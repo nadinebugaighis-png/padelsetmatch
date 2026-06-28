@@ -3,13 +3,13 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel, type PriorityTrait } from "@/lib/types";
+import { GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Camera, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 
 export const Route = createFileRoute("/app/onboarding")({
   component: Onboarding,
@@ -32,7 +32,8 @@ function Onboarding() {
   const [nationality, setNationality] = useState("Spain");
   const [zone, setZone] = useState<MadridZone>("Chamberí");
   const [level, setLevel] = useState<PadelLevel>("intermediate");
-  const [priorities, setPriorities] = useState<PriorityTrait[]>([]);
+  const [priorities, setPriorities] = useState<string[]>([]);
+  const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -49,8 +50,28 @@ function Onboarding() {
     }
   }, [profileQ.data]);
 
-  const togglePriority = (t: PriorityTrait) => {
-    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 5 ? cur : [...cur, t]);
+  const togglePriority = (t: string) => {
+    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);
+  };
+  const movePriority = (i: number, dir: -1 | 1) => {
+    setPriorities((cur) => {
+      const j = i + dir;
+      if (j < 0 || j >= cur.length) return cur;
+      const next = [...cur];
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  };
+  const removePriority = (t: string) => setPriorities((cur) => cur.filter((x) => x !== t));
+  const addCustom = () => {
+    const v = customTrait.trim().toLowerCase();
+    if (!v) return;
+    const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
+    if (customCount >= 3) { toast.error("Up to 3 custom traits"); return; }
+    if (priorities.includes(v)) { toast.error("Already added"); return; }
+    if (priorities.length >= 8) { toast.error("Max 8 traits"); return; }
+    setPriorities((cur) => [...cur, v]);
+    setCustomTrait("");
   };
   const toggleInterested = (g: Gender) => {
     setInterested((cur) => cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]);
@@ -173,17 +194,49 @@ function Onboarding() {
         {step === 3 && (
           <>
             <h2 className="text-display text-3xl">What matters to you?</h2>
-            <p className="text-sm text-[var(--cream)]/70">Pick 3–5 in order — most important first.</p>
+            <p className="text-sm text-[var(--cream)]/70">Tap to add. Then rank them — most important first. You can delete any and add up to 3 of your own to help the AI match you better.</p>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Suggested traits</label>
             <div className="flex flex-wrap gap-2">
               {PRIORITY_TRAITS.map((t) => {
-                const i = priorities.indexOf(t);
+                const picked = priorities.includes(t);
                 return (
-                  <button key={t} onClick={() => togglePriority(t)} className={`chip ${i !== -1 ? "chip-ball" : ""}`}>
-                    {i !== -1 && <span className="font-bold">{i + 1}.</span>} {t}
+                  <button key={t} onClick={() => togglePriority(t)} className={`chip ${picked ? "chip-ball" : ""}`}>
+                    {picked ? "✓ " : "+ "}{t}
                   </button>
                 );
               })}
             </div>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Add your own (up to 3)</label>
+            <div className="flex gap-2">
+              <Input
+                value={customTrait}
+                onChange={(e) => setCustomTrait(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
+                placeholder="e.g. animal lover, foodie, early bird"
+                maxLength={30}
+              />
+              <Button type="button" variant="outline" onClick={addCustom}><Plus className="w-4 h-4" /></Button>
+            </div>
+
+            {priorities.length > 0 && (
+              <>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your ranking (top = most important)</label>
+                <ul className="space-y-2">
+                  {priorities.map((t, i) => (
+                    <li key={t} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
+                      <span className="text-[var(--ball)] font-bold w-6">{i + 1}.</span>
+                      <span className="flex-1 capitalize">{t}</span>
+                      <button onClick={() => movePriority(i, -1)} disabled={i === 0} className="p-1 disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
+                      <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} className="p-1 disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
+                      <button onClick={() => removePriority(t)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-[var(--cream)]/50">Pick at least 3.</p>
+              </>
+            )}
           </>
         )}
         {step === 4 && (

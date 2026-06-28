@@ -56,7 +56,7 @@ export type Profile = {
   nationality: string;
   zone: MadridZone;
   level: PadelLevel;
-  priorities: PriorityTrait[];
+  priorities: string[];
   looking_for: LookingFor;
   bio: string | null;
   photo_url: string | null;

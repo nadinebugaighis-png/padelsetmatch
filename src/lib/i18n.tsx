@@ -411,15 +411,19 @@ const DICTS: Record<Lang, Dict> = { en, es };
 const LABELS: Record<Lang, Record<string, string>> = {
   en: {
     woman: "woman", man: "man", "non-binary": "non-binary",
-    beginner: "beginner", intermediate: "intermediate", advanced: "advanced", competitive: "competitive",
+    "just starting": "just starting", casual: "casual", beginner: "beginner", intermediate: "intermediate", advanced: "advanced", competitive: "competitive",
     friend: "friend", partner: "partner", both: "both",
     everyone: "everyone", women: "women", men: "men", "lesbian women": "lesbian women", "gay men": "gay men", bisexual: "bisexual", queer: "queer",
+    intellectual: "intellectual", looks: "looks", money: "money", "social butterfly": "social butterfly",
+    fun: "fun", quiet: "quiet", preserved: "preserved", fashionable: "fashionable", funny: "funny", adventurous: "adventurous",
   },
   es: {
     woman: "mujer", man: "hombre", "non-binary": "no binario",
-    beginner: "principiante", intermediate: "intermedio", advanced: "avanzado", competitive: "competitivo",
+    "just starting": "empezando", casual: "casual", beginner: "principiante", intermediate: "intermedio", advanced: "avanzado", competitive: "competitivo",
     friend: "amistad", partner: "pareja", both: "ambos",
     everyone: "todos", women: "mujeres", men: "hombres", "lesbian women": "mujeres lesbianas", "gay men": "hombres gays", bisexual: "bisexuales", queer: "queer",
+    intellectual: "intelectual", looks: "físico", money: "dinero", "social butterfly": "muy social",
+    fun: "divertido", quiet: "tranquilo", preserved: "reservado", fashionable: "con estilo", funny: "gracioso", adventurous: "aventurero",
   },
 };
 

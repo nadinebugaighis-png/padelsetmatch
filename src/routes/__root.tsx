@@ -66,7 +66,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "PadelMatch — find your padel partner (and maybe more)" },
       { name: "description", content: "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with." },
       { property: "og:title", content: "PadelMatch" },
-      { property: "og:description", content: "Find players you genuinely click with. Matches, friendship, and great padel games — in any city." },
+      { property: "og:description", content: "Find players you genuinely click with. Matches, friendship, and great padel games — in Madrid." },
 
       { property: "og:type", content: "website" },
       { property: "og:image", content: "https://padelspark.lovable.app/og-share.jpg" },

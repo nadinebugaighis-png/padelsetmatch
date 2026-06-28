@@ -4,11 +4,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
-  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,
 } from "@/lib/types";
+
+type LocBlock = { country: string; city: string; areas: string[] };
+const emptyBlock = (): LocBlock => ({ country: "", city: "", areas: ["", "", ""] });
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

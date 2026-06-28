@@ -177,12 +177,12 @@ function Onboarding() {
     !!photoUrl,
   ];
 
-  const steps = ["You", "Who you're meeting", "Padel, places & languages", "What matters", "Photo"];
+  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];
 
   return (
     <main className="px-4 py-6 max-w-md mx-auto">
       <div className="flex items-center justify-between text-xs uppercase tracking-widest text-[var(--cream)]/60">
-        <span>Step {step + 1} / {steps.length}</span>
+        <span>{t("ob.step")} {step + 1} {t("ob.of")} {steps.length}</span>
         <span>{steps[step]}</span>
       </div>
       <div className="h-1 mt-2 rounded-full bg-[var(--cream)]/10 overflow-hidden">
@@ -192,37 +192,37 @@ function Onboarding() {
       <div className="mt-6 surface-card p-5 space-y-4">
         {step === 0 && (
           <>
-            <h2 className="text-display text-3xl">Who are you?</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">First name (only this is shown)</label>
-            <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder="Lucía" />
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Age</label>
+            <h2 className="text-display text-3xl">{t("ob.h0")}</h2>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
+            <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
             <Input type="number" min={18} max={99} value={age} onChange={(e) => setAge(parseInt(e.target.value) || 18)} />
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">I am</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
-                <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{g}</button>
+                <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Looking for</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.lookingFor")}</label>
             <div className="flex flex-wrap gap-2">
               {LOOKING_FOR.map((g) => (
-                <button key={g} onClick={() => setLookingFor(g)} className={`chip ${looking_for === g ? "chip-ball" : ""}`}>{g}</button>
+                <button key={g} onClick={() => setLookingFor(g)} className={`chip ${looking_for === g ? "chip-ball" : ""}`}>{label(g)}</button>
               ))}
             </div>
-            <p className="text-xs text-[var(--cream)]/50">Your answers here stay private — they're never shown on your profile. You can retake this questionnaire any time to change them.</p>
+            <p className="text-xs text-[var(--cream)]/50">{t("ob.privateNote")}</p>
           </>
         )}
         {step === 1 && (
           <>
-            <h2 className="text-display text-3xl">Who do you want to meet?</h2>
-            <p className="text-sm text-[var(--cream)]/70">Pick separately for friendship and for a relationship — tap as many as fit. Choose <b>Everyone</b> if you're open to all. <b>Only used for matching — never shown on your profile.</b></p>
+            <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
+            <p className="text-sm text-[var(--cream)]/70">{t("ob.audIntro1")} <b>{t("ob.audEveryone")}</b> {t("ob.audIntro2")} <b>{t("ob.audPrivate")}</b></p>
 
             {needFriendAud && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">For friendship</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.audFriend")}</label>
                 <div className="flex flex-wrap gap-2">
                   {AUDIENCE_OPTIONS.map((o) => (
-                    <button key={o} onClick={() => toggleAud(setFriendAud)(o)} className={`chip ${friend_interested_in.includes(o) ? "chip-ball" : ""}`}>{o}</button>
+                    <button key={o} onClick={() => toggleAud(setFriendAud)(o)} className={`chip ${friend_interested_in.includes(o) ? "chip-ball" : ""}`}>{label(o)}</button>
                   ))}
                 </div>
               </>
@@ -230,19 +230,19 @@ function Onboarding() {
 
             {needPartnerAud && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">For a relationship</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.audPartner")}</label>
                 <div className="flex flex-wrap gap-2">
                   {AUDIENCE_OPTIONS.map((o) => (
-                    <button key={o} onClick={() => toggleAud(setPartnerAud)(o)} className={`chip ${partner_interested_in.includes(o) ? "chip-ball" : ""}`}>{o}</button>
+                    <button key={o} onClick={() => toggleAud(setPartnerAud)(o)} className={`chip ${partner_interested_in.includes(o) ? "chip-ball" : ""}`}>{label(o)}</button>
                   ))}
                 </div>
               </>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Age range</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
               <Input type="number" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(parseInt(e.target.value) || 18)} />
-              <span>to</span>
+              <span>{t("ob.to")}</span>
               <Input type="number" min={18} max={99} value={age_max} onChange={(e) => setAgeMax(parseInt(e.target.value) || 99)} />
             </div>
           </>

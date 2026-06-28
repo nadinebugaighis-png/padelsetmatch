@@ -115,9 +115,13 @@ function Onboarding() {
   };
 
   const save = useMutation({
-    mutationFn: () => upsert({
-      data: { first_name, age, gender, interested_in, friend_interested_in, partner_interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
-    }),
+    mutationFn: () => {
+      const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
+      const legacy = derived.length ? derived : interested_in;
+      return upsert({
+        data: { first_name, age, gender, interested_in: legacy, friend_interested_in, partner_interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
+      });
+    },
     onSuccess: () => {
       qc.invalidateQueries();
       toast.success("Profile saved");

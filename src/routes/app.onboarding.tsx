@@ -175,14 +175,14 @@ function Onboarding() {
     mutationFn: () => {
       const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
       const legacy = derived.length ? derived : interested_in;
-      const locations = zones.map((z) => encodeLocation({ country: "Spain", city: "Madrid", area: z }));
+      const first = validBlocks[0];
       return upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
           friend_interested_in, partner_interested_in,
-          age_min, age_max, nationality: "Spain",
-          zone: "Madrid",
-          locations, languages,
+          age_min, age_max, nationality,
+          zone: first ? first.city : "",
+          locations: encodedLocations, languages,
           level, priorities, looking_for,
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,

@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } 
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMyMatches, getMyProfile } from "@/lib/app.functions";
+import { getIsAdmin, getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { ArrowLeft, Heart, MessageCircle, Sparkles, User } from "lucide-react";
 import { useT, LangSwitch } from "@/lib/i18n";
 
@@ -23,9 +23,12 @@ function AuthShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
+  const checkAdmin = useServerFn(getIsAdmin);
 
   const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!profileQ.data });
+  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin() });
+
 
   const onSignOut = async () => {
     await qc.cancelQueries();
@@ -66,11 +69,17 @@ function AuthShell() {
           </Link>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          {adminQ.data && (
+            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
+              Admin
+            </Link>
+          )}
           <LangSwitch />
           <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]">
             {t("shell.signout")}
           </button>
         </div>
+
       </header>
 
       <Outlet />

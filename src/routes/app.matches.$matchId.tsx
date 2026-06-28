@@ -25,9 +25,16 @@ function ChatRoom() {
   const send = useServerFn(sendMessage);
   const block = useServerFn(blockProfile);
   const report = useServerFn(reportProfile);
+  const confirmFn = useServerFn(confirmPlayed);
+  const noShowFn = useServerFn(reportNoShow);
+  const statusFn = useServerFn(getPlayedStatus);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
+  const statusQ = useQuery({ queryKey: ["match-status", matchId], queryFn: () => statusFn({ data: { matchId } }) });
   const [text, setText] = useState("");
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<string>(REPORT_REASONS[0]);
+  const [reportDetail, setReportDetail] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

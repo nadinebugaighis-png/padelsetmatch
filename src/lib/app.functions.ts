@@ -700,4 +700,64 @@ const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
   ],
 };
 
+// ===================== Admin =====================
+
+export const getIsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data } = await context.supabase.rpc("has_role" as never, {
+      _user_id: context.userId,
+      _role: "admin",
+    } as never);
+    return Boolean(data);
+  });
+
+export const getAdminStats = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role" as never, {
+      _user_id: context.userId,
+      _role: "admin",
+    } as never);
+    if (!isAdmin) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [profilesRes, matchesRes, likesRes, feedbackRes, reportsRes, recentProfilesRes, recentFeedbackRes] = await Promise.all([
+      supabaseAdmin.from("profiles" as never).select("id", { count: "exact", head: true }).eq("is_seed", false),
+      supabaseAdmin.from("matches" as never).select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("likes" as never).select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("feedback" as never).select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("reports" as never).select("id", { count: "exact", head: true }),
+      supabaseAdmin
+        .from("profiles" as never)
+        .select("id, first_name, age, zone, created_at, suspended_at")
+        .eq("is_seed", false)
+        .order("created_at", { ascending: false })
+        .limit(20),
+      supabaseAdmin
+        .from("feedback" as never)
+        .select("id, rating, message, created_at")
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
+
+    return {
+      counts: {
+        users: profilesRes.count ?? 0,
+        matches: matchesRes.count ?? 0,
+        likes: likesRes.count ?? 0,
+        feedback: feedbackRes.count ?? 0,
+        reports: reportsRes.count ?? 0,
+      },
+      recentProfiles: (recentProfilesRes.data ?? []) as Array<{
+        id: string; first_name: string; age: number; zone: string; created_at: string; suspended_at: string | null;
+      }>,
+      recentFeedback: (recentFeedbackRes.data ?? []) as Array<{
+        id: string; rating: number; message: string; created_at: string;
+      }>,
+    };
+  });
+
+
 

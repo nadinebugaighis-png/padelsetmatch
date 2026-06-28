@@ -115,6 +115,17 @@ const en: Dict = {
   "prof.deleted": "Account deleted",
   "prof.deleteFail": "Could not delete account",
 
+  // Feedback
+  "fb.title": "Make this app better",
+  "fb.sub": "Suggestions, bugs, things you'd love — it all comes straight to the team.",
+  "fb.placeholder": "What would make PadelMatch better for you?",
+  "fb.send": "Send",
+  "fb.sending": "Sending…",
+  "fb.thanks": "Thanks — your feedback was sent.",
+  "fb.fail": "Couldn't send. Try again.",
+  "fb.tooShort": "Add a few more words first.",
+
+
   // Onboarding
   "ob.step": "Step",
   "ob.of": "/",
@@ -317,6 +328,17 @@ const es: Dict = {
   "prof.deleteConfirm": "¿Borrar tu cuenta para siempre? Esto elimina tu perfil, likes, matches y chats. No se puede deshacer.",
   "prof.deleted": "Cuenta borrada",
   "prof.deleteFail": "No se pudo borrar la cuenta",
+
+  // Feedback
+  "fb.title": "Haz esta app mejor",
+  "fb.sub": "Sugerencias, errores, lo que te encantaría — llega directo al equipo.",
+  "fb.placeholder": "¿Qué haría PadelMatch mejor para ti?",
+  "fb.send": "Enviar",
+  "fb.sending": "Enviando…",
+  "fb.thanks": "Gracias — tu feedback se envió.",
+  "fb.fail": "No se pudo enviar. Inténtalo de nuevo.",
+  "fb.tooShort": "Escribe un poco más primero.",
+
 
   // Onboarding
   "ob.step": "Paso",

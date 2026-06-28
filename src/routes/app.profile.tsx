@@ -1,13 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteMyAccount, getMyProfile } from "@/lib/app.functions";
+import { deleteMyAccount, getMyProfile, submitFeedback } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Lock } from "lucide-react";
+import { Lock, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
+import { useState } from "react";
 
 export const Route = createFileRoute("/app/profile")({
   component: ProfilePage,
@@ -88,10 +90,79 @@ function ProfilePage() {
 
       <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">{t("prof.retake")}</Button></Link>
 
+      <FeedbackBox />
+
       <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-400/70 hover:text-red-400">
         {t("prof.delete")}
       </button>
     </main>
+  );
+}
+
+function FeedbackBox() {
+  const { t } = useI18n();
+  const send = useServerFn(submitFeedback);
+  const [msg, setMsg] = useState("");
+  const [rating, setRating] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const onSubmit = async () => {
+    const trimmed = msg.trim();
+    if (trimmed.length < 3) {
+      toast.error(t("fb.tooShort"));
+      return;
+    }
+    setBusy(true);
+    try {
+      await send({ data: { message: trimmed, rating } });
+      toast.success(t("fb.thanks"));
+      setMsg("");
+      setRating(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("fb.fail"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mt-6 surface-card p-5">
+      <div className="flex items-center gap-2">
+        <Sparkles className="w-4 h-4 text-[var(--ball)]" />
+        <h2 className="text-display text-lg tracking-wider">{t("fb.title")}</h2>
+      </div>
+      <p className="text-xs text-[var(--cream)]/60 mt-1">{t("fb.sub")}</p>
+
+      <div className="flex items-center gap-1 mt-3">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => setRating(rating === n ? null : n)}
+            aria-label={`${n} star${n > 1 ? "s" : ""}`}
+            className="p-1"
+          >
+            <Star
+              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--ball)] text-[var(--ball)]" : "text-[var(--cream)]/40"}`}
+            />
+          </button>
+        ))}
+      </div>
+
+      <Textarea
+        value={msg}
+        onChange={(e) => setMsg(e.target.value.slice(0, 2000))}
+        placeholder={t("fb.placeholder")}
+        className="mt-3 min-h-[110px]"
+        maxLength={2000}
+      />
+      <div className="flex items-center justify-between mt-2">
+        <span className="text-[10px] text-[var(--cream)]/50">{msg.length}/2000</span>
+        <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm">
+          {busy ? t("fb.sending") : t("fb.send")}
+        </Button>
+      </div>
+    </div>
   );
 }
 

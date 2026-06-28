@@ -1,17 +1,7 @@
-// Madrid neighborhood proximity (curated, not real geo).
-const ZONE_CLUSTERS: Record<string, number> = {
-  "Centro|Malasaña": 1, "Centro|Chueca": 1, "Centro|La Latina": 1, "Centro|Chamberí": 2,
-  "Chamberí|Malasaña": 1, "Chamberí|Chamartín": 2, "Chamberí|Salamanca": 2,
-  "Salamanca|Retiro": 1, "Salamanca|Chamartín": 2, "Salamanca|Chueca": 1,
-  "Retiro|La Latina": 2, "Retiro|Centro": 2,
-  "Malasaña|Chueca": 1, "Malasaña|La Latina": 2,
-  "Moncloa|Chamberí": 2, "Moncloa|Tetuán": 2,
-  "Tetuán|Chamartín": 1, "Tetuán|Chamberí": 2,
-};
-
+// City proximity. Same city is the strong signal; otherwise neutral.
 export function zoneAffinity(a: string, b: string): number {
-  if (a === b) return 0;
-  return ZONE_CLUSTERS[`${a}|${b}`] ?? ZONE_CLUSTERS[`${b}|${a}`] ?? 3;
+  if (!a || !b) return 3;
+  return a.trim().toLowerCase() === b.trim().toLowerCase() ? 0 : 3;
 }
 
 const CULTURE_GROUPS: string[][] = [
@@ -30,6 +20,6 @@ export function cultureAffinity(a: string, b: string): number {
   return 2;
 }
 
-export function playtomicLink(zone: string) {
-  return `https://playtomic.io/search?q=${encodeURIComponent("Madrid " + zone)}`;
+export function playtomicLink(city: string) {
+  return `https://playtomic.io/search?q=${encodeURIComponent(city)}`;
 }

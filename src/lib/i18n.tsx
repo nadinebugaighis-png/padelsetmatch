@@ -454,8 +454,6 @@ type Ctx = {
   setLang: (l: Lang) => void;
   t: (key: string, vars?: Record<string, string>) => string;
   label: (key: string) => string;
-  needsChoice: boolean;
-  confirmChoice: (l: Lang) => void;
 };
 
 const I18nCtx = createContext<Ctx | null>(null);
@@ -468,23 +466,18 @@ function detectBrowserLang(): Lang {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  // Default suggested by browser, but mark needsChoice until user picks.
   const [lang, setLangState] = useState<Lang>("en");
-  const [needsChoice, setNeedsChoice] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
       if (stored === "en" || stored === "es") {
         setLangState(stored);
-        setNeedsChoice(false);
       } else {
         setLangState(detectBrowserLang());
-        setNeedsChoice(true);
       }
     } catch {
       setLangState(detectBrowserLang());
-      setNeedsChoice(true);
     }
   }, []);
 
@@ -492,16 +485,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLangState(l);
     try { localStorage.setItem(STORAGE_KEY, l); } catch { /* ignore */ }
   };
-  const confirmChoice = (l: Lang) => {
-    setLang(l);
-    setNeedsChoice(false);
-  };
 
   const value = useMemo<Ctx>(() => ({
     lang,
     setLang,
-    needsChoice,
-    confirmChoice,
     t: (key, vars) => {
       const dict = DICTS[lang];
       let s = dict[key] ?? en[key] ?? key;
@@ -509,12 +496,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       return s;
     },
     label: (key) => LABELS[lang][key] ?? LABELS.en[key] ?? key,
-  }), [lang, needsChoice]);
+  }), [lang]);
 
   return (
     <I18nCtx.Provider value={value}>
       {children}
-      {needsChoice && <WelcomeOverlay />}
     </I18nCtx.Provider>
   );
 }
@@ -546,35 +532,3 @@ export function LangSwitch({ className = "" }: { className?: string }) {
   );
 }
 
-function WelcomeOverlay() {
-  const { confirmChoice } = useI18n();
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--court-deep)]/95 backdrop-blur p-6">
-      <div className="w-full max-w-md surface-card p-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <span className="inline-block w-3 h-3 rounded-full bg-[var(--ball)] ball-glow" />
-          <span className="text-display text-2xl tracking-wider">PADEL · MATCH</span>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => confirmChoice("en")}
-            className="surface-card hover:bg-[var(--cream)]/5 transition-colors py-8 rounded-2xl border border-[var(--cream)]/15"
-          >
-            <div className="text-display text-4xl">hello</div>
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mt-2">English</div>
-          </button>
-          <button
-            type="button"
-            onClick={() => confirmChoice("es")}
-            className="surface-card hover:bg-[var(--cream)]/5 transition-colors py-8 rounded-2xl border border-[var(--cream)]/15"
-          >
-            <div className="text-display text-4xl">hola</div>
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mt-2">Español</div>
-          </button>
-        </div>
-        <p className="mt-6 text-[11px] text-[var(--cream)]/50">You can switch anytime · Puedes cambiar cuando quieras</p>
-      </div>
-    </div>
-  );
-}

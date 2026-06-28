@@ -138,7 +138,9 @@ export type Database = {
           id: string
           interested_in: string[]
           is_seed: boolean
+          languages: string[]
           level: string
+          locations: string[]
           looking_for: string
           nationality: string
           partner_interested_in: string[]
@@ -160,7 +162,9 @@ export type Database = {
           id?: string
           interested_in?: string[]
           is_seed?: boolean
+          languages?: string[]
           level: string
+          locations?: string[]
           looking_for?: string
           nationality: string
           partner_interested_in?: string[]
@@ -182,7 +186,9 @@ export type Database = {
           id?: string
           interested_in?: string[]
           is_seed?: boolean
+          languages?: string[]
           level?: string
+          locations?: string[]
           looking_for?: string
           nationality?: string
           partner_interested_in?: string[]

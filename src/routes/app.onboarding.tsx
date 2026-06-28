@@ -3,7 +3,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { AUDIENCE_OPTIONS, GENDERS, LOOKING_FOR, POPULAR_CITIES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type PadelLevel } from "@/lib/types";
+import {
+  AUDIENCE_OPTIONS, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  POPULAR_CITIES, POPULAR_COUNTRIES, PRIORITY_TRAITS,
+  decodeLocation, encodeLocation, formatLocation,
+  type Gender, type LookingFor, type PadelLevel,
+} from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +37,11 @@ function Onboarding() {
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");
-  const [zone, setZone] = useState<string>("Madrid");
+  const [locations, setLocations] = useState<string[]>([]);
+  const [locCountry, setLocCountry] = useState<string>("Spain");
+  const [locCity, setLocCity] = useState<string>("");
+  const [locArea, setLocArea] = useState<string>("");
+  const [languages, setLanguages] = useState<string[]>(["English"]);
   const [level, setLevel] = useState<PadelLevel>("intermediate");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");
@@ -48,9 +57,12 @@ function Onboarding() {
       setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
-      setNationality(p.nationality); setZone(p.zone); setLevel(p.level);
+      setNationality(p.nationality); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
+      if (p.languages?.length) setLanguages(p.languages);
+      if (p.locations?.length) setLocations(p.locations);
+      else if (p.zone) setLocations([encodeLocation({ country: p.nationality || "Spain", city: p.zone })]);
     }
   }, [profileQ.data]);
 
@@ -77,7 +89,17 @@ function Onboarding() {
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
-  // Derive legacy interested_in (gender list) from the audience choices
+  const addLocation = () => {
+    if (!locCountry || !locCity.trim()) { toast.error("Country and city required"); return; }
+    if (locations.length >= 8) { toast.error("Max 8 locations"); return; }
+    const next = encodeLocation({ country: locCountry, city: locCity.trim(), area: locArea.trim() || undefined });
+    if (locations.includes(next)) { toast.error("Already added"); return; }
+    setLocations((cur) => [...cur, next]);
+    setLocCity(""); setLocArea("");
+  };
+  const removeLocation = (s: string) => setLocations((cur) => cur.filter((x) => x !== s));
+  const toggleLanguage = (l: string) => setLanguages((cur) => cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l]);
+
   const audToGenders = (aud: string[]): Gender[] => {
     if (!aud.length || aud.includes("everyone") || aud.includes("bisexual") || aud.includes("queer")) return ["woman", "man", "non-binary"];
     const out = new Set<Gender>();
@@ -118,8 +140,17 @@ function Onboarding() {
     mutationFn: () => {
       const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
       const legacy = derived.length ? derived : interested_in;
+      const primaryCity = locations.length > 0 ? decodeLocation(locations[0]).city : "";
       return upsert({
-        data: { first_name, age, gender, interested_in: legacy, friend_interested_in, partner_interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
+        data: {
+          first_name, age, gender, interested_in: legacy,
+          friend_interested_in, partner_interested_in,
+          age_min, age_max, nationality,
+          zone: primaryCity,
+          locations, languages,
+          level, priorities, looking_for,
+          bio: bio || null, photo_url: photoUrl,
+        },
       });
     },
     onSuccess: () => {
@@ -139,12 +170,12 @@ function Onboarding() {
   const canStep = [
     !!first_name && age >= 18,
     audOk && age_min <= age_max,
-    !!nationality && !!zone && !!level,
+    !!nationality && locations.length > 0 && languages.length > 0 && !!level,
     priorities.length >= 3,
     !!photoUrl,
   ];
 
-  const steps = ["You", "Who you're meeting", "Padel & home", "What matters", "Photo"];
+  const steps = ["You", "Who you're meeting", "Padel, places & languages", "What matters", "Photo"];
 
   return (
     <main className="px-4 py-6 max-w-md mx-auto">
@@ -176,12 +207,13 @@ function Onboarding() {
                 <button key={g} onClick={() => setLookingFor(g)} className={`chip ${looking_for === g ? "chip-ball" : ""}`}>{g}</button>
               ))}
             </div>
+            <p className="text-xs text-[var(--cream)]/50">Your answers here stay private — they're never shown on your profile. You can retake this questionnaire any time to change them.</p>
           </>
         )}
         {step === 1 && (
           <>
             <h2 className="text-display text-3xl">Who do you want to meet?</h2>
-            <p className="text-sm text-[var(--cream)]/70">Pick separately for friendship and for a relationship — tap as many as fit. Choose <b>Everyone</b> if you're open to all.</p>
+            <p className="text-sm text-[var(--cream)]/70">Pick separately for friendship and for a relationship — tap as many as fit. Choose <b>Everyone</b> if you're open to all. <b>Only used for matching — never shown on your profile.</b></p>
 
             {needFriendAud && (
               <>
@@ -215,16 +247,52 @@ function Onboarding() {
         )}
         {step === 2 && (
           <>
-            <h2 className="text-display text-3xl">Padel & home base</h2>
+            <h2 className="text-display text-3xl">Padel, places & languages</h2>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Nationality / background</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your city</label>
-            <Input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="e.g. Madrid, London, Dubai…" maxLength={60} />
+
+            <div>
+              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Places you play</label>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">Add where you live, work, your summer house, or a city you're visiting. Add up to 8.</p>
+            </div>
+
+            {locations.length > 0 && (
+              <ul className="space-y-2">
+                {locations.map((s) => {
+                  const l = decodeLocation(s);
+                  return (
+                    <li key={s} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
+                      <span className="flex-1 text-sm">{formatLocation(l)}</span>
+                      <button onClick={() => removeLocation(s)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            <div className="space-y-2 border border-[var(--cream)]/15 rounded-md p-3">
+              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">Country</label>
+              <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={locCountry} onChange={(e) => setLocCountry(e.target.value)}>
+                {POPULAR_COUNTRIES.map((c) => <option key={c} value={c} className="bg-[var(--court-deep)]">{c}</option>)}
+              </select>
+              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">City</label>
+              <Input value={locCity} onChange={(e) => setLocCity(e.target.value)} placeholder="e.g. Madrid" maxLength={60} />
+              <div className="flex flex-wrap gap-2">
+                {POPULAR_CITIES.slice(0, 12).map((c) => (
+                  <button key={c} type="button" onClick={() => setLocCity(c)} className={`chip text-xs ${locCity.toLowerCase() === c.toLowerCase() ? "chip-ball" : ""}`}>{c}</button>
+                ))}
+              </div>
+              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">Area / barrio (optional)</label>
+              <Input value={locArea} onChange={(e) => setLocArea(e.target.value)} placeholder="e.g. La Moraleja, Chamberí" maxLength={60} />
+              <Button type="button" variant="outline" onClick={addLocation} className="w-full"><Plus className="w-4 h-4 mr-1" /> Add this location</Button>
+            </div>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Languages you speak</label>
             <div className="flex flex-wrap gap-2">
-              {POPULAR_CITIES.map((c) => (
-                <button key={c} onClick={() => setZone(c)} className={`chip ${zone.trim().toLowerCase() === c.toLowerCase() ? "chip-ball" : ""}`}>{c}</button>
+              {LANGUAGES.map((l) => (
+                <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{l}</button>
               ))}
             </div>
 
@@ -241,7 +309,7 @@ function Onboarding() {
         {step === 3 && (
           <>
             <h2 className="text-display text-3xl">What matters to you?</h2>
-            <p className="text-sm text-[var(--cream)]/70">Tap to add. Then rank them — most important first. You can delete any and add up to 3 of your own to help the AI match you better.</p>
+            <p className="text-sm text-[var(--cream)]/70">Tap to add. Then rank them — most important first. Up to 3 of your own. <b>Private — only used for matching.</b></p>
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Suggested traits</label>
             <div className="flex flex-wrap gap-2">
@@ -289,7 +357,7 @@ function Onboarding() {
         {step === 4 && (
           <>
             <h2 className="text-display text-3xl">Your padel photo</h2>
-            <p className="text-sm text-[var(--cream)]/70">A photo of you with a racket on court — that's the whole vibe. Only shown to people you match with… and the discover grid.</p>
+            <p className="text-sm text-[var(--cream)]/70">A photo of you with a racket on court — that's the whole vibe. Shown in the discover grid.</p>
             <label className="block aspect-[3/4] rounded-2xl border border-dashed border-[var(--cream)]/30 overflow-hidden relative cursor-pointer">
               {photoUrl ? (
                 <>

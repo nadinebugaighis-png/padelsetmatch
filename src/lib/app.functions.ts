@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { cultureAffinity, zoneAffinity } from "./affinity";
+import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from "./affinity";
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
@@ -17,6 +17,8 @@ const ProfileInput = z.object({
   age_max: z.number().int().min(18).max(99),
   nationality: z.string().min(1).max(40),
   zone: z.string().min(1).max(60),
+  locations: z.array(z.string().min(1).max(120)).max(8).default([]),
+  languages: z.array(z.string().min(1).max(30)).max(10).default([]),
   level: z.enum(PADEL_LEVELS),
   priorities: z.array(z.string().min(1).max(40)).min(3).max(10),
   looking_for: z.enum(LOOKING_FOR),
@@ -112,10 +114,20 @@ function scoreCandidate(me: Profile, c: Profile) {
   else if (levelGap === 1) { score += 12; reasons.push("Close padel levels"); }
   else if (levelGap === 2) score += 4;
 
-  const za = zoneAffinity(me.zone, c.zone);
-  if (za === 0) { score += 14; reasons.push(`Both in ${me.zone}`); }
-  else if (za === 1) { score += 10; reasons.push(`${me.zone} ↔ ${c.zone}, close by`); }
-  else if (za === 2) score += 5;
+  const loc = locationAffinity(me.locations ?? [], c.locations ?? []);
+  if (loc.score === 0) { score += 16; reasons.push(`Both play in ${loc.sharedCity}`); }
+  else if (loc.score === 1) { score += 8; reasons.push(`Both in ${loc.sharedCountry}`); }
+  else {
+    const za = zoneAffinity(me.zone, c.zone);
+    if (za === 0) { score += 14; reasons.push(`Both in ${me.zone}`); }
+    else if (za === 2) score += 5;
+  }
+
+  const langs = languageOverlap(me.languages ?? [], c.languages ?? []);
+  if (langs.length > 0) {
+    score += Math.min(10, langs.length * 5);
+    reasons.push(`Speak ${langs.slice(0, 3).join(", ")}`);
+  }
 
   const ca = cultureAffinity(me.nationality, c.nationality);
   if (ca === 0) { score += 10; reasons.push(`Both ${me.nationality}`); }

@@ -24,6 +24,19 @@ export const POPULAR_CITIES = [
   "Miami", "New York", "Los Angeles",
 ] as const;
 
+export const POPULAR_COUNTRIES = [
+  "Spain", "Portugal", "France", "Italy", "Germany", "United Kingdom",
+  "Ireland", "Netherlands", "Sweden", "Switzerland",
+  "United States", "Mexico", "Argentina", "Brazil", "Colombia",
+  "United Arab Emirates", "Other",
+] as const;
+
+export const LANGUAGES = [
+  "English", "Spanish", "Portuguese", "French", "Italian", "German",
+  "Dutch", "Catalan", "Arabic", "Russian", "Mandarin", "Japanese",
+  "Swedish", "Greek", "Turkish", "Hindi",
+] as const;
+export type Language = (typeof LANGUAGES)[number];
 
 export const GENDERS = ["woman", "man", "non-binary"] as const;
 export type Gender = (typeof GENDERS)[number];
@@ -50,6 +63,21 @@ export const NATIONALITIES = [
   "Netherlands", "Ireland", "Switzerland", "Sweden", "Other",
 ];
 
+// A single location: country + city + optional area/barrio
+export type LocationEntry = { country: string; city: string; area?: string };
+
+// Serialized as "Country | City | Area" inside the locations text[] column
+export function encodeLocation(l: LocationEntry): string {
+  return [l.country, l.city, l.area ?? ""].map((s) => s.trim()).join(" | ");
+}
+export function decodeLocation(s: string): LocationEntry {
+  const [country = "", city = "", area = ""] = s.split("|").map((x) => x.trim());
+  return { country, city, area: area || undefined };
+}
+export function formatLocation(l: LocationEntry): string {
+  return [l.area, l.city, l.country].filter(Boolean).join(", ");
+}
+
 export type Profile = {
   id: string;
   user_id: string | null;
@@ -64,6 +92,8 @@ export type Profile = {
   age_max: number;
   nationality: string;
   zone: string;
+  locations: string[];
+  languages: string[];
   level: PadelLevel;
   priorities: string[];
   looking_for: LookingFor;

@@ -34,6 +34,19 @@ export type MadridZone = (typeof MADRID_ZONES)[number];
 export const GENDERS = ["woman", "man", "non-binary"] as const;
 export type Gender = (typeof GENDERS)[number];
 
+// Audience options for friendship / partner targeting (broader than gender identity).
+export const AUDIENCE_OPTIONS = [
+  "women",
+  "men",
+  "non-binary",
+  "gay men",
+  "lesbian women",
+  "bisexual",
+  "queer",
+  "everyone",
+] as const;
+export type Audience = (typeof AUDIENCE_OPTIONS)[number];
+
 export const LOOKING_FOR = ["partner", "friend", "both"] as const;
 export type LookingFor = (typeof LOOKING_FOR)[number];
 
@@ -51,6 +64,8 @@ export type Profile = {
   age: number;
   gender: Gender;
   interested_in: Gender[];
+  friend_interested_in: string[];
+  partner_interested_in: string[];
   age_min: number;
   age_max: number;
   nationality: string;

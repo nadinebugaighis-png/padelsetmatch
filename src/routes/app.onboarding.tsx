@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel } from "@/lib/types";
+import { AUDIENCE_OPTIONS, GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +27,8 @@ function Onboarding() {
   const [age, setAge] = useState(28);
   const [gender, setGender] = useState<Gender>("woman");
   const [interested_in, setInterested] = useState<Gender[]>(["man"]);
+  const [friend_interested_in, setFriendAud] = useState<string[]>(["everyone"]);
+  const [partner_interested_in, setPartnerAud] = useState<string[]>(["men"]);
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");
@@ -44,6 +46,8 @@ function Onboarding() {
     if (p) {
       setFirstName(p.first_name); setAge(p.age); setGender(p.gender);
       setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
+      if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
+      if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality); setZone(p.zone); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
@@ -73,8 +77,21 @@ function Onboarding() {
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
-  const toggleInterested = (g: Gender) => {
-    setInterested((cur) => cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]);
+  // Derive legacy interested_in (gender list) from the audience choices
+  const audToGenders = (aud: string[]): Gender[] => {
+    if (!aud.length || aud.includes("everyone") || aud.includes("bisexual") || aud.includes("queer")) return ["woman", "man", "non-binary"];
+    const out = new Set<Gender>();
+    if (aud.includes("men") || aud.includes("gay men")) out.add("man");
+    if (aud.includes("women") || aud.includes("lesbian women")) out.add("woman");
+    if (aud.includes("non-binary")) out.add("non-binary");
+    return Array.from(out);
+  };
+  const toggleAud = (setter: (fn: (cur: string[]) => string[]) => void) => (opt: string) => {
+    setter((cur) => {
+      if (opt === "everyone") return cur.includes("everyone") ? [] : ["everyone"];
+      const next = cur.filter((x) => x !== "everyone");
+      return next.includes(opt) ? next.filter((x) => x !== opt) : [...next, opt];
+    });
   };
 
   const uploadPhoto = async (file: File) => {
@@ -98,9 +115,13 @@ function Onboarding() {
   };
 
   const save = useMutation({
-    mutationFn: () => upsert({
-      data: { first_name, age, gender, interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
-    }),
+    mutationFn: () => {
+      const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
+      const legacy = derived.length ? derived : interested_in;
+      return upsert({
+        data: { first_name, age, gender, interested_in: legacy, friend_interested_in, partner_interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
+      });
+    },
     onSuccess: () => {
       qc.invalidateQueries();
       toast.success("Profile saved");
@@ -109,9 +130,15 @@ function Onboarding() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Save failed"),
   });
 
+  const needFriendAud = looking_for === "friend" || looking_for === "both";
+  const needPartnerAud = looking_for === "partner" || looking_for === "both";
+  const audOk =
+    (!needFriendAud || friend_interested_in.length > 0) &&
+    (!needPartnerAud || partner_interested_in.length > 0);
+
   const canStep = [
     !!first_name && age >= 18,
-    interested_in.length > 0 && age_min <= age_max,
+    audOk && age_min <= age_max,
     !!nationality && !!zone && !!level,
     priorities.length >= 3,
     !!photoUrl,
@@ -154,12 +181,30 @@ function Onboarding() {
         {step === 1 && (
           <>
             <h2 className="text-display text-3xl">Who do you want to meet?</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Interested in</label>
-            <div className="flex flex-wrap gap-2">
-              {GENDERS.map((g) => (
-                <button key={g} onClick={() => toggleInterested(g)} className={`chip ${interested_in.includes(g) ? "chip-ball" : ""}`}>{g}</button>
-              ))}
-            </div>
+            <p className="text-sm text-[var(--cream)]/70">Pick separately for friendship and for a relationship — tap as many as fit. Choose <b>Everyone</b> if you're open to all.</p>
+
+            {needFriendAud && (
+              <>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">For friendship</label>
+                <div className="flex flex-wrap gap-2">
+                  {AUDIENCE_OPTIONS.map((o) => (
+                    <button key={o} onClick={() => toggleAud(setFriendAud)(o)} className={`chip ${friend_interested_in.includes(o) ? "chip-ball" : ""}`}>{o}</button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {needPartnerAud && (
+              <>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">For a relationship</label>
+                <div className="flex flex-wrap gap-2">
+                  {AUDIENCE_OPTIONS.map((o) => (
+                    <button key={o} onClick={() => toggleAud(setPartnerAud)(o)} className={`chip ${partner_interested_in.includes(o) ? "chip-ball" : ""}`}>{o}</button>
+                  ))}
+                </div>
+              </>
+            )}
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Age range</label>
             <div className="flex items-center gap-3">
               <Input type="number" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(parseInt(e.target.value) || 18)} />

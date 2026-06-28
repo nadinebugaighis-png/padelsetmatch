@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { cultureAffinity, zoneAffinity } from "./affinity";
-import { GENDERS, LOOKING_FOR, MADRID_ZONES, PADEL_LEVELS, PRIORITY_TRAITS, type Profile } from "./types";
+import { GENDERS, LOOKING_FOR, MADRID_ZONES, PADEL_LEVELS, type Profile } from "./types";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
@@ -11,16 +11,36 @@ const ProfileInput = z.object({
   age: z.number().int().min(18).max(99),
   gender: z.enum(GENDERS),
   interested_in: z.array(z.enum(GENDERS)).min(1),
+  friend_interested_in: z.array(z.string()).default([]),
+  partner_interested_in: z.array(z.string()).default([]),
   age_min: z.number().int().min(18).max(99),
   age_max: z.number().int().min(18).max(99),
   nationality: z.string().min(1).max(40),
   zone: z.enum(MADRID_ZONES),
   level: z.enum(PADEL_LEVELS),
-  priorities: z.array(z.enum(PRIORITY_TRAITS)).min(3).max(10),
+  priorities: z.array(z.string().min(1).max(40)).min(3).max(10),
   looking_for: z.enum(LOOKING_FOR),
   bio: z.string().max(280).nullable().optional(),
   photo_url: z.string().min(1).max(2000).nullable().optional(),
 });
+
+function audienceAcceptsGender(audience: string[], gender: string): boolean {
+  if (!audience || audience.length === 0) return true;
+  if (audience.includes("everyone") || audience.includes("bisexual") || audience.includes("queer")) return true;
+  if (gender === "man" && (audience.includes("men") || audience.includes("gay men"))) return true;
+  if (gender === "woman" && (audience.includes("women") || audience.includes("lesbian women"))) return true;
+  if (gender === "non-binary" && audience.includes("non-binary")) return true;
+  return false;
+}
+
+function sharedPurpose(a: string, b: string): "partner" | "friend" | null {
+  if (a === "partner" && (b === "partner" || b === "both")) return "partner";
+  if (b === "partner" && (a === "partner" || a === "both")) return "partner";
+  if (a === "friend" && (b === "friend" || b === "both")) return "friend";
+  if (b === "friend" && (a === "friend" || a === "both")) return "friend";
+  if (a === "both" && b === "both") return "partner";
+  return null;
+}
 
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -65,16 +85,21 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
 function scoreCandidate(me: Profile, c: Profile) {
   const reasons: string[] = [];
   let score = 0;
-  if (!me.interested_in.includes(c.gender) || !c.interested_in.includes(me.gender)) {
-    return { score: 0, reasons };
-  }
-  // looking_for compat
-  const compatLF =
-    (me.looking_for === "friend" && (c.looking_for === "friend" || c.looking_for === "both")) ||
-    (me.looking_for === "partner" && (c.looking_for === "partner" || c.looking_for === "both")) ||
-    me.looking_for === "both";
-  if (!compatLF) return { score: 0, reasons };
-  if (me.looking_for === c.looking_for) { score += 6; reasons.push(`Both looking for a ${me.looking_for === "both" ? "partner or friend" : me.looking_for}`); }
+
+  const purpose = sharedPurpose(me.looking_for, c.looking_for);
+  if (!purpose) return { score: 0, reasons };
+
+  const myAudience = purpose === "partner" ? me.partner_interested_in : me.friend_interested_in;
+  const theirAudience = purpose === "partner" ? c.partner_interested_in : c.friend_interested_in;
+  // Fallback to legacy interested_in if the purpose-specific list is empty
+  const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
+  const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
+
+  if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons };
+  if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons };
+
+  reasons.push(purpose === "partner" ? "Both open to a relationship" : "Both open to friendship");
+  score += 6;
 
   const meLikesAge = c.age >= me.age_min && c.age <= me.age_max;
   const theyLikeAge = me.age >= c.age_min && me.age <= c.age_max;

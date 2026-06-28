@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X } from "lucide-react";
+import { Heart, X, Flag, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
   component: Discover,

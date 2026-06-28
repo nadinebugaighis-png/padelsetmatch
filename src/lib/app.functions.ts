@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from "./affinity";
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
+import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 

@@ -233,7 +233,7 @@ export const getMyMatches = createServerFn({ method: "GET" })
     const otherIds = m.map((x) => (x.profile_a === myId ? x.profile_b : x.profile_a));
     if (otherIds.length === 0) return [];
     const { data: profiles } = await context.supabase
-      .from("profiles" as never).select("*").in("id", otherIds);
+      .from("profiles" as never).select("*").in("id", otherIds).is("suspended_at", null);
     const map = new Map<string, Profile>(((profiles as Profile[] | null) ?? []).map((p) => [p.id, p]));
     return m.map((row) => ({
       match_id: row.id,

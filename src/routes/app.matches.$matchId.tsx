@@ -46,8 +46,35 @@ function ChatRoom() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't send"),
   });
 
+  const safetyDone = (msg: string) => () => {
+    toast.success(msg);
+    qc.invalidateQueries({ queryKey: ["my-matches"] });
+    navigate({ to: "/app/matches" });
+  };
+  const blockM = useMutation({
+    mutationFn: (id: string) => block({ data: { blockedProfileId: id } }),
+    onSuccess: safetyDone("Blocked."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't block"),
+  });
+  const reportM = useMutation({
+    mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),
+    onSuccess: safetyDone("Report sent. Account removed."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+  });
+
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">Opening chat…</div>;
   const { other, my_profile_id, messages } = q.data;
+
+  const onBlock = () => {
+    if (!window.confirm(`Block ${other.first_name}? You won't see each other anywhere in the app.`)) return;
+    blockM.mutate(other.id);
+  };
+  const onReport = () => {
+    const reason = window.prompt(`Report ${other.first_name}?\n\nDescribe what happened (harassment, abuse, threats, fake photo…). One report removes the account immediately.`);
+    if (!reason || reason.trim().length < 3) return;
+    if (!window.confirm(`Submit this report? ${other.first_name}'s account will be permanently deleted.`)) return;
+    reportM.mutate({ id: other.id, reason: reason.trim() });
+  };
 
   return (
     <main className="max-w-md mx-auto flex flex-col h-[calc(100vh-150px)]">

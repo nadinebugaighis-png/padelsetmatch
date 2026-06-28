@@ -249,15 +249,15 @@ function Onboarding() {
         )}
         {step === 2 && (
           <>
-            <h2 className="text-display text-3xl">Padel, places & languages</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Nationality / background</label>
+            <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Places you play</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">Add where you live, work, your summer house, or a city you're visiting. Add up to 8.</p>
+              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.places")}</label>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">{t("ob.placesHelp")}</p>
             </div>
 
             {locations.length > 0 && (
@@ -275,63 +275,63 @@ function Onboarding() {
             )}
 
             <div className="space-y-2 border border-[var(--cream)]/15 rounded-md p-3">
-              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">Country</label>
+              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{t("ob.country")}</label>
               <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={locCountry} onChange={(e) => setLocCountry(e.target.value)}>
                 {POPULAR_COUNTRIES.map((c) => <option key={c} value={c} className="bg-[var(--court-deep)]">{c}</option>)}
               </select>
-              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">City</label>
-              <Input value={locCity} onChange={(e) => setLocCity(e.target.value)} placeholder="e.g. Madrid" maxLength={60} />
+              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{t("ob.city")}</label>
+              <Input value={locCity} onChange={(e) => setLocCity(e.target.value)} placeholder={t("ob.cityPh")} maxLength={60} />
               <div className="flex flex-wrap gap-2">
                 {POPULAR_CITIES.slice(0, 12).map((c) => (
                   <button key={c} type="button" onClick={() => setLocCity(c)} className={`chip text-xs ${locCity.toLowerCase() === c.toLowerCase() ? "chip-ball" : ""}`}>{c}</button>
                 ))}
               </div>
-              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">Area / barrio (optional)</label>
-              <Input value={locArea} onChange={(e) => setLocArea(e.target.value)} placeholder="e.g. La Moraleja, Chamberí" maxLength={60} />
-              <Button type="button" variant="outline" onClick={addLocation} className="w-full"><Plus className="w-4 h-4 mr-1" /> Add this location</Button>
+              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{t("ob.area")}</label>
+              <Input value={locArea} onChange={(e) => setLocArea(e.target.value)} placeholder={t("ob.areaPh")} maxLength={60} />
+              <Button type="button" variant="outline" onClick={addLocation} className="w-full"><Plus className="w-4 h-4 mr-1" /> {t("ob.addLocation")}</Button>
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Languages you speak</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.langs")}</label>
             <div className="flex flex-wrap gap-2">
               {LANGUAGES.map((l) => (
                 <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{l}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Padel level</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (
-                <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{l}</button>
+                <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Short bio (optional)</label>
-            <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Quiet hitter. Saturday morning regular." />
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.bio")}</label>
+            <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>
         )}
         {step === 3 && (
           <>
-            <h2 className="text-display text-3xl">What matters to you?</h2>
-            <p className="text-sm text-[var(--cream)]/70">Tap to add. Then rank them — most important first. Up to 3 of your own. <b>Private — only used for matching.</b></p>
+            <h2 className="text-display text-3xl">{t("ob.h3")}</h2>
+            <p className="text-sm text-[var(--cream)]/70">{t("ob.h3sub")} <b>{t("ob.h3priv")}</b></p>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Suggested traits</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.suggested")}</label>
             <div className="flex flex-wrap gap-2">
-              {PRIORITY_TRAITS.map((t) => {
-                const picked = priorities.includes(t);
+              {PRIORITY_TRAITS.map((tr) => {
+                const picked = priorities.includes(tr);
                 return (
-                  <button key={t} onClick={() => togglePriority(t)} className={`chip ${picked ? "chip-ball" : ""}`}>
-                    {picked ? "✓ " : "+ "}{t}
+                  <button key={tr} onClick={() => togglePriority(tr)} className={`chip ${picked ? "chip-ball" : ""}`}>
+                    {picked ? "✓ " : "+ "}{label(tr)}
                   </button>
                 );
               })}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Add your own (up to 3)</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.addOwn")}</label>
             <div className="flex gap-2">
               <Input
                 value={customTrait}
                 onChange={(e) => setCustomTrait(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
-                placeholder="e.g. animal lover, foodie, early bird"
+                placeholder={t("ob.addOwnPh")}
                 maxLength={30}
               />
               <Button type="button" variant="outline" onClick={addCustom}><Plus className="w-4 h-4" /></Button>
@@ -339,27 +339,27 @@ function Onboarding() {
 
             {priorities.length > 0 && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your ranking (top = most important)</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ranking")}</label>
                 <ul className="space-y-2">
-                  {priorities.map((t, i) => (
-                    <li key={t} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
+                  {priorities.map((tr, i) => (
+                    <li key={tr} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
                       <span className="text-[var(--ball)] font-bold w-6">{i + 1}.</span>
-                      <span className="flex-1 capitalize">{t}</span>
+                      <span className="flex-1 capitalize">{label(tr)}</span>
                       <button onClick={() => movePriority(i, -1)} disabled={i === 0} className="p-1 disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
                       <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} className="p-1 disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
-                      <button onClick={() => removePriority(t)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
+                      <button onClick={() => removePriority(tr)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs text-[var(--cream)]/50">Pick at least 3.</p>
+                <p className="text-xs text-[var(--cream)]/50">{t("ob.pickThree")}</p>
               </>
             )}
           </>
         )}
         {step === 4 && (
           <>
-            <h2 className="text-display text-3xl">Your padel photo</h2>
-            <p className="text-sm text-[var(--cream)]/70">A photo of you with a racket on court — that's the whole vibe. Shown in the discover grid.</p>
+            <h2 className="text-display text-3xl">{t("ob.h4")}</h2>
+            <p className="text-sm text-[var(--cream)]/70">{t("ob.h4sub")}</p>
             <label className="block aspect-[3/4] rounded-2xl border border-dashed border-[var(--cream)]/30 overflow-hidden relative cursor-pointer">
               {photoUrl ? (
                 <>
@@ -371,7 +371,7 @@ function Onboarding() {
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--cream)]/60 gap-2">
                   <Camera className="w-8 h-8" />
-                  <span className="text-sm">{uploading ? "Uploading…" : "Tap to upload"}</span>
+                  <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
                 </div>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
@@ -382,13 +382,13 @@ function Onboarding() {
 
       <div className="mt-5 flex justify-between gap-3">
         {step > 0 ? (
-          <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button>
+          <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
         {step < steps.length - 1 ? (
-          <Button onClick={() => setStep(step + 1)} disabled={!canStep[step]}>Next</Button>
+          <Button onClick={() => setStep(step + 1)} disabled={!canStep[step]}>{t("ob.next")}</Button>
         ) : (
           <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-            {save.isPending ? "Saving…" : "Start matching"}
+            {save.isPending ? t("ob.saving") : t("ob.start")}
           </Button>
         )}
       </div>

@@ -220,12 +220,14 @@ function Onboarding() {
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Madrid zone</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your city</label>
+            <Input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="e.g. Madrid, London, Dubai…" maxLength={60} />
             <div className="flex flex-wrap gap-2">
-              {MADRID_ZONES.map((z) => (
-                <button key={z} onClick={() => setZone(z)} className={`chip ${zone === z ? "chip-ball" : ""}`}>{z}</button>
+              {POPULAR_CITIES.map((c) => (
+                <button key={c} onClick={() => setZone(c)} className={`chip ${zone.trim().toLowerCase() === c.toLowerCase() ? "chip-ball" : ""}`}>{c}</button>
               ))}
             </div>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Padel level</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (

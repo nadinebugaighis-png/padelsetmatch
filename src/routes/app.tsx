@@ -39,14 +39,23 @@ function AuthShell() {
     <div className="min-h-screen pb-24">
       <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--cream)]/10 gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          {path !== "/app" && path !== "/app/" && (
+          {path === "/app" || path === "/app/" ? (
+            <Link
+              to="/"
+              aria-label="Back to home"
+              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Home</span>
+            </Link>
+          ) : (
             <Link
               to="/app"
               aria-label="Back to Discover"
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
+              <span>Discover</span>
             </Link>
           )}
           <Link to="/app" className="flex items-center gap-2 min-w-0">

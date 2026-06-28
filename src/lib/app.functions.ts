@@ -167,6 +167,11 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("likes" as never)
       .select("liked_profile_id")
       .eq("liker_profile_id", me.id);
+    const { data: myBlocks } = await context.supabase
+      .from("blocks" as never)
+      .select("blocked_profile_id")
+      .eq("blocker_profile_id", me.id);
+    const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
     const scored = ((candRows as Profile[] | null) ?? [])

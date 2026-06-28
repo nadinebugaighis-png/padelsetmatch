@@ -116,13 +116,22 @@ function Onboarding() {
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
-  const toggleZone = (z: string) => {
-    setZones((cur) => {
-      if (cur.includes(z)) return cur.filter((x) => x !== z);
-      if (cur.length >= 3) { toast.error(t("ob.errMax3Zones") ?? "Pick up to 3 areas"); return cur; }
-      return [...cur, z];
-    });
+  const updateBlock = (i: number, patch: Partial<LocBlock>) =>
+    setLocBlocks((cur) => cur.map((b, j) => (j === i ? { ...b, ...patch } : b)));
+  const updateArea = (i: number, ai: number, val: string) =>
+    setLocBlocks((cur) => cur.map((b, j) => j === i ? { ...b, areas: b.areas.map((a, k) => k === ai ? val : a) } : b));
+  const addBlock = () => {
+    if (locBlocks.length >= 5) { toast.error("Up to 5 countries"); return; }
+    setLocBlocks((cur) => [...cur, emptyBlock()]);
   };
+  const removeBlock = (i: number) => setLocBlocks((cur) => cur.length === 1 ? cur : cur.filter((_, j) => j !== i));
+
+  const validBlocks = locBlocks.filter((b) => b.country.trim() && b.city.trim());
+  const encodedLocations: string[] = validBlocks.flatMap((b) => {
+    const areas = b.areas.map((a) => a.trim()).filter(Boolean);
+    if (!areas.length) return [encodeLocation({ country: b.country.trim(), city: b.city.trim() })];
+    return areas.map((a) => encodeLocation({ country: b.country.trim(), city: b.city.trim(), area: a }));
+  });
 
   const toggleLanguage = (l: string) => setLanguages((cur) => cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l]);
 

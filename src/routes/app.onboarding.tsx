@@ -80,6 +80,13 @@ function Onboarding() {
   const toggleInterested = (g: Gender) => {
     setInterested((cur) => cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]);
   };
+  const toggleAud = (setter: (fn: (cur: string[]) => string[]) => void) => (opt: string) => {
+    setter((cur) => {
+      if (opt === "everyone") return cur.includes("everyone") ? [] : ["everyone"];
+      const next = cur.filter((x) => x !== "everyone");
+      return next.includes(opt) ? next.filter((x) => x !== opt) : [...next, opt];
+    });
+  };
 
   const uploadPhoto = async (file: File) => {
     setUploading(true);

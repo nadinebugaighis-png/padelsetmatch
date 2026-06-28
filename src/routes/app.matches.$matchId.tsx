@@ -131,6 +131,46 @@ function ChatRoom() {
         <span className="chip chip-ball shrink-0">{t("chat.open")} <ExternalLink className="w-3 h-3" /></span>
       </a>
 
+      <div className="mx-3 mt-2 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => confirmM.mutate()}
+          disabled={statusQ.data?.iConfirmed || confirmM.isPending}
+          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--cream)]/15 bg-[var(--cream)]/5 px-3 py-2 text-xs hover:bg-[var(--cream)]/10 disabled:opacity-60"
+        >
+          <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
+          {statusQ.data?.iConfirmed
+            ? (statusQ.data.count >= 2 ? "Played together ✓" : "Waiting for them to confirm…")
+            : "We played a match"}
+        </button>
+        <button
+          type="button"
+          onClick={onNoShow}
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10"
+        >
+          <UserX className="w-3.5 h-3.5" /> No-show
+        </button>
+      </div>
+
+      {reportOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
+          <div className="surface-card p-5 w-full max-w-sm space-y-3" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-display text-xl">Report {other.first_name}</h3>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Reason</label>
+            <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-10 px-2" value={reportReason} onChange={(e) => setReportReason(e.target.value)}>
+              {REPORT_REASONS.map((r) => <option key={r} value={r} className="bg-[var(--court-deep)]">{r}</option>)}
+            </select>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Details (optional)</label>
+            <Input value={reportDetail} onChange={(e) => setReportDetail(e.target.value)} placeholder="Anything else we should know?" maxLength={400} />
+            <p className="text-xs text-[var(--cream)]/60">The account will be auto-suspended immediately while our team reviews.</p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setReportOpen(false)}>Cancel</Button>
+              <Button onClick={submitReport} className="bg-red-500 hover:bg-red-600 text-white">Submit report</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {messages.length === 0 && (
           <div className="text-center text-sm text-[var(--cream)]/60 mt-10">

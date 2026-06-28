@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
-  AUDIENCE_OPTIONS, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   POPULAR_CITIES, POPULAR_COUNTRIES, PRIORITY_TRAITS,
   decodeLocation, encodeLocation, formatLocation,
-  type Gender, type LookingFor, type PadelLevel,
+  type CourtSide, type Gender, type LookingFor, type PadelLevel,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

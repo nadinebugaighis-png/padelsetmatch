@@ -24,6 +24,7 @@ export const Route = createFileRoute("/app/onboarding")({
 function Onboarding() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { t, label } = useI18n();
   const getProfile = useServerFn(getMyProfile);
   const upsert = useServerFn(upsertMyProfile);
   const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });

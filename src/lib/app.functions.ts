@@ -11,16 +11,36 @@ const ProfileInput = z.object({
   age: z.number().int().min(18).max(99),
   gender: z.enum(GENDERS),
   interested_in: z.array(z.enum(GENDERS)).min(1),
+  friend_interested_in: z.array(z.string()).default([]),
+  partner_interested_in: z.array(z.string()).default([]),
   age_min: z.number().int().min(18).max(99),
   age_max: z.number().int().min(18).max(99),
   nationality: z.string().min(1).max(40),
   zone: z.enum(MADRID_ZONES),
   level: z.enum(PADEL_LEVELS),
-  priorities: z.array(z.enum(PRIORITY_TRAITS)).min(3).max(10),
+  priorities: z.array(z.string().min(1).max(40)).min(3).max(10),
   looking_for: z.enum(LOOKING_FOR),
   bio: z.string().max(280).nullable().optional(),
   photo_url: z.string().min(1).max(2000).nullable().optional(),
 });
+
+function audienceAcceptsGender(audience: string[], gender: string): boolean {
+  if (!audience || audience.length === 0) return true;
+  if (audience.includes("everyone") || audience.includes("bisexual") || audience.includes("queer")) return true;
+  if (gender === "man" && (audience.includes("men") || audience.includes("gay men"))) return true;
+  if (gender === "woman" && (audience.includes("women") || audience.includes("lesbian women"))) return true;
+  if (gender === "non-binary" && audience.includes("non-binary")) return true;
+  return false;
+}
+
+function sharedPurpose(a: string, b: string): "partner" | "friend" | null {
+  if (a === "partner" && (b === "partner" || b === "both")) return "partner";
+  if (b === "partner" && (a === "partner" || a === "both")) return "partner";
+  if (a === "friend" && (b === "friend" || b === "both")) return "friend";
+  if (b === "friend" && (a === "friend" || a === "both")) return "friend";
+  if (a === "both" && b === "both") return "partner";
+  return null;
+}
 
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

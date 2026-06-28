@@ -69,11 +69,17 @@ function AuthShell() {
           </Link>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          {adminQ.data && (
+            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
+              Admin
+            </Link>
+          )}
           <LangSwitch />
           <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]">
             {t("shell.signout")}
           </button>
         </div>
+
       </header>
 
       <Outlet />

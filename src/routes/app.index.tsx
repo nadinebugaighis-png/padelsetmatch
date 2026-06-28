@@ -16,6 +16,8 @@ function Discover() {
   const getFeed = useServerFn(getDiscoverFeed);
   const like = useServerFn(likeProfile);
   const unlike = useServerFn(unlikeProfile);
+  const block = useServerFn(blockProfile);
+  const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
 
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });

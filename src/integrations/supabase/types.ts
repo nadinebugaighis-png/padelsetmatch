@@ -133,6 +133,7 @@ export type Database = {
           bio: string | null
           created_at: string
           first_name: string
+          friend_interested_in: string[]
           gender: string
           id: string
           interested_in: string[]
@@ -140,6 +141,7 @@ export type Database = {
           level: string
           looking_for: string
           nationality: string
+          partner_interested_in: string[]
           photo_url: string | null
           priorities: string[]
           updated_at: string
@@ -153,6 +155,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           first_name: string
+          friend_interested_in?: string[]
           gender: string
           id?: string
           interested_in?: string[]
@@ -160,6 +163,7 @@ export type Database = {
           level: string
           looking_for?: string
           nationality: string
+          partner_interested_in?: string[]
           photo_url?: string | null
           priorities?: string[]
           updated_at?: string
@@ -173,6 +177,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           first_name?: string
+          friend_interested_in?: string[]
           gender?: string
           id?: string
           interested_in?: string[]
@@ -180,6 +185,7 @@ export type Database = {
           level?: string
           looking_for?: string
           nationality?: string
+          partner_interested_in?: string[]
           photo_url?: string | null
           priorities?: string[]
           updated_at?: string

@@ -87,10 +87,26 @@ function ChatRoom() {
           <div className="text-display text-xl leading-none">{other.first_name}, {other.age}</div>
           <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{other.zone} · {other.level}</div>
         </div>
-        <a href={playtomicLink(other.zone)} target="_blank" rel="noreferrer" className="chip chip-ball">
-          Playtomic <ExternalLink className="w-3 h-3" />
-        </a>
+        <button onClick={onBlock} title="Block" aria-label="Block" className="p-1.5 rounded-full hover:bg-[var(--cream)]/10">
+          <Shield className="w-4 h-4" />
+        </button>
+        <button onClick={onReport} title="Report" aria-label="Report" className="p-1.5 rounded-full hover:bg-red-600/30">
+          <Flag className="w-4 h-4" />
+        </button>
       </div>
+
+      <a
+        href={playtomicLink(other.zone)}
+        target="_blank"
+        rel="noreferrer"
+        className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-3 py-2 text-xs text-[var(--cream)]"
+      >
+        <ShieldCheck className="w-4 h-4 text-[var(--ball)] shrink-0" />
+        <span className="flex-1">
+          <b>Safety first:</b> book the match on Playtomic — public court, verified booking, no shared addresses.
+        </span>
+        <span className="chip chip-ball shrink-0">Open <ExternalLink className="w-3 h-3" /></span>
+      </a>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {messages.length === 0 && (

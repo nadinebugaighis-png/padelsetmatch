@@ -4,7 +4,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Padel Match Madrid — your padel partner & maybe more" },
-      { name: "description", content: "Tap on the padel players you'd hit a court with. If they tap back, the chat opens and you book on Playtomic. Madrid only, for now." },
+      { name: "description", content: "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with." },
     ],
   }),
   component: Landing,
@@ -25,13 +25,11 @@ function Landing() {
         <div className="max-w-xl">
           <p className="chip chip-clay mb-6">Madrid · pilot</p>
           <h1 className="text-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
-            People who play together,<br />
-            <span style={{ color: "var(--ball)" }}>stay together.</span>
+            find your best,<br />
+            <span style={{ color: "var(--ball)" }}>Match.</span>
           </h1>
           <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-md">
-            Padel-first dating & friendship for Madrid. Answer a few honest questions, tap the
-            players you'd hit a court with, and if they tap back the chat opens. Book on Playtomic
-            and let the rallies do the talking.
+            Discover players who match your level, personality and lifestyle. &nbsp;Whether you're looking for great games, new friends or meaningful connections, well help you find people you genuinely click with.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">

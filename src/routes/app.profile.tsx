@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyProfile } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
+import { decodeLocation, formatLocation } from "@/lib/types";
+import { Lock } from "lucide-react";
 
 export const Route = createFileRoute("/app/profile")({
   component: ProfilePage,
@@ -22,6 +24,7 @@ function ProfilePage() {
       </main>
     );
   }
+  const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   return (
     <main className="px-4 py-5 max-w-md mx-auto">
       <h1 className="text-display text-4xl">Hi, {p.first_name}</h1>
@@ -33,24 +36,39 @@ function ProfilePage() {
         )}
         <div className="grid grid-cols-2 gap-2 text-sm">
           <Info label="Age" v={String(p.age)} />
-          <Info label="Looking for" v={p.looking_for} />
-          <Info label="Zone" v={p.zone} />
           <Info label="Level" v={p.level} />
           <Info label="Nationality" v={p.nationality} />
-          <Info label="Interested in" v={p.interested_in.join(", ")} />
-          <Info label="Age range" v={`${p.age_min}–${p.age_max}`} />
         </div>
-        {p.priorities.length > 0 && (
+
+        {locations.length > 0 && (
           <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">Top values</div>
+            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">Plays in</div>
             <div className="flex flex-wrap gap-2">
-              {p.priorities.map((t, i) => <span key={t} className="chip"><b>{i + 1}.</b>&nbsp;{t}</span>)}
+              {locations.map((l) => <span key={l} className="chip">{l}</span>)}
             </div>
           </div>
         )}
+
+        {p.languages?.length > 0 && (
+          <div className="mt-4">
+            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">Languages</div>
+            <div className="flex flex-wrap gap-2">
+              {p.languages.map((l) => <span key={l} className="chip">{l}</span>)}
+            </div>
+          </div>
+        )}
+
         {p.bio && <p className="mt-4 text-sm text-[var(--cream)]/80">{p.bio}</p>}
       </div>
-      <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">Edit profile</Button></Link>
+
+      <div className="mt-4 surface-card p-4 flex items-start gap-3 text-sm text-[var(--cream)]/70">
+        <Lock className="w-4 h-4 mt-0.5 shrink-0" />
+        <p>
+          Your <b>preferences</b> (who you're looking for, age range, values you care about) are kept private — they're only used by the AI to find your matches, never shown on your profile. Retake the questionnaire any time to update them.
+        </p>
+      </div>
+
+      <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">Retake questionnaire</Button></Link>
     </main>
   );
 }

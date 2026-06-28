@@ -171,12 +171,30 @@ function Onboarding() {
         {step === 1 && (
           <>
             <h2 className="text-display text-3xl">Who do you want to meet?</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Interested in</label>
-            <div className="flex flex-wrap gap-2">
-              {GENDERS.map((g) => (
-                <button key={g} onClick={() => toggleInterested(g)} className={`chip ${interested_in.includes(g) ? "chip-ball" : ""}`}>{g}</button>
-              ))}
-            </div>
+            <p className="text-sm text-[var(--cream)]/70">Pick separately for friendship and for a relationship — tap as many as fit. Choose <b>Everyone</b> if you're open to all.</p>
+
+            {needFriendAud && (
+              <>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">For friendship</label>
+                <div className="flex flex-wrap gap-2">
+                  {AUDIENCE_OPTIONS.map((o) => (
+                    <button key={o} onClick={() => toggleAud(setFriendAud)(o)} className={`chip ${friend_interested_in.includes(o) ? "chip-ball" : ""}`}>{o}</button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {needPartnerAud && (
+              <>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">For a relationship</label>
+                <div className="flex flex-wrap gap-2">
+                  {AUDIENCE_OPTIONS.map((o) => (
+                    <button key={o} onClick={() => toggleAud(setPartnerAud)(o)} className={`chip ${partner_interested_in.includes(o) ? "chip-ball" : ""}`}>{o}</button>
+                  ))}
+                </div>
+              </>
+            )}
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Age range</label>
             <div className="flex items-center gap-3">
               <Input type="number" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(parseInt(e.target.value) || 18)} />

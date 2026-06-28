@@ -162,6 +162,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     const { data: candRows } = await context.supabase
       .from("profiles" as never)
       .select("*")
+      .is("suspended_at", null)
       .neq("id", me.id);
     const { data: myLikes } = await context.supabase
       .from("likes" as never)

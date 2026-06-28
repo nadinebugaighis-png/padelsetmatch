@@ -50,8 +50,28 @@ function Onboarding() {
     }
   }, [profileQ.data]);
 
-  const togglePriority = (t: PriorityTrait) => {
-    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 5 ? cur : [...cur, t]);
+  const togglePriority = (t: string) => {
+    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);
+  };
+  const movePriority = (i: number, dir: -1 | 1) => {
+    setPriorities((cur) => {
+      const j = i + dir;
+      if (j < 0 || j >= cur.length) return cur;
+      const next = [...cur];
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  };
+  const removePriority = (t: string) => setPriorities((cur) => cur.filter((x) => x !== t));
+  const addCustom = () => {
+    const v = customTrait.trim().toLowerCase();
+    if (!v) return;
+    const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
+    if (customCount >= 3) { toast.error("Up to 3 custom traits"); return; }
+    if (priorities.includes(v)) { toast.error("Already added"); return; }
+    if (priorities.length >= 8) { toast.error("Max 8 traits"); return; }
+    setPriorities((cur) => [...cur, v]);
+    setCustomTrait("");
   };
   const toggleInterested = (g: Gender) => {
     setInterested((cur) => cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]);

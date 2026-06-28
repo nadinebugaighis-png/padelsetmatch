@@ -61,7 +61,7 @@ function Landing() {
       </section>
 
       <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex justify-between">
-        <span>Made for Madrid. Worst case: new padel friend.</span>
+        <span>Play anywhere. Worst case: a new padel friend.</span>
         <span>v0.1</span>
       </footer>
     </main>

@@ -107,6 +107,7 @@ function RootComponent() {
       <I18nProvider>
         <Outlet />
         <Toaster richColors position="top-center" />
+        <CookieBanner />
       </I18nProvider>
     </QueryClientProvider>
   );

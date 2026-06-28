@@ -1,15 +1,36 @@
 export const PRIORITY_TRAITS = [
   "intellectual",
   "looks",
-  "money",
+  "ambitious",
   "social butterfly",
   "fun",
   "quiet",
-  "preserved",
+  "reserved",
   "fashionable",
   "funny",
   "adventurous",
+  "loyal",
+  "friendly",
+  "kind",
+  "competitive",
+  "honest",
+  "empathetic",
+  "confident",
+  "creative",
+  "spiritual",
+  "family-oriented",
+  "athletic",
+  "spontaneous",
+  "romantic",
+  "ambitious career",
+  "easy-going",
+  "open-minded",
+  "passionate",
+  "generous",
+  "curious",
+  "playful",
 ] as const;
+
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 
 export const PADEL_LEVELS = ["just starting", "casual", "intermediate", "advanced", "competitive"] as const;

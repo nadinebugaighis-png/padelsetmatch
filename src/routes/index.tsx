@@ -23,7 +23,7 @@ function Landing() {
 
       <section className="flex-1 grid lg:grid-cols-2 gap-10 items-center px-6 lg:px-16 py-10">
         <div className="max-w-xl">
-          <p className="chip chip-clay mb-6">Madrid · pilot</p>
+          <p className="chip chip-clay mb-6">Worldwide · pick your city</p>
           <h1 className="text-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
             find your best,<br />
             <span style={{ color: "var(--ball)" }}>Match.</span>

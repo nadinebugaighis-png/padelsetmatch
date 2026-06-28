@@ -33,6 +33,15 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't send like"),
   });
+  const unlikeM = useMutation({
+    mutationFn: (id: string) => unlike({ data: { likedProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      toast("Like removed", { duration: 1800 });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't undo"),
+  });
 
   if (feedQ.isLoading) return <Loading />;
   if (!feedQ.data?.me) return null;

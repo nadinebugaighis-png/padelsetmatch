@@ -13,8 +13,24 @@ export const Route = createFileRoute("/app/profile")({
 });
 
 function ProfilePage() {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
   const getProfile = useServerFn(getMyProfile);
+  const deleteAcct = useServerFn(deleteMyAccount);
   const q = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+
+  const onDelete = async () => {
+    if (!confirm("Delete your account permanently? This removes your profile, likes, matches and chats. This cannot be undone.")) return;
+    try {
+      await deleteAcct();
+      await supabase.auth.signOut();
+      qc.clear();
+      toast.success("Account deleted");
+      navigate({ to: "/" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not delete account");
+    }
+  };
 
   if (q.isLoading) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">Loading…</div>;
   const p = q.data;
@@ -71,6 +87,10 @@ function ProfilePage() {
       </div>
 
       <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">Retake questionnaire</Button></Link>
+
+      <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-400/70 hover:text-red-400">
+        Delete my account
+      </button>
     </main>
   );
 }

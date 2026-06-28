@@ -35,21 +35,23 @@ export const REPORT_REASONS = [
   "Other",
 ] as const;
 
-// Popular cities shown as quick-pick suggestions. Users can type any city worldwide.
-export const POPULAR_CITIES = [
-  "Madrid", "Barcelona", "Valencia", "Seville", "Málaga",
-  "Lisbon", "Porto", "Paris", "Rome", "Milan",
-  "London", "Dublin", "Berlin", "Amsterdam", "Stockholm",
-  "Dubai", "Mexico City", "Buenos Aires", "São Paulo", "Bogotá",
-  "Miami", "New York", "Los Angeles",
+// Madrid zones / barrios — v1 focuses on Madrid only.
+export const MADRID_ZONES = [
+  "Centro", "Salamanca", "Chamberí", "Chamartín", "Retiro",
+  "Moncloa-Aravaca", "Aravaca", "Mirasierra", "Tetuán", "Arganzuela",
+  "Latina", "Carabanchel", "Usera", "Puente de Vallecas", "Moratalaz",
+  "Ciudad Lineal", "Arturo Soria", "Conde Orgaz", "Hortaleza", "Villaverde",
+  "Villa de Vallecas", "Vicálvaro", "San Blas-Canillejas", "Barajas",
+  "La Moraleja", "Alcobendas", "San Sebastián de los Reyes",
+  "Tres Cantos", "Las Rozas", "Majadahonda", "Pozuelo de Alarcón",
+  "Boadilla del Monte", "Villanueva de la Cañada", "Villaviciosa de Odón",
 ] as const;
+export type MadridZone = (typeof MADRID_ZONES)[number];
 
-export const POPULAR_COUNTRIES = [
-  "Spain", "Portugal", "France", "Italy", "Germany", "United Kingdom",
-  "Ireland", "Netherlands", "Sweden", "Switzerland",
-  "United States", "Mexico", "Argentina", "Brazil", "Colombia",
-  "United Arab Emirates", "Other",
-] as const;
+// Kept for backward-compat (read by other code); not surfaced in onboarding UI.
+export const POPULAR_CITIES = ["Madrid"] as const;
+export const POPULAR_COUNTRIES = ["Spain"] as const;
+
 
 export const LANGUAGES = [
   "English", "Spanish", "Portuguese", "French", "Italian", "German",

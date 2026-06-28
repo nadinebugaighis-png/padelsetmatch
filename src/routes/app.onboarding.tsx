@@ -4,9 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
-  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
-  POPULAR_CITIES, POPULAR_COUNTRIES, PRIORITY_TRAITS,
-  decodeLocation, encodeLocation, formatLocation,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS,
+  PRIORITY_TRAITS,
+  decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -39,10 +39,7 @@ function Onboarding() {
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");
-  const [locations, setLocations] = useState<string[]>([]);
-  const [locCountry, setLocCountry] = useState<string>("Spain");
-  const [locCity, setLocCity] = useState<string>("");
-  const [locArea, setLocArea] = useState<string>("");
+  const [zones, setZones] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>(["English"]);
   const [level, setLevel] = useState<PadelLevel>("intermediate");
   const [priorities, setPriorities] = useState<string[]>([]);
@@ -66,8 +63,11 @@ function Onboarding() {
       setPriorities(p.priorities); setLookingFor(p.looking_for);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
-      if (p.locations?.length) setLocations(p.locations);
-      else if (p.zone) setLocations([encodeLocation({ country: p.nationality || "Spain", city: p.zone })]);
+      if (p.locations?.length) {
+        // Decode "Spain | Madrid | <zone>" → just the zone string for the chip UI.
+        setZones(p.locations.map((s) => decodeLocation(s).area ?? decodeLocation(s).city).filter(Boolean) as string[]);
+      } else if (p.zone) setZones([p.zone]);
+
       if (p.availability?.length) setAvailability(p.availability);
       if (p.court_side) setCourtSide(p.court_side as CourtSide);
       if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
@@ -99,15 +99,14 @@ function Onboarding() {
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
-  const addLocation = () => {
-    if (!locCountry || !locCity.trim()) { toast.error(t("ob.errCountryCity")); return; }
-    if (locations.length >= 8) { toast.error(t("ob.errMaxLoc")); return; }
-    const next = encodeLocation({ country: locCountry, city: locCity.trim(), area: locArea.trim() || undefined });
-    if (locations.includes(next)) { toast.error(t("ob.errDup")); return; }
-    setLocations((cur) => [...cur, next]);
-    setLocCity(""); setLocArea("");
+  const toggleZone = (z: string) => {
+    setZones((cur) => {
+      if (cur.includes(z)) return cur.filter((x) => x !== z);
+      if (cur.length >= 3) { toast.error(t("ob.errMax3Zones") ?? "Pick up to 3 areas"); return cur; }
+      return [...cur, z];
+    });
   };
-  const removeLocation = (s: string) => setLocations((cur) => cur.filter((x) => x !== s));
+
   const toggleLanguage = (l: string) => setLanguages((cur) => cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l]);
 
   const audToGenders = (aud: string[]): Gender[] => {
@@ -150,13 +149,13 @@ function Onboarding() {
     mutationFn: () => {
       const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
       const legacy = derived.length ? derived : interested_in;
-      const primaryCity = locations.length > 0 ? decodeLocation(locations[0]).city : "";
+      const locations = zones.map((z) => encodeLocation({ country: "Spain", city: "Madrid", area: z }));
       return upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
           friend_interested_in, partner_interested_in,
-          age_min, age_max, nationality,
-          zone: primaryCity,
+          age_min, age_max, nationality: "Spain",
+          zone: "Madrid",
           locations, languages,
           level, priorities, looking_for,
           bio: bio || null, photo_url: photoUrl,
@@ -181,7 +180,7 @@ function Onboarding() {
   const canStep = [
     !!first_name && age >= 18,
     audOk && age_min <= age_max,
-    !!nationality && locations.length > 0 && languages.length > 0 && !!level,
+    zones.length > 0 && languages.length > 0 && !!level,
     priorities.length >= 3,
     !!photoUrl,
   ];
@@ -259,46 +258,32 @@ function Onboarding() {
         {step === 2 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
+
+            <div>
+              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Where in Madrid do you play?</label>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">Pick up to 3 areas — where you live, work, or play most often.</p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {MADRID_ZONES.map((z) => (
+                <button
+                  key={z}
+                  type="button"
+                  onClick={() => toggleZone(z)}
+                  className={`chip ${zones.includes(z) ? "chip-ball" : ""}`}
+                >
+                  {zones.includes(z) ? "✓ " : ""}{z}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-[var(--cream)]/50">{zones.length}/3 selected</p>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
 
-            <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.places")}</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">{t("ob.placesHelp")}</p>
-            </div>
 
-            {locations.length > 0 && (
-              <ul className="space-y-2">
-                {locations.map((s) => {
-                  const l = decodeLocation(s);
-                  return (
-                    <li key={s} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
-                      <span className="flex-1 text-sm">{formatLocation(l)}</span>
-                      <button onClick={() => removeLocation(s)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-
-            <div className="space-y-2 border border-[var(--cream)]/15 rounded-md p-3">
-              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{t("ob.country")}</label>
-              <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={locCountry} onChange={(e) => setLocCountry(e.target.value)}>
-                {POPULAR_COUNTRIES.map((c) => <option key={c} value={c} className="bg-[var(--court-deep)]">{c}</option>)}
-              </select>
-              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{t("ob.city")}</label>
-              <Input value={locCity} onChange={(e) => setLocCity(e.target.value)} placeholder={t("ob.cityPh")} maxLength={60} />
-              <div className="flex flex-wrap gap-2">
-                {POPULAR_CITIES.slice(0, 12).map((c) => (
-                  <button key={c} type="button" onClick={() => setLocCity(c)} className={`chip text-xs ${locCity.toLowerCase() === c.toLowerCase() ? "chip-ball" : ""}`}>{c}</button>
-                ))}
-              </div>
-              <label className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{t("ob.area")}</label>
-              <Input value={locArea} onChange={(e) => setLocArea(e.target.value)} placeholder={t("ob.areaPh")} maxLength={60} />
-              <Button type="button" variant="outline" onClick={addLocation} className="w-full"><Plus className="w-4 h-4 mr-1" /> {t("ob.addLocation")}</Button>
-            </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.langs")}</label>
             <div className="flex flex-wrap gap-2">

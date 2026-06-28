@@ -67,9 +67,23 @@ function Onboarding() {
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) {
-        // Decode "Spain | Madrid | <zone>" → just the zone string for the chip UI.
-        setZones(p.locations.map((s) => decodeLocation(s).area ?? decodeLocation(s).city).filter(Boolean) as string[]);
-      } else if (p.zone) setZones([p.zone]);
+        const byKey = new Map<string, LocBlock>();
+        for (const s of p.locations) {
+          const { country, city, area } = decodeLocation(s);
+          if (!country && !city) continue;
+          const key = `${country}|${city}`;
+          if (!byKey.has(key)) byKey.set(key, { country, city, areas: ["", "", ""] });
+          const b = byKey.get(key)!;
+          if (area) {
+            const idx = b.areas.findIndex((x) => !x);
+            if (idx >= 0) b.areas[idx] = area;
+          }
+        }
+        const blocks = Array.from(byKey.values());
+        if (blocks.length) setLocBlocks(blocks);
+      } else if (p.zone) {
+        setLocBlocks([{ country: p.nationality || "", city: p.zone, areas: ["", "", ""] }]);
+      }
 
       if (p.availability?.length) setAvailability(p.availability);
       if (p.court_side) setCourtSide(p.court_side as CourtSide);

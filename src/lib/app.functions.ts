@@ -358,7 +358,7 @@ export const reportProfile = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Look up reported user's auth id before deletion
+    // Look up reported user's auth id for the report record
     const { data: target } = await supabaseAdmin
       .from("profiles" as never)
       .select("user_id")
@@ -366,25 +366,25 @@ export const reportProfile = createServerFn({ method: "POST" })
       .maybeSingle();
     const targetUserId = (target as { user_id: string | null } | null)?.user_id ?? null;
 
-    // Log the report (kept for moderation history; reporter is auto-set via RLS rule)
+    // Log the report for staff review
     await supabaseAdmin.from("reports" as never).insert({
       reporter_profile_id: myId,
       reported_profile_id: data.reportedProfileId,
       reported_user_id: targetUserId,
       reason: data.reason,
+      status: "pending",
     } as never);
 
-    // Zero-tolerance: immediately remove the reported account and all related data
-    await supabaseAdmin.from("messages" as never).delete().eq("sender_profile_id", data.reportedProfileId);
-    await supabaseAdmin.from("likes" as never).delete()
-      .or(`liker_profile_id.eq.${data.reportedProfileId},liked_profile_id.eq.${data.reportedProfileId}`);
-    await supabaseAdmin.from("matches" as never).delete()
-      .or(`profile_a.eq.${data.reportedProfileId},profile_b.eq.${data.reportedProfileId}`);
-    await supabaseAdmin.from("blocks" as never).delete()
-      .or(`blocker_profile_id.eq.${data.reportedProfileId},blocked_profile_id.eq.${data.reportedProfileId}`);
-    await supabaseAdmin.from("profiles" as never).delete().eq("id", data.reportedProfileId);
-    if (targetUserId) {
-      try { await supabaseAdmin.auth.admin.deleteUser(targetUserId); } catch { /* ignore */ }
-    }
+    // Auto-suspend: instantly hide the reported account everywhere, pending review
+    await supabaseAdmin
+      .from("profiles" as never)
+      .update({ suspended_at: new Date().toISOString() } as never)
+      .eq("id", data.reportedProfileId);
+
+    // Auto-block from the reporter's side so they never see the account again
+    await supabaseAdmin
+      .from("blocks" as never)
+      .insert({ blocker_profile_id: myId, blocked_profile_id: data.reportedProfileId } as never);
+
     return { ok: true };
   });

@@ -218,7 +218,7 @@ export const getMatchDetail = createServerFn({ method: "GET" })
     return {
       match_id: mr.id,
       my_profile_id: myId,
-      other: other as Profile,
+      other: other as unknown as Profile,
       messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string }> | null) ?? []),
     };
   });

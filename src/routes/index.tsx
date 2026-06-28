@@ -40,10 +40,11 @@ function Landing() {
             </a>
           </div>
           <div className="mt-10 flex gap-6 text-sm text-[var(--cream)]/60">
-            <div><span className="text-display text-3xl text-[var(--cream)]">12</span><br />Madrid players seeded</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">10</span><br />neighborhoods</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />post-match vermut</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />cities, your call</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">1</span><br />sport that connects</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />post-match drinks</div>
           </div>
+
         </div>
         <div className="hidden lg:block">
           <div className="surface-card p-8 rotate-2">

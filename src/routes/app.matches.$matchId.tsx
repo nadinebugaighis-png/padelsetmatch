@@ -113,7 +113,7 @@ function ChatRoom() {
         <button onClick={onBlock} title={t("chat.block")} aria-label={t("chat.block")} className="p-1.5 rounded-full hover:bg-[var(--cream)]/10">
           <Shield className="w-4 h-4" />
         </button>
-        <button onClick={onReport} title={t("chat.report")} aria-label={t("chat.report")} className="p-1.5 rounded-full hover:bg-red-600/30">
+        <button onClick={() => setReportOpen(true)} title={t("chat.report")} aria-label={t("chat.report")} className="p-1.5 rounded-full hover:bg-red-600/30">
           <Flag className="w-4 h-4" />
         </button>
       </div>

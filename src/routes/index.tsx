@@ -4,7 +4,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Padel Match Madrid — your padel partner & maybe more" },
-      { name: "description", content: "Tap on the padel players you'd hit a court with. If they tap back, the chat opens and you book on Playtomic. Madrid only, for now." },
+      { name: "description", content: "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with." },
     ],
   }),
   component: Landing,

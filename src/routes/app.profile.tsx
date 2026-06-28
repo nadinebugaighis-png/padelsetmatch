@@ -1,10 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { getMyProfile } from "@/lib/app.functions";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteMyAccount, getMyProfile } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
 import { decodeLocation, formatLocation } from "@/lib/types";
 import { Lock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/profile")({
   component: ProfilePage,

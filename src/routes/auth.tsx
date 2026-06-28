@@ -85,13 +85,31 @@ function AuthPage() {
 
         <form onSubmit={submit} className="space-y-3">
           <Input type="email" required placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Input type="password" required minLength={6} placeholder="password (min 6)" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input type="password" required minLength={8} placeholder="password (min 8)" value={password} onChange={(e) => setPassword(e.target.value)} />
           <Button type="submit" disabled={loading} className="w-full">{mode === "signup" ? "Create account" : "Sign in"}</Button>
         </form>
 
-        <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="mt-4 text-sm text-[var(--cream)]/60 hover:text-[var(--cream)]">
-          {mode === "signup" ? "Already have an account? Sign in" : "New here? Create an account"}
-        </button>
+        <div className="mt-4 flex items-center justify-between text-sm">
+          <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="text-[var(--cream)]/60 hover:text-[var(--cream)]">
+            {mode === "signup" ? "Already have an account? Sign in" : "New here? Create an account"}
+          </button>
+          {mode === "signin" && (
+            <button
+              type="button"
+              onClick={async () => {
+                if (!email) { toast.error("Enter your email first"); return; }
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                  redirectTo: `${window.location.origin}/reset-password`,
+                });
+                if (error) toast.error(error.message);
+                else toast.success("Check your email for a reset link");
+              }}
+              className="text-[var(--cream)]/60 hover:text-[var(--ball)]"
+            >
+              Forgot password?
+            </button>
+          )}
+        </div>
       </div>
     </main>
   );

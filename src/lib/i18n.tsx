@@ -474,7 +474,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     everyone: "everyone", women: "women", men: "men", "lesbian women": "lesbian women", "gay men": "gay men", bisexual: "bisexual", queer: "queer",
     intellectual: "intellectual", looks: "looks", ambitious: "ambitious", "social butterfly": "social butterfly",
     fun: "fun", quiet: "quiet", reserved: "reserved", fashionable: "fashionable", funny: "funny", adventurous: "adventurous",
-    loyal: "loyal", friendly: "friendly", kind: "kind", competitive: "competitive", honest: "honest", empathetic: "empathetic",
+    loyal: "loyal", friendly: "friendly", kind: "kind", honest: "honest", empathetic: "empathetic",
     confident: "confident", creative: "creative", spiritual: "spiritual", "family-oriented": "family-oriented",
     athletic: "athletic", spontaneous: "spontaneous", romantic: "romantic", "ambitious career": "career-driven",
     "easy-going": "easy-going", "open-minded": "open-minded", passionate: "passionate", generous: "generous",

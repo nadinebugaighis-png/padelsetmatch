@@ -77,8 +77,9 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
-          <div className="max-w-md mx-auto grid grid-cols-3">
+          <div className="max-w-md mx-auto grid grid-cols-4">
             <NavTab to="/app" label={t("shell.tab.discover")} icon={<Heart className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
+            <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
             <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
           </div>

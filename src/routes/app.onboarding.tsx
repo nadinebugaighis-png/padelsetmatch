@@ -85,17 +85,17 @@ function Onboarding() {
     const v = customTrait.trim().toLowerCase();
     if (!v) return;
     const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
-    if (customCount >= 3) { toast.error("Up to 3 custom traits"); return; }
-    if (priorities.includes(v)) { toast.error("Already added"); return; }
-    if (priorities.length >= 8) { toast.error("Max 8 traits"); return; }
+    if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
+    if (priorities.includes(v)) { toast.error(t("ob.errDup")); return; }
+    if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
   const addLocation = () => {
-    if (!locCountry || !locCity.trim()) { toast.error("Country and city required"); return; }
-    if (locations.length >= 8) { toast.error("Max 8 locations"); return; }
+    if (!locCountry || !locCity.trim()) { toast.error(t("ob.errCountryCity")); return; }
+    if (locations.length >= 8) { toast.error(t("ob.errMaxLoc")); return; }
     const next = encodeLocation({ country: locCountry, city: locCity.trim(), area: locArea.trim() || undefined });
-    if (locations.includes(next)) { toast.error("Already added"); return; }
+    if (locations.includes(next)) { toast.error(t("ob.errDup")); return; }
     setLocations((cur) => [...cur, next]);
     setLocCity(""); setLocArea("");
   };

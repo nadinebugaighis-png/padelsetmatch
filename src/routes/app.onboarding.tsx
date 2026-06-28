@@ -286,23 +286,40 @@ function Onboarding() {
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Where in Madrid do you play?</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">Pick up to 3 areas — where you live, work, or play most often.</p>
+              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Where do you play?</label>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.</p>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {MADRID_ZONES.map((z) => (
-                <button
-                  key={z}
-                  type="button"
-                  onClick={() => toggleZone(z)}
-                  className={`chip ${zones.includes(z) ? "chip-ball" : ""}`}
-                >
-                  {zones.includes(z) ? "✓ " : ""}{z}
-                </button>
+            <div className="space-y-3">
+              {locBlocks.map((b, i) => (
+                <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Location {i + 1}</span>
+                    {locBlocks.length > 1 && (
+                      <button type="button" onClick={() => removeBlock(i)} className="text-[var(--cream)]/60 hover:text-[var(--clay)]">
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  <Input placeholder="Country (e.g. Spain)" value={b.country} onChange={(e) => updateBlock(i, { country: e.target.value })} />
+                  <Input placeholder="City (e.g. Madrid)" value={b.city} onChange={(e) => updateBlock(i, { city: e.target.value })} />
+                  <div className="grid grid-cols-1 gap-2">
+                    {b.areas.map((a, ai) => (
+                      <Input
+                        key={ai}
+                        placeholder={`Area / barrio ${ai + 1} (optional)`}
+                        value={a}
+                        onChange={(e) => updateArea(i, ai, e.target.value)}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
+              <Button type="button" variant="outline" onClick={addBlock} className="w-full">
+                <Plus className="w-4 h-4 mr-1" /> Add another country
+              </Button>
             </div>
-            <p className="text-xs text-[var(--cream)]/50">{zones.length}/3 selected</p>
+
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>

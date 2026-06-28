@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { Heart, MessageCircle, User } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated")({
+export const Route = createFileRoute("/app")({
   ssr: false,
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();

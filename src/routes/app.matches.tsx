@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyMatches } from "@/lib/app.functions";
 
-export const Route = createFileRoute("/_authenticated/matches")({
+export const Route = createFileRoute("/app/matches")({
   component: Matches,
 });
 

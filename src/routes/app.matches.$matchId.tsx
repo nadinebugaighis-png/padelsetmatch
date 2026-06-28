@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, ExternalLink, Send } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/matches/$matchId")({
+export const Route = createFileRoute("/app/matches/$matchId")({
   component: ChatRoom,
 });
 

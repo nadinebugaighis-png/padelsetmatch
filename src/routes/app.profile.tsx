@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMyProfile } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/_authenticated/profile")({
+export const Route = createFileRoute("/app/profile")({
   component: ProfilePage,
 });
 

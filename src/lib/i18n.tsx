@@ -466,23 +466,18 @@ function detectBrowserLang(): Lang {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  // Default suggested by browser, but mark needsChoice until user picks.
   const [lang, setLangState] = useState<Lang>("en");
-  const [needsChoice, setNeedsChoice] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
       if (stored === "en" || stored === "es") {
         setLangState(stored);
-        setNeedsChoice(false);
       } else {
         setLangState(detectBrowserLang());
-        setNeedsChoice(true);
       }
     } catch {
       setLangState(detectBrowserLang());
-      setNeedsChoice(true);
     }
   }, []);
 
@@ -490,16 +485,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setLangState(l);
     try { localStorage.setItem(STORAGE_KEY, l); } catch { /* ignore */ }
   };
-  const confirmChoice = (l: Lang) => {
-    setLang(l);
-    setNeedsChoice(false);
-  };
 
   const value = useMemo<Ctx>(() => ({
     lang,
     setLang,
-    needsChoice,
-    confirmChoice,
     t: (key, vars) => {
       const dict = DICTS[lang];
       let s = dict[key] ?? en[key] ?? key;
@@ -507,12 +496,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       return s;
     },
     label: (key) => LABELS[lang][key] ?? LABELS.en[key] ?? key,
-  }), [lang, needsChoice]);
+  }), [lang]);
 
   return (
     <I18nCtx.Provider value={value}>
       {children}
-      {needsChoice && <WelcomeOverlay />}
     </I18nCtx.Provider>
   );
 }

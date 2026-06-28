@@ -194,17 +194,49 @@ function Onboarding() {
         {step === 3 && (
           <>
             <h2 className="text-display text-3xl">What matters to you?</h2>
-            <p className="text-sm text-[var(--cream)]/70">Pick 3–5 in order — most important first.</p>
+            <p className="text-sm text-[var(--cream)]/70">Tap to add. Then rank them — most important first. You can delete any and add up to 3 of your own to help the AI match you better.</p>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Suggested traits</label>
             <div className="flex flex-wrap gap-2">
               {PRIORITY_TRAITS.map((t) => {
-                const i = priorities.indexOf(t);
+                const picked = priorities.includes(t);
                 return (
-                  <button key={t} onClick={() => togglePriority(t)} className={`chip ${i !== -1 ? "chip-ball" : ""}`}>
-                    {i !== -1 && <span className="font-bold">{i + 1}.</span>} {t}
+                  <button key={t} onClick={() => togglePriority(t)} className={`chip ${picked ? "chip-ball" : ""}`}>
+                    {picked ? "✓ " : "+ "}{t}
                   </button>
                 );
               })}
             </div>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Add your own (up to 3)</label>
+            <div className="flex gap-2">
+              <Input
+                value={customTrait}
+                onChange={(e) => setCustomTrait(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
+                placeholder="e.g. animal lover, foodie, early bird"
+                maxLength={30}
+              />
+              <Button type="button" variant="outline" onClick={addCustom}><Plus className="w-4 h-4" /></Button>
+            </div>
+
+            {priorities.length > 0 && (
+              <>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your ranking (top = most important)</label>
+                <ul className="space-y-2">
+                  {priorities.map((t, i) => (
+                    <li key={t} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
+                      <span className="text-[var(--ball)] font-bold w-6">{i + 1}.</span>
+                      <span className="flex-1 capitalize">{t}</span>
+                      <button onClick={() => movePriority(i, -1)} disabled={i === 0} className="p-1 disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
+                      <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} className="p-1 disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
+                      <button onClick={() => removePriority(t)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-[var(--cream)]/50">Pick at least 3.</p>
+              </>
+            )}
           </>
         )}
         {step === 4 && (

@@ -532,35 +532,3 @@ export function LangSwitch({ className = "" }: { className?: string }) {
   );
 }
 
-function WelcomeOverlay() {
-  const { confirmChoice } = useI18n();
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--court-deep)]/95 backdrop-blur p-6">
-      <div className="w-full max-w-md surface-card p-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <span className="inline-block w-3 h-3 rounded-full bg-[var(--ball)] ball-glow" />
-          <span className="text-display text-2xl tracking-wider">PADEL · MATCH</span>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => confirmChoice("en")}
-            className="surface-card hover:bg-[var(--cream)]/5 transition-colors py-8 rounded-2xl border border-[var(--cream)]/15"
-          >
-            <div className="text-display text-4xl">hello</div>
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mt-2">English</div>
-          </button>
-          <button
-            type="button"
-            onClick={() => confirmChoice("es")}
-            className="surface-card hover:bg-[var(--cream)]/5 transition-colors py-8 rounded-2xl border border-[var(--cream)]/15"
-          >
-            <div className="text-display text-4xl">hola</div>
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mt-2">Español</div>
-          </button>
-        </div>
-        <p className="mt-6 text-[11px] text-[var(--cream)]/50">You can switch anytime · Puedes cambiar cuando quieras</p>
-      </div>
-    </div>
-  );
-}

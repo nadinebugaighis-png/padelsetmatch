@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel } from "@/lib/types";
+import { AUDIENCE_OPTIONS, GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

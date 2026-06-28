@@ -110,7 +110,7 @@ function Onboarding() {
 
   const save = useMutation({
     mutationFn: () => upsert({
-      data: { first_name, age, gender, interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
+      data: { first_name, age, gender, interested_in, friend_interested_in, partner_interested_in, age_min, age_max, nationality, zone, level, priorities, looking_for, bio: bio || null, photo_url: photoUrl },
     }),
     onSuccess: () => {
       qc.invalidateQueries();
@@ -120,9 +120,15 @@ function Onboarding() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Save failed"),
   });
 
+  const needFriendAud = looking_for === "friend" || looking_for === "both";
+  const needPartnerAud = looking_for === "partner" || looking_for === "both";
+  const audOk =
+    (!needFriendAud || friend_interested_in.length > 0) &&
+    (!needPartnerAud || partner_interested_in.length > 0);
+
   const canStep = [
     !!first_name && age >= 18,
-    interested_in.length > 0 && age_min <= age_max,
+    audOk && age_min <= age_max,
     !!nationality && !!zone && !!level,
     priorities.length >= 3,
     !!photoUrl,

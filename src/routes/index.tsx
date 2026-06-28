@@ -54,9 +54,9 @@ function Landing() {
         <div className="hidden lg:block">
           <div className="surface-card p-8 rotate-2">
             <div className="grid grid-cols-2 gap-3">
-              {[1, 4, 6, 9].map((n) => (
-                <div key={n} className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--cream)]/10">
-                  <img src={`/__l5e/assets-v1/${["45c8ffba-91c1-4969-b999-c88aea455226","819355c1-075e-4a76-9a7d-593d6ecb1091","12a844fb-b963-4d8b-8e20-6e57e5bae1fe","67665327-2c78-4307-bc56-0d32937195a0"][[1,4,6,9].indexOf(n)]}/p${n}.jpg`} alt="" className="w-full h-full object-cover" />
+              {["/landing/grid1.jpg", "/landing/grid2.jpg", "/landing/grid3.jpg", "/landing/grid4.jpg"].map((src, i) => (
+                <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--cream)]/10">
+                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
                 </div>
               ))}
             </div>

@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } 
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMyMatches, getMyProfile } from "@/lib/app.functions";
+import { getIsAdmin, getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { ArrowLeft, Heart, MessageCircle, Sparkles, User } from "lucide-react";
 import { useT, LangSwitch } from "@/lib/i18n";
 

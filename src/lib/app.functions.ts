@@ -300,3 +300,20 @@ export const sendMessage = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+export const deleteMyAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (myId) {
+      await supabaseAdmin.from("messages" as never).delete().eq("sender_profile_id", myId);
+      await supabaseAdmin.from("likes" as never).delete().or(`liker_profile_id.eq.${myId},liked_profile_id.eq.${myId}`);
+      await supabaseAdmin.from("matches" as never).delete().or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
+      await supabaseAdmin.from("profiles" as never).delete().eq("id", myId);
+    }
+    await supabaseAdmin.auth.admin.deleteUser(context.userId);
+    return { ok: true };
+  });

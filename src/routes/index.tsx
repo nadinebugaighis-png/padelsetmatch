@@ -29,7 +29,7 @@ function Landing() {
       <section className="flex-1 grid lg:grid-cols-2 gap-10 items-center px-6 lg:px-16 py-10">
         <div className="max-w-xl">
           <p className="chip chip-clay mb-6">{t("land.chip")}</p>
-          <h1 className="text-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
+          <h1 className="text-display text-7xl md:text-8xl lg:text-9xl leading-[0.9]">
             {t("land.h1.a")}<br />
             <span style={{ color: "var(--ball)" }}>{t("land.h1.b")}</span>
           </h1>

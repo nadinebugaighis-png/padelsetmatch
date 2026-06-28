@@ -63,8 +63,11 @@ function Onboarding() {
       setPriorities(p.priorities); setLookingFor(p.looking_for);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
-      if (p.locations?.length) setLocations(p.locations);
-      else if (p.zone) setLocations([encodeLocation({ country: p.nationality || "Spain", city: p.zone })]);
+      if (p.locations?.length) {
+        // Decode "Spain | Madrid | <zone>" → just the zone string for the chip UI.
+        setZones(p.locations.map((s) => decodeLocation(s).area ?? decodeLocation(s).city).filter(Boolean) as string[]);
+      } else if (p.zone) setZones([p.zone]);
+
       if (p.availability?.length) setAvailability(p.availability);
       if (p.court_side) setCourtSide(p.court_side as CourtSide);
       if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
@@ -96,15 +99,14 @@ function Onboarding() {
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
-  const addLocation = () => {
-    if (!locCountry || !locCity.trim()) { toast.error(t("ob.errCountryCity")); return; }
-    if (locations.length >= 8) { toast.error(t("ob.errMaxLoc")); return; }
-    const next = encodeLocation({ country: locCountry, city: locCity.trim(), area: locArea.trim() || undefined });
-    if (locations.includes(next)) { toast.error(t("ob.errDup")); return; }
-    setLocations((cur) => [...cur, next]);
-    setLocCity(""); setLocArea("");
+  const toggleZone = (z: string) => {
+    setZones((cur) => {
+      if (cur.includes(z)) return cur.filter((x) => x !== z);
+      if (cur.length >= 3) { toast.error(t("ob.errMax3Zones") ?? "Pick up to 3 areas"); return cur; }
+      return [...cur, z];
+    });
   };
-  const removeLocation = (s: string) => setLocations((cur) => cur.filter((x) => x !== s));
+
   const toggleLanguage = (l: string) => setLanguages((cur) => cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l]);
 
   const audToGenders = (aud: string[]): Gender[] => {

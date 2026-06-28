@@ -122,7 +122,7 @@ function Onboarding() {
     setUploading(true);
     try {
       const { data: u } = await supabase.auth.getUser();
-      if (!u.user) throw new Error("Not signed in");
+      if (!u.user) throw new Error(t("ob.notSignedIn"));
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${u.user.id}/photo-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("padel-photos").upload(path, file, { upsert: true, contentType: file.type });
@@ -130,9 +130,9 @@ function Onboarding() {
       const { data: signed, error: sErr } = await supabase.storage.from("padel-photos").createSignedUrl(path, 60 * 60 * 24 * 365);
       if (sErr || !signed) throw sErr ?? new Error("Couldn't sign URL");
       setPhotoUrl(signed.signedUrl);
-      toast.success("Photo uploaded");
+      toast.success(t("ob.uploaded"));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Upload failed");
+      toast.error(e instanceof Error ? e.message : t("ob.uploadFail"));
     } finally {
       setUploading(false);
     }

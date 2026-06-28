@@ -68,8 +68,13 @@ function Onboarding() {
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) setLocations(p.locations);
       else if (p.zone) setLocations([encodeLocation({ country: p.nationality || "Spain", city: p.zone })]);
+      if (p.availability?.length) setAvailability(p.availability);
+      if (p.court_side) setCourtSide(p.court_side as CourtSide);
+      if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
     }
   }, [profileQ.data]);
+
+  const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
   const togglePriority = (t: string) => {
     setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);

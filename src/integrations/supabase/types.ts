@@ -362,6 +362,44 @@ export type Database = {
         }
         Relationships: []
       }
+      qa_answers: {
+        Row: {
+          answer: string
+          answer_norm: string
+          category: string
+          created_at: string
+          id: string
+          profile_id: string
+          question: string
+        }
+        Insert: {
+          answer: string
+          answer_norm: string
+          category?: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          question: string
+        }
+        Update: {
+          answer?: string
+          answer_norm?: string
+          category?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qa_answers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reports: {
         Row: {
           created_at: string

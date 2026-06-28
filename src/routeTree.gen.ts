@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
@@ -56,6 +57,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppQuestionsRoute = AppQuestionsRouteImport.update({
+  id: '/questions',
+  path: '/questions',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/questions': typeof AppQuestionsRoute
   '/app/': typeof AppIndexRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
 }
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/questions': typeof AppQuestionsRoute
   '/app': typeof AppIndexRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
 }
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
+  '/app/questions': typeof AppQuestionsRoute
   '/app/': typeof AppIndexRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
 }
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
+    | '/app/questions'
     | '/app/'
     | '/app/matches/$matchId'
   fileRoutesByTo: FileRoutesByTo
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
+    | '/app/questions'
     | '/app'
     | '/app/matches/$matchId'
   id:
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
+    | '/app/questions'
     | '/app/'
     | '/app/matches/$matchId'
   fileRoutesById: FileRoutesById
@@ -217,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/questions': {
+      id: '/app/questions'
+      path: '/questions'
+      fullPath: '/app/questions'
+      preLoaderRoute: typeof AppQuestionsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/profile': {
       id: '/app/profile'
       path: '/profile'
@@ -264,6 +283,7 @@ interface AppRouteChildren {
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
+  AppQuestionsRoute: typeof AppQuestionsRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -271,6 +291,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
+  AppQuestionsRoute: AppQuestionsRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from "./affinity";
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
+import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
@@ -178,11 +179,44 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
-    const scored = ((candRows as Profile[] | null) ?? [])
-      .filter((c) => !blockedSet.has(c.id))
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id));
+
+    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const ids = [me.id, ...candidates.map((c) => c.id)];
+    const { data: qaRows } = await supabaseAdmin
+      .from("qa_answers" as never)
+      .select("profile_id, question, answer_norm")
+      .in("profile_id", ids);
+    const byProfile = new Map<string, Map<string, string>>();
+    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string }> | null) ?? []).forEach((r) => {
+      let m = byProfile.get(r.profile_id);
+      if (!m) { m = new Map(); byProfile.set(r.profile_id, m); }
+      m.set(r.question, r.answer_norm);
+    });
+    const myAns = byProfile.get(me.id) ?? new Map<string, string>();
+
+    const scored = candidates
       .map((c) => {
         const { score, reasons } = scoreCandidate(me, c);
-        return { ...c, score, reasons, liked: likedSet.has(c.id) };
+        // Shared-question bonus
+        const theirAns = byProfile.get(c.id) ?? new Map<string, string>();
+        let qaBonus = 0;
+        let qSame = 0;
+        let qShared = 0;
+        myAns.forEach((v, q) => {
+          if (theirAns.has(q)) {
+            qShared++;
+            if (theirAns.get(q) === v) { qaBonus += 5; qSame++; }
+            else qaBonus += 1;
+          }
+        });
+        const bonus = Math.min(30, qaBonus);
+        const finalScore = Math.min(100, score + bonus);
+        const reasons2 = [...reasons];
+        if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
+        else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
+        return { ...c, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);
@@ -470,3 +504,184 @@ export const getPlayedStatus = createServerFn({ method: "GET" })
       count: list.length,
     };
   });
+
+// ============================================================
+// Ongoing AI-generated compatibility Q&A
+// ============================================================
+
+function normalizeAnswer(s: string): string {
+  return s.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 200);
+}
+
+export const getMyQaAnswers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) return [] as Array<{ id: string; question: string; category: string; answer: string; created_at: string }>;
+    const { data } = await context.supabase
+      .from("qa_answers" as never)
+      .select("id, question, category, answer, created_at")
+      .eq("profile_id", myId)
+      .order("created_at", { ascending: false });
+    return (data as Array<{ id: string; question: string; category: string; answer: string; created_at: string }> | null) ?? [];
+  });
+
+export const submitQaAnswer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      question: z.string().trim().min(3).max(400),
+      category: z.string().trim().min(1).max(40).default("general"),
+      answer: z.string().trim().min(1).max(400),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("Create your profile first");
+    // Upsert-like behaviour: delete existing same-question, then insert
+    await context.supabase
+      .from("qa_answers" as never)
+      .delete()
+      .eq("profile_id", myId)
+      .eq("question", data.question);
+    const { error } = await context.supabase
+      .from("qa_answers" as never)
+      .insert({
+        profile_id: myId,
+        question: data.question,
+        category: data.category,
+        answer: data.answer,
+        answer_norm: normalizeAnswer(data.answer),
+      } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteQaAnswer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    await context.supabase
+      .from("qa_answers" as never)
+      .delete()
+      .eq("id", data.id)
+      .eq("profile_id", myId);
+    return { ok: true };
+  });
+
+type GeneratedQuestion = { question: string; category: string; options?: string[] };
+
+export const generateQaQuestions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      count: z.number().int().min(1).max(8).default(5),
+      lang: z.enum(["en", "es"]).default("en"),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: meRow } = await context.supabase
+      .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
+    const me = meRow as Profile | null;
+    if (!me) throw new Error("Create your profile first");
+
+    const { data: existing } = await context.supabase
+      .from("qa_answers" as never)
+      .select("question")
+      .eq("profile_id", me.id)
+      .order("created_at", { ascending: false })
+      .limit(40);
+    const asked = ((existing as Array<{ question: string }> | null) ?? []).map((r) => r.question);
+
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) {
+      // Fallback static questions if AI is not configured
+      const fallback: GeneratedQuestion[] = FALLBACK_QUESTIONS[data.lang].filter((q) => !asked.includes(q.question)).slice(0, data.count);
+      return { questions: fallback };
+    }
+
+    const { generateText } = await import("ai");
+    const provider = createLovableAiGatewayProvider(apiKey);
+    const model = provider("google/gemini-2.5-flash");
+
+    const sys = data.lang === "es"
+      ? "Generas preguntas cortas y reveladoras de compatibilidad para emparejar jugadores de pádel, ya sea como amigos o pareja. Responde SIEMPRE en español."
+      : "You generate short, revealing compatibility questions for matching padel players, either as friends or partners. Always reply in English.";
+
+    const prompt = `Player context:
+- Age ${me.age}, ${me.gender}, level ${me.level}
+- Looking for: ${me.looking_for}
+- Nationality: ${me.nationality}
+- Languages: ${(me.languages ?? []).join(", ") || "n/a"}
+- Top values: ${(me.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
+
+They have already answered these questions (do NOT repeat or paraphrase):
+${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
+
+Generate exactly ${data.count} NEW questions that mix categories: values, lifestyle, communication, conflict, humor, padel-on-court behaviour, weekend habits, money, family, travel, social energy.
+Each question must be answerable in one short sentence or by picking one of 3-5 short options.
+
+Return ONLY valid JSON, no prose, no markdown, with this exact shape:
+{"questions":[{"question":"...","category":"values","options":["opt1","opt2","opt3"]}]}
+Options is OPTIONAL — include 3-5 short choices only when natural. Categories must be lowercase single words.`;
+
+    let text = "";
+    try {
+      const res = await generateText({ model, system: sys, prompt, temperature: 0.9 });
+      text = res.text ?? "";
+    } catch (e) {
+      const fallback: GeneratedQuestion[] = FALLBACK_QUESTIONS[data.lang].filter((q) => !asked.includes(q.question)).slice(0, data.count);
+      return { questions: fallback, warning: e instanceof Error ? e.message : "AI unavailable" };
+    }
+
+    // Extract JSON
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    let parsed: { questions?: GeneratedQuestion[] } = {};
+    try {
+      parsed = JSON.parse(cleaned.slice(start, end + 1));
+    } catch {
+      parsed = { questions: [] };
+    }
+    const out: GeneratedQuestion[] = (parsed.questions ?? [])
+      .filter((q) => q && typeof q.question === "string" && q.question.length > 3)
+      .filter((q) => !asked.includes(q.question))
+      .slice(0, data.count)
+      .map((q) => ({
+        question: q.question.trim(),
+        category: (q.category ?? "general").toLowerCase().slice(0, 30),
+        options: Array.isArray(q.options) ? q.options.slice(0, 5).map((o) => String(o).slice(0, 80)) : undefined,
+      }));
+    return { questions: out };
+  });
+
+const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
+  en: [
+    { question: "After a tough match, do you prefer to vent, joke about it, or stay quiet?", category: "communication", options: ["Vent it out", "Joke about it", "Stay quiet", "Analyse every point"] },
+    { question: "Ideal weekend energy?", category: "lifestyle", options: ["Slow and cozy", "Sport + social", "Travel & explore", "Party mode"] },
+    { question: "How important is shared humour to you?", category: "values", options: ["Essential", "Very", "Nice to have", "Not really"] },
+    { question: "Money mindset?", category: "money", options: ["Save first", "Spend on experiences", "Spend on quality things", "Live for today"] },
+    { question: "On court, when a partner makes a mistake you…", category: "padel", options: ["Encourage them", "Stay silent", "Coach gently", "Get visibly frustrated"] },
+    { question: "Pick one: deep 1-on-1 dinner or group night out?", category: "social", options: ["1-on-1 dinner", "Group night", "Depends on mood"] },
+    { question: "How often do you want to play padel together per week?", category: "padel", options: ["Once", "2–3 times", "4+ times", "Whenever"] },
+  ],
+  es: [
+    { question: "Después de un partido duro, ¿prefieres desahogarte, bromear o quedarte en silencio?", category: "comunicación", options: ["Desahogarme", "Bromear", "Silencio", "Analizar cada punto"] },
+    { question: "¿Energía de fin de semana ideal?", category: "estilo de vida", options: ["Tranquilo y casero", "Deporte + social", "Viajar y explorar", "Modo fiesta"] },
+    { question: "¿Qué tan importante es para ti el humor compartido?", category: "valores", options: ["Esencial", "Mucho", "Está bien", "No tanto"] },
+    { question: "¿Mentalidad con el dinero?", category: "dinero", options: ["Ahorrar primero", "Gastar en experiencias", "Gastar en calidad", "Vivir el hoy"] },
+    { question: "En la pista, cuando tu pareja falla…", category: "pádel", options: ["La animo", "Callo", "Le doy consejos", "Me frustro visiblemente"] },
+    { question: "Elige: cena íntima o salida en grupo", category: "social", options: ["Cena íntima", "Salida en grupo", "Depende del ánimo"] },
+    { question: "¿Cuántas veces a la semana te gustaría jugar pádel juntos?", category: "pádel", options: ["1", "2–3", "4+", "Cuando se pueda"] },
+  ],
+};
+

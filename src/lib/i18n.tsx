@@ -45,8 +45,26 @@ const en: Dict = {
   "shell.discover": "Discover",
   "shell.signout": "Sign out",
   "shell.tab.discover": "Discover",
+  "shell.tab.questions": "Q&A",
   "shell.tab.matches": "Matches",
   "shell.tab.me": "Me",
+
+  // Q&A page
+  "qa.title": "Compatibility Q&A",
+  "qa.sub": "Answer as many as you like. Each shared answer sharpens your matches. You can stop whenever — your progress is saved.",
+  "qa.generate": "Generate questions",
+  "qa.generateMore": "Generate more",
+  "qa.generating": "Thinking up questions…",
+  "qa.skip": "Skip",
+  "qa.save": "Save",
+  "qa.saved": "Saved",
+  "qa.empty": "No questions yet — tap Generate to start.",
+  "qa.answeredCount": "{n} answered",
+  "qa.yourAnswers": "Your answers",
+  "qa.seeMatches": "See who matches →",
+  "qa.delete": "Remove",
+  "qa.placeholder": "Type a short answer…",
+  "qa.howItWorks": "AI generates fresh questions tailored to your profile. We never show your answers publicly — only shared answers boost your match score.",
 
   // Discover
   "disc.h1": "Tap who you'd play.",
@@ -259,8 +277,26 @@ const es: Dict = {
   "shell.discover": "Descubrir",
   "shell.signout": "Salir",
   "shell.tab.discover": "Descubrir",
+  "shell.tab.questions": "Preguntas",
   "shell.tab.matches": "Matches",
   "shell.tab.me": "Yo",
+
+  // Q&A page
+  "qa.title": "Preguntas de compatibilidad",
+  "qa.sub": "Responde las que quieras. Cada respuesta compartida afina tus matches. Puedes parar cuando quieras — se guarda tu progreso.",
+  "qa.generate": "Generar preguntas",
+  "qa.generateMore": "Generar más",
+  "qa.generating": "Pensando preguntas…",
+  "qa.skip": "Saltar",
+  "qa.save": "Guardar",
+  "qa.saved": "Guardado",
+  "qa.empty": "Aún no hay preguntas — toca Generar para empezar.",
+  "qa.answeredCount": "{n} respondidas",
+  "qa.yourAnswers": "Tus respuestas",
+  "qa.seeMatches": "Ver quién encaja →",
+  "qa.delete": "Quitar",
+  "qa.placeholder": "Escribe una respuesta corta…",
+  "qa.howItWorks": "La IA genera preguntas nuevas según tu perfil. Tus respuestas nunca son públicas — solo las respuestas compartidas suben tu puntuación de match.",
 
   // Discover
   "disc.h1": "Toca con quién jugarías.",

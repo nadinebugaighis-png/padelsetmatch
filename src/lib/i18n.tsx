@@ -329,6 +329,17 @@ const es: Dict = {
   "prof.deleted": "Cuenta borrada",
   "prof.deleteFail": "No se pudo borrar la cuenta",
 
+  // Feedback
+  "fb.title": "Haz esta app mejor",
+  "fb.sub": "Sugerencias, errores, lo que te encantaría — llega directo al equipo.",
+  "fb.placeholder": "¿Qué haría PadelMatch mejor para ti?",
+  "fb.send": "Enviar",
+  "fb.sending": "Enviando…",
+  "fb.thanks": "Gracias — tu feedback se envió.",
+  "fb.fail": "No se pudo enviar. Inténtalo de nuevo.",
+  "fb.tooShort": "Escribe un poco más primero.",
+
+
   // Onboarding
   "ob.step": "Paso",
   "ob.of": "/",

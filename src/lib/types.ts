@@ -64,6 +64,8 @@ export type Profile = {
   age: number;
   gender: Gender;
   interested_in: Gender[];
+  friend_interested_in: string[];
+  partner_interested_in: string[];
   age_min: number;
   age_max: number;
   nationality: string;

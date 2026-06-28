@@ -23,9 +23,12 @@ function AuthShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
+  const checkAdmin = useServerFn(getIsAdmin);
 
   const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!profileQ.data });
+  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin() });
+
 
   const onSignOut = async () => {
     await qc.cancelQueries();

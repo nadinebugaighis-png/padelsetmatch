@@ -167,6 +167,7 @@ export type Database = {
           partner_interested_in: string[]
           photo_url: string | null
           priorities: string[]
+          suspended_at: string | null
           updated_at: string
           user_id: string | null
           zone: string
@@ -191,6 +192,7 @@ export type Database = {
           partner_interested_in?: string[]
           photo_url?: string | null
           priorities?: string[]
+          suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
           zone: string
@@ -215,6 +217,7 @@ export type Database = {
           partner_interested_in?: string[]
           photo_url?: string | null
           priorities?: string[]
+          suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
           zone?: string
@@ -229,6 +232,8 @@ export type Database = {
           reported_profile_id: string
           reported_user_id: string | null
           reporter_profile_id: string
+          reviewed_at: string | null
+          status: string
         }
         Insert: {
           created_at?: string
@@ -237,6 +242,8 @@ export type Database = {
           reported_profile_id: string
           reported_user_id?: string | null
           reporter_profile_id: string
+          reviewed_at?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
@@ -245,6 +252,8 @@ export type Database = {
           reported_profile_id?: string
           reported_user_id?: string | null
           reporter_profile_id?: string
+          reviewed_at?: string | null
+          status?: string
         }
         Relationships: []
       }

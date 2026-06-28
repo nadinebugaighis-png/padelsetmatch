@@ -51,6 +51,9 @@ function Onboarding() {
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [availability, setAvailability] = useState<string[]>([]);
+  const [courtSide, setCourtSide] = useState<CourtSide>("both");
+  const [mixedDoubles, setMixedDoubles] = useState(true);
 
   useEffect(() => {
     const p = profileQ.data;

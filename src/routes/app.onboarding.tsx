@@ -160,6 +160,7 @@ function Onboarding() {
           locations, languages,
           level, priorities, looking_for,
           bio: bio || null, photo_url: photoUrl,
+          availability, court_side: courtSide, mixed_doubles: mixedDoubles,
         },
       });
     },

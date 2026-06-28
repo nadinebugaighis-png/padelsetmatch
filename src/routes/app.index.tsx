@@ -135,6 +135,27 @@ function Discover() {
                 </button>
               )}
 
+              <div className="absolute top-2 left-2 z-10 flex gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleBlock(c.id, c.first_name); }}
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
+                  aria-label={`Block ${c.first_name}`}
+                  title="Block — hide from each other"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleReport(c.id, c.first_name); }}
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-red-600/80 text-[var(--cream)]"
+                  aria-label={`Report ${c.first_name}`}
+                  title="Report — removes the account"
+                >
+                  <Flag className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
               <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}, {c.age}</div>
                 <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {c.level}</div>

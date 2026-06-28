@@ -71,6 +71,16 @@ function ChatRoom() {
     onSuccess: safetyDone(t("chat.reportDone")),
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.reportFail")),
   });
+  const confirmM = useMutation({
+    mutationFn: () => confirmFn({ data: { matchId } }),
+    onSuccess: () => { toast.success("Marked as played ✅"); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't confirm"),
+  });
+  const noShowM = useMutation({
+    mutationFn: () => noShowFn({ data: { matchId } }),
+    onSuccess: () => toast.success("No-show reported. Thanks — we'll look into it."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+  });
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
   const { other, my_profile_id, messages } = q.data;
@@ -79,11 +89,14 @@ function ChatRoom() {
     if (!window.confirm(t("disc.blockConfirm", { name: other.first_name }))) return;
     blockM.mutate(other.id);
   };
-  const onReport = () => {
-    const reason = window.prompt(t("disc.reportPrompt", { name: other.first_name }));
-    if (!reason || reason.trim().length < 3) return;
-    if (!window.confirm(t("disc.reportConfirm", { name: other.first_name }))) return;
-    reportM.mutate({ id: other.id, reason: reason.trim() });
+  const submitReport = () => {
+    const full = reportDetail.trim() ? `${reportReason}: ${reportDetail.trim()}` : reportReason;
+    reportM.mutate({ id: other.id, reason: full });
+    setReportOpen(false);
+  };
+  const onNoShow = () => {
+    if (!window.confirm(`Report that ${other.first_name} didn't show up? Repeat no-shows lead to auto-suspension.`)) return;
+    noShowM.mutate();
   };
 
   return (

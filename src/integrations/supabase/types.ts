@@ -14,13 +14,186 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      likes: {
+        Row: {
+          created_at: string
+          id: string
+          liked_profile_id: string
+          liker_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          liked_profile_id: string
+          liker_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          liked_profile_id?: string
+          liker_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_liked_profile_id_fkey"
+            columns: ["liked_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_liker_profile_id_fkey"
+            columns: ["liker_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          profile_a: string
+          profile_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_a: string
+          profile_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_a?: string
+          profile_b?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_profile_a_fkey"
+            columns: ["profile_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_profile_b_fkey"
+            columns: ["profile_b"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          match_id: string
+          sender_profile_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          match_id: string
+          sender_profile_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          match_id?: string
+          sender_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          age: number
+          age_max: number
+          age_min: number
+          bio: string | null
+          created_at: string
+          first_name: string
+          gender: string
+          id: string
+          interested_in: string[]
+          is_seed: boolean
+          level: string
+          looking_for: string
+          nationality: string
+          photo_url: string | null
+          priorities: string[]
+          updated_at: string
+          user_id: string | null
+          zone: string
+        }
+        Insert: {
+          age: number
+          age_max?: number
+          age_min?: number
+          bio?: string | null
+          created_at?: string
+          first_name: string
+          gender: string
+          id?: string
+          interested_in?: string[]
+          is_seed?: boolean
+          level: string
+          looking_for?: string
+          nationality: string
+          photo_url?: string | null
+          priorities?: string[]
+          updated_at?: string
+          user_id?: string | null
+          zone: string
+        }
+        Update: {
+          age?: number
+          age_max?: number
+          age_min?: number
+          bio?: string | null
+          created_at?: string
+          first_name?: string
+          gender?: string
+          id?: string
+          interested_in?: string[]
+          is_seed?: boolean
+          level?: string
+          looking_for?: string
+          nationality?: string
+          photo_url?: string | null
+          priorities?: string[]
+          updated_at?: string
+          user_id?: string | null
+          zone?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      my_profile_id: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never

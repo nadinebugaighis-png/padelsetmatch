@@ -46,6 +46,8 @@ function Onboarding() {
     if (p) {
       setFirstName(p.first_name); setAge(p.age); setGender(p.gender);
       setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
+      if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
+      if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality); setZone(p.zone); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);

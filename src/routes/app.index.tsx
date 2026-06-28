@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X } from "lucide-react";
+import { Heart, X, Flag, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
   component: Discover,
@@ -16,6 +16,8 @@ function Discover() {
   const getFeed = useServerFn(getDiscoverFeed);
   const like = useServerFn(likeProfile);
   const unlike = useServerFn(unlikeProfile);
+  const block = useServerFn(blockProfile);
+  const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
 
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
@@ -42,6 +44,35 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't undo"),
   });
+  const blockM = useMutation({
+    mutationFn: (id: string) => block({ data: { blockedProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      toast.success("Blocked. You won't see each other again.");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't block"),
+  });
+  const reportM = useMutation({
+    mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      toast.success("Report sent. The account has been removed.");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+  });
+
+  function handleReport(id: string, name: string) {
+    const reason = window.prompt(`Report ${name}?\n\nDescribe what happened (harassment, fake photo, abuse, threats…). One report removes the account immediately.`);
+    if (!reason || reason.trim().length < 3) return;
+    if (!window.confirm(`Submit this report? ${name}'s account will be permanently deleted.`)) return;
+    reportM.mutate({ id, reason: reason.trim() });
+  }
+  function handleBlock(id: string, name: string) {
+    if (!window.confirm(`Block ${name}? You won't see each other anywhere in the app.`)) return;
+    blockM.mutate(id);
+  }
 
   if (feedQ.isLoading) return <Loading />;
   if (!feedQ.data?.me) return null;
@@ -103,6 +134,27 @@ function Discover() {
                   </div>
                 </button>
               )}
+
+              <div className="absolute top-2 left-2 z-10 flex gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleBlock(c.id, c.first_name); }}
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
+                  aria-label={`Block ${c.first_name}`}
+                  title="Block — hide from each other"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleReport(c.id, c.first_name); }}
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-red-600/80 text-[var(--cream)]"
+                  aria-label={`Report ${c.first_name}`}
+                  title="Report — removes the account"
+                >
+                  <Flag className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}, {c.age}</div>

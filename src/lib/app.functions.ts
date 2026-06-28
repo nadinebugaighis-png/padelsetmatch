@@ -167,9 +167,15 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("likes" as never)
       .select("liked_profile_id")
       .eq("liker_profile_id", me.id);
+    const { data: myBlocks } = await context.supabase
+      .from("blocks" as never)
+      .select("blocked_profile_id")
+      .eq("blocker_profile_id", me.id);
+    const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
     const scored = ((candRows as Profile[] | null) ?? [])
+      .filter((c) => !blockedSet.has(c.id))
       .map((c) => {
         const { score, reasons } = scoreCandidate(me, c);
         return { ...c, score, reasons, liked: likedSet.has(c.id) };
@@ -315,5 +321,70 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
       await supabaseAdmin.from("profiles" as never).delete().eq("id", myId);
     }
     await supabaseAdmin.auth.admin.deleteUser(context.userId);
+    return { ok: true };
+  });
+
+export const blockProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ blockedProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    // Remove any likes and matches between the two
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("likes" as never).delete()
+      .or(`and(liker_profile_id.eq.${myId},liked_profile_id.eq.${data.blockedProfileId}),and(liker_profile_id.eq.${data.blockedProfileId},liked_profile_id.eq.${myId})`);
+    await supabaseAdmin.from("matches" as never).delete()
+      .or(`and(profile_a.eq.${myId},profile_b.eq.${data.blockedProfileId}),and(profile_a.eq.${data.blockedProfileId},profile_b.eq.${myId})`);
+    const { error } = await context.supabase
+      .from("blocks" as never)
+      .insert({ blocker_profile_id: myId, blocked_profile_id: data.blockedProfileId } as never);
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const reportProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ reportedProfileId: z.string().uuid(), reason: z.string().min(3).max(500) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Look up reported user's auth id before deletion
+    const { data: target } = await supabaseAdmin
+      .from("profiles" as never)
+      .select("user_id")
+      .eq("id", data.reportedProfileId)
+      .maybeSingle();
+    const targetUserId = (target as { user_id: string | null } | null)?.user_id ?? null;
+
+    // Log the report (kept for moderation history; reporter is auto-set via RLS rule)
+    await supabaseAdmin.from("reports" as never).insert({
+      reporter_profile_id: myId,
+      reported_profile_id: data.reportedProfileId,
+      reported_user_id: targetUserId,
+      reason: data.reason,
+    } as never);
+
+    // Zero-tolerance: immediately remove the reported account and all related data
+    await supabaseAdmin.from("messages" as never).delete().eq("sender_profile_id", data.reportedProfileId);
+    await supabaseAdmin.from("likes" as never).delete()
+      .or(`liker_profile_id.eq.${data.reportedProfileId},liked_profile_id.eq.${data.reportedProfileId}`);
+    await supabaseAdmin.from("matches" as never).delete()
+      .or(`profile_a.eq.${data.reportedProfileId},profile_b.eq.${data.reportedProfileId}`);
+    await supabaseAdmin.from("blocks" as never).delete()
+      .or(`blocker_profile_id.eq.${data.reportedProfileId},blocked_profile_id.eq.${data.reportedProfileId}`);
+    await supabaseAdmin.from("profiles" as never).delete().eq("id", data.reportedProfileId);
+    if (targetUserId) {
+      try { await supabaseAdmin.auth.admin.deleteUser(targetUserId); } catch { /* ignore */ }
+    }
     return { ok: true };
   });

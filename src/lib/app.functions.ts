@@ -613,11 +613,11 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const model = provider("google/gemini-2.5-flash");
 
     const sys = data.lang === "es"
-      ? "Generas preguntas cortas y reveladoras de compatibilidad para emparejar jugadores de pádel, ya sea como amigos o pareja. Responde SIEMPRE en español."
-      : "You generate short, revealing compatibility questions for matching padel players, either as friends or partners. Always reply in English.";
+      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, personales y reveladoras para encontrar afinidad real entre personas (amistad, pareja o alma gemela). Las preguntas profundizan en personalidad, valores, emociones, estilo de vida y forma de relacionarse. Solo ocasionalmente (1 de cada 5 como máximo) tocas el pádel. Responde SIEMPRE en español."
+      : "You are an AI expert in compatibility and relational psychology. You generate short, personal, revealing questions to find real affinity between people (friendship, partner, or soulmate). Questions go deep into personality, values, emotions, lifestyle, and how someone relates to others. Only occasionally (at most 1 in 5) touch on padel. Always reply in English.";
 
-    const prompt = `Player context:
-- Age ${me.age}, ${me.gender}, level ${me.level}
+    const prompt = `Person context:
+- Age ${me.age}, ${me.gender}
 - Looking for: ${me.looking_for}
 - Nationality: ${me.nationality}
 - Languages: ${(me.languages ?? []).join(", ") || "n/a"}
@@ -626,12 +626,15 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
 They have already answered these questions (do NOT repeat or paraphrase):
 ${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
 
-Generate exactly ${data.count} NEW questions that mix categories: values, lifestyle, communication, conflict, humor, padel-on-court behaviour, weekend habits, money, family, travel, social energy.
-Each question must be answerable in one short sentence or by picking one of 3-5 short options.
+Generate exactly ${data.count} NEW questions, MOSTLY personal (not about padel). Mix these categories with strong weight on the personal ones:
+personality, love language, attachment style, emotional intelligence, vulnerability, what they value in a friend, what they value in a partner, dealbreakers, green flags, childhood, family, dreams, fears, regrets, ambition, spirituality, politics-lite, introvert/extrovert energy, conflict style, jealousy, affection, intimacy comfort, humor style, deep talks vs small talk, ideal Sunday, what makes them feel loved, what they need to feel safe, lifestyle, money, travel, food, music taste, art, books, social energy.
+At most 1 question out of ${data.count} may relate to padel or sport — and only if it reveals personality (e.g. how they handle losing, ego, competitiveness).
+Each question must be answerable in one short sentence or by picking one of 3-5 short options. Make them feel like a thoughtful friend asking — warm, specific, never generic ("what do you like to do?" is too vague; "what's the last thing that made you cry happy tears?" is good).
 
 Return ONLY valid JSON, no prose, no markdown, with this exact shape:
-{"questions":[{"question":"...","category":"values","options":["opt1","opt2","opt3"]}]}
-Options is OPTIONAL — include 3-5 short choices only when natural. Categories must be lowercase single words.`;
+{"questions":[{"question":"...","category":"personality","options":["opt1","opt2","opt3"]}]}
+Options is OPTIONAL — include 3-5 short choices only when natural; prefer open-ended for deep questions. Categories must be lowercase single words.`;
+
 
     let text = "";
     try {

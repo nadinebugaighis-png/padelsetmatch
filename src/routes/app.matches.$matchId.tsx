@@ -16,9 +16,12 @@ export const Route = createFileRoute("/app/matches/$matchId")({
 
 function ChatRoom() {
   const { matchId } = Route.useParams();
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const getDetail = useServerFn(getMatchDetail);
   const send = useServerFn(sendMessage);
+  const block = useServerFn(blockProfile);
+  const report = useServerFn(reportProfile);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
   const [text, setText] = useState("");

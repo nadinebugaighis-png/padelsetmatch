@@ -63,7 +63,7 @@ export type Profile = {
   age_min: number;
   age_max: number;
   nationality: string;
-  zone: MadridZone;
+  zone: string;
   level: PadelLevel;
   priorities: string[];
   looking_for: LookingFor;

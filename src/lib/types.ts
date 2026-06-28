@@ -32,26 +32,35 @@ export type MadridZone = (typeof MADRID_ZONES)[number];
 export const GENDERS = ["woman", "man", "non-binary"] as const;
 export type Gender = (typeof GENDERS)[number];
 
+export const LOOKING_FOR = ["partner", "friend", "both"] as const;
+export type LookingFor = (typeof LOOKING_FOR)[number];
+
+export const NATIONALITIES = [
+  "Spain", "Portugal", "Italy", "France", "Germany", "United Kingdom",
+  "Argentina", "Mexico", "Colombia", "Brazil", "United States",
+  "Netherlands", "Ireland", "Switzerland", "Sweden", "Other",
+];
+
 export type Profile = {
-  handle: string;
-  avatar: string; // emoji
-  gender: Gender;
+  id: string;
+  user_id: string | null;
+  is_seed: boolean;
+  first_name: string;
   age: number;
-  ageMin: number;
-  ageMax: number;
-  interestedIn: Gender[];
+  gender: Gender;
+  interested_in: Gender[];
+  age_min: number;
+  age_max: number;
   nationality: string;
   zone: MadridZone;
   level: PadelLevel;
-  priorities: PriorityTrait[]; // ordered, most important first
-  bio?: string;
+  priorities: PriorityTrait[];
+  looking_for: LookingFor;
+  bio: string | null;
+  photo_url: string | null;
 };
 
-export type Candidate = Profile & { id: string };
-
-export type RankedMatch = {
-  id: string;
-  score: number; // 0-100
-  reasons: string[]; // short bullet reasons (rule-based)
-  blurb: string; // AI-generated "why you'd click on court" note
+export type RankedCandidate = Profile & {
+  score: number;
+  reasons: string[];
 };

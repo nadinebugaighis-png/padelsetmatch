@@ -77,8 +77,14 @@ function Onboarding() {
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };
-  const toggleInterested = (g: Gender) => {
-    setInterested((cur) => cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]);
+  // Derive legacy interested_in (gender list) from the audience choices
+  const audToGenders = (aud: string[]): Gender[] => {
+    if (!aud.length || aud.includes("everyone") || aud.includes("bisexual") || aud.includes("queer")) return ["woman", "man", "non-binary"];
+    const out = new Set<Gender>();
+    if (aud.includes("men") || aud.includes("gay men")) out.add("man");
+    if (aud.includes("women") || aud.includes("lesbian women")) out.add("woman");
+    if (aud.includes("non-binary")) out.add("non-binary");
+    return Array.from(out);
   };
   const toggleAud = (setter: (fn: (cur: string[]) => string[]) => void) => (opt: string) => {
     setter((cur) => {

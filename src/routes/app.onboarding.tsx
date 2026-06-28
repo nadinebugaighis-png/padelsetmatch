@@ -206,7 +206,7 @@ function Onboarding() {
   const canStep = [
     !!first_name && age >= 18,
     audOk && age_min <= age_max,
-    zones.length > 0 && languages.length > 0 && !!level,
+    validBlocks.length > 0 && languages.length > 0 && !!level,
     priorities.length >= 3,
     !!photoUrl,
   ];

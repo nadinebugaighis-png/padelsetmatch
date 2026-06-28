@@ -24,6 +24,9 @@ const ProfileInput = z.object({
   looking_for: z.enum(LOOKING_FOR),
   bio: z.string().max(280).nullable().optional(),
   photo_url: z.string().min(1).max(2000).nullable().optional(),
+  availability: z.array(z.string().min(1).max(40)).max(10).default([]),
+  court_side: z.enum(["right", "left", "both"]).nullable().optional(),
+  mixed_doubles: z.boolean().default(false),
 });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {

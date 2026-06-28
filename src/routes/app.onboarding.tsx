@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -301,18 +303,34 @@ function Onboarding() {
                       </button>
                     )}
                   </div>
-                  <Input placeholder="Country (e.g. Spain)" value={b.country} onChange={(e) => updateBlock(i, { country: e.target.value })} />
-                  <Input placeholder="City (e.g. Madrid)" value={b.city} onChange={(e) => updateBlock(i, { city: e.target.value })} />
+                  <Select value={b.country || undefined} onValueChange={(v) => updateBlock(i, { country: v, city: "", areas: ["", "", ""] })}>
+                    <SelectTrigger><SelectValue placeholder="Country" /></SelectTrigger>
+                    <SelectContent>
+                      {COUNTRY_NAMES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={b.city || undefined} onValueChange={(v) => updateBlock(i, { city: v, areas: ["", "", ""] })} disabled={!b.country}>
+                    <SelectTrigger><SelectValue placeholder={b.country ? "City" : "Pick country first"} /></SelectTrigger>
+                    <SelectContent>
+                      {citiesFor(b.country).map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                   <div className="grid grid-cols-1 gap-2">
-                    {b.areas.map((a, ai) => (
-                      <Input
-                        key={ai}
-                        placeholder={`Area / barrio ${ai + 1} (optional)`}
-                        value={a}
-                        onChange={(e) => updateArea(i, ai, e.target.value)}
-                      />
-                    ))}
+                    {b.areas.map((a, ai) => {
+                      const opts = areasFor(b.country, b.city);
+                      const taken = new Set(b.areas.filter((x, k) => k !== ai && x));
+                      return (
+                        <Select key={ai} value={a || undefined} onValueChange={(v) => updateArea(i, ai, v === "__none__" ? "" : v)} disabled={!b.city}>
+                          <SelectTrigger><SelectValue placeholder={b.city ? `Area ${ai + 1} (optional)` : "Pick city first"} /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__none__">— None —</SelectItem>
+                            {opts.filter((o) => !taken.has(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                      );
+                    })}
                   </div>
+
                 </div>
               ))}
               <Button type="button" variant="outline" onClick={addBlock} className="w-full">

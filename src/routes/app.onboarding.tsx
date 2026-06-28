@@ -27,6 +27,8 @@ function Onboarding() {
   const [age, setAge] = useState(28);
   const [gender, setGender] = useState<Gender>("woman");
   const [interested_in, setInterested] = useState<Gender[]>(["man"]);
+  const [friend_interested_in, setFriendAud] = useState<string[]>(["everyone"]);
+  const [partner_interested_in, setPartnerAud] = useState<string[]>(["men"]);
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");

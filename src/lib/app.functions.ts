@@ -85,16 +85,21 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
 function scoreCandidate(me: Profile, c: Profile) {
   const reasons: string[] = [];
   let score = 0;
-  if (!me.interested_in.includes(c.gender) || !c.interested_in.includes(me.gender)) {
-    return { score: 0, reasons };
-  }
-  // looking_for compat
-  const compatLF =
-    (me.looking_for === "friend" && (c.looking_for === "friend" || c.looking_for === "both")) ||
-    (me.looking_for === "partner" && (c.looking_for === "partner" || c.looking_for === "both")) ||
-    me.looking_for === "both";
-  if (!compatLF) return { score: 0, reasons };
-  if (me.looking_for === c.looking_for) { score += 6; reasons.push(`Both looking for a ${me.looking_for === "both" ? "partner or friend" : me.looking_for}`); }
+
+  const purpose = sharedPurpose(me.looking_for, c.looking_for);
+  if (!purpose) return { score: 0, reasons };
+
+  const myAudience = purpose === "partner" ? me.partner_interested_in : me.friend_interested_in;
+  const theirAudience = purpose === "partner" ? c.partner_interested_in : c.friend_interested_in;
+  // Fallback to legacy interested_in if the purpose-specific list is empty
+  const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
+  const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
+
+  if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons };
+  if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons };
+
+  reasons.push(purpose === "partner" ? "Both open to a relationship" : "Both open to friendship");
+  score += 6;
 
   const meLikesAge = c.age >= me.age_min && c.age <= me.age_max;
   const theyLikeAge = me.age >= c.age_min && me.age <= c.age_max;

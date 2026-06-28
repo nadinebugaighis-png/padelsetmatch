@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const t = useT();
   return (
     <main className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
@@ -18,31 +20,34 @@ function Landing() {
           <span className="inline-block w-3 h-3 rounded-full bg-[var(--ball)] ball-glow" />
           <span className="text-display text-2xl tracking-wider">PADEL · MATCH</span>
         </div>
-        <Link to="/auth" className="chip chip-ball">Sign in</Link>
+        <div className="flex items-center gap-3">
+          <LangSwitch />
+          <Link to="/auth" className="chip chip-ball">{t("land.signin")}</Link>
+        </div>
       </header>
 
       <section className="flex-1 grid lg:grid-cols-2 gap-10 items-center px-6 lg:px-16 py-10">
         <div className="max-w-xl">
-          <p className="chip chip-clay mb-6">Worldwide · pick your city</p>
+          <p className="chip chip-clay mb-6">{t("land.chip")}</p>
           <h1 className="text-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
-            find your best,<br />
-            <span style={{ color: "var(--ball)" }}>Match.</span>
+            {t("land.h1.a")}<br />
+            <span style={{ color: "var(--ball)" }}>{t("land.h1.b")}</span>
           </h1>
           <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-md">
-            Discover players who match your level, personality and lifestyle. &nbsp;Whether you're looking for great games, new friends or meaningful connections, well help you find people you genuinely click with.
+            {t("land.lede")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
-              Start matching
+              {t("land.cta")}
             </Link>
             <a href="https://playtomic.io" target="_blank" rel="noreferrer" className="inline-flex items-center rounded-full border border-[var(--cream)]/30 px-6 py-3 hover:bg-[var(--cream)]/10">
-              What's Playtomic?
+              {t("land.what")}
             </a>
           </div>
           <div className="mt-10 flex gap-6 text-sm text-[var(--cream)]/60">
-            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />cities, your call</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">1</span><br />sport that connects</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />post-match drinks</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />{t("land.stat1")}</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">1</span><br />{t("land.stat2")}</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />{t("land.stat3")}</div>
           </div>
 
         </div>
@@ -55,13 +60,13 @@ function Landing() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs uppercase tracking-widest text-[var(--cream)]/60">Tap. Tap-back. Play.</p>
+            <p className="mt-4 text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("land.tap")}</p>
           </div>
         </div>
       </section>
 
       <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex justify-between">
-        <span>Play anywhere. Worst case: a new padel friend.</span>
+        <span>{t("land.foot")}</span>
         <span>v0.1</span>
       </footer>
     </main>

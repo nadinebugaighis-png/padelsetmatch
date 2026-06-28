@@ -5,6 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const t = useT();
   const [mode, setMode] = useState<"signin" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,10 +38,10 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
-          toast.success("Welcome! You're in.");
+          toast.success(t("auth.welcome"));
           navigate({ to: "/app" });
         } else {
-          toast.success("Account created — check your email to confirm.");
+          toast.success(t("auth.confirmEmail"));
           setMode("signin");
         }
       } else {
@@ -48,7 +50,7 @@ function AuthPage() {
         navigate({ to: "/app" });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Sign-in failed");
+      toast.error(err instanceof Error ? err.message : t("auth.fail"));
     } finally {
       setLoading(false);
     }
@@ -69,44 +71,47 @@ function AuthPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md surface-card p-8">
-        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← Back</Link>
-        <h1 className="text-display text-5xl mt-3">{mode === "signup" ? "Join PadelMatch" : "Welcome back"}</h1>
+        <div className="flex items-center justify-between">
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("auth.back")}</Link>
+          <LangSwitch />
+        </div>
+        <h1 className="text-display text-5xl mt-3">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
         <p className="text-sm text-[var(--cream)]/70 mt-2">
-          {mode === "signup" ? "We only ask what helps the match. Your photo is for matches, not the world." : "Sign back in to your padel feed."}
+          {mode === "signup" ? t("auth.sub.signup") : t("auth.sub.signin")}
         </p>
 
         <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
-          Continue with Google
+          {t("auth.google")}
         </Button>
 
         <div className="my-5 flex items-center gap-3 text-xs text-[var(--cream)]/40 uppercase tracking-widest">
-          <div className="flex-1 h-px bg-[var(--cream)]/15" /> or <div className="flex-1 h-px bg-[var(--cream)]/15" />
+          <div className="flex-1 h-px bg-[var(--cream)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--cream)]/15" />
         </div>
 
         <form onSubmit={submit} className="space-y-3">
-          <Input type="email" required placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Input type="password" required minLength={8} placeholder="password (min 8)" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Button type="submit" disabled={loading} className="w-full">{mode === "signup" ? "Create account" : "Sign in"}</Button>
+          <Input type="email" required placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input type="password" required minLength={8} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Button type="submit" disabled={loading} className="w-full">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
         </form>
 
         <div className="mt-4 flex items-center justify-between text-sm">
           <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="text-[var(--cream)]/60 hover:text-[var(--cream)]">
-            {mode === "signup" ? "Already have an account? Sign in" : "New here? Create an account"}
+            {mode === "signup" ? t("auth.toggleToSignin") : t("auth.toggleToSignup")}
           </button>
           {mode === "signin" && (
             <button
               type="button"
               onClick={async () => {
-                if (!email) { toast.error("Enter your email first"); return; }
+                if (!email) { toast.error(t("auth.enterEmailFirst")); return; }
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });
                 if (error) toast.error(error.message);
-                else toast.success("Check your email for a reset link");
+                else toast.success(t("auth.resetSent"));
               }}
               className="text-[var(--cream)]/60 hover:text-[var(--ball)]"
             >
-              Forgot password?
+              {t("auth.forgot")}
             </button>
           )}
         </div>

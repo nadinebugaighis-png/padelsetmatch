@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { ArrowLeft, Heart, MessageCircle, User } from "lucide-react";
+import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/app")({
 function AuthShell() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const t = useT();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
@@ -46,7 +48,7 @@ function AuthShell() {
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Home</span>
+              <span>{t("shell.home")}</span>
             </Link>
           ) : (
             <Link
@@ -55,7 +57,7 @@ function AuthShell() {
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Discover</span>
+              <span>{t("shell.discover")}</span>
             </Link>
           )}
           <Link to="/app" className="flex items-center gap-2 min-w-0">
@@ -63,9 +65,12 @@ function AuthShell() {
             <span className="text-display text-xl tracking-wider truncate">PADEL · MATCH</span>
           </Link>
         </div>
-        <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)] shrink-0">
-          Sign out
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          <LangSwitch />
+          <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]">
+            {t("shell.signout")}
+          </button>
+        </div>
       </header>
 
       <Outlet />
@@ -73,9 +78,9 @@ function AuthShell() {
       {hasProfile && !onOnboarding && (
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
           <div className="max-w-md mx-auto grid grid-cols-3">
-            <NavTab to="/app" label="Discover" icon={<Heart className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
-            <NavTab to="/app/matches" label={`Matches${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} />
-            <NavTab to="/app/profile" label="Me" icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
+            <NavTab to="/app" label={t("shell.tab.discover")} icon={<Heart className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
+            <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} />
+            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
           </div>
         </nav>
       )}

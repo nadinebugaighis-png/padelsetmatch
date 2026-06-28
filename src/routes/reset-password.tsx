@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
@@ -13,12 +14,12 @@ export const Route = createFileRoute("/reset-password")({
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
+  const t = useT();
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Supabase parses the recovery hash automatically and emits PASSWORD_RECOVERY
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") setReady(true);
     });
@@ -34,10 +35,10 @@ function ResetPasswordPage() {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      toast.success("Password updated — you're signed in.");
+      toast.success(t("rp.updated"));
       navigate({ to: "/app" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not update password");
+      toast.error(err instanceof Error ? err.message : t("rp.updateFail"));
     } finally {
       setLoading(false);
     }
@@ -46,15 +47,15 @@ function ResetPasswordPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md surface-card p-8">
-        <h1 className="text-display text-4xl">Set a new password</h1>
+        <h1 className="text-display text-4xl">{t("rp.title")}</h1>
         {!ready ? (
           <p className="text-sm text-[var(--cream)]/70 mt-3">
-            Open this page from the link in your reset email. If you got here by accident, head back to <a href="/auth" className="underline">sign in</a>.
+            {t("rp.openFromEmail")} <a href="/auth" className="underline">{t("rp.signin")}</a>.
           </p>
         ) : (
           <form onSubmit={submit} className="space-y-3 mt-5">
-            <Input type="password" required minLength={8} placeholder="new password (min 8)" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <Button type="submit" disabled={loading} className="w-full">Update password</Button>
+            <Input type="password" required minLength={8} placeholder={t("rp.newPw")} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Button type="submit" disabled={loading} className="w-full">{t("rp.update")}</Button>
           </form>
         )}
       </div>

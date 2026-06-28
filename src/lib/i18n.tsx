@@ -115,6 +115,17 @@ const en: Dict = {
   "prof.deleted": "Account deleted",
   "prof.deleteFail": "Could not delete account",
 
+  // Feedback
+  "fb.title": "Make this app better",
+  "fb.sub": "Suggestions, bugs, things you'd love — it all comes straight to the team.",
+  "fb.placeholder": "What would make PadelMatch better for you?",
+  "fb.send": "Send",
+  "fb.sending": "Sending…",
+  "fb.thanks": "Thanks — your feedback was sent.",
+  "fb.fail": "Couldn't send. Try again.",
+  "fb.tooShort": "Add a few more words first.",
+
+
   // Onboarding
   "ob.step": "Step",
   "ob.of": "/",

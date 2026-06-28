@@ -62,7 +62,7 @@ function QuestionsPage() {
         return n;
       });
       qc.invalidateQueries({ queryKey: ["qa-answers"] });
-      qc.invalidateQueries({ queryKey: ["discover-feed"] });
+      qc.invalidateQueries({ queryKey: ["discover"] });
     },
   });
 
@@ -70,7 +70,7 @@ function QuestionsPage() {
     mutationFn: (id: string) => delFn({ data: { id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["qa-answers"] });
-      qc.invalidateQueries({ queryKey: ["discover-feed"] });
+      qc.invalidateQueries({ queryKey: ["discover"] });
     },
   });
 

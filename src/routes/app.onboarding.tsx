@@ -313,6 +313,25 @@ function Onboarding() {
                 <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Preferred court side</label>
+            <div className="flex flex-wrap gap-2">
+              {COURT_SIDES.map((s) => (
+                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{s}</button>
+              ))}
+            </div>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">When can you play?</label>
+            <div className="flex flex-wrap gap-2">
+              {AVAILABILITY_SLOTS.map((s) => (
+                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{s}</button>
+              ))}
+            </div>
+
+            <label className="flex items-center gap-2 text-sm pt-1">
+              <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--ball)]" />
+              Open to mixed doubles (2 men + 2 women format)
+            </label>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.bio")}</label>
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>

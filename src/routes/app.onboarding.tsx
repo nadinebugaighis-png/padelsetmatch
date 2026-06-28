@@ -157,10 +157,10 @@ function Onboarding() {
     },
     onSuccess: () => {
       qc.invalidateQueries();
-      toast.success("Profile saved");
+      toast.success(t("ob.saved"));
       navigate({ to: "/app" });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Save failed"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
 
   const needFriendAud = looking_for === "friend" || looking_for === "both";

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
-import { Heart, MessageCircle, User } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, User } from "lucide-react";
 
 export const Route = createFileRoute("/app")({
   ssr: false,

@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMatchDetail, sendMessage, blockProfile, reportProfile } from "@/lib/app.functions";
+import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus } from "@/lib/app.functions";
 import { playtomicLink } from "@/lib/affinity";
+import { REPORT_REASONS } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ExternalLink, Send, Flag, Shield, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 

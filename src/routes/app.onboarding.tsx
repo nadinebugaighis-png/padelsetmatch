@@ -4,9 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
-  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
-  POPULAR_CITIES, POPULAR_COUNTRIES, PRIORITY_TRAITS,
-  decodeLocation, encodeLocation, formatLocation,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS,
+  PRIORITY_TRAITS,
+  decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -39,10 +39,7 @@ function Onboarding() {
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");
-  const [locations, setLocations] = useState<string[]>([]);
-  const [locCountry, setLocCountry] = useState<string>("Spain");
-  const [locCity, setLocCity] = useState<string>("");
-  const [locArea, setLocArea] = useState<string>("");
+  const [zones, setZones] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>(["English"]);
   const [level, setLevel] = useState<PadelLevel>("intermediate");
   const [priorities, setPriorities] = useState<string[]>([]);

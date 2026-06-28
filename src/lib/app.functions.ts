@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { cultureAffinity, zoneAffinity } from "./affinity";
-import { GENDERS, LOOKING_FOR, MADRID_ZONES, PADEL_LEVELS, PRIORITY_TRAITS, type Profile } from "./types";
+import { GENDERS, LOOKING_FOR, MADRID_ZONES, PADEL_LEVELS, type Profile } from "./types";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 

@@ -45,8 +45,26 @@ const en: Dict = {
   "shell.discover": "Discover",
   "shell.signout": "Sign out",
   "shell.tab.discover": "Discover",
+  "shell.tab.questions": "Q&A",
   "shell.tab.matches": "Matches",
   "shell.tab.me": "Me",
+
+  // Q&A page
+  "qa.title": "Compatibility Q&A",
+  "qa.sub": "Answer as many as you like. Each shared answer sharpens your matches. You can stop whenever — your progress is saved.",
+  "qa.generate": "Generate questions",
+  "qa.generateMore": "Generate more",
+  "qa.generating": "Thinking up questions…",
+  "qa.skip": "Skip",
+  "qa.save": "Save",
+  "qa.saved": "Saved",
+  "qa.empty": "No questions yet — tap Generate to start.",
+  "qa.answeredCount": "{n} answered",
+  "qa.yourAnswers": "Your answers",
+  "qa.seeMatches": "See who matches →",
+  "qa.delete": "Remove",
+  "qa.placeholder": "Type a short answer…",
+  "qa.howItWorks": "AI generates fresh questions tailored to your profile. We never show your answers publicly — only shared answers boost your match score.",
 
   // Discover
   "disc.h1": "Tap who you'd play.",

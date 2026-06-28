@@ -42,7 +42,7 @@ function Onboarding() {
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");
-  const [zones, setZones] = useState<string[]>([]);
+  const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
   const [languages, setLanguages] = useState<string[]>(["English"]);
   const [level, setLevel] = useState<PadelLevel>("intermediate");
   const [priorities, setPriorities] = useState<string[]>([]);

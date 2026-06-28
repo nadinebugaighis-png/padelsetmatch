@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { AUDIENCE_OPTIONS, GENDERS, LOOKING_FOR, MADRID_ZONES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type MadridZone, type PadelLevel } from "@/lib/types";
+import { AUDIENCE_OPTIONS, GENDERS, LOOKING_FOR, POPULAR_CITIES, NATIONALITIES, PADEL_LEVELS, PRIORITY_TRAITS, type Gender, type LookingFor, type PadelLevel } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +32,7 @@ function Onboarding() {
   const [age_min, setAgeMin] = useState(25);
   const [age_max, setAgeMax] = useState(38);
   const [nationality, setNationality] = useState("Spain");
-  const [zone, setZone] = useState<MadridZone>("Chamberí");
+  const [zone, setZone] = useState<string>("Madrid");
   const [level, setLevel] = useState<PadelLevel>("intermediate");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");
@@ -220,12 +220,14 @@ function Onboarding() {
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Madrid zone</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your city</label>
+            <Input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="e.g. Madrid, London, Dubai…" maxLength={60} />
             <div className="flex flex-wrap gap-2">
-              {MADRID_ZONES.map((z) => (
-                <button key={z} onClick={() => setZone(z)} className={`chip ${zone === z ? "chip-ball" : ""}`}>{z}</button>
+              {POPULAR_CITIES.map((c) => (
+                <button key={c} onClick={() => setZone(c)} className={`chip ${zone.trim().toLowerCase() === c.toLowerCase() ? "chip-ball" : ""}`}>{c}</button>
               ))}
             </div>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Padel level</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (

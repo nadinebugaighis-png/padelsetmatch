@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Padel Match Madrid — your padel partner & maybe more" },
+      { title: "PadelMatch — your padel partner & maybe more" },
       { name: "description", content: "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with." },
     ],
   }),
@@ -23,7 +23,7 @@ function Landing() {
 
       <section className="flex-1 grid lg:grid-cols-2 gap-10 items-center px-6 lg:px-16 py-10">
         <div className="max-w-xl">
-          <p className="chip chip-clay mb-6">Madrid · pilot</p>
+          <p className="chip chip-clay mb-6">Worldwide · pick your city</p>
           <h1 className="text-display text-6xl md:text-7xl lg:text-8xl leading-[0.9]">
             find your best,<br />
             <span style={{ color: "var(--ball)" }}>Match.</span>
@@ -40,10 +40,11 @@ function Landing() {
             </a>
           </div>
           <div className="mt-10 flex gap-6 text-sm text-[var(--cream)]/60">
-            <div><span className="text-display text-3xl text-[var(--cream)]">12</span><br />Madrid players seeded</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">10</span><br />neighborhoods</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />post-match vermut</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />cities, your call</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">1</span><br />sport that connects</div>
+            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />post-match drinks</div>
           </div>
+
         </div>
         <div className="hidden lg:block">
           <div className="surface-card p-8 rotate-2">
@@ -60,7 +61,7 @@ function Landing() {
       </section>
 
       <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex justify-between">
-        <span>Made for Madrid. Worst case: new padel friend.</span>
+        <span>Play anywhere. Worst case: a new padel friend.</span>
         <span>v0.1</span>
       </footer>
     </main>

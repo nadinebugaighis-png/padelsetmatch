@@ -59,10 +59,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Padel Match Madrid — find your padel partner (and maybe more)" },
+      { title: "PadelMatch — find your padel partner (and maybe more)" },
       { name: "description", content: "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with." },
-      { property: "og:title", content: "Padel Match Madrid" },
-      { property: "og:description", content: "Find players you genuinely click with. Matches, friendship, and great padel games in Madrid." },
+      { property: "og:title", content: "PadelMatch" },
+      { property: "og:description", content: "Find players you genuinely click with. Matches, friendship, and great padel games — in any city." },
+
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

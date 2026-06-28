@@ -15,21 +15,15 @@ export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 export const PADEL_LEVELS = ["just starting", "casual", "intermediate", "advanced", "competitive"] as const;
 export type PadelLevel = (typeof PADEL_LEVELS)[number];
 
-export const MADRID_ZONES = [
-  "Centro",
-  "Chamberí",
-  "Salamanca",
-  "Retiro",
-  "Malasaña",
-  "Chamartín",
-  "Moncloa",
-  "Tetuán",
-  "La Latina",
-  "Chueca",
-  "La Moraleja",
-  "Alcobendas",
+// Popular cities shown as quick-pick suggestions. Users can type any city worldwide.
+export const POPULAR_CITIES = [
+  "Madrid", "Barcelona", "Valencia", "Seville", "Málaga",
+  "Lisbon", "Porto", "Paris", "Rome", "Milan",
+  "London", "Dublin", "Berlin", "Amsterdam", "Stockholm",
+  "Dubai", "Mexico City", "Buenos Aires", "São Paulo", "Bogotá",
+  "Miami", "New York", "Los Angeles",
 ] as const;
-export type MadridZone = (typeof MADRID_ZONES)[number];
+
 
 export const GENDERS = ["woman", "man", "non-binary"] as const;
 export type Gender = (typeof GENDERS)[number];
@@ -69,7 +63,7 @@ export type Profile = {
   age_min: number;
   age_max: number;
   nationality: string;
-  zone: MadridZone;
+  zone: string;
   level: PadelLevel;
   priorities: string[];
   looking_for: LookingFor;

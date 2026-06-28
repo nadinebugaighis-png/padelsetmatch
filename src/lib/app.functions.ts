@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { cultureAffinity, zoneAffinity } from "./affinity";
-import { GENDERS, LOOKING_FOR, MADRID_ZONES, PADEL_LEVELS, type Profile } from "./types";
+import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
@@ -16,7 +16,7 @@ const ProfileInput = z.object({
   age_min: z.number().int().min(18).max(99),
   age_max: z.number().int().min(18).max(99),
   nationality: z.string().min(1).max(40),
-  zone: z.enum(MADRID_ZONES),
+  zone: z.string().min(1).max(60),
   level: z.enum(PADEL_LEVELS),
   priorities: z.array(z.string().min(1).max(40)).min(3).max(10),
   looking_for: z.enum(LOOKING_FOR),

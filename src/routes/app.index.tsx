@@ -44,6 +44,35 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't undo"),
   });
+  const blockM = useMutation({
+    mutationFn: (id: string) => block({ data: { blockedProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      toast.success("Blocked. You won't see each other again.");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't block"),
+  });
+  const reportM = useMutation({
+    mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      toast.success("Report sent. The account has been removed.");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+  });
+
+  function handleReport(id: string, name: string) {
+    const reason = window.prompt(`Report ${name}?\n\nDescribe what happened (harassment, fake photo, abuse, threats…). One report removes the account immediately.`);
+    if (!reason || reason.trim().length < 3) return;
+    if (!window.confirm(`Submit this report? ${name}'s account will be permanently deleted.`)) return;
+    reportM.mutate({ id, reason: reason.trim() });
+  }
+  function handleBlock(id: string, name: string) {
+    if (!window.confirm(`Block ${name}? You won't see each other anywhere in the app.`)) return;
+    blockM.mutate(id);
+  }
 
   if (feedQ.isLoading) return <Loading />;
   if (!feedQ.data?.me) return null;

@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMatchDetail, sendMessage, blockProfile, reportProfile } from "@/lib/app.functions";
+import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus } from "@/lib/app.functions";
 import { playtomicLink } from "@/lib/affinity";
+import { REPORT_REASONS } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ExternalLink, Send, Flag, Shield, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 
@@ -24,9 +25,16 @@ function ChatRoom() {
   const send = useServerFn(sendMessage);
   const block = useServerFn(blockProfile);
   const report = useServerFn(reportProfile);
+  const confirmFn = useServerFn(confirmPlayed);
+  const noShowFn = useServerFn(reportNoShow);
+  const statusFn = useServerFn(getPlayedStatus);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
+  const statusQ = useQuery({ queryKey: ["match-status", matchId], queryFn: () => statusFn({ data: { matchId } }) });
   const [text, setText] = useState("");
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState<string>(REPORT_REASONS[0]);
+  const [reportDetail, setReportDetail] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +71,16 @@ function ChatRoom() {
     onSuccess: safetyDone(t("chat.reportDone")),
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.reportFail")),
   });
+  const confirmM = useMutation({
+    mutationFn: () => confirmFn({ data: { matchId } }),
+    onSuccess: () => { toast.success("Marked as played ✅"); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't confirm"),
+  });
+  const noShowM = useMutation({
+    mutationFn: () => noShowFn({ data: { matchId } }),
+    onSuccess: () => toast.success("No-show reported. Thanks — we'll look into it."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+  });
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
   const { other, my_profile_id, messages } = q.data;
@@ -71,11 +89,14 @@ function ChatRoom() {
     if (!window.confirm(t("disc.blockConfirm", { name: other.first_name }))) return;
     blockM.mutate(other.id);
   };
-  const onReport = () => {
-    const reason = window.prompt(t("disc.reportPrompt", { name: other.first_name }));
-    if (!reason || reason.trim().length < 3) return;
-    if (!window.confirm(t("disc.reportConfirm", { name: other.first_name }))) return;
-    reportM.mutate({ id: other.id, reason: reason.trim() });
+  const submitReport = () => {
+    const full = reportDetail.trim() ? `${reportReason}: ${reportDetail.trim()}` : reportReason;
+    reportM.mutate({ id: other.id, reason: full });
+    setReportOpen(false);
+  };
+  const onNoShow = () => {
+    if (!window.confirm(`Report that ${other.first_name} didn't show up? Repeat no-shows lead to auto-suspension.`)) return;
+    noShowM.mutate();
   };
 
   return (
@@ -92,7 +113,7 @@ function ChatRoom() {
         <button onClick={onBlock} title={t("chat.block")} aria-label={t("chat.block")} className="p-1.5 rounded-full hover:bg-[var(--cream)]/10">
           <Shield className="w-4 h-4" />
         </button>
-        <button onClick={onReport} title={t("chat.report")} aria-label={t("chat.report")} className="p-1.5 rounded-full hover:bg-red-600/30">
+        <button onClick={() => setReportOpen(true)} title={t("chat.report")} aria-label={t("chat.report")} className="p-1.5 rounded-full hover:bg-red-600/30">
           <Flag className="w-4 h-4" />
         </button>
       </div>
@@ -109,6 +130,46 @@ function ChatRoom() {
         </span>
         <span className="chip chip-ball shrink-0">{t("chat.open")} <ExternalLink className="w-3 h-3" /></span>
       </a>
+
+      <div className="mx-3 mt-2 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => confirmM.mutate()}
+          disabled={statusQ.data?.iConfirmed || confirmM.isPending}
+          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--cream)]/15 bg-[var(--cream)]/5 px-3 py-2 text-xs hover:bg-[var(--cream)]/10 disabled:opacity-60"
+        >
+          <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
+          {statusQ.data?.iConfirmed
+            ? (statusQ.data.count >= 2 ? "Played together ✓" : "Waiting for them to confirm…")
+            : "We played a match"}
+        </button>
+        <button
+          type="button"
+          onClick={onNoShow}
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10"
+        >
+          <UserX className="w-3.5 h-3.5" /> No-show
+        </button>
+      </div>
+
+      {reportOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
+          <div className="surface-card p-5 w-full max-w-sm space-y-3" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-display text-xl">Report {other.first_name}</h3>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Reason</label>
+            <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-10 px-2" value={reportReason} onChange={(e) => setReportReason(e.target.value)}>
+              {REPORT_REASONS.map((r) => <option key={r} value={r} className="bg-[var(--court-deep)]">{r}</option>)}
+            </select>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Details (optional)</label>
+            <Input value={reportDetail} onChange={(e) => setReportDetail(e.target.value)} placeholder="Anything else we should know?" maxLength={400} />
+            <p className="text-xs text-[var(--cream)]/60">The account will be auto-suspended immediately while our team reviews.</p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setReportOpen(false)}>Cancel</Button>
+              <Button onClick={submitReport} className="bg-red-500 hover:bg-red-600 text-white">Submit report</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {messages.length === 0 && (

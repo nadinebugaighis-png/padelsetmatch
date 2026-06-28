@@ -65,9 +65,13 @@ function Landing() {
         </div>
       </section>
 
-      <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex justify-between">
+      <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex flex-wrap items-center justify-between gap-3">
         <span>{t("land.foot")}</span>
-        <span>v0.1</span>
+        <span className="flex gap-4">
+          <Link to="/terms" className="hover:text-[var(--cream)]">Terms</Link>
+          <Link to="/privacy" className="hover:text-[var(--cream)]">Privacy</Link>
+          <span>v0.1</span>
+        </span>
       </footer>
     </main>
   );

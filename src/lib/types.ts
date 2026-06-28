@@ -15,6 +15,26 @@ export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 export const PADEL_LEVELS = ["just starting", "casual", "intermediate", "advanced", "competitive"] as const;
 export type PadelLevel = (typeof PADEL_LEVELS)[number];
 
+export const AVAILABILITY_SLOTS = [
+  "Weekday mornings", "Weekday lunchtime", "Weekday evenings",
+  "Weekend mornings", "Weekend afternoons", "Weekend evenings",
+] as const;
+export type AvailabilitySlot = (typeof AVAILABILITY_SLOTS)[number];
+
+export const COURT_SIDES = ["right", "left", "both"] as const;
+export type CourtSide = (typeof COURT_SIDES)[number];
+
+export const REPORT_REASONS = [
+  "Harassment or abuse",
+  "Fake profile or catfishing",
+  "Inappropriate photos",
+  "Inappropriate messages",
+  "Spam or scam",
+  "Underage user",
+  "No-show on booked match",
+  "Other",
+] as const;
+
 // Popular cities shown as quick-pick suggestions. Users can type any city worldwide.
 export const POPULAR_CITIES = [
   "Madrid", "Barcelona", "Valencia", "Seville", "Málaga",
@@ -99,6 +119,11 @@ export type Profile = {
   looking_for: LookingFor;
   bio: string | null;
   photo_url: string | null;
+  availability?: string[];
+  court_side?: string | null;
+  mixed_doubles?: boolean;
+  played_count?: number;
+  no_show_count?: number;
 };
 
 export type RankedCandidate = Profile & {

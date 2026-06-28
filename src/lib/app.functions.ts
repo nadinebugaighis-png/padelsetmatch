@@ -24,6 +24,9 @@ const ProfileInput = z.object({
   looking_for: z.enum(LOOKING_FOR),
   bio: z.string().max(280).nullable().optional(),
   photo_url: z.string().min(1).max(2000).nullable().optional(),
+  availability: z.array(z.string().min(1).max(40)).max(10).default([]),
+  court_side: z.enum(["right", "left", "both"]).nullable().optional(),
+  mixed_doubles: z.boolean().default(false),
 });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {
@@ -412,4 +415,58 @@ export const submitFeedback = createServerFn({ method: "POST" })
       } as never);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const confirmPlayed = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("played_confirmations" as never)
+      .insert({ match_id: data.matchId, profile_id: myId } as never);
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const reportNoShow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { data: match } = await context.supabase
+      .from("matches" as never).select("*").eq("id", data.matchId).maybeSingle();
+    const mr = match as { profile_a: string; profile_b: string } | null;
+    if (!mr) throw new Error("Match not found");
+    const otherId = mr.profile_a === myId ? mr.profile_b : mr.profile_a;
+    const { error } = await context.supabase
+      .from("no_shows" as never)
+      .insert({ match_id: data.matchId, reporter_profile_id: myId, reported_profile_id: otherId } as never);
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const getPlayedStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) return { iConfirmed: false, count: 0 };
+    const { data: rows } = await context.supabase
+      .from("played_confirmations" as never)
+      .select("profile_id")
+      .eq("match_id", data.matchId);
+    const list = ((rows as Array<{ profile_id: string }> | null) ?? []);
+    return {
+      iConfirmed: list.some((r) => r.profile_id === myId),
+      count: list.length,
+    };
   });

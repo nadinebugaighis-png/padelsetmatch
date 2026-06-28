@@ -113,18 +113,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          last_message_at: string
           profile_a: string
           profile_b: string
         }
         Insert: {
           created_at?: string
           id?: string
+          last_message_at?: string
           profile_a: string
           profile_b: string
         }
         Update: {
           created_at?: string
           id?: string
+          last_message_at?: string
           profile_a?: string
           profile_b?: string
         }
@@ -184,12 +187,96 @@ export type Database = {
           },
         ]
       }
+      no_shows: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string
+          reported_profile_id: string
+          reporter_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id: string
+          reported_profile_id: string
+          reporter_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string
+          reported_profile_id?: string
+          reporter_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "no_shows_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "no_shows_reported_profile_id_fkey"
+            columns: ["reported_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "no_shows_reporter_profile_id_fkey"
+            columns: ["reporter_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      played_confirmations: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "played_confirmations_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "played_confirmations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age: number
           age_max: number
           age_min: number
+          availability: string[] | null
           bio: string | null
+          court_side: string | null
           created_at: string
           first_name: string
           friend_interested_in: string[]
@@ -201,9 +288,12 @@ export type Database = {
           level: string
           locations: string[]
           looking_for: string
+          mixed_doubles: boolean | null
           nationality: string
+          no_show_count: number
           partner_interested_in: string[]
           photo_url: string | null
+          played_count: number
           priorities: string[]
           suspended_at: string | null
           updated_at: string
@@ -214,7 +304,9 @@ export type Database = {
           age: number
           age_max?: number
           age_min?: number
+          availability?: string[] | null
           bio?: string | null
+          court_side?: string | null
           created_at?: string
           first_name: string
           friend_interested_in?: string[]
@@ -226,9 +318,12 @@ export type Database = {
           level: string
           locations?: string[]
           looking_for?: string
+          mixed_doubles?: boolean | null
           nationality: string
+          no_show_count?: number
           partner_interested_in?: string[]
           photo_url?: string | null
+          played_count?: number
           priorities?: string[]
           suspended_at?: string | null
           updated_at?: string
@@ -239,7 +334,9 @@ export type Database = {
           age?: number
           age_max?: number
           age_min?: number
+          availability?: string[] | null
           bio?: string | null
+          court_side?: string | null
           created_at?: string
           first_name?: string
           friend_interested_in?: string[]
@@ -251,9 +348,12 @@ export type Database = {
           level?: string
           locations?: string[]
           looking_for?: string
+          mixed_doubles?: boolean | null
           nationality?: string
+          no_show_count?: number
           partner_interested_in?: string[]
           photo_url?: string | null
+          played_count?: number
           priorities?: string[]
           suspended_at?: string | null
           updated_at?: string

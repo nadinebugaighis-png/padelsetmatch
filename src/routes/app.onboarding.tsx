@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
-  AUDIENCE_OPTIONS, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   POPULAR_CITIES, POPULAR_COUNTRIES, PRIORITY_TRAITS,
   decodeLocation, encodeLocation, formatLocation,
-  type Gender, type LookingFor, type PadelLevel,
+  type CourtSide, type Gender, type LookingFor, type PadelLevel,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +51,9 @@ function Onboarding() {
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [availability, setAvailability] = useState<string[]>([]);
+  const [courtSide, setCourtSide] = useState<CourtSide>("both");
+  const [mixedDoubles, setMixedDoubles] = useState(true);
 
   useEffect(() => {
     const p = profileQ.data;
@@ -65,8 +68,13 @@ function Onboarding() {
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) setLocations(p.locations);
       else if (p.zone) setLocations([encodeLocation({ country: p.nationality || "Spain", city: p.zone })]);
+      if (p.availability?.length) setAvailability(p.availability);
+      if (p.court_side) setCourtSide(p.court_side as CourtSide);
+      if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
     }
   }, [profileQ.data]);
+
+  const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
   const togglePriority = (t: string) => {
     setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);
@@ -152,6 +160,7 @@ function Onboarding() {
           locations, languages,
           level, priorities, looking_for,
           bio: bio || null, photo_url: photoUrl,
+          availability, court_side: courtSide, mixed_doubles: mixedDoubles,
         },
       });
     },
@@ -304,6 +313,25 @@ function Onboarding() {
                 <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Preferred court side</label>
+            <div className="flex flex-wrap gap-2">
+              {COURT_SIDES.map((s) => (
+                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{s}</button>
+              ))}
+            </div>
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">When can you play?</label>
+            <div className="flex flex-wrap gap-2">
+              {AVAILABILITY_SLOTS.map((s) => (
+                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{s}</button>
+              ))}
+            </div>
+
+            <label className="flex items-center gap-2 text-sm pt-1">
+              <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--ball)]" />
+              Open to mixed doubles (2 men + 2 women format)
+            </label>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.bio")}</label>
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>

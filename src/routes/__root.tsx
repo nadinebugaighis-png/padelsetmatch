@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider, useT } from "@/lib/i18n";
+import { CookieBanner } from "@/components/CookieBanner";
 
 function NotFoundComponent() {
   const t = useT();
@@ -106,6 +107,7 @@ function RootComponent() {
       <I18nProvider>
         <Outlet />
         <Toaster richColors position="top-center" />
+        <CookieBanner />
       </I18nProvider>
     </QueryClientProvider>
   );

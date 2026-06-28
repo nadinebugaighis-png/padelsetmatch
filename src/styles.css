@@ -154,7 +154,3 @@
 @utility ball-glow {
   box-shadow: 0 0 0 4px oklch(0.32 0.04 180), 0 0 40px -4px var(--ball);
 }
-@utility grain::after {
-  /* placeholder so grain util exists if needed later */
-  content: "";
-}

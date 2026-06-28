@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Padel Match Madrid" }] }),
+  head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
   component: AuthPage,
 });
 
@@ -70,7 +70,7 @@ function AuthPage() {
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md surface-card p-8">
         <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← Back</Link>
-        <h1 className="text-display text-5xl mt-3">{mode === "signup" ? "Join Madrid" : "Welcome back"}</h1>
+        <h1 className="text-display text-5xl mt-3">{mode === "signup" ? "Join PadelMatch" : "Welcome back"}</h1>
         <p className="text-sm text-[var(--cream)]/70 mt-2">
           {mode === "signup" ? "We only ask what helps the match. Your photo is for matches, not the world." : "Sign back in to your padel feed."}
         </p>

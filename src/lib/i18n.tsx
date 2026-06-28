@@ -454,8 +454,6 @@ type Ctx = {
   setLang: (l: Lang) => void;
   t: (key: string, vars?: Record<string, string>) => string;
   label: (key: string) => string;
-  needsChoice: boolean;
-  confirmChoice: (l: Lang) => void;
 };
 
 const I18nCtx = createContext<Ctx | null>(null);

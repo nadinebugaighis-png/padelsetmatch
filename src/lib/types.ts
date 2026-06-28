@@ -119,6 +119,11 @@ export type Profile = {
   looking_for: LookingFor;
   bio: string | null;
   photo_url: string | null;
+  availability?: string[];
+  court_side?: string | null;
+  mixed_doubles?: boolean;
+  played_count?: number;
+  no_show_count?: number;
 };
 
 export type RankedCandidate = Profile & {

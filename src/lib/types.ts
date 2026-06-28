@@ -26,6 +26,8 @@ export const MADRID_ZONES = [
   "Tetuán",
   "La Latina",
   "Chueca",
+  "La Moraleja",
+  "Alcobendas",
 ] as const;
 export type MadridZone = (typeof MADRID_ZONES)[number];
 

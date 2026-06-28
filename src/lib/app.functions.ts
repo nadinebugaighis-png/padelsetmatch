@@ -389,3 +389,27 @@ export const reportProfile = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+export const submitFeedback = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      message: z.string().trim().min(3).max(2000),
+      rating: z.number().int().min(1).max(5).nullable().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myProfileId = (me as { id: string } | null)?.id ?? null;
+    const { error } = await context.supabase
+      .from("feedback" as never)
+      .insert({
+        user_id: context.userId,
+        profile_id: myProfileId,
+        message: data.message,
+        rating: data.rating ?? null,
+      } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

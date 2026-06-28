@@ -178,11 +178,44 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
-    const scored = ((candRows as Profile[] | null) ?? [])
-      .filter((c) => !blockedSet.has(c.id))
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id));
+
+    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const ids = [me.id, ...candidates.map((c) => c.id)];
+    const { data: qaRows } = await supabaseAdmin
+      .from("qa_answers" as never)
+      .select("profile_id, question, answer_norm")
+      .in("profile_id", ids);
+    const byProfile = new Map<string, Map<string, string>>();
+    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string }> | null) ?? []).forEach((r) => {
+      let m = byProfile.get(r.profile_id);
+      if (!m) { m = new Map(); byProfile.set(r.profile_id, m); }
+      m.set(r.question, r.answer_norm);
+    });
+    const myAns = byProfile.get(me.id) ?? new Map<string, string>();
+
+    const scored = candidates
       .map((c) => {
         const { score, reasons } = scoreCandidate(me, c);
-        return { ...c, score, reasons, liked: likedSet.has(c.id) };
+        // Shared-question bonus
+        const theirAns = byProfile.get(c.id) ?? new Map<string, string>();
+        let qaBonus = 0;
+        let qSame = 0;
+        let qShared = 0;
+        myAns.forEach((v, q) => {
+          if (theirAns.has(q)) {
+            qShared++;
+            if (theirAns.get(q) === v) { qaBonus += 5; qSame++; }
+            else qaBonus += 1;
+          }
+        });
+        const bonus = Math.min(30, qaBonus);
+        const finalScore = Math.min(100, score + bonus);
+        const reasons2 = [...reasons];
+        if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
+        else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
+        return { ...c, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);

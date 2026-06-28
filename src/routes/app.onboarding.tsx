@@ -32,7 +32,8 @@ function Onboarding() {
   const [nationality, setNationality] = useState("Spain");
   const [zone, setZone] = useState<MadridZone>("Chamberí");
   const [level, setLevel] = useState<PadelLevel>("intermediate");
-  const [priorities, setPriorities] = useState<PriorityTrait[]>([]);
+  const [priorities, setPriorities] = useState<string[]>([]);
+  const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);

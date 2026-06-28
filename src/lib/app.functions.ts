@@ -175,6 +175,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
     const scored = ((candRows as Profile[] | null) ?? [])
+      .filter((c) => !blockedSet.has(c.id))
       .map((c) => {
         const { score, reasons } = scoreCandidate(me, c);
         return { ...c, score, reasons, liked: likedSet.has(c.id) };

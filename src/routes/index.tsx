@@ -21,6 +21,7 @@ function Landing() {
   const fetchCount = useServerFn(getPlayerCount);
   const countQ = useQuery({ queryKey: ["player-count"], queryFn: () => fetchCount() });
   const count = countQ.data?.count ?? 0;
+  const install = useInstallModal();
   return (
     <main className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">

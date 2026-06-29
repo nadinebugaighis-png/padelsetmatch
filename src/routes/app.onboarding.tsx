@@ -315,21 +315,23 @@ function Onboarding() {
                       {citiesFor(b.country).map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  <div className="grid grid-cols-1 gap-2">
-                    {b.areas.map((a, ai) => {
-                      const opts = areasFor(b.country, b.city);
-                      const taken = new Set(b.areas.filter((x, k) => k !== ai && x));
-                      return (
-                        <Select key={ai} value={a || undefined} onValueChange={(v) => updateArea(i, ai, v === "__none__" ? "" : v)} disabled={!b.city}>
-                          <SelectTrigger><SelectValue placeholder={b.city ? `Area ${ai + 1} (optional)` : "Pick city first"} /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="__none__">— None —</SelectItem>
-                            {opts.filter((o) => !taken.has(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                      );
-                    })}
-                  </div>
+                  {areasFor(b.country, b.city).length > 0 && (
+                    <div className="grid grid-cols-1 gap-2">
+                      {b.areas.map((a, ai) => {
+                        const opts = areasFor(b.country, b.city);
+                        const taken = new Set(b.areas.filter((x, k) => k !== ai && x));
+                        return (
+                          <Select key={ai} value={a || undefined} onValueChange={(v) => updateArea(i, ai, v === "__none__" ? "" : v)} disabled={!b.city}>
+                            <SelectTrigger><SelectValue placeholder={b.city ? `Area ${ai + 1} (optional)` : "Pick city first"} /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="__none__">— None —</SelectItem>
+                              {opts.filter((o) => !taken.has(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        );
+                      })}
+                    </div>
+                  )}
 
                 </div>
               ))}

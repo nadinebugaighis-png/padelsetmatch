@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile, getMyQaAnswers } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X, Flag, Shield } from "lucide-react";
+import { Heart, X, Flag, Shield, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/")({
@@ -23,6 +23,8 @@ function Discover() {
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
 
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
+  const getAnswers = useServerFn(getMyQaAnswers);
+  const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
 
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
@@ -97,6 +99,19 @@ function Discover() {
           </button>
         ))}
       </div>
+
+      {(qaQ.data?.length ?? 0) === 0 && (
+        <Link to="/app/questions" className="mt-4 block surface-card p-4 border border-[var(--ball)]/30 rounded-xl">
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-[var(--ball)] shrink-0 mt-0.5" />
+            <div>
+              <div className="text-sm font-semibold text-[var(--cream)]">{t("disc.qaBannerTitle")}</div>
+              <div className="text-xs text-[var(--cream)]/70 mt-1">{t("disc.qaBannerSub")}</div>
+              <div className="mt-2 text-xs text-[var(--ball)] underline">{t("disc.qaBannerCta")}</div>
+            </div>
+          </div>
+        </Link>
+      )}
 
       {list.length === 0 ? (
         <p className="mt-10 text-center text-[var(--cream)]/60 text-sm">{t("disc.empty")}</p>

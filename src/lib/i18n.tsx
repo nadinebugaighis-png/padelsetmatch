@@ -102,6 +102,9 @@ const en: Dict = {
   "disc.reportPrompt": "Report {name}?\n\nDescribe what happened (harassment, fake photo, abuse, threats…). The account is suspended immediately and reviewed by our team.",
   "disc.reportConfirm": "Send report? {name}'s account will be suspended pending staff review.",
   "disc.blockConfirm": "Block {name}? You won't see each other anywhere in the app.",
+  "disc.qaBannerTitle": "Unlock your Matchmaking code",
+  "disc.qaBannerSub": "Answer a few questions so the AI can find your best court matches — personality, values and what you click on.",
+  "disc.qaBannerCta": "Start matchmaking →",
 
   // Matches list
   "ml.h1": "Your courts",
@@ -341,6 +344,9 @@ const es: Dict = {
   "disc.reportPrompt": "¿Reportar a {name}?\n\nCuenta qué ha pasado (acoso, foto falsa, abuso, amenazas…). La cuenta se suspende al instante y la revisa nuestro equipo.",
   "disc.reportConfirm": "¿Enviar el reporte? La cuenta de {name} quedará suspendida pendiente de revisión.",
   "disc.blockConfirm": "¿Bloquear a {name}? No os veréis en ninguna parte de la app.",
+  "disc.qaBannerTitle": "Desbloquea tu Código de afinidad",
+  "disc.qaBannerSub": "Responde unas preguntas para que la IA encuentre tus mejores matches de pista — personalidad, valores y con quien conectas.",
+  "disc.qaBannerCta": "Empezar afinidad →",
 
   // Matches list
   "ml.h1": "Tus pistas",

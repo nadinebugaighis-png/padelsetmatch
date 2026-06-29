@@ -16,6 +16,9 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const t = useT();
+  const fetchCount = useServerFn(getPlayerCount);
+  const countQ = useQuery({ queryKey: ["player-count"], queryFn: () => fetchCount() });
+  const count = countQ.data?.count ?? 0;
   return (
     <main className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
@@ -47,10 +50,9 @@ function Landing() {
               {t("land.what")}
             </a>
           </div>
-          <div className="mt-10 flex gap-6 text-sm text-[var(--cream)]/60">
-            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />{t("land.stat1")}</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">1</span><br />{t("land.stat2")}</div>
-            <div><span className="text-display text-3xl text-[var(--cream)]">∞</span><br />{t("land.stat3")}</div>
+          <div className="mt-10 text-sm text-[var(--cream)]/60">
+            <span className="text-display text-4xl text-[var(--cream)]">{count}</span>
+            <br />{t("land.statUsers")}
           </div>
 
         </div>

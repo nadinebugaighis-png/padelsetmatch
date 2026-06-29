@@ -194,7 +194,7 @@ function ChatRoom() {
         onSubmit={(e) => { e.preventDefault(); if (text.trim()) sendM.mutate(text.trim()); }}
         className="px-3 py-3 border-t border-[var(--cream)]/10 flex gap-2"
       >
-        <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={t("chat.placeholder")} />
+        <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={messages.length === 0 ? t("chat.placeholder") : ""} />
         <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending}><Send className="w-4 h-4" /></Button>
       </form>
     </main>

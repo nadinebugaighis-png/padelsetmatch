@@ -131,6 +131,13 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "China",
+    cities: [
+      { name: "Shanghai", areas: ["The Bund", "Jing'an", "Xintiandi", "French Concession", "Lujiazui", "Gubei", "Hongqiao"] },
+      { name: "Beijing", areas: ["Sanlitun", "Chaoyang Park", "Guomao", "Shunyi"] },
+    ],
+  },
+  {
     name: "United States",
     cities: [
       { name: "Miami", areas: ["Brickell", "Coral Gables", "Coconut Grove", "Wynwood", "Aventura", "Doral", "Key Biscayne"] },
@@ -202,6 +209,19 @@ export const LOCATION_DATA: CountryData[] = [
     name: "Greece",
     cities: [
       { name: "Athens", areas: ["Kolonaki", "Glyfada", "Kifisia", "Marousi"] },
+    ],
+  },
+  {
+    name: "Hong Kong",
+    cities: [
+      { name: "Hong Kong", areas: ["Central", "Mid-Levels", "Repulse Bay", "Stanley", "Kowloon", "Tsim Sha Tsui", "Clear Water Bay", "Sai Kung"] },
+    ],
+  },
+  {
+    name: "Japan",
+    cities: [
+      { name: "Tokyo", areas: ["Shibuya", "Shinjuku", "Roppongi", "Azabu", "Meguro", "Minato", "Setagaya", "Omotesando", "Aoyama", "Ebisu"] },
+      { name: "Osaka", areas: ["Umeda", "Namba", "Shinsaibashi"] },
     ],
   },
   {

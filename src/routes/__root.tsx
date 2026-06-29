@@ -76,7 +76,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://padelspark.lovable.app/og-share.jpg" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
+    ],
+    meta: [
+      { name: "theme-color", content: "#fbbf24" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

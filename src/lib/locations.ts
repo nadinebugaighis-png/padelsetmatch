@@ -131,6 +131,13 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "China",
+    cities: [
+      { name: "Shanghai", areas: ["The Bund", "Jing'an", "Xintiandi", "French Concession", "Lujiazui", "Gubei", "Hongqiao"] },
+      { name: "Beijing", areas: ["Sanlitun", "Chaoyang Park", "Guomao", "Shunyi"] },
+    ],
+  },
+  {
     name: "United States",
     cities: [
       { name: "Miami", areas: ["Brickell", "Coral Gables", "Coconut Grove", "Wynwood", "Aventura", "Doral", "Key Biscayne"] },

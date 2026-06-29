@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile, getMyQaAnswers } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile, getMyQaAnswers, getMyMatches } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X, Flag, Shield, Sparkles } from "lucide-react";
+import { Heart, X, Flag, Shield, Sparkles, MessageCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/")({
@@ -25,6 +25,8 @@ function Discover() {
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
   const getAnswers = useServerFn(getMyQaAnswers);
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
+  const getMatches = useServerFn(getMyMatches);
+  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
 
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
@@ -104,6 +106,22 @@ function Discover() {
           </button>
         ))}
       </div>
+
+      {(matchesQ.data?.length ?? 0) > 0 && (
+        <Link to="/app/matches" className="mt-4 flex items-center gap-3 surface-card p-3 border border-[var(--ball)] rounded-xl bg-[var(--ball)]/10">
+          <div className="flex -space-x-2">
+            {matchesQ.data!.slice(0, 3).map((m) => m.other?.photo_url && (
+              <img key={m.match_id} src={m.other.photo_url} alt={m.other.first_name} className="w-9 h-9 rounded-full object-cover border-2 border-[var(--court-deep)]" />
+            ))}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold text-[var(--cream)]">🎾 It's a match! ({matchesQ.data!.length})</div>
+            <div className="text-xs text-[var(--cream)]/75">Tap to open your chat{matchesQ.data!.length > 1 ? "s" : ""}</div>
+          </div>
+          <MessageCircle className="w-5 h-5 text-[var(--ball)]" />
+        </Link>
+      )}
+
 
       {(qaQ.data?.length ?? 0) === 0 && (
         <Link to="/app/questions" className="mt-4 block surface-card p-4 border border-[var(--ball)]/30 rounded-xl">

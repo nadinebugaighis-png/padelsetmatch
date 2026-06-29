@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getIsAdmin, getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { ArrowLeft, LayoutGrid, MessageCircle, Sparkles, User } from "lucide-react";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({
@@ -83,6 +84,7 @@ function AuthShell() {
       </header>
 
       <Outlet />
+      <InstallPrompt />
 
       {hasProfile && !onOnboarding && (
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">

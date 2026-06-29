@@ -257,6 +257,13 @@ const es: Dict = {
   "land.stat3": "cañas después del partido",
   "land.tap": "Tap. Tap de vuelta. A jugar.",
   "land.foot": "Juega donde quieras. En el peor caso: un nuevo amigo de pádel.",
+  "land.preview.chip": "Adelanto",
+  "land.preview.title": "Echa un vistazo al Grid",
+  "land.preview.sub": "Un anticipo de jugadores cerca de ti. Inicia sesión para ver fotos, puntuaciones y chat.",
+  "land.preview.cta": "Únete gratis",
+  "land.preview.unlock": "Inicia sesión para ver",
+  "land.preview.foot": "Solo vista previa. Los perfiles reales aparecen al completar el cuestionario.",
+
 
   // Auth
   "auth.back": "← Atrás",

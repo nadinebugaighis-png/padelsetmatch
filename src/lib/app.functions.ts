@@ -778,4 +778,104 @@ export const getAdminStats = createServerFn({ method: "GET" })
   });
 
 
+// ===================== Padel Quiz (Learn) =====================
+
+type QuizQuestion = {
+  question: string;
+  category: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+};
+
+export const generatePadelQuiz = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      count: z.number().int().min(1).max(8).default(5),
+      lang: z.enum(["en", "es"]).default("en"),
+      topic: z.string().max(60).optional(),
+      level: z.enum(["beginner", "intermediate", "advanced", "mixed"]).default("mixed"),
+    }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) {
+      return { questions: QUIZ_FALLBACK[data.lang].slice(0, data.count) };
+    }
+
+    const { generateText } = await import("ai");
+    const provider = createLovableAiGatewayProvider(apiKey);
+    const model = provider("google/gemini-2.5-flash");
+
+    const sys = data.lang === "es"
+      ? "Eres un entrenador profesional de pádel. Creas preguntas tipo quiz multiple choice claras y correctas según las reglas oficiales de la FIP, con foco en reglas, posicionamiento, táctica, comunicación con el compañero (voces: '¡mía!', '¡tuya!', '¡fuera!', '¡bote pronto!', '¡cambio!'), golpes (bandeja, víbora, globo, chiquita, bajada de pared) y juego en pareja. Responde SIEMPRE en español."
+      : "You are a professional padel coach. You create clear multiple-choice quiz questions correct per official FIP rules, focused on rules, court positioning, tactics, partner communication (calling shots: 'mine!', 'yours!', 'out!', 'bounce!', 'switch!'), shots (bandeja, víbora, lob, chiquita, wall return) and doubles play. Always reply in English.";
+
+    const prompt = `Generate exactly ${data.count} NEW padel quiz questions.
+Level focus: ${data.level}.${data.topic ? ` Topic: ${data.topic}.` : ""}
+Mix categories across: rules, scoring, positioning, partner communication & calls, shots & technique, tactics, etiquette.
+
+Each question MUST have:
+- 3 or 4 short options (under 8 words each)
+- exactly one correct answer (correctIndex 0-based)
+- a concise explanation (1-2 sentences) that ALWAYS states the correct answer and WHY, so a wrong answer is fully clarified.
+
+Return ONLY valid JSON, no prose, no markdown:
+{"questions":[{"question":"...","category":"rules","options":["a","b","c","d"],"correctIndex":1,"explanation":"..."}]}
+Categories lowercase single words.`;
+
+    let text = "";
+    try {
+      const res = await generateText({ model, system: sys, prompt, temperature: 0.8 });
+      text = res.text ?? "";
+    } catch (e) {
+      return { questions: QUIZ_FALLBACK[data.lang].slice(0, data.count), warning: e instanceof Error ? e.message : "AI unavailable" };
+    }
+
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    let parsed: { questions?: QuizQuestion[] } = {};
+    try {
+      parsed = JSON.parse(cleaned.slice(start, end + 1));
+    } catch {
+      parsed = { questions: [] };
+    }
+    const out: QuizQuestion[] = (parsed.questions ?? [])
+      .filter((q) => q && typeof q.question === "string" && Array.isArray(q.options) && q.options.length >= 2 && typeof q.correctIndex === "number")
+      .slice(0, data.count)
+      .map((q) => ({
+        question: String(q.question).trim().slice(0, 240),
+        category: String(q.category ?? "padel").toLowerCase().slice(0, 24),
+        options: q.options.slice(0, 4).map((o) => String(o).slice(0, 80)),
+        correctIndex: Math.max(0, Math.min(q.options.length - 1, q.correctIndex | 0)),
+        explanation: String(q.explanation ?? "").slice(0, 400),
+      }));
+    if (out.length === 0) return { questions: QUIZ_FALLBACK[data.lang].slice(0, data.count) };
+    return { questions: out };
+  });
+
+const QUIZ_FALLBACK: Record<"en" | "es", QuizQuestion[]> = {
+  en: [
+    { question: "Your partner is about to hit a ball coming down the middle. What should you call?", category: "communication", options: ["'Mine!'", "'Yours!'", "Stay quiet", "'Out!'"], correctIndex: 1, explanation: "Call 'Yours!' clearly and early so your partner commits. Middle balls are the #1 cause of doubles confusion — the call decides who takes it." },
+    { question: "The ball bounces in your court, hits the back glass, and comes back. Is it still in play?", category: "rules", options: ["Yes, play it", "No, point lost", "Only if it bounces again", "Only on serve"], correctIndex: 0, explanation: "Yes — after one bounce on the floor the ball may hit your own walls and you must return it before it bounces twice on the floor." },
+    { question: "Best shot when opponents lob you deep to the back glass?", category: "shots", options: ["Smash hard", "Bandeja", "Drop shot", "Drive"], correctIndex: 1, explanation: "The bandeja is a sliced overhead that keeps you at the net. A full smash from deep usually loses position; the bandeja keeps pressure on." },
+    { question: "Where should the net team stand?", category: "positioning", options: ["On the service line", "1-2 m from the net, side by side", "One up, one back", "Against the back glass"], correctIndex: 1, explanation: "Stay together about 1-2 m from the net. 'One up, one back' opens the middle. Padel doubles is played as a unit — move together." },
+    { question: "On the serve, the ball must…", category: "rules", options: ["Be hit overhead", "Bounce first, hit at or below waist", "Be hit on the volley", "Bounce twice before hit"], correctIndex: 1, explanation: "Serve is underarm: bounce the ball once in your own box, then strike it at or below waist height into the opponent's diagonal box." },
+    { question: "The ball hits a wall before bouncing on the floor. What's the call?", category: "rules", options: ["Play on", "Point for hitter", "Point against hitter", "Replay"], correctIndex: 2, explanation: "The ball must bounce on the floor first. If it hits any wall before touching the ground, the hitter loses the point." },
+    { question: "Your partner chases a lob to the back. What should you do?", category: "tactics", options: ["Stay at the net", "Retreat to the service line and mirror them", "Run to the back too", "Switch sides immediately"], correctIndex: 1, explanation: "Drop back to around the service line and stay parallel. Staying at the net leaves a huge gap; mirroring keeps the team connected." },
+    { question: "Best response to a low, slow ball at your feet at the net?", category: "shots", options: ["Smash", "Chiquita (soft low volley)", "Lob", "Hard drive"], correctIndex: 1, explanation: "A chiquita — soft, low volley back to the opponents' feet — forces them to hit up, giving you the next attacking ball. Don't try to smash a low ball." },
+  ],
+  es: [
+    { question: "Tu compañero va a golpear una bola por el medio. ¿Qué dices?", category: "comunicación", options: ["'¡Mía!'", "'¡Tuya!'", "Callar", "'¡Fuera!'"], correctIndex: 1, explanation: "Di '¡Tuya!' claro y pronto para que tu compañero se comprometa. Las bolas por el medio son la #1 causa de confusión; la voz decide quién la toma." },
+    { question: "La bola bota en tu pista, toca el cristal del fondo y vuelve. ¿Sigue en juego?", category: "reglas", options: ["Sí, juégala", "No, punto perdido", "Solo si bota otra vez", "Solo en el saque"], correctIndex: 0, explanation: "Sí: tras un bote en el suelo la bola puede tocar tus paredes y debes devolverla antes de un segundo bote en el suelo." },
+    { question: "¿Mejor golpe cuando te globean profundo al cristal?", category: "golpes", options: ["Remate fuerte", "Bandeja", "Dejada", "Drive"], correctIndex: 1, explanation: "La bandeja es un remate cortado que te mantiene en la red. Un remate completo desde el fondo suele perder posición." },
+    { question: "¿Dónde debe colocarse la pareja en la red?", category: "posicionamiento", options: ["En la línea de saque", "A 1-2 m de la red, juntos", "Uno arriba, uno atrás", "Pegados al cristal de fondo"], correctIndex: 1, explanation: "Juntos a 1-2 m de la red. 'Uno arriba, uno atrás' abre el medio. El pádel se juega como bloque, moviéndose a la vez." },
+    { question: "En el saque, la bola debe…", category: "reglas", options: ["Golpearse por encima de la cabeza", "Botar primero y golpearse a la cintura o por debajo", "Golpearse de volea", "Botar dos veces"], correctIndex: 1, explanation: "El saque es por debajo: deja botar la bola en tu cuadro y golpéala a la altura de la cintura o por debajo, en diagonal." },
+    { question: "La bola toca la pared antes de botar en el suelo. ¿Qué pasa?", category: "reglas", options: ["Se juega", "Punto para quien golpeó", "Punto en contra de quien golpeó", "Se repite"], correctIndex: 2, explanation: "La bola debe botar primero en el suelo. Si toca cualquier pared antes del suelo, pierde el punto quien la golpeó." },
+    { question: "Tu compañero persigue un globo al fondo. ¿Qué haces?", category: "táctica", options: ["Quedarte en la red", "Retroceder en paralelo a la línea de saque", "Correr al fondo también", "Cambiar de lado"], correctIndex: 1, explanation: "Baja en paralelo a la línea de saque. Pegado a la red dejas un hueco enorme; en paralelo el equipo sigue conectado." },
+    { question: "¿Mejor respuesta a una bola baja y lenta a tus pies en la red?", category: "golpes", options: ["Remate", "Chiquita (volea baja suave)", "Globo", "Drive fuerte"], correctIndex: 1, explanation: "Una chiquita a los pies del rival lo obliga a golpear hacia arriba y te da la siguiente bola de ataque. No intentes rematar una bola baja." },
+  ],
+};
 

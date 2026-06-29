@@ -20,6 +20,7 @@ import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppLearnRouteImport } from './routes/app.learn'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
 
@@ -78,6 +79,11 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
+const AppLearnRoute = AppLearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/learn': typeof AppLearnRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/learn': typeof AppLearnRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/learn': typeof AppLearnRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/learn'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/learn'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/learn'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -269,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/learn': {
+      id: '/app/learn'
+      path: '/learn'
+      fullPath: '/app/learn'
+      preLoaderRoute: typeof AppLearnRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin': {
       id: '/app/admin'
       path: '/admin'
@@ -300,6 +319,7 @@ const AppMatchesRouteWithChildren = AppMatchesRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppLearnRoute: typeof AppLearnRoute
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -309,6 +329,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppLearnRoute: AppLearnRoute,
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,

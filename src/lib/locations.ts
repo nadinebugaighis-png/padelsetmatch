@@ -239,6 +239,12 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "Tunisia",
+    cities: [
+      { name: "Tunis", areas: ["La Marsa", "Carthage", "Sidi Bou Said", "Les Berges du Lac", "Gammarth", "Ariana", "Lac"] },
+    ],
+  },
+  {
     name: "Turkey",
     cities: [
       { name: "Istanbul", areas: ["Beşiktaş", "Nişantaşı", "Etiler", "Kadıköy", "Zekeriyaköy"] },

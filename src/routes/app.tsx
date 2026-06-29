@@ -91,7 +91,7 @@ function AuthShell() {
           <div className="max-w-md mx-auto grid grid-cols-5">
             <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
             <NavTab to="/app" label="Grid" icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
-            <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} />
+            <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             <NavTab to="/app/learn" label="Learn" icon={<GraduationCap className="w-5 h-5" />} active={path.startsWith("/app/learn")} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
           </div>
@@ -101,12 +101,15 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, icon, active, highlight }: { to: string; label: string; icon: React.ReactNode; active: boolean; highlight?: boolean }) {
+function NavTab({ to, label, icon, active, highlight, badge }: { to: string; label: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number }) {
   const isHighlight = highlight && !active;
   return (
     <Link to={to} className={`flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
       <span className="relative">
         {icon}
+        {!!badge && badge > 0 && (
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold flex items-center justify-center ball-glow">{badge > 9 ? "9+" : badge}</span>
+        )}
         {isHighlight && (
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--ball)] ball-glow animate-ping" />
         )}

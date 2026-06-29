@@ -33,14 +33,22 @@ function Matches() {
         <ul className="mt-5 space-y-3">
           {q.data.map((m) => m.other && (
             <li key={m.match_id}>
-              <Link to="/app/matches/$matchId" params={{ matchId: m.match_id }} className="flex items-center gap-3 surface-card p-3 hover:bg-[var(--cream)]/5">
-                <div className="w-16 h-16 rounded-xl overflow-hidden bg-[var(--cream)]/10 shrink-0">
+              <Link to="/app/matches/$matchId" params={{ matchId: m.match_id }} className="flex items-center gap-3 surface-card p-3 hover:bg-[var(--cream)]/5 relative">
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-[var(--cream)]/10 shrink-0 relative">
                   {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
+                  {m.unread > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold flex items-center justify-center ball-glow">{m.unread > 9 ? "9+" : m.unread}</span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-display text-2xl">{m.other.first_name}, {m.other.age}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-display text-2xl">{m.other.first_name}, {m.other.age}</div>
+                    {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--ball)] ball-glow" />}
+                  </div>
                   <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{m.other.zone} · {label(m.other.level)}</div>
-                  <div className="text-xs text-[var(--cream)]/70 mt-1 truncate">{m.other.bio}</div>
+                  <div className={`text-xs mt-1 truncate ${m.unread > 0 ? "text-[var(--cream)] font-medium" : "text-[var(--cream)]/70"}`}>
+                    {m.last_message ? `${m.last_message.from_me ? "You: " : ""}${m.last_message.body}` : m.other.bio}
+                  </div>
                 </div>
               </Link>
             </li>

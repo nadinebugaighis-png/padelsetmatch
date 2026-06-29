@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus } from "@/lib/app.functions";
+import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus, markMatchRead } from "@/lib/app.functions";
 import { playtomicLink } from "@/lib/affinity";
 import { REPORT_REASONS } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
@@ -48,6 +48,14 @@ function ChatRoom() {
   }, [matchId, qc]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [q.data?.messages.length]);
+
+  const markRead = useServerFn(markMatchRead);
+  useEffect(() => {
+    if (!q.data) return;
+    markRead({ data: { matchId } }).then(() => {
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+    }).catch(() => {});
+  }, [matchId, q.data?.messages.length, markRead, qc]);
 
   const sendM = useMutation({
     mutationFn: (body: string) => send({ data: { matchId, body } }),

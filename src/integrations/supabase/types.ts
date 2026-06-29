@@ -109,6 +109,39 @@ export type Database = {
           },
         ]
       }
+      match_reads: {
+        Row: {
+          last_read_at: string
+          match_id: string
+          profile_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          match_id: string
+          profile_id: string
+        }
+        Update: {
+          last_read_at?: string
+          match_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_reads_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_reads_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
           created_at: string

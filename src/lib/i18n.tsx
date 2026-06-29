@@ -344,6 +344,9 @@ const es: Dict = {
   "disc.reportPrompt": "¿Reportar a {name}?\n\nCuenta qué ha pasado (acoso, foto falsa, abuso, amenazas…). La cuenta se suspende al instante y la revisa nuestro equipo.",
   "disc.reportConfirm": "¿Enviar el reporte? La cuenta de {name} quedará suspendida pendiente de revisión.",
   "disc.blockConfirm": "¿Bloquear a {name}? No os veréis en ninguna parte de la app.",
+  "disc.qaBannerTitle": "Desbloquea tu Código de afinidad",
+  "disc.qaBannerSub": "Responde unas preguntas para que la IA encuentre tus mejores matches de pista — personalidad, valores y con quien conectas.",
+  "disc.qaBannerCta": "Empezar afinidad →",
 
   // Matches list
   "ml.h1": "Tus pistas",

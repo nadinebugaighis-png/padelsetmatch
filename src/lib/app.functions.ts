@@ -816,10 +816,14 @@ export const generatePadelQuiz = createServerFn({ method: "POST" })
 Level focus: ${data.level}.${data.topic ? ` Topic: ${data.topic}.` : ""}
 Mix categories across: rules, scoring, positioning, partner communication & calls, shots & technique, tactics, etiquette.
 
-Each question MUST have:
-- 3 or 4 short options (under 8 words each)
-- exactly one correct answer (correctIndex 0-based)
-- a concise explanation (1-2 sentences) that ALWAYS states the correct answer and WHY, so a wrong answer is fully clarified.
+CLARITY RULES (very important):
+- Write the question as ONE plain sentence, max 20 words. If you use a padel term (bandeja, víbora, chiquita, globo), add a quick hint in parentheses.
+- Make the scenario unambiguous: state who is serving/returning, where players stand (net vs baseline), and the score only if it matters.
+- No trick wording, double negatives, "all of the above", "none of the above", or "both A and C".
+- 3 or 4 options, each under 8 words, mutually exclusive, all plausible — no joke answers.
+- Exactly one correct option (correctIndex 0-based). The wrong options must be clearly wrong to an expert but believable to a learner.
+- Explanation: 1-2 short sentences that restate the correct answer in plain words AND give the reason/rule.
+- ${data.lang === "es" ? "Escribe TODO en español natural y claro." : "Write EVERYTHING in clear, natural English."}
 
 Return ONLY valid JSON, no prose, no markdown:
 {"questions":[{"question":"...","category":"rules","options":["a","b","c","d"],"correctIndex":1,"explanation":"..."}]}

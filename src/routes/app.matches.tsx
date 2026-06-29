@@ -14,7 +14,8 @@ function Matches() {
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const { t, label } = useI18n();
 
-  if (path !== "/app/matches") return <Outlet />;
+  const isMatchesList = path === "/app/matches" || path === "/app/matches/";
+  if (!isMatchesList) return <Outlet />;
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">

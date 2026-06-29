@@ -251,7 +251,7 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
-            <Input type="number" min={18} max={99} value={age} onChange={(e) => setAge(parseInt(e.target.value) || 18)} />
+            <Input type="number" min={18} max={120} value={age} onChange={(e) => setAge(parseInt(e.target.value) || 18)} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
@@ -296,9 +296,9 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
-              <Input type="number" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(parseInt(e.target.value) || 18)} />
+              <Input type="number" min={18} max={120} value={age_min} onChange={(e) => setAgeMin(parseInt(e.target.value) || 18)} />
               <span>{t("ob.to")}</span>
-              <Input type="number" min={18} max={99} value={age_max} onChange={(e) => setAgeMax(parseInt(e.target.value) || 99)} />
+              <Input type="number" min={18} max={120} value={age_max} onChange={(e) => setAgeMax(parseInt(e.target.value) || 120)} />
             </div>
           </>
         )}

@@ -9,13 +9,13 @@ const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l
 
 const ProfileInput = z.object({
   first_name: z.string().min(1).max(40),
-  age: z.number().int().min(18).max(99),
+  age: z.number().int().min(18).max(120),
   gender: z.enum(GENDERS),
   interested_in: z.array(z.enum(GENDERS)).min(1),
   friend_interested_in: z.array(z.string()).default([]),
   partner_interested_in: z.array(z.string()).default([]),
-  age_min: z.number().int().min(18).max(99),
-  age_max: z.number().int().min(18).max(99),
+  age_min: z.number().int().min(18).max(120),
+  age_max: z.number().int().min(18).max(120),
   nationality: z.string().min(1).max(40),
   zone: z.string().min(1).max(60),
   locations: z.array(z.string().min(1).max(120)).max(8).default([]),

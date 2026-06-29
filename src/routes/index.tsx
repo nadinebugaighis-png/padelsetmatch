@@ -50,6 +50,7 @@ function Landing() {
             <a href="https://playtomic.io" target="_blank" rel="noreferrer" className="inline-flex items-center rounded-full border border-[var(--cream)]/30 px-6 py-3 hover:bg-[var(--cream)]/10">
               {t("land.what")}
             </a>
+            <ShareQR url="https://padelspark.lovable.app" label="Join me on PadelMatch" />
           </div>
           <div className="mt-10 text-sm text-[var(--cream)]/60">
             <span className="text-display text-4xl text-[var(--cream)]">{count}</span>

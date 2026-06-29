@@ -236,7 +236,17 @@ export const likeProfile = createServerFn({ method: "POST" })
       .from("likes" as never)
       .insert({ liker_profile_id: myId, liked_profile_id: data.likedProfileId } as never);
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
-    return { ok: true };
+    // Check if a match was created (trigger handles reciprocal)
+    const a = myId < data.likedProfileId ? myId : data.likedProfileId;
+    const b = myId < data.likedProfileId ? data.likedProfileId : myId;
+    const { data: m } = await context.supabase
+      .from("matches" as never)
+      .select("id")
+      .eq("profile_a", a)
+      .eq("profile_b", b)
+      .maybeSingle();
+    const matchId = (m as { id: string } | null)?.id ?? null;
+    return { ok: true, matchId };
   });
 
 export const unlikeProfile = createServerFn({ method: "POST" })

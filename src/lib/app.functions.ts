@@ -281,18 +281,47 @@ export const getMyMatches = createServerFn({ method: "GET" })
     const { data: matches } = await context.supabase
       .from("matches" as never)
       .select("*")
-      .order("created_at", { ascending: false });
-    const m = (matches as Array<{ id: string; profile_a: string; profile_b: string; created_at: string }> | null) ?? [];
+      .order("last_message_at", { ascending: false });
+    const m = (matches as Array<{ id: string; profile_a: string; profile_b: string; created_at: string; last_message_at: string }> | null) ?? [];
     const otherIds = m.map((x) => (x.profile_a === myId ? x.profile_b : x.profile_a));
     if (otherIds.length === 0) return [];
-    const { data: profiles } = await context.supabase
-      .from("profiles" as never).select("*").in("id", otherIds).is("suspended_at", null);
+    const matchIds = m.map((x) => x.id);
+    const [{ data: profiles }, { data: reads }, { data: msgs }] = await Promise.all([
+      context.supabase.from("profiles" as never).select("*").in("id", otherIds).is("suspended_at", null),
+      context.supabase.from("match_reads" as never).select("match_id,last_read_at").eq("profile_id", myId).in("match_id", matchIds),
+      context.supabase.from("messages" as never).select("match_id,sender_profile_id,body,created_at").in("match_id", matchIds).order("created_at", { ascending: false }),
+    ]);
     const map = new Map<string, Profile>(((profiles as Profile[] | null) ?? []).map((p) => [p.id, p]));
-    return m.map((row) => ({
-      match_id: row.id,
-      created_at: row.created_at,
-      other: map.get(row.profile_a === myId ? row.profile_b : row.profile_a),
-    })).filter((x) => x.other);
+    const readMap = new Map<string, string>(((reads as Array<{ match_id: string; last_read_at: string }> | null) ?? []).map((r) => [r.match_id, r.last_read_at]));
+    const allMsgs = (msgs as Array<{ match_id: string; sender_profile_id: string; body: string; created_at: string }> | null) ?? [];
+    return m.map((row) => {
+      const lastRead = readMap.get(row.id) ?? "1970-01-01";
+      const matchMsgs = allMsgs.filter((x) => x.match_id === row.id);
+      const last = matchMsgs[0];
+      const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
+      return {
+        match_id: row.id,
+        created_at: row.created_at,
+        last_message_at: row.last_message_at,
+        last_message: last ? { body: last.body, created_at: last.created_at, from_me: last.sender_profile_id === myId } : null,
+        unread,
+        other: map.get(row.profile_a === myId ? row.profile_b : row.profile_a),
+      };
+    }).filter((x) => x.other);
+  });
+
+export const markMatchRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) return { ok: false };
+    await context.supabase
+      .from("match_reads" as never)
+      .upsert({ match_id: data.matchId, profile_id: myId, last_read_at: new Date().toISOString() } as never, { onConflict: "match_id,profile_id" } as never);
+    return { ok: true };
   });
 
 export const getMatchDetail = createServerFn({ method: "GET" })

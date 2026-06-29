@@ -199,6 +199,7 @@ export const LOCATION_DATA: CountryData[] = [
     name: "Libya",
     cities: [
       { name: "Tripoli", areas: ["Janoura", "Sidi Elmasri", "Tajura", "Ben Ashour", "Gargaresh"] },
+      { name: "Benghazi", areas: ["Sidi Khalifa", "Raas Abayda", "Al-Fuwayhat", "Hay Alandalus", "Benina", "Downtown"] },
     ],
   },
   {

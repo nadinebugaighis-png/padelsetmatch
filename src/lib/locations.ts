@@ -118,6 +118,14 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "Morocco",
+    cities: [
+      { name: "Casablanca", areas: ["Anfa", "Maarif", "Ain Diab", "Bouskoura", "Sidi Maarouf"] },
+      { name: "Marrakech", areas: ["Hivernage", "Gueliz", "Palmeraie", "Agdal", "Sidi Ghanem"] },
+      { name: "Rabat", areas: ["Agdal", "Hay Riad", "Souissi", "Hassan", "Ocean"] },
+    ],
+  },
+  {
     name: "Colombia",
     cities: [
       { name: "Bogotá", areas: ["Chapinero", "Usaquén", "Chicó", "Rosales", "Cedritos"] },

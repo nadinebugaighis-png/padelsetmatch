@@ -98,11 +98,20 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, icon, active }: { to: string; label: string; icon: React.ReactNode; active: boolean }) {
+function NavTab({ to, label, icon, active, highlight }: { to: string; label: string; icon: React.ReactNode; active: boolean; highlight?: boolean }) {
+  const isHighlight = highlight && !active;
   return (
-    <Link to={to} className={`flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest ${active ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
-      {icon}
+    <Link to={to} className={`flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
+      <span className="relative">
+        {icon}
+        {isHighlight && (
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--ball)] ball-glow animate-ping" />
+        )}
+      </span>
       <span className="mt-1">{label}</span>
+      {isHighlight && (
+        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">★ core</span>
+      )}
     </Link>
   );
 }

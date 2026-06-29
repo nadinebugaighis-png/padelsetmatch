@@ -212,6 +212,19 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "Hong Kong",
+    cities: [
+      { name: "Hong Kong", areas: ["Central", "Mid-Levels", "Repulse Bay", "Stanley", "Kowloon", "Tsim Sha Tsui", "Clear Water Bay", "Sai Kung"] },
+    ],
+  },
+  {
+    name: "Japan",
+    cities: [
+      { name: "Tokyo", areas: ["Shibuya", "Shinjuku", "Roppongi", "Azabu", "Meguro", "Minato", "Setagaya", "Omotesando", "Aoyama", "Ebisu"] },
+      { name: "Osaka", areas: ["Umeda", "Namba", "Shinsaibashi"] },
+    ],
+  },
+  {
     name: "Turkey",
     cities: [
       { name: "Istanbul", areas: ["Beşiktaş", "Nişantaşı", "Etiler", "Kadıköy", "Zekeriyaköy"] },

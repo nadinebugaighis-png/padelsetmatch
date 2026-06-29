@@ -18,6 +18,13 @@ const en: Dict = {
   "land.stat3": "post-match drinks",
   "land.tap": "Tap. Tap-back. Play.",
   "land.foot": "Play anywhere. Worst case: a new padel friend.",
+  "land.preview.chip": "Sneak peek",
+  "land.preview.title": "Browse the Grid",
+  "land.preview.sub": "A taste of players around you. Sign in to unlock photos, scores and chat.",
+  "land.preview.cta": "Join free",
+  "land.preview.unlock": "Sign in to unlock",
+  "land.preview.foot": "Preview only. Real profiles appear after you complete the questionnaire.",
+
 
   // Auth
   "auth.back": "← Back",
@@ -250,6 +257,13 @@ const es: Dict = {
   "land.stat3": "cañas después del partido",
   "land.tap": "Tap. Tap de vuelta. A jugar.",
   "land.foot": "Juega donde quieras. En el peor caso: un nuevo amigo de pádel.",
+  "land.preview.chip": "Adelanto",
+  "land.preview.title": "Echa un vistazo al Grid",
+  "land.preview.sub": "Un anticipo de jugadores cerca de ti. Inicia sesión para ver fotos, puntuaciones y chat.",
+  "land.preview.cta": "Únete gratis",
+  "land.preview.unlock": "Inicia sesión para ver",
+  "land.preview.foot": "Solo vista previa. Los perfiles reales aparecen al completar el cuestionario.",
+
 
   // Auth
   "auth.back": "← Atrás",

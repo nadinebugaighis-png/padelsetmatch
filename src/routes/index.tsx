@@ -126,6 +126,7 @@ function Landing() {
           <span>v0.1</span>
         </span>
       </footer>
+      <InstallModal open={install.open} onClose={install.closeModal} />
     </main>
   );
 }

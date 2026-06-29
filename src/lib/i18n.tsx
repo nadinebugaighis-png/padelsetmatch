@@ -45,7 +45,7 @@ const en: Dict = {
   "shell.discover": "Discover",
   "shell.signout": "Sign out",
   "shell.tab.discover": "Discover",
-  "shell.tab.questions": "Q&A",
+  "shell.tab.questions": "Matchmaker",
   "shell.tab.matches": "Matches",
   "shell.tab.me": "Me",
 
@@ -277,7 +277,7 @@ const es: Dict = {
   "shell.discover": "Descubrir",
   "shell.signout": "Salir",
   "shell.tab.discover": "Descubrir",
-  "shell.tab.questions": "Preguntas",
+  "shell.tab.questions": "Afinidad",
   "shell.tab.matches": "Matches",
   "shell.tab.me": "Yo",
 

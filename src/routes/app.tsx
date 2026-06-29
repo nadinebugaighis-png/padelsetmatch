@@ -88,7 +88,7 @@ function AuthShell() {
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
           <div className="max-w-md mx-auto grid grid-cols-4">
             <NavTab to="/app" label={t("shell.tab.discover")} icon={<Heart className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
-            <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
+            <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} highlight />
             <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
           </div>
@@ -98,11 +98,20 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, icon, active }: { to: string; label: string; icon: React.ReactNode; active: boolean }) {
+function NavTab({ to, label, icon, active, highlight }: { to: string; label: string; icon: React.ReactNode; active: boolean; highlight?: boolean }) {
   return (
-    <Link to={to} className={`flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest ${active ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
-      {icon}
-      <span className="mt-1">{label}</span>
+    <Link to={to} className={`relative flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest ${active ? "text-[var(--ball)]" : highlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
+      <div className="relative">
+        {icon}
+        {highlight && (
+          <span className="absolute -top-1 -right-2 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--ball)] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--ball)]" />
+          </span>
+        )}
+      </div>
+      <span className={`mt-1 ${highlight ? "font-bold" : ""}`}>{label}</span>
+      {highlight && <span className="text-[8px] tracking-wider text-[var(--ball)]/80 leading-none">core</span>}
     </Link>
   );
 }

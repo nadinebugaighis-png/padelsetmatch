@@ -98,20 +98,11 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, icon, active, highlight }: { to: string; label: string; icon: React.ReactNode; active: boolean; highlight?: boolean }) {
+function NavTab({ to, label, icon, active }: { to: string; label: string; icon: React.ReactNode; active: boolean }) {
   return (
-    <Link to={to} className={`relative flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest ${active ? "text-[var(--ball)]" : highlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
-      <div className="relative">
-        {icon}
-        {highlight && (
-          <span className="absolute -top-1 -right-2 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--ball)] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--ball)]" />
-          </span>
-        )}
-      </div>
-      <span className={`mt-1 ${highlight ? "font-bold" : ""}`}>{label}</span>
-      {highlight && <span className="text-[8px] tracking-wider text-[var(--ball)]/80 leading-none">core</span>}
+    <Link to={to} className={`flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest ${active ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
+      {icon}
+      <span className="mt-1">{label}</span>
     </Link>
   );
 }

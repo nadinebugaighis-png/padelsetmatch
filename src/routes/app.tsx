@@ -27,7 +27,7 @@ function AuthShell() {
 
   const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!profileQ.data });
-  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin() });
+  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin(), enabled: !!profileQ.data, retry: false });
 
 
   const onSignOut = async () => {

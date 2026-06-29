@@ -158,10 +158,29 @@ function Onboarding() {
     try {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error(t("ob.notSignedIn"));
-      const ext = file.name.split(".").pop() ?? "jpg";
+      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
       const path = `${u.user.id}/photo-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("padel-photos").upload(path, file, { upsert: true, contentType: file.type });
-      if (upErr) throw upErr;
+
+      const isTransient = (msg: string) =>
+        /too many connections|timeout|temporarily|503|gateway|fetch failed|network/i.test(msg);
+
+      let upErr: { message: string } | null = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const { error } = await supabase.storage
+          .from("padel-photos")
+          .upload(path, file, { upsert: true, contentType: file.type });
+        if (!error) { upErr = null; break; }
+        upErr = error;
+        if (!isTransient(error.message) || attempt === 3) break;
+        await new Promise((r) => setTimeout(r, 700 * (attempt + 1)));
+      }
+      if (upErr) {
+        if (isTransient(upErr.message)) {
+          throw new Error("Server is busy right now — please wait a few seconds and try again.");
+        }
+        throw upErr;
+      }
+
       const { data: signed, error: sErr } = await supabase.storage.from("padel-photos").createSignedUrl(path, 60 * 60 * 24 * 365);
       if (sErr || !signed) throw sErr ?? new Error("Couldn't sign URL");
       setPhotoUrl(signed.signedUrl);

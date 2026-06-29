@@ -118,13 +118,19 @@ function scoreCandidate(me: Profile, c: Profile) {
   else if (levelGap === 1) { score += 12; reasons.push("Close padel levels"); }
   else if (levelGap === 2) score += 4;
 
+  // HARD GATE: only match people who will actually play in the same area.
+  // We require an overlapping city in their listed play locations, OR (legacy)
+  // the same single zone. No shared city => not a match, regardless of score.
   const loc = locationAffinity(me.locations ?? [], c.locations ?? []);
-  if (loc.score === 0) { score += 16; reasons.push(`Both play in ${loc.sharedCity}`); }
-  else if (loc.score === 1) { score += 8; reasons.push(`Both in ${loc.sharedCountry}`); }
-  else {
-    const za = zoneAffinity(me.zone, c.zone);
-    if (za === 0) { score += 14; reasons.push(`Both in ${me.zone}`); }
-    else if (za === 2) score += 5;
+  const za = zoneAffinity(me.zone, c.zone);
+  if (loc.score === 0) {
+    score += 16;
+    reasons.push(`Both play in ${loc.sharedCity}`);
+  } else if (za === 0 && me.zone) {
+    score += 14;
+    reasons.push(`Both in ${me.zone}`);
+  } else {
+    return { score: 0, reasons: [] };
   }
 
   const langs = languageOverlap(me.languages ?? [], c.languages ?? []);

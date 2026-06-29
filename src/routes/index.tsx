@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { ShareQR } from "@/components/ShareQR";
 import { useT, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";

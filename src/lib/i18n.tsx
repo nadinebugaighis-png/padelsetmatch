@@ -117,7 +117,7 @@ const en: Dict = {
   "chat.safety": "book the match on Playtomic — public court, verified booking, no shared addresses.",
   "chat.open": "Open",
   "chat.empty": "You both tapped. Say hi 👋",
-  "chat.placeholder": "When do we play?",
+  "chat.placeholder": "It's a match — let's plan to play! 🎾",
   "chat.block": "Block",
   "chat.report": "Report",
   "chat.blockedDone": "Blocked.",

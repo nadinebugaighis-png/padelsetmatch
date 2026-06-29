@@ -1,0 +1,1 @@
+GRANT INSERT ON public.feedback TO authenticated; GRANT ALL ON public.feedback TO service_role;

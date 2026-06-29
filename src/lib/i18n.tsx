@@ -18,6 +18,13 @@ const en: Dict = {
   "land.stat3": "post-match drinks",
   "land.tap": "Tap. Tap-back. Play.",
   "land.foot": "Play anywhere. Worst case: a new padel friend.",
+  "land.preview.chip": "Sneak peek",
+  "land.preview.title": "Browse the Grid",
+  "land.preview.sub": "A taste of players around you. Sign in to unlock photos, scores and chat.",
+  "land.preview.cta": "Join free",
+  "land.preview.unlock": "Sign in to unlock",
+  "land.preview.foot": "Preview only. Real profiles appear after you complete the questionnaire.",
+
 
   // Auth
   "auth.back": "← Back",

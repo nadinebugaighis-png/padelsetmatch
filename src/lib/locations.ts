@@ -118,6 +118,14 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "Morocco",
+    cities: [
+      { name: "Casablanca", areas: ["Anfa", "Maarif", "Ain Diab", "Bouskoura", "Sidi Maarouf"] },
+      { name: "Marrakech", areas: ["Hivernage", "Gueliz", "Palmeraie", "Agdal", "Sidi Ghanem"] },
+      { name: "Rabat", areas: ["Agdal", "Hay Riad", "Souissi", "Hassan", "Ocean"] },
+    ],
+  },
+  {
     name: "Colombia",
     cities: [
       { name: "Bogotá", areas: ["Chapinero", "Usaquén", "Chicó", "Rosales", "Cedritos"] },
@@ -188,6 +196,12 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "Libya",
+    cities: [
+      { name: "Tripoli", areas: ["Janoura", "Sidi Elmasri", "Tajura", "Ben Ashour", "Gargaresh"] },
+    ],
+  },
+  {
     name: "Norway",
     cities: [
       { name: "Oslo", areas: ["Sentrum", "Frogner", "Majorstuen", "Bærum"] },
@@ -222,6 +236,12 @@ export const LOCATION_DATA: CountryData[] = [
     cities: [
       { name: "Tokyo", areas: ["Shibuya", "Shinjuku", "Roppongi", "Azabu", "Meguro", "Minato", "Setagaya", "Omotesando", "Aoyama", "Ebisu"] },
       { name: "Osaka", areas: ["Umeda", "Namba", "Shinsaibashi"] },
+    ],
+  },
+  {
+    name: "Tunisia",
+    cities: [
+      { name: "Tunis", areas: ["La Marsa", "Carthage", "Sidi Bou Said", "Les Berges du Lac", "Gammarth", "Ariana", "Lac"] },
     ],
   },
   {

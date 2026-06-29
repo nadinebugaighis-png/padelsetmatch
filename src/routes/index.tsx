@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { ShareQR } from "@/components/ShareQR";
+import { Smartphone } from "lucide-react";
 import { useT, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -20,6 +22,7 @@ function Landing() {
   const fetchCount = useServerFn(getPlayerCount);
   const countQ = useQuery({ queryKey: ["player-count"], queryFn: () => fetchCount() });
   const count = countQ.data?.count ?? 0;
+  const install = useInstallModal();
   return (
     <main className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
@@ -57,6 +60,13 @@ function Landing() {
             <br />{t("land.statUsers")}
           </div>
 
+          <button
+            onClick={install.openModal}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--ball)] px-5 py-2.5 text-sm font-bold text-[var(--ball)] hover:bg-[var(--ball)] hover:text-[var(--court-deep)] transition"
+          >
+            <Smartphone className="w-4 h-4" />
+            Add to your home screen
+          </button>
         </div>
         <div className="hidden lg:block">
           <div className="surface-card p-8 rotate-2">
@@ -116,6 +126,7 @@ function Landing() {
           <span>v0.1</span>
         </span>
       </footer>
+      <InstallModal open={install.open} onClose={install.closeModal} />
     </main>
   );
 }

@@ -613,8 +613,8 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const model = provider("google/gemini-2.5-flash");
 
     const sys = data.lang === "es"
-      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, personales y reveladoras para encontrar afinidad real entre personas (amistad, pareja o alma gemela). Las preguntas profundizan en personalidad, valores, emociones, estilo de vida y forma de relacionarse. Solo ocasionalmente (1 de cada 5 como máximo) tocas el pádel. Responde SIEMPRE en español."
-      : "You are an AI expert in compatibility and relational psychology. You generate short, personal, revealing questions to find real affinity between people (friendship, partner, or soulmate). Questions go deep into personality, values, emotions, lifestyle, and how someone relates to others. Only occasionally (at most 1 in 5) touch on padel. Always reply in English.";
+      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~60% personalidad/valores/estilo de vida y ~40% pádel (cómo juega, actitud en pista, estilo de juego, mentalidad competitiva, etc.). Responde SIEMPRE en español."
+      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~60% personality/values/lifestyle and ~40% padel (how they play, on-court attitude, playing style, competitive mindset, etc.). Always reply in English.";
 
     const prompt = `Person context:
 - Age ${me.age}, ${me.gender}
@@ -626,14 +626,13 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
 They have already answered these questions (do NOT repeat or paraphrase):
 ${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
 
-Generate exactly ${data.count} NEW questions, MOSTLY personal (not about padel). Mix these categories with strong weight on the personal ones:
-personality, love language, attachment style, emotional intelligence, vulnerability, what they value in a friend, what they value in a partner, dealbreakers, green flags, childhood, family, dreams, fears, regrets, ambition, spirituality, politics-lite, introvert/extrovert energy, conflict style, jealousy, affection, intimacy comfort, humor style, deep talks vs small talk, ideal Sunday, what makes them feel loved, what they need to feel safe, lifestyle, money, travel, food, music taste, art, books, social energy.
-At most 1 question out of ${data.count} may relate to padel or sport — and only if it reveals personality (e.g. how they handle losing, ego, competitiveness).
-Each question must be answerable in one short sentence or by picking one of 3-5 short options. Make them feel like a thoughtful friend asking — warm, specific, never generic ("what do you like to do?" is too vague; "what's the last thing that made you cry happy tears?" is good).
+Generate exactly ${data.count} NEW questions as MULTIPLE CHOICE.
+Ratio: about 60% personal (personality, love language, attachment, conflict style, humor, lifestyle, values, dealbreakers, family, ambition, social energy, intimacy comfort, money mindset, ideal weekend, what makes them feel loved) and about 40% padel (preferred side left/right, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).
+EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic.
 
-Return ONLY valid JSON, no prose, no markdown, with this exact shape:
-{"questions":[{"question":"...","category":"personality","options":["opt1","opt2","opt3"]}]}
-Options is OPTIONAL — include 3-5 short choices only when natural; prefer open-ended for deep questions. Categories must be lowercase single words.`;
+Return ONLY valid JSON, no prose, no markdown:
+{"questions":[{"question":"...","category":"personality","options":["opt1","opt2","opt3","opt4"]}]}
+Categories must be lowercase single words.`;
 
 
     let text = "";
@@ -657,12 +656,13 @@ Options is OPTIONAL — include 3-5 short choices only when natural; prefer open
     }
     const out: GeneratedQuestion[] = (parsed.questions ?? [])
       .filter((q) => q && typeof q.question === "string" && q.question.length > 3)
+      .filter((q) => Array.isArray(q.options) && q.options.length >= 2)
       .filter((q) => !asked.includes(q.question))
       .slice(0, data.count)
       .map((q) => ({
         question: q.question.trim(),
         category: (q.category ?? "general").toLowerCase().slice(0, 30),
-        options: Array.isArray(q.options) ? q.options.slice(0, 5).map((o) => String(o).slice(0, 80)) : undefined,
+        options: (q.options as string[]).slice(0, 5).map((o) => String(o).slice(0, 80)),
       }));
     return { questions: out };
   });
@@ -670,33 +670,41 @@ Options is OPTIONAL — include 3-5 short choices only when natural; prefer open
 const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
   en: [
     { question: "What's your love language?", category: "personality", options: ["Words of affirmation", "Quality time", "Physical touch", "Acts of service", "Gifts"] },
-    { question: "What makes you instantly trust someone?", category: "values" },
+    { question: "What makes you instantly trust someone?", category: "values", options: ["Consistency", "Honesty under pressure", "Kindness to strangers", "Keeps secrets"] },
     { question: "Introvert, extrovert, or somewhere in between?", category: "personality", options: ["Introvert", "Extrovert", "Ambivert"] },
-    { question: "What's an absolute dealbreaker for you in a relationship?", category: "dealbreakers" },
-    { question: "When you're upset, do you want to talk it out or be left alone?", category: "conflict", options: ["Talk it out", "Be left alone", "A bit of both"] },
-    { question: "What's the last thing that made you genuinely laugh out loud?", category: "humor" },
-    { question: "What does a perfect Sunday look like for you?", category: "lifestyle" },
+    { question: "Biggest relationship dealbreaker?", category: "dealbreakers", options: ["Dishonesty", "Jealousy", "Bad temper", "No ambition", "Closed-mindedness"] },
+    { question: "When you're upset, you prefer to…", category: "conflict", options: ["Talk it out", "Be left alone", "A bit of both"] },
+    { question: "Your humour is mostly…", category: "humor", options: ["Dry/sarcastic", "Silly/playful", "Witty/clever", "Dark", "Wholesome"] },
+    { question: "Perfect Sunday?", category: "lifestyle", options: ["Brunch + walk", "Sport + nap", "Beach/nature", "Home + movie", "Out with friends"] },
     { question: "Do you believe in soulmates?", category: "values", options: ["Yes", "No", "Sort of"] },
-    { question: "What's something small that makes you feel deeply loved?", category: "intimacy" },
-    { question: "Pick one: deep 1-on-1 dinner or group night out?", category: "social", options: ["1-on-1 dinner", "Group night out", "Depends on mood"] },
-    { question: "How important is shared humour to you?", category: "values", options: ["Essential", "Very", "Nice to have", "Not really"] },
-    { question: "What's your relationship with your family like?", category: "family" },
-    { question: "After a tough padel match, do you vent, joke, or stay quiet?", category: "padel", options: ["Vent it out", "Joke about it", "Stay quiet", "Analyse every point"] },
+    { question: "Pick one night out:", category: "social", options: ["1-on-1 dinner", "Group night out", "House party", "Stay home"] },
+    { question: "How important is shared humour?", category: "values", options: ["Essential", "Very", "Nice to have", "Not really"] },
+    { question: "Money mindset?", category: "lifestyle", options: ["Save first", "Spend on experiences", "Treat yourself often", "Invest long-term"] },
+    { question: "Which padel side do you prefer?", category: "padel", options: ["Right (drive)", "Left (revés)", "Both", "Still figuring out"] },
+    { question: "Your playing style is…", category: "padel", options: ["Aggressive smasher", "Defensive wall", "Tactical/patient", "Fun-first social"] },
+    { question: "After a tough match you…", category: "padel", options: ["Vent it out", "Joke about it", "Stay quiet", "Analyse every point"] },
+    { question: "Your partner misses an easy ball — you…", category: "padel", options: ["Encourage them", "Stay quiet", "Give tips", "Get frustrated"] },
+    { question: "How competitive are you on court?", category: "padel", options: ["Win at all costs", "Competitive but chill", "Mostly for fun", "Just to socialise"] },
+    { question: "Ideal padel session?", category: "padel", options: ["Friendly Americano", "Serious match", "Drills + match", "Quick fun game"] },
   ],
   es: [
     { question: "¿Cuál es tu lenguaje del amor?", category: "personalidad", options: ["Palabras de afirmación", "Tiempo de calidad", "Contacto físico", "Actos de servicio", "Regalos"] },
-    { question: "¿Qué hace que confíes inmediatamente en alguien?", category: "valores" },
+    { question: "¿Qué hace que confíes en alguien al instante?", category: "valores", options: ["Consistencia", "Honestidad bajo presión", "Amabilidad con extraños", "Guarda secretos"] },
     { question: "¿Introvertido, extrovertido o ambivertido?", category: "personalidad", options: ["Introvertido", "Extrovertido", "Ambivertido"] },
-    { question: "¿Cuál es un dealbreaker absoluto para ti en una relación?", category: "dealbreakers" },
-    { question: "Cuando estás molesto, ¿prefieres hablarlo o que te dejen en paz?", category: "conflicto", options: ["Hablarlo", "Que me dejen en paz", "Un poco de ambos"] },
-    { question: "¿Qué fue lo último que te hizo reír a carcajadas?", category: "humor" },
-    { question: "¿Cómo es tu domingo perfecto?", category: "estilo de vida" },
+    { question: "¿Mayor dealbreaker en una relación?", category: "dealbreakers", options: ["Deshonestidad", "Celos", "Mal carácter", "Sin ambición", "Mente cerrada"] },
+    { question: "Cuando estás molesto prefieres…", category: "conflicto", options: ["Hablarlo", "Que te dejen en paz", "Un poco de ambos"] },
+    { question: "Tu humor es sobre todo…", category: "humor", options: ["Sarcástico", "Tonto/juguetón", "Ingenioso", "Oscuro", "Sano"] },
+    { question: "¿Domingo perfecto?", category: "estilo de vida", options: ["Brunch + paseo", "Deporte + siesta", "Playa/naturaleza", "Casa + peli", "Salir con amigos"] },
     { question: "¿Crees en las almas gemelas?", category: "valores", options: ["Sí", "No", "Más o menos"] },
-    { question: "¿Qué pequeño gesto te hace sentir profundamente querido?", category: "intimidad" },
-    { question: "Elige: cena íntima 1 a 1 o salida en grupo", category: "social", options: ["Cena íntima", "Salida en grupo", "Depende del ánimo"] },
-    { question: "¿Qué tan importante es para ti el humor compartido?", category: "valores", options: ["Esencial", "Mucho", "Está bien", "No tanto"] },
-    { question: "¿Cómo es tu relación con tu familia?", category: "familia" },
-    { question: "Después de un partido duro, ¿desahogarte, bromear o silencio?", category: "pádel", options: ["Desahogarme", "Bromear", "Silencio", "Analizar cada punto"] },
+    { question: "Elige una salida:", category: "social", options: ["Cena 1 a 1", "Salida en grupo", "Fiesta en casa", "Quedarme en casa"] },
+    { question: "¿Qué tan importante es el humor compartido?", category: "valores", options: ["Esencial", "Mucho", "Está bien", "No tanto"] },
+    { question: "¿Mentalidad con el dinero?", category: "estilo de vida", options: ["Ahorrar primero", "Gastar en experiencias", "Darte caprichos", "Invertir a largo plazo"] },
+    { question: "¿Qué lado del pádel prefieres?", category: "pádel", options: ["Derecha (drive)", "Izquierda (revés)", "Ambos", "Aún descubriéndolo"] },
+    { question: "Tu estilo de juego es…", category: "pádel", options: ["Agresivo, remate", "Defensivo, muro", "Táctico/paciente", "Social, por diversión"] },
+    { question: "Después de un partido duro…", category: "pádel", options: ["Me desahogo", "Bromeo", "Silencio", "Analizo cada punto"] },
+    { question: "Tu compañero falla una fácil — tú…", category: "pádel", options: ["Lo animo", "Callo", "Doy consejos", "Me frustro"] },
+    { question: "¿Qué tan competitivo en pista?", category: "pádel", options: ["Ganar a toda costa", "Competitivo pero tranqui", "Por diversión", "Solo por socializar"] },
+    { question: "¿Sesión ideal de pádel?", category: "pádel", options: ["Americano amistoso", "Partido serio", "Drills + partido", "Juego rápido divertido"] },
   ],
 };
 

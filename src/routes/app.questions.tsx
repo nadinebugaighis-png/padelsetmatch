@@ -9,7 +9,6 @@ import {
   submitQaAnswer,
 } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
@@ -120,7 +119,11 @@ function QuestionsPage() {
                       <button
                         key={opt}
                         type="button"
-                        onClick={() => setDraft((d) => ({ ...d, [q.question]: opt }))}
+                        onClick={() => {
+                          setDraft((d) => ({ ...d, [q.question]: opt }));
+                          submit.mutate({ question: q.question, category: q.category, answer: opt });
+                        }}
+                        disabled={submit.isPending}
                         className={`chip ${selected ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : ""}`}
                       >
                         {opt}
@@ -130,14 +133,6 @@ function QuestionsPage() {
                 </div>
               ) : null}
 
-              <Input
-                value={value}
-                onChange={(e) => setDraft((d) => ({ ...d, [q.question]: e.target.value }))}
-                placeholder={t("qa.placeholder")}
-                maxLength={400}
-                className="mt-3"
-              />
-
               <div className="mt-3 flex gap-2 justify-end">
                 <Button
                   variant="ghost"
@@ -145,15 +140,6 @@ function QuestionsPage() {
                   onClick={() => setQueue((arr) => arr.filter((x) => x.question !== q.question))}
                 >
                   {t("qa.skip")}
-                </Button>
-                <Button
-                  size="sm"
-                  disabled={!value.trim() || submit.isPending}
-                  onClick={() =>
-                    submit.mutate({ question: q.question, category: q.category, answer: value.trim() })
-                  }
-                >
-                  {t("qa.save")}
                 </Button>
               </div>
             </div>

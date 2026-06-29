@@ -72,7 +72,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 {copied ? "Copied" : "Copy link"}
               </button>
-              {navigator.share && (
+              {typeof navigator.share === "function" && (
                 <button
                   onClick={nativeShare}
                   className="inline-flex items-center gap-1.5 rounded-full border border-[var(--cream)]/20 px-4 py-2 text-xs text-[var(--cream)] hover:bg-[var(--cream)]/10"

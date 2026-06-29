@@ -32,10 +32,15 @@ function Discover() {
 
   const likeM = useMutation({
     mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
-    onSuccess: () => {
+    onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
-      toast.success(t("disc.likeSent"), { duration: 2200 });
+      if (res?.matchId) {
+        toast.success("🎾 It's a match! Opening chat…", { duration: 2500 });
+        setTimeout(() => navigate({ to: "/app/matches/$matchId", params: { matchId: res.matchId! } }), 600);
+      } else {
+        toast.success(t("disc.likeSent"), { duration: 2200 });
+      }
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });

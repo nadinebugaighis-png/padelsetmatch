@@ -91,7 +91,7 @@ function AuthShell() {
           <div className="max-w-md mx-auto grid grid-cols-5">
             <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
             <NavTab to="/app" label="Grid" icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
-            <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} />
+            <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             <NavTab to="/app/learn" label="Learn" icon={<GraduationCap className="w-5 h-5" />} active={path.startsWith("/app/learn")} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
           </div>

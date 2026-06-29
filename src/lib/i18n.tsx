@@ -357,7 +357,7 @@ const es: Dict = {
   "chat.safety": "reservad el partido en Playtomic — pista pública, reserva verificada, sin compartir direcciones.",
   "chat.open": "Abrir",
   "chat.empty": "Os habéis tocado mutuamente. ¡Saluda 👋!",
-  "chat.placeholder": "¿Cuándo jugamos?",
+  "chat.placeholder": "¡Es un match — vamos a planear para jugar! 🎾",
   "chat.block": "Bloquear",
   "chat.report": "Reportar",
   "chat.blockedDone": "Bloqueado.",

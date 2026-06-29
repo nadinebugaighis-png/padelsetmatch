@@ -49,6 +49,14 @@ function ChatRoom() {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [q.data?.messages.length]);
 
+  const markRead = useServerFn(markMatchRead);
+  useEffect(() => {
+    if (!q.data) return;
+    markRead({ data: { matchId } }).then(() => {
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+    }).catch(() => {});
+  }, [matchId, q.data?.messages.length, markRead, qc]);
+
   const sendM = useMutation({
     mutationFn: (body: string) => send({ data: { matchId, body } }),
     onMutate: () => setText(""),

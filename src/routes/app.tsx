@@ -108,7 +108,7 @@ function NavTab({ to, label, icon, active, highlight }: { to: string; label: str
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--ball)] ball-glow animate-ping" />
         )}
       </span>
-      <span className="mt-1">{label}</span>
+      <span className="mt-1 text-center leading-tight">{label}</span>
       {isHighlight && (
         <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">★ core</span>
       )}

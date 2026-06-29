@@ -65,6 +65,42 @@ function Landing() {
         </div>
       </section>
 
+      <section className="px-6 lg:px-16 py-12 border-t border-[var(--cream)]/10">
+        <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
+          <div>
+            <p className="chip chip-clay mb-3">{t("land.preview.chip")}</p>
+            <h2 className="text-display text-4xl md:text-5xl">{t("land.preview.title")}</h2>
+            <p className="mt-2 text-[var(--cream)]/70 max-w-lg">{t("land.preview.sub")}</p>
+          </div>
+          <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
+            {t("land.preview.cta")}
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { src: "/landing/grid1.jpg", name: "Lucía", city: "Madrid", score: 92 },
+            { src: "/landing/grid2.jpg", name: "Marc", city: "Barcelona", score: 88 },
+            { src: "/landing/grid3.jpg", name: "Aisha", city: "Dubai", score: 85 },
+            { src: "/landing/grid4.jpg", name: "Kenji", city: "Tokyo", score: 81 },
+          ].map((p, i) => (
+            <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10 group">
+              <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--ball)] text-[var(--court-deep)] rounded-full px-2 py-1">{p.score}</span>
+              <div className="absolute bottom-3 left-3 right-3 text-[var(--cream)]">
+                <div className="text-display text-xl">{p.name}</div>
+                <div className="text-xs opacity-80">{p.city}</div>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
+                <Link to="/auth" className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-xs text-[var(--cream)]/50">{t("land.preview.foot")}</p>
+      </section>
+
+
       <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex flex-wrap items-center justify-between gap-3">
         <span>{t("land.foot")}</span>
         <span className="flex gap-4">

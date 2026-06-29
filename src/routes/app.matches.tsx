@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyMatches } from "@/lib/app.functions";
@@ -9,9 +9,13 @@ export const Route = createFileRoute("/app/matches")({
 });
 
 function Matches() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
   const getMatches = useServerFn(getMyMatches);
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const { t, label } = useI18n();
+
+  const isMatchesList = path === "/app/matches" || path === "/app/matches/";
+  if (!isMatchesList) return <Outlet />;
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">

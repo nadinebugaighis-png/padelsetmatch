@@ -275,6 +275,13 @@ function Discover() {
                     <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
                     <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
                   </div>
+                  {preview.free_court_access && (
+                    <div className="rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>
+                      {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
+                      <p className="text-[10px] text-[var(--cream)]/55 mt-1">Arrange the exact court in chat — Playtomic or their address.</p>
+                    </div>
+                  )}
                   {preview.bio ? (
                     <p className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap">{preview.bio}</p>
                   ) : (

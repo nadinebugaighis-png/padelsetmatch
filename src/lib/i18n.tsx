@@ -753,6 +753,20 @@ const LABELS: Record<Lang, Record<string, string>> = {
     curious: "curioso", playful: "juguetón",
     art: "arte", travel: "viajes", food: "comida", concerts: "conciertos", "music events": "eventos musicales",
   },
+  ar: {
+    woman: "امرأة", man: "رجل", "non-binary": "غير ثنائي",
+    "just starting": "مبتدئ تماماً", casual: "هاوي", beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدم", competitive: "تنافسي",
+    friend: "صديق", partner: "شريك", both: "كلاهما",
+    everyone: "الجميع", women: "نساء", men: "رجال", "lesbian women": "نساء مثليات", "gay men": "رجال مثليون", bisexual: "ثنائي الميل", queer: "كوير",
+    intellectual: "مثقف", looks: "المظهر", ambitious: "طموح", "social butterfly": "اجتماعي جداً",
+    fun: "مرح", quiet: "هادئ", reserved: "متحفّظ", fashionable: "أنيق", funny: "ظريف", adventurous: "مغامر",
+    loyal: "وفي", friendly: "ودود", kind: "لطيف", honest: "صادق", empathetic: "متعاطف",
+    confident: "واثق", creative: "مبدع", spiritual: "روحاني", "family-oriented": "عائلي",
+    athletic: "رياضي", spontaneous: "تلقائي", romantic: "رومانسي", "ambitious career": "طموح مهنياً",
+    "easy-going": "مرن", "open-minded": "متفتح", passionate: "شغوف", generous: "كريم",
+    curious: "فضولي", playful: "مرِح",
+    art: "الفن", travel: "السفر", food: "الطعام", concerts: "الحفلات", "music events": "فعاليات موسيقية",
+  },
 };
 
 type Ctx = {

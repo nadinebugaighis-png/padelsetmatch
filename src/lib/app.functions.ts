@@ -1007,5 +1007,15 @@ const QUIZ_FALLBACK: Record<"en" | "es" | "ar", QuizQuestion[]> = {
     { question: "Tu compañero persigue un globo al fondo. ¿Qué haces?", category: "táctica", options: ["Quedarte en la red", "Retroceder en paralelo a la línea de saque", "Correr al fondo también", "Cambiar de lado"], correctIndex: 1, explanation: "Baja en paralelo a la línea de saque. Pegado a la red dejas un hueco enorme; en paralelo el equipo sigue conectado." },
     { question: "¿Mejor respuesta a una bola baja y lenta a tus pies en la red?", category: "golpes", options: ["Remate", "Chiquita (volea baja suave)", "Globo", "Drive fuerte"], correctIndex: 1, explanation: "Una chiquita a los pies del rival lo obliga a golpear hacia arriba y te da la siguiente bola de ataque. No intentes rematar una bola baja." },
   ],
+  ar: [
+    { question: "شريكك على وشك ضرب كرة قادمة من المنتصف. ماذا تنادي؟", category: "communication", options: ["«ليّ!»", "«لك!»", "اصمت", "«خارج!»"], correctIndex: 1, explanation: "نادِ «لك!» بوضوح وبسرعة ليلتزم شريكك. كرات المنتصف هي السبب الأول للارتباك في الزوجي." },
+    { question: "ترتد الكرة في ملعبك، تصطدم بالزجاج الخلفي وتعود. هل لا تزال في اللعب؟", category: "rules", options: ["نعم، العبها", "لا، خسرت النقطة", "فقط إذا ارتدت مرة ثانية", "فقط في الإرسال"], correctIndex: 0, explanation: "نعم — بعد ارتداد واحد على الأرض يمكن للكرة أن تلمس جدرانك وعليك إعادتها قبل أن ترتد مرتين على الأرض." },
+    { question: "أفضل ضربة عندما يرسل الخصم لوبًا عميقًا للزجاج الخلفي؟", category: "shots", options: ["سماش قوي", "بانديخا", "كرة قصيرة", "درايف"], correctIndex: 1, explanation: "البانديخا ضربة علوية مقطوعة تُبقيك على الشبكة. السماش الكامل من العمق يخسرك المركز." },
+    { question: "أين يجب أن يقف فريق الشبكة؟", category: "positioning", options: ["على خط الإرسال", "على بُعد 1-2 م من الشبكة جنبًا إلى جنب", "واحد للأمام وواحد للخلف", "ملتصقين بالزجاج الخلفي"], correctIndex: 1, explanation: "ابقَوا معًا على بُعد 1-2 م من الشبكة. التشكيل «واحد أمام وواحد خلف» يفتح المنتصف." },
+    { question: "في الإرسال، يجب أن…", category: "rules", options: ["تُضرب فوق الرأس", "ترتد أولًا وتُضرب عند الخصر أو أدنى", "تُضرب طائرة", "ترتد مرتين قبل الضرب"], correctIndex: 1, explanation: "الإرسال من الأسفل: اترك الكرة ترتد مرة في مربعك ثم اضربها عند الخصر أو أدنى نحو المربع القطري للخصم." },
+    { question: "الكرة تصطدم بالجدار قبل أن ترتد على الأرض. ماذا يحدث؟", category: "rules", options: ["استمر باللعب", "نقطة للضارب", "نقطة ضد الضارب", "إعادة"], correctIndex: 2, explanation: "يجب أن ترتد الكرة على الأرض أولًا. إذا لمست أي جدار قبل الأرض، يخسر الضارب النقطة." },
+    { question: "شريكك يطارد لوبًا للخلف. ماذا تفعل؟", category: "tactics", options: ["ابقَ على الشبكة", "تراجع موازيًا له إلى خط الإرسال", "اركض للخلف أيضًا", "بدّل الجهات فورًا"], correctIndex: 1, explanation: "تراجع إلى خط الإرسال وابقَ موازيًا. البقاء على الشبكة يفتح فجوة كبيرة." },
+    { question: "أفضل رد على كرة بطيئة منخفضة عند قدميك على الشبكة؟", category: "shots", options: ["سماش", "تشيكيتا (طائرة منخفضة ناعمة)", "لوب", "درايف قوي"], correctIndex: 1, explanation: "التشيكيتا — طائرة ناعمة منخفضة عند أقدام الخصم — تجبره على الرفع وتمنحك الكرة الهجومية التالية." },
+  ],
 };
 

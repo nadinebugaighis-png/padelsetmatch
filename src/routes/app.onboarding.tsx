@@ -27,6 +27,14 @@ export const Route = createFileRoute("/app/onboarding")({
   component: Onboarding,
 });
 
+function normalizeAge(raw: string, fallback: number): number {
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n)) return fallback;
+  const currentYear = new Date().getFullYear();
+  if (n > 1900 && n <= currentYear) return Math.min(99, Math.max(18, currentYear - n));
+  return Math.min(99, Math.max(18, n));
+}
+
 function Onboarding() {
   const navigate = useNavigate();
   const qc = useQueryClient();

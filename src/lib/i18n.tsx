@@ -856,6 +856,12 @@ export function LangSwitch({ className = "" }: { className?: string }) {
         className={`px-2.5 py-1 ${lang === "es" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
         aria-pressed={lang === "es"}
       >ES</button>
+      <button
+        type="button"
+        onClick={() => setLang("ar")}
+        className={`px-2.5 py-1 ${lang === "ar" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
+        aria-pressed={lang === "ar"}
+      >ع</button>
     </div>
   );
 }

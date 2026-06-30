@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type Lang = "en" | "es";
+export type Lang = "en" | "es" | "ar";
+
+export function isRTL(lang: Lang): boolean {
+  return lang === "ar";
+}
 
 type Dict = Record<string, string>;
 

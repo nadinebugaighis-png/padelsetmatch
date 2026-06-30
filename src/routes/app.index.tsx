@@ -23,7 +23,7 @@ function Discover() {
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null }>(null);
 
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
   const getAnswers = useServerFn(getMyQaAnswers);
@@ -169,14 +169,14 @@ function Discover() {
               {!c.liked ? (
                 <button
                   type="button"
-                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: false })}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: false, free_court_access: c.free_court_access, free_court_note: c.free_court_note })}
                   className="absolute inset-0 w-full h-full text-left"
                   aria-label={`View ${c.first_name}'s profile`}
                 />
               ) : (
                 <button
                   type="button"
-                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true })}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true, free_court_access: c.free_court_access, free_court_note: c.free_court_note })}
                   className="absolute inset-0 flex items-center justify-center bg-[var(--court-deep)]/60"
                   aria-label={`View ${c.first_name}'s profile`}
                 >
@@ -228,7 +228,11 @@ function Discover() {
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}</div>
                 <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
+                {c.free_court_access && (
+                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
+                )}
               </div>
+
 
             </div>
           ))}
@@ -271,6 +275,13 @@ function Discover() {
                     <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
                     <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
                   </div>
+                  {preview.free_court_access && (
+                    <div className="rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>
+                      {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
+                      <p className="text-[10px] text-[var(--cream)]/55 mt-1">Arrange the exact court in chat — Playtomic or their address.</p>
+                    </div>
+                  )}
                   {preview.bio ? (
                     <p className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap">{preview.bio}</p>
                   ) : (

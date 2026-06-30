@@ -354,6 +354,8 @@ export type Database = {
           court_side: string | null
           created_at: string
           first_name: string
+          free_court_access: boolean
+          free_court_note: string | null
           friend_interested_in: string[]
           gender: string
           id: string
@@ -384,6 +386,8 @@ export type Database = {
           court_side?: string | null
           created_at?: string
           first_name: string
+          free_court_access?: boolean
+          free_court_note?: string | null
           friend_interested_in?: string[]
           gender: string
           id?: string
@@ -414,6 +418,8 @@ export type Database = {
           court_side?: string | null
           created_at?: string
           first_name?: string
+          free_court_access?: boolean
+          free_court_note?: string | null
           friend_interested_in?: string[]
           gender?: string
           id?: string

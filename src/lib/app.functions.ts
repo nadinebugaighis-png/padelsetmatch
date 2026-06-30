@@ -28,6 +28,8 @@ const ProfileInput = z.object({
   availability: z.array(z.string().min(1).max(40)).max(10).default([]),
   court_side: z.enum(["right", "left", "both"]).nullable().optional(),
   mixed_doubles: z.boolean().default(false),
+  free_court_access: z.boolean().default(false),
+  free_court_note: z.string().max(200).nullable().optional(),
 });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {

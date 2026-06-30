@@ -15,6 +15,8 @@ export const LOCATION_DATA: CountryData[] = [
       { name: "Málaga", areas: ["Centro", "Pedregalejo", "El Limonar", "Teatinos", "Churriana", "Marbella", "Estepona"] },
       { name: "Sevilla", areas: ["Centro", "Triana", "Nervión", "Los Remedios", "Bellavista"] },
       { name: "Bilbao", areas: ["Abando", "Indautxu", "Deusto", "Getxo"] },
+      { name: "Mallorca", areas: ["Palma", "Port d'Andratx", "Pollença", "Alcúdia", "Sóller", "Manacor", "Calvià", "Inca"] },
+      { name: "Menorca", areas: ["Maó (Mahón)", "Ciutadella", "Es Mercadal", "Fornells", "Sant Lluís", "Alaior"] },
     ],
   },
   {

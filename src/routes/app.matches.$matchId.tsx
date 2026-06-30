@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 

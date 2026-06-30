@@ -73,6 +73,42 @@ export type Database = {
           },
         ]
       }
+      hides: {
+        Row: {
+          created_at: string
+          hidden_profile_id: string
+          hider_profile_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          hidden_profile_id: string
+          hider_profile_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          hidden_profile_id?: string
+          hider_profile_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hides_hidden_profile_id_fkey"
+            columns: ["hidden_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hides_hider_profile_id_fkey"
+            columns: ["hider_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       likes: {
         Row: {
           created_at: string

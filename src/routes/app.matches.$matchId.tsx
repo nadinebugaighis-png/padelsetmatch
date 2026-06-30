@@ -93,6 +93,16 @@ function ChatRoom() {
     onSuccess: () => toast.success("No-show reported. Thanks — we'll look into it."),
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
   });
+  const editM = useMutation({
+    mutationFn: (v: { messageId: string; body: string }) => editFn({ data: v }),
+    onSuccess: () => { setEditingId(null); setEditingText(""); qc.invalidateQueries({ queryKey: ["match", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't edit"),
+  });
+  const deleteM = useMutation({
+    mutationFn: (messageId: string) => delFn({ data: { messageId } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["match", matchId] }),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't delete"),
+  });
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
   const { other, my_profile_id, messages } = q.data;

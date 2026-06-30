@@ -82,6 +82,8 @@ function Onboarding() {
   const [availability, setAvailability] = useState<string[]>([]);
   const [courtSide, setCourtSide] = useState<CourtSide>("both");
   const [mixedDoubles, setMixedDoubles] = useState(true);
+  const [freeCourt, setFreeCourt] = useState(false);
+  const [freeCourtNote, setFreeCourtNote] = useState("");
 
   useEffect(() => {
     const p = profileQ.data;

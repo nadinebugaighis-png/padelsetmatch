@@ -91,6 +91,10 @@ function Discover() {
     if (!window.confirm(t("disc.reportConfirm", { name }))) return;
     reportM.mutate({ id, reason: reason.trim() });
   }
+  function handleHide(id: string, name: string) {
+    if (!window.confirm(`Hide ${name} from your Grid? You can still be matched later if you change your mind in settings.`)) return;
+    hideM.mutate(id);
+  }
   function handleBlock(id: string, name: string) {
     if (!window.confirm(t("disc.blockConfirm", { name }))) return;
     blockM.mutate(id);

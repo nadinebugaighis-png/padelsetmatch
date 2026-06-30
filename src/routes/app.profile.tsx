@@ -12,6 +12,48 @@ import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 import { useRef, useState } from "react";
 
+const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
+
+async function preparePhotoFile(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) throw new Error("Please choose a photo file.");
+
+  const shouldCompress = file.size > 2.5 * 1024 * 1024 || /heic|heif|png/i.test(file.type);
+  if (!shouldCompress && file.size <= MAX_UPLOAD_BYTES) return file;
+
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.decoding = "async";
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("This photo format could not be read. Please try a JPG photo."));
+      img.src = objectUrl;
+    });
+
+    const maxSide = 1800;
+    const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+    const width = Math.max(1, Math.round(img.naturalWidth * scale));
+    const height = Math.max(1, Math.round(img.naturalHeight * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Could not prepare the photo. Please try another image.");
+    ctx.drawImage(img, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.86));
+    if (!blob) throw new Error("Could not prepare the photo. Please try another image.");
+    if (blob.size > MAX_UPLOAD_BYTES) throw new Error("Photo is too large. Please choose a smaller photo.");
+    return new File([blob], "padel-photo.jpg", { type: "image/jpeg" });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+function isTransientUploadError(message: string) {
+  return /too many connections|timeout|temporarily|503|gateway|fetch failed|network|failed to fetch/i.test(message);
+}
+
 
 export const Route = createFileRoute("/app/profile")({
   component: ProfilePage,
@@ -31,13 +73,22 @@ function ProfilePage() {
   const onPickPhoto = async (file: File) => {
     setUploading(true);
     try {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) throw new Error("Not signed in");
-      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
-      const path = `${u.user.id}/photo-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage
-        .from("padel-photos")
-        .upload(path, file, { upsert: true, contentType: file.type });
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+      if (!user) throw new Error("Please sign in again, then change your photo.");
+
+      const photo = await preparePhotoFile(file);
+      const path = `${user.id}/photo-${Date.now()}.jpg`;
+      let upErr: { message: string } | null = null;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const { error } = await supabase.storage
+          .from("padel-photos")
+          .upload(path, photo, { upsert: true, contentType: photo.type });
+        if (!error) { upErr = null; break; }
+        upErr = error;
+        if (!isTransientUploadError(error.message) || attempt === 3) break;
+        await new Promise((r) => setTimeout(r, 700 * (attempt + 1)));
+      }
       if (upErr) throw upErr;
       const { data: signed, error: sErr } = await supabase.storage
         .from("padel-photos")
@@ -45,9 +96,11 @@ function ProfilePage() {
       if (sErr || !signed) throw sErr ?? new Error("Couldn't sign URL");
       await updatePhoto({ data: { photo_url: signed.signedUrl } });
       await qc.invalidateQueries({ queryKey: ["my-profile"] });
+      await q.refetch();
       toast.success("Photo updated");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Upload failed");
+      const message = e instanceof Error ? e.message : "Upload failed";
+      toast.error(isTransientUploadError(message) ? "Upload failed because the connection was busy. Please try again." : message);
     } finally {
       setUploading(false);
     }

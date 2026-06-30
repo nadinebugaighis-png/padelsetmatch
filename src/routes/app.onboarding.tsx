@@ -308,9 +308,9 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
-              <Input type="number" min={18} max={120} value={age_min} onChange={(e) => setAgeMin(parseInt(e.target.value) || 18)} />
+              <Input type="number" inputMode="numeric" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(normalizeAge(e.target.value, 18))} />
               <span>{t("ob.to")}</span>
-              <Input type="number" min={18} max={120} value={age_max} onChange={(e) => setAgeMax(parseInt(e.target.value) || 120)} />
+              <Input type="number" inputMode="numeric" min={18} max={99} value={age_max} onChange={(e) => setAgeMax(normalizeAge(e.target.value, 99))} />
             </div>
           </>
         )}

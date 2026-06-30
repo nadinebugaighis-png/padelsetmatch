@@ -21,6 +21,7 @@ import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 
 export const Route = createFileRoute("/app/onboarding")({
   component: Onboarding,
@@ -90,6 +91,16 @@ function Onboarding() {
       if (p.availability?.length) setAvailability(p.availability);
       if (p.court_side) setCourtSide(p.court_side as CourtSide);
       if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
+    } else if (profileQ.data === null) {
+      // New user — hydrate from the pre-signup guest draft if present
+      const draft = loadGuestDraft();
+      if (draft) {
+        if (draft.priorities?.length) setPriorities((cur) => cur.length ? cur : draft.priorities!);
+        if (draft.level) setLevel(draft.level as PadelLevel);
+        if (draft.looking_for) setLookingFor(draft.looking_for as LookingFor);
+        clearGuestDraft();
+        toast.success("We pre-filled your answers from the preview.");
+      }
     }
   }, [profileQ.data]);
 

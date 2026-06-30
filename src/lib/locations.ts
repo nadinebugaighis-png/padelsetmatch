@@ -228,6 +228,7 @@ export const LOCATION_DATA: CountryData[] = [
     name: "Greece",
     cities: [
       { name: "Athens", areas: ["Kolonaki", "Glyfada", "Kifisia", "Marousi"] },
+      { name: "Crete", areas: ["Chania", "Heraklion", "Rethymno", "Agios Nikolaos", "Elounda", "Platanias", "Malia"] },
     ],
   },
   {

@@ -192,6 +192,14 @@ function ProfilePage() {
         )}
 
         {p.bio && <p className="mt-4 text-sm text-[var(--cream)]/80">{p.bio}</p>}
+
+        {p.free_court_access && (
+          <div className="mt-4 rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>
+            {p.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{p.free_court_note}</p>}
+            <p className="text-[10px] text-[var(--cream)]/55 mt-1">Shown on your grid card. Share the exact address only in chat.</p>
+          </div>
+        )}
       </div>
 
       <div className="mt-4 surface-card p-4 flex items-start gap-3 text-sm text-[var(--cream)]/70">

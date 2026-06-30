@@ -859,7 +859,7 @@ export function LangSwitch({ className = "" }: { className?: string }) {
       <button
         type="button"
         onClick={() => setLang("ar")}
-        className={`px-2.5 py-1 ${lang === "ar" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
+        className={`inline-flex items-center justify-center px-2.5 py-1 font-['Noto_Sans_Arabic'] text-sm leading-none ${lang === "ar" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
         aria-pressed={lang === "ar"}
       >ع</button>
     </div>

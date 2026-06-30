@@ -76,6 +76,8 @@ function Onboarding() {
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
+  const [goals, setGoals] = useState<string[]>(["padel", "friends"]);
+  const [meetPref, setMeetPref] = useState<"men" | "women" | "everyone">("everyone");
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);

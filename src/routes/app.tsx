@@ -26,9 +26,18 @@ function AuthShell() {
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);
 
-  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
-  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!profileQ.data });
-  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin(), enabled: !!profileQ.data, retry: false });
+  const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) return null;
+      return await fn();
+    } catch {
+      return null;
+    }
+  };
+  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => safe(() => getProfile()), retry: false });
+  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => safe(() => getMatches()), enabled: !!profileQ.data, retry: false });
+  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => safe(() => checkAdmin()), enabled: !!profileQ.data, retry: false });
 
 
   const onSignOut = async () => {

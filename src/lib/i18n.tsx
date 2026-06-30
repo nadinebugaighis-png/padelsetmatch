@@ -495,6 +495,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     athletic: "athletic", spontaneous: "spontaneous", romantic: "romantic", "ambitious career": "career-driven",
     "easy-going": "easy-going", "open-minded": "open-minded", passionate: "passionate", generous: "generous",
     curious: "curious", playful: "playful",
+    art: "art", travel: "travel", food: "food", concerts: "concerts", "music events": "music events",
   },
   es: {
     woman: "mujer", man: "hombre", "non-binary": "no binario",
@@ -508,7 +509,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     athletic: "deportista", spontaneous: "espontáneo", romantic: "romántico", "ambitious career": "ambicioso profesional",
     "easy-going": "tranquilo y flexible", "open-minded": "mente abierta", passionate: "apasionado", generous: "generoso",
     curious: "curioso", playful: "juguetón",
-
+    art: "arte", travel: "viajes", food: "comida", concerts: "conciertos", "music events": "eventos musicales",
   },
 };
 

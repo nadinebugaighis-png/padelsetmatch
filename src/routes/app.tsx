@@ -93,7 +93,6 @@ function AuthShell() {
       </header>
 
       <Outlet />
-      <InstallPrompt />
 
       {hasProfile && !onOnboarding && (
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">

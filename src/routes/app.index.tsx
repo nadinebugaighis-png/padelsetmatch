@@ -271,6 +271,7 @@ function Discover() {
                   <Heart className={`w-4 h-4 ${preview.liked ? "" : "fill-[var(--court-deep)]"}`} />
                   {preview.liked ? t("disc.undo") : "Like"}
                 </button>
+                </div>
               </div>
             </>
           )}

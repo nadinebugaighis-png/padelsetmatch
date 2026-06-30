@@ -205,17 +205,19 @@ function ChatRoom() {
           return (
             <div key={m.id} className={`group flex items-end gap-1.5 ${mine ? "justify-end" : "justify-start"}`}>
               {mine && !isEditing && (
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-1 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button
+                    type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                    className="p-1 rounded-full hover:bg-[var(--cream)]/10 text-[var(--cream)]/60"
+                    className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)]"
                     aria-label="Edit"
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => { if (window.confirm("Delete this message?")) deleteM.mutate(m.id); }}
-                    className="p-1 rounded-full hover:bg-red-500/20 text-[var(--cream)]/60 hover:text-red-400"
+                    className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-red-500/20 text-[var(--cream)] hover:text-red-400"
                     aria-label="Delete"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

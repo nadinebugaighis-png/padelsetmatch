@@ -23,24 +23,29 @@ type Q = {
 type Level = "beginner" | "intermediate" | "advanced" | "mixed";
 
 const TOPICS = [
-  { id: "", en: "Mixed", es: "Variado" },
-  { id: "rules & scoring", en: "Rules & scoring", es: "Reglas y puntuación" },
-  { id: "partner communication & calls", en: "Calls & comms", es: "Voces y comunicación" },
-  { id: "positioning & tactics", en: "Positioning & tactics", es: "Posición y táctica" },
-  { id: "shots: bandeja, víbora, chiquita, globo", en: "Shots & technique", es: "Golpes y técnica" },
-  { id: "etiquette", en: "Etiquette", es: "Etiqueta" },
+  { id: "", en: "Mixed", es: "Variado", ar: "متنوع" },
+  { id: "rules & scoring", en: "Rules & scoring", es: "Reglas y puntuación", ar: "القوانين والنقاط" },
+  { id: "partner communication & calls", en: "Calls & comms", es: "Voces y comunicación", ar: "النداءات والتواصل" },
+  { id: "positioning & tactics", en: "Positioning & tactics", es: "Posición y táctica", ar: "التمركز والتكتيك" },
+  { id: "shots: bandeja, víbora, chiquita, globo", en: "Shots & technique", es: "Golpes y técnica", ar: "الضربات والتقنية" },
+  { id: "etiquette", en: "Etiquette", es: "Etiqueta", ar: "آداب اللعب" },
 ];
 
-const LEVELS: { id: Level; en: string; es: string }[] = [
-  { id: "mixed", en: "Mixed", es: "Variado" },
-  { id: "beginner", en: "Beginner", es: "Principiante" },
-  { id: "intermediate", en: "Intermediate", es: "Intermedio" },
-  { id: "advanced", en: "Advanced", es: "Avanzado" },
+const LEVELS: { id: Level; en: string; es: string; ar: string }[] = [
+  { id: "mixed", en: "Mixed", es: "Variado", ar: "متنوع" },
+  { id: "beginner", en: "Beginner", es: "Principiante", ar: "مبتدئ" },
+  { id: "intermediate", en: "Intermediate", es: "Intermedio", ar: "متوسط" },
+  { id: "advanced", en: "Advanced", es: "Avanzado", ar: "متقدم" },
 ];
+
+type L = "en" | "es" | "ar";
+function pick(l: L, en: string, es: string, ar: string) {
+  return l === "ar" ? ar : l === "es" ? es : en;
+}
 
 function LearnPage() {
   const { lang } = useI18n();
-  const es = lang === "es";
+  const L = (lang as L) ?? "en";
   const genFn = useServerFn(generatePadelQuiz);
 
   const [topic, setTopic] = useState<string>("");

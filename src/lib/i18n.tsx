@@ -11,7 +11,7 @@ const en: Dict = {
   "land.h1.a": "find your best,",
   "land.h1.b": "Match.",
   "land.lede": "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with.",
-  "land.cta": "Start here",
+  "land.cta": "START MATCH",
   "land.what": "What's Playtomic?",
   "land.statUsers": "players joined",
   "land.tap": "Tap. Tap-back. Play.",

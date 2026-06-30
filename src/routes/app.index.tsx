@@ -198,6 +198,15 @@ function Discover() {
               <div className="absolute top-2 left-2 z-10 flex gap-1">
                 <button
                   type="button"
+                  onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
+                  aria-label={`Hide ${c.first_name}`}
+                  title="Not interested — hide from my Grid"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
                   onClick={(e) => { e.stopPropagation(); handleBlock(c.id, c.first_name); }}
                   className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
                   aria-label={`Block ${c.first_name}`}

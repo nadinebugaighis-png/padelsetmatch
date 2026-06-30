@@ -35,6 +35,23 @@ function normalizeAge(raw: string, fallback: number): number {
   return Math.min(99, Math.max(18, n));
 }
 
+function AgeInput({ value, onCommit, placeholder }: { value: number; onCommit: (n: number) => void; placeholder?: string }) {
+  const [text, setText] = useState(String(value));
+  useEffect(() => { setText(String(value)); }, [value]);
+  return (
+    <Input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      maxLength={4}
+      placeholder={placeholder}
+      value={text}
+      onChange={(e) => setText(e.target.value.replace(/[^0-9]/g, ""))}
+      onBlur={() => onCommit(normalizeAge(text, value))}
+    />
+  );
+}
+
 function Onboarding() {
   const navigate = useNavigate();
   const qc = useQueryClient();

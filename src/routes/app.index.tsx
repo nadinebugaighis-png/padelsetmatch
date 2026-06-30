@@ -156,26 +156,31 @@ function Discover() {
               {!c.liked ? (
                 <button
                   type="button"
-                  disabled={likeM.isPending}
-                  onClick={() => likeM.mutate(c.id)}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: false })}
                   className="absolute inset-0 w-full h-full text-left"
-                  aria-label={`Like ${c.first_name}`}
+                  aria-label={`View ${c.first_name}'s profile`}
                 />
               ) : (
                 <button
                   type="button"
-                  disabled={unlikeM.isPending}
-                  onClick={() => unlikeM.mutate(c.id)}
-                  className="absolute inset-0 flex items-center justify-center bg-[var(--court-deep)]/70"
-                  aria-label={`Undo like for ${c.first_name}`}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true })}
+                  className="absolute inset-0 flex items-center justify-center bg-[var(--court-deep)]/60"
+                  aria-label={`View ${c.first_name}'s profile`}
                 >
-                  <div className="flex flex-col items-center gap-2">
-                    <Heart className="w-8 h-8 fill-[var(--ball)] text-[var(--ball)]" />
-                    <span className="text-xs uppercase tracking-widest">{t("disc.liked")}</span>
-                    <span className="mt-1 inline-flex items-center gap-1 chip text-[10px]"><X className="w-3 h-3" /> {t("disc.undo")}</span>
-                  </div>
+                  <Heart className="w-10 h-10 fill-[var(--ball)] text-[var(--ball)] drop-shadow-lg" />
                 </button>
               )}
+
+              <button
+                type="button"
+                disabled={likeM.isPending || unlikeM.isPending}
+                onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
+                className={`absolute bottom-2 right-2 z-10 p-2 rounded-full shadow-lg transition-transform active:scale-90 ${c.liked ? "bg-[var(--ball)]" : "bg-black/65 hover:bg-black/85"}`}
+                aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
+                title={c.liked ? t("disc.undo") : "Like"}
+              >
+                <Heart className={`w-4 h-4 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]"}`} />
+              </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">
                 <button
@@ -198,11 +203,11 @@ function Discover() {
                 </button>
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none">
-                <div className="text-display text-2xl leading-none">{c.first_name}, {c.age}</div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">
+                <div className="text-display text-2xl leading-none">{c.first_name}</div>
                 <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
-                {c.reasons[0] && <div className="text-[11px] text-[var(--cream)]/70 mt-1 line-clamp-2">{c.reasons[0]}</div>}
               </div>
+
             </div>
           ))}
         </div>

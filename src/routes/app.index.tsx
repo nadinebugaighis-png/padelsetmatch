@@ -5,6 +5,7 @@ import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfil
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Heart, X, Flag, Shield, Sparkles, MessageCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/")({

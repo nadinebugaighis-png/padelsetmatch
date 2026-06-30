@@ -177,8 +177,10 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "Saudi Arabia",
     cities: [
-      { name: "Riyadh", areas: ["Olaya", "Al Malqa", "Diplomatic Quarter", "Hittin"] },
-      { name: "Jeddah", areas: ["Al Hamra", "Al Shati", "Obhur"] },
+      { name: "Riyadh", areas: ["Olaya", "Al Malqa", "Diplomatic Quarter", "Hittin", "King Abdullah District", "Al Yasmin"] },
+      { name: "Jeddah", areas: ["Al Hamra", "Al Shati", "Obhur", "Al Andalus", "Al Rawdah"] },
+      { name: "Khobar", areas: ["Corniche", "Al Bandariyah", "Al Rakah"] },
+      { name: "Dammam", areas: ["Al Faisaliyah", "Al Shati East", "Al Khalidiyah"] },
     ],
   },
   {

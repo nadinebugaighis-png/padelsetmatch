@@ -182,10 +182,15 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("blocks" as never)
       .select("blocked_profile_id")
       .eq("blocker_profile_id", me.id);
+    const { data: myHides } = await context.supabase
+      .from("hides" as never)
+      .select("hidden_profile_id")
+      .eq("hider_profile_id", me.id);
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
+    const hiddenSet = new Set(((myHides as Array<{ hidden_profile_id: string }> | null) ?? []).map((h) => h.hidden_profile_id));
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
-    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id));
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id) && !hiddenSet.has(c.id));
 
     // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

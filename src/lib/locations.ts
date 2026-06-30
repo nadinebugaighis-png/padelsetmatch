@@ -186,7 +186,28 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "Qatar",
     cities: [
-      { name: "Doha", areas: ["West Bay", "The Pearl", "Lusail", "Al Waab"] },
+      { name: "Doha", areas: ["West Bay", "The Pearl", "Lusail", "Al Waab", "Katara", "Msheireb", "Al Sadd", "Wakra"] },
+    ],
+  },
+  {
+    name: "Bahrain",
+    cities: [
+      { name: "Manama", areas: ["Diplomatic Area", "Juffair", "Adliya", "Seef", "Amwaj Islands"] },
+      { name: "Riffa", areas: ["East Riffa", "West Riffa", "Bukuwara"] },
+    ],
+  },
+  {
+    name: "Kuwait",
+    cities: [
+      { name: "Kuwait City", areas: ["Sharq", "Salmiya", "Jabriya", "Hawally", "Kaifan", "Shuwaikh", "Fahaheel"] },
+      { name: "Al Jahra", areas: ["Al Naeem", "Al Qasr"] },
+    ],
+  },
+  {
+    name: "Oman",
+    cities: [
+      { name: "Muscat", areas: ["Shatti Al Qurum", "Al Khuwair", "Ghala", "Bawshar", "Seeb", "Muttrah"] },
+      { name: "Salalah", areas: ["Al Saadah", "Al Wadi", "New Salalah"] },
     ],
   },
   {

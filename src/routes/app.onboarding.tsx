@@ -311,10 +311,21 @@ function Onboarding() {
                 <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.lookingFor")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">What are you looking for?</label>
             <div className="flex flex-wrap gap-2">
-              {LOOKING_FOR.map((g) => (
-                <button key={g} onClick={() => setLookingFor(g)} className={`chip ${looking_for === g ? "chip-ball" : ""}`}>{label(g)}</button>
+              {[
+                { id: "padel", label: "Padel partners" },
+                { id: "friends", label: "Friends" },
+                { id: "relationship", label: "Relationship" },
+                { id: "all", label: "Open to all" },
+              ].map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
+                  className={`chip ${goals.includes(g.id) ? "chip-ball" : ""}`}
+                >
+                  {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+                </button>
               ))}
             </div>
             <p className="text-xs text-[var(--cream)]/50">{t("ob.privateNote")}</p>
@@ -323,25 +334,15 @@ function Onboarding() {
         {step === 1 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
-            <p className="text-sm text-[var(--cream)]/70">{t("ob.audIntro1")} <b>{t("ob.audEveryone")}</b> {t("ob.audIntro2")} <b>{t("ob.audPrivate")}</b></p>
 
-            {needFriendAud && (
+            {hasPartnerGoal && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.audFriend")}</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Who would you like to meet?</label>
                 <div className="flex flex-wrap gap-2">
-                  {AUDIENCE_OPTIONS.map((o) => (
-                    <button key={o} onClick={() => toggleAud(setFriendAud)(o)} className={`chip ${friend_interested_in.includes(o) ? "chip-ball" : ""}`}>{label(o)}</button>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {needPartnerAud && (
-              <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.audPartner")}</label>
-                <div className="flex flex-wrap gap-2">
-                  {AUDIENCE_OPTIONS.map((o) => (
-                    <button key={o} onClick={() => toggleAud(setPartnerAud)(o)} className={`chip ${partner_interested_in.includes(o) ? "chip-ball" : ""}`}>{label(o)}</button>
+                  {(["men", "women", "everyone"] as const).map((o) => (
+                    <button key={o} onClick={() => setMeetPref(o)} className={`chip ${meetPref === o ? "chip-ball" : ""}`}>
+                      {o === "men" ? "Men" : o === "women" ? "Women" : "Everyone"}
+                    </button>
                   ))}
                 </div>
               </>

@@ -23,7 +23,7 @@ function Discover() {
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null }>(null);
 
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
   const getAnswers = useServerFn(getMyQaAnswers);

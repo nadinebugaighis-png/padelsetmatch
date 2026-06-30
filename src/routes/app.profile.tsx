@@ -23,7 +23,36 @@ function ProfilePage() {
   const { t, label } = useI18n();
   const getProfile = useServerFn(getMyProfile);
   const deleteAcct = useServerFn(deleteMyAccount);
+  const updatePhoto = useServerFn(updateMyPhoto);
   const q = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const onPickPhoto = async (file: File) => {
+    setUploading(true);
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) throw new Error("Not signed in");
+      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+      const path = `${u.user.id}/photo-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("padel-photos")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: signed, error: sErr } = await supabase.storage
+        .from("padel-photos")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (sErr || !signed) throw sErr ?? new Error("Couldn't sign URL");
+      await updatePhoto({ data: { photo_url: signed.signedUrl } });
+      await qc.invalidateQueries({ queryKey: ["my-profile"] });
+      toast.success("Photo updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
 
   const onDelete = async () => {
     if (!confirm(t("prof.deleteConfirm"))) return;

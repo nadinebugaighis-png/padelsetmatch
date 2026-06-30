@@ -88,6 +88,18 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
     return inserted as Profile;
   });
 
+export const updateMyPhoto = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ photo_url: z.string().min(1).max(2000) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profiles" as never)
+      .update({ photo_url: data.photo_url } as never)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 function scoreCandidate(me: Profile, c: Profile) {
   const reasons: string[] = [];
   let score = 0;

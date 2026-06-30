@@ -2,15 +2,16 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ShareQR } from "@/components/ShareQR";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteMyAccount, getMyProfile, submitFeedback } from "@/lib/app.functions";
+import { deleteMyAccount, getMyProfile, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Lock, Sparkles, Star } from "lucide-react";
+import { Camera, Lock, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
-import { useState } from "react";
+import { useRef, useState } from "react";
+
 
 export const Route = createFileRoute("/app/profile")({
   component: ProfilePage,
@@ -22,7 +23,36 @@ function ProfilePage() {
   const { t, label } = useI18n();
   const getProfile = useServerFn(getMyProfile);
   const deleteAcct = useServerFn(deleteMyAccount);
+  const updatePhoto = useServerFn(updateMyPhoto);
   const q = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const onPickPhoto = async (file: File) => {
+    setUploading(true);
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) throw new Error("Not signed in");
+      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+      const path = `${u.user.id}/photo-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("padel-photos")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: signed, error: sErr } = await supabase.storage
+        .from("padel-photos")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (sErr || !signed) throw sErr ?? new Error("Couldn't sign URL");
+      await updatePhoto({ data: { photo_url: signed.signedUrl } });
+      await qc.invalidateQueries({ queryKey: ["my-profile"] });
+      toast.success("Photo updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
 
   const onDelete = async () => {
     if (!confirm(t("prof.deleteConfirm"))) return;
@@ -53,10 +83,32 @@ function ProfilePage() {
       <h1 className="text-display text-4xl">{t("prof.hi", { name: p.first_name })}</h1>
       <div className="mt-4 surface-card p-5">
         {p.photo_url && (
-          <div className="aspect-[3/4] rounded-xl overflow-hidden mb-4">
+          <div className="aspect-[3/4] rounded-xl overflow-hidden mb-3">
             <img src={p.photo_url} alt={p.first_name} className="w-full h-full object-cover" />
           </div>
         )}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onPickPhoto(f);
+            e.target.value = "";
+          }}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mb-4"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          <Camera className="w-4 h-4 mr-2" />
+          {uploading ? "Uploading…" : p.photo_url ? "Change photo" : "Add photo"}
+        </Button>
+
         <div className="grid grid-cols-2 gap-2 text-sm">
           <Info label={t("prof.age")} v={String(p.age)} />
           <Info label={t("prof.level")} v={label(p.level)} />

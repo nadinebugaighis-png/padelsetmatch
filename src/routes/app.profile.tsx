@@ -3,14 +3,14 @@ import { ShareQR } from "@/components/ShareQR";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteMyAccount, getMyProfile, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
 import { Camera, Lock, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
@@ -67,6 +67,7 @@ function ProfilePage() {
   const deleteAcct = useServerFn(deleteMyAccount);
   const updatePhoto = useServerFn(updateMyPhoto);
   const q = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+  const photoInputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -142,25 +143,29 @@ function ProfilePage() {
         )}
         <input
           ref={fileRef}
+          id={photoInputId}
           type="file"
           accept="image/*"
-          className="hidden"
+          className="sr-only"
+          disabled={uploading}
           onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) onPickPhoto(f);
             e.target.value = "";
           }}
         />
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full mb-4"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploading}
+        <label
+          htmlFor={photoInputId}
+          aria-disabled={uploading}
+          className={buttonVariants({
+            variant: "outline",
+            size: "sm",
+            className: `w-full mb-4 ${uploading ? "pointer-events-none opacity-50" : ""}`,
+          })}
         >
           <Camera className="w-4 h-4 mr-2" />
           {uploading ? "Uploading…" : p.photo_url ? "Change photo" : "Add photo"}
-        </Button>
+        </label>
 
         <div className="grid grid-cols-2 gap-2 text-sm">
           <Info label={t("prof.age")} v={String(p.age)} />

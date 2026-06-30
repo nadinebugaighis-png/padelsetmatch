@@ -152,6 +152,8 @@ export type Profile = {
   mixed_doubles?: boolean;
   played_count?: number;
   no_show_count?: number;
+  free_court_access?: boolean;
+  free_court_note?: string | null;
 };
 
 export type RankedCandidate = Profile & {

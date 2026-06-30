@@ -433,6 +433,21 @@ export const blockProfile = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const hideProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ hiddenProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("hides" as never)
+      .insert({ hider_profile_id: myId, hidden_profile_id: data.hiddenProfileId } as never);
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const reportProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>

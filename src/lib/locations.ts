@@ -34,6 +34,8 @@ export const LOCATION_DATA: CountryData[] = [
       { name: "Roma", areas: ["Centro", "Parioli", "Prati", "EUR", "Trastevere", "Flaminio", "Appia"] },
       { name: "Torino", areas: ["Centro", "Crocetta", "San Salvario", "Lingotto"] },
       { name: "Bologna", areas: ["Centro", "Saragozza", "San Donato"] },
+      { name: "Sicily", areas: ["Palermo", "Catania", "Taormina", "Siracusa", "Agrigento", "Trapani", "Messina", "Ragusa"] },
+      { name: "Sardinia", areas: ["Cagliari", "Olbia", "Alghero", "Porto Cervo", "Costa Smeralda", "Pula", "Oristano"] },
     ],
   },
   {

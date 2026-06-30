@@ -76,6 +76,8 @@ function Onboarding() {
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
+  const [goals, setGoals] = useState<string[]>(["padel", "friends"]);
+  const [meetPref, setMeetPref] = useState<"men" | "women" | "everyone">("everyone");
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -94,6 +96,13 @@ function Onboarding() {
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
+      // Derive simple goals + meetPref from stored data
+      const g: string[] = [];
+      if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
+      if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+      if (g.length) setGoals(g);
+      const pa = p.partner_interested_in?.[0];
+      if (pa === "men" || pa === "women" || pa === "everyone") setMeetPref(pa);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) {
@@ -232,19 +241,25 @@ function Onboarding() {
     }
   };
 
+  const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
+  const hasFriendGoal = goals.includes("friends") || goals.includes("padel") || goals.includes("all");
+
   const save = useMutation({
     mutationFn: () => {
-      const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
+      const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
+      const partnerAud = hasPartnerGoal ? [meetPref] : [];
+      const friendAud = hasFriendGoal ? ["everyone"] : [];
+      const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
       return upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
-          friend_interested_in, partner_interested_in,
+          friend_interested_in: friendAud, partner_interested_in: partnerAud,
           age_min, age_max, nationality,
           zone: first ? first.city : "",
           locations: encodedLocations, languages,
-          level, priorities, looking_for,
+          level, priorities, looking_for: derivedLookingFor,
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
@@ -259,11 +274,7 @@ function Onboarding() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
 
-  const needFriendAud = looking_for === "friend" || looking_for === "both";
-  const needPartnerAud = looking_for === "partner" || looking_for === "both";
-  const audOk =
-    (!needFriendAud || friend_interested_in.length > 0) &&
-    (!needPartnerAud || partner_interested_in.length > 0);
+  const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
 
   const canStep = [
     !!first_name && age >= 18,
@@ -300,10 +311,21 @@ function Onboarding() {
                 <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.lookingFor")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">What are you looking for?</label>
             <div className="flex flex-wrap gap-2">
-              {LOOKING_FOR.map((g) => (
-                <button key={g} onClick={() => setLookingFor(g)} className={`chip ${looking_for === g ? "chip-ball" : ""}`}>{label(g)}</button>
+              {[
+                { id: "padel", label: "Padel partners" },
+                { id: "friends", label: "Friends" },
+                { id: "relationship", label: "Relationship" },
+                { id: "all", label: "Open to all" },
+              ].map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
+                  className={`chip ${goals.includes(g.id) ? "chip-ball" : ""}`}
+                >
+                  {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+                </button>
               ))}
             </div>
             <p className="text-xs text-[var(--cream)]/50">{t("ob.privateNote")}</p>
@@ -312,25 +334,15 @@ function Onboarding() {
         {step === 1 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
-            <p className="text-sm text-[var(--cream)]/70">{t("ob.audIntro1")} <b>{t("ob.audEveryone")}</b> {t("ob.audIntro2")} <b>{t("ob.audPrivate")}</b></p>
 
-            {needFriendAud && (
+            {hasPartnerGoal && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.audFriend")}</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Who would you like to meet?</label>
                 <div className="flex flex-wrap gap-2">
-                  {AUDIENCE_OPTIONS.map((o) => (
-                    <button key={o} onClick={() => toggleAud(setFriendAud)(o)} className={`chip ${friend_interested_in.includes(o) ? "chip-ball" : ""}`}>{label(o)}</button>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {needPartnerAud && (
-              <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.audPartner")}</label>
-                <div className="flex flex-wrap gap-2">
-                  {AUDIENCE_OPTIONS.map((o) => (
-                    <button key={o} onClick={() => toggleAud(setPartnerAud)(o)} className={`chip ${partner_interested_in.includes(o) ? "chip-ball" : ""}`}>{label(o)}</button>
+                  {(["men", "women", "everyone"] as const).map((o) => (
+                    <button key={o} onClick={() => setMeetPref(o)} className={`chip ${meetPref === o ? "chip-ball" : ""}`}>
+                      {o === "men" ? "Men" : o === "women" ? "Women" : "Everyone"}
+                    </button>
                   ))}
                 </div>
               </>

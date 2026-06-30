@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile, getMyQaAnswers, getMyMatches } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, getMyQaAnswers, getMyMatches } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft } from "lucide-react";
+import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 
@@ -20,6 +20,7 @@ function Discover() {
   const like = useServerFn(likeProfile);
   const unlike = useServerFn(unlikeProfile);
   const block = useServerFn(blockProfile);
+  const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean }>(null);
@@ -66,6 +67,14 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
+  const hideM = useMutation({
+    mutationFn: (id: string) => hide({ data: { hiddenProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      toast("Hidden from your Grid", { duration: 1800 });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not hide"),
+  });
   const reportM = useMutation({
     mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),
     onSuccess: () => {
@@ -81,6 +90,10 @@ function Discover() {
     if (!reason || reason.trim().length < 3) return;
     if (!window.confirm(t("disc.reportConfirm", { name }))) return;
     reportM.mutate({ id, reason: reason.trim() });
+  }
+  function handleHide(id: string, name: string) {
+    if (!window.confirm(`Hide ${name} from your Grid? You can still be matched later if you change your mind in settings.`)) return;
+    hideM.mutate(id);
   }
   function handleBlock(id: string, name: string) {
     if (!window.confirm(t("disc.blockConfirm", { name }))) return;
@@ -183,6 +196,15 @@ function Discover() {
               </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
+                  aria-label={`Hide ${c.first_name}`}
+                  title="Not interested — hide from my Grid"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                </button>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); handleBlock(c.id, c.first_name); }}

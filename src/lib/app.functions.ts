@@ -182,10 +182,15 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("blocks" as never)
       .select("blocked_profile_id")
       .eq("blocker_profile_id", me.id);
+    const { data: myHides } = await context.supabase
+      .from("hides" as never)
+      .select("hidden_profile_id")
+      .eq("hider_profile_id", me.id);
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
+    const hiddenSet = new Set(((myHides as Array<{ hidden_profile_id: string }> | null) ?? []).map((h) => h.hidden_profile_id));
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
-    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id));
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id) && !hiddenSet.has(c.id));
 
     // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -424,6 +429,21 @@ export const blockProfile = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("blocks" as never)
       .insert({ blocker_profile_id: myId, blocked_profile_id: data.blockedProfileId } as never);
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const hideProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ hiddenProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("hides" as never)
+      .insert({ hider_profile_id: myId, hidden_profile_id: data.hiddenProfileId } as never);
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
     return { ok: true };
   });

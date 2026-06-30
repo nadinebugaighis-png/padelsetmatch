@@ -700,7 +700,7 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       count: z.number().int().min(1).max(8).default(5),
-      lang: z.enum(["en", "es"]).default("en"),
+      lang: z.enum(["en", "es", "ar"]).default("en"),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -730,6 +730,8 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
 
     const sys = data.lang === "es"
       ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~60% personalidad/valores/estilo de vida y ~40% pádel (cómo juega, actitud en pista, estilo de juego, mentalidad competitiva, etc.). Responde SIEMPRE en español."
+      : data.lang === "ar"
+      ? "أنت ذكاء اصطناعي خبير في التوافق وعلم نفس العلاقات. تُولِّد أسئلة قصيرة وكاشفة من نوع الاختيار من متعدد لإيجاد توافق حقيقي بين الأشخاص (صداقة، شريك، أو توأم روح). يجب أن يكون المزيج ~60٪ شخصية/قيم/أسلوب حياة و~40٪ بادل (كيف يلعب، موقفه على الملعب، أسلوب لعبه، عقلية المنافسة، إلخ). أجب دائمًا باللغة العربية الفصحى الواضحة."
       : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~60% personality/values/lifestyle and ~40% padel (how they play, on-court attitude, playing style, competitive mindset, etc.). Always reply in English.";
 
     const prompt = `Person context:
@@ -783,7 +785,7 @@ Categories must be lowercase single words.`;
     return { questions: out };
   });
 
-const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
+const FALLBACK_QUESTIONS: Record<"en" | "es" | "ar", GeneratedQuestion[]> = {
   en: [
     { question: "What's your love language?", category: "personality", options: ["Words of affirmation", "Quality time", "Physical touch", "Acts of service", "Gifts"] },
     { question: "What makes you instantly trust someone?", category: "values", options: ["Consistency", "Honesty under pressure", "Kindness to strangers", "Keeps secrets"] },
@@ -821,6 +823,24 @@ const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
     { question: "Tu compañero falla una fácil — tú…", category: "pádel", options: ["Lo animo", "Callo", "Doy consejos", "Me frustro"] },
     { question: "¿Qué tan competitivo en pista?", category: "pádel", options: ["Ganar a toda costa", "Competitivo pero tranqui", "Por diversión", "Solo por socializar"] },
     { question: "¿Sesión ideal de pádel?", category: "pádel", options: ["Americano amistoso", "Partido serio", "Drills + partido", "Juego rápido divertido"] },
+  ],
+  ar: [
+    { question: "ما هي لغة الحب التي تفضّلها؟", category: "personality", options: ["كلمات التقدير", "وقت نوعي", "اللمس الجسدي", "أفعال الخدمة", "الهدايا"] },
+    { question: "ما الذي يجعلك تثق بشخص فورًا؟", category: "values", options: ["الثبات", "الصدق تحت الضغط", "اللطف مع الغرباء", "حفظ الأسرار"] },
+    { question: "انطوائي، انبساطي، أم بينهما؟", category: "personality", options: ["انطوائي", "انبساطي", "بينهما"] },
+    { question: "أكبر شيء مرفوض في العلاقة؟", category: "dealbreakers", options: ["الكذب", "الغيرة", "سرعة الغضب", "بدون طموح", "انغلاق الفكر"] },
+    { question: "عندما تنزعج، تفضّل…", category: "conflict", options: ["التحدث عنه", "أن تُترك وحدك", "قليل من الاثنين"] },
+    { question: "حسّ الفكاهة لديك غالبًا…", category: "humor", options: ["ساخر", "مرح وطفولي", "ذكي", "أسود", "لطيف"] },
+    { question: "الأحد المثالي؟", category: "lifestyle", options: ["فطور متأخر ومشي", "رياضة وقيلولة", "بحر/طبيعة", "بيت وفيلم", "خروج مع الأصدقاء"] },
+    { question: "هل تؤمن بتوأم الروح؟", category: "values", options: ["نعم", "لا", "نوعًا ما"] },
+    { question: "اختر سهرة:", category: "social", options: ["عشاء ثنائي", "خروج جماعي", "حفلة بيت", "البقاء في المنزل"] },
+    { question: "ما أهمية المال بالنسبة لك؟", category: "lifestyle", options: ["ادّخر أولًا", "أنفق على التجارب", "دلّل نفسك", "استثمر طويل الأمد"] },
+    { question: "أي جانب تفضل في البادل؟", category: "padel", options: ["اليمين (درايف)", "اليسار (ريفيس)", "كلاهما", "ما زلت أكتشف"] },
+    { question: "أسلوب لعبك…", category: "padel", options: ["هجومي وقوي", "دفاعي كالجدار", "تكتيكي صبور", "اجتماعي للمتعة"] },
+    { question: "بعد مباراة صعبة…", category: "padel", options: ["أُفرّغ مشاعري", "أمزح", "أصمت", "أحلّل كل نقطة"] },
+    { question: "شريكك يخطئ كرة سهلة — أنت…", category: "padel", options: ["أشجّعه", "أصمت", "أعطي نصائح", "أنزعج"] },
+    { question: "كم أنت تنافسي على الملعب؟", category: "padel", options: ["الفوز بأي ثمن", "تنافسي وهادئ", "للمتعة", "للتواصل فقط"] },
+    { question: "جلسة البادل المثالية؟", category: "padel", options: ["أمريكانو ودّي", "مباراة جدية", "تمارين ومباراة", "لعب سريع ممتع"] },
   ],
 };
 
@@ -899,7 +919,7 @@ export const generatePadelQuiz = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       count: z.number().int().min(1).max(8).default(5),
-      lang: z.enum(["en", "es"]).default("en"),
+      lang: z.enum(["en", "es", "ar"]).default("en"),
       topic: z.string().max(60).optional(),
       level: z.enum(["beginner", "intermediate", "advanced", "mixed"]).default("mixed"),
     }).parse(d),
@@ -966,7 +986,7 @@ Categories lowercase single words.`;
     return { questions: out };
   });
 
-const QUIZ_FALLBACK: Record<"en" | "es", QuizQuestion[]> = {
+const QUIZ_FALLBACK: Record<"en" | "es" | "ar", QuizQuestion[]> = {
   en: [
     { question: "Your partner is about to hit a ball coming down the middle. What should you call?", category: "communication", options: ["'Mine!'", "'Yours!'", "Stay quiet", "'Out!'"], correctIndex: 1, explanation: "Call 'Yours!' clearly and early so your partner commits. Middle balls are the #1 cause of doubles confusion — the call decides who takes it." },
     { question: "The ball bounces in your court, hits the back glass, and comes back. Is it still in play?", category: "rules", options: ["Yes, play it", "No, point lost", "Only if it bounces again", "Only on serve"], correctIndex: 0, explanation: "Yes — after one bounce on the floor the ball may hit your own walls and you must return it before it bounces twice on the floor." },
@@ -986,6 +1006,16 @@ const QUIZ_FALLBACK: Record<"en" | "es", QuizQuestion[]> = {
     { question: "La bola toca la pared antes de botar en el suelo. ¿Qué pasa?", category: "reglas", options: ["Se juega", "Punto para quien golpeó", "Punto en contra de quien golpeó", "Se repite"], correctIndex: 2, explanation: "La bola debe botar primero en el suelo. Si toca cualquier pared antes del suelo, pierde el punto quien la golpeó." },
     { question: "Tu compañero persigue un globo al fondo. ¿Qué haces?", category: "táctica", options: ["Quedarte en la red", "Retroceder en paralelo a la línea de saque", "Correr al fondo también", "Cambiar de lado"], correctIndex: 1, explanation: "Baja en paralelo a la línea de saque. Pegado a la red dejas un hueco enorme; en paralelo el equipo sigue conectado." },
     { question: "¿Mejor respuesta a una bola baja y lenta a tus pies en la red?", category: "golpes", options: ["Remate", "Chiquita (volea baja suave)", "Globo", "Drive fuerte"], correctIndex: 1, explanation: "Una chiquita a los pies del rival lo obliga a golpear hacia arriba y te da la siguiente bola de ataque. No intentes rematar una bola baja." },
+  ],
+  ar: [
+    { question: "شريكك على وشك ضرب كرة قادمة من المنتصف. ماذا تنادي؟", category: "communication", options: ["«ليّ!»", "«لك!»", "اصمت", "«خارج!»"], correctIndex: 1, explanation: "نادِ «لك!» بوضوح وبسرعة ليلتزم شريكك. كرات المنتصف هي السبب الأول للارتباك في الزوجي." },
+    { question: "ترتد الكرة في ملعبك، تصطدم بالزجاج الخلفي وتعود. هل لا تزال في اللعب؟", category: "rules", options: ["نعم، العبها", "لا، خسرت النقطة", "فقط إذا ارتدت مرة ثانية", "فقط في الإرسال"], correctIndex: 0, explanation: "نعم — بعد ارتداد واحد على الأرض يمكن للكرة أن تلمس جدرانك وعليك إعادتها قبل أن ترتد مرتين على الأرض." },
+    { question: "أفضل ضربة عندما يرسل الخصم لوبًا عميقًا للزجاج الخلفي؟", category: "shots", options: ["سماش قوي", "بانديخا", "كرة قصيرة", "درايف"], correctIndex: 1, explanation: "البانديخا ضربة علوية مقطوعة تُبقيك على الشبكة. السماش الكامل من العمق يخسرك المركز." },
+    { question: "أين يجب أن يقف فريق الشبكة؟", category: "positioning", options: ["على خط الإرسال", "على بُعد 1-2 م من الشبكة جنبًا إلى جنب", "واحد للأمام وواحد للخلف", "ملتصقين بالزجاج الخلفي"], correctIndex: 1, explanation: "ابقَوا معًا على بُعد 1-2 م من الشبكة. التشكيل «واحد أمام وواحد خلف» يفتح المنتصف." },
+    { question: "في الإرسال، يجب أن…", category: "rules", options: ["تُضرب فوق الرأس", "ترتد أولًا وتُضرب عند الخصر أو أدنى", "تُضرب طائرة", "ترتد مرتين قبل الضرب"], correctIndex: 1, explanation: "الإرسال من الأسفل: اترك الكرة ترتد مرة في مربعك ثم اضربها عند الخصر أو أدنى نحو المربع القطري للخصم." },
+    { question: "الكرة تصطدم بالجدار قبل أن ترتد على الأرض. ماذا يحدث؟", category: "rules", options: ["استمر باللعب", "نقطة للضارب", "نقطة ضد الضارب", "إعادة"], correctIndex: 2, explanation: "يجب أن ترتد الكرة على الأرض أولًا. إذا لمست أي جدار قبل الأرض، يخسر الضارب النقطة." },
+    { question: "شريكك يطارد لوبًا للخلف. ماذا تفعل؟", category: "tactics", options: ["ابقَ على الشبكة", "تراجع موازيًا له إلى خط الإرسال", "اركض للخلف أيضًا", "بدّل الجهات فورًا"], correctIndex: 1, explanation: "تراجع إلى خط الإرسال وابقَ موازيًا. البقاء على الشبكة يفتح فجوة كبيرة." },
+    { question: "أفضل رد على كرة بطيئة منخفضة عند قدميك على الشبكة؟", category: "shots", options: ["سماش", "تشيكيتا (طائرة منخفضة ناعمة)", "لوب", "درايف قوي"], correctIndex: 1, explanation: "التشيكيتا — طائرة ناعمة منخفضة عند أقدام الخصم — تجبره على الرفع وتمنحك الكرة الهجومية التالية." },
   ],
 };
 

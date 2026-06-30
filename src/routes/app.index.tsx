@@ -218,42 +218,45 @@ function Discover() {
       </Link>
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-w-sm p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15">
+        <DialogContent className="max-w-sm p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[90vh] flex flex-col">
           {preview && (
             <>
               <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
-              <button
-                type="button"
-                onClick={() => setPreview(null)}
-                className="absolute top-3 left-3 z-20 flex items-center gap-1 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 text-[var(--cream)] text-xs font-semibold backdrop-blur-sm"
-                aria-label="Back to grid"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" /> Back
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreview(null)}
-                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/70 hover:bg-black/90 text-[var(--cream)] backdrop-blur-sm"
-                aria-label="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              {preview.photo_url && (
-                <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
-              )}
-              <div className="p-4 space-y-3">
-                <div>
-                  <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
-                  <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
-                </div>
-                {preview.bio ? (
-                  <p className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap">{preview.bio}</p>
-                ) : (
-                  <p className="text-sm text-[var(--cream)]/50 italic">No bio yet.</p>
+              <div className="sticky top-0 z-20 flex items-center justify-between px-3 py-2 bg-[var(--court-deep)]/95 backdrop-blur-sm border-b border-[var(--cream)]/10">
+                <button
+                  type="button"
+                  onClick={() => setPreview(null)}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)] text-xs font-semibold"
+                  aria-label="Back to grid"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" /> Back
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreview(null)}
+                  className="p-2 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)]"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="overflow-y-auto flex-1">
+                {preview.photo_url && (
+                  <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
                 )}
-                {preview.reasons[0] && (
-                  <p className="text-xs text-[var(--cream)]/65 border-t border-[var(--cream)]/10 pt-3">{preview.reasons[0]}</p>
-                )}
+                <div className="p-4 space-y-3">
+                  <div>
+                    <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
+                    <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                  </div>
+                  {preview.bio ? (
+                    <p className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap">{preview.bio}</p>
+                  ) : (
+                    <p className="text-sm text-[var(--cream)]/50 italic">No bio yet.</p>
+                  )}
+                  {preview.reasons[0] && (
+                    <p className="text-xs text-[var(--cream)]/65 border-t border-[var(--cream)]/10 pt-3">{preview.reasons[0]}</p>
+                  )}
                 <button
                   type="button"
                   disabled={likeM.isPending || unlikeM.isPending}
@@ -268,6 +271,7 @@ function Discover() {
                   <Heart className={`w-4 h-4 ${preview.liked ? "" : "fill-[var(--court-deep)]"}`} />
                   {preview.liked ? t("disc.undo") : "Like"}
                 </button>
+                </div>
               </div>
             </>
           )}

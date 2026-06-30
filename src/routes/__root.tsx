@@ -13,7 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
-import { I18nProvider, useT } from "@/lib/i18n";
+import { I18nProvider } from "@/lib/i18n";
 import { CookieBanner } from "@/components/CookieBanner";
 
 function NotFoundComponent() {

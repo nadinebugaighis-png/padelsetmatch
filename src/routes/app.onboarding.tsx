@@ -96,6 +96,13 @@ function Onboarding() {
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
+      // Derive simple goals + meetPref from stored data
+      const g: string[] = [];
+      if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
+      if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+      if (g.length) setGoals(g);
+      const pa = p.partner_interested_in?.[0];
+      if (pa === "men" || pa === "women" || pa === "everyone") setMeetPref(pa);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) {

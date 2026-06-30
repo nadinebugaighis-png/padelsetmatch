@@ -333,9 +333,9 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
-              <Input type="number" inputMode="numeric" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(normalizeAge(e.target.value, 18))} />
+              <AgeInput value={age_min} onCommit={setAgeMin} />
               <span>{t("ob.to")}</span>
-              <Input type="number" inputMode="numeric" min={18} max={99} value={age_max} onChange={(e) => setAgeMax(normalizeAge(e.target.value, 99))} />
+              <AgeInput value={age_max} onCommit={setAgeMax} />
             </div>
           </>
         )}

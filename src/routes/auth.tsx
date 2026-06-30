@@ -81,7 +81,21 @@ function AuthPage() {
         </p>
 
         <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
-          {t("auth.google")}
+           {t("auth.google")}
+        </Button>
+        <Button
+          onClick={async () => {
+            setLoading(true);
+            const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/app" });
+            if (result.error) { toast.error(result.error.message); setLoading(false); return; }
+            if (result.redirected) return;
+            navigate({ to: "/app" });
+          }}
+          disabled={loading}
+          variant="secondary"
+          className="w-full mt-2 bg-black text-white hover:bg-black/90"
+        >
+           Continue with Apple
         </Button>
 
         <div className="my-5 flex items-center gap-3 text-xs text-[var(--cream)]/40 uppercase tracking-widest">

@@ -824,6 +824,24 @@ const FALLBACK_QUESTIONS: Record<"en" | "es" | "ar", GeneratedQuestion[]> = {
     { question: "¿Qué tan competitivo en pista?", category: "pádel", options: ["Ganar a toda costa", "Competitivo pero tranqui", "Por diversión", "Solo por socializar"] },
     { question: "¿Sesión ideal de pádel?", category: "pádel", options: ["Americano amistoso", "Partido serio", "Drills + partido", "Juego rápido divertido"] },
   ],
+  ar: [
+    { question: "ما هي لغة الحب التي تفضّلها؟", category: "personality", options: ["كلمات التقدير", "وقت نوعي", "اللمس الجسدي", "أفعال الخدمة", "الهدايا"] },
+    { question: "ما الذي يجعلك تثق بشخص فورًا؟", category: "values", options: ["الثبات", "الصدق تحت الضغط", "اللطف مع الغرباء", "حفظ الأسرار"] },
+    { question: "انطوائي، انبساطي، أم بينهما؟", category: "personality", options: ["انطوائي", "انبساطي", "بينهما"] },
+    { question: "أكبر شيء مرفوض في العلاقة؟", category: "dealbreakers", options: ["الكذب", "الغيرة", "سرعة الغضب", "بدون طموح", "انغلاق الفكر"] },
+    { question: "عندما تنزعج، تفضّل…", category: "conflict", options: ["التحدث عنه", "أن تُترك وحدك", "قليل من الاثنين"] },
+    { question: "حسّ الفكاهة لديك غالبًا…", category: "humor", options: ["ساخر", "مرح وطفولي", "ذكي", "أسود", "لطيف"] },
+    { question: "الأحد المثالي؟", category: "lifestyle", options: ["فطور متأخر ومشي", "رياضة وقيلولة", "بحر/طبيعة", "بيت وفيلم", "خروج مع الأصدقاء"] },
+    { question: "هل تؤمن بتوأم الروح؟", category: "values", options: ["نعم", "لا", "نوعًا ما"] },
+    { question: "اختر سهرة:", category: "social", options: ["عشاء ثنائي", "خروج جماعي", "حفلة بيت", "البقاء في المنزل"] },
+    { question: "ما أهمية المال بالنسبة لك؟", category: "lifestyle", options: ["ادّخر أولًا", "أنفق على التجارب", "دلّل نفسك", "استثمر طويل الأمد"] },
+    { question: "أي جانب تفضل في البادل؟", category: "padel", options: ["اليمين (درايف)", "اليسار (ريفيس)", "كلاهما", "ما زلت أكتشف"] },
+    { question: "أسلوب لعبك…", category: "padel", options: ["هجومي وقوي", "دفاعي كالجدار", "تكتيكي صبور", "اجتماعي للمتعة"] },
+    { question: "بعد مباراة صعبة…", category: "padel", options: ["أُفرّغ مشاعري", "أمزح", "أصمت", "أحلّل كل نقطة"] },
+    { question: "شريكك يخطئ كرة سهلة — أنت…", category: "padel", options: ["أشجّعه", "أصمت", "أعطي نصائح", "أنزعج"] },
+    { question: "كم أنت تنافسي على الملعب؟", category: "padel", options: ["الفوز بأي ثمن", "تنافسي وهادئ", "للمتعة", "للتواصل فقط"] },
+    { question: "جلسة البادل المثالية؟", category: "padel", options: ["أمريكانو ودّي", "مباراة جدية", "تمارين ومباراة", "لعب سريع ممتع"] },
+  ],
 };
 
 // ===================== Admin =====================

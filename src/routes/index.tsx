@@ -47,10 +47,7 @@ function Landing() {
             {t("land.lede")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/preview" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
-              Try it — no signup
-            </Link>
-            <Link to="/auth" className="inline-flex items-center rounded-full border border-[var(--cream)]/30 px-6 py-3 hover:bg-[var(--cream)]/10">
+            <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
               {t("land.cta")}
             </Link>
             <ShareQR url="https://padelspark.lovable.app" label="Join me on PadelMatch" />

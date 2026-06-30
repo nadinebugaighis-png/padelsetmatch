@@ -35,6 +35,23 @@ function normalizeAge(raw: string, fallback: number): number {
   return Math.min(99, Math.max(18, n));
 }
 
+function AgeInput({ value, onCommit, placeholder }: { value: number; onCommit: (n: number) => void; placeholder?: string }) {
+  const [text, setText] = useState(String(value));
+  useEffect(() => { setText(String(value)); }, [value]);
+  return (
+    <Input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      maxLength={4}
+      placeholder={placeholder}
+      value={text}
+      onChange={(e) => setText(e.target.value.replace(/[^0-9]/g, ""))}
+      onBlur={() => onCommit(normalizeAge(text, value))}
+    />
+  );
+}
+
 function Onboarding() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -270,7 +287,7 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
-            <Input type="number" inputMode="numeric" min={18} max={99} placeholder="e.g. 32" value={age} onChange={(e) => setAge(normalizeAge(e.target.value, 18))} />
+            <AgeInput value={age} onCommit={setAge} placeholder="e.g. 32" />
             <p className="text-[11px] text-[var(--cream)]/50">Enter your age (18–99), not your birth year.</p>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
@@ -316,9 +333,9 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
-              <Input type="number" inputMode="numeric" min={18} max={99} value={age_min} onChange={(e) => setAgeMin(normalizeAge(e.target.value, 18))} />
+              <AgeInput value={age_min} onCommit={setAgeMin} />
               <span>{t("ob.to")}</span>
-              <Input type="number" inputMode="numeric" min={18} max={99} value={age_max} onChange={(e) => setAgeMax(normalizeAge(e.target.value, 99))} />
+              <AgeInput value={age_max} onCommit={setAgeMax} />
             </div>
           </>
         )}

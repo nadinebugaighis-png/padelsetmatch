@@ -241,19 +241,25 @@ function Onboarding() {
     }
   };
 
+  const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
+  const hasFriendGoal = goals.includes("friends") || goals.includes("padel") || goals.includes("all");
+
   const save = useMutation({
     mutationFn: () => {
-      const derived = Array.from(new Set([...audToGenders(friend_interested_in), ...audToGenders(partner_interested_in)]));
+      const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
+      const partnerAud = hasPartnerGoal ? [meetPref] : [];
+      const friendAud = hasFriendGoal ? ["everyone"] : [];
+      const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
       return upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
-          friend_interested_in, partner_interested_in,
+          friend_interested_in: friendAud, partner_interested_in: partnerAud,
           age_min, age_max, nationality,
           zone: first ? first.city : "",
           locations: encodedLocations, languages,
-          level, priorities, looking_for,
+          level, priorities, looking_for: derivedLookingFor,
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
@@ -268,11 +274,7 @@ function Onboarding() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
 
-  const needFriendAud = looking_for === "friend" || looking_for === "both";
-  const needPartnerAud = looking_for === "partner" || looking_for === "both";
-  const audOk =
-    (!needFriendAud || friend_interested_in.length > 0) &&
-    (!needPartnerAud || partner_interested_in.length > 0);
+  const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
 
   const canStep = [
     !!first_name && age >= 18,

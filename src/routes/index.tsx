@@ -58,7 +58,7 @@ function Landing() {
             </Link>
             <ShareQR url="https://padelspark.lovable.app" label="Join me on PadelMatch" />
           </div>
-          <p className="mt-3 text-xs text-[var(--cream)]/60 max-w-md">
+          <p className="mt-4 text-base font-medium text-[var(--cream)]/90 max-w-md tracking-wide">
             {t("land.cta.sub")}
           </p>
 

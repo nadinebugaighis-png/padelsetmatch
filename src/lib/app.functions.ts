@@ -700,7 +700,7 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       count: z.number().int().min(1).max(8).default(5),
-      lang: z.enum(["en", "es"]).default("en"),
+      lang: z.enum(["en", "es", "ar"]).default("en"),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -783,7 +783,7 @@ Categories must be lowercase single words.`;
     return { questions: out };
   });
 
-const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
+const FALLBACK_QUESTIONS: Record<"en" | "es" | "ar", GeneratedQuestion[]> = {
   en: [
     { question: "What's your love language?", category: "personality", options: ["Words of affirmation", "Quality time", "Physical touch", "Acts of service", "Gifts"] },
     { question: "What makes you instantly trust someone?", category: "values", options: ["Consistency", "Honesty under pressure", "Kindness to strangers", "Keeps secrets"] },
@@ -899,7 +899,7 @@ export const generatePadelQuiz = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       count: z.number().int().min(1).max(8).default(5),
-      lang: z.enum(["en", "es"]).default("en"),
+      lang: z.enum(["en", "es", "ar"]).default("en"),
       topic: z.string().max(60).optional(),
       level: z.enum(["beginner", "intermediate", "advanced", "mixed"]).default("mixed"),
     }).parse(d),
@@ -966,7 +966,7 @@ Categories lowercase single words.`;
     return { questions: out };
   });
 
-const QUIZ_FALLBACK: Record<"en" | "es", QuizQuestion[]> = {
+const QUIZ_FALLBACK: Record<"en" | "es" | "ar", QuizQuestion[]> = {
   en: [
     { question: "Your partner is about to hit a ball coming down the middle. What should you call?", category: "communication", options: ["'Mine!'", "'Yours!'", "Stay quiet", "'Out!'"], correctIndex: 1, explanation: "Call 'Yours!' clearly and early so your partner commits. Middle balls are the #1 cause of doubles confusion — the call decides who takes it." },
     { question: "The ball bounces in your court, hits the back glass, and comes back. Is it still in play?", category: "rules", options: ["Yes, play it", "No, point lost", "Only if it bounces again", "Only on serve"], correctIndex: 0, explanation: "Yes — after one bounce on the floor the ball may hit your own walls and you must return it before it bounces twice on the floor." },

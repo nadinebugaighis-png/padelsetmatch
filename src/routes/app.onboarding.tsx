@@ -441,6 +441,26 @@ function Onboarding() {
               Open to mixed doubles (2 men + 2 women format)
             </label>
 
+            <div className="rounded-xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-3 mt-2">
+              <label className="flex items-start gap-2 text-sm">
+                <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--ball)] mt-0.5" />
+                <span>
+                  <span className="font-semibold">🎾 I have free court access</span>
+                  <span className="block text-xs text-[var(--cream)]/70 mt-0.5">Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.</span>
+                </span>
+              </label>
+              {freeCourt && (
+                <Input
+                  className="mt-2"
+                  value={freeCourtNote}
+                  onChange={(e) => setFreeCourtNote(e.target.value)}
+                  placeholder="Optional: court name or area (share full address only in chat)"
+                  maxLength={200}
+                />
+              )}
+            </div>
+
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.bio")}</label>
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>

@@ -67,6 +67,14 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
+  const hideM = useMutation({
+    mutationFn: (id: string) => hide({ data: { hiddenProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      toast("Hidden from your Grid", { duration: 1800 });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not hide"),
+  });
   const reportM = useMutation({
     mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),
     onSuccess: () => {

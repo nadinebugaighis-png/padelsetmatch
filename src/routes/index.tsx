@@ -20,7 +20,13 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const t = useT();
   const fetchCount = useServerFn(getPlayerCount);
-  const countQ = useQuery({ queryKey: ["player-count"], queryFn: () => fetchCount() });
+  const countQ = useQuery({
+    queryKey: ["player-count"],
+    queryFn: async () => {
+      try { return await fetchCount(); } catch { return { count: 0 }; }
+    },
+    retry: false,
+  });
   const count = countQ.data?.count ?? 0;
   const install = useInstallModal();
   return (

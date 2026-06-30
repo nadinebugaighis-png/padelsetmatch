@@ -177,14 +177,37 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "Saudi Arabia",
     cities: [
-      { name: "Riyadh", areas: ["Olaya", "Al Malqa", "Diplomatic Quarter", "Hittin"] },
-      { name: "Jeddah", areas: ["Al Hamra", "Al Shati", "Obhur"] },
+      { name: "Riyadh", areas: ["Olaya", "Al Malqa", "Diplomatic Quarter", "Hittin", "King Abdullah District", "Al Yasmin"] },
+      { name: "Jeddah", areas: ["Al Hamra", "Al Shati", "Obhur", "Al Andalus", "Al Rawdah"] },
+      { name: "Khobar", areas: ["Corniche", "Al Bandariyah", "Al Rakah"] },
+      { name: "Dammam", areas: ["Al Faisaliyah", "Al Shati East", "Al Khalidiyah"] },
     ],
   },
   {
     name: "Qatar",
     cities: [
-      { name: "Doha", areas: ["West Bay", "The Pearl", "Lusail", "Al Waab"] },
+      { name: "Doha", areas: ["West Bay", "The Pearl", "Lusail", "Al Waab", "Katara", "Msheireb", "Al Sadd", "Wakra"] },
+    ],
+  },
+  {
+    name: "Bahrain",
+    cities: [
+      { name: "Manama", areas: ["Diplomatic Area", "Juffair", "Adliya", "Seef", "Amwaj Islands"] },
+      { name: "Riffa", areas: ["East Riffa", "West Riffa", "Bukuwara"] },
+    ],
+  },
+  {
+    name: "Kuwait",
+    cities: [
+      { name: "Kuwait City", areas: ["Sharq", "Salmiya", "Jabriya", "Hawally", "Kaifan", "Shuwaikh", "Fahaheel"] },
+      { name: "Al Jahra", areas: ["Al Naeem", "Al Qasr"] },
+    ],
+  },
+  {
+    name: "Oman",
+    cities: [
+      { name: "Muscat", areas: ["Shatti Al Qurum", "Al Khuwair", "Ghala", "Bawshar", "Seeb", "Muttrah"] },
+      { name: "Salalah", areas: ["Al Saadah", "Al Wadi", "New Salalah"] },
     ],
   },
   {

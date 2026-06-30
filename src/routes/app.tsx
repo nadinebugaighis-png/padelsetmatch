@@ -10,6 +10,9 @@ import { useT, LangSwitch } from "@/lib/i18n";
 export const Route = createFileRoute("/app")({
   ssr: false,
   beforeLoad: async () => {
+    // getSession recovers from localStorage and refreshes the token if expired
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData.session) throw redirect({ to: "/auth" });
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
     return { user: data.user };

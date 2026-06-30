@@ -15,6 +15,8 @@ export const LOCATION_DATA: CountryData[] = [
       { name: "Málaga", areas: ["Centro", "Pedregalejo", "El Limonar", "Teatinos", "Churriana", "Marbella", "Estepona"] },
       { name: "Sevilla", areas: ["Centro", "Triana", "Nervión", "Los Remedios", "Bellavista"] },
       { name: "Bilbao", areas: ["Abando", "Indautxu", "Deusto", "Getxo"] },
+      { name: "Mallorca", areas: ["Palma", "Port d'Andratx", "Pollença", "Alcúdia", "Sóller", "Manacor", "Calvià", "Inca"] },
+      { name: "Menorca", areas: ["Maó (Mahón)", "Ciutadella", "Es Mercadal", "Fornells", "Sant Lluís", "Alaior"] },
     ],
   },
   {
@@ -32,6 +34,8 @@ export const LOCATION_DATA: CountryData[] = [
       { name: "Roma", areas: ["Centro", "Parioli", "Prati", "EUR", "Trastevere", "Flaminio", "Appia"] },
       { name: "Torino", areas: ["Centro", "Crocetta", "San Salvario", "Lingotto"] },
       { name: "Bologna", areas: ["Centro", "Saragozza", "San Donato"] },
+      { name: "Sicily", areas: ["Palermo", "Catania", "Taormina", "Siracusa", "Agrigento", "Trapani", "Messina", "Ragusa"] },
+      { name: "Sardinia", areas: ["Cagliari", "Olbia", "Alghero", "Porto Cervo", "Costa Smeralda", "Pula", "Oristano"] },
     ],
   },
   {
@@ -224,6 +228,7 @@ export const LOCATION_DATA: CountryData[] = [
     name: "Greece",
     cities: [
       { name: "Athens", areas: ["Kolonaki", "Glyfada", "Kifisia", "Marousi"] },
+      { name: "Crete", areas: ["Chania", "Heraklion", "Rethymno", "Agios Nikolaos", "Elounda", "Platanias", "Malia"] },
     ],
   },
   {

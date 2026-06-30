@@ -29,6 +29,11 @@ export const PRIORITY_TRAITS = [
   "generous",
   "curious",
   "playful",
+  "art",
+  "travel",
+  "food",
+  "concerts",
+  "music events",
 ] as const;
 
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];

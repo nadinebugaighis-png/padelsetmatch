@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, reportProfile, getMyQaAnswers, getMyMatches } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X, Flag, Shield, Sparkles, MessageCircle } from "lucide-react";
+import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 

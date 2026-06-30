@@ -20,6 +20,7 @@ function Discover() {
   const like = useServerFn(likeProfile);
   const unlike = useServerFn(unlikeProfile);
   const block = useServerFn(blockProfile);
+  const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean }>(null);

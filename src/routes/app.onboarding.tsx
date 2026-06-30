@@ -247,6 +247,7 @@ function Onboarding() {
           level, priorities, looking_for,
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,
+          free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
         },
       });
     },

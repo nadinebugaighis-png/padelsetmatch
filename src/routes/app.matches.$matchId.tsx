@@ -1,14 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus, markMatchRead } from "@/lib/app.functions";
+import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus, markMatchRead, editMessage, deleteMessage } from "@/lib/app.functions";
 import { playtomicLink } from "@/lib/affinity";
 import { REPORT_REASONS } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 
@@ -28,10 +28,14 @@ function ChatRoom() {
   const confirmFn = useServerFn(confirmPlayed);
   const noShowFn = useServerFn(reportNoShow);
   const statusFn = useServerFn(getPlayedStatus);
+  const editFn = useServerFn(editMessage);
+  const delFn = useServerFn(deleteMessage);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
   const statusQ = useQuery({ queryKey: ["match-status", matchId], queryFn: () => statusFn({ data: { matchId } }) });
   const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState<string>(REPORT_REASONS[0]);
   const [reportDetail, setReportDetail] = useState("");
@@ -88,6 +92,16 @@ function ChatRoom() {
     mutationFn: () => noShowFn({ data: { matchId } }),
     onSuccess: () => toast.success("No-show reported. Thanks — we'll look into it."),
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+  });
+  const editM = useMutation({
+    mutationFn: (v: { messageId: string; body: string }) => editFn({ data: v }),
+    onSuccess: () => { setEditingId(null); setEditingText(""); qc.invalidateQueries({ queryKey: ["match", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't edit"),
+  });
+  const deleteM = useMutation({
+    mutationFn: (messageId: string) => delFn({ data: { messageId } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["match", matchId] }),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't delete"),
   });
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
@@ -187,10 +201,60 @@ function ChatRoom() {
         )}
         {messages.map((m) => {
           const mine = m.sender_profile_id === my_profile_id;
+          const isEditing = editingId === m.id;
           return (
-            <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+            <div key={m.id} className={`group flex items-end gap-1.5 ${mine ? "justify-end" : "justify-start"}`}>
+              {mine && !isEditing && (
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
+                    className="p-1 rounded-full hover:bg-[var(--cream)]/10 text-[var(--cream)]/60"
+                    aria-label="Edit"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => { if (window.confirm("Delete this message?")) deleteM.mutate(m.id); }}
+                    className="p-1 rounded-full hover:bg-red-500/20 text-[var(--cream)]/60 hover:text-red-400"
+                    aria-label="Delete"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
               <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
-                {m.body}
+                {isEditing ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const body = editingText.trim();
+                      if (body && body !== m.body) editM.mutate({ messageId: m.id, body });
+                      else { setEditingId(null); setEditingText(""); }
+                    }}
+                    className="flex flex-col gap-1.5 min-w-[180px]"
+                  >
+                    <textarea
+                      value={editingText}
+                      onChange={(e) => setEditingText(e.target.value)}
+                      className="w-full bg-[var(--court-deep)]/20 text-[var(--court-deep)] rounded p-1.5 text-sm resize-none"
+                      rows={2}
+                      autoFocus
+                    />
+                    <div className="flex gap-1 justify-end">
+                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label="Cancel">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label="Save">
+                        <Check className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    {m.body}
+                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--court-deep)]/60" : "text-[var(--cream)]/50"}`}>(edited)</span>}
+                  </>
+                )}
               </div>
             </div>
           );

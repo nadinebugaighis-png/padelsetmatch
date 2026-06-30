@@ -362,7 +362,7 @@ export const getMatchDetail = createServerFn({ method: "GET" })
       match_id: mr.id,
       my_profile_id: myId,
       other: other as unknown as Profile,
-      messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string }> | null) ?? []),
+      messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string; edited_at: string | null }> | null) ?? []),
     };
   });
 
@@ -406,6 +406,43 @@ export const sendMessage = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+export const editMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ messageId: z.string().uuid(), body: z.string().min(1).max(2000) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("messages" as never)
+      .update({ body: data.body, edited_at: new Date().toISOString() } as never)
+      .eq("id", data.messageId)
+      .eq("sender_profile_id", myId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ messageId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("messages" as never)
+      .delete()
+      .eq("id", data.messageId)
+      .eq("sender_profile_id", myId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

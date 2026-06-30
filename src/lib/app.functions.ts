@@ -730,6 +730,8 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
 
     const sys = data.lang === "es"
       ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~60% personalidad/valores/estilo de vida y ~40% pádel (cómo juega, actitud en pista, estilo de juego, mentalidad competitiva, etc.). Responde SIEMPRE en español."
+      : data.lang === "ar"
+      ? "أنت ذكاء اصطناعي خبير في التوافق وعلم نفس العلاقات. تُولِّد أسئلة قصيرة وكاشفة من نوع الاختيار من متعدد لإيجاد توافق حقيقي بين الأشخاص (صداقة، شريك، أو توأم روح). يجب أن يكون المزيج ~60٪ شخصية/قيم/أسلوب حياة و~40٪ بادل (كيف يلعب، موقفه على الملعب، أسلوب لعبه، عقلية المنافسة، إلخ). أجب دائمًا باللغة العربية الفصحى الواضحة."
       : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~60% personality/values/lifestyle and ~40% padel (how they play, on-court attitude, playing style, competitive mindset, etc.). Always reply in English.";
 
     const prompt = `Person context:

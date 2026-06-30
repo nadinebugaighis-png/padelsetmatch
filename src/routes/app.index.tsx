@@ -222,6 +222,22 @@ function Discover() {
           {preview && (
             <>
               <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
+              <button
+                type="button"
+                onClick={() => setPreview(null)}
+                className="absolute top-3 left-3 z-20 flex items-center gap-1 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 text-[var(--cream)] text-xs font-semibold backdrop-blur-sm"
+                aria-label="Back to grid"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreview(null)}
+                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-black/70 hover:bg-black/90 text-[var(--cream)] backdrop-blur-sm"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
               {preview.photo_url && (
                 <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
               )}

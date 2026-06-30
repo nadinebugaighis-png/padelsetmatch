@@ -28,10 +28,14 @@ function ChatRoom() {
   const confirmFn = useServerFn(confirmPlayed);
   const noShowFn = useServerFn(reportNoShow);
   const statusFn = useServerFn(getPlayedStatus);
+  const editFn = useServerFn(editMessage);
+  const delFn = useServerFn(deleteMessage);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
   const statusQ = useQuery({ queryKey: ["match-status", matchId], queryFn: () => statusFn({ data: { matchId } }) });
   const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState<string>(REPORT_REASONS[0]);
   const [reportDetail, setReportDetail] = useState("");

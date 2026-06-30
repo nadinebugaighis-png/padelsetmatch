@@ -262,7 +262,8 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
-            <Input type="number" min={18} max={120} value={age} onChange={(e) => setAge(parseInt(e.target.value) || 18)} />
+            <Input type="number" inputMode="numeric" min={18} max={99} placeholder="e.g. 32" value={age} onChange={(e) => setAge(normalizeAge(e.target.value, 18))} />
+            <p className="text-[11px] text-[var(--cream)]/50">Enter your age (18–99), not your birth year.</p>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (

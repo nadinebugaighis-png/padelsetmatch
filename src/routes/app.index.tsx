@@ -216,6 +216,48 @@ function Discover() {
       <Link to="/app/matches" className="mt-8 block text-center text-sm text-[var(--cream)]/60 underline">
         {t("disc.seeChats")}
       </Link>
+
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-w-sm p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15">
+          {preview && (
+            <>
+              <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
+              {preview.photo_url && (
+                <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
+              )}
+              <div className="p-4 space-y-3">
+                <div>
+                  <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
+                  <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                </div>
+                {preview.bio ? (
+                  <p className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap">{preview.bio}</p>
+                ) : (
+                  <p className="text-sm text-[var(--cream)]/50 italic">No bio yet.</p>
+                )}
+                {preview.reasons[0] && (
+                  <p className="text-xs text-[var(--cream)]/65 border-t border-[var(--cream)]/10 pt-3">{preview.reasons[0]}</p>
+                )}
+                <button
+                  type="button"
+                  disabled={likeM.isPending || unlikeM.isPending}
+                  onClick={() => {
+                    const id = preview.id;
+                    const wasLiked = preview.liked;
+                    setPreview(null);
+                    if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
+                  }}
+                  className={`w-full mt-2 py-3 rounded-full font-semibold flex items-center justify-center gap-2 ${preview.liked ? "bg-[var(--cream)]/10 text-[var(--cream)]" : "bg-[var(--ball)] text-[var(--court-deep)]"}`}
+                >
+                  <Heart className={`w-4 h-4 ${preview.liked ? "" : "fill-[var(--court-deep)]"}`} />
+                  {preview.liked ? t("disc.undo") : "Like"}
+                </button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </main>
+
   );
 }

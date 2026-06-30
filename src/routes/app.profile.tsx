@@ -83,10 +83,32 @@ function ProfilePage() {
       <h1 className="text-display text-4xl">{t("prof.hi", { name: p.first_name })}</h1>
       <div className="mt-4 surface-card p-5">
         {p.photo_url && (
-          <div className="aspect-[3/4] rounded-xl overflow-hidden mb-4">
+          <div className="aspect-[3/4] rounded-xl overflow-hidden mb-3">
             <img src={p.photo_url} alt={p.first_name} className="w-full h-full object-cover" />
           </div>
         )}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onPickPhoto(f);
+            e.target.value = "";
+          }}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mb-4"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          <Camera className="w-4 h-4 mr-2" />
+          {uploading ? "Uploading…" : p.photo_url ? "Change photo" : "Add photo"}
+        </Button>
+
         <div className="grid grid-cols-2 gap-2 text-sm">
           <Info label={t("prof.age")} v={String(p.age)} />
           <Info label={t("prof.level")} v={label(p.level)} />

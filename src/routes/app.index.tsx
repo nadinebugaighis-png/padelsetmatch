@@ -24,7 +24,7 @@ function Discover() {
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 
   const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
   const getAnswers = useServerFn(getMyQaAnswers);
@@ -170,14 +170,14 @@ function Discover() {
               {!c.liked ? (
                 <button
                   type="button"
-                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: false, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories })}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: false, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities })}
                   className="absolute inset-0 w-full h-full text-left"
                   aria-label={`View ${c.first_name}'s profile`}
                 />
               ) : (
                 <button
                   type="button"
-                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories })}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities })}
                   className="absolute inset-0 flex items-center justify-center bg-[var(--court-deep)]/60"
                   aria-label={`View ${c.first_name}'s profile`}
                 >
@@ -277,6 +277,33 @@ function Discover() {
                     <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
                     <div className="text-xs text-[var(--cream)]/70 mt-1">{preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)}</div>
                   </div>
+
+                  {(() => {
+                    const mine = feedQ.data?.me;
+                    const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
+                    const chips = [
+                      ...(preview.padel_style ?? []),
+                      ...(preview.personal_traits ?? []),
+                      ...(preview.priorities ?? []),
+                    ];
+                    if (chips.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap gap-1.5">
+                        {chips.map((w) => {
+                          const shared = mineTraits.has(w);
+                          return (
+                            <span
+                              key={w}
+                              className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${shared ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/85"}`}
+                              title={shared ? "You both picked this" : undefined}
+                            >
+                              {shared && "✨ "}{w}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
 
                   {preview.categories && (
                     <MatchScoreCard total={preview.score} categories={preview.categories} />

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  PADEL_STYLES, PERSONAL_TRAITS,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,

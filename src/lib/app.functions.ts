@@ -118,7 +118,6 @@ function scoreCandidate(me: Profile, c: Profile) {
   if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons };
   if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons };
 
-  reasons.push(purpose === "partner" ? "Both open to a relationship" : "Both open to friendship");
   score += 6;
 
   const meLikesAge = c.age >= me.age_min && c.age <= me.age_max;

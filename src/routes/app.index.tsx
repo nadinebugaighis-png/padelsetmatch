@@ -22,7 +22,7 @@ function Discover() {
   const block = useServerFn(blockProfile);
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
-  const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
+  const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 

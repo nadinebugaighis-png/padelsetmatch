@@ -368,6 +368,7 @@ export const getMatchDetail = createServerFn({ method: "GET" })
     const otherId = mr.profile_a === myId ? mr.profile_b : mr.profile_a;
     const { data: other } = await context.supabase
       .from("profiles" as never).select("*").eq("id", otherId).maybeSingle();
+    if (!other) throw new Error("Other profile not found");
     const { data: messages } = await context.supabase
       .from("messages" as never).select("*").eq("match_id", data.matchId).order("created_at", { ascending: true });
     return {

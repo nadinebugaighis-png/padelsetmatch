@@ -358,6 +358,7 @@ export type Database = {
           free_court_note: string | null
           friend_interested_in: string[]
           gender: string
+          gender_custom: string | null
           id: string
           interested_in: string[]
           is_seed: boolean
@@ -390,6 +391,7 @@ export type Database = {
           free_court_note?: string | null
           friend_interested_in?: string[]
           gender: string
+          gender_custom?: string | null
           id?: string
           interested_in?: string[]
           is_seed?: boolean
@@ -422,6 +424,7 @@ export type Database = {
           free_court_note?: string | null
           friend_interested_in?: string[]
           gender?: string
+          gender_custom?: string | null
           id?: string
           interested_in?: string[]
           is_seed?: boolean

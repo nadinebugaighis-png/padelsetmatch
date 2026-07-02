@@ -245,56 +245,67 @@ function Discover() {
       </Link>
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-w-sm p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[90vh] flex flex-col">
-          {preview && (
-            <>
-              <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
-              <div className="sticky top-0 z-20 flex items-center justify-between px-3 py-2 bg-[var(--court-deep)]/95 backdrop-blur-sm border-b border-[var(--cream)]/10">
-                <button
-                  type="button"
-                  onClick={() => setPreview(null)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)] text-xs font-semibold"
-                  aria-label="Back to grid"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" /> Back
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreview(null)}
-                  className="p-2 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)]"
-                  aria-label="Close"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="overflow-y-auto flex-1">
-                {preview.photo_url && (
-                  <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
-                )}
-                <div className="p-4 space-y-3">
-                  <div>
-                    <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
-                    <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
-                    <div className="text-xs text-[var(--cream)]/70 mt-1">{preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)}</div>
+        <DialogContent className="max-w-sm p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[92vh] flex flex-col rounded-3xl">
+          {preview && (() => {
+            const mine = feedQ.data?.me;
+            const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
+            const chips = [
+              ...(preview.padel_style ?? []),
+              ...(preview.personal_traits ?? []),
+              ...(preview.priorities ?? []),
+            ];
+            const match = matchesQ.data?.find((m) => m.other?.id === preview.id);
+            return (
+              <>
+                <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
+                <div className="overflow-y-auto flex-1">
+                  {/* Hero photo */}
+                  <div className="relative">
+                    {preview.photo_url ? (
+                      <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
+                    ) : (
+                      <div className="w-full aspect-[3/4] bg-[var(--court)]" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/40 to-transparent pointer-events-none" />
+
+                    {/* Top controls */}
+                    <button
+                      type="button"
+                      onClick={() => setPreview(null)}
+                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/60"
+                      aria-label="Back"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreview(null)}
+                      className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/60"
+                      aria-label="Close"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+
+                    {/* Overlaid identity */}
+                    <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-2">
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
+                        {preview.score}% Match
+                      </div>
+                      <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase">{preview.first_name}</div>
+                      <div className="text-sm text-[var(--cream)]/85">{preview.zone} · {label(preview.level)}</div>
+                    </div>
                   </div>
 
-                  {(() => {
-                    const mine = feedQ.data?.me;
-                    const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
-                    const chips = [
-                      ...(preview.padel_style ?? []),
-                      ...(preview.personal_traits ?? []),
-                      ...(preview.priorities ?? []),
-                    ];
-                    if (chips.length === 0) return null;
-                    return (
-                      <div className="flex flex-wrap gap-1.5">
+                  {/* Body */}
+                  <div className="px-5 pt-4 pb-28 space-y-4">
+                    {chips.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
                         {chips.map((w) => {
                           const shared = mineTraits.has(w);
                           return (
                             <span
                               key={w}
-                              className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${shared ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/85"}`}
+                              className={`px-3.5 py-1.5 rounded-full text-xs font-medium border ${shared ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "bg-transparent text-[var(--cream)]/85 border-[var(--cream)]/15"}`}
                               title={shared ? "You both picked this" : undefined}
                             >
                               {shared && "✨ "}{w}
@@ -302,45 +313,74 @@ function Discover() {
                           );
                         })}
                       </div>
-                    );
-                  })()}
+                    )}
 
-                  {preview.categories && (
-                    <MatchScoreCard total={preview.score} categories={preview.categories} />
-                  )}
-                  {preview.free_court_access && (
-                    <div className="rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
-                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>
-                      {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
-                      <p className="text-[10px] text-[var(--cream)]/55 mt-1">Arrange the exact court in chat — Playtomic or their address.</p>
+                    {preview.categories && (
+                      <MatchScoreCard total={preview.score} categories={preview.categories} />
+                    )}
+
+                    {preview.free_court_access && (
+                      <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>
+                        {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
+                        <p className="text-[10px] text-[var(--cream)]/55 mt-1">Arrange the exact court in chat — Playtomic or their address.</p>
+                      </div>
+                    )}
+
+                    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
+                      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">About {preview.first_name}</div>
+                      {preview.bio ? (
+                        <p className="text-sm text-[var(--cream)]/90 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
+                      ) : (
+                        <p className="text-sm text-[var(--cream)]/50 italic">No bio yet.</p>
+                      )}
                     </div>
-                  )}
-                  {preview.bio ? (
-                    <p className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap">{preview.bio}</p>
-                  ) : (
-                    <p className="text-sm text-[var(--cream)]/50 italic">No bio yet.</p>
-                  )}
-                  {preview.reasons[0] && (
-                    <p className="text-xs text-[var(--cream)]/65 border-t border-[var(--cream)]/10 pt-3">{preview.reasons[0]}</p>
-                  )}
-                <button
-                  type="button"
-                  disabled={likeM.isPending || unlikeM.isPending}
-                  onClick={() => {
-                    const id = preview.id;
-                    const wasLiked = preview.liked;
-                    setPreview(null);
-                    if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
-                  }}
-                  className={`w-full mt-2 py-3 rounded-full font-semibold flex items-center justify-center gap-2 ${preview.liked ? "bg-[var(--cream)]/10 text-[var(--cream)]" : "bg-[var(--ball)] text-[var(--court-deep)]"}`}
-                >
-                  <Heart className={`w-4 h-4 ${preview.liked ? "" : "fill-[var(--court-deep)]"}`} />
-                  {preview.liked ? t("disc.undo") : "Like"}
-                </button>
+
+                    {preview.reasons[0] && (
+                      <p className="text-xs text-[var(--cream)]/60 px-1">{preview.reasons[0]}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+
+                {/* Sticky bottom action bar */}
+                <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/95 to-transparent">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      disabled={likeM.isPending || unlikeM.isPending}
+                      onClick={() => {
+                        const id = preview.id;
+                        const wasLiked = preview.liked;
+                        if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
+                      }}
+                      className={`w-14 h-14 shrink-0 rounded-full flex items-center justify-center transition-transform active:scale-90 ${preview.liked ? "bg-[var(--ball)]" : "bg-[var(--cream)]/10 border border-[var(--cream)]/20"}`}
+                      aria-label={preview.liked ? "Unlike" : "Like"}
+                    >
+                      <Heart className={`w-6 h-6 ${preview.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]"}`} />
+                    </button>
+                    {match ? (
+                      <button
+                        type="button"
+                        onClick={() => { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }}
+                        className="flex-1 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-widest text-sm flex items-center justify-center gap-2"
+                      >
+                        Send Message <MessageCircle className="w-5 h-5" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={likeM.isPending}
+                        onClick={() => { const id = preview.id; if (!preview.liked) likeM.mutate(id); }}
+                        className="flex-1 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-widest text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+                      >
+                        {preview.liked ? "Waiting for match…" : "Like"} <Heart className="w-5 h-5 fill-[var(--court-deep)]" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </main>

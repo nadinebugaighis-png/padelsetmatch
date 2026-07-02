@@ -69,7 +69,7 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
   const hideM = useMutation({
-    mutationFn: (vars: { id: string; category: "partner" | "friend" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
+    mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       toast("Hidden from your Grid — manage in Profile → Hidden & blocked", { duration: 2400 });

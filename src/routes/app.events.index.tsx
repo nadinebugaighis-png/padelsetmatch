@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
-import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, Mars, Venus, VenusAndMars } from "lucide-react";
+import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, Mars, Venus, VenusAndMars, MessageCircle, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
@@ -73,10 +73,13 @@ function EventsPage() {
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
     const filled = e.filled ?? 0;
+    const detailHref = { to: "/app/events/$eventId", params: { eventId: e.id } } as const;
     return (
-      <div
+      <Link
         key={e.id}
+        {...detailHref}
         className="rounded-2xl border border-[var(--cream)]/10 bg-black/30 px-4 py-4 flex items-center gap-3"
+        aria-label={`Open match at ${e.club_name}`}
       >
         {/* Time */}
         <div className="flex flex-col items-center w-14 shrink-0">
@@ -120,15 +123,19 @@ function EventsPage() {
         {/* Gender + Join */}
         <div className="flex items-center gap-2 shrink-0">
           <GenderBadge rule={e.gender_rule} />
-          <Link
-            to="/app/events/$eventId"
-            params={{ eventId: e.id }}
-            className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
-          >
-            Join
-          </Link>
+          <div className="flex flex-col items-stretch gap-1.5">
+            <span className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
+              {e.iAmHost ? "View" : e.iAmParticipant ? "Chat" : "Join"}
+            </span>
+            {(e.iAmHost || e.iAmParticipant) && (
+              <span className="inline-flex items-center justify-center gap-1 text-[9px] uppercase tracking-widest text-[var(--cream)]/55">
+                {e.iAmHost ? <Pencil className="w-3 h-3" /> : <MessageCircle className="w-3 h-3" />}
+                {e.iAmHost ? "Edit" : "Chat"}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      </Link>
     );
   };
 

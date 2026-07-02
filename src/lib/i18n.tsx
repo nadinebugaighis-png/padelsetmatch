@@ -726,7 +726,7 @@ const DICTS: Record<Lang, Dict> = { en, es, ar };
 // Display labels for fixed enums stored in English in the DB.
 const LABELS: Record<Lang, Record<string, string>> = {
   en: {
-    woman: "woman", man: "man", "non-binary": "non-binary",
+    woman: "woman", man: "man", "non-binary": "non-binary", "self-describe": "Prefer to self-describe",
     "just starting": "just starting", casual: "casual", beginner: "beginner", intermediate: "intermediate", advanced: "advanced", competitive: "competitive",
     friend: "friend", partner: "partner", both: "both",
     everyone: "everyone", women: "women", men: "men", "lesbian women": "lesbian women", "gay men": "gay men", bisexual: "bisexual", queer: "queer",
@@ -740,7 +740,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     art: "art", travel: "travel", food: "food", concerts: "concerts", "music events": "music events",
   },
   es: {
-    woman: "mujer", man: "hombre", "non-binary": "no binario",
+    woman: "mujer", man: "hombre", "non-binary": "no binario", "self-describe": "Prefiero describirme",
     "just starting": "empezando", casual: "casual", beginner: "principiante", intermediate: "intermedio", advanced: "avanzado", competitive: "competitivo",
     friend: "amistad", partner: "pareja", both: "ambos",
     everyone: "todos", women: "mujeres", men: "hombres", "lesbian women": "mujeres lesbianas", "gay men": "hombres gays", bisexual: "bisexuales", queer: "queer",
@@ -754,7 +754,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     art: "arte", travel: "viajes", food: "comida", concerts: "conciertos", "music events": "eventos musicales",
   },
   ar: {
-    woman: "امرأة", man: "رجل", "non-binary": "غير ثنائي",
+    woman: "امرأة", man: "رجل", "non-binary": "غير ثنائي", "self-describe": "أفضل أن أصف نفسي",
     "just starting": "مبتدئ تماماً", casual: "هاوي", beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدم", competitive: "تنافسي",
     friend: "صديق", partner: "شريك", both: "كلاهما",
     everyone: "الجميع", women: "نساء", men: "رجال", "lesbian women": "نساء مثليات", "gay men": "رجال مثليون", bisexual: "ثنائي الميل", queer: "كوير",

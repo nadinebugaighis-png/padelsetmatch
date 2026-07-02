@@ -50,6 +50,16 @@ function sharedPurpose(a: string, b: string): "partner" | "friend" | null {
   return null;
 }
 
+function stripPrivateFields(p: Profile): any {
+  const clone = { ...p } as any;
+  delete clone.interested_in;
+  delete clone.partner_interested_in;
+  delete clone.friend_interested_in;
+  delete clone.age_min;
+  delete clone.age_max;
+  return clone;
+}
+
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -118,7 +128,6 @@ function scoreCandidate(me: Profile, c: Profile) {
   if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons };
   if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons };
 
-  reasons.push(purpose === "partner" ? "Both open to a relationship" : "Both open to friendship");
   score += 6;
 
   const meLikesAge = c.age >= me.age_min && c.age <= me.age_max;
@@ -241,7 +250,8 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         const reasons2 = [...reasons];
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
-        return { ...c, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
+        const pub = stripPrivateFields(c);
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);
@@ -310,7 +320,7 @@ export const getMyMatches = createServerFn({ method: "GET" })
       context.supabase.from("match_reads" as never).select("match_id,last_read_at").eq("profile_id", myId).in("match_id", matchIds),
       context.supabase.from("messages" as never).select("match_id,sender_profile_id,body,created_at").in("match_id", matchIds).order("created_at", { ascending: false }),
     ]);
-    const map = new Map<string, Profile>(((profiles as Profile[] | null) ?? []).map((p) => [p.id, p]));
+    const map = new Map<string, any>(((profiles as Profile[] | null) ?? []).map((p) => [p.id, stripPrivateFields(p)]));
     const readMap = new Map<string, string>(((reads as Array<{ match_id: string; last_read_at: string }> | null) ?? []).map((r) => [r.match_id, r.last_read_at]));
     const allMsgs = (msgs as Array<{ match_id: string; sender_profile_id: string; body: string; created_at: string }> | null) ?? [];
     return m.map((row) => {
@@ -358,12 +368,13 @@ export const getMatchDetail = createServerFn({ method: "GET" })
     const otherId = mr.profile_a === myId ? mr.profile_b : mr.profile_a;
     const { data: other } = await context.supabase
       .from("profiles" as never).select("*").eq("id", otherId).maybeSingle();
+    if (!other) throw new Error("Other profile not found");
     const { data: messages } = await context.supabase
       .from("messages" as never).select("*").eq("match_id", data.matchId).order("created_at", { ascending: true });
     return {
       match_id: mr.id,
       my_profile_id: myId,
-      other: other as unknown as Profile,
+      other: stripPrivateFields(other as Profile) as unknown as Profile,
       messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string; edited_at: string | null }> | null) ?? []),
     };
   });

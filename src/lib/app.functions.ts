@@ -249,13 +249,23 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .eq("blocker_profile_id", me.id);
     const { data: myHides } = await context.supabase
       .from("hides" as never)
-      .select("hidden_profile_id")
+      .select("hidden_profile_id, category")
       .eq("hider_profile_id", me.id);
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
-    const hiddenSet = new Set(((myHides as Array<{ hidden_profile_id: string }> | null) ?? []).map((h) => h.hidden_profile_id));
+    const hiddenMap = new Map<string, Set<string>>();
+    ((myHides as Array<{ hidden_profile_id: string; category: string }> | null) ?? []).forEach((h) => {
+      const set = hiddenMap.get(h.hidden_profile_id) ?? new Set<string>();
+      set.add(h.category);
+      hiddenMap.set(h.hidden_profile_id, set);
+    });
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
-    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id) && !hiddenSet.has(c.id));
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
+      if (blockedSet.has(c.id)) return false;
+      const cats = hiddenMap.get(c.id);
+      // hide only when "all" — category-specific hides are filtered client-side per active filter
+      return !cats || !cats.has("all");
+    }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
     // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

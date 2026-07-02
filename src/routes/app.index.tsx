@@ -107,7 +107,13 @@ function Discover() {
   if (!feedQ.data?.me) return null;
 
   const all = feedQ.data.candidates;
-  const list = filter === "all" ? all : all.filter((c) => c.looking_for === filter || c.looking_for === "both");
+  const activeCat = filter === "partner" ? "partner" : filter === "friend" ? "friend" : null;
+  const list = (filter === "all" ? all : all.filter((c) => c.looking_for === filter || c.looking_for === "both"))
+    .filter((c) => {
+      const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
+      if (activeCat && hc.includes(activeCat)) return false;
+      return true;
+    });
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">

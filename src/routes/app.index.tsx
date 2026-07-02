@@ -133,10 +133,10 @@ function Discover() {
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
-      <div className="flex gap-2 mt-4">
-        {(["all", "partner", "friend"] as const).map((f) => (
+      <div className="flex gap-2 mt-4 flex-wrap">
+        {(["all", "padel", "friend", "relationship"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-            {f === "all" ? t("disc.filter.all") : f === "partner" ? t("disc.filter.partner") : t("disc.filter.friend")}
+            {f === "all" ? "Everyone" : f === "padel" ? "Padel partner" : f === "friend" ? "Friend" : "Relationship"}
           </button>
         ))}
       </div>

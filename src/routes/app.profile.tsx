@@ -194,6 +194,24 @@ function ProfilePage() {
 
         {p.bio && <p className="mt-4 text-sm text-[var(--cream)]/80">{p.bio}</p>}
 
+        {(p.personal_traits?.length ?? 0) > 0 && (
+          <div className="mt-4">
+            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">Personal characteristics</div>
+            <div className="flex flex-wrap gap-2">
+              {p.personal_traits!.map((tr) => <span key={tr} className="chip">{tr}</span>)}
+            </div>
+          </div>
+        )}
+
+        {(p.padel_style?.length ?? 0) > 0 && (
+          <div className="mt-4">
+            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">Padel style</div>
+            <div className="flex flex-wrap gap-2">
+              {p.padel_style!.map((s) => <span key={s} className="chip">{s}</span>)}
+            </div>
+          </div>
+        )}
+
         {p.free_court_access && (
           <div className="mt-4 rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
             <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>

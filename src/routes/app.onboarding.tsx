@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  PADEL_STYLES, PERSONAL_TRAITS,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,
@@ -88,6 +89,8 @@ function Onboarding() {
   const [freeCourt, setFreeCourt] = useState(false);
   const [freeCourtNote, setFreeCourtNote] = useState("");
   const [sexualOrientation, setSexualOrientation] = useState("");
+  const [personalTraits, setPersonalTraits] = useState<string[]>([]);
+  const [padelStyle, setPadelStyle] = useState<string[]>([]);
 
   useEffect(() => {
     const p = profileQ.data;
@@ -133,6 +136,8 @@ function Onboarding() {
       if (typeof p.free_court_access === "boolean") setFreeCourt(p.free_court_access);
       if (p.free_court_note) setFreeCourtNote(p.free_court_note);
       if (p.sexual_orientation) setSexualOrientation(p.sexual_orientation);
+      if (p.personal_traits?.length) setPersonalTraits(p.personal_traits);
+      if (p.padel_style?.length) setPadelStyle(p.padel_style);
     } else if (profileQ.data === null) {
       // New user — hydrate from the pre-signup guest draft if present
       const draft = loadGuestDraft();
@@ -269,6 +274,8 @@ function Onboarding() {
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
           gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
           sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
+          personal_traits: personalTraits,
+          padel_style: padelStyle,
         },
       });
     },
@@ -451,6 +458,27 @@ function Onboarding() {
               ))}
             </div>
 
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your padel style (pick up to 3)</label>
+            <div className="flex flex-wrap gap-2">
+              {PADEL_STYLES.map((s) => {
+                const on = padelStyle.includes(s);
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() =>
+                      setPadelStyle((cur) =>
+                        cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
+                      )
+                    }
+                    className={`chip ${on ? "chip-ball" : ""}`}
+                  >
+                    {on ? "✓ " : "+ "}{s}
+                  </button>
+                );
+              })}
+            </div>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (
@@ -546,6 +574,28 @@ function Onboarding() {
                 <p className="text-xs text-[var(--cream)]/50">{t("ob.pickThree")}</p>
               </>
             )}
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Personal characteristics (pick up to 10)</label>
+            <div className="flex flex-wrap gap-2">
+              {PERSONAL_TRAITS.map((tr) => {
+                const on = personalTraits.includes(tr);
+                return (
+                  <button
+                    key={tr}
+                    type="button"
+                    onClick={() =>
+                      setPersonalTraits((cur) =>
+                        cur.includes(tr) ? cur.filter((x) => x !== tr) : cur.length >= 10 ? cur : [...cur, tr]
+                      )
+                    }
+                    className={`chip ${on ? "chip-ball" : ""}`}
+                  >
+                    {on ? "✓ " : "+ "}{tr}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 selected</p>
           </>
         )}
         {step === 4 && (

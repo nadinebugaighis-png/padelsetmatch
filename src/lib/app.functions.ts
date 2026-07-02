@@ -261,12 +261,22 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("hides" as never)
       .select("hidden_profile_id, category")
       .eq("hider_profile_id", me.id);
+    // Reciprocal: if they hid me under category X, treat that as if I hid them under X too — no awkwardness.
+    const { data: hidesOfMe } = await context.supabase
+      .from("hides" as never)
+      .select("hider_profile_id, category")
+      .eq("hidden_profile_id", me.id);
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
     const hiddenMap = new Map<string, Set<string>>();
     ((myHides as Array<{ hidden_profile_id: string; category: string }> | null) ?? []).forEach((h) => {
       const set = hiddenMap.get(h.hidden_profile_id) ?? new Set<string>();
       set.add(h.category);
       hiddenMap.set(h.hidden_profile_id, set);
+    });
+    ((hidesOfMe as Array<{ hider_profile_id: string; category: string }> | null) ?? []).forEach((h) => {
+      const set = hiddenMap.get(h.hider_profile_id) ?? new Set<string>();
+      set.add(h.category);
+      hiddenMap.set(h.hider_profile_id, set);
     });
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 

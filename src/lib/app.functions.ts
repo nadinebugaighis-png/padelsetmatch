@@ -250,7 +250,8 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         const reasons2 = [...reasons];
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
-        return { ...c, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
+        const pub = stripPrivateFields(c);
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);

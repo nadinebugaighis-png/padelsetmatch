@@ -320,3 +320,31 @@ function Discover() {
 
   );
 }
+
+function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number; vibe: number } }) {
+  const rows = [
+    { label: "Playing Style", value: categories.playingStyle },
+    { label: "Personality", value: categories.personality },
+    { label: "Lifestyle", value: categories.lifestyle },
+    { label: "Vibe", value: categories.vibe },
+  ];
+  return (
+    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/60 p-4">
+      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-3">Your Match Score</div>
+      <div className="flex items-center gap-4">
+        <div className="text-display text-5xl text-[var(--ball)] leading-none">{total}%</div>
+        <div className="flex-1 space-y-2.5">
+          {rows.map((r) => (
+            <div key={r.label} className="flex items-center gap-2">
+              <div className="text-[11px] text-[var(--cream)]/80 w-20 shrink-0 text-right">{r.label}</div>
+              <div className="flex-1 h-1.5 rounded-full bg-[var(--cream)]/10 overflow-hidden">
+                <div className="h-full rounded-full bg-[var(--ball)]" style={{ width: `${r.value}%` }} />
+              </div>
+              <div className="text-[11px] font-semibold text-[var(--ball)] w-8 shrink-0 text-right">{r.value}%</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

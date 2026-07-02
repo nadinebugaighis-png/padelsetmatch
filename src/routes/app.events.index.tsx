@@ -23,6 +23,15 @@ function fmtWhen(iso: string) {
   });
 }
 
+function dayKey(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+}
+
+function fmtTime(iso: string) {
+  return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
 function EventsPage() {
   const navigate = useNavigate();
   const getProfile = useServerFn(getMyProfile);

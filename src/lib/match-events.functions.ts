@@ -242,7 +242,7 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const patch: Record<string, unknown> = {};
+    const patch: { playtomic_link?: string | null; court_booked?: boolean } = {};
     if (data.playtomic_link !== undefined) patch.playtomic_link = data.playtomic_link;
     if (data.court_booked !== undefined) patch.court_booked = data.court_booked;
     const { error } = await supabase

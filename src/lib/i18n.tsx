@@ -862,8 +862,9 @@ export function LangSwitch({ className = "" }: { className?: string }) {
       <button
         type="button"
         onClick={() => setLang("ar")}
-        className={`inline-flex items-center justify-center px-2.5 py-1 font-['Noto_Sans_Arabic'] text-sm leading-none ${lang === "ar" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
+        className={`inline-flex items-center justify-center min-w-[2.25rem] px-2.5 py-1.5 font-['Cairo',_'Noto_Sans_Arabic',_sans-serif] text-base font-bold leading-[1.4] tracking-normal normal-case ${lang === "ar" ? "bg-[var(--ball)] text-[var(--court-deep)]" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
         aria-pressed={lang === "ar"}
+        aria-label="العربية"
       >ع</button>
     </div>
   );

@@ -293,9 +293,9 @@ function Onboarding() {
   const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
 
   const canStep = [
-    !!first_name && age >= 18,
-    audOk && age_min <= age_max,
-    validBlocks.length > 0 && languages.length > 0 && !!level,
+    !!first_name && age !== null && age >= 18 && !!gender && goals.length > 0,
+    audOk && age_min !== null && age_max !== null && age_min <= age_max,
+    validBlocks.length > 0 && !!nationality && languages.length > 0 && !!level && !!courtSide,
     priorities.length >= 3,
     !!photoUrl,
   ];

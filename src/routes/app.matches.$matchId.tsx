@@ -294,3 +294,16 @@ function ChatRoom() {
     </main>
   );
 }
+
+function SharedRow({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mb-1">{title}</div>
+      <div className="flex flex-wrap gap-1.5">
+        {items.map((i) => (
+          <span key={i} className="chip chip-ball text-[11px]">{i}</span>
+        ))}
+      </div>
+    </div>
+  );
+}

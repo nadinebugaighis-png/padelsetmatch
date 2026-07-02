@@ -25,6 +25,7 @@ import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
+import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -106,6 +107,11 @@ const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
   path: '/events/$eventId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEventsEventIdEditRoute = AppEventsEventIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AppEventsEventIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -120,10 +126,11 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/app/': typeof AppIndexRoute
-  '/app/events/$eventId': typeof AppEventsEventIdRoute
+  '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events/': typeof AppEventsIndexRoute
+  '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -137,10 +144,11 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/app': typeof AppIndexRoute
-  '/app/events/$eventId': typeof AppEventsEventIdRoute
+  '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events': typeof AppEventsIndexRoute
+  '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -156,10 +164,11 @@ export interface FileRoutesById {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/app/': typeof AppIndexRoute
-  '/app/events/$eventId': typeof AppEventsEventIdRoute
+  '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events/': typeof AppEventsIndexRoute
+  '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/app/events/new'
     | '/app/matches/$matchId'
     | '/app/events/'
+    | '/app/events/$eventId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/app/events/new'
     | '/app/matches/$matchId'
     | '/app/events'
+    | '/app/events/$eventId/edit'
   id:
     | '__root__'
     | '/'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/app/events/new'
     | '/app/matches/$matchId'
     | '/app/events/'
+    | '/app/events/$eventId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -340,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsEventIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/events/$eventId/edit': {
+      id: '/app/events/$eventId/edit'
+      path: '/edit'
+      fullPath: '/app/events/$eventId/edit'
+      preLoaderRoute: typeof AppEventsEventIdEditRouteImport
+      parentRoute: typeof AppEventsEventIdRoute
+    }
   }
 }
 
@@ -355,6 +374,17 @@ const AppMatchesRouteWithChildren = AppMatchesRoute._addFileChildren(
   AppMatchesRouteChildren,
 )
 
+interface AppEventsEventIdRouteChildren {
+  AppEventsEventIdEditRoute: typeof AppEventsEventIdEditRoute
+}
+
+const AppEventsEventIdRouteChildren: AppEventsEventIdRouteChildren = {
+  AppEventsEventIdEditRoute: AppEventsEventIdEditRoute,
+}
+
+const AppEventsEventIdRouteWithChildren =
+  AppEventsEventIdRoute._addFileChildren(AppEventsEventIdRouteChildren)
+
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
@@ -362,7 +392,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppQuestionsRoute: typeof AppQuestionsRoute
   AppIndexRoute: typeof AppIndexRoute
-  AppEventsEventIdRoute: typeof AppEventsEventIdRoute
+  AppEventsEventIdRoute: typeof AppEventsEventIdRouteWithChildren
   AppEventsNewRoute: typeof AppEventsNewRoute
   AppEventsIndexRoute: typeof AppEventsIndexRoute
 }
@@ -374,7 +404,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppQuestionsRoute: AppQuestionsRoute,
   AppIndexRoute: AppIndexRoute,
-  AppEventsEventIdRoute: AppEventsEventIdRoute,
+  AppEventsEventIdRoute: AppEventsEventIdRouteWithChildren,
   AppEventsNewRoute: AppEventsNewRoute,
   AppEventsIndexRoute: AppEventsIndexRoute,
 }

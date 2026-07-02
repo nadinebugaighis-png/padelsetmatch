@@ -15,7 +15,11 @@ export const Route = createFileRoute("/app/events/new")({
 function NewEvent() {
   const navigate = useNavigate();
   const create = useServerFn(createMatchEvent);
+  const [locMode, setLocMode] = useState<"club" | "address">("club");
   const [club, setClub] = useState<ClubResult | null>(null);
+  const [customName, setCustomName] = useState("");
+  const [customAddress, setCustomAddress] = useState("");
+  const [customCity, setCustomCity] = useState("");
   const [when, setWhen] = useState("");
   const [genderRule, setGenderRule] = useState<"mixed" | "men_only" | "women_only">("mixed");
   const [extra, setExtra] = useState(0);
@@ -26,22 +30,38 @@ function NewEvent() {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const canSave = !!club && !!when && !saving;
+  const locationReady =
+    locMode === "club" ? !!club : customName.trim().length > 1 && customAddress.trim().length > 3;
+  const canSave = locationReady && !!when && !saving;
 
   const onSave = async () => {
-    if (!club || !when) return;
+    if (!locationReady || !when) return;
     setSaving(true);
     try {
+      const payload =
+        locMode === "club" && club
+          ? {
+              club_name: club.name,
+              club_address: club.address || null,
+              club_place_id: club.place_id || null,
+              club_lat: club.lat,
+              club_lng: club.lng,
+              city: club.city || null,
+              country: club.country || null,
+            }
+          : {
+              club_name: customName.trim(),
+              club_address: customAddress.trim(),
+              club_place_id: null,
+              club_lat: null,
+              club_lng: null,
+              city: customCity.trim() || null,
+              country: null,
+            };
       const { id } = await create({
         data: {
           starts_at: new Date(when).toISOString(),
-          club_name: club.name,
-          club_address: club.address || null,
-          club_place_id: club.place_id || null,
-          club_lat: club.lat,
-          club_lng: club.lng,
-          city: club.city || null,
-          country: club.country || null,
+          ...payload,
           level_min: levelMin,
           level_max: levelMax,
           gender_rule: genderRule,
@@ -65,8 +85,56 @@ function NewEvent() {
       <h1 className="text-display text-2xl tracking-wider">CALL A MATCH</h1>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">Club</label>
-        <ClubPicker value={club} onChange={setClub} />
+        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">Where</label>
+        <div className="grid grid-cols-2 gap-2 mb-2">
+          {[
+            { v: "club" as const, l: "Padel club" },
+            { v: "address" as const, l: "Address" },
+          ].map((o) => (
+            <button
+              key={o.v}
+              type="button"
+              onClick={() => setLocMode(o.v)}
+              className={`py-2 rounded-lg border text-sm ${
+                locMode === o.v
+                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
+                  : "border-[var(--cream)]/15 text-[var(--cream)]/70"
+              }`}
+            >
+              {o.l}
+            </button>
+          ))}
+        </div>
+        {locMode === "club" ? (
+          <ClubPicker value={club} onChange={setClub} />
+        ) : (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+              placeholder="Court / place name (e.g. Urbanización Los Olivos)"
+              className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+            />
+            <input
+              type="text"
+              value={customAddress}
+              onChange={(e) => setCustomAddress(e.target.value)}
+              placeholder="Street address"
+              className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+            />
+            <input
+              type="text"
+              value={customCity}
+              onChange={(e) => setCustomCity(e.target.value)}
+              placeholder="City / area (optional)"
+              className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+            />
+            <p className="text-[11px] text-[var(--cream)]/50">
+              Use this for residential / private courts that aren't on Google.
+            </p>
+          </div>
+        )}
       </div>
 
       <div>

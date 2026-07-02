@@ -92,6 +92,7 @@ function Onboarding() {
     const p = profileQ.data;
     if (p) {
       setFirstName(p.first_name); setAge(p.age); setGender(p.gender);
+      setGenderCustom(p.gender_custom ?? "");
       setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);

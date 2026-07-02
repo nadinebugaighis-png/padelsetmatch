@@ -118,21 +118,31 @@ export const updateMyPhoto = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+function overlapCount(a: string[], b: string[]) {
+  const bs = new Set(b.map((x) => x.toLowerCase()));
+  return a.filter((x) => bs.has(x.toLowerCase())).length;
+}
+
 function scoreCandidate(me: Profile, c: Profile) {
   const reasons: string[] = [];
   let score = 0;
 
+  // Category buckets (0-100 each)
+  let playingStyle = 0;
+  let personality = 0;
+  let lifestyle = 0;
+  let vibe = 0;
+
   const purpose = sharedPurpose(me.looking_for, c.looking_for);
-  if (!purpose) return { score: 0, reasons };
+  if (!purpose) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
 
   const myAudience = purpose === "partner" ? me.partner_interested_in : me.friend_interested_in;
   const theirAudience = purpose === "partner" ? c.partner_interested_in : c.friend_interested_in;
-  // Fallback to legacy interested_in if the purpose-specific list is empty
   const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
   const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
 
-  if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons };
-  if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons };
+  if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
 
   score += 6;
 
@@ -140,37 +150,38 @@ function scoreCandidate(me: Profile, c: Profile) {
   const theyLikeAge = me.age >= c.age_min && me.age <= c.age_max;
   if (meLikesAge && theyLikeAge) { score += 22; reasons.push("Ages line up both ways"); }
   else if (meLikesAge || theyLikeAge) { score += 8; }
-  else return { score: 0, reasons }; // hard age gate
+  else return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
 
   const levelGap = Math.abs((LEVEL_IDX[me.level] ?? 0) - (LEVEL_IDX[c.level] ?? 0));
-  if (levelGap === 0) { score += 18; reasons.push("Same padel level — fair match"); }
-  else if (levelGap === 1) { score += 12; reasons.push("Close padel levels"); }
-  else if (levelGap === 2) score += 4;
+  if (levelGap === 0) { score += 18; reasons.push("Same padel level — fair match"); playingStyle += 40; }
+  else if (levelGap === 1) { score += 12; reasons.push("Close padel levels"); playingStyle += 28; }
+  else if (levelGap === 2) { score += 4; playingStyle += 12; }
+  else { playingStyle += 5; }
 
-  // HARD GATE: only match people who will actually play in the same area.
-  // We require an overlapping city in their listed play locations, OR (legacy)
-  // the same single zone. No shared city => not a match, regardless of score.
   const loc = locationAffinity(me.locations ?? [], c.locations ?? []);
   const za = zoneAffinity(me.zone, c.zone);
   if (loc.score === 0) {
     score += 16;
     reasons.push(`Both play in ${loc.sharedCity}`);
+    lifestyle += 30;
   } else if (za === 0 && me.zone) {
     score += 14;
     reasons.push(`Both in ${me.zone}`);
+    lifestyle += 26;
   } else {
-    return { score: 0, reasons: [] };
+    return { score: 0, reasons: [], categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
   }
 
   const langs = languageOverlap(me.languages ?? [], c.languages ?? []);
   if (langs.length > 0) {
     score += Math.min(10, langs.length * 5);
     reasons.push(`Speak ${langs.slice(0, 3).join(", ")}`);
+    lifestyle += Math.min(25, langs.length * 12);
   }
 
   const ca = cultureAffinity(me.nationality, c.nationality);
-  if (ca === 0) { score += 10; reasons.push(`Both ${me.nationality}`); }
-  else if (ca === 1) { score += 8; reasons.push(`${me.nationality} × ${c.nationality}, neighboring cultures`); }
+  if (ca === 0) { score += 10; reasons.push(`Both ${me.nationality}`); lifestyle += 20; }
+  else if (ca === 1) { score += 8; reasons.push(`${me.nationality} × ${c.nationality}, neighboring cultures`); lifestyle += 16; }
 
   let priorityScore = 0;
   const shared: string[] = [];
@@ -183,8 +194,33 @@ function scoreCandidate(me: Profile, c: Profile) {
   });
   score += Math.min(36, priorityScore * 2);
   if (shared.length >= 2) reasons.push(`Shared values: ${shared.slice(0, 3).join(", ")}`);
+  personality += Math.min(55, priorityScore * 3);
 
-  return { score: Math.min(100, score), reasons };
+  const traitOverlap = overlapCount(me.personal_traits ?? [], c.personal_traits ?? []);
+  if (traitOverlap > 0) {
+    personality += Math.min(30, traitOverlap * 10);
+  }
+
+  // Padel-style overlap
+  const styleOverlap = overlapCount(me.padel_style ?? [], c.padel_style ?? []);
+  if (styleOverlap > 0) {
+    playingStyle += Math.min(25, styleOverlap * 12);
+  }
+  if (me.court_side && c.court_side) {
+    if (me.court_side === "both" || c.court_side === "both" || me.court_side === c.court_side) {
+      playingStyle += 10;
+    }
+  }
+  if (me.mixed_doubles && c.mixed_doubles) playingStyle += 8;
+  if (me.free_court_access || c.free_court_access) playingStyle += 8;
+
+  // Normalize each category to 0-100 with a generous baseline so decent matches look good
+  playingStyle = Math.min(100, Math.round(playingStyle * 1.4 + 20));
+  personality = Math.min(100, Math.round(personality * 1.6 + 15));
+  lifestyle = Math.min(100, Math.round(lifestyle * 1.3 + 18));
+  vibe = 0; // filled in by QA bonus in getDiscoverFeed
+
+  return { score: Math.min(100, score), reasons, categories: { playingStyle, personality, lifestyle, vibe } };
 }
 
 export const getDiscoverFeed = createServerFn({ method: "GET" })
@@ -238,7 +274,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
     const scored = candidates
       .map((c) => {
-        const { score, reasons } = scoreCandidate(me, c);
+        const { score, reasons, categories } = scoreCandidate(me, c);
         // Shared-question bonus
         const theirAns = byProfile.get(c.id) ?? new Map<string, string>();
         let qaBonus = 0;
@@ -257,7 +293,8 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
         const pub = stripPrivateFields(c);
-        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
+        const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe } };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);

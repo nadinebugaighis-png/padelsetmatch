@@ -357,7 +357,7 @@ function Onboarding() {
               </>
             )}
 
-            {hasPartnerGoal && (
+            {hasPartnerGoal && meetPref === "everyone" && (
               <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
                 <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Advanced profile (optional)</div>
                 <label className="text-[11px] text-[var(--cream)]/60">Sexual orientation</label>

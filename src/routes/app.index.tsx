@@ -385,18 +385,18 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
     { label: "Lifestyle", value: categories.lifestyle },
   ];
   return (
-    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/60 p-4">
-      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-3">Your Match Score</div>
+    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">Your Match Score</div>
       <div className="flex items-center gap-4">
-        <div className="text-display text-5xl text-[var(--ball)] leading-none">{total}%</div>
+        <div className="text-display text-5xl text-[var(--cream)] leading-none">{total}%</div>
         <div className="flex-1 space-y-2.5">
           {rows.map((r) => (
             <div key={r.label} className="flex items-center gap-2">
-              <div className="text-[11px] text-[var(--cream)]/80 w-20 shrink-0 text-right">{r.label}</div>
+              <div className="text-[11px] text-[var(--cream)]/70 w-20 shrink-0 text-right">{r.label}</div>
               <div className="flex-1 h-1.5 rounded-full bg-[var(--cream)]/10 overflow-hidden">
-                <div className="h-full rounded-full bg-[var(--ball)]" style={{ width: `${r.value}%` }} />
+                <div className="h-full rounded-full bg-[var(--cream)]/70" style={{ width: `${r.value}%` }} />
               </div>
-              <div className="text-[11px] font-semibold text-[var(--ball)] w-8 shrink-0 text-right">{r.value}%</div>
+              <div className="text-[11px] font-semibold text-[var(--cream)]/80 w-8 shrink-0 text-right">{r.value}%</div>
             </div>
           ))}
         </div>

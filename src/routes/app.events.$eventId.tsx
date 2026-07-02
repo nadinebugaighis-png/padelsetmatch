@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   cancelMatchEvent,
+  deleteMatchEvent,
   getMatchEvent,
   joinMatchEvent,
   leaveMatchEvent,
@@ -13,7 +14,7 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/$eventId")({
   component: EventDetail,
@@ -39,6 +40,7 @@ function EventDetail() {
   const join = useServerFn(joinMatchEvent);
   const leave = useServerFn(leaveMatchEvent);
   const cancel = useServerFn(cancelMatchEvent);
+  const deleteEvent = useServerFn(deleteMatchEvent);
   const update = useServerFn(updateMatchEvent);
   const listMsgs = useServerFn(listEventMessages);
   const sendMsg = useServerFn(sendEventMessage);
@@ -114,6 +116,14 @@ function EventDetail() {
     if (!confirm("Cancel this match?")) return;
     await cancel({ data: { id: eventId } });
     toast.success("Match cancelled");
+    navigate({ to: "/app/events" });
+  };
+
+  const onDelete = async () => {
+    if (!confirm("Delete this match permanently? This cannot be undone.")) return;
+    await deleteEvent({ data: { id: eventId } });
+    toast.success("Match deleted");
+    qc.invalidateQueries({ queryKey: ["open-events"] });
     navigate({ to: "/app/events" });
   };
 
@@ -230,6 +240,14 @@ function EventDetail() {
             Join this match
           </button>
         )}
+        {me?.iAmParticipant && (
+          <a
+            href="#event-chat"
+            className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
+          >
+            <MessageCircle className="w-4 h-4" /> Open chat room
+          </a>
+        )}
         {me?.iAmParticipant && !me?.iAmHost && (
           <button
             onClick={onLeave}
@@ -260,6 +278,12 @@ function EventDetail() {
                 Cancel
               </button>
             </div>
+            <button
+              onClick={onDelete}
+              className="w-full py-2 rounded-full border border-red-500/40 text-xs uppercase tracking-widest text-red-300"
+            >
+              Delete match
+            </button>
           </>
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && (
@@ -269,7 +293,7 @@ function EventDetail() {
 
       {/* Chat — visible to participants */}
       {me?.iAmParticipant && (
-        <div className="mt-6">
+        <div id="event-chat" className="mt-6 scroll-mt-6">
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-2">Group chat</div>
           <div
             ref={scrollRef}

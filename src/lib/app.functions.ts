@@ -31,6 +31,7 @@ const ProfileInput = z.object({
   free_court_access: z.boolean().default(false),
   free_court_note: z.string().max(200).nullable().optional(),
   gender_custom: z.string().max(40).nullable().optional(),
+  sexual_orientation: z.string().max(60).nullable().optional(),
 });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {

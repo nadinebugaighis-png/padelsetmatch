@@ -138,6 +138,7 @@ const en: Dict = {
   "prof.age": "Age",
   "prof.level": "Level",
   "prof.nationality": "Nationality",
+  "prof.gender": "Gender",
   "prof.playsIn": "Plays in",
   "prof.languages": "Languages",
   "prof.privacy": "Your preferences (who you're looking for, age range, values you care about) are kept private — they're only used by the AI to find your matches, never shown on your profile. Retake the questionnaire any time to update them.",

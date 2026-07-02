@@ -141,16 +141,20 @@ function scoreCandidate(me: Profile, c: Profile) {
   let lifestyle = 0;
   let vibe = 0;
 
-  const purpose = sharedPurpose(me.looking_for, c.looking_for);
-  if (!purpose) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-
-  const myAudience = purpose === "partner" ? me.partner_interested_in : me.friend_interested_in;
-  const theirAudience = purpose === "partner" ? c.partner_interested_in : c.friend_interested_in;
-  const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
-  const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
-
-  if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  const shared = sharedIntents(me, c);
+  if (shared.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  // Audience gating only matters for social intents (friend / relationship).
+  // Padel-only overlap ignores gender preference — it's just a game.
+  const socialOnly = shared.filter((s) => s !== "padel");
+  const primary = socialOnly.includes("relationship") ? "relationship" : socialOnly.includes("friend") ? "friend" : null;
+  if (primary) {
+    const myAudience = primary === "relationship" ? me.partner_interested_in : me.friend_interested_in;
+    const theirAudience = primary === "relationship" ? c.partner_interested_in : c.friend_interested_in;
+    const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
+    const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
+    if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+    if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  }
 
   score += 6;
 

@@ -38,6 +38,22 @@ export const PRIORITY_TRAITS = [
 
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 
+export const PERSONAL_TRAITS = [
+  "Honest", "Kind", "Calm", "Curious", "Confident", "Friendly", "Loyal", "Patient",
+  "Organized", "Open-minded", "Ambitious", "Ambidextrous", "Brave", "Creative",
+  "Determined", "Diplomatic", "Easygoing", "Empathetic", "Energetic", "Flexible",
+  "Generous", "Humble", "Independent", "Introverted", "Outgoing", "Practical",
+  "Reflective", "Reliable", "Serious", "Witty/funny",
+] as const;
+export type PersonalTrait = (typeof PERSONAL_TRAITS)[number];
+
+export const PADEL_STYLES = [
+  "Competitive", "Casual", "Strategic", "Aggressive", "Defensive", "Team player",
+  "Coachable", "Loves tournaments", "Just for fun", "Always improving",
+  "Fitness-focused", "Social player",
+] as const;
+export type PadelStyle = (typeof PADEL_STYLES)[number];
+
 export const PADEL_LEVELS = ["just starting", "casual", "intermediate", "advanced", "competitive"] as const;
 export type PadelLevel = (typeof PADEL_LEVELS)[number];
 

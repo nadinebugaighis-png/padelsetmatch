@@ -20,8 +20,11 @@ import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppEventsRouteImport } from './routes/app.events'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
+import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
+import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -78,6 +81,11 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEventsRoute = AppEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -88,6 +96,16 @@ const AppMatchesMatchIdRoute = AppMatchesMatchIdRouteImport.update({
   path: '/$matchId',
   getParentRoute: () => AppMatchesRoute,
 } as any)
+const AppEventsNewRoute = AppEventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppEventsRoute,
+} as any)
+const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
+  id: '/$eventId',
+  path: '/$eventId',
+  getParentRoute: () => AppEventsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,11 +115,14 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/events': typeof AppEventsRouteWithChildren
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/app/': typeof AppIndexRoute
+  '/app/events/$eventId': typeof AppEventsEventIdRoute
+  '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
 }
 export interface FileRoutesByTo {
@@ -111,11 +132,14 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/events': typeof AppEventsRouteWithChildren
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/app': typeof AppIndexRoute
+  '/app/events/$eventId': typeof AppEventsEventIdRoute
+  '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
 }
 export interface FileRoutesById {
@@ -127,11 +151,14 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/events': typeof AppEventsRouteWithChildren
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/app/': typeof AppIndexRoute
+  '/app/events/$eventId': typeof AppEventsEventIdRoute
+  '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
 }
 export interface FileRouteTypes {
@@ -144,11 +171,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/events'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
     | '/app/'
+    | '/app/events/$eventId'
+    | '/app/events/new'
     | '/app/matches/$matchId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -158,11 +188,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/events'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
     | '/app'
+    | '/app/events/$eventId'
+    | '/app/events/new'
     | '/app/matches/$matchId'
   id:
     | '__root__'
@@ -173,11 +206,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/events'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
     | '/app/'
+    | '/app/events/$eventId'
+    | '/app/events/new'
     | '/app/matches/$matchId'
   fileRoutesById: FileRoutesById
 }
@@ -269,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/events': {
+      id: '/app/events'
+      path: '/events'
+      fullPath: '/app/events'
+      preLoaderRoute: typeof AppEventsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin': {
       id: '/app/admin'
       path: '/admin'
@@ -283,8 +326,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesMatchIdRouteImport
       parentRoute: typeof AppMatchesRoute
     }
+    '/app/events/new': {
+      id: '/app/events/new'
+      path: '/new'
+      fullPath: '/app/events/new'
+      preLoaderRoute: typeof AppEventsNewRouteImport
+      parentRoute: typeof AppEventsRoute
+    }
+    '/app/events/$eventId': {
+      id: '/app/events/$eventId'
+      path: '/$eventId'
+      fullPath: '/app/events/$eventId'
+      preLoaderRoute: typeof AppEventsEventIdRouteImport
+      parentRoute: typeof AppEventsRoute
+    }
   }
 }
+
+interface AppEventsRouteChildren {
+  AppEventsEventIdRoute: typeof AppEventsEventIdRoute
+  AppEventsNewRoute: typeof AppEventsNewRoute
+}
+
+const AppEventsRouteChildren: AppEventsRouteChildren = {
+  AppEventsEventIdRoute: AppEventsEventIdRoute,
+  AppEventsNewRoute: AppEventsNewRoute,
+}
+
+const AppEventsRouteWithChildren = AppEventsRoute._addFileChildren(
+  AppEventsRouteChildren,
+)
 
 interface AppMatchesRouteChildren {
   AppMatchesMatchIdRoute: typeof AppMatchesMatchIdRoute
@@ -300,6 +371,7 @@ const AppMatchesRouteWithChildren = AppMatchesRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppEventsRoute: typeof AppEventsRouteWithChildren
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -309,6 +381,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppEventsRoute: AppEventsRouteWithChildren,
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,

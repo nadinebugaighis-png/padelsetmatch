@@ -798,8 +798,8 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const model = provider("google/gemini-2.5-flash");
 
     const sys = data.lang === "es"
-      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~60% personalidad/valores/estilo de vida y ~40% pádel (cómo juega, actitud en pista, estilo de juego, mentalidad competitiva, etc.). Responde SIEMPRE en español."
-      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~60% personality/values/lifestyle and ~40% padel (how they play, on-court attitude, playing style, competitive mindset, etc.). Always reply in English.";
+      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~35% personalidad/valores, ~30% estilo de vida y estatus (rutina diaria, situación laboral, nivel de estudios, situación sentimental actual, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Responde SIEMPRE en español."
+      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.";
 
     const prompt = `Person context:
 - Age ${me.age}, ${me.gender === "self-describe" ? (me.gender_custom || "self-describe") : me.gender}
@@ -812,12 +812,13 @@ They have already answered these questions (do NOT repeat or paraphrase):
 ${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
 
 Generate exactly ${data.count} NEW questions as MULTIPLE CHOICE.
-Ratio: about 60% personal (personality, love language, attachment, conflict style, humor, lifestyle, values, dealbreakers, family, ambition, social energy, intimacy comfort, money mindset, ideal weekend, what makes them feel loved) and about 40% padel (preferred side left/right, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).
-EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic.
+Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).
+EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic. Never ask for income amounts.
 
 Return ONLY valid JSON, no prose, no markdown:
-{"questions":[{"question":"...","category":"personality","options":["opt1","opt2","opt3","opt4"]}]}
-Categories must be lowercase single words.`;
+{"questions":[{"question":"...","category":"lifestyle","options":["opt1","opt2","opt3","opt4"]}]}
+Categories must be lowercase single words (personality, values, lifestyle, status, padel, etc.).`;
+
 
 
     let text = "";
@@ -871,6 +872,23 @@ const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
     { question: "Your partner misses an easy ball — you…", category: "padel", options: ["Encourage them", "Stay quiet", "Give tips", "Get frustrated"] },
     { question: "How competitive are you on court?", category: "padel", options: ["Win at all costs", "Competitive but chill", "Mostly for fun", "Just to socialise"] },
     { question: "Ideal padel session?", category: "padel", options: ["Friendly Americano", "Serious match", "Drills + match", "Quick fun game"] },
+    { question: "Current relationship status?", category: "status", options: ["Single", "Dating around", "In a situationship", "Recently out of one", "It's complicated"] },
+    { question: "Do you want kids (or more)?", category: "status", options: ["Yes, definitely", "Maybe someday", "Not sure", "No"] },
+    { question: "Do you already have kids?", category: "status", options: ["No", "Yes, they live with me", "Yes, part-time", "Grown up already"] },
+    { question: "Your work life right now?", category: "lifestyle", options: ["Employed 9–6", "Self-employed", "Founder/entrepreneur", "Studying", "Between things"] },
+    { question: "Highest education level?", category: "status", options: ["High school", "Bachelor's", "Master's", "PhD", "Self-taught"] },
+    { question: "Living situation?", category: "lifestyle", options: ["Alone", "With partner", "With family", "Flatmates", "Move around a lot"] },
+    { question: "Do you smoke?", category: "lifestyle", options: ["Never", "Socially", "Regularly", "Trying to quit"] },
+    { question: "Drinking habits?", category: "lifestyle", options: ["Never", "Socially", "Weekends", "Wine with dinner", "Sober"] },
+    { question: "Fitness routine?", category: "lifestyle", options: ["Daily", "3–4x a week", "Just padel", "When I feel like it"] },
+    { question: "Diet style?", category: "lifestyle", options: ["Anything goes", "Mostly healthy", "Vegetarian", "Vegan", "Pescatarian"] },
+    { question: "How often do you travel?", category: "lifestyle", options: ["Every month", "A few times a year", "Once a year", "Rarely"] },
+    { question: "Pets?", category: "lifestyle", options: ["Dog person", "Cat person", "Both", "Neither", "Allergic"] },
+    { question: "How religious are you?", category: "values", options: ["Very", "Spiritual not religious", "Culturally", "Not at all"] },
+    { question: "Politics matter in a partner?", category: "values", options: ["A lot", "Somewhat", "Not really", "Prefer not to say"] },
+    { question: "Sleep schedule?", category: "lifestyle", options: ["Early bird", "Night owl", "Depends on the day"] },
+    { question: "Ambition level?", category: "status", options: ["Career-driven", "Balanced", "Life first, work second", "Still figuring it out"] },
+
   ],
   es: [
     { question: "¿Cuál es tu lenguaje del amor?", category: "personalidad", options: ["Palabras de afirmación", "Tiempo de calidad", "Contacto físico", "Actos de servicio", "Regalos"] },
@@ -890,6 +908,23 @@ const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
     { question: "Tu compañero falla una fácil — tú…", category: "pádel", options: ["Lo animo", "Callo", "Doy consejos", "Me frustro"] },
     { question: "¿Qué tan competitivo en pista?", category: "pádel", options: ["Ganar a toda costa", "Competitivo pero tranqui", "Por diversión", "Solo por socializar"] },
     { question: "¿Sesión ideal de pádel?", category: "pádel", options: ["Americano amistoso", "Partido serio", "Drills + partido", "Juego rápido divertido"] },
+    { question: "¿Situación sentimental actual?", category: "estatus", options: ["Soltero/a", "Conociendo gente", "En un lío", "Recién salido/a de una relación", "Es complicado"] },
+    { question: "¿Quieres tener hijos (o más)?", category: "estatus", options: ["Sí, seguro", "Quizás algún día", "No lo sé", "No"] },
+    { question: "¿Ya tienes hijos?", category: "estatus", options: ["No", "Sí, viven conmigo", "Sí, a tiempo parcial", "Ya son mayores"] },
+    { question: "¿Tu vida laboral ahora?", category: "estilo de vida", options: ["Empleado 9–6", "Autónomo", "Emprendedor/fundador", "Estudiando", "Entre etapas"] },
+    { question: "¿Nivel de estudios?", category: "estatus", options: ["Bachillerato", "Grado", "Máster", "Doctorado", "Autodidacta"] },
+    { question: "¿Con quién vives?", category: "estilo de vida", options: ["Solo/a", "Con mi pareja", "Con familia", "Con compañeros", "Me muevo mucho"] },
+    { question: "¿Fumas?", category: "estilo de vida", options: ["Nunca", "Socialmente", "Con frecuencia", "Intentando dejarlo"] },
+    { question: "¿Bebes alcohol?", category: "estilo de vida", options: ["Nunca", "Socialmente", "Fines de semana", "Vino con la cena", "Sobrio/a"] },
+    { question: "¿Rutina de deporte?", category: "estilo de vida", options: ["Diaria", "3–4 veces/semana", "Solo pádel", "Cuando me apetece"] },
+    { question: "¿Tipo de dieta?", category: "estilo de vida", options: ["De todo", "Sano en general", "Vegetariana", "Vegana", "Pescetariana"] },
+    { question: "¿Con qué frecuencia viajas?", category: "estilo de vida", options: ["Cada mes", "Varias veces al año", "Una vez al año", "Casi nunca"] },
+    { question: "¿Mascotas?", category: "estilo de vida", options: ["Perros", "Gatos", "Ambos", "Ninguno", "Alérgico/a"] },
+    { question: "¿Qué tan religioso/a eres?", category: "valores", options: ["Mucho", "Espiritual, no religioso/a", "Culturalmente", "Nada"] },
+    { question: "¿La política importa en tu pareja?", category: "valores", options: ["Mucho", "Algo", "No mucho", "Prefiero no decirlo"] },
+    { question: "¿Horario de sueño?", category: "estilo de vida", options: ["Madrugador/a", "Noctámbulo/a", "Depende del día"] },
+    { question: "¿Nivel de ambición?", category: "estatus", options: ["Enfocado/a en carrera", "Equilibrado/a", "Vida primero, trabajo segundo", "Aún descubriéndolo"] },
+
   ],
 };
 

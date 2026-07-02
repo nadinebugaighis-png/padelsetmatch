@@ -171,6 +171,7 @@ function ProfilePage() {
           <Info label={t("prof.age")} v={String(p.age)} />
           <Info label={t("prof.level")} v={label(p.level)} />
           <Info label={t("prof.nationality")} v={p.nationality} />
+          <Info label={t("prof.gender")} v={p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender)} />
         </div>
 
         {locations.length > 0 && (

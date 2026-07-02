@@ -64,6 +64,7 @@ function Onboarding() {
   const [first_name, setFirstName] = useState("");
   const [age, setAge] = useState(28);
   const [gender, setGender] = useState<Gender>("woman");
+  const [genderCustom, setGenderCustom] = useState("");
   const [interested_in, setInterested] = useState<Gender[]>(["man"]);
   const [friend_interested_in, setFriendAud] = useState<string[]>(["everyone"]);
   const [partner_interested_in, setPartnerAud] = useState<string[]>(["men"]);
@@ -91,6 +92,7 @@ function Onboarding() {
     const p = profileQ.data;
     if (p) {
       setFirstName(p.first_name); setAge(p.age); setGender(p.gender);
+      setGenderCustom(p.gender_custom ?? "");
       setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
@@ -263,6 +265,7 @@ function Onboarding() {
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
+          gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
         },
       });
     },
@@ -311,6 +314,9 @@ function Onboarding() {
                 <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
               ))}
             </div>
+            {gender === "self-describe" && (
+              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder="Describe yourself (e.g. trans woman, genderfluid…)" maxLength={40} />
+            )}
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">What are you looking for?</label>
             <div className="flex flex-wrap gap-2">
               {[

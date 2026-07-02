@@ -138,6 +138,7 @@ const en: Dict = {
   "prof.age": "Age",
   "prof.level": "Level",
   "prof.nationality": "Nationality",
+  "prof.gender": "Gender",
   "prof.playsIn": "Plays in",
   "prof.languages": "Languages",
   "prof.privacy": "Your preferences (who you're looking for, age range, values you care about) are kept private — they're only used by the AI to find your matches, never shown on your profile. Retake the questionnaire any time to update them.",
@@ -380,6 +381,7 @@ const es: Dict = {
   "prof.age": "Edad",
   "prof.level": "Nivel",
   "prof.nationality": "Nacionalidad",
+  "prof.gender": "Género",
   "prof.playsIn": "Juega en",
   "prof.languages": "Idiomas",
   "prof.privacy": "Tus preferencias (a quién buscas, rango de edad, valores que te importan) son privadas — solo las usa la IA para encontrar tus matches, nunca se muestran en tu perfil. Puedes rehacer el cuestionario cuando quieras.",
@@ -615,6 +617,7 @@ const ar: Dict = {
   "prof.age": "العمر",
   "prof.level": "المستوى",
   "prof.nationality": "الجنسية",
+  "prof.gender": "الجنس",
   "prof.playsIn": "يلعب في",
   "prof.languages": "اللغات",
   "prof.privacy": "تفضيلاتك (من تبحث عنه، نطاق العمر، القيم) خاصة — يستخدمها الذكاء الاصطناعي فقط للمطابقة، ولا تظهر في ملفك. أعد الاستبيان لتحديثها وقت ما شئت.",
@@ -726,7 +729,7 @@ const DICTS: Record<Lang, Dict> = { en, es, ar };
 // Display labels for fixed enums stored in English in the DB.
 const LABELS: Record<Lang, Record<string, string>> = {
   en: {
-    woman: "woman", man: "man", "non-binary": "non-binary",
+    woman: "woman", man: "man", "non-binary": "non-binary", "self-describe": "Prefer to self-describe",
     "just starting": "just starting", casual: "casual", beginner: "beginner", intermediate: "intermediate", advanced: "advanced", competitive: "competitive",
     friend: "friend", partner: "partner", both: "both",
     everyone: "everyone", women: "women", men: "men", "lesbian women": "lesbian women", "gay men": "gay men", bisexual: "bisexual", queer: "queer",
@@ -740,7 +743,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     art: "art", travel: "travel", food: "food", concerts: "concerts", "music events": "music events",
   },
   es: {
-    woman: "mujer", man: "hombre", "non-binary": "no binario",
+    woman: "mujer", man: "hombre", "non-binary": "no binario", "self-describe": "Prefiero describirme",
     "just starting": "empezando", casual: "casual", beginner: "principiante", intermediate: "intermedio", advanced: "avanzado", competitive: "competitivo",
     friend: "amistad", partner: "pareja", both: "ambos",
     everyone: "todos", women: "mujeres", men: "hombres", "lesbian women": "mujeres lesbianas", "gay men": "hombres gays", bisexual: "bisexuales", queer: "queer",
@@ -754,7 +757,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     art: "arte", travel: "viajes", food: "comida", concerts: "conciertos", "music events": "eventos musicales",
   },
   ar: {
-    woman: "امرأة", man: "رجل", "non-binary": "غير ثنائي",
+    woman: "امرأة", man: "رجل", "non-binary": "غير ثنائي", "self-describe": "أفضل أن أصف نفسي",
     "just starting": "مبتدئ تماماً", casual: "هاوي", beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدم", competitive: "تنافسي",
     friend: "صديق", partner: "شريك", both: "كلاهما",
     everyone: "الجميع", women: "نساء", men: "رجال", "lesbian women": "نساء مثليات", "gay men": "رجال مثليون", bisexual: "ثنائي الميل", queer: "كوير",

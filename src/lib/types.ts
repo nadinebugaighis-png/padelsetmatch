@@ -86,7 +86,7 @@ export const LANGUAGES = [
 ] as const;
 export type Language = (typeof LANGUAGES)[number];
 
-export const GENDERS = ["woman", "man", "non-binary"] as const;
+export const GENDERS = ["woman", "man", "non-binary", "self-describe"] as const;
 export type Gender = (typeof GENDERS)[number];
 
 // Audience options for friendship / partner targeting (broader than gender identity).
@@ -158,6 +158,7 @@ export type Profile = {
   first_name: string;
   age: number;
   gender: Gender;
+  gender_custom: string | null;
   interested_in: Gender[];
   friend_interested_in: string[];
   partner_interested_in: string[];

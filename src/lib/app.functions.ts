@@ -30,6 +30,7 @@ const ProfileInput = z.object({
   mixed_doubles: z.boolean().default(false),
   free_court_access: z.boolean().default(false),
   free_court_note: z.string().max(200).nullable().optional(),
+  gender_custom: z.string().max(40).nullable().optional(),
 });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {
@@ -38,6 +39,7 @@ function audienceAcceptsGender(audience: string[], gender: string): boolean {
   if (gender === "man" && (audience.includes("men") || audience.includes("gay men"))) return true;
   if (gender === "woman" && (audience.includes("women") || audience.includes("lesbian women"))) return true;
   if (gender === "non-binary" && audience.includes("non-binary")) return true;
+  if (gender === "self-describe" && (audience.includes("non-binary") || audience.includes("everyone") || audience.includes("bisexual") || audience.includes("queer"))) return true;
   return false;
 }
 
@@ -746,7 +748,7 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
       : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~60% personality/values/lifestyle and ~40% padel (how they play, on-court attitude, playing style, competitive mindset, etc.). Always reply in English.";
 
     const prompt = `Person context:
-- Age ${me.age}, ${me.gender}
+- Age ${me.age}, ${me.gender === "self-describe" ? (me.gender_custom || "self-describe") : me.gender}
 - Looking for: ${me.looking_for}
 - Nationality: ${me.nationality}
 - Languages: ${(me.languages ?? []).join(", ") || "n/a"}

@@ -280,7 +280,7 @@ function Onboarding() {
           age_min, age_max, nationality,
           zone: first ? first.city : "",
           locations: encodedLocations, languages,
-          level, priorities, looking_for: derivedLookingFor,
+          level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,

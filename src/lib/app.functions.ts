@@ -23,6 +23,7 @@ const ProfileInput = z.object({
   level: z.enum(PADEL_LEVELS),
   priorities: z.array(z.string().min(1).max(40)).min(3).max(8),
   looking_for: z.enum(LOOKING_FOR),
+  intents: z.array(z.enum(["padel", "friend", "relationship"])).default([]),
   bio: z.string().max(280).nullable().optional(),
   photo_url: z.string().min(1).max(2000).nullable().optional(),
   availability: z.array(z.string().min(1).max(40)).max(10).default([]),

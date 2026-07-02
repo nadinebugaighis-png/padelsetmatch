@@ -105,7 +105,7 @@ function ChatRoom() {
   });
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
-  const { other, my_profile_id, messages, shared } = q.data as typeof q.data & { shared?: { priorities: string[]; personal_traits: string[]; padel_style: string[]; languages: string[] } };
+  const { other, my_profile_id, messages } = q.data;
 
   const onBlock = () => {
     if (!window.confirm(t("disc.blockConfirm", { name: other.first_name }))) return;

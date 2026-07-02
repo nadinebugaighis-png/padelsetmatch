@@ -321,12 +321,11 @@ function Discover() {
   );
 }
 
-function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number; vibe: number } }) {
+function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number } }) {
   const rows = [
     { label: "Playing Style", value: categories.playingStyle },
     { label: "Personality", value: categories.personality },
     { label: "Lifestyle", value: categories.lifestyle },
-    { label: "Vibe", value: categories.vibe },
   ];
   return (
     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/60 p-4">

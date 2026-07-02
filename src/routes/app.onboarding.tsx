@@ -313,6 +313,9 @@ function Onboarding() {
                 <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
               ))}
             </div>
+            {gender === "self-describe" && (
+              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder="Describe yourself (e.g. trans woman, genderfluid…)" maxLength={40} />
+            )}
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">What are you looking for?</label>
             <div className="flex flex-wrap gap-2">
               {[

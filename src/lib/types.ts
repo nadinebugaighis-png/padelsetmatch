@@ -197,6 +197,8 @@ export type Profile = {
   no_show_count?: number;
   free_court_access?: boolean;
   free_court_note?: string | null;
+  personal_traits?: string[];
+  padel_style?: string[];
 };
 
 export type RankedCandidate = Profile & {

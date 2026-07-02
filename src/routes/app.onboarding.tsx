@@ -36,9 +36,9 @@ function normalizeAge(raw: string, fallback: number): number {
   return Math.min(99, Math.max(18, n));
 }
 
-function AgeInput({ value, onCommit, placeholder }: { value: number; onCommit: (n: number) => void; placeholder?: string }) {
-  const [text, setText] = useState(String(value));
-  useEffect(() => { setText(String(value)); }, [value]);
+function AgeInput({ value, onCommit, placeholder }: { value: number | null; onCommit: (n: number | null) => void; placeholder?: string }) {
+  const [text, setText] = useState(value === null ? "" : String(value));
+  useEffect(() => { setText(value === null ? "" : String(value)); }, [value]);
   return (
     <Input
       type="text"
@@ -48,7 +48,10 @@ function AgeInput({ value, onCommit, placeholder }: { value: number; onCommit: (
       placeholder={placeholder}
       value={text}
       onChange={(e) => setText(e.target.value.replace(/[^0-9]/g, ""))}
-      onBlur={() => onCommit(normalizeAge(text, value))}
+      onBlur={() => {
+        if (text.trim() === "") { onCommit(null); return; }
+        onCommit(normalizeAge(text, value ?? 18));
+      }}
     />
   );
 }
@@ -63,29 +66,29 @@ function Onboarding() {
 
   const [step, setStep] = useState(0);
   const [first_name, setFirstName] = useState("");
-  const [age, setAge] = useState(28);
-  const [gender, setGender] = useState<Gender>("woman");
+  const [age, setAge] = useState<number | null>(null);
+  const [gender, setGender] = useState<Gender | "">("");
   const [genderCustom, setGenderCustom] = useState("");
-  const [interested_in, setInterested] = useState<Gender[]>(["man"]);
-  const [friend_interested_in, setFriendAud] = useState<string[]>(["everyone"]);
-  const [partner_interested_in, setPartnerAud] = useState<string[]>(["men"]);
-  const [age_min, setAgeMin] = useState(25);
-  const [age_max, setAgeMax] = useState(38);
+  const [interested_in, setInterested] = useState<Gender[]>([]);
+  const [friend_interested_in, setFriendAud] = useState<string[]>([]);
+  const [partner_interested_in, setPartnerAud] = useState<string[]>([]);
+  const [age_min, setAgeMin] = useState<number | null>(null);
+  const [age_max, setAgeMax] = useState<number | null>(null);
   const [nationality, setNationality] = useState("");
   const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
-  const [languages, setLanguages] = useState<string[]>(["English"]);
-  const [level, setLevel] = useState<PadelLevel>("intermediate");
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [level, setLevel] = useState<PadelLevel | "">("");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
-  const [goals, setGoals] = useState<string[]>(["padel", "friends"]);
-  const [meetPref, setMeetPref] = useState<"men" | "women" | "everyone">("everyone");
+  const [goals, setGoals] = useState<string[]>([]);
+  const [meetPref, setMeetPref] = useState<"men" | "women" | "everyone" | "">("");
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [availability, setAvailability] = useState<string[]>([]);
-  const [courtSide, setCourtSide] = useState<CourtSide>("both");
-  const [mixedDoubles, setMixedDoubles] = useState(true);
+  const [courtSide, setCourtSide] = useState<CourtSide | "">("");
+  const [mixedDoubles, setMixedDoubles] = useState(false);
   const [freeCourt, setFreeCourt] = useState(false);
   const [freeCourtNote, setFreeCourtNote] = useState("");
   const [sexualOrientation, setSexualOrientation] = useState("");
@@ -256,11 +259,14 @@ function Onboarding() {
   const save = useMutation({
     mutationFn: () => {
       const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
-      const partnerAud = hasPartnerGoal ? [meetPref] : [];
+      const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
       const friendAud = hasFriendGoal ? ["everyone"] : [];
       const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
+      if (age === null || age_min === null || age_max === null || !gender || !level) {
+        throw new Error("Please complete all required fields");
+      }
       return upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
@@ -270,7 +276,7 @@ function Onboarding() {
           locations: encodedLocations, languages,
           level, priorities, looking_for: derivedLookingFor,
           bio: bio || null, photo_url: photoUrl,
-          availability, court_side: courtSide, mixed_doubles: mixedDoubles,
+          availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
           gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
           sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
@@ -290,9 +296,9 @@ function Onboarding() {
   const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
 
   const canStep = [
-    !!first_name && age >= 18,
-    audOk && age_min <= age_max,
-    validBlocks.length > 0 && languages.length > 0 && !!level,
+    !!first_name && age !== null && age >= 18 && !!gender && goals.length > 0,
+    audOk && age_min !== null && age_max !== null && age_min <= age_max,
+    validBlocks.length > 0 && !!nationality && languages.length > 0 && !!level && !!courtSide,
     priorities.length >= 3,
     !!photoUrl,
   ];
@@ -446,6 +452,7 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
+              <option value="" className="bg-[var(--court-deep)]">— Select —</option>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
 

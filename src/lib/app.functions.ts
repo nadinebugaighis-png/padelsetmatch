@@ -798,8 +798,8 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const model = provider("google/gemini-2.5-flash");
 
     const sys = data.lang === "es"
-      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~60% personalidad/valores/estilo de vida y ~40% pádel (cómo juega, actitud en pista, estilo de juego, mentalidad competitiva, etc.). Responde SIEMPRE en español."
-      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~60% personality/values/lifestyle and ~40% padel (how they play, on-court attitude, playing style, competitive mindset, etc.). Always reply in English.";
+      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~35% personalidad/valores, ~30% estilo de vida y estatus (rutina diaria, situación laboral, nivel de estudios, situación sentimental actual, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Responde SIEMPRE en español."
+      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.";
 
     const prompt = `Person context:
 - Age ${me.age}, ${me.gender === "self-describe" ? (me.gender_custom || "self-describe") : me.gender}
@@ -812,12 +812,13 @@ They have already answered these questions (do NOT repeat or paraphrase):
 ${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
 
 Generate exactly ${data.count} NEW questions as MULTIPLE CHOICE.
-Ratio: about 60% personal (personality, love language, attachment, conflict style, humor, lifestyle, values, dealbreakers, family, ambition, social energy, intimacy comfort, money mindset, ideal weekend, what makes them feel loved) and about 40% padel (preferred side left/right, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).
-EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic.
+Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).
+EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic. Never ask for income amounts.
 
 Return ONLY valid JSON, no prose, no markdown:
-{"questions":[{"question":"...","category":"personality","options":["opt1","opt2","opt3","opt4"]}]}
-Categories must be lowercase single words.`;
+{"questions":[{"question":"...","category":"lifestyle","options":["opt1","opt2","opt3","opt4"]}]}
+Categories must be lowercase single words (personality, values, lifestyle, status, padel, etc.).`;
+
 
 
     let text = "";

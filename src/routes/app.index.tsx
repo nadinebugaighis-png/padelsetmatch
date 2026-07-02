@@ -333,8 +333,8 @@ function Discover() {
                 </div>
 
                 {/* Sticky bottom action bar */}
-                <div className="absolute bottom-0 left-0 right-0 px-5 py-4 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/95 to-transparent">
-                  <div className="flex items-center gap-3">
+                <div className="absolute bottom-0 left-0 right-0 px-4 pt-6 pb-4 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/90 to-transparent">
+                  <div className="flex items-center gap-2.5">
                     <button
                       type="button"
                       disabled={likeM.isPending || unlikeM.isPending}
@@ -343,29 +343,33 @@ function Discover() {
                         const wasLiked = preview.liked;
                         if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
                       }}
-                      className={`w-14 h-14 shrink-0 rounded-full flex items-center justify-center transition-transform active:scale-90 ${preview.liked ? "bg-[var(--ball)]" : "bg-[var(--cream)]/10 border border-[var(--cream)]/20"}`}
+                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--ball)] flex items-center justify-center transition-transform active:scale-90"
                       aria-label={preview.liked ? "Unlike" : "Like"}
                     >
-                      <Heart className={`w-6 h-6 ${preview.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]"}`} />
+                      <Heart className={`w-5 h-5 text-[var(--court-deep)] ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
                     </button>
-                    {match ? (
-                      <button
-                        type="button"
-                        onClick={() => { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }}
-                        className="flex-1 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-widest text-sm flex items-center justify-center gap-2"
-                      >
-                        Send Message <MessageCircle className="w-5 h-5" />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled={likeM.isPending}
-                        onClick={() => { const id = preview.id; if (!preview.liked) likeM.mutate(id); }}
-                        className="flex-1 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-widest text-sm flex items-center justify-center gap-2 disabled:opacity-60"
-                      >
-                        {preview.liked ? "Waiting for match…" : "Like"} <Heart className="w-5 h-5 fill-[var(--court-deep)]" />
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                        if (!preview.liked) likeM.mutate(preview.id);
+                      }}
+                      disabled={likeM.isPending && !match}
+                      className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
+                    >
+                      {match ? "Send Message" : preview.liked ? "Waiting for match…" : "Like to connect"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }
+                      }}
+                      disabled={!match}
+                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--court)] border border-[var(--cream)]/10 flex items-center justify-center text-[var(--cream)] disabled:opacity-40"
+                      aria-label="Open chat"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               </>

@@ -276,13 +276,25 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
     const { id, ...inputPatch } = data;
+    const { data: current } = await supabase
+      .from("match_events")
+      .select("extra_confirmed")
+      .eq("id", id)
+      .eq("host_profile_id", profile.id)
+      .maybeSingle();
+    if (!current) throw new Error("Match not found");
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })
       .eq("match_event_id", id);
-    const filled = (count ?? 0) + (inputPatch.extra_confirmed ?? 0);
+    const extraConfirmed = Math.min(
+      inputPatch.extra_confirmed ?? current.extra_confirmed ?? 0,
+      Math.max(0, 4 - (count ?? 0)),
+    );
+    const filled = (count ?? 0) + extraConfirmed;
     const patch = {
       ...inputPatch,
+      extra_confirmed: extraConfirmed,
       status: inputPatch.status ?? (filled >= 4 ? "full" : "open"),
     };
     const { error } = await supabase

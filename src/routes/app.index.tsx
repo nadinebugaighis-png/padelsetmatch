@@ -22,7 +22,7 @@ function Discover() {
   const block = useServerFn(blockProfile);
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
-  const [filter, setFilter] = useState<"all" | "partner" | "friend">("all");
+  const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 
@@ -69,7 +69,7 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
   const hideM = useMutation({
-    mutationFn: (vars: { id: string; category: "partner" | "friend" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
+    mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       toast("Hidden from your Grid — manage in Profile → Hidden & blocked", { duration: 2400 });
@@ -93,8 +93,11 @@ function Discover() {
     reportM.mutate({ id, reason: reason.trim() });
   }
   function handleHide(id: string, name: string) {
-    const scope: "partner" | "friend" | "all" = filter === "all" ? "all" : filter;
-    const scopeLabel = scope === "all" ? "everywhere" : scope === "partner" ? "from Partners only" : "from Friends only";
+    const scope: "padel" | "friend" | "relationship" | "all" = filter === "all" ? "all" : filter;
+    const scopeLabel =
+      scope === "all" ? "everywhere" :
+      scope === "padel" ? "from Padel partners" :
+      scope === "friend" ? "from Friends" : "from Relationships";
     if (!window.confirm(`Hide ${name} ${scopeLabel}? You can unhide them anytime from Profile → Hidden & blocked.`)) return;
     hideM.mutate({ id, category: scope });
   }
@@ -107,8 +110,15 @@ function Discover() {
   if (!feedQ.data?.me) return null;
 
   const all = feedQ.data.candidates;
-  const activeCat = filter === "partner" ? "partner" : filter === "friend" ? "friend" : null;
-  const list = (filter === "all" ? all : all.filter((c) => c.looking_for === filter || c.looking_for === "both"))
+  const activeCat = filter === "all" ? null : filter;
+  const deriveIntents = (c: { intents?: string[] | null; looking_for?: string | null }): string[] => {
+    if (c.intents && c.intents.length > 0) return c.intents;
+    if (c.looking_for === "partner") return ["relationship", "padel"];
+    if (c.looking_for === "friend") return ["friend", "padel"];
+    if (c.looking_for === "both") return ["relationship", "friend", "padel"];
+    return ["padel"];
+  };
+  const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
@@ -123,10 +133,10 @@ function Discover() {
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
-      <div className="flex gap-2 mt-4">
-        {(["all", "partner", "friend"] as const).map((f) => (
+      <div className="flex gap-2 mt-4 flex-wrap">
+        {(["all", "padel", "friend", "relationship"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-            {f === "all" ? t("disc.filter.all") : f === "partner" ? t("disc.filter.partner") : t("disc.filter.friend")}
+            {f === "all" ? "Everyone" : f === "padel" ? "Padel partner" : f === "friend" ? "Friend" : "Relationship"}
           </button>
         ))}
       </div>

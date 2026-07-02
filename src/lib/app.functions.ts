@@ -23,6 +23,7 @@ const ProfileInput = z.object({
   level: z.enum(PADEL_LEVELS),
   priorities: z.array(z.string().min(1).max(40)).min(3).max(8),
   looking_for: z.enum(LOOKING_FOR),
+  intents: z.array(z.enum(["padel", "friend", "relationship"])).default([]),
   bio: z.string().max(280).nullable().optional(),
   photo_url: z.string().min(1).max(2000).nullable().optional(),
   availability: z.array(z.string().min(1).max(40)).max(10).default([]),
@@ -46,13 +47,20 @@ function audienceAcceptsGender(audience: string[], gender: string): boolean {
   return false;
 }
 
-function sharedPurpose(a: string, b: string): "partner" | "friend" | null {
-  if (a === "partner" && (b === "partner" || b === "both")) return "partner";
-  if (b === "partner" && (a === "partner" || a === "both")) return "partner";
-  if (a === "friend" && (b === "friend" || b === "both")) return "friend";
-  if (b === "friend" && (a === "friend" || a === "both")) return "friend";
-  if (a === "both" && b === "both") return "partner";
-  return null;
+// Returns the list of shared intents between two profiles.
+// Falls back to legacy looking_for so users who haven't re-saved still match.
+function deriveIntents(p: { intents?: string[] | null; looking_for?: string | null }): string[] {
+  if (p.intents && p.intents.length > 0) return p.intents;
+  switch (p.looking_for) {
+    case "partner": return ["relationship", "padel"];
+    case "friend": return ["friend", "padel"];
+    case "both": return ["relationship", "friend", "padel"];
+    default: return ["padel"];
+  }
+}
+function sharedIntents(a: Profile, b: Profile): string[] {
+  const av = new Set(deriveIntents(a));
+  return deriveIntents(b).filter((x) => av.has(x));
 }
 
 function stripPrivateFields(p: Profile): any {
@@ -133,16 +141,18 @@ function scoreCandidate(me: Profile, c: Profile) {
   let lifestyle = 0;
   let vibe = 0;
 
-  const purpose = sharedPurpose(me.looking_for, c.looking_for);
-  if (!purpose) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-
-  const myAudience = purpose === "partner" ? me.partner_interested_in : me.friend_interested_in;
-  const theirAudience = purpose === "partner" ? c.partner_interested_in : c.friend_interested_in;
-  const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
-  const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
-
-  if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  const intentOverlap = sharedIntents(me, c);
+  if (intentOverlap.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  const socialOnly = intentOverlap.filter((s) => s !== "padel");
+  const primary = socialOnly.includes("relationship") ? "relationship" : socialOnly.includes("friend") ? "friend" : null;
+  if (primary) {
+    const myAudience = primary === "relationship" ? me.partner_interested_in : me.friend_interested_in;
+    const theirAudience = primary === "relationship" ? c.partner_interested_in : c.friend_interested_in;
+    const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
+    const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
+    if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+    if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  }
 
   score += 6;
 
@@ -568,7 +578,7 @@ export const hideProfile = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       hiddenProfileId: z.string().uuid(),
-      category: z.enum(["partner", "friend", "all"]).default("all"),
+      category: z.enum(["padel", "friend", "relationship", "partner", "all"]).default("all"),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -588,7 +598,7 @@ export const unhideProfile = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       hiddenProfileId: z.string().uuid(),
-      category: z.enum(["partner", "friend", "all"]).optional(),
+      category: z.enum(["padel", "friend", "relationship", "partner", "all"]).optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {

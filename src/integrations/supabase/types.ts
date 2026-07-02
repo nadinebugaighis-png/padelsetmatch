@@ -515,6 +515,7 @@ export type Database = {
           gender: string
           gender_custom: string | null
           id: string
+          intents: string[]
           interested_in: string[]
           is_seed: boolean
           languages: string[]
@@ -551,6 +552,7 @@ export type Database = {
           gender: string
           gender_custom?: string | null
           id?: string
+          intents?: string[]
           interested_in?: string[]
           is_seed?: boolean
           languages?: string[]
@@ -587,6 +589,7 @@ export type Database = {
           gender?: string
           gender_custom?: string | null
           id?: string
+          intents?: string[]
           interested_in?: string[]
           is_seed?: boolean
           languages?: string[]

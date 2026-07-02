@@ -105,10 +105,17 @@ function Onboarding() {
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
-      // Derive simple goals + meetPref from stored data
+      // Derive simple goals + meetPref from stored intents (fallback to legacy looking_for)
       const g: string[] = [];
-      if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
-      if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+      const storedIntents = (p as unknown as { intents?: string[] }).intents ?? [];
+      if (storedIntents.length > 0) {
+        if (storedIntents.includes("padel")) g.push("padel");
+        if (storedIntents.includes("friend")) g.push("friends");
+        if (storedIntents.includes("relationship")) g.push("relationship");
+      } else {
+        if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
+        if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+      }
       if (g.length) setGoals(g);
       const pa = p.partner_interested_in?.[0];
       if (pa === "men" || pa === "women" || pa === "everyone") setMeetPref(pa);
@@ -254,7 +261,13 @@ function Onboarding() {
   };
 
   const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
-  const hasFriendGoal = goals.includes("friends") || goals.includes("padel") || goals.includes("all");
+  const hasFriendGoal = goals.includes("friends") || goals.includes("all");
+  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("relationship") || goals.includes("all");
+  const derivedIntents = Array.from(new Set<string>([
+    ...(hasPadelGoal ? ["padel"] : []),
+    ...(hasFriendGoal ? ["friend"] : []),
+    ...(hasPartnerGoal ? ["relationship"] : []),
+  ]));
 
   const save = useMutation({
     mutationFn: () => {
@@ -274,7 +287,7 @@ function Onboarding() {
           age_min, age_max, nationality,
           zone: first ? first.city : "",
           locations: encodedLocations, languages,
-          level, priorities, looking_for: derivedLookingFor,
+          level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,

@@ -36,9 +36,9 @@ function normalizeAge(raw: string, fallback: number): number {
   return Math.min(99, Math.max(18, n));
 }
 
-function AgeInput({ value, onCommit, placeholder }: { value: number; onCommit: (n: number) => void; placeholder?: string }) {
-  const [text, setText] = useState(String(value));
-  useEffect(() => { setText(String(value)); }, [value]);
+function AgeInput({ value, onCommit, placeholder }: { value: number | null; onCommit: (n: number | null) => void; placeholder?: string }) {
+  const [text, setText] = useState(value === null ? "" : String(value));
+  useEffect(() => { setText(value === null ? "" : String(value)); }, [value]);
   return (
     <Input
       type="text"
@@ -48,7 +48,10 @@ function AgeInput({ value, onCommit, placeholder }: { value: number; onCommit: (
       placeholder={placeholder}
       value={text}
       onChange={(e) => setText(e.target.value.replace(/[^0-9]/g, ""))}
-      onBlur={() => onCommit(normalizeAge(text, value))}
+      onBlur={() => {
+        if (text.trim() === "") { onCommit(null); return; }
+        onCommit(normalizeAge(text, value ?? 18));
+      }}
     />
   );
 }

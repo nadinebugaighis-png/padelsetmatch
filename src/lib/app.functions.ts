@@ -60,6 +60,7 @@ function stripPrivateFields(p: Profile): any {
   delete clone.friend_interested_in;
   delete clone.age_min;
   delete clone.age_max;
+  delete clone.sexual_orientation;
   return clone;
 }
 

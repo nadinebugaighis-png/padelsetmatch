@@ -141,12 +141,9 @@ function scoreCandidate(me: Profile, c: Profile) {
   let lifestyle = 0;
   let vibe = 0;
 
-  const sharedIntentsList = sharedIntents(me, c);
-  const shared = sharedIntentsList;
-  if (shared.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  // Audience gating only matters for social intents (friend / relationship).
-  // Padel-only overlap ignores gender preference — it's just a game.
-  const socialOnly = shared.filter((s) => s !== "padel");
+  const intentOverlap = sharedIntents(me, c);
+  if (intentOverlap.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  const socialOnly = intentOverlap.filter((s) => s !== "padel");
   const primary = socialOnly.includes("relationship") ? "relationship" : socialOnly.includes("friend") ? "friend" : null;
   if (primary) {
     const myAudience = primary === "relationship" ? me.partner_interested_in : me.friend_interested_in;

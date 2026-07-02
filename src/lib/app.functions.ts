@@ -50,6 +50,16 @@ function sharedPurpose(a: string, b: string): "partner" | "friend" | null {
   return null;
 }
 
+function stripPrivateFields(p: Profile): any {
+  const clone = { ...p } as any;
+  delete clone.interested_in;
+  delete clone.partner_interested_in;
+  delete clone.friend_interested_in;
+  delete clone.age_min;
+  delete clone.age_max;
+  return clone;
+}
+
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

@@ -357,6 +357,20 @@ function Onboarding() {
               </>
             )}
 
+            {hasPartnerGoal && (
+              <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Advanced profile (optional)</div>
+                <label className="text-[11px] text-[var(--cream)]/60">Sexual orientation</label>
+                <Input
+                  value={sexualOrientation}
+                  onChange={(e) => setSexualOrientation(e.target.value)}
+                  placeholder="e.g. straight, gay, bisexual, queer, pansexual…"
+                  maxLength={60}
+                />
+                <p className="text-[10px] text-[var(--cream)]/50">Private — used only to improve matches. Not shown on your profile.</p>
+              </div>
+            )}
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
               <AgeInput value={age_min} onCommit={setAgeMin} />

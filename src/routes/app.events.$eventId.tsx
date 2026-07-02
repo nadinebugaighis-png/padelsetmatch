@@ -239,20 +239,28 @@ function EventDetail() {
           </button>
         )}
         {me?.iAmHost && event.status !== "cancelled" && (
-          <div className="flex gap-2">
+          <>
             <button
-              onClick={onToggleBooked}
-              className="flex-1 py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/80"
+              onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
+              className="w-full py-2 rounded-full border border-[var(--ball)]/60 text-xs uppercase tracking-widest text-[var(--ball)]"
             >
-              {event.court_booked ? "Mark court not booked" : "Mark court booked ✅"}
+              Edit match
             </button>
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 rounded-full border border-red-500/30 text-xs uppercase tracking-widest text-red-300"
-            >
-              Cancel
-            </button>
-          </div>
+            <div className="flex gap-2">
+              <button
+                onClick={onToggleBooked}
+                className="flex-1 py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/80"
+              >
+                {event.court_booked ? "Mark court not booked" : "Mark court booked ✅"}
+              </button>
+              <button
+                onClick={onCancel}
+                className="px-4 py-2 rounded-full border border-red-500/30 text-xs uppercase tracking-widest text-red-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && (
           <p className="text-xs text-[var(--cream)]/50 text-center">This match doesn't match your profile settings.</p>

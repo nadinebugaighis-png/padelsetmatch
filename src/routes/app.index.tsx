@@ -177,7 +177,7 @@ function Discover() {
               ) : (
                 <button
                   type="button"
-                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note })}
+                  onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: true, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories })}
                   className="absolute inset-0 flex items-center justify-center bg-[var(--court-deep)]/60"
                   aria-label={`View ${c.first_name}'s profile`}
                 >

@@ -23,7 +23,9 @@ function AdminPage() {
   if (q.isLoading) return <div className="p-6 text-[var(--cream)]/70">Loading…</div>;
   if (q.error || !q.data) return <div className="p-6 text-[var(--cream)]/70">Could not load admin data.</div>;
 
-  const { counts, recentProfiles, recentFeedback } = q.data;
+  const { counts, allSignups, recentFeedback } = q.data;
+  const incomplete = allSignups.filter((u) => !u.profile_completed);
+  const completed = allSignups.filter((u) => u.profile_completed);
 
   return (
     <div className="max-w-3xl mx-auto p-5 space-y-8">
@@ -33,25 +35,47 @@ function AdminPage() {
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Stat label="Users" value={counts.users} />
+        <Stat label="Signups" value={counts.signups} />
+        <Stat label="Profiles" value={counts.users} />
+        <Stat label="Incomplete" value={counts.incomplete} />
         <Stat label="Matches" value={counts.matches} />
-        <Stat label="Likes" value={counts.likes} />
-        <Stat label="Feedback" value={counts.feedback} />
         <Stat label="Reports" value={counts.reports} />
       </section>
 
+      {incomplete.length > 0 && (
+        <section>
+          <h2 className="text-display text-xl tracking-wider mb-3">Signed up but no profile ({incomplete.length})</h2>
+          <p className="text-xs text-[var(--cream)]/50 mb-2">Registered an account but didn't finish onboarding — they won't appear in the Grid.</p>
+          <div className="space-y-2">
+            {incomplete.map((u) => (
+              <div key={u.user_id} className="flex items-center justify-between border border-amber-500/30 rounded-lg px-3 py-2">
+                <div className="min-w-0">
+                  <div className="truncate text-sm">{u.email ?? "(no email)"}</div>
+                  <div className="text-xs text-[var(--cream)]/50">
+                    signed up {new Date(u.signed_up_at).toLocaleString()}
+                    {!u.email_confirmed && <span className="ml-2 text-amber-400">email not confirmed</span>}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section>
-        <h2 className="text-display text-xl tracking-wider mb-3">New signups</h2>
+        <h2 className="text-display text-xl tracking-wider mb-3">All members ({completed.length})</h2>
         <div className="space-y-2">
-          {recentProfiles.length === 0 && <p className="text-sm text-[var(--cream)]/60">No users yet.</p>}
-          {recentProfiles.map((p) => (
-            <div key={p.id} className="flex items-center justify-between border border-[var(--cream)]/10 rounded-lg px-3 py-2">
+          {completed.length === 0 && <p className="text-sm text-[var(--cream)]/60">No users yet.</p>}
+          {completed.map((u) => (
+            <div key={u.user_id} className="flex items-center justify-between border border-[var(--cream)]/10 rounded-lg px-3 py-2">
               <div className="min-w-0">
                 <div className="truncate">
-                  {p.first_name}, {p.age} · <span className="text-[var(--cream)]/60">{p.zone}</span>
-                  {p.suspended_at && <span className="ml-2 text-xs text-red-400">suspended</span>}
+                  {u.first_name}{u.age ? `, ${u.age}` : ""} · <span className="text-[var(--cream)]/60">{u.zone ?? "—"}</span>
+                  {u.suspended && <span className="ml-2 text-xs text-red-400">suspended</span>}
                 </div>
-                <div className="text-xs text-[var(--cream)]/50">{new Date(p.created_at).toLocaleString()}</div>
+                <div className="text-xs text-[var(--cream)]/50 truncate">
+                  {u.email} · joined {new Date(u.signed_up_at).toLocaleDateString()}
+                </div>
               </div>
             </div>
           ))}

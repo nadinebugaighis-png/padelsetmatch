@@ -145,6 +145,158 @@ export type Database = {
           },
         ]
       }
+      match_event_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          match_event_id: string
+          sender_profile_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          match_event_id: string
+          sender_profile_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          match_event_id?: string
+          sender_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_event_messages_match_event_id_fkey"
+            columns: ["match_event_id"]
+            isOneToOne: false
+            referencedRelation: "match_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_event_messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_event_participants: {
+        Row: {
+          id: string
+          joined_at: string
+          match_event_id: string
+          profile_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          match_event_id: string
+          profile_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          match_event_id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_event_participants_match_event_id_fkey"
+            columns: ["match_event_id"]
+            isOneToOne: false
+            referencedRelation: "match_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_event_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_events: {
+        Row: {
+          city: string | null
+          club_address: string | null
+          club_lat: number | null
+          club_lng: number | null
+          club_name: string
+          club_place_id: string | null
+          country: string | null
+          court_booked: boolean
+          created_at: string
+          extra_confirmed: number
+          gender_rule: Database["public"]["Enums"]["match_gender_rule"]
+          host_profile_id: string
+          id: string
+          level_max: string
+          level_min: string
+          note: string | null
+          playtomic_link: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["match_event_status"]
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          club_address?: string | null
+          club_lat?: number | null
+          club_lng?: number | null
+          club_name: string
+          club_place_id?: string | null
+          country?: string | null
+          court_booked?: boolean
+          created_at?: string
+          extra_confirmed?: number
+          gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
+          host_profile_id: string
+          id?: string
+          level_max?: string
+          level_min?: string
+          note?: string | null
+          playtomic_link?: string | null
+          starts_at: string
+          status?: Database["public"]["Enums"]["match_event_status"]
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          club_address?: string | null
+          club_lat?: number | null
+          club_lng?: number | null
+          club_name?: string
+          club_place_id?: string | null
+          country?: string | null
+          court_booked?: boolean
+          created_at?: string
+          extra_confirmed?: number
+          gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
+          host_profile_id?: string
+          id?: string
+          level_max?: string
+          level_min?: string
+          note?: string | null
+          playtomic_link?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["match_event_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_events_host_profile_id_fkey"
+            columns: ["host_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_reads: {
         Row: {
           last_read_at: string
@@ -563,6 +715,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      match_event_status: "open" | "full" | "cancelled" | "played"
+      match_gender_rule: "mixed" | "men_only" | "women_only"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -691,6 +845,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      match_event_status: ["open", "full", "cancelled", "played"],
+      match_gender_rule: ["mixed", "men_only", "women_only"],
     },
   },
 } as const

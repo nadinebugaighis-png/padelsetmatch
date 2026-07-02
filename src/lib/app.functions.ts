@@ -320,7 +320,7 @@ export const getMyMatches = createServerFn({ method: "GET" })
       context.supabase.from("match_reads" as never).select("match_id,last_read_at").eq("profile_id", myId).in("match_id", matchIds),
       context.supabase.from("messages" as never).select("match_id,sender_profile_id,body,created_at").in("match_id", matchIds).order("created_at", { ascending: false }),
     ]);
-    const map = new Map<string, Profile>(((profiles as Profile[] | null) ?? []).map((p) => [p.id, p]));
+    const map = new Map<string, any>(((profiles as Profile[] | null) ?? []).map((p) => [p.id, stripPrivateFields(p)]));
     const readMap = new Map<string, string>(((reads as Array<{ match_id: string; last_read_at: string }> | null) ?? []).map((r) => [r.match_id, r.last_read_at]));
     const allMsgs = (msgs as Array<{ match_id: string; sender_profile_id: string; body: string; created_at: string }> | null) ?? [];
     return m.map((row) => {

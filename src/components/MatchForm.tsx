@@ -23,6 +23,7 @@ export type MatchFormValues = {
 
 export type MatchFormInitial = Partial<MatchFormValues> & {
   when_local?: string; // datetime-local formatted
+  app_players_count?: number;
 };
 
 type Props = {
@@ -41,6 +42,12 @@ function toLocalDatetime(iso?: string | null) {
 }
 
 export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Props) {
+  const appPlayersCount = Math.min(4, Math.max(1, initial?.app_players_count ?? 1));
+  const maxNeeded = Math.max(0, 4 - appPlayersCount);
+  const initialNeeded = Math.min(
+    maxNeeded,
+    Math.max(0, 4 - appPlayersCount - (initial?.extra_confirmed ?? 0)),
+  );
   const isClub = !!initial?.club_place_id;
   const [locMode, setLocMode] = useState<"club" | "address">(
     initial ? (isClub ? "club" : "address") : "club",
@@ -66,7 +73,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [genderRule, setGenderRule] = useState<"mixed" | "men_only" | "women_only">(
     initial?.gender_rule ?? "mixed",
   );
-  const [extra, setExtra] = useState<number>(initial?.extra_confirmed ?? 0);
+  const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
   const [courtBooked, setCourtBooked] = useState<boolean>(initial?.court_booked ?? false);
@@ -78,6 +85,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
   const handleSubmit = async () => {
     if (!locationReady || !when) return;
+    const extraConfirmed = Math.max(0, 4 - appPlayersCount - playersNeeded);
     const values: MatchFormValues =
       locMode === "club" && club
         ? {
@@ -92,7 +100,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             level_min: levelMin,
             level_max: levelMax,
             gender_rule: genderRule,
-            extra_confirmed: extra,
+            extra_confirmed: extraConfirmed,
             note: note || null,
             playtomic_link: playtomicLink || null,
             court_booked: courtBooked,
@@ -109,7 +117,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             level_min: levelMin,
             level_max: levelMax,
             gender_rule: genderRule,
-            extra_confirmed: extra,
+            extra_confirmed: extraConfirmed,
             note: note || null,
             playtomic_link: playtomicLink || null,
             court_booked: courtBooked,
@@ -178,25 +186,28 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">Who's already in? (besides you)</label>
+        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">Players needed</label>
         <div className="grid grid-cols-4 gap-2">
-          {[0, 1, 2, 3].map((n) => (
+          {Array.from({ length: maxNeeded + 1 }, (_, i) => maxNeeded - i).map((n) => (
             <button
               key={n}
               type="button"
-              onClick={() => setExtra(n)}
+              onClick={() => setPlayersNeeded(n)}
               className={`py-2 rounded-lg border text-sm ${
-                extra === n
+                playersNeeded === n
                   ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
                   : "border-[var(--cream)]/15 text-[var(--cream)]/70"
               }`}
             >
-              +{n}
+              {n}
             </button>
           ))}
         </div>
         <p className="text-xs text-[var(--cream)]/50 mt-1.5">
-          Needs {Math.max(0, 3 - extra)} more player{Math.max(0, 3 - extra) === 1 ? "" : "s"} to reach 4.
+          {playersNeeded === 0
+            ? "This match is full."
+            : `Needs ${playersNeeded} more player${playersNeeded === 1 ? "" : "s"}.`}{" "}
+          App players: {appPlayersCount}. Outside-app players: {Math.max(0, 4 - appPlayersCount - playersNeeded)}.
         </p>
       </div>
 

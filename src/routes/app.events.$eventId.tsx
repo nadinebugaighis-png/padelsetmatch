@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,10 +17,16 @@ import { toast } from "sonner";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/$eventId")({
-  component: EventDetail,
+  component: EventRoute,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
   notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">Not found</div>,
 });
+
+function EventRoute() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  if (path.endsWith("/edit")) return <Outlet />;
+  return <EventDetail />;
+}
 
 function fmtWhen(iso: string) {
   return new Date(iso).toLocaleString(undefined, {

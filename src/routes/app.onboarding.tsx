@@ -265,6 +265,7 @@ function Onboarding() {
           bio: bio || null, photo_url: photoUrl,
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
+          gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
         },
       });
     },

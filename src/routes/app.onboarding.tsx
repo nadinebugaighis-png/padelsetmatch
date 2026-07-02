@@ -458,6 +458,27 @@ function Onboarding() {
               ))}
             </div>
 
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your padel style (pick up to 3)</label>
+            <div className="flex flex-wrap gap-2">
+              {PADEL_STYLES.map((s) => {
+                const on = padelStyle.includes(s);
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() =>
+                      setPadelStyle((cur) =>
+                        cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
+                      )
+                    }
+                    className={`chip ${on ? "chip-ball" : ""}`}
+                  >
+                    {on ? "✓ " : "+ "}{s}
+                  </button>
+                );
+              })}
+            </div>
+
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (

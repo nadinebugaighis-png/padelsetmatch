@@ -105,10 +105,35 @@ export type Audience = (typeof AUDIENCE_OPTIONS)[number];
 export const LOOKING_FOR = ["partner", "friend", "both"] as const;
 export type LookingFor = (typeof LOOKING_FOR)[number];
 
+// Comprehensive list of world nationalities (UN member states + widely recognized).
+// Alphabetical, with "Other" at the end for anything not listed.
 export const NATIONALITIES = [
-  "Spain", "Portugal", "Italy", "France", "Germany", "United Kingdom",
-  "Argentina", "Mexico", "Colombia", "Brazil", "United States",
-  "Netherlands", "Ireland", "Switzerland", "Sweden", "Other",
+  "Afghan", "Albanian", "Algerian", "Andorran", "Angolan", "Antiguan", "Argentine", "Armenian", "Australian", "Austrian", "Azerbaijani",
+  "Bahamian", "Bahraini", "Bangladeshi", "Barbadian", "Belarusian", "Belgian", "Belizean", "Beninese", "Bhutanese", "Bolivian", "Bosnian", "Botswanan", "Brazilian", "British", "Bruneian", "Bulgarian", "Burkinabé", "Burmese", "Burundian",
+  "Cambodian", "Cameroonian", "Canadian", "Cape Verdean", "Central African", "Chadian", "Chilean", "Chinese", "Colombian", "Comoran", "Congolese", "Costa Rican", "Croatian", "Cuban", "Cypriot", "Czech",
+  "Danish", "Djiboutian", "Dominican",
+  "Dutch", "East Timorese", "Ecuadorian", "Egyptian", "Emirati", "Equatorial Guinean", "Eritrean", "Estonian", "Eswatini", "Ethiopian",
+  "Fijian", "Filipino", "Finnish", "French",
+  "Gabonese", "Gambian", "Georgian", "German", "Ghanaian", "Greek", "Grenadian", "Guatemalan", "Guinean", "Guyanese",
+  "Haitian", "Honduran", "Hungarian",
+  "Icelandic", "Indian", "Indonesian", "Iranian", "Iraqi", "Irish", "Israeli", "Italian", "Ivorian",
+  "Jamaican", "Japanese", "Jordanian",
+  "Kazakhstani", "Kenyan", "Kiribati", "Kosovar", "Kuwaiti", "Kyrgyz",
+  "Lao", "Latvian", "Lebanese", "Liberian", "Libyan", "Liechtensteiner", "Lithuanian", "Luxembourgish",
+  "Macedonian", "Malagasy", "Malawian", "Malaysian", "Maldivian", "Malian", "Maltese", "Marshallese", "Mauritanian", "Mauritian", "Mexican", "Micronesian", "Moldovan", "Monégasque", "Mongolian", "Montenegrin", "Moroccan", "Mozambican",
+  "Namibian", "Nauruan", "Nepali", "New Zealander", "Nicaraguan", "Nigerian", "Nigerien", "North Korean", "Norwegian",
+  "Omani",
+  "Pakistani", "Palauan", "Palestinian", "Panamanian", "Papua New Guinean", "Paraguayan", "Peruvian", "Polish", "Portuguese", "Puerto Rican",
+  "Qatari",
+  "Romanian", "Russian", "Rwandan",
+  "Saint Lucian", "Salvadoran", "Sammarinese", "Samoan", "São Toméan", "Saudi", "Scottish", "Senegalese", "Serbian", "Seychellois", "Sierra Leonean", "Singaporean", "Slovak", "Slovenian", "Solomon Islander", "Somali", "South African", "South Korean", "South Sudanese", "Spanish", "Sri Lankan", "Sudanese", "Surinamese", "Swazi", "Swedish", "Swiss", "Syrian",
+  "Taiwanese", "Tajik", "Tanzanian", "Thai", "Togolese", "Tongan", "Trinidadian", "Tunisian", "Turkish", "Turkmen", "Tuvaluan",
+  "Ugandan", "Ukrainian", "Uruguayan", "Uzbek",
+  "Vanuatuan", "Vatican", "Venezuelan", "Vietnamese",
+  "Welsh",
+  "Yemeni",
+  "Zambian", "Zimbabwean",
+  "Other",
 ];
 
 // A single location: country + city + optional area/barrio

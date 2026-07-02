@@ -93,8 +93,11 @@ function Discover() {
     reportM.mutate({ id, reason: reason.trim() });
   }
   function handleHide(id: string, name: string) {
-    const scope: "partner" | "friend" | "all" = filter === "all" ? "all" : filter;
-    const scopeLabel = scope === "all" ? "everywhere" : scope === "partner" ? "from Partners only" : "from Friends only";
+    const scope: "padel" | "friend" | "relationship" | "all" = filter === "all" ? "all" : filter;
+    const scopeLabel =
+      scope === "all" ? "everywhere" :
+      scope === "padel" ? "from Padel partners" :
+      scope === "friend" ? "from Friends" : "from Relationships";
     if (!window.confirm(`Hide ${name} ${scopeLabel}? You can unhide them anytime from Profile → Hidden & blocked.`)) return;
     hideM.mutate({ id, category: scope });
   }
@@ -107,8 +110,15 @@ function Discover() {
   if (!feedQ.data?.me) return null;
 
   const all = feedQ.data.candidates;
-  const activeCat = filter === "partner" ? "partner" : filter === "friend" ? "friend" : null;
-  const list = (filter === "all" ? all : all.filter((c) => c.looking_for === filter || c.looking_for === "both"))
+  const activeCat = filter === "all" ? null : filter;
+  const deriveIntents = (c: { intents?: string[] | null; looking_for?: string | null }): string[] => {
+    if (c.intents && c.intents.length > 0) return c.intents;
+    if (c.looking_for === "partner") return ["relationship", "padel"];
+    if (c.looking_for === "friend") return ["friend", "padel"];
+    if (c.looking_for === "both") return ["relationship", "friend", "padel"];
+    return ["padel"];
+  };
+  const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;

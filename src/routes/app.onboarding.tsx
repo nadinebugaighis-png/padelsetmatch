@@ -132,6 +132,7 @@ function Onboarding() {
       if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
       if (typeof p.free_court_access === "boolean") setFreeCourt(p.free_court_access);
       if (p.free_court_note) setFreeCourtNote(p.free_court_note);
+      if (p.sexual_orientation) setSexualOrientation(p.sexual_orientation);
     } else if (profileQ.data === null) {
       // New user — hydrate from the pre-signup guest draft if present
       const draft = loadGuestDraft();

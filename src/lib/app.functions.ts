@@ -578,7 +578,7 @@ export const hideProfile = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       hiddenProfileId: z.string().uuid(),
-      category: z.enum(["partner", "friend", "all"]).default("all"),
+      category: z.enum(["padel", "friend", "relationship", "partner", "all"]).default("all"),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {

@@ -375,12 +375,27 @@ export const getMatchDetail = createServerFn({ method: "GET" })
     const { data: other } = await context.supabase
       .from("profiles" as never).select("*").eq("id", otherId).maybeSingle();
     if (!other) throw new Error("Other profile not found");
+    const { data: myFull } = await context.supabase
+      .from("profiles" as never).select("*").eq("id", myId).maybeSingle();
     const { data: messages } = await context.supabase
       .from("messages" as never).select("*").eq("match_id", data.matchId).order("created_at", { ascending: true });
+    const meP = (myFull ?? {}) as Profile;
+    const otP = other as Profile;
+    const overlap = (a?: string[] | null, b?: string[] | null) => {
+      const bs = new Set((b ?? []).map((x) => x.toLowerCase()));
+      return (a ?? []).filter((x) => bs.has(x.toLowerCase()));
+    };
+    const shared = {
+      priorities: overlap(meP.priorities, otP.priorities),
+      personal_traits: overlap(meP.personal_traits, otP.personal_traits),
+      padel_style: overlap(meP.padel_style, otP.padel_style),
+      languages: overlap(meP.languages, otP.languages),
+    };
     return {
       match_id: mr.id,
       my_profile_id: myId,
       other: stripPrivateFields(other as Profile) as unknown as Profile,
+      shared,
       messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string; edited_at: string | null }> | null) ?? []),
     };
   });

@@ -249,11 +249,12 @@ function Discover() {
           {preview && (() => {
             const mine = feedQ.data?.me;
             const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
-            const chips = [
+            const allTheirs = [
               ...(preview.padel_style ?? []),
               ...(preview.personal_traits ?? []),
               ...(preview.priorities ?? []),
             ];
+            const sharedChips = Array.from(new Set(allTheirs.filter((w) => mineTraits.has(w))));
             const match = matchesQ.data?.find((m) => m.other?.id === preview.id);
             return (
               <>
@@ -266,54 +267,43 @@ function Discover() {
                     ) : (
                       <div className="w-full aspect-[3/4] bg-[var(--court)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/40 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none" />
 
                     {/* Top controls */}
                     <button
                       type="button"
                       onClick={() => setPreview(null)}
-                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/60"
+                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55"
                       aria-label="Back"
                     >
                       <ArrowLeft className="w-4 h-4" />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreview(null)}
-                      className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/60"
-                      aria-label="Close"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
 
                     {/* Overlaid identity */}
-                    <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-2">
+                    <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
                         {preview.score}% Match
                       </div>
-                      <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase">{preview.first_name}</div>
+                      <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
                       <div className="text-sm text-[var(--cream)]/85">{preview.zone} · {label(preview.level)}</div>
                     </div>
                   </div>
 
                   {/* Body */}
                   <div className="px-5 pt-4 pb-28 space-y-4">
-                    {chips.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {chips.map((w) => {
-                          const shared = mineTraits.has(w);
-                          return (
-                            <span
-                              key={w}
-                              className={`px-3.5 py-1.5 rounded-full text-xs font-medium border ${shared ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "bg-transparent text-[var(--cream)]/85 border-[var(--cream)]/15"}`}
-                              title={shared ? "You both picked this" : undefined}
-                            >
-                              {shared && "✨ "}{w}
-                            </span>
-                          );
-                        })}
+                    {sharedChips.length > 0 && (
+                      <div className="flex flex-wrap gap-2.5">
+                        {sharedChips.map((w) => (
+                          <span
+                            key={w}
+                            className="px-4 py-2 rounded-full text-[13px] font-medium bg-[var(--cream)]/[0.06] text-[var(--cream)]/90 border border-[var(--cream)]/10"
+                          >
+                            {w}
+                          </span>
+                        ))}
                       </div>
                     )}
+
 
                     {preview.categories && (
                       <MatchScoreCard total={preview.score} categories={preview.categories} />

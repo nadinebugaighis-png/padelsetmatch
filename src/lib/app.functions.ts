@@ -262,7 +262,9 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .select("hidden_profile_id, category")
       .eq("hider_profile_id", me.id);
     // Reciprocal: if they hid me under category X, treat that as if I hid them under X too — no awkwardness.
-    const { data: hidesOfMe } = await context.supabase
+    // Uses admin because RLS on `hides` only exposes rows to the hider (privacy).
+    const { supabaseAdmin: _adminForHides } = await import("@/integrations/supabase/client.server");
+    const { data: hidesOfMe } = await _adminForHides
       .from("hides" as never)
       .select("hider_profile_id, category")
       .eq("hidden_profile_id", me.id);

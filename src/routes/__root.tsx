@@ -62,7 +62,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#fbbf24" },
+      { name: "theme-color", content: "#0d2929" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "PadelMatch — find your padel partner (and maybe more)" },
@@ -84,6 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       
       { rel: "manifest", href: "/manifest.json" },
+      { rel: "icon", type: "image/png", href: "/icon-192.png" },
       { rel: "apple-touch-icon", href: "/icon-192.png" },
     ],
   }),

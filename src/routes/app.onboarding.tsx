@@ -254,7 +254,13 @@ function Onboarding() {
   };
 
   const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
-  const hasFriendGoal = goals.includes("friends") || goals.includes("padel") || goals.includes("all");
+  const hasFriendGoal = goals.includes("friends") || goals.includes("all");
+  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("relationship") || goals.includes("all");
+  const derivedIntents = Array.from(new Set<string>([
+    ...(hasPadelGoal ? ["padel"] : []),
+    ...(hasFriendGoal ? ["friend"] : []),
+    ...(hasPartnerGoal ? ["relationship"] : []),
+  ]));
 
   const save = useMutation({
     mutationFn: () => {

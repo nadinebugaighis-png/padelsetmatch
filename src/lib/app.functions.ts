@@ -304,7 +304,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
-        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe } };
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);

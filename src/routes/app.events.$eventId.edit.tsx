@@ -70,6 +70,7 @@ function EditEvent() {
         note: event.note,
         playtomic_link: event.playtomic_link,
         court_booked: event.court_booked,
+        app_players_count: event.participants?.length ?? 1,
       }}
     />
   );

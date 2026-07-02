@@ -5,7 +5,7 @@ import { listOpenEvents } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { MapPin, Calendar, Users, Plus, Trophy } from "lucide-react";
 
-export const Route = createFileRoute("/app/events")({
+export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
   errorComponent: ({ error }) => <div className="p-6 text-center text-[var(--cream)]/70">{error.message}</div>,
   notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">Not found</div>,

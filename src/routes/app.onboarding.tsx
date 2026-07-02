@@ -105,10 +105,17 @@ function Onboarding() {
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality); setLevel(p.level);
       setPriorities(p.priorities); setLookingFor(p.looking_for);
-      // Derive simple goals + meetPref from stored data
+      // Derive simple goals + meetPref from stored intents (fallback to legacy looking_for)
       const g: string[] = [];
-      if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
-      if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+      const storedIntents = (p as unknown as { intents?: string[] }).intents ?? [];
+      if (storedIntents.length > 0) {
+        if (storedIntents.includes("padel")) g.push("padel");
+        if (storedIntents.includes("friend")) g.push("friends");
+        if (storedIntents.includes("relationship")) g.push("relationship");
+      } else {
+        if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
+        if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+      }
       if (g.length) setGoals(g);
       const pa = p.partner_interested_in?.[0];
       if (pa === "men" || pa === "women" || pa === "everyone") setMeetPref(pa);

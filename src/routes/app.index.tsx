@@ -277,6 +277,10 @@ function Discover() {
                     <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
                     <div className="text-xs text-[var(--cream)]/70 mt-1">{preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)}</div>
                   </div>
+
+                  {preview.categories && (
+                    <MatchScoreCard total={preview.score} categories={preview.categories} />
+                  )}
                   {preview.free_court_access && (
                     <div className="rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
                       <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>

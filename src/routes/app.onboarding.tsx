@@ -64,6 +64,7 @@ function Onboarding() {
   const [first_name, setFirstName] = useState("");
   const [age, setAge] = useState(28);
   const [gender, setGender] = useState<Gender>("woman");
+  const [genderCustom, setGenderCustom] = useState("");
   const [interested_in, setInterested] = useState<Gender[]>(["man"]);
   const [friend_interested_in, setFriendAud] = useState<string[]>(["everyone"]);
   const [partner_interested_in, setPartnerAud] = useState<string[]>(["men"]);

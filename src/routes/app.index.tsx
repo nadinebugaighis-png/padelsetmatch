@@ -69,10 +69,10 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
   const hideM = useMutation({
-    mutationFn: (id: string) => hide({ data: { hiddenProfileId: id } }),
+    mutationFn: (vars: { id: string; category: "partner" | "friend" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast("Hidden from your Grid", { duration: 1800 });
+      toast("Hidden from your Grid — manage in Profile → Hidden & blocked", { duration: 2400 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not hide"),
   });
@@ -93,8 +93,10 @@ function Discover() {
     reportM.mutate({ id, reason: reason.trim() });
   }
   function handleHide(id: string, name: string) {
-    if (!window.confirm(`Hide ${name} from your Grid? You can still be matched later if you change your mind in settings.`)) return;
-    hideM.mutate(id);
+    const scope: "partner" | "friend" | "all" = filter === "all" ? "all" : filter;
+    const scopeLabel = scope === "all" ? "everywhere" : scope === "partner" ? "from Partners only" : "from Friends only";
+    if (!window.confirm(`Hide ${name} ${scopeLabel}? You can unhide them anytime from Profile → Hidden & blocked.`)) return;
+    hideM.mutate({ id, category: scope });
   }
   function handleBlock(id: string, name: string) {
     if (!window.confirm(t("disc.blockConfirm", { name }))) return;

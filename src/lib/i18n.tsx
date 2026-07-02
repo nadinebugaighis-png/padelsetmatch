@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type Lang = "en" | "es" | "ar";
+export type Lang = "en" | "es";
 
-export function isRTL(lang: Lang): boolean {
-  return lang === "ar";
+export function isRTL(_lang: Lang): boolean {
+  return false;
 }
 
 type Dict = Record<string, string>;
@@ -489,242 +489,8 @@ const es: Dict = {
   "welcome.holaSub": "Continúa en Español",
 };
 
-const ar: Dict = {
-  // Landing
-  "land.signin": "تسجيل الدخول",
-  "land.chip": "حول العالم · اختر مدينتك",
-  "land.h1.a": "اعثر على أفضل",
-  "land.h1.b": "Match.",
-  "land.lede": "اكتشف لاعبين يناسبون مستواك وشخصيتك وأسلوب حياتك. سواء كنت تبحث عن مباريات رائعة أو أصدقاء جدد أو علاقة حقيقية، نساعدك على إيجاد من تنسجم معهم فعلاً.",
-  "land.cta": "ابدأ المباراة",
-  "land.cta.sub": "ثم احجز عبر Playtomic — أو العب مجاناً إذا كان لدى شريكك ملعب خاص 🎾",
-  "land.what": "ما هو Playtomic؟",
-  "land.statUsers": "لاعب انضم",
-  "land.tap": "اضغط. ردّ. العب.",
-  "land.foot": "العب في أي مكان. وفي أسوأ الأحوال: صديق بادل جديد.",
-  "land.preview.chip": "نظرة سريعة",
-  "land.preview.title": "تصفّح الشبكة",
-  "land.preview.sub": "اعثر على شريك ملعبك المثالي. سجّل الدخول لرؤية الصور والنقاط والمحادثات.",
-  "land.preview.cta": "انضم مجاناً",
-  "land.preview.unlock": "سجّل الدخول للعرض",
-  "land.preview.foot": "معاينة فقط. تظهر الحسابات الحقيقية بعد إكمال الاستبيان.",
 
-  // Auth
-  "auth.back": "← رجوع",
-  "auth.title.signup": "انضم إلى PadelMatch",
-  "auth.title.signin": "أهلاً بعودتك",
-  "auth.sub.signup": "نسأل فقط ما يساعد في المطابقة. صورتك للمطابقات، ليست للعالم.",
-  "auth.sub.signin": "عُد إلى موجز البادل الخاص بك.",
-  "auth.google": "المتابعة باستخدام Google",
-  "auth.or": "أو",
-  "auth.email": "البريد الإلكتروني",
-  "auth.password": "كلمة المرور (8 أحرف على الأقل)",
-  "auth.create": "إنشاء حساب",
-  "auth.signin": "تسجيل الدخول",
-  "auth.toggleToSignin": "لديك حساب؟ سجّل الدخول",
-  "auth.toggleToSignup": "جديد هنا؟ أنشئ حساباً",
-  "auth.forgot": "نسيت كلمة المرور؟",
-  "auth.welcome": "مرحباً! لقد دخلت.",
-  "auth.confirmEmail": "تم إنشاء الحساب — تحقق من بريدك للتأكيد.",
-  "auth.fail": "فشل تسجيل الدخول",
-  "auth.enterEmailFirst": "اكتب بريدك الإلكتروني أولاً",
-  "auth.resetSent": "تحقق من بريدك لرابط إعادة التعيين",
-
-  // App shell
-  "shell.home": "الرئيسية",
-  "shell.discover": "اكتشف",
-  "shell.signout": "خروج",
-  "shell.tab.discover": "اكتشف",
-  "shell.tab.questions": "كود المطابقة",
-  "shell.tab.matches": "المطابقات",
-  "shell.tab.me": "أنا",
-
-  // Q&A
-  "qa.title": "أسئلة التوافق",
-  "qa.sub": "أجب على ما تشاء. كل إجابة تحسّن مطابقاتك. توقف متى أردت — يُحفظ تقدمك.",
-  "qa.generate": "أنشئ أسئلة",
-  "qa.generateMore": "أنشئ المزيد",
-  "qa.generating": "نفكر في أسئلة…",
-  "qa.skip": "تخطٍ",
-  "qa.save": "حفظ",
-  "qa.saved": "تم الحفظ",
-  "qa.empty": "لا أسئلة بعد — اضغط أنشئ للبدء.",
-  "qa.answeredCount": "تمت الإجابة على {n}",
-  "qa.yourAnswers": "إجاباتك",
-  "qa.seeMatches": "← شاهد من يطابقك",
-  "qa.delete": "إزالة",
-  "qa.placeholder": "اكتب إجابة قصيرة…",
-  "qa.howItWorks": "يولّد الذكاء الاصطناعي أسئلة جديدة حسب ملفك. إجاباتك ليست علنية — الإجابات المشتركة فقط ترفع نقاط المطابقة.",
-
-  // Discover
-  "disc.h1": "اضغط على من تودّ اللعب معه.",
-  "disc.sub": "الضغط المتبادل يفتح محادثة. ثم احجزوا في Playtomic.",
-  "disc.scoreA": "الـ",
-  "disc.scoreB": "هي",
-  "disc.scoreBold": "نقاط المطابقة",
-  "disc.scoreC": "— مدى توافق إجاباتكم (العمر، المستوى، المنطقة، الثقافة، القيم). الأعلى = توافق أكبر.",
-  "disc.filter.all": "الجميع",
-  "disc.filter.partner": "شريك",
-  "disc.filter.friend": "صديق",
-  "disc.empty": "لا مطابقات بهذه المرشحات بعد.",
-  "disc.liked": "أعجبك",
-  "disc.undo": "اضغط للتراجع",
-  "disc.seeChats": "← شاهد محادثاتك",
-  "disc.likeSent": "تم إرسال الإعجاب — إذا ردّ، تُفتح المحادثة",
-  "disc.likeFail": "تعذّر إرسال الإعجاب",
-  "disc.likeRemoved": "أُزيل الإعجاب",
-  "disc.undoFail": "تعذّر التراجع",
-  "disc.blocked": "تم الحظر. لن تروا بعضكم.",
-  "disc.blockFail": "تعذّر الحظر",
-  "disc.reportSent": "تم إرسال البلاغ. عُلّق الحساب للمراجعة.",
-  "disc.reportFail": "تعذّر الإبلاغ",
-  "disc.loading": "تحميل الملاعب…",
-  "disc.blockTitle": "حظر — أخفِ أحدكما الآخر",
-  "disc.reportTitle": "بلاغ — يُرسل للفريق للمراجعة",
-  "disc.scoreTooltip": "نقاط المطابقة (0–100): مدى توافق إجاباتكم",
-  "disc.reportPrompt": "الإبلاغ عن {name}؟\n\nصف ما حدث (تحرش، صورة مزيفة، إساءة، تهديدات…). يُعلَّق الحساب فوراً ويُراجعه فريقنا.",
-  "disc.reportConfirm": "إرسال البلاغ؟ سيُعلَّق حساب {name} بانتظار المراجعة.",
-  "disc.blockConfirm": "حظر {name}؟ لن يرى أحدكما الآخر في أي مكان بالتطبيق.",
-  "disc.qaBannerTitle": "افتح كود المطابقة الخاص بك",
-  "disc.qaBannerSub": "أجب على أسئلة قليلة ليجد الذكاء الاصطناعي أفضل مطابقاتك — الشخصية، القيم، ومن تنسجم معهم.",
-  "disc.qaBannerCta": "← ابدأ المطابقة",
-
-  // Matches list
-  "ml.h1": "ملاعبك",
-  "ml.sub": "كل من هنا ردّ عليك.",
-  "ml.loading": "تحميل…",
-  "ml.empty": "لا مطابقات بعد.",
-  "ml.discoverLink": "← اكتشف لاعبين",
-
-  // Chat
-  "chat.opening": "فتح المحادثة…",
-  "chat.safetyTitle": "السلامة أولاً:",
-  "chat.safety": "احجزوا المباراة عبر Playtomic — ملعب عام، حجز موثوق، دون مشاركة عناوين.",
-  "chat.open": "فتح",
-  "chat.empty": "تبادلتما الإعجاب. ألقِ التحية 👋",
-  "chat.placeholder": "أهلاً! 👋",
-  "chat.block": "حظر",
-  "chat.report": "إبلاغ",
-  "chat.blockedDone": "تم الحظر.",
-  "chat.reportDone": "تم إرسال البلاغ. عُلّق الحساب للمراجعة.",
-  "chat.sendFail": "تعذّر الإرسال",
-
-  // Profile
-  "prof.loading": "تحميل…",
-  "prof.noProfile": "ليس لديك ملف بعد.",
-  "prof.createLink": "← أنشئ ملفك",
-  "prof.hi": "مرحباً، {name}",
-  "prof.age": "العمر",
-  "prof.level": "المستوى",
-  "prof.nationality": "الجنسية",
-  "prof.gender": "الجنس",
-  "prof.playsIn": "يلعب في",
-  "prof.languages": "اللغات",
-  "prof.privacy": "تفضيلاتك (من تبحث عنه، نطاق العمر، القيم) خاصة — يستخدمها الذكاء الاصطناعي فقط للمطابقة، ولا تظهر في ملفك. أعد الاستبيان لتحديثها وقت ما شئت.",
-  "prof.retake": "أعد الاستبيان",
-  "prof.delete": "حذف حسابي",
-  "prof.deleteConfirm": "حذف حسابك نهائياً؟ يُحذف ملفك وإعجاباتك ومطابقاتك ومحادثاتك. لا يمكن التراجع.",
-  "prof.deleted": "تم حذف الحساب",
-  "prof.deleteFail": "تعذّر حذف الحساب",
-
-  // Feedback
-  "fb.title": "اجعل هذا التطبيق أفضل",
-  "fb.sub": "اقتراحات، أخطاء، أي شيء تحبّه — يصل مباشرة للفريق.",
-  "fb.placeholder": "ما الذي سيجعل PadelMatch أفضل لك؟",
-  "fb.send": "إرسال",
-  "fb.sending": "جارٍ الإرسال…",
-  "fb.thanks": "شكراً — أُرسلت ملاحظاتك.",
-  "fb.fail": "تعذّر الإرسال. حاول مجدداً.",
-  "fb.tooShort": "أضف بضع كلمات إضافية أولاً.",
-
-  // Onboarding
-  "ob.step": "خطوة",
-  "ob.of": "/",
-  "ob.s0": "أنت",
-  "ob.s1": "من ستقابل",
-  "ob.s2": "البادل، الأماكن واللغات",
-  "ob.s3": "ما يهمّك",
-  "ob.s4": "صورة",
-  "ob.back": "رجوع",
-  "ob.next": "التالي",
-  "ob.start": "ابدأ المطابقة",
-  "ob.saving": "جارٍ الحفظ…",
-  "ob.saved": "تم حفظ الملف",
-  "ob.saveFail": "فشل الحفظ",
-  "ob.h0": "من أنت؟",
-  "ob.firstName": "الاسم الأول (هذا فقط يظهر)",
-  "ob.firstNamePh": "لُجين",
-  "ob.age": "العمر",
-  "ob.iAm": "أنا",
-  "ob.lookingFor": "أبحث عن",
-  "ob.privateNote": "إجاباتك هنا تبقى خاصة — لا تظهر في ملفك. يمكنك إعادة الاستبيان متى شئت.",
-  "ob.h1": "من تودّ مقابلته؟",
-  "ob.audIntro1": "اختر منفصلاً للصداقة وللعلاقة — اضغط على ما يناسب. اختر",
-  "ob.audIntro2": "إذا كنت منفتحاً للجميع.",
-  "ob.audPrivate": "يُستخدم للمطابقة فقط — لا يظهر في ملفك.",
-  "ob.audEveryone": "الجميع",
-  "ob.audFriend": "للصداقة",
-  "ob.audPartner": "لعلاقة",
-  "ob.ageRange": "نطاق العمر",
-  "ob.to": "إلى",
-  "ob.h2": "البادل، الأماكن واللغات",
-  "ob.nat": "الجنسية / الأصل",
-  "ob.places": "الأماكن التي تلعب فيها",
-  "ob.placesHelp": "أضف حيث تسكن أو تعمل أو بيت الصيف أو مدينة تزورها. حتى 8.",
-  "ob.country": "الدولة",
-  "ob.city": "المدينة",
-  "ob.cityPh": "مثل: دبي",
-  "ob.area": "المنطقة / الحي (اختياري)",
-  "ob.areaPh": "مثل: الجميرا",
-  "ob.addLocation": "أضف هذا الموقع",
-  "ob.langs": "اللغات التي تتحدثها",
-  "ob.padelLevel": "مستوى البادل",
-  "ob.bio": "نبذة قصيرة (اختياري)",
-  "ob.bioPh": "ضربة هادئة. صباح السبت ثابت.",
-  "ob.errCountryCity": "الدولة والمدينة مطلوبتان",
-  "ob.errMaxLoc": "أقصى 8 مواقع",
-  "ob.errDup": "مضاف بالفعل",
-  "ob.h3": "ما الذي يهمّك؟",
-  "ob.h3sub": "اضغط للإضافة. ثم رتّبها — الأهم أولاً. حتى 3 خاصة بك.",
-  "ob.h3priv": "خاص — يُستخدم للمطابقة فقط.",
-  "ob.suggested": "صفات مقترحة",
-  "ob.addOwn": "أضف صفاتك (حتى 3)",
-  "ob.addOwnPh": "مثل: محب للحيوانات، عشيق طعام، باكر النهوض",
-  "ob.ranking": "ترتيبك (الأعلى = الأهم)",
-  "ob.pickThree": "اختر 3 على الأقل.",
-  "ob.errMax3": "حتى 3 صفات خاصة",
-  "ob.errMaxTraits": "أقصى 8 صفات",
-  "ob.h4": "صورتك في البادل",
-  "ob.h4sub": "صورة لك مع المضرب في الملعب — هذا كل شيء. تظهر في شبكة الاكتشاف.",
-  "ob.uploading": "جارٍ الرفع…",
-  "ob.tapUpload": "اضغط للرفع",
-  "ob.uploaded": "تم رفع الصورة",
-  "ob.uploadFail": "فشل الرفع",
-  "ob.notSignedIn": "لم تسجّل الدخول",
-
-  // Reset password
-  "rp.title": "عيّن كلمة مرور جديدة",
-  "rp.openFromEmail": "افتح هذه الصفحة من رابط البريد. إذا وصلت بالخطأ، عُد إلى",
-  "rp.signin": "تسجيل الدخول",
-  "rp.newPw": "كلمة مرور جديدة (8 على الأقل)",
-  "rp.update": "تحديث كلمة المرور",
-  "rp.updated": "تم تحديث كلمة المرور — أنت داخل الآن.",
-  "rp.updateFail": "تعذّر تحديث كلمة المرور",
-
-  // Errors / 404
-  "err.404": "الصفحة غير موجودة",
-  "err.goHome": "إلى الرئيسية",
-  "err.title": "لم تُحمَّل هذه الصفحة",
-  "err.sub": "حدث خطأ من جانبنا.",
-  "err.retry": "أعد المحاولة",
-
-  // Welcome
-  "welcome.hello": "مرحباً",
-  "welcome.helloSub": "Continue in English",
-  "welcome.holaSub": "تابع بالعربية",
-};
-
-const DICTS: Record<Lang, Dict> = { en, es, ar };
+const DICTS: Record<Lang, Dict> = { en, es };
 
 // Display labels for fixed enums stored in English in the DB.
 const LABELS: Record<Lang, Record<string, string>> = {
@@ -756,20 +522,6 @@ const LABELS: Record<Lang, Record<string, string>> = {
     curious: "curioso", playful: "juguetón",
     art: "arte", travel: "viajes", food: "comida", concerts: "conciertos", "music events": "eventos musicales",
   },
-  ar: {
-    woman: "امرأة", man: "رجل", "non-binary": "غير ثنائي", "self-describe": "أفضل أن أصف نفسي",
-    "just starting": "مبتدئ تماماً", casual: "هاوي", beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدم", competitive: "تنافسي",
-    friend: "صديق", partner: "شريك", both: "كلاهما",
-    everyone: "الجميع", women: "نساء", men: "رجال", "lesbian women": "نساء مثليات", "gay men": "رجال مثليون", bisexual: "ثنائي الميل", queer: "كوير",
-    intellectual: "مثقف", looks: "المظهر", ambitious: "طموح", "social butterfly": "اجتماعي جداً",
-    fun: "مرح", quiet: "هادئ", reserved: "متحفّظ", fashionable: "أنيق", funny: "ظريف", adventurous: "مغامر",
-    loyal: "وفي", friendly: "ودود", kind: "لطيف", honest: "صادق", empathetic: "متعاطف",
-    confident: "واثق", creative: "مبدع", spiritual: "روحاني", "family-oriented": "عائلي",
-    athletic: "رياضي", spontaneous: "تلقائي", romantic: "رومانسي", "ambitious career": "طموح مهنياً",
-    "easy-going": "مرن", "open-minded": "متفتح", passionate: "شغوف", generous: "كريم",
-    curious: "فضولي", playful: "مرِح",
-    art: "الفن", travel: "السفر", food: "الطعام", concerts: "الحفلات", "music events": "فعاليات موسيقية",
-  },
 };
 
 type Ctx = {
@@ -785,7 +537,6 @@ const STORAGE_KEY = "padel_lang_v1";
 function detectBrowserLang(): Lang {
   if (typeof navigator === "undefined") return "en";
   const langs = (navigator.languages ?? [navigator.language ?? "en"]).map((s) => s.toLowerCase());
-  if (langs.some((l) => l.startsWith("ar"))) return "ar";
   if (langs.some((l) => l.startsWith("es"))) return "es";
   return "en";
 }
@@ -796,7 +547,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-      if (stored === "en" || stored === "es" || stored === "ar") {
+      if (stored === "en" || stored === "es") {
         setLangState(stored);
       } else {
         setLangState(detectBrowserLang());
@@ -809,7 +560,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.lang = lang;
-    document.documentElement.dir = isRTL(lang) ? "rtl" : "ltr";
   }, [lang]);
 
   const setLang = (l: Lang) => {
@@ -859,13 +609,6 @@ export function LangSwitch({ className = "" }: { className?: string }) {
         className={`px-2.5 py-1 ${lang === "es" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
         aria-pressed={lang === "es"}
       >ES</button>
-      <button
-        type="button"
-        onClick={() => setLang("ar")}
-        className={`inline-flex items-center justify-center min-w-[2.25rem] px-2.5 py-1.5 font-['Cairo',_'Noto_Sans_Arabic',_sans-serif] text-base font-bold leading-[1.4] tracking-normal normal-case ${lang === "ar" ? "bg-[var(--ball)] text-[var(--court-deep)]" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
-        aria-pressed={lang === "ar"}
-        aria-label="العربية"
-      >ع</button>
     </div>
   );
 }

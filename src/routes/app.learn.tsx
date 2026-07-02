@@ -23,24 +23,24 @@ type Q = {
 type Level = "beginner" | "intermediate" | "advanced" | "mixed";
 
 const TOPICS = [
-  { id: "", en: "Mixed", es: "Variado", ar: "متنوع" },
-  { id: "rules & scoring", en: "Rules & scoring", es: "Reglas y puntuación", ar: "القوانين والنقاط" },
-  { id: "partner communication & calls", en: "Calls & comms", es: "Voces y comunicación", ar: "النداءات والتواصل" },
-  { id: "positioning & tactics", en: "Positioning & tactics", es: "Posición y táctica", ar: "التمركز والتكتيك" },
-  { id: "shots: bandeja, víbora, chiquita, globo", en: "Shots & technique", es: "Golpes y técnica", ar: "الضربات والتقنية" },
-  { id: "etiquette", en: "Etiquette", es: "Etiqueta", ar: "آداب اللعب" },
+  { id: "", en: "Mixed", es: "Variado" },
+  { id: "rules & scoring", en: "Rules & scoring", es: "Reglas y puntuación" },
+  { id: "partner communication & calls", en: "Calls & comms", es: "Voces y comunicación" },
+  { id: "positioning & tactics", en: "Positioning & tactics", es: "Posición y táctica" },
+  { id: "shots: bandeja, víbora, chiquita, globo", en: "Shots & technique", es: "Golpes y técnica" },
+  { id: "etiquette", en: "Etiquette", es: "Etiqueta" },
 ];
 
-const LEVELS: { id: Level; en: string; es: string; ar: string }[] = [
-  { id: "mixed", en: "Mixed", es: "Variado", ar: "متنوع" },
-  { id: "beginner", en: "Beginner", es: "Principiante", ar: "مبتدئ" },
-  { id: "intermediate", en: "Intermediate", es: "Intermedio", ar: "متوسط" },
-  { id: "advanced", en: "Advanced", es: "Avanzado", ar: "متقدم" },
+const LEVELS: { id: Level; en: string; es: string }[] = [
+  { id: "mixed", en: "Mixed", es: "Variado" },
+  { id: "beginner", en: "Beginner", es: "Principiante" },
+  { id: "intermediate", en: "Intermediate", es: "Intermedio" },
+  { id: "advanced", en: "Advanced", es: "Avanzado" },
 ];
 
-type L = "en" | "es" | "ar";
-function tr(l: L, en: string, es: string, ar: string) {
-  return l === "ar" ? ar : l === "es" ? es : en;
+type L = "en" | "es";
+function tr(l: L, en: string, es: string) {
+  return l === "es" ? es : en;
 }
 
 function LearnPage() {
@@ -59,7 +59,7 @@ function LearnPage() {
     onSuccess: (res) => {
       const fresh = (res?.questions ?? []) as Q[];
       if (fresh.length === 0) {
-        toast.message(tr(L, "No questions, try again", "No hay preguntas, intenta de nuevo", "لا توجد أسئلة، حاول مرة أخرى"));
+        toast.message(tr(L, "No questions, try again", "No hay preguntas, intenta de nuevo"));
         return;
       }
       setQuestions(fresh);
@@ -83,16 +83,16 @@ function LearnPage() {
     <main className="px-4 py-5 max-w-md mx-auto">
       <div className="flex items-center gap-2">
         <GraduationCap className="w-5 h-5 text-[var(--ball)]" />
-        <h1 className="text-display text-3xl">{tr(L, "Learn Padel", "Aprende pádel", "تعلّم البادل")}</h1>
+        <h1 className="text-display text-3xl">{tr(L, "Learn Padel", "Aprende pádel")}</h1>
       </div>
       <p className="mt-2 text-sm text-[var(--cream)]/70">
-        {tr(L, "AI-powered quiz: rules, positioning, what to call to your partner, and shots. Learn while you play.", "Quiz con IA: reglas, posicionamiento, voces para tu compañero y golpes. Aprende mientras juegas.", "اختبار بالذكاء الاصطناعي: القوانين، التمركز، النداءات لشريكك، والضربات. تعلّم وأنت تلعب.")}
+        {tr(L, "AI-powered quiz: rules, positioning, what to call to your partner, and shots. Learn while you play.", "Quiz con IA: reglas, posicionamiento, voces para tu compañero y golpes. Aprende mientras juegas.")}
       </p>
 
       <div className="mt-4 surface-card p-3 space-y-3">
         <div>
           <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-1.5">
-            {tr(L, "Topic", "Tema", "الموضوع")}
+            {tr(L, "Topic", "Tema")}
           </div>
           <div className="flex flex-wrap gap-1.5">
             {TOPICS.map((t) => (
@@ -102,14 +102,14 @@ function LearnPage() {
                 onClick={() => setTopic(t.id)}
                 className={`chip text-xs ${topic === t.id ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : ""}`}
               >
-                {tr(L, t.en, t.es, t.ar)}
+                {tr(L, t.en, t.es)}
               </button>
             ))}
           </div>
         </div>
         <div>
           <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-1.5">
-            {tr(L, "Level", "Nivel", "المستوى")}
+            {tr(L, "Level", "Nivel")}
           </div>
           <div className="flex flex-wrap gap-1.5">
             {LEVELS.map((l) => (
@@ -119,7 +119,7 @@ function LearnPage() {
                 onClick={() => setLevel(l.id)}
                 className={`chip text-xs ${level === l.id ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : ""}`}
               >
-                {tr(L, l.en, l.es, l.ar)}
+                {tr(L, l.en, l.es)}
               </button>
             ))}
           </div>
@@ -131,17 +131,17 @@ function LearnPage() {
           {generate.isPending ? (
             <>
               <Sparkles className="w-4 h-4 animate-pulse" />
-              {tr(L, "Generating...", "Generando...", "جارٍ التوليد...")}
+              {tr(L, "Generating...", "Generando...")}
             </>
           ) : questions.length > 0 ? (
             <>
               <RefreshCw className="w-4 h-4" />
-              {tr(L, "New quiz", "Nuevo quiz", "اختبار جديد")}
+              {tr(L, "New quiz", "Nuevo quiz")}
             </>
           ) : (
             <>
               <Sparkles className="w-4 h-4" />
-              {tr(L, "Start quiz", "Empezar quiz", "ابدأ الاختبار")}
+              {tr(L, "Start quiz", "Empezar quiz")}
             </>
           )}
         </Button>
@@ -150,7 +150,7 @@ function LearnPage() {
       {questions.length > 0 && (
         <div className="mt-3 flex items-center justify-between text-xs text-[var(--cream)]/70">
           <span>
-            {tr(L, "Answered", "Respondidas", "تمت الإجابة")}: {Object.keys(revealed).length}/{questions.length}
+            {tr(L, "Answered", "Respondidas")}: {Object.keys(revealed).length}/{questions.length}
           </span>
           <span className="inline-flex items-center gap-1">
             <Trophy className="w-3.5 h-3.5 text-[var(--ball)]" />
@@ -212,8 +212,8 @@ function LearnPage() {
                 <div className="mt-3 rounded-lg bg-[var(--cream)]/5 border border-[var(--cream)]/10 p-3">
                   <div className="text-[10px] uppercase tracking-widest text-[var(--ball)] mb-1">
                     {pick === q.correctIndex
-                      ? tr(L, "Correct!", "¡Correcto!", "إجابة صحيحة!")
-                      : tr(L, "Correct answer", "Respuesta correcta", "الإجابة الصحيحة")}
+                      ? tr(L, "Correct!", "¡Correcto!")
+                      : tr(L, "Correct answer", "Respuesta correcta")}
                   </div>
                   {pick !== q.correctIndex && (
                     <div className="text-sm text-emerald-200 mb-1">
@@ -229,7 +229,7 @@ function LearnPage() {
 
         {questions.length === 0 && !generate.isPending && (
           <p className="text-center text-xs text-[var(--cream)]/50 py-8">
-            {tr(L, "Pick a topic and level, then start the quiz.", "Elige tema y nivel, luego empieza el quiz.", "اختر الموضوع والمستوى، ثم ابدأ الاختبار.")}
+            {tr(L, "Pick a topic and level, then start the quiz.", "Elige tema y nivel, luego empieza el quiz.")}
           </p>
         )}
 
@@ -240,11 +240,11 @@ function LearnPage() {
               {score} / {questions.length}
             </div>
             <p className="text-xs text-[var(--cream)]/70 mt-1">
-              {tr(L, "Nice! Generate another quiz to keep learning.", "¡Bien hecho! Genera otro quiz para seguir aprendiendo.", "أحسنت! ولِّد اختبارًا آخر لمواصلة التعلّم.")}
+              {tr(L, "Nice! Generate another quiz to keep learning.", "¡Bien hecho! Genera otro quiz para seguir aprendiendo.")}
             </p>
             <Button onClick={() => generate.mutate()} className="mt-3 w-full" disabled={generate.isPending}>
               <RefreshCw className="w-4 h-4" />
-              {tr(L, "Another quiz", "Otro quiz", "اختبار آخر")}
+              {tr(L, "Another quiz", "Otro quiz")}
             </Button>
           </div>
         )}

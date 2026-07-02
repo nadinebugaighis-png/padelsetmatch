@@ -369,7 +369,9 @@ export type Database = {
           mixed_doubles: boolean | null
           nationality: string
           no_show_count: number
+          padel_style: string[]
           partner_interested_in: string[]
+          personal_traits: string[]
           photo_url: string | null
           played_count: number
           priorities: string[]
@@ -403,7 +405,9 @@ export type Database = {
           mixed_doubles?: boolean | null
           nationality: string
           no_show_count?: number
+          padel_style?: string[]
           partner_interested_in?: string[]
+          personal_traits?: string[]
           photo_url?: string | null
           played_count?: number
           priorities?: string[]
@@ -437,7 +441,9 @@ export type Database = {
           mixed_doubles?: boolean | null
           nationality?: string
           no_show_count?: number
+          padel_style?: string[]
           partner_interested_in?: string[]
+          personal_traits?: string[]
           photo_url?: string | null
           played_count?: number
           priorities?: string[]

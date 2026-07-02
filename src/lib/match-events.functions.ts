@@ -266,6 +266,7 @@ const UpdateInput = z.object({
   note: z.string().max(500).nullable().optional(),
   playtomic_link: z.string().max(500).nullable().optional(),
   court_booked: z.boolean().optional(),
+  status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });
 export const updateMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -274,7 +275,16 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const { id, ...patch } = data;
+    const { id, ...inputPatch } = data;
+    const { count } = await supabase
+      .from("match_event_participants")
+      .select("id", { count: "exact", head: true })
+      .eq("match_event_id", id);
+    const filled = (count ?? 0) + (inputPatch.extra_confirmed ?? 0);
+    const patch = {
+      ...inputPatch,
+      status: inputPatch.status ?? (filled >= 4 ? "full" : "open"),
+    };
     const { error } = await supabase
       .from("match_events")
       .update(patch)

@@ -908,6 +908,23 @@ const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
     { question: "Tu compañero falla una fácil — tú…", category: "pádel", options: ["Lo animo", "Callo", "Doy consejos", "Me frustro"] },
     { question: "¿Qué tan competitivo en pista?", category: "pádel", options: ["Ganar a toda costa", "Competitivo pero tranqui", "Por diversión", "Solo por socializar"] },
     { question: "¿Sesión ideal de pádel?", category: "pádel", options: ["Americano amistoso", "Partido serio", "Drills + partido", "Juego rápido divertido"] },
+    { question: "¿Situación sentimental actual?", category: "estatus", options: ["Soltero/a", "Conociendo gente", "En un lío", "Recién salido/a de una relación", "Es complicado"] },
+    { question: "¿Quieres tener hijos (o más)?", category: "estatus", options: ["Sí, seguro", "Quizás algún día", "No lo sé", "No"] },
+    { question: "¿Ya tienes hijos?", category: "estatus", options: ["No", "Sí, viven conmigo", "Sí, a tiempo parcial", "Ya son mayores"] },
+    { question: "¿Tu vida laboral ahora?", category: "estilo de vida", options: ["Empleado 9–6", "Autónomo", "Emprendedor/fundador", "Estudiando", "Entre etapas"] },
+    { question: "¿Nivel de estudios?", category: "estatus", options: ["Bachillerato", "Grado", "Máster", "Doctorado", "Autodidacta"] },
+    { question: "¿Con quién vives?", category: "estilo de vida", options: ["Solo/a", "Con mi pareja", "Con familia", "Con compañeros", "Me muevo mucho"] },
+    { question: "¿Fumas?", category: "estilo de vida", options: ["Nunca", "Socialmente", "Con frecuencia", "Intentando dejarlo"] },
+    { question: "¿Bebes alcohol?", category: "estilo de vida", options: ["Nunca", "Socialmente", "Fines de semana", "Vino con la cena", "Sobrio/a"] },
+    { question: "¿Rutina de deporte?", category: "estilo de vida", options: ["Diaria", "3–4 veces/semana", "Solo pádel", "Cuando me apetece"] },
+    { question: "¿Tipo de dieta?", category: "estilo de vida", options: ["De todo", "Sano en general", "Vegetariana", "Vegana", "Pescetariana"] },
+    { question: "¿Con qué frecuencia viajas?", category: "estilo de vida", options: ["Cada mes", "Varias veces al año", "Una vez al año", "Casi nunca"] },
+    { question: "¿Mascotas?", category: "estilo de vida", options: ["Perros", "Gatos", "Ambos", "Ninguno", "Alérgico/a"] },
+    { question: "¿Qué tan religioso/a eres?", category: "valores", options: ["Mucho", "Espiritual, no religioso/a", "Culturalmente", "Nada"] },
+    { question: "¿La política importa en tu pareja?", category: "valores", options: ["Mucho", "Algo", "No mucho", "Prefiero no decirlo"] },
+    { question: "¿Horario de sueño?", category: "estilo de vida", options: ["Madrugador/a", "Noctámbulo/a", "Depende del día"] },
+    { question: "¿Nivel de ambición?", category: "estatus", options: ["Enfocado/a en carrera", "Equilibrado/a", "Vida primero, trabajo segundo", "Aún descubriéndolo"] },
+
   ],
 };
 

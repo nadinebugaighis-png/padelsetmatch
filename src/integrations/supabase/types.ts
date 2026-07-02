@@ -75,18 +75,21 @@ export type Database = {
       }
       hides: {
         Row: {
+          category: string
           created_at: string
           hidden_profile_id: string
           hider_profile_id: string
           id: string
         }
         Insert: {
+          category?: string
           created_at?: string
           hidden_profile_id: string
           hider_profile_id: string
           id?: string
         }
         Update: {
+          category?: string
           created_at?: string
           hidden_profile_id?: string
           hider_profile_id?: string

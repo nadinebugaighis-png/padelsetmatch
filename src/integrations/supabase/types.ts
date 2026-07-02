@@ -373,6 +373,7 @@ export type Database = {
           photo_url: string | null
           played_count: number
           priorities: string[]
+          sexual_orientation: string | null
           suspended_at: string | null
           updated_at: string
           user_id: string | null
@@ -406,6 +407,7 @@ export type Database = {
           photo_url?: string | null
           played_count?: number
           priorities?: string[]
+          sexual_orientation?: string | null
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
@@ -439,6 +441,7 @@ export type Database = {
           photo_url?: string | null
           played_count?: number
           priorities?: string[]
+          sexual_orientation?: string | null
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null

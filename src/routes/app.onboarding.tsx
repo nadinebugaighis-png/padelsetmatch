@@ -87,6 +87,7 @@ function Onboarding() {
   const [mixedDoubles, setMixedDoubles] = useState(true);
   const [freeCourt, setFreeCourt] = useState(false);
   const [freeCourtNote, setFreeCourtNote] = useState("");
+  const [sexualOrientation, setSexualOrientation] = useState("");
 
   useEffect(() => {
     const p = profileQ.data;
@@ -131,6 +132,7 @@ function Onboarding() {
       if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
       if (typeof p.free_court_access === "boolean") setFreeCourt(p.free_court_access);
       if (p.free_court_note) setFreeCourtNote(p.free_court_note);
+      if (p.sexual_orientation) setSexualOrientation(p.sexual_orientation);
     } else if (profileQ.data === null) {
       // New user — hydrate from the pre-signup guest draft if present
       const draft = loadGuestDraft();
@@ -266,6 +268,7 @@ function Onboarding() {
           availability, court_side: courtSide, mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
           gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
+          sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
         },
       });
     },
@@ -352,6 +355,20 @@ function Onboarding() {
                   ))}
                 </div>
               </>
+            )}
+
+            {hasPartnerGoal && (
+              <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Advanced profile (optional)</div>
+                <label className="text-[11px] text-[var(--cream)]/60">Sexual orientation</label>
+                <Input
+                  value={sexualOrientation}
+                  onChange={(e) => setSexualOrientation(e.target.value)}
+                  placeholder="e.g. straight, gay, bisexual, queer, pansexual…"
+                  maxLength={60}
+                />
+                <p className="text-[10px] text-[var(--cream)]/50">Private — used only to improve matches. Not shown on your profile.</p>
+              </div>
             )}
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>

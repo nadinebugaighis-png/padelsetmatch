@@ -259,11 +259,14 @@ function Onboarding() {
   const save = useMutation({
     mutationFn: () => {
       const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
-      const partnerAud = hasPartnerGoal ? [meetPref] : [];
+      const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
       const friendAud = hasFriendGoal ? ["everyone"] : [];
       const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
+      if (age === null || age_min === null || age_max === null || !gender || !level) {
+        throw new Error("Please complete all required fields");
+      }
       return upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
@@ -273,7 +276,7 @@ function Onboarding() {
           locations: encodedLocations, languages,
           level, priorities, looking_for: derivedLookingFor,
           bio: bio || null, photo_url: photoUrl,
-          availability, court_side: courtSide, mixed_doubles: mixedDoubles,
+          availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
           free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
           gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
           sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,

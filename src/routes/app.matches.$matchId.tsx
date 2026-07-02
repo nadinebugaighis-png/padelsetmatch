@@ -105,7 +105,7 @@ function ChatRoom() {
   });
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
-  const { other, my_profile_id, messages, shared } = q.data as typeof q.data & { shared?: { priorities: string[]; personal_traits: string[]; padel_style: string[]; languages: string[] } };
+  const { other, my_profile_id, messages } = q.data;
 
   const onBlock = () => {
     if (!window.confirm(t("disc.blockConfirm", { name: other.first_name }))) return;
@@ -153,25 +153,6 @@ function ChatRoom() {
         <span className="chip chip-ball shrink-0">{t("chat.open")} <ExternalLink className="w-3 h-3" /></span>
       </a>
 
-      {shared && (shared.priorities.length + shared.personal_traits.length + shared.padel_style.length + shared.languages.length) > 0 && (
-        <div className="mx-3 mt-3 surface-card p-3">
-          <div className="text-[11px] uppercase tracking-widest text-[var(--ball)] mb-2">✨ You both share</div>
-          <div className="space-y-2">
-            {shared.priorities.length > 0 && (
-              <SharedRow title="Interests" items={shared.priorities} />
-            )}
-            {shared.personal_traits.length > 0 && (
-              <SharedRow title="Personality" items={shared.personal_traits} />
-            )}
-            {shared.padel_style.length > 0 && (
-              <SharedRow title="Padel style" items={shared.padel_style} />
-            )}
-            {shared.languages.length > 0 && (
-              <SharedRow title="Languages" items={shared.languages} />
-            )}
-          </div>
-        </div>
-      )}
 
       <div className="mx-3 mt-2 flex flex-wrap gap-2">
         <button
@@ -292,18 +273,5 @@ function ChatRoom() {
         <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending}><Send className="w-4 h-4" /></Button>
       </form>
     </main>
-  );
-}
-
-function SharedRow({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mb-1">{title}</div>
-      <div className="flex flex-wrap gap-1.5">
-        {items.map((i) => (
-          <span key={i} className="chip chip-ball text-[11px]">{i}</span>
-        ))}
-      </div>
-    </div>
   );
 }

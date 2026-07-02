@@ -274,6 +274,7 @@ function Discover() {
                   <div>
                     <div className="text-display text-3xl leading-none text-[var(--cream)]">{preview.first_name}</div>
                     <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                    <div className="text-xs text-[var(--cream)]/70 mt-1">{preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)}</div>
                   </div>
                   {preview.free_court_access && (
                     <div className="rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">

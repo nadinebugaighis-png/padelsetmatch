@@ -31,14 +31,27 @@ export function languageOverlap(a: string[], b: string[]): string[] {
   return b.filter((x) => set.has(x.toLowerCase()));
 }
 
+// Groups use adjectival nationality forms matching NATIONALITIES in types.ts.
 const CULTURE_GROUPS: string[][] = [
-  ["Spain", "Portugal"],
-  ["Spain", "Italy", "France"],
-  ["Italy", "France"],
-  ["Spain", "Argentina", "Mexico", "Colombia"],
-  ["Argentina", "Mexico", "Colombia", "Brazil"],
-  ["United Kingdom", "Ireland", "United States"],
-  ["Germany", "Netherlands", "Switzerland", "Sweden"],
+  ["Spanish", "Portuguese"],
+  ["Spanish", "Italian", "French"],
+  ["Italian", "French"],
+  ["Spanish", "Argentine", "Mexican", "Colombian", "Peruvian", "Chilean", "Uruguayan", "Venezuelan", "Ecuadorian", "Bolivian", "Paraguayan"],
+  ["Argentine", "Mexican", "Colombian", "Brazilian", "Peruvian", "Chilean", "Uruguayan", "Venezuelan"],
+  ["British", "Irish", "American", "Canadian", "Australian", "New Zealander", "Scottish", "Welsh"],
+  ["German", "Dutch", "Swiss", "Austrian", "Belgian", "Luxembourgish"],
+  ["Swedish", "Norwegian", "Danish", "Finnish", "Icelandic"],
+  ["Saudi", "Emirati", "Qatari", "Kuwaiti", "Bahraini", "Omani", "Yemeni"],
+  ["Egyptian", "Jordanian", "Lebanese", "Syrian", "Palestinian", "Iraqi"],
+  ["Moroccan", "Algerian", "Tunisian", "Libyan"],
+  ["Indian", "Pakistani", "Bangladeshi", "Sri Lankan", "Nepali"],
+  ["Chinese", "Taiwanese", "Singaporean"],
+  ["Japanese", "South Korean"],
+  ["Polish", "Czech", "Slovak", "Hungarian"],
+  ["Serbian", "Croatian", "Bosnian", "Montenegrin", "Slovenian", "Macedonian", "Kosovar"],
+  ["Russian", "Ukrainian", "Belarusian"],
+  ["Kenyan", "Tanzanian", "Ugandan", "Rwandan"],
+  ["Nigerian", "Ghanaian", "Ivorian", "Senegalese"],
 ];
 
 export function cultureAffinity(a: string, b: string): number {

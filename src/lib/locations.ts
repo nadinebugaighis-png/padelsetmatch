@@ -223,6 +223,18 @@ export const LOCATION_DATA: CountryData[] = [
     ],
   },
   {
+    name: "Palestine",
+    cities: [
+      { name: "Ramallah", areas: ["Al-Masyoun", "Al-Irsal", "Al-Tireh"] },
+      { name: "Gaza", areas: ["Rimal", "Al-Shati", "Al-Tuffah"] },
+      { name: "Bethlehem", areas: ["Beit Jala", "Beit Sahour", "Old City"] },
+      { name: "Hebron", areas: ["Old City", "H1 Area", "Al-Salam"] },
+      { name: "Nablus", areas: ["Old City", "Rafidia", "Askar"] },
+      { name: "Jenin", areas: ["Old City", "Al-Jabriyat"] },
+      { name: "Jericho", areas: ["City Centre", "Aqabat Jaber"] },
+    ],
+  },
+  {
     name: "Libya",
     cities: [
       { name: "Tripoli", areas: [] },

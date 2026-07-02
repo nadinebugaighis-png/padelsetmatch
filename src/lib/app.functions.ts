@@ -47,13 +47,20 @@ function audienceAcceptsGender(audience: string[], gender: string): boolean {
   return false;
 }
 
-function sharedPurpose(a: string, b: string): "partner" | "friend" | null {
-  if (a === "partner" && (b === "partner" || b === "both")) return "partner";
-  if (b === "partner" && (a === "partner" || a === "both")) return "partner";
-  if (a === "friend" && (b === "friend" || b === "both")) return "friend";
-  if (b === "friend" && (a === "friend" || a === "both")) return "friend";
-  if (a === "both" && b === "both") return "partner";
-  return null;
+// Returns the list of shared intents between two profiles.
+// Falls back to legacy looking_for so users who haven't re-saved still match.
+function deriveIntents(p: { intents?: string[] | null; looking_for?: string | null }): string[] {
+  if (p.intents && p.intents.length > 0) return p.intents;
+  switch (p.looking_for) {
+    case "partner": return ["relationship", "padel"];
+    case "friend": return ["friend", "padel"];
+    case "both": return ["relationship", "friend", "padel"];
+    default: return ["padel"];
+  }
+}
+function sharedIntents(a: Profile, b: Profile): string[] {
+  const av = new Set(deriveIntents(a));
+  return deriveIntents(b).filter((x) => av.has(x));
 }
 
 function stripPrivateFields(p: Profile): any {

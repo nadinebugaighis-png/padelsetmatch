@@ -274,7 +274,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
     const scored = candidates
       .map((c) => {
-        const { score, reasons } = scoreCandidate(me, c);
+        const { score, reasons, categories } = scoreCandidate(me, c);
         // Shared-question bonus
         const theirAns = byProfile.get(c.id) ?? new Map<string, string>();
         let qaBonus = 0;
@@ -293,7 +293,8 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
         const pub = stripPrivateFields(c);
-        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id) };
+        const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe } };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);

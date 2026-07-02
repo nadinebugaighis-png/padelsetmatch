@@ -574,6 +574,28 @@ function Onboarding() {
                 <p className="text-xs text-[var(--cream)]/50">{t("ob.pickThree")}</p>
               </>
             )}
+
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Personal characteristics (pick up to 10)</label>
+            <div className="flex flex-wrap gap-2">
+              {PERSONAL_TRAITS.map((tr) => {
+                const on = personalTraits.includes(tr);
+                return (
+                  <button
+                    key={tr}
+                    type="button"
+                    onClick={() =>
+                      setPersonalTraits((cur) =>
+                        cur.includes(tr) ? cur.filter((x) => x !== tr) : cur.length >= 10 ? cur : [...cur, tr]
+                      )
+                    }
+                    className={`chip ${on ? "chip-ball" : ""}`}
+                  >
+                    {on ? "✓ " : "+ "}{tr}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 selected</p>
           </>
         )}
         {step === 4 && (

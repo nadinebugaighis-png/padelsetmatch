@@ -185,6 +185,7 @@ export type Profile = {
   level: PadelLevel;
   priorities: string[];
   looking_for: LookingFor;
+  intents?: string[];
   bio: string | null;
   photo_url: string | null;
   availability?: string[];

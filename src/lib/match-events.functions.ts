@@ -228,27 +228,37 @@ export const cancelMatchEvent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ---------- Update host-only bits (playtomic link, court_booked) ----------
+// ---------- Update (host) ----------
+const UpdateInput = z.object({
+  id: z.string().uuid(),
+  starts_at: z.string().min(1).optional(),
+  club_name: z.string().min(1).max(200).optional(),
+  club_address: z.string().max(400).nullable().optional(),
+  club_place_id: z.string().max(200).nullable().optional(),
+  club_lat: z.number().nullable().optional(),
+  club_lng: z.number().nullable().optional(),
+  city: z.string().max(120).nullable().optional(),
+  country: z.string().max(120).nullable().optional(),
+  level_min: z.enum(PADEL_LEVELS).optional(),
+  level_max: z.enum(PADEL_LEVELS).optional(),
+  gender_rule: z.enum(["mixed", "men_only", "women_only"]).optional(),
+  extra_confirmed: z.number().int().min(0).max(3).optional(),
+  note: z.string().max(500).nullable().optional(),
+  playtomic_link: z.string().max(500).nullable().optional(),
+  court_booked: z.boolean().optional(),
+});
 export const updateMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; playtomic_link?: string | null; court_booked?: boolean }) =>
-    z.object({
-      id: z.string().uuid(),
-      playtomic_link: z.string().max(500).nullable().optional(),
-      court_booked: z.boolean().optional(),
-    }).parse(d),
-  )
+  .inputValidator((d: z.infer<typeof UpdateInput>) => UpdateInput.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const patch: { playtomic_link?: string | null; court_booked?: boolean } = {};
-    if (data.playtomic_link !== undefined) patch.playtomic_link = data.playtomic_link;
-    if (data.court_booked !== undefined) patch.court_booked = data.court_booked;
+    const { id, ...patch } = data;
     const { error } = await supabase
       .from("match_events")
       .update(patch)
-      .eq("id", data.id)
+      .eq("id", id)
       .eq("host_profile_id", profile.id);
     if (error) throw new Error(error.message);
     return { ok: true };

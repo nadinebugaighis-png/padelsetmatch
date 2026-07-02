@@ -87,6 +87,7 @@ function Onboarding() {
   const [mixedDoubles, setMixedDoubles] = useState(true);
   const [freeCourt, setFreeCourt] = useState(false);
   const [freeCourtNote, setFreeCourtNote] = useState("");
+  const [sexualOrientation, setSexualOrientation] = useState("");
 
   useEffect(() => {
     const p = profileQ.data;

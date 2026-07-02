@@ -158,6 +158,7 @@ export type Profile = {
   first_name: string;
   age: number;
   gender: Gender;
+  gender_custom: string | null;
   interested_in: Gender[];
   friend_interested_in: string[];
   partner_interested_in: string[];

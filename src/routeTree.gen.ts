@@ -20,6 +20,7 @@ import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppHiddenRouteImport } from './routes/app.hidden'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
@@ -82,6 +83,11 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHiddenRoute = AppHiddenRouteImport.update({
+  id: '/hidden',
+  path: '/hidden',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/hidden': typeof AppHiddenRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/hidden': typeof AppHiddenRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/hidden': typeof AppHiddenRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/hidden'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/hidden'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/app/admin'
+    | '/app/hidden'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -317,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/hidden': {
+      id: '/app/hidden'
+      path: '/hidden'
+      fullPath: '/app/hidden'
+      preLoaderRoute: typeof AppHiddenRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin': {
       id: '/app/admin'
       path: '/admin'
@@ -387,6 +406,7 @@ const AppEventsEventIdRouteWithChildren =
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppHiddenRoute: typeof AppHiddenRoute
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -399,6 +419,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppHiddenRoute: AppHiddenRoute,
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,

@@ -249,13 +249,23 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .eq("blocker_profile_id", me.id);
     const { data: myHides } = await context.supabase
       .from("hides" as never)
-      .select("hidden_profile_id")
+      .select("hidden_profile_id, category")
       .eq("hider_profile_id", me.id);
     const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
-    const hiddenSet = new Set(((myHides as Array<{ hidden_profile_id: string }> | null) ?? []).map((h) => h.hidden_profile_id));
+    const hiddenMap = new Map<string, Set<string>>();
+    ((myHides as Array<{ hidden_profile_id: string; category: string }> | null) ?? []).forEach((h) => {
+      const set = hiddenMap.get(h.hidden_profile_id) ?? new Set<string>();
+      set.add(h.category);
+      hiddenMap.set(h.hidden_profile_id, set);
+    });
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
-    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => !blockedSet.has(c.id) && !hiddenSet.has(c.id));
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
+      if (blockedSet.has(c.id)) return false;
+      const cats = hiddenMap.get(c.id);
+      // hide only when "all" — category-specific hides are filtered client-side per active filter
+      return !cats || !cats.has("all");
+    }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
     // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -294,7 +304,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
-        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe } };
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
       })
       .filter((c) => c.score > 0)
       .sort((a, b) => b.score - a.score);
@@ -555,7 +565,12 @@ export const blockProfile = createServerFn({ method: "POST" })
 
 export const hideProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ hiddenProfileId: z.string().uuid() }).parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({
+      hiddenProfileId: z.string().uuid(),
+      category: z.enum(["partner", "friend", "all"]).default("all"),
+    }).parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { data: me } = await context.supabase
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
@@ -563,9 +578,79 @@ export const hideProfile = createServerFn({ method: "POST" })
     if (!myId) throw new Error("No profile");
     const { error } = await context.supabase
       .from("hides" as never)
-      .insert({ hider_profile_id: myId, hidden_profile_id: data.hiddenProfileId } as never);
+      .insert({ hider_profile_id: myId, hidden_profile_id: data.hiddenProfileId, category: data.category } as never);
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
     return { ok: true };
+  });
+
+export const unhideProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      hiddenProfileId: z.string().uuid(),
+      category: z.enum(["partner", "friend", "all"]).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    let q = context.supabase.from("hides" as never).delete()
+      .eq("hider_profile_id", myId)
+      .eq("hidden_profile_id", data.hiddenProfileId);
+    if (data.category) q = q.eq("category", data.category);
+    const { error } = await q;
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const unblockProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ blockedProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("blocks" as never).delete()
+      .eq("blocker_profile_id", myId)
+      .eq("blocked_profile_id", data.blockedProfileId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const getHiddenAndBlocked = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) return { hidden: [], blocked: [] };
+    const { data: hides } = await context.supabase
+      .from("hides" as never)
+      .select("hidden_profile_id, category, created_at")
+      .eq("hider_profile_id", myId);
+    const { data: blocks } = await context.supabase
+      .from("blocks" as never)
+      .select("blocked_profile_id, created_at")
+      .eq("blocker_profile_id", myId);
+    const hideRows = (hides as Array<{ hidden_profile_id: string; category: string; created_at: string }> | null) ?? [];
+    const blockRows = (blocks as Array<{ blocked_profile_id: string; created_at: string }> | null) ?? [];
+    const ids = Array.from(new Set([...hideRows.map((h) => h.hidden_profile_id), ...blockRows.map((b) => b.blocked_profile_id)]));
+    let profileMap = new Map<string, { id: string; first_name: string; photo_url: string | null; zone: string | null }>();
+    if (ids.length > 0) {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: profs } = await supabaseAdmin
+        .from("profiles" as never)
+        .select("id, first_name, photo_url, zone")
+        .in("id", ids);
+      ((profs as Array<{ id: string; first_name: string; photo_url: string | null; zone: string | null }> | null) ?? []).forEach((p) => profileMap.set(p.id, p));
+    }
+    const hidden = hideRows.map((h) => ({ ...profileMap.get(h.hidden_profile_id), profile_id: h.hidden_profile_id, category: h.category, created_at: h.created_at }));
+    const blocked = blockRows.map((b) => ({ ...profileMap.get(b.blocked_profile_id), profile_id: b.blocked_profile_id, created_at: b.created_at }));
+    return { hidden, blocked };
   });
 
 export const reportProfile = createServerFn({ method: "POST" })

@@ -227,6 +227,7 @@ function ProfilePage() {
       </div>
 
       <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">{t("prof.retake")}</Button></Link>
+      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-2" })}>Hidden &amp; blocked</Link>
 
       <FeedbackBox />
 

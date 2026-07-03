@@ -258,7 +258,9 @@ function scoreCandidate(me: Profile, c: Profile) {
 
 export const getDiscoverFeed = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d: unknown) => z.object({ world: z.boolean().optional() }).optional().parse(d) ?? {})
+  .handler(async ({ data, context }) => {
+    const world = data?.world === true;
     const { data: meRow } = await context.supabase
       .from("profiles" as never)
       .select("*")

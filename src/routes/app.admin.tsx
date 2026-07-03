@@ -1,17 +1,23 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats, getIsAdmin } from "@/lib/app.functions";
+import { getAdminStats } from "@/lib/admin.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/app/admin")({
   ssr: false,
   beforeLoad: async () => {
-    try {
-      const isAdmin = await getIsAdmin();
-      if (!isAdmin) throw redirect({ to: "/app" });
-    } catch {
-      throw redirect({ to: "/app" });
-    }
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("id")
+      .eq("user_id", userData.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (error || !data) throw redirect({ to: "/app" });
   },
   component: AdminPage,
 });

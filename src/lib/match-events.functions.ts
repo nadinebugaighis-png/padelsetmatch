@@ -119,12 +119,16 @@ export const createMatchEvent = createServerFn({ method: "POST" })
 // ---------- List open events ----------
 export const listOpenEvents = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { city?: string | null; needs?: number | null }) =>
-    z.object({ city: z.string().nullable().optional(), needs: z.number().int().nullable().optional() }).parse(d),
+  .inputValidator((d: { city?: string | null; needs?: number | null; myLocations?: boolean }) =>
+    z.object({ city: z.string().nullable().optional(), needs: z.number().int().nullable().optional(), myLocations: z.boolean().optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
+    const myLocs = (profile?.locations ?? []).filter((l): l is string => typeof l === "string" && l.length > 0);
+    if (data.myLocations && myLocs.length === 0) {
+      return { events: [] as any[] };
+    }
     let q = supabase
       .from("match_events")
       .select("*, participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))")
@@ -132,7 +136,11 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       .gte("starts_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
       .order("starts_at", { ascending: true })
       .limit(500);
-    if (data.city) q = q.ilike("city", `%${data.city}%`);
+    if (data.myLocations && myLocs.length > 0) {
+      q = q.in("city", myLocs);
+    } else if (data.city) {
+      q = q.ilike("city", `%${data.city}%`);
+    }
     const { data: events, error } = await q;
     if (error) throw new Error(error.message);
     const list = (events ?? []).map((e: any) => {

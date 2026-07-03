@@ -181,7 +181,7 @@ const en: Dict = {
   "ob.age": "Age",
   "ob.iAm": "I am",
   "ob.lookingFor": "Looking for",
-  "ob.privateNote": "Your answers here stay private — they're never shown on your profile. You can retake this questionnaire any time to change them.",
+  "ob.privateNote": "Your answers here stay private — they're never shown on your profile and will not be shared. You can retake this questionnaire any time to change them.",
   // step 1
   "ob.h1": "Who do you want to meet?",
   "ob.audIntro1": "Pick separately for friendship and for a relationship — tap as many as fit. Choose",
@@ -424,7 +424,7 @@ const es: Dict = {
   "ob.age": "Edad",
   "ob.iAm": "Soy",
   "ob.lookingFor": "Busco",
-  "ob.privateNote": "Tus respuestas aquí son privadas — nunca se muestran en tu perfil. Puedes rehacer el cuestionario cuando quieras.",
+  "ob.privateNote": "Tus respuestas aquí son privadas — nunca se muestran en tu perfil ni se compartirán. Puedes rehacer el cuestionario cuando quieras.",
   "ob.h1": "¿A quién quieres conocer?",
   "ob.audIntro1": "Elige por separado para amistad y para una relación — toca tantos como encajen. Pulsa",
   "ob.audIntro2": "si te abres a todo el mundo.",

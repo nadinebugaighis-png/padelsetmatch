@@ -115,7 +115,7 @@ function EventsPage() {
       }
       return true;
     });
-  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly]);
+  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly, myAreasOnly]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, any[]>();

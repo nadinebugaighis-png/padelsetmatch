@@ -83,10 +83,13 @@ function EventsPage() {
     if (next && day) next.setDate(day.getDate() + 1);
 
     const cityQ = cityFilter.trim().toLowerCase();
+    const now = new Date();
     return arr.filter((e: any) => {
+      const t = new Date(e.starts_at);
       if (day && next) {
-        const t = new Date(e.starts_at);
         if (!(t >= day && t < next)) return false;
+      } else if (selectedIdx === "all") {
+        if (t < now) return false;
       }
       if (genderFilter !== "any" && e.gender_rule !== genderFilter) return false;
       if (levelFilter !== "any") {
@@ -104,6 +107,17 @@ function EventsPage() {
       return true;
     });
   }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly]);
+
+  const grouped = useMemo(() => {
+    const map = new Map<string, any[]>();
+    for (const e of filtered) {
+      const d = new Date(e.starts_at);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(e);
+    }
+    return Array.from(map.entries()).map(([key, items]) => ({ key, date: new Date(items[0].starts_at), items }));
+  }, [filtered]);
 
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));

@@ -130,7 +130,14 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
   return (
     <div className="max-w-md mx-auto px-5 py-6 pb-32 space-y-5">
+      <Link
+        to="/app/events"
+        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
+      >
+        <ArrowLeft className="w-4 h-4" /> Find matches
+      </Link>
       <h1 className="text-display text-2xl tracking-wider">{title}</h1>
+
 
       <div>
         <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">Where</label>

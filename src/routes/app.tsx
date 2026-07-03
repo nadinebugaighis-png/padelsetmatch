@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { ArrowLeft, LayoutGrid, MessageCircle, Shield, Sparkles, Trophy, User } from "lucide-react";
+import { ArrowLeft, LayoutGrid, MessageCircle, Sparkles, Trophy, User } from "lucide-react";
 
 import { useT, LangSwitch } from "@/lib/i18n";
 

@@ -289,6 +289,17 @@ function EventsPage() {
 
       {/* Day tabs */}
       <div className="flex items-center gap-2 mb-5 overflow-x-auto -mx-1 px-1 no-scrollbar">
+        <button
+          onClick={() => setSelectedIdx("all")}
+          className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
+            selectedIdx === "all"
+              ? "border-[var(--ball)] text-[var(--ball)]"
+              : "border-transparent text-[var(--cream)]/70"
+          }`}
+        >
+          <div className="text-[10px] uppercase tracking-widest font-semibold leading-none">ALL</div>
+          <div className="text-[10px] uppercase tracking-widest opacity-70 mt-1 leading-none">UPCOMING</div>
+        </button>
         {days.map((d, i) => {
           const active = selectedIdx === i;
           return (
@@ -322,12 +333,13 @@ function EventsPage() {
             onChange={(e) => {
               const v = e.target.value;
               setCustomDate(v);
-              setSelectedIdx(v ? "custom" : 0);
+              setSelectedIdx(v ? "custom" : "all");
             }}
             className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </label>
       </div>
+
 
       {selectedIdx === "custom" && customDate && (
         <div className="flex items-center gap-2 mb-4">

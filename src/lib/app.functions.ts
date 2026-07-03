@@ -141,18 +141,24 @@ function scoreCandidate(me: Profile, c: Profile) {
   let lifestyle = 0;
   let vibe = 0;
 
-  const intentOverlap = sharedIntents(me, c);
-  if (intentOverlap.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  const socialOnly = intentOverlap.filter((s) => s !== "padel");
-  const primary = socialOnly.includes("relationship") ? "relationship" : socialOnly.includes("friend") ? "friend" : null;
-  if (primary) {
-    const myAudience = primary === "relationship" ? me.partner_interested_in : me.friend_interested_in;
-    const theirAudience = primary === "relationship" ? c.partner_interested_in : c.friend_interested_in;
+  const intentOverlapRaw = sharedIntents(me, c);
+  if (intentOverlapRaw.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  // For each social intent (relationship/friend), check gender-audience both ways.
+  // If it fails, drop just that intent — don't reject the whole person, because they may
+  // still be a great padel partner or friend.
+  const passesAudience = (kind: "relationship" | "friend") => {
+    const myAudience = kind === "relationship" ? me.partner_interested_in : me.friend_interested_in;
+    const theirAudience = kind === "relationship" ? c.partner_interested_in : c.friend_interested_in;
     const myAud = (myAudience && myAudience.length > 0) ? myAudience : (me.interested_in as string[]);
     const theirAud = (theirAudience && theirAudience.length > 0) ? theirAudience : (c.interested_in as string[]);
-    if (!audienceAcceptsGender(myAud, c.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-    if (!audienceAcceptsGender(theirAud, me.gender)) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  }
+    return audienceAcceptsGender(myAud, c.gender) && audienceAcceptsGender(theirAud, me.gender);
+  };
+  const intentOverlap = intentOverlapRaw.filter((s) => {
+    if (s === "relationship") return passesAudience("relationship");
+    if (s === "friend") return passesAudience("friend");
+    return true; // padel has no gender-audience gate
+  });
+  if (intentOverlap.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
 
   score += 6;
 

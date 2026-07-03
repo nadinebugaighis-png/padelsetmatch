@@ -321,6 +321,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       if (blockedSet.has(c.id)) return false;
       const cats = hiddenMap.get(c.id);
       if (cats && cats.has("all")) return false;
+      if (world) return true;
       if (myCities.size === 0) return false;
       const theirCities = new Set<string>();
       (c.locations ?? []).forEach((l) => {

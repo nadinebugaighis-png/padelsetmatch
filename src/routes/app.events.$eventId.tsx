@@ -219,7 +219,7 @@ function EventDetail() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md overflow-x-hidden px-5 py-4 pb-32">
+    <div className="mx-auto w-full max-w-md max-w-[100dvw] overflow-x-hidden px-5 py-4 pb-32">
       <div className="flex items-center justify-between mb-3">
         <Link to="/app/events" className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60">
           <ArrowLeft className="w-4 h-4" /> All matches
@@ -450,7 +450,7 @@ function EventDetail() {
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-2">Group chat</div>
           <div
             ref={scrollRef}
-            className="rounded-xl border border-[var(--cream)]/10 bg-black/30 p-3 h-72 overflow-y-auto space-y-2"
+            className="h-72 w-full max-w-full overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-[var(--cream)]/10 bg-black/30 p-3 space-y-3"
           >
             {msgsQ.data?.messages.length === 0 && (
               <div className="text-center text-xs text-[var(--cream)]/50 py-8">No messages yet. Say hi!</div>
@@ -459,64 +459,66 @@ function EventDetail() {
               const mine = m.sender_profile_id === me?.id;
               const isEditing = editingId === m.id;
               return (
-                <div key={m.id} className={`group flex items-end gap-1.5 ${mine ? "justify-end" : "justify-start"}`}>
-                  {mine && !isEditing && (
-                    <div className="flex shrink-0 gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                      <button
-                        type="button"
-                        onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                        className="grid h-8 w-8 place-items-center rounded-full bg-[var(--cream)]/10 text-[var(--cream)] hover:bg-[var(--cream)]/20"
-                        aria-label="Edit"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onDeleteMessage(m.id)}
-                        className="grid h-8 w-8 place-items-center rounded-full bg-[var(--cream)]/10 text-[var(--cream)] hover:bg-red-500/20 hover:text-red-300"
-                        aria-label="Delete"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  )}
-                  <div
-                    className={`${mine ? "max-w-[min(72%,16rem)]" : "max-w-[min(80%,18rem)]"} rounded-2xl px-3 py-2 text-base sm:text-sm ${
+                <div key={m.id} className={`group flex w-full ${mine ? "justify-end" : "justify-start"}`}>
+                  <div className={`flex min-w-0 flex-col ${mine ? "items-end" : "items-start"}`}>
+                    <div
+                      className={`${mine ? "max-w-[min(100%,18rem)]" : "max-w-[min(100%,19rem)]"} min-w-0 rounded-2xl px-3 py-2 text-base ${
                       mine
                         ? "bg-[var(--ball)]/25 text-[var(--cream)]"
                         : "bg-[var(--court-deep)] border border-[var(--cream)]/10 text-[var(--cream)]"
                     }`}
-                  >
-                    {!mine && !isEditing && (
-                      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-0.5">
-                        {m.sender?.first_name}
-                      </div>
-                    )}
-                    {isEditing ? (
-                      <form
-                        onSubmit={(e) => { e.preventDefault(); void onSaveMessage(); }}
-                        className="flex min-w-[min(12rem,66vw)] flex-col gap-2"
-                      >
-                        <textarea
-                          value={editingText}
-                          onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--cream)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--ball)]/60"
-                          rows={2}
-                          autoFocus
-                        />
-                        <div className="flex justify-end gap-1">
-                          <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-7 w-7 place-items-center rounded-full hover:bg-[var(--cream)]/10" aria-label="Cancel">
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                          <button type="submit" className="grid h-7 w-7 place-items-center rounded-full hover:bg-[var(--cream)]/10" aria-label="Save">
-                            <Check className="h-3.5 w-3.5" />
-                          </button>
+                    >
+                      {!mine && !isEditing && (
+                        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-0.5">
+                          {m.sender?.first_name}
                         </div>
-                      </form>
-                    ) : (
-                      <div className="whitespace-pre-wrap break-words">
-                        {m.body}
-                        {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--cream)]/50">(edited)</span>}
+                      )}
+                      {isEditing ? (
+                        <form
+                          onSubmit={(e) => { e.preventDefault(); void onSaveMessage(); }}
+                          className="flex w-[min(16rem,72vw)] max-w-full flex-col gap-2"
+                        >
+                          <textarea
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--cream)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--ball)]/60"
+                            rows={2}
+                            autoFocus
+                          />
+                          <div className="flex justify-end gap-1">
+                            <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--cream)]/10" aria-label="Cancel">
+                              <X className="h-4 w-4" />
+                            </button>
+                            <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)]" aria-label="Save">
+                              <Check className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <div className="whitespace-pre-wrap break-words">
+                          {m.body}
+                          {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--cream)]/50">(edited)</span>}
+                        </div>
+                      )}
+                    </div>
+                    {mine && !isEditing && (
+                      <div className="mt-1 flex gap-2 pr-1">
+                        <button
+                          type="button"
+                          onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
+                          className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2.5 text-[11px] uppercase tracking-wider text-[var(--cream)] hover:bg-[var(--cream)]/20"
+                          aria-label="Edit message"
+                        >
+                          <Pencil className="h-3.5 w-3.5" /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onDeleteMessage(m.id)}
+                          className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2.5 text-[11px] uppercase tracking-wider text-[var(--cream)] hover:bg-red-500/20 hover:text-red-300"
+                          aria-label="Delete message"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" /> Delete
+                        </button>
                       </div>
                     )}
                   </div>
@@ -524,13 +526,20 @@ function EventDetail() {
               );
             })}
           </div>
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 mt-2">
-            <input
+          <div className="grid w-full max-w-full grid-cols-[minmax(0,1fr)_auto] gap-2 mt-2 overflow-hidden">
+            <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onSend()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  void onSend();
+                }
+              }}
               placeholder="Message the group…"
-              className="min-w-0 bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-base text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none focus:ring-1 focus:ring-[var(--ball)]/60"
+              rows={1}
+              enterKeyHint="send"
+              className="min-h-10 min-w-0 resize-none overflow-hidden bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-base leading-6 text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none focus:ring-1 focus:ring-[var(--ball)]/60"
             />
             <button
               type="button"

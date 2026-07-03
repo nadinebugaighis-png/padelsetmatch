@@ -54,7 +54,7 @@ function EventsPage() {
 
   const today = startOfDay(new Date());
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i)), [today.getTime()]);
-  const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">(0);
+  const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">("all");
   const [customDate, setCustomDate] = useState<string>("");
 
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -83,10 +83,13 @@ function EventsPage() {
     if (next && day) next.setDate(day.getDate() + 1);
 
     const cityQ = cityFilter.trim().toLowerCase();
+    const now = new Date();
     return arr.filter((e: any) => {
+      const t = new Date(e.starts_at);
       if (day && next) {
-        const t = new Date(e.starts_at);
         if (!(t >= day && t < next)) return false;
+      } else if (selectedIdx === "all") {
+        if (t < now) return false;
       }
       if (genderFilter !== "any" && e.gender_rule !== genderFilter) return false;
       if (levelFilter !== "any") {
@@ -104,6 +107,17 @@ function EventsPage() {
       return true;
     });
   }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly]);
+
+  const grouped = useMemo(() => {
+    const map = new Map<string, any[]>();
+    for (const e of filtered) {
+      const d = new Date(e.starts_at);
+      const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(e);
+    }
+    return Array.from(map.entries()).map(([key, items]) => ({ key, date: new Date(items[0].starts_at), items }));
+  }, [filtered]);
 
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
@@ -289,6 +303,17 @@ function EventsPage() {
 
       {/* Day tabs */}
       <div className="flex items-center gap-2 mb-5 overflow-x-auto -mx-1 px-1 no-scrollbar">
+        <button
+          onClick={() => setSelectedIdx("all")}
+          className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
+            selectedIdx === "all"
+              ? "border-[var(--ball)] text-[var(--ball)]"
+              : "border-transparent text-[var(--cream)]/70"
+          }`}
+        >
+          <div className="text-[10px] uppercase tracking-widest font-semibold leading-none">ALL</div>
+          <div className="text-[10px] uppercase tracking-widest opacity-70 mt-1 leading-none">UPCOMING</div>
+        </button>
         {days.map((d, i) => {
           const active = selectedIdx === i;
           return (
@@ -322,12 +347,13 @@ function EventsPage() {
             onChange={(e) => {
               const v = e.target.value;
               setCustomDate(v);
-              setSelectedIdx(v ? "custom" : 0);
+              setSelectedIdx(v ? "custom" : "all");
             }}
             className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </label>
       </div>
+
 
       {selectedIdx === "custom" && customDate && (
         <div className="flex items-center gap-2 mb-4">
@@ -349,10 +375,32 @@ function EventsPage() {
       {eventsQ.isLoading && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
       {!eventsQ.isLoading && filtered.length === 0 && (
         <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm">
-          No open matches for this day.
+          {selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}
         </div>
       )}
-      <div className="space-y-3">{filtered.map(renderCard)}</div>
+      {selectedIdx === "all" ? (
+        <div className="space-y-5">
+          {grouped.map((g) => {
+            const diff = Math.round((startOfDay(g.date).getTime() - today.getTime()) / 86400000);
+            const label =
+              diff === 0
+                ? "TODAY"
+                : diff === 1
+                ? "TOMORROW"
+                : g.date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }).toUpperCase();
+            return (
+              <div key={g.key}>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 font-semibold mb-2 px-1">
+                  {label}
+                </div>
+                <div className="space-y-3">{g.items.map(renderCard)}</div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="space-y-3">{filtered.map(renderCard)}</div>
+      )}
 
       {/* Create match CTA */}
       <div className="mt-5 rounded-2xl border border-[var(--cream)]/15 bg-black/20 p-4 flex items-center gap-3">

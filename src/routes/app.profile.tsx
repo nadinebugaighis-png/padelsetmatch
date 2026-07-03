@@ -227,6 +227,8 @@ function ProfilePage() {
         )}
       </div>
 
+      <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
+
       <div className="mt-4 surface-card p-4 flex items-start gap-3 text-sm text-[var(--cream)]/70">
         <Lock className="w-4 h-4 mt-0.5 shrink-0" />
         <p>{t("prof.privacy")}</p>

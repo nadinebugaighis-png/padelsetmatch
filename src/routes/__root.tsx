@@ -66,26 +66,46 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "PadelMatch — find your padel partner (and maybe more)" },
-      { name: "description", content: "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with." },
-      { property: "og:title", content: "PadelMatch" },
-      { property: "og:description", content: "Find players you genuinely click with. Matches, friendship, and great padel games — worldwide." },
-
+      { name: "description", content: "Find padel players who match your level, personality and lifestyle. Great games, real friends, meaningful connections." },
+      { property: "og:site_name", content: "PadelMatch" },
+      { property: "og:title", content: "PadelMatch — find your padel partner (and maybe more)" },
+      { property: "og:description", content: "Find padel players you click with. Matches, friendship and great games — worldwide." },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://padelmatch.lovable.app/og-share.jpg" },
+      { property: "og:image", content: "https://padelmatchapp.lovable.app/og-share.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { property: "og:image:type", content: "image/jpeg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://padelmatch.lovable.app/og-share.jpg" },
+      { name: "twitter:image", content: "https://padelmatchapp.lovable.app/og-share.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      
       { rel: "manifest", href: "/manifest.json" },
       { rel: "icon", type: "image/png", href: "/icon-192.png" },
       { rel: "apple-touch-icon", href: "/icon-192.png" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "PadelMatch",
+              url: "https://padelmatchapp.lovable.app",
+              logo: "https://padelmatchapp.lovable.app/icon-512.png",
+            },
+            {
+              "@type": "WebSite",
+              name: "PadelMatch",
+              url: "https://padelmatchapp.lovable.app",
+            },
+          ],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -93,6 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
 
 function RootShell({ children }: { children: ReactNode }) {
   return (

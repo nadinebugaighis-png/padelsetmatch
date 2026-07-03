@@ -114,6 +114,20 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
     return inserted as Profile;
   });
 
+export const setAwayStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ away_until: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profiles" as never)
+      .update({ away_until: data.away_until } as never)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const updateMyPhoto = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ photo_url: z.string().min(1).max(2000) }).parse(d))
@@ -356,7 +370,13 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
       })
       .filter((c) => c.score > 0)
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => {
+        const today = new Date().toISOString().slice(0, 10);
+        const aAway = (a as any).away_until && (a as any).away_until >= today ? 1 : 0;
+        const bAway = (b as any).away_until && (b as any).away_until >= today ? 1 : 0;
+        if (aAway !== bAway) return aAway - bAway;
+        return b.score - a.score;
+      });
 
     return { me, candidates: scored };
   });

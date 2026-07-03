@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ShareQR } from "@/components/ShareQR";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteMyAccount, getMyProfile, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
+import { deleteMyAccount, getMyProfile, setAwayStatus, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
@@ -227,6 +227,8 @@ function ProfilePage() {
         )}
       </div>
 
+      <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
+
       <div className="mt-4 surface-card p-4 flex items-start gap-3 text-sm text-[var(--cream)]/70">
         <Lock className="w-4 h-4 mt-0.5 shrink-0" />
         <p>{t("prof.privacy")}</p>
@@ -316,6 +318,76 @@ function Info({ label, v }: { label: string; v: string }) {
     <div>
       <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
       <div>{v}</div>
+    </div>
+  );
+}
+
+function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; onSaved: () => void }) {
+  const setAway = useServerFn(setAwayStatus);
+  const today = new Date().toISOString().slice(0, 10);
+  const isAway = !!awayUntil && awayUntil >= today;
+  const [away, setAway2] = useState(isAway);
+  const [until, setUntil] = useState(isAway ? awayUntil! : "");
+  const [busy, setBusy] = useState(false);
+
+  const save = async (payload: string | null) => {
+    setBusy(true);
+    try {
+      await setAway({ data: { away_until: payload } });
+      toast.success(payload ? "You're marked as away" : "You're back — available again");
+      onSaved();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not update");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="mt-4 surface-card p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-display text-lg tracking-wider">Availability</h2>
+          <p className="text-xs text-[var(--cream)]/60 mt-1">
+            {isAway ? `Away until ${new Date(awayUntil!).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}` : "You're available to play"}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const next = !away;
+            setAway2(next);
+            if (!next) { setUntil(""); save(null); }
+          }}
+          disabled={busy}
+          className={`relative w-12 h-7 rounded-full transition-colors ${away ? "bg-amber-500" : "bg-[var(--cream)]/25"}`}
+          aria-label="Toggle away status"
+        >
+          <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${away ? "translate-x-5" : ""}`} />
+        </button>
+      </div>
+
+      {away && (
+        <div className="mt-4 space-y-2">
+          <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Away until</label>
+          <input
+            type="date"
+            min={today}
+            value={until}
+            onChange={(e) => setUntil(e.target.value)}
+            className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2 text-sm text-[var(--cream)]"
+          />
+          <Button
+            onClick={() => until && save(until)}
+            disabled={busy || !until || until < today}
+            size="sm"
+            className="w-full"
+          >
+            {busy ? "Saving…" : "Save away status"}
+          </Button>
+          <p className="text-[10px] text-[var(--cream)]/55">Other players will see an "Away until" badge on your card, and you'll show up at the bottom of their grid.</p>
+        </div>
+      )}
     </div>
   );
 }

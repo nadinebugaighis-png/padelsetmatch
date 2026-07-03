@@ -253,6 +253,16 @@ function Discover() {
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}</div>
                 <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
+                {(() => {
+                  const au = (c as any).away_until as string | null | undefined;
+                  if (!au || au < new Date().toISOString().slice(0, 10)) return null;
+                  const until = new Date(au).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+                  return (
+                    <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-500/90 text-black text-[10px] font-bold uppercase tracking-wider">
+                      ✈️ Away until {until}
+                    </div>
+                  );
+                })()}
                 {c.free_court_access && (
                   <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
                 )}

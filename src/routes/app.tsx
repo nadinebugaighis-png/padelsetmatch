@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } 
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getIsAdmin, getMyMatches, getMyProfile } from "@/lib/app.functions";
+import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { ArrowLeft, LayoutGrid, MessageCircle, Sparkles, Trophy, User } from "lucide-react";
 
 import { useT, LangSwitch } from "@/lib/i18n";
@@ -27,7 +27,6 @@ function AuthShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
-  const checkAdmin = useServerFn(getIsAdmin);
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
     try {
@@ -40,7 +39,23 @@ function AuthShell() {
   };
   const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => safe(() => getProfile()), retry: false });
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => safe(() => getMatches()), enabled: !!profileQ.data, retry: false });
-  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => safe(() => checkAdmin()), enabled: !!profileQ.data, retry: false });
+  const adminQ = useQuery({
+    queryKey: ["is-admin"],
+    queryFn: () => safe(async () => {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData.user) return false;
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("id")
+        .eq("user_id", userData.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (error) return false;
+      return Boolean(data);
+    }),
+    enabled: !!profileQ.data,
+    retry: false,
+  });
 
 
   const onSignOut = async () => {

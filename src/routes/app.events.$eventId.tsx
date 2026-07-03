@@ -506,18 +506,18 @@ function EventDetail() {
                         <button
                           type="button"
                           onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                          className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2.5 text-[11px] uppercase tracking-wider text-[var(--cream)] hover:bg-[var(--cream)]/20"
+                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2 text-[10px] uppercase tracking-wider text-[var(--cream)] hover:bg-[var(--cream)]/20"
                           aria-label="Edit message"
                         >
-                          <Pencil className="h-3.5 w-3.5" /> Edit
+                          <Pencil className="h-3 w-3" /> Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => onDeleteMessage(m.id)}
-                          className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2.5 text-[11px] uppercase tracking-wider text-[var(--cream)] hover:bg-red-500/20 hover:text-red-300"
+                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2 text-[10px] uppercase tracking-wider text-[var(--cream)] hover:bg-red-500/20 hover:text-red-300"
                           aria-label="Delete message"
                         >
-                          <Trash2 className="h-3.5 w-3.5" /> Delete
+                          <Trash2 className="h-3 w-3" /> Delete
                         </button>
                       </div>
                     )}

@@ -131,7 +131,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       .in("status", ["open", "full"])
       .gte("starts_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
       .order("starts_at", { ascending: true })
-      .limit(60);
+      .limit(500);
     if (data.city) q = q.ilike("city", `%${data.city}%`);
     const { data: events, error } = await q;
     if (error) throw new Error(error.message);

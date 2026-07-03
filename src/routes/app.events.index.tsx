@@ -327,8 +327,23 @@ function EventsPage() {
             className="absolute inset-0 opacity-0 cursor-pointer"
           />
         </label>
-
       </div>
+
+      {selectedIdx === "custom" && customDate && (
+        <div className="flex items-center gap-2 mb-4">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ball)] text-[var(--ball)] text-[11px] uppercase tracking-widest px-3 py-1.5">
+            {new Date(customDate + "T00:00:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+            <button
+              type="button"
+              onClick={() => { setCustomDate(""); setSelectedIdx(0); }}
+              aria-label="Clear date"
+              className="inline-flex"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* List */}
       {eventsQ.isLoading && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}

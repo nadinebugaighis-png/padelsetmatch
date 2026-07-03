@@ -4,7 +4,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
-import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, Mars, Venus, VenusAndMars, MessageCircle, Pencil } from "lucide-react";
+import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
@@ -35,11 +35,9 @@ function dayLabels(base: Date, i: number) {
 
 function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
   const label = rule === "mixed" ? "MIXED" : rule === "men_only" ? "MEN" : "WOMEN";
-  const Icon = rule === "mixed" ? VenusAndMars : rule === "men_only" ? Mars : Venus;
   return (
-    <div className="flex flex-col items-center text-[var(--ball)]">
-      <Icon className="w-5 h-5" strokeWidth={2} />
-      <span className="text-[9px] uppercase tracking-widest mt-0.5">{label}</span>
+    <div className="flex flex-col items-center justify-center text-[var(--ball)]">
+      <span className="text-[10px] uppercase tracking-widest font-bold">{label}</span>
     </div>
   );
 }

@@ -72,9 +72,16 @@ function EventsPage() {
   const filtered = useMemo(() => {
     const arr = [...(eventsQ.data?.events ?? [])];
     arr.sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
-    const day = selectedIdx === "all" ? null : days[selectedIdx].date;
+    let day: Date | null = null;
+    if (selectedIdx === "custom" && customDate) {
+      const [y, m, dd] = customDate.split("-").map(Number);
+      day = new Date(y, m - 1, dd);
+    } else if (typeof selectedIdx === "number") {
+      day = days[selectedIdx].date;
+    }
     const next = day ? new Date(day) : null;
     if (next && day) next.setDate(day.getDate() + 1);
+
     const cityQ = cityFilter.trim().toLowerCase();
     return arr.filter((e: any) => {
       if (day && next) {

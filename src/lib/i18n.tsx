@@ -256,7 +256,8 @@ const es: Dict = {
   // Landing
   "land.signin": "Iniciar sesión",
   "land.chip": "En todo el mundo · elige tu ciudad",
-  "land.h1.a": "encuentra tu mejor",
+  "land.h1.a": "encuentra tu",
+  "land.h1.a2": "mejor",
   "land.h1.b": "Match.",
   "land.lede": "Descubre jugadores que encajan con tu nivel, personalidad y estilo de vida. Ya sea para grandes partidos, nuevos amigos o conexiones reales, te ayudamos a encontrar gente con la que de verdad conectas.",
   "land.cta": "INICIAR MATCH",

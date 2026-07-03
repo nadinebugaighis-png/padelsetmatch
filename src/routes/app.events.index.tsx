@@ -396,10 +396,25 @@ function EventsPage() {
       )}
 
       {/* List */}
-      {eventsQ.isLoading && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
-      {!eventsQ.isLoading && filtered.length === 0 && (
-        <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm">
-          {selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}
+      {(eventsQ.isLoading || (myAreasOnly && profileQ.isLoading)) && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
+      {!eventsQ.isLoading && !(myAreasOnly && profileQ.isLoading) && filtered.length === 0 && (
+        <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm space-y-3">
+          {myAreasOnly && !profileQ.isLoading && !profileQ.data?.locations?.length ? (
+            <>
+              <p className="font-semibold">No areas selected</p>
+              <p>Add the cities where you play in your profile to see matches near you.</p>
+              <Link
+                to="/app/profile"
+                className="inline-block rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+              >
+                Go to profile →
+              </Link>
+            </>
+          ) : myAreasOnly ? (
+            <p>No upcoming matches in your areas.</p>
+          ) : (
+            <p>{selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}</p>
+          )}
         </div>
       )}
       {selectedIdx === "all" ? (

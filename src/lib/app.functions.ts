@@ -291,11 +291,29 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     });
     const likedSet = new Set(((myLikes as Array<{ liked_profile_id: string }> | null) ?? []).map((l) => l.liked_profile_id));
 
+    // Strict city gate: only show people who share at least one city with me
+    // (either a location city or my zone). People will not fly to play.
+    const { decodeLocation } = await import("./types");
+    const myCities = new Set<string>();
+    (me.locations ?? []).forEach((l) => {
+      const d = decodeLocation(l);
+      if (d.city) myCities.add(d.city.trim().toLowerCase());
+    });
+    if (me.zone) myCities.add(me.zone.trim().toLowerCase());
+
     const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
       if (blockedSet.has(c.id)) return false;
       const cats = hiddenMap.get(c.id);
-      // hide only when "all" — category-specific hides are filtered client-side per active filter
-      return !cats || !cats.has("all");
+      if (cats && cats.has("all")) return false;
+      if (myCities.size === 0) return false;
+      const theirCities = new Set<string>();
+      (c.locations ?? []).forEach((l) => {
+        const d = decodeLocation(l);
+        if (d.city) theirCities.add(d.city.trim().toLowerCase());
+      });
+      if (c.zone) theirCities.add(c.zone.trim().toLowerCase());
+      for (const city of theirCities) if (myCities.has(city)) return true;
+      return false;
     }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
     // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)

@@ -4,6 +4,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
+import { getMyProfile } from "@/lib/app.functions";
 import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/")({

@@ -173,8 +173,9 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: profile } = await supabase.from("profiles").select("id, gender").eq("user_id", userId).maybeSingle();
-    if (!profile) throw new Error("No profile");
+    const { data: profile } = await supabase.from("profiles").select("id, gender, first_name, level").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("Please add your name and padel level first.");
+    if (!profile.first_name || !profile.level) throw new Error("Please add your name and padel level first.");
     const { data: event } = await supabase
       .from("match_events")
       .select("gender_rule, status, extra_confirmed")

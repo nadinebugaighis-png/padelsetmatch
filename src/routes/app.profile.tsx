@@ -326,15 +326,14 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
   const setAway = useServerFn(setAwayStatus);
   const today = new Date().toISOString().slice(0, 10);
   const isAway = !!awayUntil && awayUntil >= today;
-  const [away, setAway2] = useState(isAway);
-  const [until, setUntil] = useState(isAway ? awayUntil! : "");
   const [busy, setBusy] = useState(false);
 
-  const save = async (payload: string | null) => {
+  const toggle = async () => {
     setBusy(true);
     try {
+      const payload = isAway ? null : "2999-12-31";
       await setAway({ data: { away_until: payload } });
-      toast.success(payload ? "You're marked as away" : "You're back — available again");
+      toast.success(payload ? "Marked as on holidays" : "You're available again");
       onSaved();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not update");
@@ -349,45 +348,23 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
         <div>
           <h2 className="text-display text-lg tracking-wider">Availability</h2>
           <p className="text-xs text-[var(--cream)]/60 mt-1">
-            {isAway ? `Away until ${new Date(awayUntil!).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}` : "You're available to play"}
+            {isAway ? "✈️ On holidays" : "🎾 Available / in city"}
           </p>
         </div>
         <button
           type="button"
-          onClick={() => {
-            const next = !away;
-            setAway2(next);
-            if (!next) { setUntil(""); save(null); }
-          }}
+          onClick={toggle}
           disabled={busy}
-          className={`relative w-12 h-7 rounded-full transition-colors ${away ? "bg-amber-500" : "bg-[var(--cream)]/25"}`}
-          aria-label="Toggle away status"
+          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-amber-500" : "bg-[var(--cream)]/25"}`}
+          aria-label="Toggle holiday status"
         >
-          <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${away ? "translate-x-5" : ""}`} />
+          <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
       </div>
-
-      {away && (
-        <div className="mt-4 space-y-2">
-          <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Away until</label>
-          <input
-            type="date"
-            min={today}
-            value={until}
-            onChange={(e) => setUntil(e.target.value)}
-            className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2 text-sm text-[var(--cream)]"
-          />
-          <Button
-            onClick={() => until && save(until)}
-            disabled={busy || !until || until < today}
-            size="sm"
-            className="w-full"
-          >
-            {busy ? "Saving…" : "Save away status"}
-          </Button>
-          <p className="text-[10px] text-[var(--cream)]/55">Other players will see an "Away until" badge on your card, and you'll show up at the bottom of their grid.</p>
-        </div>
-      )}
+      <p className="mt-3 text-[10px] text-[var(--cream)]/55">
+        When on holidays, other players see an "On holidays" badge on your card and you drop to the bottom of their grid.
+      </p>
     </div>
   );
 }
+

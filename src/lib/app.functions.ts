@@ -179,7 +179,10 @@ function scoreCandidate(me: Profile, c: Profile) {
     reasons.push(`Both in ${me.zone}`);
     lifestyle += 26;
   } else {
-    return { score: 0, reasons: [], categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+    // No shared city or zone — still show them, just no location bonus.
+    // (Previously we hard-filtered these out, which hid people you actually know.)
+    score += 2;
+    lifestyle += 8;
   }
 
   const langs = languageOverlap(me.languages ?? [], c.languages ?? []);

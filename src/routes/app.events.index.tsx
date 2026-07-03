@@ -57,19 +57,46 @@ function EventsPage() {
   const today = startOfDay(new Date());
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i)), [today.getTime()]);
   const [selectedIdx, setSelectedIdx] = useState<number | "all">(0);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [genderFilter, setGenderFilter] = useState<"any" | "mixed" | "women_only" | "men_only">("any");
+  const [levelFilter, setLevelFilter] = useState<"any" | "beginner" | "intermediate" | "advanced">("any");
+  const [cityFilter, setCityFilter] = useState("");
+  const [openOnly, setOpenOnly] = useState(true);
+
+  const activeFilterCount =
+    (genderFilter !== "any" ? 1 : 0) +
+    (levelFilter !== "any" ? 1 : 0) +
+    (cityFilter.trim() ? 1 : 0) +
+    (openOnly ? 0 : 1); // openOnly is the default, doesn't count
 
   const filtered = useMemo(() => {
     const arr = [...(eventsQ.data?.events ?? [])];
     arr.sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
-    if (selectedIdx === "all") return arr;
-    const day = days[selectedIdx].date;
-    const next = new Date(day);
-    next.setDate(day.getDate() + 1);
+    const day = selectedIdx === "all" ? null : days[selectedIdx].date;
+    const next = day ? new Date(day) : null;
+    if (next && day) next.setDate(day.getDate() + 1);
+    const cityQ = cityFilter.trim().toLowerCase();
     return arr.filter((e: any) => {
-      const t = new Date(e.starts_at);
-      return t >= day && t < next;
+      if (day && next) {
+        const t = new Date(e.starts_at);
+        if (!(t >= day && t < next)) return false;
+      }
+      if (genderFilter !== "any" && e.gender_rule !== genderFilter) return false;
+      if (levelFilter !== "any") {
+        const lvls = [e.level_min, e.level_max].filter(Boolean).map((x: string) => x.toLowerCase());
+        if (!lvls.some((l: string) => l.includes(levelFilter))) return false;
+      }
+      if (cityQ) {
+        const hay = `${e.city ?? ""} ${e.club_name ?? ""}`.toLowerCase();
+        if (!hay.includes(cityQ)) return false;
+      }
+      if (openOnly) {
+        const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
+        if (needs === 0) return false;
+      }
+      return true;
     });
-  }, [eventsQ.data, selectedIdx, days]);
+  }, [eventsQ.data, selectedIdx, days, genderFilter, levelFilter, cityFilter, openOnly]);
 
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));

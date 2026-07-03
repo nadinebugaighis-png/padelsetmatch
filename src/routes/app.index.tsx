@@ -29,10 +29,11 @@ function Discover() {
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
+  const [world, setWorld] = useState(false);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 
-  const feedQ = useQuery({ queryKey: ["discover"], queryFn: () => getFeed() });
+  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });
   const getAnswers = useServerFn(getMyQaAnswers);
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
   const getMatches = useServerFn(getMyMatches);
@@ -139,13 +140,25 @@ function Discover() {
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
-      <div className="flex gap-2 mt-4 flex-wrap">
+      <div className="flex gap-2 mt-4 flex-wrap items-center">
         {(["all", "padel", "friend", "relationship"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
             {f === "all" ? "Everyone" : f === "padel" ? "Padel partner" : f === "friend" ? "Friend" : "Relationship"}
           </button>
         ))}
+        <button
+          onClick={() => setWorld((w) => !w)}
+          className={`chip ${world ? "chip-ball" : ""}`}
+          title={world ? "Showing players worldwide — tap to return to your area" : "Explore players everywhere, any age, any city"}
+        >
+          🌍 World {world ? "On" : "Off"}
+        </button>
       </div>
+      {world && (
+        <p className="text-[11px] text-[var(--cream)]/60 mt-2">
+          Showing everyone worldwide (except people you've hidden). Turn off to return to your area.
+        </p>
+      )}
 
       {(matchesQ.data?.length ?? 0) > 0 && (
         <Link to="/app/matches" className="mt-4 flex items-center gap-3 surface-card p-3 border border-[var(--ball)] rounded-xl bg-[var(--ball)]/10">

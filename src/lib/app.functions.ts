@@ -258,7 +258,9 @@ function scoreCandidate(me: Profile, c: Profile) {
 
 export const getDiscoverFeed = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d: unknown) => z.object({ world: z.boolean().optional() }).optional().parse(d) ?? {})
+  .handler(async ({ data, context }) => {
+    const world = data?.world === true;
     const { data: meRow } = await context.supabase
       .from("profiles" as never)
       .select("*")
@@ -319,6 +321,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       if (blockedSet.has(c.id)) return false;
       const cats = hiddenMap.get(c.id);
       if (cats && cats.has("all")) return false;
+      if (world) return true;
       if (myCities.size === 0) return false;
       const theirCities = new Set<string>();
       (c.locations ?? []).forEach((l) => {

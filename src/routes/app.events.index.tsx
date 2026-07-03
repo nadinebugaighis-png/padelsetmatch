@@ -4,6 +4,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
+import { getMyProfile } from "@/lib/app.functions";
 import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/")({
@@ -45,10 +46,18 @@ function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
 function EventsPage() {
   const navigate = useNavigate();
   const list = useServerFn(listOpenEvents);
+  const getProfile = useServerFn(getMyProfile);
+  const [myAreasOnly, setMyAreasOnly] = useState(true);
+
+  const profileQ = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getProfile(),
+    retry: false,
+  });
 
   const eventsQ = useQuery({
-    queryKey: ["open-events"],
-    queryFn: () => list({ data: { city: null, needs: null } }),
+    queryKey: ["open-events", myAreasOnly],
+    queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
     refetchOnWindowFocus: true,
   });
 
@@ -96,7 +105,7 @@ function EventsPage() {
         const lvls = [e.level_min, e.level_max].filter(Boolean).map((x: string) => x.toLowerCase());
         if (!lvls.some((l: string) => l.includes(levelFilter))) return false;
       }
-      if (cityQ) {
+      if (!myAreasOnly && cityQ) {
         const hay = `${e.city ?? ""} ${e.club_name ?? ""}`.toLowerCase();
         if (!hay.includes(cityQ)) return false;
       }
@@ -106,7 +115,7 @@ function EventsPage() {
       }
       return true;
     });
-  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly]);
+  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly, myAreasOnly]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, any[]>();
@@ -261,15 +270,30 @@ function EventsPage() {
               ))}
             </div>
           </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">City or club</div>
+          <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
             <input
-              value={cityFilter}
-              onChange={(e) => setCityFilter(e.target.value)}
-              placeholder="e.g. Alcobendas"
-              className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
+              type="checkbox"
+              checked={myAreasOnly}
+              onChange={(e) => {
+                const on = e.target.checked;
+                setMyAreasOnly(on);
+                if (on) setCityFilter("");
+              }}
+              className="accent-[var(--ball)]"
             />
-          </div>
+            Only my areas
+          </label>
+          {!myAreasOnly && (
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">City or club</div>
+              <input
+                value={cityFilter}
+                onChange={(e) => setCityFilter(e.target.value)}
+                placeholder="e.g. Alcobendas"
+                className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
+              />
+            </div>
+          )}
           <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
             <input
               type="checkbox"
@@ -372,10 +396,25 @@ function EventsPage() {
       )}
 
       {/* List */}
-      {eventsQ.isLoading && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
-      {!eventsQ.isLoading && filtered.length === 0 && (
-        <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm">
-          {selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}
+      {(eventsQ.isLoading || (myAreasOnly && profileQ.isLoading)) && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
+      {!eventsQ.isLoading && !(myAreasOnly && profileQ.isLoading) && filtered.length === 0 && (
+        <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm space-y-3">
+          {myAreasOnly && !profileQ.isLoading && !profileQ.data?.locations?.length ? (
+            <>
+              <p className="font-semibold">No areas selected</p>
+              <p>Add the cities where you play in your profile to see matches near you.</p>
+              <Link
+                to="/app/profile"
+                className="inline-block rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+              >
+                Go to profile →
+              </Link>
+            </>
+          ) : myAreasOnly ? (
+            <p>No upcoming matches in your areas.</p>
+          ) : (
+            <p>{selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}</p>
+          )}
         </div>
       )}
       {selectedIdx === "all" ? (

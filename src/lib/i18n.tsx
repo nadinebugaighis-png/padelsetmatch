@@ -250,6 +250,13 @@ const en: Dict = {
   "welcome.hello": "Hello",
   "welcome.helloSub": "Continue in English",
   "welcome.holaSub": "Continúa en Español",
+
+  // Events
+  "events.myAreas": "Only my areas",
+  "events.noAreasTitle": "No areas selected",
+  "events.noAreasBody": "Add the cities where you play in your profile to see matches near you.",
+  "events.noAreasCta": "Go to profile →",
+  "events.noMatchesMyAreas": "No upcoming matches in your areas.",
 };
 
 const es: Dict = {
@@ -489,6 +496,13 @@ const es: Dict = {
   "welcome.hello": "Hola",
   "welcome.helloSub": "Continue in English",
   "welcome.holaSub": "Continúa en Español",
+
+  // Events
+  "events.myAreas": "Solo mis zonas",
+  "events.noAreasTitle": "Ninguna zona seleccionada",
+  "events.noAreasBody": "Añade las ciudades donde juegas en tu perfil para ver partidos cerca de ti.",
+  "events.noAreasCta": "Ir al perfil →",
+  "events.noMatchesMyAreas": "No hay partidos próximos en tus zonas.",
 };
 
 

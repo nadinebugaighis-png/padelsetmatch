@@ -14,7 +14,7 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, MessageCircle } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, MessageCircle, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/$eventId")({
   component: EventRoute,

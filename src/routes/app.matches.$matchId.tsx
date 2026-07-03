@@ -206,7 +206,7 @@ function ChatRoom() {
           return (
             <div key={m.id} className={`group flex items-end gap-1.5 ${mine ? "justify-end" : "justify-start"}`}>
               {mine && !isEditing && (
-                <div className="flex gap-1 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button
                     type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}

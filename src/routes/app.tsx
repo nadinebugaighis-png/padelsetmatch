@@ -12,9 +12,9 @@ export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
     // getSession recovers from localStorage and refreshes the token if expired
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !sessionData.session) throw redirect({ to: "/auth", search: {} });
+    if (sessionError || !sessionData.session) throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth", search: {} });
+    if (error || !data.user) throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
     return { user: data.user };
   },
   component: AuthShell,
@@ -47,7 +47,7 @@ function AuthShell() {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", search: {}, replace: true });
+    navigate({ to: "/auth", search: { redirect: undefined, join: undefined }, replace: true });
   };
 
   const hasProfile = !!profileQ.data;

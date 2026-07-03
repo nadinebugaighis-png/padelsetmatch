@@ -7,7 +7,7 @@ import { getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/d6b898dc-6712-4cd7-be4d-00e90e615ffc/padel-og.jpg";
+const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/3405870a-80f1-4e7d-a4f1-4277f9982a23/padel-mixed-share.jpg";
 
 export const Route = createFileRoute("/m/$eventId")({
   head: () => {

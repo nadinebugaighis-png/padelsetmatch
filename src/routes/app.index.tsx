@@ -256,10 +256,9 @@ function Discover() {
                 {(() => {
                   const au = (c as any).away_until as string | null | undefined;
                   if (!au || au < new Date().toISOString().slice(0, 10)) return null;
-                  const until = new Date(au).toLocaleDateString(undefined, { day: "numeric", month: "short" });
                   return (
                     <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-500/90 text-black text-[10px] font-bold uppercase tracking-wider">
-                      ✈️ Away until {until}
+                      ✈️ On holidays
                     </div>
                   );
                 })()}

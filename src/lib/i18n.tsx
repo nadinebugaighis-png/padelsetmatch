@@ -12,7 +12,8 @@ const en: Dict = {
   // Landing
   "land.signin": "Sign in",
   "land.chip": "Worldwide · pick your city",
-  "land.h1.a": "find your best",
+  "land.h1.a": "find your",
+  "land.h1.a2": "best",
   "land.h1.b": "Match.",
   "land.lede": "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with.",
   "land.cta": "START MATCH",
@@ -255,7 +256,8 @@ const es: Dict = {
   // Landing
   "land.signin": "Iniciar sesión",
   "land.chip": "En todo el mundo · elige tu ciudad",
-  "land.h1.a": "encuentra tu mejor",
+  "land.h1.a": "encuentra tu",
+  "land.h1.a2": "mejor",
   "land.h1.b": "Match.",
   "land.lede": "Descubre jugadores que encajan con tu nivel, personalidad y estilo de vida. Ya sea para grandes partidos, nuevos amigos o conexiones reales, te ayudamos a encontrar gente con la que de verdad conectas.",
   "land.cta": "INICIAR MATCH",

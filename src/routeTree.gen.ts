@@ -22,6 +22,7 @@ import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
@@ -95,6 +96,11 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
+const AppJoinSetupRoute = AppJoinSetupRouteImport.update({
+  id: '/join-setup',
+  path: '/join-setup',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppHiddenRoute = AppHiddenRouteImport.update({
   id: '/hidden',
   path: '/hidden',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/hidden': typeof AppHiddenRoute
+  '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/hidden': typeof AppHiddenRoute
+  '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/hidden': typeof AppHiddenRoute
+  '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/admin'
     | '/app/hidden'
+    | '/app/join-setup'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/admin'
     | '/app/hidden'
+    | '/app/join-setup'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/admin'
     | '/app/hidden'
+    | '/app/join-setup'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
@@ -369,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/join-setup': {
+      id: '/app/join-setup'
+      path: '/join-setup'
+      fullPath: '/app/join-setup'
+      preLoaderRoute: typeof AppJoinSetupRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/hidden': {
       id: '/app/hidden'
       path: '/hidden'
@@ -447,6 +466,7 @@ const AppEventsEventIdRouteWithChildren =
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
   AppHiddenRoute: typeof AppHiddenRoute
+  AppJoinSetupRoute: typeof AppJoinSetupRoute
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -460,6 +480,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
   AppHiddenRoute: AppHiddenRoute,
+  AppJoinSetupRoute: AppJoinSetupRoute,
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,

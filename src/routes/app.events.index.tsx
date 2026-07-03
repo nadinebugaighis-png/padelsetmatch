@@ -54,7 +54,7 @@ function EventsPage() {
 
   const today = startOfDay(new Date());
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i)), [today.getTime()]);
-  const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">(0);
+  const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">("all");
   const [customDate, setCustomDate] = useState<string>("");
 
   const [filtersOpen, setFiltersOpen] = useState(false);

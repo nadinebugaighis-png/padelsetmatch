@@ -18,11 +18,21 @@ function fmtWhen(iso: string) {
   });
 }
 
+function shareOrigin() {
+  if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
+  const { hostname, origin } = window.location;
+  if (hostname === "localhost" || hostname.includes("preview--") || hostname.includes("id-preview--")) {
+    return "https://padelmatchapp.lovable.app";
+  }
+  return origin;
+}
+
 function PublicMatchPage() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
   const getPublic = useServerFn(getPublicMatch);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
@@ -37,13 +47,23 @@ function PublicMatchPage() {
   const genderLabel = !match ? "" : match.gender_rule === "mixed" ? "Mixed" : match.gender_rule === "men_only" ? "Men only" : "Women only";
   const totalSpots = 4;
   const openSpots = match ? Math.max(0, totalSpots - (match.filled ?? 0)) : 0;
+  const shareUrl = `${shareOrigin()}/m/${eventId}`;
 
-  const onShare = async () => {
-    const url = window.location.href;
+  const copyShareLink = async () => {
     try {
-      if (navigator.share) await navigator.share({ title: "PadelMatch", url });
-      else { await navigator.clipboard.writeText(url); toast.success("Link copied"); }
-    } catch { /* ignore */ }
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied");
+    } catch {
+      toast.error("Could not copy the link");
+    }
+  };
+
+  const nativeShare = async () => {
+    try {
+      await navigator.share({ title: "PadelMatch", url: shareUrl });
+    } catch (err: any) {
+      if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
+    }
   };
 
   const onJoinClick = () => {
@@ -124,7 +144,7 @@ function PublicMatchPage() {
               >
                 {openSpots === 0 ? "Match is full" : hasSession ? "Join this match" : "Sign up & join"}
               </button>
-              <button onClick={onShare} className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
+              <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> Share
               </button>
               <p className="text-[11px] text-[var(--cream)]/50 text-center pt-1">
@@ -132,6 +152,66 @@ function PublicMatchPage() {
               </p>
             </div>
           </>
+        )}
+        {shareOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/80 px-4 pb-4 pt-10"
+            onClick={() => setShareOpen(false)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Share match"
+              className="w-full max-w-md rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-[var(--ball)]">Share match</div>
+                  <p className="mt-1 text-sm text-[var(--cream)]/70">Send this invitation link so players can join an open spot.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShareOpen(false)}
+                  className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70"
+                >
+                  Close
+                </button>
+              </div>
+              <input
+                readOnly
+                value={shareUrl}
+                onFocus={(e) => e.currentTarget.select()}
+                className="mt-4 w-full rounded-full border border-[var(--cream)]/20 bg-black/30 px-4 py-2 text-sm text-[var(--cream)] outline-none"
+              />
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <a
+                  href={shareUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+                >
+                  Open link
+                </a>
+                <button
+                  type="button"
+                  onClick={copyShareLink}
+                  className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
+                >
+                  Copy link
+                </button>
+              </div>
+              {typeof navigator !== "undefined" && "share" in navigator && (
+                <button
+                  type="button"
+                  onClick={nativeShare}
+                  className="mt-2 w-full rounded-full border border-[var(--cream)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
+                >
+                  Share with phone
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </main>

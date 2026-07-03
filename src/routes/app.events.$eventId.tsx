@@ -38,6 +38,15 @@ function fmtWhen(iso: string) {
   });
 }
 
+function shareOrigin() {
+  if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
+  const { hostname, origin } = window.location;
+  if (hostname === "localhost" || hostname.includes("preview--") || hostname.includes("id-preview--")) {
+    return "https://padelmatchapp.lovable.app";
+  }
+  return origin;
+}
+
 function EventDetail() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
@@ -89,6 +98,7 @@ function EventDetail() {
   }, [eventId, eventQ.data?.me?.iAmParticipant, qc]);
 
   const [text, setText] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -102,6 +112,25 @@ function EventDetail() {
   const mapsUrl = event.club_place_id
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name + " " + (event.city ?? ""))}`;
+  const shareUrl = `${shareOrigin()}/m/${eventId}`;
+  const shareText = `Join my padel match on PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`;
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Share link copied");
+    } catch {
+      toast.error("Could not copy the link");
+    }
+  };
+
+  const nativeShare = async () => {
+    try {
+      await navigator.share({ title: "PadelMatch", text: shareText, url: shareUrl });
+    } catch (err: any) {
+      if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
+    }
+  };
 
   const genderLabel = event.gender_rule === "mixed" ? "Mixed" : event.gender_rule === "men_only" ? "Men only" : "Women only";
   const canJoin =
@@ -166,22 +195,74 @@ function EventDetail() {
           <ArrowLeft className="w-4 h-4" /> All matches
         </Link>
         <button
-          onClick={async () => {
-            const url = `${window.location.origin}/m/${eventId}`;
-            const text = `Join my padel match on PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`;
-            try {
-              if (navigator.share) await navigator.share({ title: "PadelMatch", text, url });
-              else {
-                await navigator.clipboard.writeText(url);
-                toast.success("Share link copied");
-              }
-            } catch { /* user cancelled */ }
-          }}
+          type="button"
+          onClick={() => setShareOpen(true)}
           className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ball)] border border-[var(--ball)]/40 rounded-full px-3 py-1"
         >
           <Share2 className="w-3.5 h-3.5" /> Share
         </button>
       </div>
+
+      {shareOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/80 px-4 pb-4 pt-10"
+          onClick={() => setShareOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Share match"
+            className="w-full max-w-md rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-xs uppercase tracking-widest text-[var(--ball)]">Share match</div>
+                <p className="mt-1 text-sm text-[var(--cream)]/70">Send this invitation link so players can join an open spot.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShareOpen(false)}
+                className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70"
+              >
+                Close
+              </button>
+            </div>
+            <input
+              readOnly
+              value={shareUrl}
+              onFocus={(e) => e.currentTarget.select()}
+              className="mt-4 w-full rounded-full border border-[var(--cream)]/20 bg-black/30 px-4 py-2 text-sm text-[var(--cream)] outline-none"
+            />
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <a
+                href={shareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+              >
+                Open link
+              </a>
+              <button
+                type="button"
+                onClick={copyShareLink}
+                className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
+              >
+                Copy link
+              </button>
+            </div>
+            {typeof navigator !== "undefined" && "share" in navigator && (
+              <button
+                type="button"
+                onClick={nativeShare}
+                className="mt-2 w-full rounded-full border border-[var(--cream)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
+              >
+                Share with phone
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="rounded-xl border border-[var(--cream)]/10 bg-black/30 p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">

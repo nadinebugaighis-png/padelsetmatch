@@ -44,7 +44,7 @@ function Landing() {
         </div>
         <div className="flex items-center gap-3">
           <LangSwitch />
-          <Link to="/auth" className="chip chip-ball">{t("land.signin")}</Link>
+          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="chip chip-ball">{t("land.signin")}</Link>
         </div>
       </header>
 
@@ -59,7 +59,7 @@ function Landing() {
             {t("land.lede")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
+            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
               {t("land.cta")}
             </Link>
             <ShareQR url="https://padelmatch.lovable.app" label="Join me on PadelMatch" />
@@ -102,7 +102,7 @@ function Landing() {
             <h2 className="text-display text-4xl md:text-5xl">{t("land.preview.title")}</h2>
             <p className="mt-2 text-[var(--cream)]/70 max-w-lg">{t("land.preview.sub")}</p>
           </div>
-          <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
+          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
             {t("land.preview.cta")}
           </Link>
         </div>
@@ -122,7 +122,7 @@ function Landing() {
                 <div className="text-xs opacity-80">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
-                <Link to="/auth" className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
+                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
               </div>
             </div>
           ))}

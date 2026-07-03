@@ -307,7 +307,7 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ---------- Chat: list + send ----------
+// ---------- Chat: list + send + edit/delete ----------
 export const listEventMessages = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
@@ -315,7 +315,7 @@ export const listEventMessages = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { data: msgs, error } = await supabase
       .from("match_event_messages")
-      .select("id, sender_profile_id, body, created_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url)")
+      .select("id, sender_profile_id, body, created_at, edited_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url)")
       .eq("match_event_id", data.id)
       .order("created_at", { ascending: true })
       .limit(200);
@@ -339,19 +339,76 @@ export const sendEventMessage = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const editEventMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { messageId: string; body: string }) =>
+    z.object({ messageId: z.string().uuid(), body: z.string().min(1).max(2000) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    const { error } = await supabase
+      .from("match_event_messages")
+      .update({ body: data.body, edited_at: new Date().toISOString() } as never)
+      .eq("id", data.messageId)
+      .eq("sender_profile_id", profile.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteEventMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { messageId: string }) => z.object({ messageId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    const { error } = await supabase
+      .from("match_event_messages")
+      .delete()
+      .eq("id", data.messageId)
+      .eq("sender_profile_id", profile.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 // ---------- Public read: shareable match view (no auth) ----------
 export const getPublicMatch = createServerFn({ method: "GET" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
-    const { createClient } = await import("@supabase/supabase-js");
-    const url = process.env.SUPABASE_URL!;
-    const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
-    const client = createClient(url, key, {
-      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
-    });
-    const { data: view, error } = await client.rpc("public_match_view", { _event_id: data.id });
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: event, error } = await supabaseAdmin
+      .from("match_events")
+      .select("id, starts_at, club_name, club_address, city, country, gender_rule, level_min, level_max, note, court_booked, status, extra_confirmed, host:profiles!match_events_host_profile_id_fkey(first_name)")
+      .eq("id", data.id)
+      .in("status", ["open", "full"])
+      .gt("starts_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
+      .maybeSingle();
     if (error) throw new Error(error.message);
-    return { match: (view ?? null) as PublicMatchView | null };
+    if (!event) return { match: null };
+
+    const { data: participants, error: participantsError } = await supabaseAdmin
+      .from("match_event_participants")
+      .select("joined_at, profiles(first_name)")
+      .eq("match_event_id", data.id)
+      .order("joined_at", { ascending: true });
+    if (participantsError) throw new Error(participantsError.message);
+
+    const participantNames = (participants ?? [])
+      .map((participant: any) => participant.profiles?.first_name)
+      .filter((name: unknown): name is string => typeof name === "string" && name.length > 0);
+    const extraConfirmed = event.extra_confirmed ?? 0;
+    const filled = participantNames.length + extraConfirmed;
+
+    return {
+      match: {
+        ...event,
+        extra_confirmed: extraConfirmed,
+        filled,
+        participant_names: participantNames,
+      } as PublicMatchView,
+    };
   });
 
 export type PublicMatchView = {

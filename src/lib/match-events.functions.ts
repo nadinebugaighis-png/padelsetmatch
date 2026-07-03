@@ -338,3 +338,61 @@ export const sendEventMessage = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ---------- Public read: shareable match view (no auth) ----------
+export const getPublicMatch = createServerFn({ method: "GET" })
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { createClient } = await import("@supabase/supabase-js");
+    const url = process.env.SUPABASE_URL!;
+    const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
+    const client = createClient(url, key, {
+      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    });
+    const { data: view, error } = await client.rpc("public_match_view", { _event_id: data.id });
+    if (error) throw new Error(error.message);
+    if (!view) return { match: null as null | Record<string, unknown> };
+    return { match: view as Record<string, unknown> };
+  });
+
+// ---------- Save "lite" profile: first_name + level (+ optional city) ----------
+export const saveLiteProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { first_name: string; level: (typeof PADEL_LEVELS)[number]; city?: string | null }) =>
+    z.object({
+      first_name: z.string().trim().min(1).max(40),
+      level: z.enum(PADEL_LEVELS),
+      city: z.string().trim().max(120).nullable().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: existing } = await supabase
+      .from("profiles")
+      .select("id, onboarding_stage")
+      .eq("user_id", userId)
+      .maybeSingle();
+    const nextStage = existing?.onboarding_stage === "complete" ? "complete" : "lite";
+    if (existing) {
+      const patch: Record<string, unknown> = {
+        first_name: data.first_name,
+        level: data.level,
+        onboarding_stage: nextStage,
+      };
+      if (data.city) patch.locations = [data.city];
+      const { error } = await supabase.from("profiles").update(patch as never).eq("user_id", userId);
+      if (error) throw new Error(error.message);
+    } else {
+      const row: Record<string, unknown> = {
+        user_id: userId,
+        first_name: data.first_name,
+        level: data.level,
+        onboarding_stage: "lite",
+        is_seed: false,
+      };
+      if (data.city) row.locations = [data.city];
+      const { error } = await supabase.from("profiles").insert(row as never);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });

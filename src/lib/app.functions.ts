@@ -705,25 +705,49 @@ export const reportProfile = createServerFn({ method: "POST" })
       .maybeSingle();
     const targetUserId = (target as { user_id: string | null } | null)?.user_id ?? null;
 
-    // Log the report for staff review
-    await supabaseAdmin.from("reports" as never).insert({
-      reporter_profile_id: myId,
-      reported_profile_id: data.reportedProfileId,
-      reported_user_id: targetUserId,
-      reason: data.reason,
-      status: "pending",
-    } as never);
+    // Prevent duplicate pending reports from the same reporter against the same target
+    const { data: existing } = await supabaseAdmin
+      .from("reports" as never)
+      .select("id")
+      .eq("reporter_profile_id", myId)
+      .eq("reported_profile_id", data.reportedProfileId)
+      .eq("status", "pending")
+      .maybeSingle();
 
-    // Auto-suspend: instantly hide the reported account everywhere, pending review
-    await supabaseAdmin
-      .from("profiles" as never)
-      .update({ suspended_at: new Date().toISOString() } as never)
-      .eq("id", data.reportedProfileId);
+    if (!existing) {
+      // Log the report for staff review
+      await supabaseAdmin.from("reports" as never).insert({
+        reporter_profile_id: myId,
+        reported_profile_id: data.reportedProfileId,
+        reported_user_id: targetUserId,
+        reason: data.reason,
+        status: "pending",
+      } as never);
+    }
+
+    // Auto-suspend ONLY after 3+ distinct reporters have flagged this account.
+    // A single unverified report must not disable an account (DoS risk).
+    const { data: distinctReports } = await supabaseAdmin
+      .from("reports" as never)
+      .select("reporter_profile_id")
+      .eq("reported_profile_id", data.reportedProfileId)
+      .eq("status", "pending");
+    const distinctReporterCount = new Set(
+      ((distinctReports as Array<{ reporter_profile_id: string }> | null) ?? []).map((r) => r.reporter_profile_id),
+    ).size;
+    if (distinctReporterCount >= 3) {
+      await supabaseAdmin
+        .from("profiles" as never)
+        .update({ suspended_at: new Date().toISOString() } as never)
+        .eq("id", data.reportedProfileId)
+        .is("suspended_at", null);
+    }
 
     // Auto-block from the reporter's side so they never see the account again
     await supabaseAdmin
       .from("blocks" as never)
       .insert({ blocker_profile_id: myId, blocked_profile_id: data.reportedProfileId } as never);
+
 
     return { ok: true };
   });

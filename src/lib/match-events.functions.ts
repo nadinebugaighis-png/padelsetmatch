@@ -307,7 +307,7 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// ---------- Chat: list + send ----------
+// ---------- Chat: list + send + edit/delete ----------
 export const listEventMessages = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
@@ -315,7 +315,7 @@ export const listEventMessages = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { data: msgs, error } = await supabase
       .from("match_event_messages")
-      .select("id, sender_profile_id, body, created_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url)")
+      .select("id, sender_profile_id, body, created_at, edited_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url)")
       .eq("match_event_id", data.id)
       .order("created_at", { ascending: true })
       .limit(200);
@@ -335,6 +335,40 @@ export const sendEventMessage = createServerFn({ method: "POST" })
     const { error } = await supabase
       .from("match_event_messages")
       .insert({ match_event_id: data.id, sender_profile_id: profile.id, body: data.body });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const editEventMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { messageId: string; body: string }) =>
+    z.object({ messageId: z.string().uuid(), body: z.string().min(1).max(2000) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    const { error } = await supabase
+      .from("match_event_messages")
+      .update({ body: data.body, edited_at: new Date().toISOString() } as never)
+      .eq("id", data.messageId)
+      .eq("sender_profile_id", profile.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteEventMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { messageId: string }) => z.object({ messageId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    const { error } = await supabase
+      .from("match_event_messages")
+      .delete()
+      .eq("id", data.messageId)
+      .eq("sender_profile_id", profile.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

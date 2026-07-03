@@ -53,7 +53,16 @@ function EventDetail() {
 
   const eventQ = useQuery({
     queryKey: ["event", eventId],
-    queryFn: () => get({ data: { id: eventId } }),
+    queryFn: async () => {
+      try {
+        return await get({ data: { id: eventId } });
+      } catch (err: any) {
+        // Swallow transient auth errors during sign-out; the auth gate will redirect.
+        if (String(err?.message ?? "").includes("Unauthorized")) return { event: null, me: null };
+        throw err;
+      }
+    },
+    retry: false,
     refetchOnWindowFocus: true,
   });
 

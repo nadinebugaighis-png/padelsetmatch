@@ -375,10 +375,32 @@ function EventsPage() {
       {eventsQ.isLoading && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
       {!eventsQ.isLoading && filtered.length === 0 && (
         <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm">
-          No open matches for this day.
+          {selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}
         </div>
       )}
-      <div className="space-y-3">{filtered.map(renderCard)}</div>
+      {selectedIdx === "all" ? (
+        <div className="space-y-5">
+          {grouped.map((g) => {
+            const diff = Math.round((startOfDay(g.date).getTime() - today.getTime()) / 86400000);
+            const label =
+              diff === 0
+                ? "TODAY"
+                : diff === 1
+                ? "TOMORROW"
+                : g.date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }).toUpperCase();
+            return (
+              <div key={g.key}>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 font-semibold mb-2 px-1">
+                  {label}
+                </div>
+                <div className="space-y-3">{g.items.map(renderCard)}</div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="space-y-3">{filtered.map(renderCard)}</div>
+      )}
 
       {/* Create match CTA */}
       <div className="mt-5 rounded-2xl border border-[var(--cream)]/15 bg-black/20 p-4 flex items-center gap-3">

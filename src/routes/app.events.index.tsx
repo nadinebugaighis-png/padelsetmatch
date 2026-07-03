@@ -306,17 +306,28 @@ function EventsPage() {
             </button>
           );
         })}
-        <button
-          onClick={() => setSelectedIdx("all")}
-          className={`shrink-0 rounded-full border w-11 h-11 flex items-center justify-center ${
-            selectedIdx === "all"
+        <label
+          className={`relative shrink-0 rounded-full border w-11 h-11 flex items-center justify-center cursor-pointer ${
+            selectedIdx === "custom"
               ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
-          aria-label="All upcoming"
+          aria-label="Pick a date"
         >
           <CalendarDays className="w-4 h-4" />
-        </button>
+          <input
+            type="date"
+            value={customDate}
+            min={new Date().toISOString().slice(0, 10)}
+            onChange={(e) => {
+              const v = e.target.value;
+              setCustomDate(v);
+              setSelectedIdx(v ? "custom" : 0);
+            }}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+        </label>
+
       </div>
 
       {/* List */}

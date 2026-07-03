@@ -52,12 +52,12 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/app` },
+          options: { emailRedirectTo: oauthRedirectUri() },
         });
         if (error) throw error;
         if (data.session) {
           toast.success(t("auth.welcome"));
-          navigate({ to: "/app" });
+          navigate(afterAuthTarget() as never);
         } else {
           toast.success(t("auth.confirmEmail"));
           setMode("signin");
@@ -65,7 +65,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/app" });
+        navigate(afterAuthTarget() as never);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("auth.fail"));
@@ -76,14 +76,14 @@ function AuthPage() {
 
   const google = async () => {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/app" });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
     if (result.error) {
       toast.error(result.error.message);
       setLoading(false);
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/app" });
+    navigate(afterAuthTarget() as never);
   };
 
   return (
@@ -104,10 +104,10 @@ function AuthPage() {
         <Button
           onClick={async () => {
             setLoading(true);
-            const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/app" });
+            const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
             if (result.error) { toast.error(result.error.message); setLoading(false); return; }
             if (result.redirected) return;
-            navigate({ to: "/app" });
+            navigate(afterAuthTarget() as never);
           }}
           disabled={loading}
           variant="secondary"

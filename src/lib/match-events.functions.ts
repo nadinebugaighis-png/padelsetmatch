@@ -183,8 +183,8 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!event) throw new Error("Match not found");
     if (event.status !== "open") throw new Error("This match is no longer open");
-    if (event.gender_rule === "men_only" && profile.gender !== "man") throw new Error("This match is for men only");
-    if (event.gender_rule === "women_only" && profile.gender !== "woman") throw new Error("This match is for women only");
+    if (event.gender_rule === "men_only" && profile.gender && profile.gender !== "man") throw new Error("This match is for men only");
+    if (event.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") throw new Error("This match is for women only");
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })

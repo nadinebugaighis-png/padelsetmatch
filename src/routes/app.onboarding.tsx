@@ -25,6 +25,12 @@ import { useI18n } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 
 export const Route = createFileRoute("/app/onboarding")({
+  head: () => ({
+    meta: [
+      { title: "Create your profile · PadelMatch" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Onboarding,
 });
 

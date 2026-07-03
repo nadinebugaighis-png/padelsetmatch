@@ -5,7 +5,11 @@ export const Route = createFileRoute("/privacy")({
     meta: [
       { title: "Privacy Policy · PadelMatch" },
       { name: "description", content: "How PadelMatch collects, stores and protects your data." },
+      { property: "og:title", content: "Privacy Policy · PadelMatch" },
+      { property: "og:description", content: "How PadelMatch collects, stores and protects your data." },
+      { property: "og:url", content: "https://padelmatchapp.lovable.app/privacy" },
     ],
+    links: [{ rel: "canonical", href: "https://padelmatchapp.lovable.app/privacy" }],
   }),
   component: Privacy,
 });

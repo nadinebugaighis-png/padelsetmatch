@@ -1,0 +1,11 @@
+# PadelMatch
+
+> PadelMatch helps padel players find partners, friends, and meaningful connections through shared games. Launched in Madrid, expanding worldwide.
+
+PadelMatch matches players by level, personality, location and lifestyle, so people who love padel can meet on court and get to know each other through the game.
+
+## Pages
+
+- [Home](/): What PadelMatch is and how to join.
+- [Privacy Policy](/privacy): How we handle your data.
+- [Terms of Service](/terms): Rules for using PadelMatch.

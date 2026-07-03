@@ -71,12 +71,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Find players you genuinely click with. Matches, friendship, and great padel games — worldwide." },
 
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://padelspark.lovable.app/og-share.jpg" },
+      { property: "og:image", content: "https://padelmatch.lovable.app/og-share.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { property: "og:image:type", content: "image/jpeg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://padelspark.lovable.app/og-share.jpg" },
+      { name: "twitter:image", content: "https://padelmatch.lovable.app/og-share.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

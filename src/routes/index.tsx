@@ -56,7 +56,7 @@ function Landing() {
             <Link to="/auth" className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
               {t("land.cta")}
             </Link>
-            <ShareQR url="https://padelspark.lovable.app" label="Join me on PadelMatch" />
+            <ShareQR url="https://padelmatch.lovable.app" label="Join me on PadelMatch" />
           </div>
           <p className="mt-4 text-base font-medium text-[var(--cream)]/90 max-w-md tracking-wide">
             {t("land.cta.sub")}

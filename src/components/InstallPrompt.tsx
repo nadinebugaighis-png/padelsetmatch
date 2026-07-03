@@ -37,7 +37,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
   const ios = isIOS();
   const android = isAndroid();
   const safari = isSafari();
-  const appUrl = typeof window !== "undefined" ? window.location.origin : "https://padelspark.lovable.app";
+  const appUrl = typeof window !== "undefined" ? window.location.origin : "https://padelmatch.lovable.app";
 
   useEffect(() => {
     if (window.matchMedia("(display-mode: standalone)").matches) {

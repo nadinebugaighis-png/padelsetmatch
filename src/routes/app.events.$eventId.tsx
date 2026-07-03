@@ -481,7 +481,7 @@ function EventDetail() {
                     </div>
                   )}
                   <div
-                    className={`max-w-[min(80%,18rem)] rounded-2xl px-3 py-2 text-base sm:text-sm ${
+                    className={`${mine ? "max-w-[min(72%,16rem)]" : "max-w-[min(80%,18rem)]"} rounded-2xl px-3 py-2 text-base sm:text-sm ${
                       mine
                         ? "bg-[var(--ball)]/25 text-[var(--cream)]"
                         : "bg-[var(--court-deep)] border border-[var(--cream)]/10 text-[var(--cream)]"

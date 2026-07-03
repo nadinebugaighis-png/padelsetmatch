@@ -5,7 +5,11 @@ export const Route = createFileRoute("/terms")({
     meta: [
       { title: "Terms of Service · PadelMatch" },
       { name: "description", content: "Terms of Service for PadelMatch — the padel-first matching app." },
+      { property: "og:title", content: "Terms of Service · PadelMatch" },
+      { property: "og:description", content: "Terms of Service for PadelMatch — the padel-first matching app." },
+      { property: "og:url", content: "https://padelmatchapp.lovable.app/terms" },
     ],
+    links: [{ rel: "canonical", href: "https://padelmatchapp.lovable.app/terms" }],
   }),
   component: Terms,
 });

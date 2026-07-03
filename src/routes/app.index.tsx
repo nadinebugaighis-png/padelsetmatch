@@ -9,6 +9,12 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/")({
+  head: () => ({
+    meta: [
+      { title: "Discover players · PadelMatch" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Discover,
 });
 

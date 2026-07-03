@@ -7,8 +7,29 @@ import { getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/a9d82d6d-fb9a-4b5a-8eb3-7932f3af664e/padel-og.jpg";
+
 export const Route = createFileRoute("/m/$eventId")({
-  head: ({ params }) => ({ meta: [{ title: `Padel match — PadelMatch` }, { name: "description", content: `Join this padel match on PadelMatch (${params.eventId.slice(0, 8)}).` }] }),
+  head: () => {
+    const title = "Join my padel match — PadelMatch";
+    const description = "You're invited to a padel match on PadelMatch. Tap to grab an open spot.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:image", content: OG_IMAGE },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "640" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: OG_IMAGE },
+      ],
+    };
+  },
   component: PublicMatchPage,
 });
 

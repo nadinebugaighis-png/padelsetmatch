@@ -9,22 +9,40 @@ import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+    join: typeof s.join === "string" ? s.join : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { redirect, join } = Route.useSearch();
   const t = useT();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
+    if (join) return { to: "/app/join-setup", search: { join } };
+    if (redirect) return { to: redirect };
+    return { to: "/app" };
+  };
+  const oauthRedirectUri = () => {
+    const base = window.location.origin;
+    if (join) return `${base}/app/join-setup?join=${encodeURIComponent(join)}`;
+    if (redirect) return `${base}${redirect}`;
+    return `${base}/app`;
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app" });
+      if (data.session) navigate(afterAuthTarget() as never);
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -239,7 +239,7 @@ function ChatRoom() {
                     <textarea
                       value={editingText}
                       onChange={(e) => setEditingText(e.target.value)}
-                      className="w-full bg-[var(--court-deep)]/20 text-[var(--court-deep)] rounded p-1.5 text-sm resize-none"
+                      className="w-full bg-[var(--court-deep)]/20 text-[var(--court-deep)] rounded p-1.5 text-base resize-none"
                       rows={2}
                       autoFocus
                     />

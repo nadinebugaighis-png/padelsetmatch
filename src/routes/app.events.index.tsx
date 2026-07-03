@@ -103,7 +103,7 @@ function EventsPage() {
       }
       return true;
     });
-  }, [eventsQ.data, selectedIdx, days, genderFilter, levelFilter, cityFilter, openOnly]);
+  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly]);
 
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));

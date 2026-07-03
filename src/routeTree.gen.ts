@@ -17,6 +17,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
@@ -68,6 +69,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const MEventIdRoute = MEventIdRouteImport.update({
+  id: '/m/$eventId',
+  path: '/m/$eventId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppQuestionsRoute = AppQuestionsRouteImport.update({
   id: '/questions',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/m/$eventId': typeof MEventIdRoute
   '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/m/$eventId'
     | '/app'
     | '/app/events/$eventId'
     | '/app/events/new'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
@@ -261,6 +273,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  MEventIdRoute: typeof MEventIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -320,6 +333,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/m/$eventId': {
+      id: '/m/$eventId'
+      path: '/m/$eventId'
+      fullPath: '/m/$eventId'
+      preLoaderRoute: typeof MEventIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/questions': {
       id: '/app/questions'
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  MEventIdRoute: MEventIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

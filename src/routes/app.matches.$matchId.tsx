@@ -51,7 +51,7 @@ function ChatRoom() {
     return () => { supabase.removeChannel(ch); };
   }, [matchId, qc]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [q.data?.messages.length]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "auto", block: "nearest" }); }, [q.data?.messages.length]);
 
   const markRead = useServerFn(markMatchRead);
   useEffect(() => {

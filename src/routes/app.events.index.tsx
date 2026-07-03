@@ -270,15 +270,30 @@ function EventsPage() {
               ))}
             </div>
           </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">City or club</div>
+          <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
             <input
-              value={cityFilter}
-              onChange={(e) => setCityFilter(e.target.value)}
-              placeholder="e.g. Alcobendas"
-              className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
+              type="checkbox"
+              checked={myAreasOnly}
+              onChange={(e) => {
+                const on = e.target.checked;
+                setMyAreasOnly(on);
+                if (on) setCityFilter("");
+              }}
+              className="accent-[var(--ball)]"
             />
-          </div>
+            Only my areas
+          </label>
+          {!myAreasOnly && (
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">City or club</div>
+              <input
+                value={cityFilter}
+                onChange={(e) => setCityFilter(e.target.value)}
+                placeholder="e.g. Alcobendas"
+                className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
+              />
+            </div>
+          )}
           <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
             <input
               type="checkbox"

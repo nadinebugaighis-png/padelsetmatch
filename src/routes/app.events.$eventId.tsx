@@ -303,14 +303,6 @@ function EventDetail() {
             Join this match
           </button>
         )}
-        {me?.iAmParticipant && (
-          <a
-            href="#event-chat"
-            className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
-          >
-            <MessageCircle className="w-4 h-4" /> Open chat room
-          </a>
-        )}
         {me?.iAmParticipant && !me?.iAmHost && (
           <button
             onClick={onLeave}
@@ -327,25 +319,11 @@ function EventDetail() {
             >
               Edit match
             </button>
-            <div className="flex gap-2">
-              <button
-                onClick={onToggleBooked}
-                className="flex-1 py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/80"
-              >
-                {event.court_booked ? "Mark court not booked" : "Mark court booked ✅"}
-              </button>
-              <button
-                onClick={onCancel}
-                className="px-4 py-2 rounded-full border border-red-500/30 text-xs uppercase tracking-widest text-red-300"
-              >
-                Cancel
-              </button>
-            </div>
             <button
-              onClick={onDelete}
-              className="w-full py-2 rounded-full border border-red-500/40 text-xs uppercase tracking-widest text-red-300"
+              onClick={onToggleBooked}
+              className="w-full py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/80"
             >
-              Delete match
+              {event.court_booked ? "Mark court not booked" : "Mark court booked ✅"}
             </button>
           </>
         )}
@@ -354,8 +332,9 @@ function EventDetail() {
         )}
       </div>
 
-      {/* Chat — visible to participants */}
-      {me?.iAmParticipant && (
+      {/* Chat — auto-opens for participants once at least 2 players joined */}
+      {me?.iAmParticipant && (event.participants?.length ?? 0) >= 2 && (
+
         <div id="event-chat" className="mt-6 scroll-mt-6">
           <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-2">Group chat</div>
           <div

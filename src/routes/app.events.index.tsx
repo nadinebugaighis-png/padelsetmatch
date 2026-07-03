@@ -105,7 +105,7 @@ function EventsPage() {
         const lvls = [e.level_min, e.level_max].filter(Boolean).map((x: string) => x.toLowerCase());
         if (!lvls.some((l: string) => l.includes(levelFilter))) return false;
       }
-      if (cityQ) {
+      if (!myAreasOnly && cityQ) {
         const hay = `${e.city ?? ""} ${e.club_name ?? ""}`.toLowerCase();
         if (!hay.includes(cityQ)) return false;
       }

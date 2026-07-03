@@ -46,10 +46,18 @@ function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
 function EventsPage() {
   const navigate = useNavigate();
   const list = useServerFn(listOpenEvents);
+  const getProfile = useServerFn(getMyProfile);
+  const [myAreasOnly, setMyAreasOnly] = useState(true);
+
+  const profileQ = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getProfile(),
+    retry: false,
+  });
 
   const eventsQ = useQuery({
-    queryKey: ["open-events"],
-    queryFn: () => list({ data: { city: null, needs: null } }),
+    queryKey: ["open-events", myAreasOnly],
+    queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
     refetchOnWindowFocus: true,
   });
 

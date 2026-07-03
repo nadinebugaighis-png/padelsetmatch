@@ -501,7 +501,7 @@ export type Database = {
       }
       profiles: {
         Row: {
-          age: number
+          age: number | null
           age_max: number
           age_min: number
           availability: string[] | null
@@ -512,7 +512,7 @@ export type Database = {
           free_court_access: boolean
           free_court_note: string | null
           friend_interested_in: string[]
-          gender: string
+          gender: string | null
           gender_custom: string | null
           id: string
           intents: string[]
@@ -523,8 +523,9 @@ export type Database = {
           locations: string[]
           looking_for: string
           mixed_doubles: boolean | null
-          nationality: string
+          nationality: string | null
           no_show_count: number
+          onboarding_stage: string
           padel_style: string[]
           partner_interested_in: string[]
           personal_traits: string[]
@@ -535,10 +536,10 @@ export type Database = {
           suspended_at: string | null
           updated_at: string
           user_id: string | null
-          zone: string
+          zone: string | null
         }
         Insert: {
-          age: number
+          age?: number | null
           age_max?: number
           age_min?: number
           availability?: string[] | null
@@ -549,7 +550,7 @@ export type Database = {
           free_court_access?: boolean
           free_court_note?: string | null
           friend_interested_in?: string[]
-          gender: string
+          gender?: string | null
           gender_custom?: string | null
           id?: string
           intents?: string[]
@@ -560,8 +561,9 @@ export type Database = {
           locations?: string[]
           looking_for?: string
           mixed_doubles?: boolean | null
-          nationality: string
+          nationality?: string | null
           no_show_count?: number
+          onboarding_stage?: string
           padel_style?: string[]
           partner_interested_in?: string[]
           personal_traits?: string[]
@@ -572,10 +574,10 @@ export type Database = {
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
-          zone: string
+          zone?: string | null
         }
         Update: {
-          age?: number
+          age?: number | null
           age_max?: number
           age_min?: number
           availability?: string[] | null
@@ -586,7 +588,7 @@ export type Database = {
           free_court_access?: boolean
           free_court_note?: string | null
           friend_interested_in?: string[]
-          gender?: string
+          gender?: string | null
           gender_custom?: string | null
           id?: string
           intents?: string[]
@@ -597,8 +599,9 @@ export type Database = {
           locations?: string[]
           looking_for?: string
           mixed_doubles?: boolean | null
-          nationality?: string
+          nationality?: string | null
           no_show_count?: number
+          onboarding_stage?: string
           padel_style?: string[]
           partner_interested_in?: string[]
           personal_traits?: string[]
@@ -609,7 +612,7 @@ export type Database = {
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
-          zone?: string
+          zone?: string | null
         }
         Relationships: []
       }
@@ -718,6 +721,7 @@ export type Database = {
         Returns: boolean
       }
       my_profile_id: { Args: never; Returns: string }
+      public_match_view: { Args: { _event_id: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

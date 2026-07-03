@@ -91,9 +91,29 @@ function PublicMatchPage() {
               {match.host?.first_name && (
                 <p className="text-xs text-[var(--cream)]/60 pt-2">Hosted by <span className="text-[var(--cream)]">{match.host.first_name}</span></p>
               )}
-              {match.participant_names.length > 0 && (
-                <p className="text-xs text-[var(--cream)]/60">Playing: {match.participant_names.join(", ")}</p>
-              )}
+
+              {/* Players — tap an open spot to join */}
+              <div className="pt-3">
+                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">Players</div>
+                <div className="flex flex-wrap gap-2">
+                  {match.participant_names.map((name, i) => (
+                    <div key={`p-${i}`} className="flex items-center gap-2 bg-black/30 border border-[var(--cream)]/10 rounded-full px-3 py-1.5">
+                      <div className="w-6 h-6 rounded-full bg-[var(--court-deep)]" />
+                      <span className="text-xs text-[var(--cream)]">{name}</span>
+                    </div>
+                  ))}
+                  {Array.from({ length: openSpots }).map((_, i) => (
+                    <button
+                      key={`o-${i}`}
+                      type="button"
+                      onClick={onJoinClick}
+                      className="flex items-center gap-2 border border-dashed border-[var(--ball)]/60 rounded-full px-3 py-1.5 hover:bg-[var(--ball)]/10"
+                    >
+                      <span className="text-xs text-[var(--ball)]">Join open spot</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="mt-5 space-y-2">

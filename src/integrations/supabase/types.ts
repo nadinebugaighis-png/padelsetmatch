@@ -152,6 +152,7 @@ export type Database = {
         Row: {
           body: string
           created_at: string
+          edited_at: string | null
           id: string
           match_event_id: string
           sender_profile_id: string
@@ -159,6 +160,7 @@ export type Database = {
         Insert: {
           body: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           match_event_id: string
           sender_profile_id: string
@@ -166,6 +168,7 @@ export type Database = {
         Update: {
           body?: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           match_event_id?: string
           sender_profile_id?: string

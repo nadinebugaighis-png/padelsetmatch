@@ -293,7 +293,16 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("hides" as never)
       .select("hider_profile_id, category")
       .eq("hidden_profile_id", me.id);
-    const blockedSet = new Set(((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id));
+    // Reciprocal blocks: a one-way block would let the blocker keep seeing/liking the victim.
+    // RLS on `blocks` only exposes rows to the blocker, so read via admin.
+    const { data: blocksOfMe } = await _adminForHides
+      .from("blocks" as never)
+      .select("blocker_profile_id")
+      .eq("blocked_profile_id", me.id);
+    const blockedSet = new Set<string>([
+      ...((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id),
+      ...((blocksOfMe as Array<{ blocker_profile_id: string }> | null) ?? []).map((b) => b.blocker_profile_id),
+    ]);
     const hiddenMap = new Map<string, Set<string>>();
     ((myHides as Array<{ hidden_profile_id: string; category: string }> | null) ?? []).forEach((h) => {
       const set = hiddenMap.get(h.hidden_profile_id) ?? new Set<string>();

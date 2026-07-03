@@ -1,0 +1,1 @@
+DELETE FROM public.profiles WHERE is_seed = true;

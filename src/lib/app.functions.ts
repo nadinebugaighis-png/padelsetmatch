@@ -370,7 +370,13 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
       })
       .filter((c) => c.score > 0)
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => {
+        const today = new Date().toISOString().slice(0, 10);
+        const aAway = (a as any).away_until && (a as any).away_until >= today ? 1 : 0;
+        const bAway = (b as any).away_until && (b as any).away_until >= today ? 1 : 0;
+        if (aAway !== bAway) return aAway - bAway;
+        return b.score - a.score;
+      });
 
     return { me, candidates: scored };
   });

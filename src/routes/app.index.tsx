@@ -140,13 +140,25 @@ function Discover() {
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
-      <div className="flex gap-2 mt-4 flex-wrap">
+      <div className="flex gap-2 mt-4 flex-wrap items-center">
         {(["all", "padel", "friend", "relationship"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
             {f === "all" ? "Everyone" : f === "padel" ? "Padel partner" : f === "friend" ? "Friend" : "Relationship"}
           </button>
         ))}
+        <button
+          onClick={() => setWorld((w) => !w)}
+          className={`chip ${world ? "chip-ball" : ""}`}
+          title={world ? "Showing players worldwide — tap to return to your area" : "Explore players everywhere, any age, any city"}
+        >
+          🌍 World {world ? "On" : "Off"}
+        </button>
       </div>
+      {world && (
+        <p className="text-[11px] text-[var(--cream)]/60 mt-2">
+          Showing everyone worldwide (except people you've hidden). Turn off to return to your area.
+        </p>
+      )}
 
       {(matchesQ.data?.length ?? 0) > 0 && (
         <Link to="/app/matches" className="mt-4 flex items-center gap-3 surface-card p-3 border border-[var(--ball)] rounded-xl bg-[var(--ball)]/10">

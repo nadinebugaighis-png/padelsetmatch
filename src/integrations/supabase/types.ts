@@ -505,6 +505,7 @@ export type Database = {
           age_max: number
           age_min: number
           availability: string[] | null
+          away_until: string | null
           bio: string | null
           court_side: string | null
           created_at: string
@@ -543,6 +544,7 @@ export type Database = {
           age_max?: number
           age_min?: number
           availability?: string[] | null
+          away_until?: string | null
           bio?: string | null
           court_side?: string | null
           created_at?: string
@@ -581,6 +583,7 @@ export type Database = {
           age_max?: number
           age_min?: number
           availability?: string[] | null
+          away_until?: string | null
           bio?: string | null
           court_side?: string | null
           created_at?: string

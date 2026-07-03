@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
-import { ArrowLeft, LayoutGrid, MessageCircle, Sparkles, Trophy, User } from "lucide-react";
+import { getIsAdmin } from "@/lib/admin.functions";
+import { ArrowLeft, LayoutGrid, MessageCircle, Shield, Sparkles, Trophy, User } from "lucide-react";
 
 import { useT, LangSwitch } from "@/lib/i18n";
 
@@ -27,6 +28,7 @@ function AuthShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
+  const checkAdmin = useServerFn(getIsAdmin);
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
     try {
@@ -41,19 +43,7 @@ function AuthShell() {
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => safe(() => getMatches()), enabled: !!profileQ.data, retry: false });
   const adminQ = useQuery({
     queryKey: ["is-admin"],
-    queryFn: () => safe(async () => {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      if (userError || !userData.user) return false;
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("id")
-        .eq("user_id", userData.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      if (error) return false;
-      return Boolean(data);
-    }),
-    enabled: !!profileQ.data,
+    queryFn: () => safe(() => checkAdmin()),
     retry: false,
   });
 
@@ -67,6 +57,7 @@ function AuthShell() {
 
   const hasProfile = !!profileQ.data;
   const onOnboarding = path.startsWith("/app/onboarding");
+  const isAdmin = adminQ.data === true;
 
   return (
     <div className="min-h-screen pb-24">
@@ -97,7 +88,7 @@ function AuthShell() {
           </Link>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          {adminQ.data && (
+          {isAdmin && (
             <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
               Admin
             </Link>
@@ -114,12 +105,13 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
-          <div className="max-w-md mx-auto grid grid-cols-5">
+          <div className="max-w-md mx-auto grid" style={{ gridTemplateColumns: `repeat(${isAdmin ? 6 : 5}, minmax(0, 1fr))` }}>
             <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
             <NavTab to="/app" label="Grid" icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
             <NavTab to="/app/events" label="Play" icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
             <NavTab to="/app/matches" label={`${t("shell.tab.matches")}${matchesQ.data?.length ? ` · ${matchesQ.data.length}` : ""}`} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
+            {isAdmin && <NavTab to="/app/admin" label="Admin" icon={<Shield className="w-5 h-5" />} active={path.startsWith("/app/admin")} />}
           </div>
         </nav>
       )}

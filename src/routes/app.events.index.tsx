@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { X } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -56,19 +57,46 @@ function EventsPage() {
   const today = startOfDay(new Date());
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i)), [today.getTime()]);
   const [selectedIdx, setSelectedIdx] = useState<number | "all">(0);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [genderFilter, setGenderFilter] = useState<"any" | "mixed" | "women_only" | "men_only">("any");
+  const [levelFilter, setLevelFilter] = useState<"any" | "beginner" | "intermediate" | "advanced">("any");
+  const [cityFilter, setCityFilter] = useState("");
+  const [openOnly, setOpenOnly] = useState(true);
+
+  const activeFilterCount =
+    (genderFilter !== "any" ? 1 : 0) +
+    (levelFilter !== "any" ? 1 : 0) +
+    (cityFilter.trim() ? 1 : 0) +
+    (openOnly ? 0 : 1); // openOnly is the default, doesn't count
 
   const filtered = useMemo(() => {
     const arr = [...(eventsQ.data?.events ?? [])];
     arr.sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
-    if (selectedIdx === "all") return arr;
-    const day = days[selectedIdx].date;
-    const next = new Date(day);
-    next.setDate(day.getDate() + 1);
+    const day = selectedIdx === "all" ? null : days[selectedIdx].date;
+    const next = day ? new Date(day) : null;
+    if (next && day) next.setDate(day.getDate() + 1);
+    const cityQ = cityFilter.trim().toLowerCase();
     return arr.filter((e: any) => {
-      const t = new Date(e.starts_at);
-      return t >= day && t < next;
+      if (day && next) {
+        const t = new Date(e.starts_at);
+        if (!(t >= day && t < next)) return false;
+      }
+      if (genderFilter !== "any" && e.gender_rule !== genderFilter) return false;
+      if (levelFilter !== "any") {
+        const lvls = [e.level_min, e.level_max].filter(Boolean).map((x: string) => x.toLowerCase());
+        if (!lvls.some((l: string) => l.includes(levelFilter))) return false;
+      }
+      if (cityQ) {
+        const hay = `${e.city ?? ""} ${e.club_name ?? ""}`.toLowerCase();
+        if (!hay.includes(cityQ)) return false;
+      }
+      if (openOnly) {
+        const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
+        if (needs === 0) return false;
+      }
+      return true;
     });
-  }, [eventsQ.data, selectedIdx, days]);
+  }, [eventsQ.data, selectedIdx, days, genderFilter, levelFilter, cityFilter, openOnly]);
 
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
@@ -146,12 +174,111 @@ function EventsPage() {
         <h1 className="text-display text-4xl tracking-wider leading-none">FIND<br />MATCHES</h1>
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/25 text-[var(--cream)] px-4 py-2 text-[11px] uppercase tracking-widest"
+          onClick={() => setFiltersOpen((v) => !v)}
+          aria-expanded={filtersOpen}
+          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[11px] uppercase tracking-widest ${
+            filtersOpen || activeFilterCount > 0
+              ? "border-[var(--ball)] text-[var(--ball)]"
+              : "border-[var(--cream)]/25 text-[var(--cream)]"
+          }`}
         >
           <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
+          {activeFilterCount > 0 && (
+            <span className="ml-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
+              {activeFilterCount}
+            </span>
+          )}
         </button>
       </div>
       <p className="text-sm text-[var(--cream)]/60 mb-5">Pick a match. Join the game.</p>
+
+      {filtersOpen && (
+        <div className="mb-5 rounded-2xl border border-[var(--cream)]/15 bg-black/30 p-4 space-y-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">Gender</div>
+            <div className="flex flex-wrap gap-2">
+              {([
+                ["any", "Any"],
+                ["mixed", "Mixed"],
+                ["women_only", "Women"],
+                ["men_only", "Men"],
+              ] as const).map(([v, l]) => (
+                <button
+                  key={v}
+                  onClick={() => setGenderFilter(v)}
+                  className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
+                    genderFilter === v
+                      ? "border-[var(--ball)] text-[var(--ball)]"
+                      : "border-[var(--cream)]/25 text-[var(--cream)]/80"
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">Level</div>
+            <div className="flex flex-wrap gap-2">
+              {([
+                ["any", "Any"],
+                ["beginner", "Beginner"],
+                ["intermediate", "Intermediate"],
+                ["advanced", "Advanced"],
+              ] as const).map(([v, l]) => (
+                <button
+                  key={v}
+                  onClick={() => setLevelFilter(v)}
+                  className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
+                    levelFilter === v
+                      ? "border-[var(--ball)] text-[var(--ball)]"
+                      : "border-[var(--cream)]/25 text-[var(--cream)]/80"
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">City or club</div>
+            <input
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              placeholder="e.g. Alcobendas"
+              className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
+            <input
+              type="checkbox"
+              checked={openOnly}
+              onChange={(e) => setOpenOnly(e.target.checked)}
+              className="accent-[var(--ball)]"
+            />
+            Only matches that still need players
+          </label>
+          <div className="flex justify-between pt-1">
+            <button
+              onClick={() => {
+                setGenderFilter("any");
+                setLevelFilter("any");
+                setCityFilter("");
+                setOpenOnly(true);
+              }}
+              className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 inline-flex items-center gap-1"
+            >
+              <X className="w-3 h-3" /> Clear
+            </button>
+            <button
+              onClick={() => setFiltersOpen(false)}
+              className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+            >
+              Show {filtered.length}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Day tabs */}
       <div className="flex items-center gap-2 mb-5 overflow-x-auto -mx-1 px-1 no-scrollbar">

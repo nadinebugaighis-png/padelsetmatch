@@ -351,9 +351,27 @@ export const getPublicMatch = createServerFn({ method: "GET" })
     });
     const { data: view, error } = await client.rpc("public_match_view", { _event_id: data.id });
     if (error) throw new Error(error.message);
-    if (!view) return { match: null as null | Record<string, unknown> };
-    return { match: view as Record<string, unknown> };
+    return { match: (view ?? null) as PublicMatchView | null };
   });
+
+export type PublicMatchView = {
+  id: string;
+  starts_at: string;
+  club_name: string;
+  club_address: string | null;
+  city: string | null;
+  country: string | null;
+  gender_rule: "mixed" | "men_only" | "women_only";
+  level_min: string;
+  level_max: string;
+  note: string | null;
+  court_booked: boolean;
+  status: string;
+  extra_confirmed: number;
+  filled: number;
+  host: { first_name: string } | null;
+  participant_names: string[];
+};
 
 // ---------- Save "lite" profile: first_name + level (+ optional city) ----------
 export const saveLiteProfile = createServerFn({ method: "POST" })

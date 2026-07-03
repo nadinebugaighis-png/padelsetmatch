@@ -152,7 +152,7 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "United States",
     cities: [
-      { name: "Miami", areas: ["Brickell", "Coral Gables", "Coconut Grove", "Wynwood", "Aventura", "Doral", "Key Biscayne"] },
+      { name: "Miami", areas: ["Brickell", "Coral Gables", "Coconut Grove", "Wynwood", "Aventura", "Doral", "Key Biscayne", "Miami Beach", "South Beach", "Sunny Isles", "Bal Harbour", "Bay Harbor Islands", "Surfside", "Pinecrest", "Palmetto Bay", "Edgewater", "Midtown", "Downtown Miami", "Kendall", "Coral Way"] },
       { name: "New York City", areas: ["Manhattan", "Brooklyn", "Queens", "Long Island City", "Williamsburg", "Bronx", "Westchester", "Long Island", "Hamptons"] },
       { name: "Los Angeles", areas: ["Beverly Hills", "Santa Monica", "West Hollywood", "Pasadena", "Venice", "Manhattan Beach", "Culver City", "Downtown LA"] },
       { name: "San Francisco", areas: ["Downtown", "SoMa", "Mission", "Marina", "Pacific Heights", "Nob Hill", "Presidio"] },

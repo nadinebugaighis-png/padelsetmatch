@@ -51,7 +51,7 @@ function ChatRoom() {
     return () => { supabase.removeChannel(ch); };
   }, [matchId, qc]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [q.data?.messages.length]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "auto", block: "nearest" }); }, [q.data?.messages.length]);
 
   const markRead = useServerFn(markMatchRead);
   useEffect(() => {
@@ -122,7 +122,7 @@ function ChatRoom() {
   };
 
   return (
-    <main className="max-w-md mx-auto flex flex-col h-[calc(100vh-150px)]">
+    <main className="max-w-md mx-auto flex flex-col h-[calc(100dvh-150px)]">
       <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--cream)]/10">
         <Link to="/app/matches" className="p-1"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="w-10 h-10 rounded-full overflow-hidden bg-[var(--cream)]/10 shrink-0">
@@ -206,7 +206,7 @@ function ChatRoom() {
           return (
             <div key={m.id} className={`group flex items-end gap-1.5 ${mine ? "justify-end" : "justify-start"}`}>
               {mine && !isEditing && (
-                <div className="flex gap-1 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button
                     type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
@@ -239,7 +239,7 @@ function ChatRoom() {
                     <textarea
                       value={editingText}
                       onChange={(e) => setEditingText(e.target.value)}
-                      className="w-full bg-[var(--court-deep)]/20 text-[var(--court-deep)] rounded p-1.5 text-sm resize-none"
+                      className="w-full bg-[var(--court-deep)]/20 text-[var(--court-deep)] rounded p-1.5 text-base resize-none"
                       rows={2}
                       autoFocus
                     />

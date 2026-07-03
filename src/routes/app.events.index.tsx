@@ -54,7 +54,9 @@ function EventsPage() {
 
   const today = startOfDay(new Date());
   const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i)), [today.getTime()]);
-  const [selectedIdx, setSelectedIdx] = useState<number | "all">(0);
+  const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">(0);
+  const [customDate, setCustomDate] = useState<string>("");
+
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [genderFilter, setGenderFilter] = useState<"any" | "mixed" | "women_only" | "men_only">("any");
   const [levelFilter, setLevelFilter] = useState<"any" | "beginner" | "intermediate" | "advanced">("any");
@@ -70,9 +72,16 @@ function EventsPage() {
   const filtered = useMemo(() => {
     const arr = [...(eventsQ.data?.events ?? [])];
     arr.sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
-    const day = selectedIdx === "all" ? null : days[selectedIdx].date;
+    let day: Date | null = null;
+    if (selectedIdx === "custom" && customDate) {
+      const [y, m, dd] = customDate.split("-").map(Number);
+      day = new Date(y, m - 1, dd);
+    } else if (typeof selectedIdx === "number") {
+      day = days[selectedIdx].date;
+    }
     const next = day ? new Date(day) : null;
     if (next && day) next.setDate(day.getDate() + 1);
+
     const cityQ = cityFilter.trim().toLowerCase();
     return arr.filter((e: any) => {
       if (day && next) {
@@ -94,7 +103,7 @@ function EventsPage() {
       }
       return true;
     });
-  }, [eventsQ.data, selectedIdx, days, genderFilter, levelFilter, cityFilter, openOnly]);
+  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly]);
 
   const renderCard = (e: any) => {
     const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
@@ -297,17 +306,28 @@ function EventsPage() {
             </button>
           );
         })}
-        <button
-          onClick={() => setSelectedIdx("all")}
-          className={`shrink-0 rounded-full border w-11 h-11 flex items-center justify-center ${
-            selectedIdx === "all"
+        <label
+          className={`relative shrink-0 rounded-full border w-11 h-11 flex items-center justify-center cursor-pointer ${
+            selectedIdx === "custom"
               ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
-          aria-label="All upcoming"
+          aria-label="Pick a date"
         >
           <CalendarDays className="w-4 h-4" />
-        </button>
+          <input
+            type="date"
+            value={customDate}
+            min={new Date().toISOString().slice(0, 10)}
+            onChange={(e) => {
+              const v = e.target.value;
+              setCustomDate(v);
+              setSelectedIdx(v ? "custom" : 0);
+            }}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+        </label>
+
       </div>
 
       {/* List */}

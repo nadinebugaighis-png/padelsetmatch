@@ -53,6 +53,7 @@ function Landing() {
           <p className="chip chip-clay mb-6">{t("land.chip")}</p>
           <h1 className="text-display text-7xl md:text-8xl lg:text-9xl leading-[0.9]">
             {t("land.h1.a")}<br />
+            {t("land.h1.a2")}<br />
             <span style={{ color: "var(--ball)" }}>{t("land.h1.b")}</span>
           </h1>
           <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-md">

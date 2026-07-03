@@ -14,7 +14,7 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, MessageCircle } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, MessageCircle, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/app/events/$eventId")({
   component: EventRoute,
@@ -152,9 +152,27 @@ function EventDetail() {
 
   return (
     <div className="max-w-md mx-auto px-5 py-4 pb-32">
-      <Link to="/app/events" className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-3">
-        <ArrowLeft className="w-4 h-4" /> All matches
-      </Link>
+      <div className="flex items-center justify-between mb-3">
+        <Link to="/app/events" className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60">
+          <ArrowLeft className="w-4 h-4" /> All matches
+        </Link>
+        <button
+          onClick={async () => {
+            const url = `${window.location.origin}/m/${eventId}`;
+            const text = `Join my padel match on PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`;
+            try {
+              if (navigator.share) await navigator.share({ title: "PadelMatch", text, url });
+              else {
+                await navigator.clipboard.writeText(url);
+                toast.success("Share link copied");
+              }
+            } catch { /* user cancelled */ }
+          }}
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ball)] border border-[var(--ball)]/40 rounded-full px-3 py-1"
+        >
+          <Share2 className="w-3.5 h-3.5" /> Share
+        </button>
+      </div>
 
       <div className="rounded-xl border border-[var(--cream)]/10 bg-black/30 p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">

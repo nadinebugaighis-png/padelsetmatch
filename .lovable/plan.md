@@ -1,54 +1,52 @@
+## Goal
+Let anyone share a match they created. Recipients open a public link, see the match, and can sign up with **just name + padel level** to join instantly. Full profile (photo, priorities, zones, etc.) becomes optional and can be completed later.
 
-# PadelMatch Madrid — full rebuild
+## What I'll build
 
-Pivoting the demo into a real, account-based app. Tinder-style **grid (no swiping)**: tap photos you like, and if they tap yours back, a chat room opens.
+### 1. Public shareable match page
+- New public route `/m/$eventId` (top-level, SSR-enabled, no auth gate) that renders match details: host name, sport-level, date/time, club, address, players joined vs needed, gender/level tags.
+- Uses a public server fn (publishable-key client, narrow `TO anon` SELECT on `match_events` + host profile name/level only — no PII).
+- OG tags in `head()` from loader data so the link previews nicely on WhatsApp / iMessage.
+- CTAs:
+  - Signed in + onboarded → "Join this match" button (calls existing join fn).
+  - Signed in + not onboarded → "Add your name & level to join" (goes to lite-onboarding, redirects back).
+  - Not signed in → "Sign up to join" (goes to `/auth?redirect=/m/<id>&join=1`).
 
-## Flow
+### 2. Lite onboarding (name + level only)
+- New `/app/join-setup` (under `_authenticated` equivalent, i.e. `app.*`) that shows only:
+  - First name
+  - Padel level (beginner / intermediate / advanced / competitive)
+  - Optional: primary city (prefilled from match's city so grid isn't empty)
+- Saves a partial profile with an `onboarding_stage = 'lite'` flag. Discover grid / matches still require full onboarding, but joining a match does not.
+- After save, if there's a pending `?join=<eventId>`, auto-join and route to the match page.
 
-1. **Sign up / sign in** (email + password, via Lovable Cloud).
-2. **Onboarding questionnaire**: first name, age, gender, who you're interested in, age range, nationality, Madrid zone, padel level, ranked priorities (intellectual, looks, funny, adventurous…), looking-for (partner / friend / both), short bio.
-3. **Upload a padel photo** (you holding a racket / on court). Required. Stored in Lovable Cloud Storage.
-4. **Discover** tab — grid of matching players' photos with first name + age + zone overlay. Tap a card to "like". Filter chip: partner / friend.
-5. **Matches** tab — when two people have liked each other, a chat room appears here.
-6. **Chat** — real-time messages + a "Book a court on Playtomic" button that opens Playtomic for the user's zone.
-7. **Profile** tab — edit your info, replace photo, sign out.
+### 3. Full onboarding stays optional
+- Existing multi-step onboarding becomes reachable from Profile ("Complete your profile") and from a soft banner on the app shell.
+- Guard changes: routes that need a full profile (Discover, being matched-with) check `onboarding_stage === 'complete'`; joining/creating matches only needs `lite`.
 
-## Matching logic (server function)
+### 4. Share affordance on match page
+- On `/app/events/$eventId` (host + participants view), add a **Share** button using the existing `ShareQR` component with URL `https://<origin>/m/<eventId>`. Native share sheet + QR + copy link.
 
-Hybrid score reused from the current code, gated by:
-- Mutual gender interest
-- Mutual age range
-- "Looking for" overlap (partner ↔ partner, friend matches anyone open to friends)
+### 5. Auth flow tweak
+- `/auth` reads `redirect` search param and returns there after sign-in/sign-up (already partially supported; verify + wire for `/m/*`).
+- Default new signups to `onboarding_stage = 'lite'` (not `pending_full`) so they aren't forced into the long questionnaire.
 
-Plus weighted bonuses for padel level proximity, Madrid zone proximity, nationality / cultural affinity, ranked priority overlap. AI Gateway (Gemini 3 Flash) generates a one-line "why you'd click on court" blurb shown when you tap a card.
+## Data model changes
+- `profiles.onboarding_stage text default 'none'` — values: `none` | `lite` | `complete`.
+- Backfill: existing rows with photo+priorities → `complete`; others → `lite` if they have name+level else `none`.
+- New public RLS policy: `TO anon SELECT` on `match_events` for open/full non-cancelled events (safe columns only via the server fn's column projection).
+- New public RLS policy: `TO anon SELECT` on `profiles` for `id, first_name, level` **only** — enforced by column projection in the server fn, plus a `SECURITY DEFINER` function `public_match_view(eventId)` that returns a whitelisted shape. Simpler + safer than opening the whole table.
 
-## Seed players (Madrid)
+## Technical section
+- Server fn `getPublicMatch(eventId)` in `src/lib/match-events.functions.ts` — no `requireSupabaseAuth`, uses server publishable client, calls `public_match_view` RPC.
+- Server fn `saveLiteProfile({ first_name, level, city? })` with `requireSupabaseAuth`.
+- Update `joinMatchEvent` to accept lite profiles (currently likely requires full profile — verify and relax).
+- `src/routes/m.$eventId.tsx` (public) — loader → `getPublicMatch`, `head()` sets title/desc/OG/twitter from loader data, `errorComponent` + `notFoundComponent` required.
+- `src/routes/app.join-setup.tsx` — lite form.
+- `/auth` handles `redirect` param on all success paths (email, Google, Apple).
 
-12 seeded profiles with **AI-generated padel action photos** (premium image gen, photoreal, varied: men/women, different ages, different Madrid courts, racket in hand). First names only. They auto-"like back" anyone who likes them after a short delay, so the chat flow is demoable from a fresh account.
+## Out of scope (ask if you want them)
+- Guest RSVP without account (would need spam controls).
+- SMS/email invites.
 
-## Data model (Lovable Cloud)
-
-- `profiles` (1-1 with auth.users): first_name, age, gender, interested_in[], age_min, age_max, nationality, zone, level, priorities[], looking_for, bio, photo_url
-- `likes`: liker_id, liked_id, created_at (unique pair)
-- `matches`: user_a, user_b, created_at — created by trigger when a like is reciprocated
-- `messages`: match_id, sender_id, body, created_at — realtime subscription
-
-RLS: users read their own profile + profiles of users in their match pool; can only insert their own likes; can only read/write messages in matches they're part of. Storage bucket `padel-photos` public-read, write only by authenticated owner.
-
-## Design
-
-Keep the existing **Court at Dusk** theme (teal + Madrid clay + neon ball-yellow, Bebas Neue headlines, Barlow body). Add a clean card-grid for Discover and a stripped-down chat surface using AI Elements primitives.
-
-## Technical notes
-
-- TanStack Start + Lovable Cloud (Supabase under the hood).
-- `_authenticated` route group for app shell; `/auth` for sign-in/up.
-- Server functions for matching score + AI blurb; client-side Supabase realtime for messages.
-- Image gen done as a one-time seed script via the AI gateway skill (12 photos saved into `src/assets/seed/`).
-- Playtomic link = `https://playtomic.io/clubs?q=Madrid+<zone>`.
-
-## What I'll cut from the current build
-
-The anonymous handles + emoji avatars + "reveal on match" flow is fully replaced by real first names and real photos, per your direction.
-
-Approve and I'll enable Lovable Cloud, generate the seed photos, build the schema, and ship the full flow.
+Approve and I'll ship it.

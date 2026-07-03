@@ -173,8 +173,9 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: profile } = await supabase.from("profiles").select("id, gender").eq("user_id", userId).maybeSingle();
-    if (!profile) throw new Error("No profile");
+    const { data: profile } = await supabase.from("profiles").select("id, gender, first_name, level").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("Please add your name and padel level first.");
+    if (!profile.first_name || !profile.level) throw new Error("Please add your name and padel level first.");
     const { data: event } = await supabase
       .from("match_events")
       .select("gender_rule, status, extra_confirmed")
@@ -182,8 +183,8 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!event) throw new Error("Match not found");
     if (event.status !== "open") throw new Error("This match is no longer open");
-    if (event.gender_rule === "men_only" && profile.gender !== "man") throw new Error("This match is for men only");
-    if (event.gender_rule === "women_only" && profile.gender !== "woman") throw new Error("This match is for women only");
+    if (event.gender_rule === "men_only" && profile.gender && profile.gender !== "man") throw new Error("This match is for men only");
+    if (event.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") throw new Error("This match is for women only");
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })
@@ -335,5 +336,81 @@ export const sendEventMessage = createServerFn({ method: "POST" })
       .from("match_event_messages")
       .insert({ match_event_id: data.id, sender_profile_id: profile.id, body: data.body });
     if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// ---------- Public read: shareable match view (no auth) ----------
+export const getPublicMatch = createServerFn({ method: "GET" })
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { createClient } = await import("@supabase/supabase-js");
+    const url = process.env.SUPABASE_URL!;
+    const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
+    const client = createClient(url, key, {
+      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    });
+    const { data: view, error } = await client.rpc("public_match_view", { _event_id: data.id });
+    if (error) throw new Error(error.message);
+    return { match: (view ?? null) as PublicMatchView | null };
+  });
+
+export type PublicMatchView = {
+  id: string;
+  starts_at: string;
+  club_name: string;
+  club_address: string | null;
+  city: string | null;
+  country: string | null;
+  gender_rule: "mixed" | "men_only" | "women_only";
+  level_min: string;
+  level_max: string;
+  note: string | null;
+  court_booked: boolean;
+  status: string;
+  extra_confirmed: number;
+  filled: number;
+  host: { first_name: string } | null;
+  participant_names: string[];
+};
+
+// ---------- Save "lite" profile: first_name + level (+ optional city) ----------
+export const saveLiteProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { first_name: string; level: (typeof PADEL_LEVELS)[number]; city?: string | null }) =>
+    z.object({
+      first_name: z.string().trim().min(1).max(40),
+      level: z.enum(PADEL_LEVELS),
+      city: z.string().trim().max(120).nullable().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: existing } = await supabase
+      .from("profiles")
+      .select("id, onboarding_stage")
+      .eq("user_id", userId)
+      .maybeSingle();
+    const nextStage = existing?.onboarding_stage === "complete" ? "complete" : "lite";
+    if (existing) {
+      const patch: Record<string, unknown> = {
+        first_name: data.first_name,
+        level: data.level,
+        onboarding_stage: nextStage,
+      };
+      if (data.city) patch.locations = [data.city];
+      const { error } = await supabase.from("profiles").update(patch as never).eq("user_id", userId);
+      if (error) throw new Error(error.message);
+    } else {
+      const row: Record<string, unknown> = {
+        user_id: userId,
+        first_name: data.first_name,
+        level: data.level,
+        onboarding_stage: "lite",
+        is_seed: false,
+      };
+      if (data.city) row.locations = [data.city];
+      const { error } = await supabase.from("profiles").insert(row as never);
+      if (error) throw new Error(error.message);
+    }
     return { ok: true };
   });

@@ -9,22 +9,40 @@ import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+    join: typeof s.join === "string" ? s.join : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { redirect, join } = Route.useSearch();
   const t = useT();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
+    if (join) return { to: "/app/join-setup", search: { join } };
+    if (redirect) return { to: redirect };
+    return { to: "/app" };
+  };
+  const oauthRedirectUri = () => {
+    const base = window.location.origin;
+    if (join) return `${base}/app/join-setup?join=${encodeURIComponent(join)}`;
+    if (redirect) return `${base}${redirect}`;
+    return `${base}/app`;
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app" });
+      if (data.session) navigate(afterAuthTarget() as never);
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,12 +52,12 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/app` },
+          options: { emailRedirectTo: oauthRedirectUri() },
         });
         if (error) throw error;
         if (data.session) {
           toast.success(t("auth.welcome"));
-          navigate({ to: "/app" });
+          navigate(afterAuthTarget() as never);
         } else {
           toast.success(t("auth.confirmEmail"));
           setMode("signin");
@@ -47,7 +65,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/app" });
+        navigate(afterAuthTarget() as never);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("auth.fail"));
@@ -58,14 +76,14 @@ function AuthPage() {
 
   const google = async () => {
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/app" });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
     if (result.error) {
       toast.error(result.error.message);
       setLoading(false);
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/app" });
+    navigate(afterAuthTarget() as never);
   };
 
   return (
@@ -86,10 +104,10 @@ function AuthPage() {
         <Button
           onClick={async () => {
             setLoading(true);
-            const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin + "/app" });
+            const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
             if (result.error) { toast.error(result.error.message); setLoading(false); return; }
             if (result.redirected) return;
-            navigate({ to: "/app" });
+            navigate(afterAuthTarget() as never);
           }}
           disabled={loading}
           variant="secondary"

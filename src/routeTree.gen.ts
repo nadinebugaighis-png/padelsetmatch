@@ -17,10 +17,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
@@ -69,6 +71,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const MEventIdRoute = MEventIdRouteImport.update({
+  id: '/m/$eventId',
+  path: '/m/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppQuestionsRoute = AppQuestionsRouteImport.update({
   id: '/questions',
   path: '/questions',
@@ -87,6 +94,11 @@ const AppOnboardingRoute = AppOnboardingRouteImport.update({
 const AppMatchesRoute = AppMatchesRouteImport.update({
   id: '/matches',
   path: '/matches',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppJoinSetupRoute = AppJoinSetupRouteImport.update({
+  id: '/join-setup',
+  path: '/join-setup',
   getParentRoute: () => AppRoute,
 } as any)
 const AppHiddenRoute = AppHiddenRouteImport.update({
@@ -135,10 +147,12 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/hidden': typeof AppHiddenRoute
+  '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
@@ -155,10 +169,12 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/hidden': typeof AppHiddenRoute
+  '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/m/$eventId': typeof MEventIdRoute
   '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
@@ -177,10 +193,12 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/hidden': typeof AppHiddenRoute
+  '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
@@ -200,10 +218,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/admin'
     | '/app/hidden'
+    | '/app/join-setup'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
@@ -220,10 +240,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/admin'
     | '/app/hidden'
+    | '/app/join-setup'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/m/$eventId'
     | '/app'
     | '/app/events/$eventId'
     | '/app/events/new'
@@ -241,10 +263,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/admin'
     | '/app/hidden'
+    | '/app/join-setup'
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
@@ -261,6 +285,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  MEventIdRoute: typeof MEventIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -321,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/m/$eventId': {
+      id: '/m/$eventId'
+      path: '/m/$eventId'
+      fullPath: '/m/$eventId'
+      preLoaderRoute: typeof MEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/questions': {
       id: '/app/questions'
       path: '/questions'
@@ -347,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/matches'
       fullPath: '/app/matches'
       preLoaderRoute: typeof AppMatchesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/join-setup': {
+      id: '/app/join-setup'
+      path: '/join-setup'
+      fullPath: '/app/join-setup'
+      preLoaderRoute: typeof AppJoinSetupRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/hidden': {
@@ -427,6 +466,7 @@ const AppEventsEventIdRouteWithChildren =
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
   AppHiddenRoute: typeof AppHiddenRoute
+  AppJoinSetupRoute: typeof AppJoinSetupRoute
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -440,6 +480,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
   AppHiddenRoute: AppHiddenRoute,
+  AppJoinSetupRoute: AppJoinSetupRoute,
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
@@ -460,17 +501,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  MEventIdRoute: MEventIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

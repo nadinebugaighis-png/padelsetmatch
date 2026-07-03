@@ -231,25 +231,55 @@ function EventDetail() {
       <div className="mt-4">
         <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-2">Players</div>
         <div className="flex flex-wrap gap-2">
-          {(event.participants ?? []).map((p: any) => (
-            <div key={p.profile_id} className="flex items-center gap-2 bg-black/30 border border-[var(--cream)]/10 rounded-full pl-1 pr-3 py-1">
-              <div className="w-7 h-7 rounded-full bg-[var(--court-deep)] overflow-hidden">
-                {p.profiles?.photo_url && (
-                  <img src={p.profiles.photo_url} alt="" className="w-full h-full object-cover" />
-                )}
-              </div>
-              <span className="text-xs text-[var(--cream)]">{p.profiles?.first_name}</span>
-            </div>
-          ))}
+          {(event.participants ?? []).map((p: any) => {
+            const isMe = p.profile_id === me?.id;
+            const isHost = p.profile_id === event.host_profile_id;
+            return (
+              <button
+                key={p.profile_id}
+                type="button"
+                onClick={() => { if (isMe && !isHost) onLeave(); }}
+                disabled={!isMe || isHost}
+                title={isMe && !isHost ? "Tap to leave the match" : ""}
+                className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
+                  isMe && !isHost
+                    ? "bg-[var(--ball)]/10 border-[var(--ball)]/40 hover:bg-[var(--ball)]/20 cursor-pointer"
+                    : "bg-black/30 border-[var(--cream)]/10 cursor-default"
+                }`}
+              >
+                <div className="w-7 h-7 rounded-full bg-[var(--court-deep)] overflow-hidden">
+                  {p.profiles?.photo_url && (
+                    <img src={p.profiles.photo_url} alt="" className="w-full h-full object-cover" />
+                  )}
+                </div>
+                <span className="text-xs text-[var(--cream)]">
+                  {p.profiles?.first_name}{isMe ? " (you)" : ""}
+                </span>
+              </button>
+            );
+          })}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
             <div key={`x-${i}`} className="flex items-center gap-2 bg-black/20 border border-dashed border-[var(--cream)]/15 rounded-full px-3 py-1.5">
               <span className="text-xs text-[var(--cream)]/60">+1 friend</span>
             </div>
           ))}
           {Array.from({ length: event.needs }).map((_, i) => (
-            <div key={`o-${i}`} className="flex items-center gap-2 bg-transparent border border-dashed border-[var(--ball)]/40 rounded-full px-3 py-1.5">
-              <span className="text-xs text-[var(--ball)]">Open spot</span>
-            </div>
+            <button
+              key={`o-${i}`}
+              type="button"
+              onClick={() => { if (canJoin) onJoin(); }}
+              disabled={!canJoin}
+              title={canJoin ? "Tap to join this spot" : "This match doesn't match your profile"}
+              className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
+                canJoin
+                  ? "border-[var(--ball)]/60 hover:bg-[var(--ball)]/10 cursor-pointer"
+                  : "border-[var(--ball)]/30 opacity-60 cursor-not-allowed"
+              }`}
+            >
+              <span className="text-xs text-[var(--ball)]">
+                {canJoin ? "Join open spot" : "Open spot"}
+              </span>
+            </button>
           ))}
         </div>
       </div>

@@ -547,3 +547,41 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
     </div>
   );
 }
+
+function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_at?: string | null } }) {
+  const [dismissed, setDismissed] = useState(false);
+  if (me.photo_url) return null;
+  if (typeof window !== "undefined" && sessionStorage.getItem("photo-reminder-dismissed") === "1") return null;
+  if (dismissed) return null;
+  const created = me.created_at ? new Date(me.created_at).getTime() : Date.now();
+  const daysOld = (Date.now() - created) / (1000 * 60 * 60 * 24);
+  const strong = daysOld >= 7;
+  return (
+    <Link
+      to="/app/profile"
+      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--ball)] bg-[var(--ball)]/10" : "border-[var(--cream)]/15"}`}
+    >
+      <div className="w-9 h-9 rounded-full bg-[var(--ball)]/20 flex items-center justify-center text-lg">📸</div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-semibold text-[var(--cream)]">
+          {strong ? "Add a photo — you'll get 3× more matches" : "Add a profile photo when you're ready"}
+        </div>
+        <div className="text-xs text-[var(--cream)]/75">Tip: a photo with your racket 🎾 works best.</div>
+      </div>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sessionStorage.setItem("photo-reminder-dismissed", "1");
+          setDismissed(true);
+        }}
+        className="p-1 text-[var(--cream)]/50 hover:text-[var(--cream)]"
+        aria-label="Dismiss"
+      >
+        <X className="w-4 h-4" />
+      </button>
+    </Link>
+  );
+}
+

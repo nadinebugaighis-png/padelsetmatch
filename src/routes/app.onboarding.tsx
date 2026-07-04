@@ -451,9 +451,10 @@ function Onboarding() {
                       }}
                       className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                     >
-                      <option value="" className="bg-[var(--court-deep)]">Country</option>
+                      <option value="" className="bg-[var(--court-deep)]">{tr("Country", "País")}</option>
                       {COUNTRY_NAMES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-                      <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                      <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)")}</option>
+
                     </select>
                     {!countryInList && (
                       <Input

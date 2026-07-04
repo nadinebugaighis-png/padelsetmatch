@@ -135,7 +135,7 @@ function PublicMatchPage() {
               {match.note && <p className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
 
               {match.host?.first_name && (
-                <p className="text-xs text-[var(--cream)]/60 pt-2">Hosted by <span className="text-[var(--cream)]">{match.host.first_name}</span></p>
+                <p className="text-xs text-[var(--cream)]/60 pt-2">{tr("Hosted by", "Organizado por")} <span className="text-[var(--cream)]">{match.host.first_name}</span></p>
               )}
 
               {/* Players — tap an open spot to join */}

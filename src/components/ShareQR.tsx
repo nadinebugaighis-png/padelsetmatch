@@ -75,7 +75,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
                 className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-xs hover:opacity-90"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                {copied ? "Copied" : "Copy link"}
+                {copied ? tr("Copied", "Copiado") : tr("Copy link", "Copiar enlace")}
               </button>
               {typeof navigator.share === "function" && (
                 <button

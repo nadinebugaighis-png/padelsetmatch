@@ -122,7 +122,7 @@ function AuthShell() {
           {path === "/app" || path === "/app/" ? (
             <Link
               to="/"
-              aria-label="Back to home"
+              aria-label={t("shell.back.home")}
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />

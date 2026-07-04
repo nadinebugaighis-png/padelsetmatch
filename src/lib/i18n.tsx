@@ -350,6 +350,7 @@ const es: Dict = {
   "disc.undoFail": "No se pudo deshacer",
   "disc.blocked": "Bloqueado. No os volveréis a ver.",
   "disc.blockFail": "No se pudo bloquear",
+  "disc.privacyNote": "Solo sabrá que le has dado a conectar si te lo devuelve. Sin presión.",
   "disc.reportSent": "Reporte enviado. La cuenta queda suspendida para revisión.",
   "disc.reportFail": "No se pudo reportar",
   "disc.loading": "Cargando las pistas…",

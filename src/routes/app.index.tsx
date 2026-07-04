@@ -39,6 +39,15 @@ function Discover() {
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
 
+  const compatFn = useServerFn(getAiCompatibility);
+  const compatQ = useQuery({
+    queryKey: ["ai-compat", preview?.id],
+    queryFn: () => compatFn({ data: { otherProfileId: preview!.id } }),
+    enabled: !!preview?.id,
+    staleTime: 1000 * 60 * 60,
+    retry: false,
+  });
+
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
   }, [feedQ.data, navigate]);

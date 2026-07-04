@@ -128,7 +128,7 @@ function PublicMatchPage() {
               <div className="flex flex-wrap gap-2 pt-1">
                 <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70">{genderLabel}</span>
                 <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70">
-                  Level {match.level_min} – {match.level_max}
+                  {tr("Level", "Nivel")} {match.level_min} – {match.level_max}
                 </span>
               </div>
 

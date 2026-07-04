@@ -53,6 +53,7 @@ function shareOrigin() {
 function PublicMatchPage() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
+  const tr = useTr();
   const getPublic = useServerFn(getPublicMatch);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
@@ -67,7 +68,7 @@ function PublicMatchPage() {
   });
 
   const match = q.data?.match;
-  const genderLabel = !match ? "" : match.gender_rule === "mixed" ? "Mixed" : match.gender_rule === "men_only" ? "Men only" : "Women only";
+  const genderLabel = !match ? "" : match.gender_rule === "mixed" ? tr("Mixed", "Mixto") : match.gender_rule === "men_only" ? tr("Men only", "Solo hombres") : tr("Women only", "Solo mujeres");
   const totalSpots = 4;
   const openSpots = match ? Math.max(0, totalSpots - (match.filled ?? 0)) : 0;
   const shareUrl = `${shareOrigin()}/m/${eventId}`;
@@ -75,11 +76,12 @@ function PublicMatchPage() {
   const copyShareLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      toast.success("Link copied");
+      toast.success(tr("Link copied", "Enlace copiado"));
     } catch {
-      toast.error("Could not copy the link");
+      toast.error(tr("Could not copy the link", "No se pudo copiar el enlace"));
     }
   };
+
 
   const nativeShare = async () => {
     try {

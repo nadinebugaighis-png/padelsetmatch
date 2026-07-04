@@ -55,12 +55,13 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
             <button
               onClick={() => setOpen(false)}
               className="absolute top-3 right-3 text-[var(--cream)]/50 hover:text-[var(--cream)]"
-              aria-label="Close"
+              aria-label={tr("Close", "Cerrar")}
             >
               <X className="w-4 h-4" />
             </button>
-            <p className="text-display text-lg tracking-wider">Share PadelMatch</p>
-            <p className="text-xs text-[var(--cream)]/60 mt-1">Scan to open</p>
+            <p className="text-display text-lg tracking-wider">{tr("Share PadelMatch", "Compartir PadelMatch")}</p>
+            <p className="text-xs text-[var(--cream)]/60 mt-1">{tr("Scan to open", "Escanea para abrir")}</p>
+
 
             {dataUrl ? (
               <img src={dataUrl} alt="QR code" className="mx-auto mt-4 rounded-lg" width={280} height={280} />

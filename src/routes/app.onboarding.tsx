@@ -474,9 +474,10 @@ function Onboarding() {
                         disabled={!isReal(b.country) && countryInList}
                         className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)] disabled:opacity-50"
                       >
-                        <option value="" className="bg-[var(--court-deep)]">{b.country ? "City" : "Pick country first"}</option>
+                        <option value="" className="bg-[var(--court-deep)]">{b.country ? tr("City", "Ciudad") : tr("Pick country first", "Elige país primero")}</option>
                         {cities.map((c) => <option key={c.name} value={c.name} className="bg-[var(--court-deep)]">{c.name}</option>)}
-                        <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                        <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)")}</option>
+
                       </select>
                     ) : null}
                     {(cities.length === 0 || !cityInList) && isReal(b.country) && (

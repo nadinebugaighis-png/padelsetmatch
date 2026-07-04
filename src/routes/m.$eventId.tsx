@@ -226,7 +226,7 @@ function PublicMatchPage() {
                   onClick={copyShareLink}
                   className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
                 >
-                  Copy link
+                  {tr("Copy link", "Copiar enlace")}
                 </button>
               </div>
               {typeof navigator !== "undefined" && "share" in navigator && (

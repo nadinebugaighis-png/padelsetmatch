@@ -535,6 +535,38 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "just starting": "empezando", casual: "casual", beginner: "principiante", intermediate: "intermedio", advanced: "avanzado", competitive: "competitivo",
     friend: "amistad", partner: "pareja", both: "ambos",
     everyone: "todos", women: "mujeres", men: "hombres", "lesbian women": "mujeres lesbianas", "gay men": "hombres gays", bisexual: "bisexuales", queer: "queer",
+    // Court sides
+    right: "derecha", left: "izquierda",
+    // Languages
+    English: "Inglés", Spanish: "Español", Portuguese: "Portugués", French: "Francés",
+    Italian: "Italiano", German: "Alemán", Dutch: "Neerlandés", Catalan: "Catalán",
+    Arabic: "Árabe", Russian: "Ruso", Mandarin: "Mandarín", Japanese: "Japonés",
+    Swedish: "Sueco", Greek: "Griego", Turkish: "Turco", Hindi: "Hindi",
+    // Personal traits
+    Honest: "Honesto", Kind: "Amable", Calm: "Tranquilo", Curious: "Curioso",
+    Confident: "Seguro", Friendly: "Simpático", Loyal: "Leal", Patient: "Paciente",
+    Organized: "Organizado", "Open-minded": "Mente abierta", Ambitious: "Ambicioso",
+    Ambidextrous: "Ambidiestro", Brave: "Valiente", Creative: "Creativo",
+    Determined: "Decidido", Diplomatic: "Diplomático", Easygoing: "Fácil de tratar",
+    Empathetic: "Empático", Energetic: "Enérgico", Flexible: "Flexible",
+    Generous: "Generoso", Humble: "Humilde", Independent: "Independiente",
+    Introverted: "Introvertido", Outgoing: "Extrovertido", Practical: "Práctico",
+    Reflective: "Reflexivo", Reliable: "Fiable", Serious: "Serio",
+    "Witty/funny": "Ingenioso/gracioso",
+    // Padel styles
+    Competitive: "Competitivo", Strategic: "Estratégico", Aggressive: "Agresivo",
+    Defensive: "Defensivo", "Team player": "Jugador de equipo", Coachable: "Enseñable",
+    "Loves tournaments": "Le encantan los torneos", "Just for fun": "Solo por diversión",
+    "Always improving": "Siempre mejorando", "Fitness-focused": "Enfocado en fitness",
+    "Social player": "Jugador social",
+    // Availability slots
+    "Weekday mornings": "Mañanas entre semana",
+    "Weekday lunchtime": "Mediodías entre semana",
+    "Weekday evenings": "Tardes entre semana",
+    "Weekend mornings": "Mañanas de fin de semana",
+    "Weekend afternoons": "Tardes de fin de semana",
+    "Weekend evenings": "Noches de fin de semana",
+    // Priority traits
     "Travel": "Viajes",
     "Art": "Arte",
     "Music": "Música",
@@ -561,6 +593,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "Comfort (home life)": "Confort (vida en casa)",
     "Spontaneity (surprises)": "Espontaneidad (sorpresas)",
   },
+
 };
 
 type Ctx = {

@@ -214,7 +214,7 @@ function ProfilePage() {
           <div className="mt-4">
             <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Padel style", "Estilo de pádel")}</div>
             <div className="flex flex-wrap gap-2">
-              {p.padel_style!.map((s) => <span key={s} className="chip">{s}</span>)}
+              {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
             </div>
           </div>
         )}

@@ -82,8 +82,8 @@ function HowItWorksPage() {
           </h1>
           <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-2xl leading-relaxed">
             {tr(
-              "PadelMatch app is built on a simple belief: the best connections happen when people feel safe, unpressured, and free to be themselves. We use AI to find your court soulmates — but the real magic is in the game.",
-              "La app PadelMatch se basa en una creencia sencilla: las mejores conexiones surgen cuando la gente se siente segura, sin presión y libre de ser quien es. Usamos IA para encontrar tus almas gemelas de pista — pero la magia real está en el juego."
+              "PadelMatch is built on one simple idea: padel is more fun when you play with people who match your energy. We use AI to connect you with compatible players, help you discover free courts and games, and spend less time searching so you can spend more time playing. Great matches that lead to teammates, lasting friendships, or even something more — but every connection starts with a great game.",
+              "PadelMatch se basa en una idea sencilla: el pádel es más divertido cuando juegas con gente que comparte tu energía. Usamos IA para conectarte con jugadores compatibles, ayudarte a descubrir pistas y partidos gratuitos, y pasar menos tiempo buscando para poder pasar más tiempo jugando. Grandes matches que llevan a compañeros de equipo, amistades duraderas o incluso algo más — pero cada conexión empieza con un gran partido."
             )}
           </p>
         </div>

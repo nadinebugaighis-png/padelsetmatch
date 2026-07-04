@@ -485,7 +485,7 @@ function Onboarding() {
                         maxLength={80}
                         value={b.city === CUSTOM ? "" : b.city}
                         onChange={(e) => updateBlock(i, { city: e.target.value })}
-                        placeholder="Type city name"
+                        placeholder={tr("Type city name", "Escribe la ciudad")}
                       />
                     )}
                     {isReal(b.city) && (

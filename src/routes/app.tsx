@@ -170,7 +170,7 @@ function AuthShell() {
 function NavTab({ to, label, icon, active, highlight, badge }: { to: string; label: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number }) {
   const isHighlight = highlight && !active;
   return (
-    <Link to={to} className={`flex flex-col items-center justify-center py-3 text-[11px] uppercase tracking-widest relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
+    <Link to={to} className={`flex flex-col items-center justify-center py-3 px-1 text-[11px] uppercase tracking-widest relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (

@@ -39,36 +39,43 @@ export const Route = createFileRoute("/app")({
     // Never leave the user on a blank dark screen. Show a recoverable message.
     // eslint-disable-next-line no-console
     console.error("[/app errorComponent]", error);
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6 text-center">
-        <div className="max-w-sm">
-          <h1 className="text-display text-3xl tracking-wider text-[var(--cream)]">Something went wrong</h1>
-          <p className="mt-3 text-sm text-[var(--cream)]/70">
-            We hit a snag loading your account. Please try again or sign in.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <button
-              onClick={() => { reset(); window.location.reload(); }}
-              className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
-            >
-              Try again
-            </button>
-            <Link
-              to="/auth"
-              search={{ redirect: undefined, join: undefined }}
-              className="rounded-full border border-[var(--cream)]/30 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
-            >
-              Sign in
-            </Link>
-          </div>
+    return <AppErrorFallback reset={reset} />;
+  },
+  notFoundComponent: () => <AppNotFoundFallback />,
+});
+
+function AppErrorFallback({ reset }: { reset: () => void }) {
+  const t = useT();
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 text-center">
+      <div className="max-w-sm">
+        <h1 className="text-display text-3xl tracking-wider text-[var(--cream)]">{t("shell.err.title")}</h1>
+        <p className="mt-3 text-sm text-[var(--cream)]/70">{t("shell.err.body")}</p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => { reset(); window.location.reload(); }}
+            className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            {t("shell.err.retry")}
+          </button>
+          <Link
+            to="/auth"
+            search={{ redirect: undefined, join: undefined }}
+            className="rounded-full border border-[var(--cream)]/30 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            {t("shell.err.signin")}
+          </Link>
         </div>
       </div>
-    );
-  },
-  notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center text-[var(--cream)]/70">Not found</div>
-  ),
-});
+    </div>
+  );
+}
+
+function AppNotFoundFallback() {
+  const t = useT();
+  return <div className="min-h-screen flex items-center justify-center text-[var(--cream)]/70">{t("shell.notFound")}</div>;
+}
+
 
 function AuthShell() {
   const navigate = useNavigate();

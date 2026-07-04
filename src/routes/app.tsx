@@ -147,7 +147,8 @@ function AuthShell() {
         <div className="flex items-center gap-3 shrink-0">
           {isAdmin && (
             <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
-              Admin
+              {t("shell.admin")}
+
             </Link>
           )}
           <LangSwitch />

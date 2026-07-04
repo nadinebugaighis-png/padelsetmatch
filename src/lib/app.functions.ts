@@ -1077,6 +1077,12 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const me = meRow as Profile | null;
     if (!me) throw new Error("Create your profile first");
 
+    // Derive intent flags from profile so we tailor questions silently.
+    const myIntents = deriveIntents({ intents: me.intents, looking_for: me.looking_for });
+    const wantsRelationship = myIntents.includes("relationship");
+    const wantsFriend = myIntents.includes("friend");
+    const padelOnly = !wantsRelationship && !wantsFriend;
+
     const { data: existing } = await context.supabase
       .from("qa_answers" as never)
       .select("question")
@@ -1085,10 +1091,21 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
       .limit(40);
     const asked = ((existing as Array<{ question: string }> | null) ?? []).map((r) => r.question);
 
+    // Filter fallback pool based on intent (silent — driven by profile only).
+    const isRelationshipQuestion = (q: GeneratedQuestion): boolean => {
+      const t = `${q.question} ${q.category}`.toLowerCase();
+      return /(relationship|dealbreaker|soulmate|love language|partner|dating|romance|romantic|kids|children|pareja|relaci[oó]n|alma gemela|lenguaje del amor|dating|hijos|sentimental|intimacy|intimidad|attraction|atracci[oó]n)/.test(t);
+    };
+    const filterPool = (pool: GeneratedQuestion[]): GeneratedQuestion[] => {
+      if (wantsRelationship) return pool;
+      return pool.filter((q) => !isRelationshipQuestion(q));
+    };
+
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      // Fallback static questions if AI is not configured
-      const fallback: GeneratedQuestion[] = FALLBACK_QUESTIONS[data.lang].filter((q) => !asked.includes(q.question)).slice(0, data.count);
+      const fallback: GeneratedQuestion[] = filterPool(FALLBACK_QUESTIONS[data.lang])
+        .filter((q) => !asked.includes(q.question))
+        .slice(0, data.count);
       return { questions: fallback };
     }
 
@@ -1096,13 +1113,38 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-2.5-flash");
 
-    const sys = data.lang === "es"
-      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla debe ser ~35% personalidad/valores, ~30% estilo de vida y estatus (rutina diaria, situación laboral, nivel de estudios, situación sentimental actual, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Responde SIEMPRE en español."
-      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). The mix must be ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.";
+    // Build intent-aware guidance appended to the system prompt.
+    const intentGuidanceEs = padelOnly
+      ? " El usuario SOLO busca compañeros de pádel — NO hagas preguntas sobre citas, relaciones, romance, atracción física, lenguajes del amor, dealbreakers de pareja, hijos deseados ni intimidad. Céntrate casi todo en pádel (estilo, actitud, competitividad, disponibilidad) y en personalidad/estilo de vida ligeros y adecuados para amistad. Proporción: ~60% pádel, ~40% personalidad/estilo de vida amistosos."
+      : !wantsRelationship
+      ? " El usuario busca amistad, NO pareja — NO hagas preguntas sobre citas, romance, atracción, lenguajes del amor, dealbreakers de pareja, hijos deseados ni intimidad. Céntrate en pádel, personalidad, valores y estilo de vida. Proporción: ~40% pádel, ~35% personalidad/valores, ~25% estilo de vida."
+      : "";
+    const intentGuidanceEn = padelOnly
+      ? " The user is ONLY looking for padel partners — do NOT ask about dating, relationships, romance, physical attraction, love languages, partner dealbreakers, wanting kids, or intimacy. Focus almost entirely on padel (style, attitude, competitiveness, availability) and light, friendship-appropriate personality/lifestyle. Ratio: ~60% padel, ~40% friendship-friendly personality/lifestyle."
+      : !wantsRelationship
+      ? " The user is looking for friendship, NOT a partner — do NOT ask about dating, romance, attraction, love languages, partner dealbreakers, wanting kids, or intimacy. Focus on padel, personality, values, and lifestyle. Ratio: ~40% padel, ~35% personality/values, ~25% lifestyle."
+      : "";
+
+    const sys = (data.lang === "es"
+      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla por defecto es ~35% personalidad/valores, ~30% estilo de vida y estatus (rutina diaria, situación laboral, nivel de estudios, situación sentimental actual, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Responde SIEMPRE en español."
+      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). Default mix: ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.")
+      + (data.lang === "es" ? intentGuidanceEs : intentGuidanceEn);
+
+    const ratioLine = padelOnly
+      ? (data.lang === "es"
+        ? "Proporción OBLIGATORIA: ~60% pádel, ~40% personalidad ligera y estilo de vida (rutina, deporte, viajes, humor, energía social, mascotas). NADA de romance, citas, pareja, hijos ni atracción."
+        : "MANDATORY ratio: ~60% padel, ~40% light personality and lifestyle (routine, fitness, travel, humor, social energy, pets). NOTHING about romance, dating, partners, kids, or attraction.")
+      : !wantsRelationship
+      ? (data.lang === "es"
+        ? "Proporción OBLIGATORIA: ~40% pádel, ~35% personalidad/valores (humor, energía social, estilo de conflicto, ambición), ~25% estilo de vida (rutina, viajes, comida, fumar/beber, mascotas). NADA de romance, citas, pareja ni hijos."
+        : "MANDATORY ratio: ~40% padel, ~35% personality/values (humor, social energy, conflict style, ambition), ~25% lifestyle (routine, travel, food, smoking/drinking, pets). NOTHING about romance, dating, partners, or kids.")
+      : (data.lang === "es"
+        ? "Proporción: ~35% personalidad (lenguaje del amor, apego, estilo de conflicto, humor, dealbreakers, familia, ambición, energía social, comodidad con la intimidad, qué les hace sentir queridos), ~30% estilo de vida y estatus (etapa laboral, estudios, situación sentimental, hijos o querer hijos, vivienda, fumar, beber, dieta, deporte, sueño, viajes, mascotas, religión, política, mentalidad con el dinero, fin de semana ideal), ~35% pádel (lado preferido, estilo agresivo/defensivo, cómo reacciona al perder, cómo trata a compañeros, intensidad, social vs competitivo, compañero ideal)."
+        : "Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).");
 
     const prompt = `Person context:
 - Age ${me.age}, ${me.gender === "self-describe" ? (me.gender_custom || "self-describe") : me.gender}
-- Looking for: ${me.looking_for}
+- Looking for: ${myIntents.join(", ") || me.looking_for}
 - Nationality: ${me.nationality}
 - Languages: ${(me.languages ?? []).join(", ") || "n/a"}
 - Top values: ${(me.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
@@ -1111,21 +1153,21 @@ They have already answered these questions (do NOT repeat or paraphrase):
 ${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
 
 Generate exactly ${data.count} NEW questions as MULTIPLE CHOICE.
-Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).
+${ratioLine}
 EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic. Never ask for income amounts.
 
 Return ONLY valid JSON, no prose, no markdown:
 {"questions":[{"question":"...","category":"lifestyle","options":["opt1","opt2","opt3","opt4"]}]}
 Categories must be lowercase single words (personality, values, lifestyle, status, padel, etc.).`;
 
-
-
     let text = "";
     try {
       const res = await generateText({ model, system: sys, prompt, temperature: 0.9 });
       text = res.text ?? "";
     } catch (e) {
-      const fallback: GeneratedQuestion[] = FALLBACK_QUESTIONS[data.lang].filter((q) => !asked.includes(q.question)).slice(0, data.count);
+      const fallback: GeneratedQuestion[] = filterPool(FALLBACK_QUESTIONS[data.lang])
+        .filter((q) => !asked.includes(q.question))
+        .slice(0, data.count);
       return { questions: fallback, warning: e instanceof Error ? e.message : "AI unavailable" };
     }
 
@@ -1139,18 +1181,31 @@ Categories must be lowercase single words (personality, values, lifestyle, statu
     } catch {
       parsed = { questions: [] };
     }
-    const out: GeneratedQuestion[] = (parsed.questions ?? [])
+    let out: GeneratedQuestion[] = (parsed.questions ?? [])
       .filter((q) => q && typeof q.question === "string" && q.question.length > 3)
       .filter((q) => Array.isArray(q.options) && q.options.length >= 2)
       .filter((q) => !asked.includes(q.question))
-      .slice(0, data.count)
       .map((q) => ({
         question: q.question.trim(),
         category: (q.category ?? "general").toLowerCase().slice(0, 30),
         options: (q.options as string[]).slice(0, 5).map((o) => String(o).slice(0, 80)),
       }));
-    return { questions: out };
+
+    // Safety net: even if the model ignored guidance, strip relationship questions
+    // when the user's profile intents don't include "relationship".
+    out = filterPool(out);
+
+    // If filtering left us short, top up from the (also-filtered) fallback pool.
+    if (out.length < data.count) {
+      const topUp = filterPool(FALLBACK_QUESTIONS[data.lang])
+        .filter((q) => !asked.includes(q.question) && !out.some((o) => o.question === q.question))
+        .slice(0, data.count - out.length);
+      out = [...out, ...topUp];
+    }
+
+    return { questions: out.slice(0, data.count) };
   });
+
 
 const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
   en: [

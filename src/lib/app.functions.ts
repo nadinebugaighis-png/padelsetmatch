@@ -1221,6 +1221,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
         id: string; rating: number; message: string; created_at: string;
       }>,
     };
+  });
 
 
 // AI-generated compatibility summary between me and another profile.

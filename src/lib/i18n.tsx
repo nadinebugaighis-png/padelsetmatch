@@ -316,6 +316,8 @@ const es: Dict = {
   "auth.sub.signup": "Solo preguntamos lo que ayuda al match. Tu foto es para tus matches, no para el mundo.",
   "auth.sub.signin": "Vuelve a entrar en tu feed de pádel.",
   "auth.google": "Continuar con Google",
+  "auth.apple": "Continuar con Apple",
+
   "auth.or": "o",
   "auth.email": "email",
   "auth.password": "contraseña (mín. 8)",

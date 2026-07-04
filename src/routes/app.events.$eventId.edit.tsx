@@ -122,7 +122,7 @@ function EditEvent() {
             disabled={busy}
             className="w-full py-2 rounded-full border border-red-500/40 text-xs uppercase tracking-widest text-red-300 disabled:opacity-50"
           >
-            Cancel match
+            {tr("Cancel match", "Cancelar partido")}
           </button>
         )}
         <button

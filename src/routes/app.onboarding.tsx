@@ -442,7 +442,9 @@ function Onboarding() {
                       value={countryInList ? b.country : CUSTOM}
                       onChange={(e) => {
                         const v = e.target.value;
-                        updateBlock(i, { country: v === CUSTOM ? CUSTOM : v, city: "", areas: ["", "", ""] });
+                        const nextCountry = v === CUSTOM ? CUSTOM : v;
+                        const firstCity = nextCountry && nextCountry !== CUSTOM ? (citiesFor(nextCountry)[0]?.name ?? "") : "";
+                        updateBlock(i, { country: nextCountry, city: firstCity, areas: ["", "", ""] });
                       }}
                       className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                     >

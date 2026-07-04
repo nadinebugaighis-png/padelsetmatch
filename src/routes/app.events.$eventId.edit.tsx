@@ -5,12 +5,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cancelMatchEvent, deleteMatchEvent, getMatchEvent, updateMatchEvent } from "@/lib/match-events.functions";
 import { MatchForm, type MatchFormValues } from "@/components/MatchForm";
 import { toast } from "sonner";
+import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId/edit")({
   component: EditEvent,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">Not found</div>,
+  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">—</div>,
 });
+
 
 function EditEvent() {
   const { eventId } = Route.useParams();

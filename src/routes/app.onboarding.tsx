@@ -434,7 +434,7 @@ function Onboarding() {
                 return (
                   <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Location {i + 1}</span>
+                      <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Location", "Ubicación")} {i + 1}</span>
                       {locBlocks.length > 1 && (
                         <button type="button" onClick={() => removeBlock(i)} className="text-[var(--cream)]/60 hover:text-[var(--clay)]">
                           <X className="w-4 h-4" />

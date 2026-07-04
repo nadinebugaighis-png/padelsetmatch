@@ -380,14 +380,15 @@ function Onboarding() {
 
             {hasPartnerGoal && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Who would you like to meet?</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?")}</label>
                 <div className="flex flex-wrap gap-2">
                   {(["men", "women", "everyone"] as const).map((o) => (
                     <button key={o} onClick={() => setMeetPref(o)} className={`chip ${meetPref === o ? "chip-ball" : ""}`}>
-                      {o === "men" ? "Men" : o === "women" ? "Women" : "Everyone"}
+                      {o === "men" ? tr("Men", "Hombres") : o === "women" ? tr("Women", "Mujeres") : tr("Everyone", "Todos")}
                     </button>
                   ))}
                 </div>
+
               </>
             )}
 

@@ -192,7 +192,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
       {isHighlight && (
-        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">★ core</span>
+        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">{t("shell.core")}</span>
       )}
     </Link>
   );

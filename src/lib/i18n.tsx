@@ -58,6 +58,7 @@ const en: Dict = {
   "shell.signout": "Sign out",
   "shell.tab.discover": "Discover",
   "shell.tab.questions": "Matchmaking code",
+  "shell.tab.questions.short": "Code",
   "shell.tab.matches": "Matchat",
   "shell.tab.me": "Me",
 
@@ -310,6 +311,7 @@ const es: Dict = {
   "shell.signout": "Salir",
   "shell.tab.discover": "Descubrir",
   "shell.tab.questions": "Código de afinidad",
+  "shell.tab.questions.short": "Código",
   "shell.tab.matches": "Matchat",
   "shell.tab.me": "Yo",
 

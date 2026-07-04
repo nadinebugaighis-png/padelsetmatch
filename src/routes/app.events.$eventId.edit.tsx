@@ -89,8 +89,9 @@ function EditEvent() {
   return (
     <div>
       <MatchForm
-        title="EDIT MATCH"
-        submitLabel="Save changes"
+        title={tr("EDIT MATCH", "EDITAR PARTIDO")}
+        submitLabel={tr("Save changes", "Guardar cambios")}
+
         saving={saving}
         onSubmit={onSubmit}
         initial={{

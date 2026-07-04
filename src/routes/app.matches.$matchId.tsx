@@ -175,6 +175,11 @@ function ChatRoom() {
         </button>
       </div>
 
+      {statusQ.data && statusQ.data.count >= 2 && (
+        <MatchRatingPanel matchId={matchId} otherName={other.first_name} />
+      )}
+
+
       {reportOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
           <div className="surface-card p-5 w-full max-w-sm space-y-3" onClick={(e) => e.stopPropagation()}>

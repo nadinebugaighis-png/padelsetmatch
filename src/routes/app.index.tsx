@@ -48,6 +48,22 @@ function Discover() {
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
+  const getCompatFb = useServerFn(getMyAiCompatibilityFeedback);
+  const compatFbQ = useQuery({
+    queryKey: ["ai-compat-fb", preview?.id],
+    queryFn: () => getCompatFb({ data: { otherProfileId: preview!.id } }),
+    enabled: !!preview?.id,
+  });
+  const rateCompat = useServerFn(rateAiCompatibility);
+  const rateCompatM = useMutation({
+    mutationFn: (thumbs: 1 | -1) => rateCompat({ data: { otherProfileId: preview!.id, thumbs } }),
+    onSuccess: (_r, thumbs) => {
+      qc.setQueryData(["ai-compat-fb", preview?.id], { thumbs });
+      toast.success(thumbs === 1 ? "Thanks — we'll surface more like this" : "Got it — we'll adjust");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
+  });
+
 
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });

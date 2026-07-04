@@ -13,6 +13,8 @@ function Matches() {
   const getMatches = useServerFn(getMyMatches);
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const { t, label } = useI18n();
+  const tr = useTr();
+
 
   const isMatchesList = path === "/app/matches" || path === "/app/matches/";
   if (!isMatchesList) return <Outlet />;

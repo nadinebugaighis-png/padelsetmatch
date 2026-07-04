@@ -166,7 +166,6 @@ function HowItWorksPage() {
 
           <div className="mt-8 space-y-6 max-w-2xl">
             <FeatureRow
-              icon={<Lock className="w-5 h-5" />}
               title={tr("Your answers are private", "Tus respuestas son privadas")}
               body={tr(
                 "Your matchmaking answers are never shown publicly. Only when two people share an answer does it contribute to their match score. Nobody sees what you answered alone.",
@@ -174,7 +173,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<EyeOff className="w-5 h-5" />}
               title={tr("Anonymous-first likes", "Likes anónimos primero")}
               body={tr(
                 "Tap someone you like? They'll never know unless they tap you back. This removes all pressure and awkwardness — you're free to explore without fear of rejection or unwanted attention.",
@@ -182,7 +180,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<Shield className="w-5 h-5" />}
               title={tr("Safety by design", "Seguridad por diseño")}
               body={tr(
                 "We encourage booking through Playtomic for verified public courts. Block and report tools are one tap away. Reports are reviewed by real humans, and offending accounts are suspended immediately.",
@@ -190,7 +187,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<Users className="w-5 h-5" />}
               title={tr("You control your intent", "Tú controlas tu intención")}
               body={tr(
                 "Looking for padel partners, friends, or something more? Set your preferences privately. If you're only here for padel and friendship, you'll never see relationship questions — and vice versa.",
@@ -198,7 +194,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<MapPin className="w-5 h-5" />}
               title={tr("Free court access", "Pista propia")}
               body={tr(
                 "Players with court access can mark it on their profile. It's a great way to play for free and meet new people — just coordinate through chat and enjoy the game.",

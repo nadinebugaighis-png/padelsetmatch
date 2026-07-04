@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
@@ -439,16 +438,18 @@ function Onboarding() {
                         </button>
                       )}
                     </div>
-                    <Select
-                      value={countryInList ? (b.country || undefined) : CUSTOM}
-                      onValueChange={(v) => updateBlock(i, { country: v === CUSTOM ? CUSTOM : v, city: "", areas: ["", "", ""] })}
+                    <select
+                      value={countryInList ? b.country : CUSTOM}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        updateBlock(i, { country: v === CUSTOM ? CUSTOM : v, city: "", areas: ["", "", ""] });
+                      }}
+                      className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                     >
-                      <SelectTrigger><SelectValue placeholder="Country" /></SelectTrigger>
-                      <SelectContent>
-                        {COUNTRY_NAMES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                        <SelectItem value={CUSTOM}>+ Other (type your own)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      <option value="" className="bg-[var(--court-deep)]">Country</option>
+                      {COUNTRY_NAMES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
+                      <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                    </select>
                     {!countryInList && (
                       <Input
                         maxLength={60}
@@ -458,17 +459,19 @@ function Onboarding() {
                       />
                     )}
                     {cities.length > 0 ? (
-                      <Select
-                        value={cityInList ? (b.city || undefined) : CUSTOM}
-                        onValueChange={(v) => updateBlock(i, { city: v === CUSTOM ? CUSTOM : v, areas: ["", "", ""] })}
+                      <select
+                        value={cityInList ? b.city : CUSTOM}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          updateBlock(i, { city: v === CUSTOM ? CUSTOM : v, areas: ["", "", ""] });
+                        }}
                         disabled={!isReal(b.country) && countryInList}
+                        className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)] disabled:opacity-50"
                       >
-                        <SelectTrigger><SelectValue placeholder={b.country ? "City" : "Pick country first"} /></SelectTrigger>
-                        <SelectContent>
-                          {cities.map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
-                          <SelectItem value={CUSTOM}>+ Other (type your own)</SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <option value="" className="bg-[var(--court-deep)]">{b.country ? "City" : "Pick country first"}</option>
+                        {cities.map((c) => <option key={c.name} value={c.name} className="bg-[var(--court-deep)]">{c.name}</option>)}
+                        <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                      </select>
                     ) : null}
                     {(cities.length === 0 || !cityInList) && isReal(b.country) && (
                       <Input
@@ -485,18 +488,16 @@ function Onboarding() {
                           const taken = new Set(b.areas.filter((x, k) => k !== ai && x && x !== CUSTOM));
                           if (areaOpts.length > 0 && areaInList) {
                             return (
-                              <Select
+                              <select
                                 key={ai}
-                                value={a || undefined}
-                                onValueChange={(v) => updateArea(i, ai, v === "__none__" ? "" : v)}
+                                value={a || "__none__"}
+                                onChange={(e) => updateArea(i, ai, e.target.value === "__none__" ? "" : e.target.value)}
+                                className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                               >
-                                <SelectTrigger><SelectValue placeholder={`Area ${ai + 1} (optional)`} /></SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="__none__">— None —</SelectItem>
-                                  {areaOpts.filter((o) => !taken.has(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                                  <SelectItem value={CUSTOM}>+ Other (type your own)</SelectItem>
-                                </SelectContent>
-                              </Select>
+                                <option value="__none__" className="bg-[var(--court-deep)]">Area {ai + 1} (optional)</option>
+                                {areaOpts.filter((o) => !taken.has(o)).map((o) => <option key={o} value={o} className="bg-[var(--court-deep)]">{o}</option>)}
+                                <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                              </select>
                             );
                           }
                           return (
@@ -516,6 +517,11 @@ function Onboarding() {
                           );
                         })}
                       </div>
+                    )}
+                    {isReal(b.country) && !isReal(b.city) && (
+                      <p className="text-[11px] text-[var(--ball)]/80">
+                        {tr("Choose a city too so we can show nearby players.", "Elige también una ciudad para poder mostrar jugadores cerca.")}
+                      </p>
                     )}
                   </div>
                 );

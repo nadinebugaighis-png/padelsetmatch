@@ -169,20 +169,19 @@ function Discover() {
       <div className="flex gap-2 mt-4 flex-wrap items-center">
         {(["all", "padel", "friend", "relationship"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-            {f === "all" ? "Everyone" : f === "padel" ? "Padel partner" : f === "friend" ? "Friend" : "Relationship"}
+            {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
           </button>
         ))}
         <button
           onClick={() => setWorld((w) => !w)}
           className={`chip ${world ? "chip-ball" : ""}`}
-          title={world ? "Showing players worldwide — tap to return to your area" : "Explore players everywhere, any age, any city"}
         >
-          🌍 World {world ? "On" : "Off"}
+          {world ? t("disc.world.on") : t("disc.world.off")}
         </button>
       </div>
       {world && (
         <p className="text-[11px] text-[var(--cream)]/60 mt-2">
-          Showing everyone worldwide (except people you've hidden). Turn off to return to your area.
+          {t("disc.world.note")}
         </p>
       )}
 

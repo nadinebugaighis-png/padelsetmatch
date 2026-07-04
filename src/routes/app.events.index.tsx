@@ -468,7 +468,7 @@ function EventsPage() {
       <button
         onClick={() => navigate({ to: "/app/events/new" })}
         className="fixed left-1/2 -translate-x-1/2 bottom-20 w-14 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center shadow-xl z-30"
-        aria-label="Call a match"
+        aria-label={tr("Call a match", "Convocar un partido")}
       >
         <Plus className="w-6 h-6" strokeWidth={2.5} />
       </button>

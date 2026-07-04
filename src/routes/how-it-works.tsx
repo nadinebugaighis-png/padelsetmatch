@@ -1,11 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr } from "@/lib/i18n";
-import {
-  Heart,
-  MessageCircle,
-  Users,
-  ArrowLeft,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 
 export const Route = createFileRoute("/how-it-works")({

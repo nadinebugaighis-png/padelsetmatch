@@ -442,6 +442,9 @@ function Discover() {
                               <ThumbsDown className="w-4 h-4" />
                             </button>
                           </div>
+                          <p className="text-[10px] text-[var(--cream)]/40 mt-1.5 leading-snug">
+                            Your feedback is completely private — only the AI sees it to learn what you like.
+                          </p>
                         </>
                       ) : (
                         <p className="text-sm text-[var(--cream)]/50 italic">Couldn't load AI analysis right now.</p>

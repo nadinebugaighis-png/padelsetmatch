@@ -310,7 +310,7 @@ const es: Dict = {
   "shell.signout": "Salir",
   "shell.tab.discover": "Descubrir",
   "shell.tab.questions": "Código de afinidad",
-  "shell.tab.matches": "Matches",
+  "shell.tab.matches": "Matchat",
   "shell.tab.me": "Yo",
 
   // Q&A page

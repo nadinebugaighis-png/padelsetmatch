@@ -131,11 +131,12 @@ function AuthShell() {
           ) : (
             <Link
               to="/app"
-              aria-label="Back to Grid"
+              aria-label={t("shell.back.grid")}
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Grid</span>
+              <span>{t("shell.grid")}</span>
+
             </Link>
           )}
           <Link to="/app" className="flex items-center gap-2 min-w-0">

@@ -197,7 +197,7 @@ function Onboarding() {
   const updateArea = (i: number, ai: number, val: string) =>
     setLocBlocks((cur) => cur.map((b, j) => j === i ? { ...b, areas: b.areas.map((a, k) => k === ai ? val : a) } : b));
   const addBlock = () => {
-    if (locBlocks.length >= 5) { toast.error("Up to 5 countries"); return; }
+    if (locBlocks.length >= 5) { toast.error(tr("Up to 5 countries", "Hasta 5 países")); return; }
     setLocBlocks((cur) => [...cur, emptyBlock()]);
   };
   const removeBlock = (i: number) => setLocBlocks((cur) => cur.length === 1 ? cur : cur.filter((_, j) => j !== i));

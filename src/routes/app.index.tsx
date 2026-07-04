@@ -372,6 +372,24 @@ function Discover() {
                       </div>
                     )}
 
+                    {/* AI compatibility blurb — cached per pair */}
+                    <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
+                        <Sparkles className="w-3 h-3" /> AI compatibility
+                      </div>
+                      {compatQ.isLoading ? (
+                        <p className="text-sm text-[var(--cream)]/60 italic">Analyzing your vibe…</p>
+                      ) : compatQ.data ? (
+                        <>
+                          <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
+                          <p className="text-sm text-[var(--cream)]/90 mt-1 leading-relaxed">{compatQ.data.blurb}</p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-[var(--cream)]/50 italic">Couldn't load AI analysis right now.</p>
+                      )}
+                    </div>
+
+
                     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
                       <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">About {preview.first_name}</div>
                       {preview.bio ? (

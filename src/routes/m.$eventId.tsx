@@ -168,13 +168,14 @@ function PublicMatchPage() {
                 disabled={openSpots === 0}
                 className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
               >
-                {openSpots === 0 ? "Match is full" : hasSession ? "Join this match" : "Sign up & join"}
+                {openSpots === 0 ? tr("Match is full", "Partido completo") : hasSession ? tr("Join this match", "Unirme al partido") : tr("Sign up & join", "Regístrate y únete")}
               </button>
               <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
-                <Share2 className="w-4 h-4" /> Share
+                <Share2 className="w-4 h-4" /> {tr("Share", "Compartir")}
               </button>
               <p className="text-[11px] text-[var(--cream)]/50 text-center pt-1">
-                No long profile needed to join — just your name and padel level.
+                {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.")}
+
               </p>
             </div>
           </>

@@ -119,7 +119,7 @@ function ChatRoom() {
     setReportOpen(false);
   };
   const onNoShow = () => {
-    if (!window.confirm(`Report that ${other.first_name} didn't show up? Repeat no-shows lead to auto-suspension.`)) return;
+    if (!window.confirm(tr(`Report that ${other.first_name} didn't show up? Repeat no-shows lead to auto-suspension.`, `¿Reportar que ${other.first_name} no se presentó? Los no-shows repetidos causan suspensión automática.`))) return;
     noShowM.mutate();
   };
 

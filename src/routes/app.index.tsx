@@ -231,7 +231,7 @@ function Discover() {
                 <img src={c.photo_url} alt={c.first_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
-              {!c.liked && <div className="absolute inset-0 bg-black/30 pointer-events-none" />}
+              {!c.liked && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
               <div className="absolute top-2 right-2 chip chip-ball text-[10px]" title={t("disc.scoreTooltip")}>{c.score}</div>
 
               <button
@@ -245,11 +245,11 @@ function Discover() {
                 type="button"
                 disabled={likeM.isPending || unlikeM.isPending}
                 onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
-                className={`absolute bottom-2 right-2 z-10 p-2 rounded-full shadow-lg transition-transform active:scale-90 ${c.liked ? "bg-[var(--ball)]" : "bg-black/65 hover:bg-black/85"}`}
+                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-black/50"}`}
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >
-                <Heart className={`w-4 h-4 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]"}`} />
+                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]/70"}`} />
               </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">

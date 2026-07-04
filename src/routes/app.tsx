@@ -39,36 +39,43 @@ export const Route = createFileRoute("/app")({
     // Never leave the user on a blank dark screen. Show a recoverable message.
     // eslint-disable-next-line no-console
     console.error("[/app errorComponent]", error);
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6 text-center">
-        <div className="max-w-sm">
-          <h1 className="text-display text-3xl tracking-wider text-[var(--cream)]">Something went wrong</h1>
-          <p className="mt-3 text-sm text-[var(--cream)]/70">
-            We hit a snag loading your account. Please try again or sign in.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <button
-              onClick={() => { reset(); window.location.reload(); }}
-              className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
-            >
-              Try again
-            </button>
-            <Link
-              to="/auth"
-              search={{ redirect: undefined, join: undefined }}
-              className="rounded-full border border-[var(--cream)]/30 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
-            >
-              Sign in
-            </Link>
-          </div>
+    return <AppErrorFallback reset={reset} />;
+  },
+  notFoundComponent: () => <AppNotFoundFallback />,
+});
+
+function AppErrorFallback({ reset }: { reset: () => void }) {
+  const t = useT();
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 text-center">
+      <div className="max-w-sm">
+        <h1 className="text-display text-3xl tracking-wider text-[var(--cream)]">{t("shell.err.title")}</h1>
+        <p className="mt-3 text-sm text-[var(--cream)]/70">{t("shell.err.body")}</p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => { reset(); window.location.reload(); }}
+            className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            {t("shell.err.retry")}
+          </button>
+          <Link
+            to="/auth"
+            search={{ redirect: undefined, join: undefined }}
+            className="rounded-full border border-[var(--cream)]/30 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            {t("shell.err.signin")}
+          </Link>
         </div>
       </div>
-    );
-  },
-  notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center text-[var(--cream)]/70">Not found</div>
-  ),
-});
+    </div>
+  );
+}
+
+function AppNotFoundFallback() {
+  const t = useT();
+  return <div className="min-h-screen flex items-center justify-center text-[var(--cream)]/70">{t("shell.notFound")}</div>;
+}
+
 
 function AuthShell() {
   const navigate = useNavigate();
@@ -115,7 +122,7 @@ function AuthShell() {
           {path === "/app" || path === "/app/" ? (
             <Link
               to="/"
-              aria-label="Back to home"
+              aria-label={t("shell.back.home")}
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -124,11 +131,12 @@ function AuthShell() {
           ) : (
             <Link
               to="/app"
-              aria-label="Back to Grid"
+              aria-label={t("shell.back.grid")}
               className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Grid</span>
+              <span>{t("shell.grid")}</span>
+
             </Link>
           )}
           <Link to="/app" className="flex items-center gap-2 min-w-0">
@@ -139,7 +147,8 @@ function AuthShell() {
         <div className="flex items-center gap-3 shrink-0">
           {isAdmin && (
             <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
-              Admin
+              {t("shell.admin")}
+
             </Link>
           )}
           <LangSwitch />
@@ -156,8 +165,9 @@ function AuthShell() {
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
           <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(5, minmax(0, 1fr))` }}>
             <NavTab to="/app/questions" label={t("shell.tab.questions.short")} ariaLabel={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
-            <NavTab to="/app" label="Grid" icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
-            <NavTab to="/app/events" label="Play" icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
+            <NavTab to="/app" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
+            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
+
             <NavTab to="/app/matches" label={t("shell.tab.matches")} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
           </div>
@@ -168,7 +178,9 @@ function AuthShell() {
 }
 
 function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number }) {
+  const t = useT();
   const isHighlight = highlight && !active;
+
   return (
     <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
       <span className="relative">
@@ -182,7 +194,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
       {isHighlight && (
-        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">★ core</span>
+        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">{t("shell.core")}</span>
       )}
     </Link>
   );

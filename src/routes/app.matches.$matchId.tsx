@@ -86,24 +86,25 @@ function ChatRoom() {
   });
   const confirmM = useMutation({
     mutationFn: () => confirmFn({ data: { matchId } }),
-    onSuccess: () => { toast.success("Marked as played ✅"); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't confirm"),
+    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't confirm", "No se pudo confirmar")),
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success("No-show reported. Thanks — we'll look into it."),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar")),
   });
   const editM = useMutation({
     mutationFn: (v: { messageId: string; body: string }) => editFn({ data: v }),
     onSuccess: () => { setEditingId(null); setEditingText(""); qc.invalidateQueries({ queryKey: ["match", matchId] }); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't edit"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't edit", "No se pudo editar")),
   });
   const deleteM = useMutation({
     mutationFn: (messageId: string) => delFn({ data: { messageId } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["match", matchId] }),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't delete"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't delete", "No se pudo eliminar")),
   });
+
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
   const { other, my_profile_id, messages } = q.data;
@@ -118,7 +119,7 @@ function ChatRoom() {
     setReportOpen(false);
   };
   const onNoShow = () => {
-    if (!window.confirm(`Report that ${other.first_name} didn't show up? Repeat no-shows lead to auto-suspension.`)) return;
+    if (!window.confirm(tr(`Report that ${other.first_name} didn't show up? Repeat no-shows lead to auto-suspension.`, `¿Reportar que ${other.first_name} no se presentó? Los no-shows repetidos causan suspensión automática.`))) return;
     noShowM.mutate();
   };
 
@@ -164,16 +165,17 @@ function ChatRoom() {
         >
           <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
           {statusQ.data?.iConfirmed
-            ? (statusQ.data.count >= 2 ? "Played together ✓" : "Waiting for them to confirm…")
-            : "We played a match"}
+            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…"))
+            : tr("We played a match", "Jugamos un partido")}
         </button>
         <button
           type="button"
           onClick={onNoShow}
           className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10"
         >
-          <UserX className="w-3.5 h-3.5" /> No-show
+          <UserX className="w-3.5 h-3.5" /> {tr("No-show", "No-show")}
         </button>
+
       </div>
 
       {statusQ.data && statusQ.data.count >= 2 && (
@@ -217,7 +219,7 @@ function ChatRoom() {
                     type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
                     className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)]"
-                    aria-label="Edit"
+                    aria-label={tr("Edit", "Editar")}
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
@@ -225,7 +227,7 @@ function ChatRoom() {
                     type="button"
                     onClick={() => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?"))) deleteM.mutate(m.id); }}
                     className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-red-500/20 text-[var(--cream)] hover:text-red-400"
-                    aria-label="Delete"
+                    aria-label={tr("Delete", "Eliminar")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -250,10 +252,10 @@ function ChatRoom() {
                       autoFocus
                     />
                     <div className="flex gap-1 justify-end">
-                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label="Cancel">
+                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Cancel", "Cancelar")}>
                         <X className="w-3.5 h-3.5" />
                       </button>
-                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label="Save">
+                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Save", "Guardar")}>
                         <Check className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -360,7 +362,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
             type="button"
             onClick={() => setStars(n)}
             className="p-1"
-            aria-label={`${n} star${n>1?"s":""}`}
+            aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
           >
             <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
           </button>

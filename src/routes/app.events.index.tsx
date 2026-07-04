@@ -6,12 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
-import { useTr } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
   errorComponent: ({ error }) => <div className="p-6 text-center text-[var(--cream)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">Not found</div>,
+  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">—</div>,
 });
 
 function startOfDay(d: Date) {
@@ -24,16 +24,18 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
-function dayLabels(base: Date, i: number) {
+function dayLabels(base: Date, i: number, es: boolean = false) {
   const d = new Date(base);
   d.setDate(base.getDate() + i);
-  const weekday = d.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase();
-  const month = d.toLocaleDateString(undefined, { month: "short" }).toUpperCase();
+  const locale = es ? "es" : undefined;
+  const weekday = d.toLocaleDateString(locale, { weekday: "short" }).toUpperCase();
+  const month = d.toLocaleDateString(locale, { month: "short" }).toUpperCase();
   const day = d.getDate();
-  const top = i === 0 ? "TODAY" : i === 1 ? "TOMORROW" : weekday;
+  const top = i === 0 ? (es ? "HOY" : "TODAY") : i === 1 ? (es ? "MAÑANA" : "TOMORROW") : weekday;
   const bottom = `${month} ${day}`;
   return { top, bottom, date: d };
 }
+
 
 function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
   const tr = useTr();
@@ -48,6 +50,9 @@ function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
 function EventsPage() {
   const navigate = useNavigate();
   const tr = useTr();
+  const { lang } = useI18n();
+  const es = lang === "es";
+
   const list = useServerFn(listOpenEvents);
   const getProfile = useServerFn(getMyProfile);
   const [myAreasOnly, setMyAreasOnly] = useState(true);
@@ -65,7 +70,7 @@ function EventsPage() {
   });
 
   const today = startOfDay(new Date());
-  const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i)), [today.getTime()]);
+  const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i, es)), [today.getTime(), es]);
   const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">("all");
   const [customDate, setCustomDate] = useState<string>("");
 
@@ -140,7 +145,7 @@ function EventsPage() {
         key={e.id}
         {...detailHref}
         className="rounded-2xl border border-[var(--cream)]/10 bg-black/30 px-4 py-4 flex items-center gap-3"
-        aria-label={`Open match at ${e.club_name}`}
+        aria-label={tr(`Open match at ${e.club_name}`, `Abrir partido en ${e.club_name}`)}
       >
         {/* Time */}
         <div className="flex flex-col items-center w-14 shrink-0">
@@ -364,7 +369,7 @@ function EventsPage() {
               ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
-          aria-label="Pick a date"
+          aria-label={tr("Pick a date", "Elegir fecha")}
         >
           <CalendarDays className="w-4 h-4" />
           <input
@@ -389,7 +394,7 @@ function EventsPage() {
             <button
               type="button"
               onClick={() => { setCustomDate(""); setSelectedIdx(0); }}
-              aria-label="Clear date"
+              aria-label={tr("Clear date", "Borrar fecha")}
               className="inline-flex"
             >
               <X className="w-3 h-3" />
@@ -463,7 +468,7 @@ function EventsPage() {
       <button
         onClick={() => navigate({ to: "/app/events/new" })}
         className="fixed left-1/2 -translate-x-1/2 bottom-20 w-14 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center shadow-xl z-30"
-        aria-label="Call a match"
+        aria-label={tr("Call a match", "Convocar un partido")}
       >
         <Plus className="w-6 h-6" strokeWidth={2.5} />
       </button>

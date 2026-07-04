@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyMatches } from "@/lib/app.functions";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/matches")({
   component: Matches,
@@ -13,6 +13,8 @@ function Matches() {
   const getMatches = useServerFn(getMyMatches);
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const { t, label } = useI18n();
+  const tr = useTr();
+
 
   const isMatchesList = path === "/app/matches" || path === "/app/matches/";
   if (!isMatchesList) return <Outlet />;
@@ -47,7 +49,7 @@ function Matches() {
                   </div>
                   <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{m.other.zone} · {label(m.other.level)}</div>
                   <div className={`text-xs mt-1 truncate ${m.unread > 0 ? "text-[var(--cream)] font-medium" : "text-[var(--cream)]/70"}`}>
-                    {m.last_message ? `${m.last_message.from_me ? "You: " : ""}${m.last_message.body}` : m.other.bio}
+                    {m.last_message ? `${m.last_message.from_me ? tr("You: ", "Tú: ") : ""}${m.last_message.body}` : m.other.bio}
                   </div>
                 </div>
               </Link>

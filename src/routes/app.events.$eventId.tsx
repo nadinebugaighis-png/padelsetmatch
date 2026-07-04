@@ -246,7 +246,7 @@ function EventDetail() {
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Share match"
+            aria-label={tr("Share match", "Compartir partido")}
             className="w-full max-w-md rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >

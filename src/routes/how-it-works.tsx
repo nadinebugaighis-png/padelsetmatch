@@ -51,26 +51,20 @@ function StepCard({
 
 
 function FeatureRow({
-  icon,
   title,
   body,
 }: {
-  icon: React.ReactNode;
   title: string;
   body: string;
 }) {
   return (
-    <div className="flex gap-4 items-start">
-      <div className="w-10 h-10 rounded-xl bg-[var(--ball)]/10 border border-[var(--ball)]/20 flex items-center justify-center shrink-0 text-[var(--ball)]">
-        {icon}
-      </div>
-      <div>
-        <h4 className="text-sm font-semibold text-[var(--cream)]">{title}</h4>
-        <p className="mt-1 text-sm text-[var(--cream)]/60 leading-relaxed">{body}</p>
-      </div>
+    <div>
+      <h4 className="text-base font-semibold text-[var(--cream)]">{title}</h4>
+      <p className="mt-1 text-sm text-[var(--cream)]/70 leading-relaxed">{body}</p>
     </div>
   );
 }
+
 
 function HowItWorksPage() {
   const t = useT();

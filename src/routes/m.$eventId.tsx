@@ -115,7 +115,7 @@ function PublicMatchPage() {
         {match && (
           <>
             <div className="mt-4 rounded-2xl border border-[var(--cream)]/10 bg-black/30 p-5 space-y-3">
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">You're invited</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("You're invited", "Estás invitado")}</div>
               <h1 className="text-2xl text-[var(--cream)] font-medium leading-tight">{match.club_name}</h1>
               {match.club_address && <p className="text-xs text-[var(--cream)]/60">{match.club_address}</p>}
 

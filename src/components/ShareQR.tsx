@@ -30,7 +30,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
   const nativeShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: "PadelMatch", text: label || "Join me on PadelMatch", url });
+        await navigator.share({ title: "PadelMatch", text: label || tr("Join me on PadelMatch", "Únete a mí en PadelMatch"), url });
       } catch {
         // ignore cancellation
       }

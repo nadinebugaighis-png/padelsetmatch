@@ -1,14 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus, markMatchRead, editMessage, deleteMessage } from "@/lib/app.functions";
+import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus, markMatchRead, editMessage, deleteMessage, submitMatchRating, getMyMatchRating } from "@/lib/app.functions";
 import { playtomicLink } from "@/lib/affinity";
 import { REPORT_REASONS } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX, Pencil, Trash2, X } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Send, Flag, Shield, ShieldCheck, UserX, Pencil, Trash2, X, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 
@@ -175,6 +175,11 @@ function ChatRoom() {
         </button>
       </div>
 
+      {statusQ.data && statusQ.data.count >= 2 && (
+        <MatchRatingPanel matchId={matchId} otherName={other.first_name} />
+      )}
+
+
       {reportOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
           <div className="surface-card p-5 w-full max-w-sm space-y-3" onClick={(e) => e.stopPropagation()}>
@@ -275,3 +280,117 @@ function ChatRoom() {
     </main>
   );
 }
+
+const RATING_TAGS = ["Great vibe", "Skill match", "Would play again", "Punctual", "Communicative", "Fun off-court", "Mismatched level", "Low energy"];
+
+function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: string }) {
+  const qc = useQueryClient();
+  const getRatingFn = useServerFn(getMyMatchRating);
+  const submitFn = useServerFn(submitMatchRating);
+  const ratingQ = useQuery({
+    queryKey: ["match-rating", matchId],
+    queryFn: () => getRatingFn({ data: { matchId } }),
+  });
+  const [expanded, setExpanded] = useState(false);
+  const [stars, setStars] = useState(0);
+  const [tags, setTags] = useState<string[]>([]);
+  const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    if (ratingQ.data) {
+      setStars(ratingQ.data.stars);
+      setTags(ratingQ.data.tags ?? []);
+      setComment(ratingQ.data.comment ?? "");
+    }
+  }, [ratingQ.data]);
+
+  const submitM = useMutation({
+    mutationFn: () => submitFn({ data: { matchId, stars, tags, comment: comment.trim() || undefined } }),
+    onSuccess: () => {
+      toast.success("Thanks — this makes future matches smarter");
+      qc.invalidateQueries({ queryKey: ["match-rating", matchId] });
+      setExpanded(false);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
+  });
+
+  const hasRated = !!ratingQ.data;
+
+  if (!expanded && hasRated) {
+    return (
+      <div className="mx-3 mt-2 rounded-xl border border-[var(--cream)]/10 bg-[var(--cream)]/5 px-3 py-2 text-xs text-[var(--cream)]/70 flex items-center gap-2">
+        <div className="flex">
+          {[1,2,3,4,5].map((n) => (
+            <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
+          ))}
+        </div>
+        <span className="flex-1">You rated this match</span>
+        <button type="button" onClick={() => setExpanded(true)} className="text-[var(--ball)] underline">Edit</button>
+      </div>
+    );
+  }
+
+  if (!expanded) {
+    return (
+      <button
+        type="button"
+        onClick={() => setExpanded(true)}
+        className="mx-3 mt-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-3 py-2.5 text-xs text-[var(--cream)] flex items-center gap-2 hover:bg-[var(--ball)]/15 transition"
+      >
+        <Star className="w-4 h-4 text-[var(--ball)]" />
+        <span className="flex-1 text-left">How was your match with {otherName}? Rate to help us learn.</span>
+        <span className="text-[var(--ball)] font-semibold">Rate</span>
+      </button>
+    );
+  }
+
+  return (
+    <div className="mx-3 mt-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--court)]/60 p-3 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Rate your match</div>
+        <button type="button" onClick={() => setExpanded(false)} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>
+      </div>
+      <div className="flex gap-1.5 justify-center">
+        {[1,2,3,4,5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => setStars(n)}
+            className="p-1"
+            aria-label={`${n} star${n>1?"s":""}`}
+          >
+            <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {RATING_TAGS.map((tag) => {
+          const active = tags.includes(tag);
+          return (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
+            >
+              {tag}
+            </button>
+          );
+        })}
+      </div>
+      <Input
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Optional note (private, helps us learn)"
+        maxLength={400}
+      />
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm" onClick={() => setExpanded(false)}>Cancel</Button>
+        <Button size="sm" disabled={stars === 0 || submitM.isPending} onClick={() => submitM.mutate()}>
+          {submitM.isPending ? "Saving…" : hasRated ? "Update" : "Submit"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+

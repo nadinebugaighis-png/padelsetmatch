@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, getMyQaAnswers, getMyMatches, getAiCompatibility } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff } from "lucide-react";
+import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown } from "lucide-react";
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 
@@ -47,6 +48,22 @@ function Discover() {
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
+  const getCompatFb = useServerFn(getMyAiCompatibilityFeedback);
+  const compatFbQ = useQuery({
+    queryKey: ["ai-compat-fb", preview?.id],
+    queryFn: () => getCompatFb({ data: { otherProfileId: preview!.id } }),
+    enabled: !!preview?.id,
+  });
+  const rateCompat = useServerFn(rateAiCompatibility);
+  const rateCompatM = useMutation({
+    mutationFn: (thumbs: 1 | -1) => rateCompat({ data: { otherProfileId: preview!.id, thumbs } }),
+    onSuccess: (_r, thumbs) => {
+      qc.setQueryData(["ai-compat-fb", preview?.id], { thumbs });
+      toast.success(thumbs === 1 ? "Thanks — we'll surface more like this" : "Got it — we'll adjust");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
+  });
+
 
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
@@ -372,22 +389,65 @@ function Discover() {
                       </div>
                     )}
 
-                    {/* AI compatibility blurb — cached per pair */}
+                    {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
                     <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
                       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
-                        <Sparkles className="w-3 h-3" /> AI compatibility
+                        <Sparkles className="w-3 h-3" /> Why you two could click
                       </div>
                       {compatQ.isLoading ? (
                         <p className="text-sm text-[var(--cream)]/60 italic">Analyzing your vibe…</p>
                       ) : compatQ.data ? (
                         <>
-                          <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
+                          <div className="flex items-baseline gap-2">
+                            <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
+                          </div>
                           <p className="text-sm text-[var(--cream)]/90 mt-1 leading-relaxed">{compatQ.data.blurb}</p>
+
+                          {Array.isArray(compatQ.data.reasons) && compatQ.data.reasons.length > 0 && (
+                            <ul className="mt-3 space-y-1.5">
+                              {compatQ.data.reasons.map((r, i) => (
+                                <li key={i} className="text-[13px] text-[var(--cream)]/85 leading-snug flex gap-2">
+                                  <span className="text-[var(--ball)] mt-0.5">•</span>
+                                  <span>{r}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+
+                          {compatQ.data.friction && (
+                            <div className="mt-3 text-[12px] text-[var(--cream)]/60 leading-snug border-t border-[var(--cream)]/10 pt-2">
+                              <span className="uppercase tracking-wider text-[10px] text-[var(--cream)]/45">Watch-out · </span>
+                              {compatQ.data.friction}
+                            </div>
+                          )}
+
+                          <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">
+                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">Was this useful?</span>
+                            <button
+                              type="button"
+                              disabled={rateCompatM.isPending}
+                              onClick={() => rateCompatM.mutate(1)}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              aria-label="Helpful"
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={rateCompatM.isPending}
+                              onClick={() => rateCompatM.mutate(-1)}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--cream)]/80 text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              aria-label="Not useful"
+                            >
+                              <ThumbsDown className="w-4 h-4" />
+                            </button>
+                          </div>
                         </>
                       ) : (
                         <p className="text-sm text-[var(--cream)]/50 italic">Couldn't load AI analysis right now.</p>
                       )}
                     </div>
+
 
 
                     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">

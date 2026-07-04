@@ -1241,11 +1241,11 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     // 1. Cache hit?
     const { data: cached } = await context.supabase
       .from("compatibility_scores" as never)
-      .select("score, blurb, model_version, created_at")
+      .select("score, blurb, reasons, friction, model_version, created_at")
       .eq("profile_a", a)
       .eq("profile_b", b)
       .maybeSingle();
-    if (cached) return cached as { score: number; blurb: string; model_version: string; created_at: string };
+    if (cached) return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
 
     // 2. Gather both profiles + Q&A (via admin — reading other user data)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -1276,9 +1276,8 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       rows.length ? rows.map((r) => `- ${r.question} → ${r.answer}`).join("\n") : "(no answers)";
 
     const apiKey = process.env.LOVABLE_API_KEY;
-    // Fallback: produce a neutral summary if AI is not configured.
     if (!apiKey) {
-      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", model_version: "fallback", created_at: new Date().toISOString() };
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, model_version: "fallback", created_at: new Date().toISOString() };
       return fallback;
     }
 
@@ -1289,8 +1288,15 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const prompt = `You are a warm, insightful compatibility analyst for a padel-focused connection app. Given two people, judge how well they'd click — as padel partners, friends, or possibly more, depending on their stated intents. Weigh shared values, complementary personalities, communication style, life stage, and on-court compatibility. Ignore surface-level overlaps that don't matter (e.g. same nationality alone).
 
-Return ONLY valid JSON:
-{"score": <0-100 integer>, "blurb": "<one to two warm, specific sentences about why they'd click or where friction might be. Address the reader ('you two...'). Max 220 chars. No emojis.>"}
+Return ONLY valid JSON with this exact shape:
+{
+  "score": <0-100 integer>,
+  "blurb": "<one to two warm sentences addressed to the reader ('you two...'). Max 220 chars. No emojis.>",
+  "reasons": ["<short concrete reason 1, max 90 chars>", "<reason 2>", "<reason 3>"],
+  "friction": "<optional one short line of potential friction, or null if none stands out>"
+}
+
+Reasons must be specific to THIS pair (name shared values, complementary traits, on-court fit, life stage overlap, etc.), not generic. Exactly 3 reasons.
 
 ${summarizeProfile(me, "PERSON A (the viewer)")}
 Q&A:
@@ -1302,23 +1308,125 @@ ${qaBlock(theirQA)}`;
 
     let score = 60;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
+    let reasons: string[] = [];
+    let friction: string | null = null;
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string };
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown };
       if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
       if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
+      if (Array.isArray(parsed.reasons)) {
+        reasons = parsed.reasons.filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
+      }
+      if (typeof parsed.friction === "string" && parsed.friction.trim().length > 0 && parsed.friction.toLowerCase() !== "null") {
+        friction = parsed.friction.trim().slice(0, 160);
+      }
     } catch (e) {
       blurb = e instanceof Error && e.message.includes("402")
         ? "AI credits exhausted — top up in Settings to unlock this."
         : blurb;
     }
 
-    const insertRow = { profile_a: a, profile_b: b, score, blurb, model_version: "gemini-2.5-flash-v1" };
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-v2" };
     await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });
+
+// Thumbs up/down on the AI compatibility take for a specific profile.
+export const rateAiCompatibility = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    otherProfileId: z.string().uuid(),
+    thumbs: z.union([z.literal(1), z.literal(-1)]),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { error } = await context.supabase
+      .from("compatibility_feedback" as never)
+      .upsert(
+        { rater_profile_id: myId, subject_profile_id: data.otherProfileId, thumbs: data.thumbs } as never,
+        { onConflict: "rater_profile_id,subject_profile_id" } as never,
+      );
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const getMyAiCompatibilityFeedback = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) return { thumbs: 0 as 0 | 1 | -1 };
+    const { data: row } = await context.supabase
+      .from("compatibility_feedback" as never)
+      .select("thumbs")
+      .eq("rater_profile_id", myId)
+      .eq("subject_profile_id", data.otherProfileId)
+      .maybeSingle();
+    return { thumbs: ((row as { thumbs: number } | null)?.thumbs ?? 0) as 0 | 1 | -1 };
+  });
+
+// Post-play match rating (1–5 stars + optional tags/comment).
+export const submitMatchRating = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    matchId: z.string().uuid(),
+    stars: z.number().int().min(1).max(5),
+    tags: z.array(z.string().max(40)).max(8).default([]),
+    comment: z.string().max(400).optional(),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { data: match } = await context.supabase
+      .from("matches" as never).select("profile_a, profile_b").eq("id", data.matchId).maybeSingle();
+    const mr = match as { profile_a: string; profile_b: string } | null;
+    if (!mr) throw new Error("Match not found");
+    if (mr.profile_a !== myId && mr.profile_b !== myId) throw new Error("Not your match");
+    const otherId = mr.profile_a === myId ? mr.profile_b : mr.profile_a;
+    const { error } = await context.supabase
+      .from("match_ratings" as never)
+      .upsert(
+        {
+          match_id: data.matchId,
+          rater_profile_id: myId,
+          rated_profile_id: otherId,
+          stars: data.stars,
+          tags: data.tags,
+          comment: data.comment ?? null,
+        } as never,
+        { onConflict: "match_id,rater_profile_id" } as never,
+      );
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const getMyMatchRating = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) return null;
+    const { data: row } = await context.supabase
+      .from("match_ratings" as never)
+      .select("stars, tags, comment, created_at")
+      .eq("match_id", data.matchId)
+      .eq("rater_profile_id", myId)
+      .maybeSingle();
+    return (row as { stars: number; tags: string[]; comment: string | null; created_at: string } | null);
+  });
+
 
 
 

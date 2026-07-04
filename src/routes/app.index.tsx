@@ -186,6 +186,9 @@ function Discover() {
         </p>
       )}
 
+      <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
+
+
       {(matchesQ.data?.length ?? 0) > 0 && (
         <Link to="/app/matches" className="mt-4 flex items-center gap-3 surface-card p-3 border border-[var(--ball)] rounded-xl bg-[var(--ball)]/10">
           <div className="flex -space-x-2">

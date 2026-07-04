@@ -18,6 +18,7 @@ function EditEvent() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const tr = useTr();
   const get = useServerFn(getMatchEvent);
   const update = useServerFn(updateMatchEvent);
   const cancel = useServerFn(cancelMatchEvent);
@@ -30,59 +31,60 @@ function EditEvent() {
     queryFn: () => get({ data: { id: eventId } }),
   });
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">Loading…</div>;
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
-  if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">Match not found</div>;
+  if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado")}</div>;
   if (!me?.iAmHost) {
-    return <div className="p-6 text-center text-[var(--cream)]/60">Only the host can edit this match.</div>;
+    return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Only the host can edit this match.", "Solo el organizador puede editar este partido.")}</div>;
   }
 
   const onSubmit = async (v: MatchFormValues) => {
     setSaving(true);
     try {
       await update({ data: { id: eventId, ...v } });
-      toast.success("Match updated");
+      toast.success(tr("Match updated", "Partido actualizado"));
       qc.invalidateQueries({ queryKey: ["event", eventId] });
       qc.invalidateQueries({ queryKey: ["open-events"] });
       navigate({ to: "/app/events/$eventId", params: { eventId } });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not update match");
+      toast.error(e instanceof Error ? e.message : tr("Could not update match", "No se pudo actualizar el partido"));
     } finally {
       setSaving(false);
     }
   };
 
   const onCancel = async () => {
-    if (!confirm("Cancel this match? Players will see it as cancelled.")) return;
+    if (!confirm(tr("Cancel this match? Players will see it as cancelled.", "¿Cancelar este partido? Los jugadores lo verán como cancelado."))) return;
     setBusy(true);
     try {
       await cancel({ data: { id: eventId } });
-      toast.success("Match cancelled");
+      toast.success(tr("Match cancelled", "Partido cancelado"));
       qc.invalidateQueries({ queryKey: ["event", eventId] });
       qc.invalidateQueries({ queryKey: ["open-events"] });
       navigate({ to: "/app/events" });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not cancel");
+      toast.error(e instanceof Error ? e.message : tr("Could not cancel", "No se pudo cancelar"));
     } finally {
       setBusy(false);
     }
   };
 
   const onDelete = async () => {
-    if (!confirm("Delete this match permanently? This cannot be undone.")) return;
+    if (!confirm(tr("Delete this match permanently? This cannot be undone.", "¿Eliminar este partido permanentemente? Esta acción no se puede deshacer."))) return;
     setBusy(true);
     try {
       await deleteEvent({ data: { id: eventId } });
-      toast.success("Match deleted");
+      toast.success(tr("Match deleted", "Partido eliminado"));
       qc.invalidateQueries({ queryKey: ["open-events"] });
       navigate({ to: "/app/events" });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not delete");
+      toast.error(e instanceof Error ? e.message : tr("Could not delete", "No se pudo eliminar"));
     } finally {
       setBusy(false);
     }
   };
+
 
   return (
     <div>

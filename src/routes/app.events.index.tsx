@@ -11,7 +11,7 @@ import { useI18n, useTr } from "@/lib/i18n";
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
   errorComponent: ({ error }) => <div className="p-6 text-center text-[var(--cream)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">Not found</div>,
+  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">—</div>,
 });
 
 function startOfDay(d: Date) {

@@ -70,10 +70,11 @@ function Landing() {
           </div>
           <Link
             to="/how-it-works"
-            className="mt-3 inline-block text-sm text-[var(--cream)]/70 hover:text-[var(--ball)] underline underline-offset-4 decoration-[var(--cream)]/20 hover:decoration-[var(--ball)]"
+            className="mt-4 inline-block text-base font-semibold text-[var(--ball)] hover:opacity-80 underline underline-offset-4 decoration-2 decoration-[var(--ball)]/40 hover:decoration-[var(--ball)]"
           >
-            {t("land.howItWorks")}
+            {t("land.howItWorks")} →
           </Link>
+
           <p className="mt-4 text-base font-medium text-[var(--cream)]/90 max-w-md tracking-wide">
             {t("land.cta.sub")}
           </p>

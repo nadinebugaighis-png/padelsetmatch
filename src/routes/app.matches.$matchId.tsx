@@ -86,24 +86,25 @@ function ChatRoom() {
   });
   const confirmM = useMutation({
     mutationFn: () => confirmFn({ data: { matchId } }),
-    onSuccess: () => { toast.success("Marked as played ✅"); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't confirm"),
+    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't confirm", "No se pudo confirmar")),
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success("No-show reported. Thanks — we'll look into it."),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't report"),
+    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar")),
   });
   const editM = useMutation({
     mutationFn: (v: { messageId: string; body: string }) => editFn({ data: v }),
     onSuccess: () => { setEditingId(null); setEditingText(""); qc.invalidateQueries({ queryKey: ["match", matchId] }); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't edit"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't edit", "No se pudo editar")),
   });
   const deleteM = useMutation({
     mutationFn: (messageId: string) => delFn({ data: { messageId } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["match", matchId] }),
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't delete"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't delete", "No se pudo eliminar")),
   });
+
 
   if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("chat.opening")}</div>;
   const { other, my_profile_id, messages } = q.data;

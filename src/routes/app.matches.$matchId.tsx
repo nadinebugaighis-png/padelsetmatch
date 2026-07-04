@@ -219,7 +219,7 @@ function ChatRoom() {
                     type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
                     className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)]"
-                    aria-label="Edit"
+                    aria-label={tr("Edit", "Editar")}
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>

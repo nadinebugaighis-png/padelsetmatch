@@ -154,7 +154,7 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
-          <div className="max-w-md mx-auto grid px-2" style={{ gridTemplateColumns: `repeat(5, minmax(0, 1fr))` }}>
+          <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(5, minmax(0, 1fr))` }}>
             <NavTab to="/app/questions" label={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
             <NavTab to="/app" label="Grid" icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
             <NavTab to="/app/events" label="Play" icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />

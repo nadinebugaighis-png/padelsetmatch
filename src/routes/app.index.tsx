@@ -225,7 +225,7 @@ function Discover() {
           {list.map((c) => (
             <div
               key={c.id}
-              className={`group relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-300 ${c.liked ? "border-2 border-[var(--ball)]/60 shadow-[0_0_30px_-8px_var(--ball)]" : "border border-[var(--cream)]/10"}`}
+              className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10"
             >
               {c.photo_url && (
                 <img src={c.photo_url} alt={c.first_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105" />

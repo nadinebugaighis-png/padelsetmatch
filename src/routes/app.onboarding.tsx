@@ -393,15 +393,15 @@ function Onboarding() {
 
             {hasPartnerGoal && meetPref === "everyone" && (
               <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Advanced profile (optional)</div>
-                <label className="text-[11px] text-[var(--cream)]/60">Sexual orientation</label>
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)")}</div>
+                <label className="text-[11px] text-[var(--cream)]/60">{tr("Sexual orientation", "Orientación sexual")}</label>
                 <Input
                   value={sexualOrientation}
                   onChange={(e) => setSexualOrientation(e.target.value)}
-                  placeholder="e.g. straight, gay, bisexual, queer, pansexual…"
+                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…")}
                   maxLength={60}
                 />
-                <p className="text-[10px] text-[var(--cream)]/50">Private — used only to improve matches. Not shown on your profile.</p>
+                <p className="text-[10px] text-[var(--cream)]/50">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.")}</p>
               </div>
             )}
 

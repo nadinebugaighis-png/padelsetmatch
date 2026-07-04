@@ -674,27 +674,28 @@ function Onboarding() {
               </>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Personal characteristics (pick up to 10)</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Personal characteristics (pick up to 10)", "Características personales (elige hasta 10)")}</label>
             <div className="flex flex-wrap gap-2">
-              {PERSONAL_TRAITS.map((tr) => {
-                const on = personalTraits.includes(tr);
+              {PERSONAL_TRAITS.map((pt) => {
+                const on = personalTraits.includes(pt);
                 return (
                   <button
-                    key={tr}
+                    key={pt}
                     type="button"
                     onClick={() =>
                       setPersonalTraits((cur) =>
-                        cur.includes(tr) ? cur.filter((x) => x !== tr) : cur.length >= 10 ? cur : [...cur, tr]
+                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
                       )
                     }
                     className={`chip ${on ? "chip-ball" : ""}`}
                   >
-                    {on ? "✓ " : "+ "}{tr}
+                    {on ? "✓ " : "+ "}{label(pt)}
                   </button>
                 );
               })}
             </div>
-            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 selected</p>
+            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 {tr("selected", "seleccionados")}</p>
+
           </>
         )}
         {step === 4 && (

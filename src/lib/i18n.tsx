@@ -297,6 +297,7 @@ const es: Dict = {
   "land.lede": "Descubre jugadores que encajan con tu nivel, personalidad y estilo de vida. Ya sea para grandes partidos, nuevos amigos o conexiones reales, te ayudamos a encontrar gente con la que de verdad conectas.",
   "land.cta": "INICIAR MATCH",
   "land.cta.sub": "Luego reservas en Playtomic — o juegas gratis si tu match tiene pista propia 🎾",
+  "land.howItWorks": "Cómo funciona",
 
   "land.what": "¿Qué es Playtomic?",
   "land.statUsers": "jugadores unidos",

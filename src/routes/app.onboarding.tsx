@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 
 export const Route = createFileRoute("/app/onboarding")({
@@ -66,6 +66,7 @@ function Onboarding() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { t, label } = useI18n();
+  const tr = useTr();
   const getProfile = useServerFn(getMyProfile);
   const upsert = useServerFn(upsertMyProfile);
   const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
@@ -392,15 +393,15 @@ function Onboarding() {
 
             {hasPartnerGoal && meetPref === "everyone" && (
               <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Advanced profile (optional)</div>
-                <label className="text-[11px] text-[var(--cream)]/60">Sexual orientation</label>
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)")}</div>
+                <label className="text-[11px] text-[var(--cream)]/60">{tr("Sexual orientation", "Orientación sexual")}</label>
                 <Input
                   value={sexualOrientation}
                   onChange={(e) => setSexualOrientation(e.target.value)}
-                  placeholder="e.g. straight, gay, bisexual, queer, pansexual…"
+                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…")}
                   maxLength={60}
                 />
-                <p className="text-[10px] text-[var(--cream)]/50">Private — used only to improve matches. Not shown on your profile.</p>
+                <p className="text-[10px] text-[var(--cream)]/50">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.")}</p>
               </div>
             )}
 
@@ -567,14 +568,14 @@ function Onboarding() {
                 <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Preferred court side</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Preferred court side", "Lado de pista preferido")}</label>
             <div className="flex flex-wrap gap-2">
               {COURT_SIDES.map((s) => (
                 <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{s}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">When can you play?</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("When can you play?", "¿Cuándo puedes jugar?")}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABILITY_SLOTS.map((s) => (
                 <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{s}</button>
@@ -583,15 +584,15 @@ function Onboarding() {
 
             <label className="flex items-center gap-2 text-sm pt-1">
               <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--ball)]" />
-              Open to mixed doubles (2 men + 2 women format)
+              {tr("Open to mixed doubles (2 men + 2 women format)", "Abierto a dobles mixtos (formato 2 hombres + 2 mujeres)")}
             </label>
 
             <div className="rounded-xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-3 mt-2">
               <label className="flex items-start gap-2 text-sm">
                 <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--ball)] mt-0.5" />
                 <span>
-                  <span className="font-semibold">🎾 I have free court access</span>
-                  <span className="block text-xs text-[var(--cream)]/70 mt-0.5">Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.</span>
+                  <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis")}</span>
+                  <span className="block text-xs text-[var(--cream)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.")}</span>
                 </span>
               </label>
               {freeCourt && (
@@ -599,7 +600,7 @@ function Onboarding() {
                   className="mt-2"
                   value={freeCourtNote}
                   onChange={(e) => setFreeCourtNote(e.target.value)}
-                  placeholder="Optional: court name or area (share full address only in chat)"
+                  placeholder={tr("Optional: court name or area (share full address only in chat)", "Opcional: nombre de la pista o zona (comparte la dirección solo en el chat)")}
                   maxLength={200}
                 />
               )}
@@ -696,14 +697,14 @@ function Onboarding() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--cream)]/60 gap-2">
                   <Camera className="w-8 h-8" />
                   <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">Tip: a photo with your racket gets 3× more matches 🎾</span>
+                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾")}</span>
                 </div>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
             </label>
             {!photoUrl && (
               <p className="text-[11px] text-[var(--cream)]/55 text-center">
-                No photo? No problem — you can add one anytime from your profile.
+                {tr("No photo? No problem — you can add one anytime from your profile.", "¿Sin foto? Sin problema — puedes añadirla cuando quieras desde tu perfil.")}
               </p>
             )}
           </>
@@ -718,7 +719,7 @@ function Onboarding() {
           <Button onClick={() => setStep(step + 1)} disabled={!canStep[step]}>{t("ob.next")}</Button>
         ) : (
           <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-            {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : "Skip photo & start"}
+            {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar")}
           </Button>
         )}
       </div>

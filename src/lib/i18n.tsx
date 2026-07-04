@@ -618,6 +618,12 @@ export function useI18n() {
 }
 export const useT = () => useI18n().t;
 
+// Quick inline translator for strings not yet keyed in the dictionary.
+export function useTr() {
+  const { lang } = useI18n();
+  return (en: string, es: string) => (lang === "es" ? es : en);
+}
+
 export function LangSwitch({ className = "" }: { className?: string }) {
   const { lang, setLang } = useI18n();
   return (

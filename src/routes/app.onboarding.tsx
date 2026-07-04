@@ -197,7 +197,7 @@ function Onboarding() {
   const updateArea = (i: number, ai: number, val: string) =>
     setLocBlocks((cur) => cur.map((b, j) => j === i ? { ...b, areas: b.areas.map((a, k) => k === ai ? val : a) } : b));
   const addBlock = () => {
-    if (locBlocks.length >= 5) { toast.error("Up to 5 countries"); return; }
+    if (locBlocks.length >= 5) { toast.error(tr("Up to 5 countries", "Hasta 5 países")); return; }
     setLocBlocks((cur) => [...cur, emptyBlock()]);
   };
   const removeBlock = (i: number) => setLocBlocks((cur) => cur.length === 1 ? cur : cur.filter((_, j) => j !== i));
@@ -285,7 +285,7 @@ function Onboarding() {
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
       if (age === null || age_min === null || age_max === null || !gender || !level) {
-        throw new Error("Please complete all required fields");
+        throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios"));
       }
       return upsert({
         data: {
@@ -342,8 +342,8 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
-            <AgeInput value={age} onCommit={setAge} placeholder="e.g. 32" />
-            <p className="text-[11px] text-[var(--cream)]/50">Enter your age (18–99), not your birth year.</p>
+            <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32")} />
+            <p className="text-[11px] text-[var(--cream)]/50">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.")}</p>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
@@ -351,15 +351,15 @@ function Onboarding() {
               ))}
             </div>
             {gender === "self-describe" && (
-              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder="Describe yourself (e.g. trans woman, genderfluid…)" maxLength={40} />
+              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)")} maxLength={40} />
             )}
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">What are you looking for?</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("What are you looking for?", "¿Qué estás buscando?")}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { id: "padel", label: "Padel partners" },
-                { id: "friends", label: "Friends" },
-                { id: "relationship", label: "Relationship" },
-                { id: "all", label: "Open to all" },
+                { id: "padel", label: tr("Padel partners", "Compis de pádel") },
+                { id: "friends", label: tr("Friends", "Amistad") },
+                { id: "relationship", label: tr("Relationship", "Relación") },
+                { id: "all", label: tr("Open to all", "Abierto a todo") },
               ].map((g) => (
                 <button
                   key={g.id}
@@ -367,6 +367,7 @@ function Onboarding() {
                   className={`chip ${goals.includes(g.id) ? "chip-ball" : ""}`}
                 >
                   {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+
                 </button>
               ))}
             </div>
@@ -379,14 +380,15 @@ function Onboarding() {
 
             {hasPartnerGoal && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Who would you like to meet?</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?")}</label>
                 <div className="flex flex-wrap gap-2">
                   {(["men", "women", "everyone"] as const).map((o) => (
                     <button key={o} onClick={() => setMeetPref(o)} className={`chip ${meetPref === o ? "chip-ball" : ""}`}>
-                      {o === "men" ? "Men" : o === "women" ? "Women" : "Everyone"}
+                      {o === "men" ? tr("Men", "Hombres") : o === "women" ? tr("Women", "Mujeres") : tr("Everyone", "Todos")}
                     </button>
                   ))}
                 </div>
+
               </>
             )}
 
@@ -417,9 +419,10 @@ function Onboarding() {
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Where do you play?</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.</p>
+              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Where do you play?", "¿Dónde juegas?")}</label>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.")}</p>
             </div>
+
 
             <div className="space-y-3">
               {locBlocks.map((b, i) => {
@@ -431,7 +434,7 @@ function Onboarding() {
                 return (
                   <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Location {i + 1}</span>
+                      <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Location", "Ubicación")} {i + 1}</span>
                       {locBlocks.length > 1 && (
                         <button type="button" onClick={() => removeBlock(i)} className="text-[var(--cream)]/60 hover:text-[var(--clay)]">
                           <X className="w-4 h-4" />
@@ -448,16 +451,17 @@ function Onboarding() {
                       }}
                       className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                     >
-                      <option value="" className="bg-[var(--court-deep)]">Country</option>
+                      <option value="" className="bg-[var(--court-deep)]">{tr("Country", "País")}</option>
                       {COUNTRY_NAMES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-                      <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                      <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)")}</option>
+
                     </select>
                     {!countryInList && (
                       <Input
                         maxLength={60}
                         value={b.country === CUSTOM ? "" : b.country}
                         onChange={(e) => updateBlock(i, { country: e.target.value })}
-                        placeholder="Type country name"
+                        placeholder={tr("Type country name", "Escribe el país")}
                       />
                     )}
                     {cities.length > 0 ? (
@@ -470,9 +474,10 @@ function Onboarding() {
                         disabled={!isReal(b.country) && countryInList}
                         className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)] disabled:opacity-50"
                       >
-                        <option value="" className="bg-[var(--court-deep)]">{b.country ? "City" : "Pick country first"}</option>
+                        <option value="" className="bg-[var(--court-deep)]">{b.country ? tr("City", "Ciudad") : tr("Pick country first", "Elige país primero")}</option>
                         {cities.map((c) => <option key={c.name} value={c.name} className="bg-[var(--court-deep)]">{c.name}</option>)}
-                        <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                        <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)")}</option>
+
                       </select>
                     ) : null}
                     {(cities.length === 0 || !cityInList) && isReal(b.country) && (
@@ -480,7 +485,7 @@ function Onboarding() {
                         maxLength={80}
                         value={b.city === CUSTOM ? "" : b.city}
                         onChange={(e) => updateBlock(i, { city: e.target.value })}
-                        placeholder="Type city name"
+                        placeholder={tr("Type city name", "Escribe la ciudad")}
                       />
                     )}
                     {isReal(b.city) && (
@@ -496,9 +501,10 @@ function Onboarding() {
                                 onChange={(e) => updateArea(i, ai, e.target.value === "__none__" ? "" : e.target.value)}
                                 className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                               >
-                                <option value="__none__" className="bg-[var(--court-deep)]">Area {ai + 1} (optional)</option>
+                                <option value="__none__" className="bg-[var(--court-deep)]">{tr("Area", "Zona")} {ai + 1} ({tr("optional", "opcional")})</option>
                                 {areaOpts.filter((o) => !taken.has(o)).map((o) => <option key={o} value={o} className="bg-[var(--court-deep)]">{o}</option>)}
-                                <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                                <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)")}</option>
+
                               </select>
                             );
                           }
@@ -508,7 +514,7 @@ function Onboarding() {
                                 maxLength={80}
                                 value={a === CUSTOM ? "" : a}
                                 onChange={(e) => updateArea(i, ai, e.target.value)}
-                                placeholder={`Area ${ai + 1} (optional)`}
+                                placeholder={`${tr("Area", "Zona")} ${ai + 1} (${tr("optional", "opcional")})`}
                               />
                               {a && (
                                 <button type="button" onClick={() => updateArea(i, ai, "")} className="text-[var(--cream)]/60 hover:text-[var(--clay)] px-2">
@@ -529,14 +535,14 @@ function Onboarding() {
                 );
               })}
               <Button type="button" variant="outline" onClick={addBlock} className="w-full">
-                <Plus className="w-4 h-4 mr-1" /> Add another country
+                <Plus className="w-4 h-4 mr-1" /> {tr("Add another country", "Añadir otro país")}
               </Button>
             </div>
 
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
-              <option value="" className="bg-[var(--court-deep)]">— Select —</option>
+              <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —")}</option>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
 
@@ -545,11 +551,11 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.langs")}</label>
             <div className="flex flex-wrap gap-2">
               {LANGUAGES.map((l) => (
-                <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{l}</button>
+                <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your padel style (pick up to 3)</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_STYLES.map((s) => {
                 const on = padelStyle.includes(s);
@@ -564,11 +570,12 @@ function Onboarding() {
                     }
                     className={`chip ${on ? "chip-ball" : ""}`}
                   >
-                    {on ? "✓ " : "+ "}{s}
+                    {on ? "✓ " : "+ "}{label(s)}
                   </button>
                 );
               })}
             </div>
+
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">
@@ -579,15 +586,16 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Preferred court side", "Lado de pista preferido")}</label>
             <div className="flex flex-wrap gap-2">
               {COURT_SIDES.map((s) => (
-                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{s}</button>
+                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{label(s)}</button>
               ))}
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("When can you play?", "¿Cuándo puedes jugar?")}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABILITY_SLOTS.map((s) => (
-                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{s}</button>
+                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{label(s)}</button>
               ))}
+
             </div>
 
             <label className="flex items-center gap-2 text-sm pt-1">
@@ -666,27 +674,28 @@ function Onboarding() {
               </>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Personal characteristics (pick up to 10)</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Personal characteristics (pick up to 10)", "Características personales (elige hasta 10)")}</label>
             <div className="flex flex-wrap gap-2">
-              {PERSONAL_TRAITS.map((tr) => {
-                const on = personalTraits.includes(tr);
+              {PERSONAL_TRAITS.map((pt) => {
+                const on = personalTraits.includes(pt);
                 return (
                   <button
-                    key={tr}
+                    key={pt}
                     type="button"
                     onClick={() =>
                       setPersonalTraits((cur) =>
-                        cur.includes(tr) ? cur.filter((x) => x !== tr) : cur.length >= 10 ? cur : [...cur, tr]
+                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
                       )
                     }
                     className={`chip ${on ? "chip-ball" : ""}`}
                   >
-                    {on ? "✓ " : "+ "}{tr}
+                    {on ? "✓ " : "+ "}{label(pt)}
                   </button>
                 );
               })}
             </div>
-            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 selected</p>
+            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 {tr("selected", "seleccionados")}</p>
+
           </>
         )}
         {step === 4 && (

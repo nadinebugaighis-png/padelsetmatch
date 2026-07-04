@@ -194,7 +194,7 @@ function ProfilePage() {
           <div className="mt-4">
             <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{t("prof.languages")}</div>
             <div className="flex flex-wrap gap-2">
-              {p.languages.map((l) => <span key={l} className="chip">{l}</span>)}
+              {p.languages.map((l) => <span key={l} className="chip">{label(l)}</span>)}
             </div>
           </div>
         )}
@@ -205,7 +205,7 @@ function ProfilePage() {
           <div className="mt-4">
             <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Personal characteristics", "Características personales")}</div>
             <div className="flex flex-wrap gap-2">
-              {p.personal_traits!.map((trait) => <span key={trait} className="chip">{trait}</span>)}
+              {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
             </div>
           </div>
         )}
@@ -214,7 +214,7 @@ function ProfilePage() {
           <div className="mt-4">
             <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Padel style", "Estilo de pádel")}</div>
             <div className="flex flex-wrap gap-2">
-              {p.padel_style!.map((s) => <span key={s} className="chip">{s}</span>)}
+              {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
             </div>
           </div>
         )}

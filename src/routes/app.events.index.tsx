@@ -394,7 +394,7 @@ function EventsPage() {
             <button
               type="button"
               onClick={() => { setCustomDate(""); setSelectedIdx(0); }}
-              aria-label="Clear date"
+              aria-label={tr("Clear date", "Borrar fecha")}
               className="inline-flex"
             >
               <X className="w-3 h-3" />

@@ -28,12 +28,10 @@ export const Route = createFileRoute("/how-it-works")({
 
 function StepCard({
   number,
-  icon,
   title,
   body,
 }: {
   number: string;
-  icon: React.ReactNode;
   title: string;
   body: string;
 }) {
@@ -44,13 +42,13 @@ function StepCard({
         <span className="w-8 h-8 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-xs font-bold flex items-center justify-center">
           {number}
         </span>
-        <span className="text-[var(--ball)]">{icon}</span>
       </div>
       <h3 className="text-display text-xl text-[var(--cream)]">{title}</h3>
       <p className="mt-2 text-sm text-[var(--cream)]/70 leading-relaxed">{body}</p>
     </div>
   );
 }
+
 
 function FeatureRow({
   icon,

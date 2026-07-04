@@ -11,8 +11,10 @@ type Props = {
 };
 
 export function ClubPicker({ value, onChange }: Props) {
+  const tr = useTr();
   const search = useServerFn(searchClubs);
   const [q, setQ] = useState("");
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<ClubResult[]>([]);

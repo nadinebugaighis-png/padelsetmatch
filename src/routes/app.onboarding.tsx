@@ -320,7 +320,7 @@ function Onboarding() {
     audOk && age_min !== null && age_max !== null && age_min <= age_max,
     validBlocks.length > 0 && !!nationality && languages.length > 0 && !!level && !!courtSide,
     priorities.length >= 3,
-    !!photoUrl,
+    true,
   ];
 
   const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];
@@ -696,10 +696,16 @@ function Onboarding() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--cream)]/60 gap-2">
                   <Camera className="w-8 h-8" />
                   <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
+                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">Tip: a photo with your racket gets 3× more matches 🎾</span>
                 </div>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
             </label>
+            {!photoUrl && (
+              <p className="text-[11px] text-[var(--cream)]/55 text-center">
+                No photo? No problem — you can add one anytime from your profile.
+              </p>
+            )}
           </>
         )}
       </div>
@@ -712,7 +718,7 @@ function Onboarding() {
           <Button onClick={() => setStep(step + 1)} disabled={!canStep[step]}>{t("ob.next")}</Button>
         ) : (
           <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-            {save.isPending ? t("ob.saving") : t("ob.start")}
+            {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : "Skip photo & start"}
           </Button>
         )}
       </div>

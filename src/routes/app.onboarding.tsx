@@ -551,11 +551,11 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.langs")}</label>
             <div className="flex flex-wrap gap-2">
               {LANGUAGES.map((l) => (
-                <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{l}</button>
+                <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Your padel style (pick up to 3)</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_STYLES.map((s) => {
                 const on = padelStyle.includes(s);
@@ -570,11 +570,12 @@ function Onboarding() {
                     }
                     className={`chip ${on ? "chip-ball" : ""}`}
                   >
-                    {on ? "✓ " : "+ "}{s}
+                    {on ? "✓ " : "+ "}{label(s)}
                   </button>
                 );
               })}
             </div>
+
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">

@@ -64,7 +64,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
 
 
             {dataUrl ? (
-              <img src={dataUrl} alt="QR code" className="mx-auto mt-4 rounded-lg" width={280} height={280} />
+              <img src={dataUrl} alt={tr("QR code", "Código QR")} className="mx-auto mt-4 rounded-lg" width={280} height={280} />
             ) : (
               <div className="mx-auto mt-4 w-[280px] h-[280px] rounded-lg bg-[var(--cream)]/10 animate-pulse" />
             )}

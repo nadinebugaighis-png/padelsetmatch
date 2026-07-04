@@ -342,40 +342,49 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       return false;
     }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
-    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
+    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others).
+    // Include the embedding so we can score by MEANING (semantic), not just exact-string equality.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { parsePgVector, cosineSim } = await import("./embeddings.server");
     const ids = [me.id, ...candidates.map((c) => c.id)];
     const { data: qaRows } = await supabaseAdmin
       .from("qa_answers" as never)
-      .select("profile_id, question, answer_norm")
+      .select("profile_id, question, answer_norm, answer_embedding")
       .in("profile_id", ids);
-    const byProfile = new Map<string, Map<string, string>>();
-    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string }> | null) ?? []).forEach((r) => {
+    type QAEntry = { norm: string; vec: number[] | null };
+    const byProfile = new Map<string, Map<string, QAEntry>>();
+    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string; answer_embedding: unknown }> | null) ?? []).forEach((r) => {
       let m = byProfile.get(r.profile_id);
       if (!m) { m = new Map(); byProfile.set(r.profile_id, m); }
-      m.set(r.question, r.answer_norm);
+      m.set(r.question, { norm: r.answer_norm, vec: parsePgVector(r.answer_embedding) });
     });
-    const myAns = byProfile.get(me.id) ?? new Map<string, string>();
+    const myAns = byProfile.get(me.id) ?? new Map<string, QAEntry>();
 
     const scored = candidates
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
-        // Shared-question bonus
-        const theirAns = byProfile.get(c.id) ?? new Map<string, string>();
+        // Semantic Q&A affinity — same question, compare answers by meaning.
+        const theirAns = byProfile.get(c.id) ?? new Map<string, QAEntry>();
         let qaBonus = 0;
         let qSame = 0;
+        let qClose = 0;
         let qShared = 0;
-        myAns.forEach((v, q) => {
-          if (theirAns.has(q)) {
-            qShared++;
-            if (theirAns.get(q) === v) { qaBonus += 5; qSame++; }
-            else qaBonus += 1;
-          }
+        myAns.forEach((mine, q) => {
+          const theirs = theirAns.get(q);
+          if (!theirs) return;
+          qShared++;
+          if (theirs.norm === mine.norm) { qaBonus += 5; qSame++; return; }
+          const sim = cosineSim(mine.vec, theirs.vec);
+          if (sim >= 0.85) { qaBonus += 4; qClose++; }
+          else if (sim >= 0.7) { qaBonus += 3; qClose++; }
+          else if (sim >= 0.55) { qaBonus += 2; }
+          else qaBonus += 1;
         });
         const bonus = Math.min(30, qaBonus);
         const finalScore = Math.min(100, score + bonus);
         const reasons2 = [...reasons];
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
+        else if (qClose >= 2) reasons2.push(`${qClose} similar answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
@@ -917,22 +926,33 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("Create your profile first");
+    // Best-effort semantic embedding — never blocks the save.
+    const { embedText, toPgVector } = await import("./embeddings.server");
+    const embedding = await embedText(`${data.question}\n${data.answer}`);
     // Upsert-like behaviour: delete existing same-question, then insert
     await context.supabase
       .from("qa_answers" as never)
       .delete()
       .eq("profile_id", myId)
       .eq("question", data.question);
+    const row: Record<string, unknown> = {
+      profile_id: myId,
+      question: data.question,
+      category: data.category,
+      answer: data.answer,
+      answer_norm: normalizeAnswer(data.answer),
+    };
+    if (embedding) row.answer_embedding = toPgVector(embedding);
     const { error } = await context.supabase
       .from("qa_answers" as never)
-      .insert({
-        profile_id: myId,
-        question: data.question,
-        category: data.category,
-        answer: data.answer,
-        answer_norm: normalizeAnswer(data.answer),
-      } as never);
+      .insert(row as never);
     if (error) throw new Error(error.message);
+    // Any cached AI compatibility involving me is stale — clear it.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("compatibility_scores" as never)
+      .delete()
+      .or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
     return { ok: true };
   });
 
@@ -1202,6 +1222,104 @@ export const getAdminStats = createServerFn({ method: "GET" })
       }>,
     };
   });
+
+
+// AI-generated compatibility summary between me and another profile.
+// Cached in compatibility_scores to keep it cheap and stable.
+export const getAiCompatibility = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: meRow } = await context.supabase
+      .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
+    const me = meRow as Profile | null;
+    if (!me) throw new Error("Create your profile first");
+    if (me.id === data.otherProfileId) throw new Error("Cannot compare to yourself");
+
+    const [a, b] = me.id < data.otherProfileId ? [me.id, data.otherProfileId] : [data.otherProfileId, me.id];
+
+    // 1. Cache hit?
+    const { data: cached } = await context.supabase
+      .from("compatibility_scores" as never)
+      .select("score, blurb, model_version, created_at")
+      .eq("profile_a", a)
+      .eq("profile_b", b)
+      .maybeSingle();
+    if (cached) return cached as { score: number; blurb: string; model_version: string; created_at: string };
+
+    // 2. Gather both profiles + Q&A (via admin — reading other user data)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: otherRow } = await supabaseAdmin
+      .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
+    const other = otherRow as Profile | null;
+    if (!other) throw new Error("Profile not found");
+
+    const { data: qaRows } = await supabaseAdmin
+      .from("qa_answers" as never)
+      .select("profile_id, question, answer")
+      .in("profile_id", [me.id, other.id])
+      .limit(200);
+    const qa = ((qaRows as Array<{ profile_id: string; question: string; answer: string }> | null) ?? []);
+    const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
+    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
+
+    const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
+- Padel level: ${p.level}
+- Nationality: ${p.nationality}
+- Languages: ${(p.languages ?? []).join(", ") || "n/a"}
+- Values (top): ${(p.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
+- Personal traits: ${(p.personal_traits ?? []).join(", ") || "n/a"}
+- Padel style: ${(p.padel_style ?? []).join(", ") || "n/a"}
+- Bio: ${p.bio ?? "n/a"}`;
+
+    const qaBlock = (rows: Array<{ question: string; answer: string }>) =>
+      rows.length ? rows.map((r) => `- ${r.question} → ${r.answer}`).join("\n") : "(no answers)";
+
+    const apiKey = process.env.LOVABLE_API_KEY;
+    // Fallback: produce a neutral summary if AI is not configured.
+    if (!apiKey) {
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", model_version: "fallback", created_at: new Date().toISOString() };
+      return fallback;
+    }
+
+    const { generateText } = await import("ai");
+    const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
+    const provider = createLovableAiGatewayProvider(apiKey);
+    const model = provider("google/gemini-2.5-flash");
+
+    const prompt = `You are a warm, insightful compatibility analyst for a padel-focused connection app. Given two people, judge how well they'd click — as padel partners, friends, or possibly more, depending on their stated intents. Weigh shared values, complementary personalities, communication style, life stage, and on-court compatibility. Ignore surface-level overlaps that don't matter (e.g. same nationality alone).
+
+Return ONLY valid JSON:
+{"score": <0-100 integer>, "blurb": "<one to two warm, specific sentences about why they'd click or where friction might be. Address the reader ('you two...'). Max 220 chars. No emojis.>"}
+
+${summarizeProfile(me, "PERSON A (the viewer)")}
+Q&A:
+${qaBlock(myQA)}
+
+${summarizeProfile(other, "PERSON B")}
+Q&A:
+${qaBlock(theirQA)}`;
+
+    let score = 60;
+    let blurb = "Not enough signal yet — answer more questions to sharpen this.";
+    try {
+      const res = await generateText({ model, prompt, temperature: 0.6 });
+      const text = (res.text ?? "").replace(/```json|```/g, "").trim();
+      const s = text.indexOf("{"); const e = text.lastIndexOf("}");
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string };
+      if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+      if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
+    } catch (e) {
+      blurb = e instanceof Error && e.message.includes("402")
+        ? "AI credits exhausted — top up in Settings to unlock this."
+        : blurb;
+    }
+
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, model_version: "gemini-2.5-flash-v1" };
+    await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
+    return { ...insertRow, created_at: new Date().toISOString() };
+  });
+
 
 
 

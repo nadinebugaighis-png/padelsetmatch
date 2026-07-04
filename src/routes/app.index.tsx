@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, getMyQaAnswers, getMyMatches } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, getMyQaAnswers, getMyMatches, getAiCompatibility } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff } from "lucide-react";
@@ -38,6 +38,15 @@ function Discover() {
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
+
+  const compatFn = useServerFn(getAiCompatibility);
+  const compatQ = useQuery({
+    queryKey: ["ai-compat", preview?.id],
+    queryFn: () => compatFn({ data: { otherProfileId: preview!.id } }),
+    enabled: !!preview?.id,
+    staleTime: 1000 * 60 * 60,
+    retry: false,
+  });
 
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
@@ -362,6 +371,24 @@ function Discover() {
                         <p className="text-[10px] text-[var(--cream)]/55 mt-1">Arrange the exact court in chat — Playtomic or their address.</p>
                       </div>
                     )}
+
+                    {/* AI compatibility blurb — cached per pair */}
+                    <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
+                        <Sparkles className="w-3 h-3" /> AI compatibility
+                      </div>
+                      {compatQ.isLoading ? (
+                        <p className="text-sm text-[var(--cream)]/60 italic">Analyzing your vibe…</p>
+                      ) : compatQ.data ? (
+                        <>
+                          <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
+                          <p className="text-sm text-[var(--cream)]/90 mt-1 leading-relaxed">{compatQ.data.blurb}</p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-[var(--cream)]/50 italic">Couldn't load AI analysis right now.</p>
+                      )}
+                    </div>
+
 
                     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
                       <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">About {preview.first_name}</div>

@@ -35,6 +35,48 @@ export type Database = {
         }
         Relationships: []
       }
+      compatibility_scores: {
+        Row: {
+          blurb: string
+          created_at: string
+          model_version: string
+          profile_a: string
+          profile_b: string
+          score: number
+        }
+        Insert: {
+          blurb: string
+          created_at?: string
+          model_version?: string
+          profile_a: string
+          profile_b: string
+          score: number
+        }
+        Update: {
+          blurb?: string
+          created_at?: string
+          model_version?: string
+          profile_a?: string
+          profile_b?: string
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compatibility_scores_profile_a_fkey"
+            columns: ["profile_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compatibility_scores_profile_b_fkey"
+            columns: ["profile_b"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           created_at: string
@@ -625,6 +667,7 @@ export type Database = {
       qa_answers: {
         Row: {
           answer: string
+          answer_embedding: string | null
           answer_norm: string
           category: string
           created_at: string
@@ -634,6 +677,7 @@ export type Database = {
         }
         Insert: {
           answer: string
+          answer_embedding?: string | null
           answer_norm: string
           category?: string
           created_at?: string
@@ -643,6 +687,7 @@ export type Database = {
         }
         Update: {
           answer?: string
+          answer_embedding?: string | null
           answer_norm?: string
           category?: string
           created_at?: string

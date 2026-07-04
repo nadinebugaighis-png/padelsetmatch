@@ -44,6 +44,9 @@ function Landing() {
         </div>
         <div className="flex items-center gap-3">
           <LangSwitch />
+          <Link to="/how-it-works" className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)] hidden sm:inline">
+            {t("land.howItWorks")}
+          </Link>
           <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="chip chip-ball">{t("land.signin")}</Link>
         </div>
       </header>

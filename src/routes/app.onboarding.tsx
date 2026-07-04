@@ -696,10 +696,16 @@ function Onboarding() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--cream)]/60 gap-2">
                   <Camera className="w-8 h-8" />
                   <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
+                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">Tip: a photo with your racket gets 3× more matches 🎾</span>
                 </div>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
             </label>
+            {!photoUrl && (
+              <p className="text-[11px] text-[var(--cream)]/55 text-center">
+                No photo? No problem — you can add one anytime from your profile.
+              </p>
+            )}
           </>
         )}
       </div>

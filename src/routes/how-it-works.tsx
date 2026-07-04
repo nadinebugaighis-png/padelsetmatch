@@ -1,11 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr } from "@/lib/i18n";
-import {
-  Heart,
-  MessageCircle,
-  Users,
-  ArrowLeft,
-} from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 
 export const Route = createFileRoute("/how-it-works")({
@@ -183,8 +178,8 @@ function HowItWorksPage() {
             <FeatureRow
               title={tr("You control your intent", "Tú controlas tu intención")}
               body={tr(
-                "Looking for padel partners, friends, or something more? Set your preferences privately. If you're only here for padel and friendship, you'll never see relationship questions — and vice versa.",
-                "¿Buscas compis de pádel, amigos o algo más? Configura tus preferencias en privado. Si solo estás aquí para pádel y amistad, nunca verás preguntas de relación — y viceversa."
+                "Looking for padel partners, friends, or something more? Set your preferences privately. If you're only here for padel and friendship, you'll never see relationship questions — or anyone interested in a relationship with you — and vice versa.",
+                "¿Buscas compis de pádel, amigos o algo más? Configura tus preferencias en privado. Si solo estás aquí para pádel y amistad, nunca verás preguntas de relación — ni a nadie interesado en una relación contigo — y viceversa."
               )}
             />
             <FeatureRow
@@ -213,10 +208,7 @@ function HowItWorksPage() {
 
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[var(--ball)]/10 flex items-center justify-center text-[var(--ball)]">
-                <Heart className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 text-display text-lg text-[var(--cream)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Teamwork", "Trabajo en equipo")}
               </h3>
               <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
@@ -227,10 +219,7 @@ function HowItWorksPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[var(--ball)]/10 flex items-center justify-center text-[var(--ball)]">
-                <MessageCircle className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 text-display text-lg text-[var(--cream)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Communication", "Comunicación")}
               </h3>
               <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
@@ -241,10 +230,7 @@ function HowItWorksPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[var(--ball)]/10 flex items-center justify-center text-[var(--ball)]">
-                <Users className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 text-display text-lg text-[var(--cream)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Community", "Comunidad")}
               </h3>
               <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">

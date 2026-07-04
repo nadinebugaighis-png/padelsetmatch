@@ -586,15 +586,16 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Preferred court side", "Lado de pista preferido")}</label>
             <div className="flex flex-wrap gap-2">
               {COURT_SIDES.map((s) => (
-                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{s}</button>
+                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{label(s)}</button>
               ))}
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("When can you play?", "¿Cuándo puedes jugar?")}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABILITY_SLOTS.map((s) => (
-                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{s}</button>
+                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{label(s)}</button>
               ))}
+
             </div>
 
             <label className="flex items-center gap-2 text-sm pt-1">

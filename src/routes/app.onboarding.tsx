@@ -535,7 +535,7 @@ function Onboarding() {
                 );
               })}
               <Button type="button" variant="outline" onClick={addBlock} className="w-full">
-                <Plus className="w-4 h-4 mr-1" /> Add another country
+                <Plus className="w-4 h-4 mr-1" /> {tr("Add another country", "Añadir otro país")}
               </Button>
             </div>
 

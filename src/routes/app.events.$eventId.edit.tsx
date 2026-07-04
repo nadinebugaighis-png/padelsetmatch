@@ -130,7 +130,7 @@ function EditEvent() {
           disabled={busy}
           className="w-full py-2 rounded-full border border-red-500/60 bg-red-500/10 text-xs uppercase tracking-widest text-red-300 disabled:opacity-50"
         >
-          Delete match
+          {tr("Delete match", "Eliminar partido")}
         </button>
       </div>
     </div>

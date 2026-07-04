@@ -202,9 +202,10 @@ function Onboarding() {
   };
   const removeBlock = (i: number) => setLocBlocks((cur) => cur.length === 1 ? cur : cur.filter((_, j) => j !== i));
 
-  const validBlocks = locBlocks.filter((b) => b.country.trim() && b.city.trim());
+  const isReal = (s: string) => s.trim() && s !== "__custom__";
+  const validBlocks = locBlocks.filter((b) => isReal(b.country) && isReal(b.city));
   const encodedLocations: string[] = validBlocks.flatMap((b) => {
-    const areas = b.areas.map((a) => a.trim()).filter(Boolean);
+    const areas = b.areas.map((a) => a.trim()).filter((a) => a && a !== "__custom__");
     if (!areas.length) return [encodeLocation({ country: b.country.trim(), city: b.city.trim() })];
     return areas.map((a) => encodeLocation({ country: b.country.trim(), city: b.city.trim(), area: a }));
   });

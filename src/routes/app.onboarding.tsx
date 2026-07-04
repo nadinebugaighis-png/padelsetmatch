@@ -718,7 +718,7 @@ function Onboarding() {
           <Button onClick={() => setStep(step + 1)} disabled={!canStep[step]}>{t("ob.next")}</Button>
         ) : (
           <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-            {save.isPending ? t("ob.saving") : t("ob.start")}
+            {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : "Skip photo & start"}
           </Button>
         )}
       </div>

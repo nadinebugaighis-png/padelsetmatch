@@ -360,6 +360,92 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     });
     const myAns = byProfile.get(me.id) ?? new Map<string, QAEntry>();
 
+    // ---- Learned personal weights from user feedback ----
+    // Positive signals: 4-5 star match ratings + thumbs-up on AI compat.
+    // Negative signals: 1-2 star match ratings + thumbs-down.
+    // For each signal, extract the other profile's priorities/personal_traits/padel_style
+    // and increment/decrement a per-tag weight for THIS user.
+    const [fbRes, ratingRes] = await Promise.all([
+      supabaseAdmin
+        .from("compatibility_feedback" as never)
+        .select("subject_profile_id, thumbs")
+        .eq("rater_profile_id", me.id)
+        .limit(500),
+      supabaseAdmin
+        .from("match_ratings" as never)
+        .select("rated_profile_id, stars")
+        .eq("rater_profile_id", me.id)
+        .limit(500),
+    ]);
+    type Signal = { profileId: string; weight: number };
+    const signals: Signal[] = [];
+    ((fbRes.data as Array<{ subject_profile_id: string; thumbs: number }> | null) ?? []).forEach((r) => {
+      signals.push({ profileId: r.subject_profile_id, weight: r.thumbs === 1 ? 1 : -1 });
+    });
+    ((ratingRes.data as Array<{ rated_profile_id: string; stars: number }> | null) ?? []).forEach((r) => {
+      if (r.stars >= 4) signals.push({ profileId: r.rated_profile_id, weight: r.stars === 5 ? 2 : 1 });
+      else if (r.stars <= 2) signals.push({ profileId: r.rated_profile_id, weight: r.stars === 1 ? -2 : -1 });
+    });
+    const tagWeights = new Map<string, number>(); // key: "kind:value"
+    let learnedCount = 0;
+    if (signals.length > 0) {
+      const sigIds = Array.from(new Set(signals.map((s) => s.profileId)));
+      const { data: sigProfiles } = await supabaseAdmin
+        .from("profiles" as never)
+        .select("id, priorities, personal_traits, padel_style")
+        .in("id", sigIds);
+      const byId = new Map<string, { priorities: string[]; personal_traits: string[]; padel_style: string[] }>();
+      ((sigProfiles as Array<{ id: string; priorities: string[] | null; personal_traits: string[] | null; padel_style: string[] | null }> | null) ?? []).forEach((p) => {
+        byId.set(p.id, {
+          priorities: p.priorities ?? [],
+          personal_traits: p.personal_traits ?? [],
+          padel_style: p.padel_style ?? [],
+        });
+      });
+      signals.forEach(({ profileId, weight }) => {
+        const p = byId.get(profileId);
+        if (!p) return;
+        learnedCount++;
+        const bump = (kind: string, list: string[]) => {
+          list.forEach((v) => {
+            const k = `${kind}:${v}`;
+            tagWeights.set(k, (tagWeights.get(k) ?? 0) + weight);
+          });
+        };
+        bump("prio", p.priorities);
+        bump("trait", p.personal_traits);
+        bump("style", p.padel_style);
+      });
+      // Clamp to ±4 so a few strong signals don't dominate deterministic scoring.
+      tagWeights.forEach((v, k) => tagWeights.set(k, Math.max(-4, Math.min(4, v))));
+    }
+    const personalBoost = (c: Profile): { delta: number; reason: string | null } => {
+      if (tagWeights.size === 0) return { delta: 0, reason: null };
+      let delta = 0;
+      let posHits = 0;
+      let negHits = 0;
+      const posTags: string[] = [];
+      const applyList = (kind: string, list: string[]) => {
+        list.forEach((v) => {
+          const w = tagWeights.get(`${kind}:${v}`) ?? 0;
+          if (w === 0) return;
+          delta += w;
+          if (w > 0) { posHits++; if (posTags.length < 3) posTags.push(v); }
+          else negHits++;
+        });
+      };
+      applyList("prio", c.priorities ?? []);
+      applyList("trait", c.personal_traits ?? []);
+      applyList("style", c.padel_style ?? []);
+      // Cap the total learned nudge so it complements (not replaces) deterministic score.
+      delta = Math.max(-10, Math.min(12, Math.round(delta * 0.75)));
+      const reason = posHits >= 2 && posTags.length > 0
+        ? `Matches what you've liked before (${posTags.slice(0, 2).join(", ")})`
+        : (negHits >= 3 ? null : null);
+      return { delta, reason };
+    };
+
+
     const scored = candidates
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
@@ -381,15 +467,18 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
           else qaBonus += 1;
         });
         const bonus = Math.min(30, qaBonus);
-        const finalScore = Math.min(100, score + bonus);
+        const learned = personalBoost(c);
+        const finalScore = Math.max(0, Math.min(100, score + bonus + learned.delta));
         const reasons2 = [...reasons];
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
         else if (qClose >= 2) reasons2.push(`${qClose} similar answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
+        if (learned.reason) reasons2.push(learned.reason);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
         return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
       })
+
       .filter((c) => c.score > 0)
       .sort((a, b) => {
         const today = new Date().toISOString().slice(0, 10);

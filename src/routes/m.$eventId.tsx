@@ -155,7 +155,7 @@ function PublicMatchPage() {
                       onClick={onJoinClick}
                       className="flex items-center gap-2 border border-dashed border-[var(--ball)]/60 rounded-full px-3 py-1.5 hover:bg-[var(--ball)]/10"
                     >
-                      <span className="text-xs text-[var(--ball)]">Join open spot</span>
+                      <span className="text-xs text-[var(--ball)]">{tr("Join open spot", "Unirme al hueco libre")}</span>
                     </button>
                   ))}
                 </div>

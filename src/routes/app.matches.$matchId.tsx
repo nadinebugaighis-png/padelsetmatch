@@ -165,16 +165,17 @@ function ChatRoom() {
         >
           <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
           {statusQ.data?.iConfirmed
-            ? (statusQ.data.count >= 2 ? "Played together ✓" : "Waiting for them to confirm…")
-            : "We played a match"}
+            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…"))
+            : tr("We played a match", "Jugamos un partido")}
         </button>
         <button
           type="button"
           onClick={onNoShow}
           className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10"
         >
-          <UserX className="w-3.5 h-3.5" /> No-show
+          <UserX className="w-3.5 h-3.5" /> {tr("No-show", "No-show")}
         </button>
+
       </div>
 
       {statusQ.data && statusQ.data.count >= 2 && (

@@ -255,7 +255,7 @@ function ChatRoom() {
                       <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Cancel", "Cancelar")}>
                         <X className="w-3.5 h-3.5" />
                       </button>
-                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label="Save">
+                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Save", "Guardar")}>
                         <Check className="w-3.5 h-3.5" />
                       </button>
                     </div>

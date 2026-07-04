@@ -227,7 +227,7 @@ function ChatRoom() {
                     type="button"
                     onClick={() => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?"))) deleteM.mutate(m.id); }}
                     className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-red-500/20 text-[var(--cream)] hover:text-red-400"
-                    aria-label="Delete"
+                    aria-label={tr("Delete", "Eliminar")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>

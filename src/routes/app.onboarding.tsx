@@ -285,7 +285,7 @@ function Onboarding() {
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
       if (age === null || age_min === null || age_max === null || !gender || !level) {
-        throw new Error("Please complete all required fields");
+        throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios"));
       }
       return upsert({
         data: {

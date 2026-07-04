@@ -60,7 +60,8 @@ export function ClubPicker({ value, onChange }: Props) {
           }}
           className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)] shrink-0"
         >
-          Change
+          {tr("Change", "Cambiar")}
+
         </button>
       </div>
     );

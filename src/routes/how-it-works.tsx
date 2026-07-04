@@ -2,17 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr } from "@/lib/i18n";
 import {
   Heart,
-  Shield,
-  Sparkles,
   MessageCircle,
-  Trophy,
-  Eye,
-  EyeOff,
-  Lock,
   Users,
-  MapPin,
   ArrowLeft,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({

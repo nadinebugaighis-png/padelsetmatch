@@ -101,13 +101,14 @@ function PublicMatchPage() {
       <div className="max-w-md mx-auto px-5 py-8">
         <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelMatch</Link>
 
-        {q.isLoading && <div className="mt-10 text-center text-[var(--cream)]/60">Loading…</div>}
+        {q.isLoading && <div className="mt-10 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…")}</div>}
 
         {!q.isLoading && !match && (
           <div className="mt-10 text-center text-[var(--cream)]/70">
-            <p className="text-lg">This match link isn't available.</p>
-            <p className="text-sm text-[var(--cream)]/50 mt-2">It may have been cancelled or already played.</p>
-            <Link to="/app/events" className="inline-block mt-6 text-[var(--ball)] underline">Browse open matches</Link>
+            <p className="text-lg">{tr("This match link isn't available.", "Este enlace de partido no está disponible.")}</p>
+            <p className="text-sm text-[var(--cream)]/50 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.")}</p>
+            <Link to="/app/events" className="inline-block mt-6 text-[var(--ball)] underline">{tr("Browse open matches", "Ver partidos abiertos")}</Link>
+
           </div>
         )}
 

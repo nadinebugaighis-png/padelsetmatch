@@ -205,7 +205,7 @@ function ProfilePage() {
           <div className="mt-4">
             <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Personal characteristics", "Características personales")}</div>
             <div className="flex flex-wrap gap-2">
-              {p.personal_traits!.map((trait) => <span key={trait} className="chip">{trait}</span>)}
+              {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
             </div>
           </div>
         )}

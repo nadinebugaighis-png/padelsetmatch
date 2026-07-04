@@ -514,7 +514,7 @@ function Onboarding() {
                                 maxLength={80}
                                 value={a === CUSTOM ? "" : a}
                                 onChange={(e) => updateArea(i, ai, e.target.value)}
-                                placeholder={`Area ${ai + 1} (optional)`}
+                                placeholder={`${tr("Area", "Zona")} ${ai + 1} (${tr("optional", "opcional")})`}
                               />
                               {a && (
                                 <button type="button" onClick={() => updateArea(i, ai, "")} className="text-[var(--cream)]/60 hover:text-[var(--clay)] px-2">

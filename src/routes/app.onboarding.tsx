@@ -202,9 +202,10 @@ function Onboarding() {
   };
   const removeBlock = (i: number) => setLocBlocks((cur) => cur.length === 1 ? cur : cur.filter((_, j) => j !== i));
 
-  const validBlocks = locBlocks.filter((b) => b.country.trim() && b.city.trim());
+  const isReal = (s: string) => s.trim() && s !== "__custom__";
+  const validBlocks = locBlocks.filter((b) => isReal(b.country) && isReal(b.city));
   const encodedLocations: string[] = validBlocks.flatMap((b) => {
-    const areas = b.areas.map((a) => a.trim()).filter(Boolean);
+    const areas = b.areas.map((a) => a.trim()).filter((a) => a && a !== "__custom__");
     if (!areas.length) return [encodeLocation({ country: b.country.trim(), city: b.city.trim() })];
     return areas.map((a) => encodeLocation({ country: b.country.trim(), city: b.city.trim(), area: a }));
   });
@@ -421,48 +422,103 @@ function Onboarding() {
             </div>
 
             <div className="space-y-3">
-              {locBlocks.map((b, i) => (
-                <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Location {i + 1}</span>
-                    {locBlocks.length > 1 && (
-                      <button type="button" onClick={() => removeBlock(i)} className="text-[var(--cream)]/60 hover:text-[var(--clay)]">
-                        <X className="w-4 h-4" />
-                      </button>
+              {locBlocks.map((b, i) => {
+                const CUSTOM = "__custom__";
+                const countryInList = !b.country || COUNTRY_NAMES.includes(b.country);
+                const cities = citiesFor(countryInList ? b.country : "");
+                const cityInList = !b.city || cities.some((c) => c.name === b.city);
+                const areaOpts = areasFor(countryInList ? b.country : "", cityInList ? b.city : "");
+                return (
+                  <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Location {i + 1}</span>
+                      {locBlocks.length > 1 && (
+                        <button type="button" onClick={() => removeBlock(i)} className="text-[var(--cream)]/60 hover:text-[var(--clay)]">
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                    <Select
+                      value={countryInList ? (b.country || undefined) : CUSTOM}
+                      onValueChange={(v) => updateBlock(i, { country: v === CUSTOM ? CUSTOM : v, city: "", areas: ["", "", ""] })}
+                    >
+                      <SelectTrigger><SelectValue placeholder="Country" /></SelectTrigger>
+                      <SelectContent>
+                        {COUNTRY_NAMES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                        <SelectItem value={CUSTOM}>+ Other (type your own)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {!countryInList && (
+                      <Input
+                        maxLength={60}
+                        value={b.country === CUSTOM ? "" : b.country}
+                        onChange={(e) => updateBlock(i, { country: e.target.value })}
+                        placeholder="Type country name"
+                      />
+                    )}
+                    {cities.length > 0 ? (
+                      <Select
+                        value={cityInList ? (b.city || undefined) : CUSTOM}
+                        onValueChange={(v) => updateBlock(i, { city: v === CUSTOM ? CUSTOM : v, areas: ["", "", ""] })}
+                        disabled={!isReal(b.country) && countryInList}
+                      >
+                        <SelectTrigger><SelectValue placeholder={b.country ? "City" : "Pick country first"} /></SelectTrigger>
+                        <SelectContent>
+                          {cities.map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
+                          <SelectItem value={CUSTOM}>+ Other (type your own)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : null}
+                    {(cities.length === 0 || !cityInList) && isReal(b.country) && (
+                      <Input
+                        maxLength={80}
+                        value={b.city === CUSTOM ? "" : b.city}
+                        onChange={(e) => updateBlock(i, { city: e.target.value })}
+                        placeholder="Type city name"
+                      />
+                    )}
+                    {isReal(b.city) && (
+                      <div className="grid grid-cols-1 gap-2">
+                        {b.areas.map((a, ai) => {
+                          const areaInList = !a || areaOpts.includes(a);
+                          const taken = new Set(b.areas.filter((x, k) => k !== ai && x && x !== CUSTOM));
+                          if (areaOpts.length > 0 && areaInList) {
+                            return (
+                              <Select
+                                key={ai}
+                                value={a || undefined}
+                                onValueChange={(v) => updateArea(i, ai, v === "__none__" ? "" : v)}
+                              >
+                                <SelectTrigger><SelectValue placeholder={`Area ${ai + 1} (optional)`} /></SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="__none__">— None —</SelectItem>
+                                  {areaOpts.filter((o) => !taken.has(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                                  <SelectItem value={CUSTOM}>+ Other (type your own)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            );
+                          }
+                          return (
+                            <div key={ai} className="flex gap-2">
+                              <Input
+                                maxLength={80}
+                                value={a === CUSTOM ? "" : a}
+                                onChange={(e) => updateArea(i, ai, e.target.value)}
+                                placeholder={`Area ${ai + 1} (optional)`}
+                              />
+                              {a && (
+                                <button type="button" onClick={() => updateArea(i, ai, "")} className="text-[var(--cream)]/60 hover:text-[var(--clay)] px-2">
+                                  <X className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
-                  <Select value={b.country || undefined} onValueChange={(v) => updateBlock(i, { country: v, city: "", areas: ["", "", ""] })}>
-                    <SelectTrigger><SelectValue placeholder="Country" /></SelectTrigger>
-                    <SelectContent>
-                      {COUNTRY_NAMES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Select value={b.city || undefined} onValueChange={(v) => updateBlock(i, { city: v, areas: ["", "", ""] })} disabled={!b.country}>
-                    <SelectTrigger><SelectValue placeholder={b.country ? "City" : "Pick country first"} /></SelectTrigger>
-                    <SelectContent>
-                      {citiesFor(b.country).map((c) => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {areasFor(b.country, b.city).length > 0 && (
-                    <div className="grid grid-cols-1 gap-2">
-                      {b.areas.map((a, ai) => {
-                        const opts = areasFor(b.country, b.city);
-                        const taken = new Set(b.areas.filter((x, k) => k !== ai && x));
-                        return (
-                          <Select key={ai} value={a || undefined} onValueChange={(v) => updateArea(i, ai, v === "__none__" ? "" : v)} disabled={!b.city}>
-                            <SelectTrigger><SelectValue placeholder={b.city ? `Area ${ai + 1} (optional)` : "Pick city first"} /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="__none__">— None —</SelectItem>
-                              {opts.filter((o) => !taken.has(o)).map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                </div>
-              ))}
+                );
+              })}
               <Button type="button" variant="outline" onClick={addBlock} className="w-full">
                 <Plus className="w-4 h-4 mr-1" /> Add another country
               </Button>

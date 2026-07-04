@@ -189,6 +189,20 @@ function HowItWorksPage() {
                 "Los jugadores con pista propia pueden marcarlo en su perfil. Es una gran forma de jugar gratis y conocer gente — solo coordinad por chat y disfrutad del partido."
               )}
             />
+            <FeatureRow
+              title={tr("Your grid is yours alone", "Tu grid es solo tuyo")}
+              body={tr(
+                "No one can see who you've tapped, skipped, or matched with on your grid. Your activity stays completely private — there is no public feed or visibility into anyone else's grid.",
+                "Nadie puede ver a quién has dado a conectar, a quién has saltado o con quién has hecho match en tu grid. Tu actividad es completamente privada — no hay feed público ni visibilidad del grid de nadie más."
+              )}
+            />
+            <FeatureRow
+              title={tr("Hide someone, disappear from theirs", "Oculta a alguien y desaparece del suyo")}
+              body={tr(
+                "Not interested in someone for any reason? Hide them and you'll automatically be removed from their grid too. Clean, mutual, and completely drama-free.",
+                "¿No te interesa alguien por cualquier motivo? Ocúltalo y tú desaparecerás automáticamente de su grid también. Limpio, mutuo y sin dramas."
+              )}
+            />
           </div>
         </div>
       </section>

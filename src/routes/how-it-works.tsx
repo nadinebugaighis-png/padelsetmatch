@@ -129,7 +129,7 @@ function HowItWorksPage() {
             />
             <StepCard
               number="4"
-              title={tr("Chat & Game", "Chatea y juega")}
+              title={tr("Chat & Organize", "Chatea y organiza")}
               body={tr(
                 "When you both tap, a chat opens. Coordinate your match and book a public court on Playtomic — or, if someone has free access to a padel court, arrange the game right there and invite more players to join. You don't have to leave the app.",
                 "Cuando os tocáis mutuamente, se abre el chat. Coordinad el partido y reservad una pista pública en Playtomic — o, si alguien tiene acceso gratuito a una pista, organizad el partido ahí mismo e invitad a más jugadores. No tienes que salir de la app."

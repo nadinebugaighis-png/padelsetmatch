@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
+import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
@@ -35,7 +36,8 @@ function dayLabels(base: Date, i: number) {
 }
 
 function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
-  const label = rule === "mixed" ? "MIXED" : rule === "men_only" ? "MEN" : "WOMEN";
+  const tr = useTr();
+  const label = rule === "mixed" ? tr("MIXED", "MIXTO") : rule === "men_only" ? tr("MEN", "HOMBRES") : tr("WOMEN", "MUJERES");
   return (
     <div className="flex flex-col items-center justify-center text-[var(--ball)]">
       <span className="text-[10px] uppercase tracking-widest font-bold">{label}</span>
@@ -45,6 +47,7 @@ function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
 
 function EventsPage() {
   const navigate = useNavigate();
+  const tr = useTr();
   const list = useServerFn(listOpenEvents);
   const getProfile = useServerFn(getMyProfile);
   const [myAreasOnly, setMyAreasOnly] = useState(true);
@@ -146,8 +149,8 @@ function EventsPage() {
             {(() => {
               const t = new Date(e.starts_at);
               const diff = Math.round((startOfDay(t).getTime() - today.getTime()) / 86400000);
-              if (diff === 0) return "TODAY";
-              if (diff === 1) return "TMRW";
+              if (diff === 0) return tr("TODAY", "HOY");
+              if (diff === 1) return tr("TMRW", "MAÑ");
               return t.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase();
             })()}
           </span>
@@ -157,7 +160,7 @@ function EventsPage() {
         <div className="flex-1 min-w-0">
           <div className="text-[15px] font-semibold text-[var(--cream)] truncate leading-tight">{e.club_name}</div>
           <div className="text-[11px] text-[var(--cream)]/60 mt-0.5 truncate">
-            {e.city ?? "Location"}
+            {e.city ?? tr("Location", "Ubicación")}
           </div>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {e.level_min && (
@@ -174,7 +177,7 @@ function EventsPage() {
             <Users className="w-3.5 h-3.5" /> {filled}/4
           </div>
           <div className="text-[9px] uppercase tracking-widest text-[var(--cream)]/50 mt-1 text-center leading-tight">
-            {needs === 0 ? "Full" : `${needs} player${needs === 1 ? "" : "s"}\nneeded`.split("\n").map((s, i) => <div key={i}>{s}</div>)}
+            {needs === 0 ? tr("Full", "Completo") : `${needs} ${needs === 1 ? tr("player", "jugador") : tr("players", "jugadores")}\n${tr("needed", "faltan")}`.split("\n").map((s, i) => <div key={i}>{s}</div>)}
           </div>
         </div>
 
@@ -183,12 +186,12 @@ function EventsPage() {
           <GenderBadge rule={e.gender_rule} />
           <div className="flex flex-col items-stretch gap-1.5">
             <span className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
-              {e.iAmHost ? "View" : e.iAmParticipant ? "Chat" : "Join"}
+              {e.iAmHost ? tr("View", "Ver") : e.iAmParticipant ? tr("Chat", "Chat") : tr("Join", "Unirme")}
             </span>
             {(e.iAmHost || e.iAmParticipant) && (
               <span className="inline-flex items-center justify-center gap-1 text-[9px] uppercase tracking-widest text-[var(--cream)]/55">
                 {e.iAmHost ? <Pencil className="w-3 h-3" /> : <MessageCircle className="w-3 h-3" />}
-                {e.iAmHost ? "Edit" : "Chat"}
+                {e.iAmHost ? tr("Edit", "Editar") : tr("Chat", "Chat")}
               </span>
             )}
           </div>
@@ -201,7 +204,7 @@ function EventsPage() {
     <div className="max-w-md mx-auto px-5 py-6 pb-28">
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
-        <h1 className="text-display text-4xl tracking-wider leading-none">FIND<br />MATCHES</h1>
+        <h1 className="text-display text-4xl tracking-wider leading-none">{tr("FIND", "BUSCA")}<br />{tr("MATCHES", "PARTIDOS")}</h1>
         <button
           type="button"
           onClick={() => setFiltersOpen((v) => !v)}
@@ -212,7 +215,7 @@ function EventsPage() {
               : "border-[var(--cream)]/25 text-[var(--cream)]"
           }`}
         >
-          <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
+          <SlidersHorizontal className="w-3.5 h-3.5" /> {tr("Filters", "Filtros")}
           {activeFilterCount > 0 && (
             <span className="ml-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
               {activeFilterCount}
@@ -220,18 +223,18 @@ function EventsPage() {
           )}
         </button>
       </div>
-      <p className="text-sm text-[var(--cream)]/60 mb-5">Pick a match. Join the game.</p>
+      <p className="text-sm text-[var(--cream)]/60 mb-5">{tr("Pick a match. Join the game.", "Elige un partido. Únete al juego.")}</p>
 
       {filtersOpen && (
         <div className="mb-5 rounded-2xl border border-[var(--cream)]/15 bg-black/30 p-4 space-y-4">
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">Gender</div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Gender", "Género")}</div>
             <div className="flex flex-wrap gap-2">
               {([
-                ["any", "Any"],
-                ["mixed", "Mixed"],
-                ["women_only", "Women"],
-                ["men_only", "Men"],
+                ["any", tr("Any", "Cualquiera")],
+                ["mixed", tr("Mixed", "Mixto")],
+                ["women_only", tr("Women", "Mujeres")],
+                ["men_only", tr("Men", "Hombres")],
               ] as const).map(([v, l]) => (
                 <button
                   key={v}
@@ -248,13 +251,13 @@ function EventsPage() {
             </div>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">Level</div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Level", "Nivel")}</div>
             <div className="flex flex-wrap gap-2">
               {([
-                ["any", "Any"],
-                ["beginner", "Beginner"],
-                ["intermediate", "Intermediate"],
-                ["advanced", "Advanced"],
+                ["any", tr("Any", "Cualquiera")],
+                ["beginner", tr("Beginner", "Principiante")],
+                ["intermediate", tr("Intermediate", "Intermedio")],
+                ["advanced", tr("Advanced", "Avanzado")],
               ] as const).map(([v, l]) => (
                 <button
                   key={v}
@@ -281,15 +284,15 @@ function EventsPage() {
               }}
               className="accent-[var(--ball)]"
             />
-            Only my areas
+            {tr("Only my areas", "Solo mis zonas")}
           </label>
           {!myAreasOnly && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">City or club</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("City or club", "Ciudad o club")}</div>
               <input
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
-                placeholder="e.g. Alcobendas"
+                placeholder={tr("e.g. Alcobendas", "p. ej. Alcobendas")}
                 className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
               />
             </div>
@@ -301,7 +304,7 @@ function EventsPage() {
               onChange={(e) => setOpenOnly(e.target.checked)}
               className="accent-[var(--ball)]"
             />
-            Only matches that still need players
+            {tr("Only matches that still need players", "Solo partidos que buscan jugadores")}
           </label>
           <div className="flex justify-between pt-1">
             <button
@@ -313,13 +316,13 @@ function EventsPage() {
               }}
               className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 inline-flex items-center gap-1"
             >
-              <X className="w-3 h-3" /> Clear
+              <X className="w-3 h-3" /> {tr("Clear", "Limpiar")}
             </button>
             <button
               onClick={() => setFiltersOpen(false)}
               className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
             >
-              Show {filtered.length}
+              {tr("Show", "Mostrar")} {filtered.length}
             </button>
           </div>
         </div>
@@ -335,8 +338,8 @@ function EventsPage() {
               : "border-transparent text-[var(--cream)]/70"
           }`}
         >
-          <div className="text-[10px] uppercase tracking-widest font-semibold leading-none">ALL</div>
-          <div className="text-[10px] uppercase tracking-widest opacity-70 mt-1 leading-none">UPCOMING</div>
+          <div className="text-[10px] uppercase tracking-widest font-semibold leading-none">{tr("ALL", "TODOS")}</div>
+          <div className="text-[10px] uppercase tracking-widest opacity-70 mt-1 leading-none">{tr("UPCOMING", "PRÓXIMOS")}</div>
         </button>
         {days.map((d, i) => {
           const active = selectedIdx === i;
@@ -396,24 +399,24 @@ function EventsPage() {
       )}
 
       {/* List */}
-      {(eventsQ.isLoading || (myAreasOnly && profileQ.isLoading)) && <div className="text-center py-10 text-[var(--cream)]/60">Loading matches…</div>}
+      {(eventsQ.isLoading || (myAreasOnly && profileQ.isLoading)) && <div className="text-center py-10 text-[var(--cream)]/60">{tr("Loading matches…", "Cargando partidos…")}</div>}
       {!eventsQ.isLoading && !(myAreasOnly && profileQ.isLoading) && filtered.length === 0 && (
         <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm space-y-3">
           {myAreasOnly && !profileQ.isLoading && !profileQ.data?.locations?.length ? (
             <>
-              <p className="font-semibold">No areas selected</p>
-              <p>Add the cities where you play in your profile to see matches near you.</p>
+              <p className="font-semibold">{tr("No areas selected", "Ninguna zona seleccionada")}</p>
+              <p>{tr("Add the cities where you play in your profile to see matches near you.", "Añade en tu perfil las ciudades donde juegas para ver partidos cerca.")}</p>
               <Link
                 to="/app/profile"
                 className="inline-block rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
               >
-                Go to profile →
+                {tr("Go to profile →", "Ir al perfil →")}
               </Link>
             </>
           ) : myAreasOnly ? (
-            <p>No upcoming matches in your areas.</p>
+            <p>{tr("No upcoming matches in your areas.", "No hay partidos próximos en tus zonas.")}</p>
           ) : (
-            <p>{selectedIdx === "all" ? "No upcoming matches yet." : "No open matches for this day."}</p>
+            <p>{selectedIdx === "all" ? tr("No upcoming matches yet.", "Aún no hay partidos próximos.") : tr("No open matches for this day.", "No hay partidos abiertos ese día.")}</p>
           )}
         </div>
       )}
@@ -423,9 +426,9 @@ function EventsPage() {
             const diff = Math.round((startOfDay(g.date).getTime() - today.getTime()) / 86400000);
             const label =
               diff === 0
-                ? "TODAY"
+                ? tr("TODAY", "HOY")
                 : diff === 1
-                ? "TOMORROW"
+                ? tr("TOMORROW", "MAÑANA")
                 : g.date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }).toUpperCase();
             return (
               <div key={g.key}>
@@ -445,14 +448,14 @@ function EventsPage() {
       <div className="mt-5 rounded-2xl border border-[var(--cream)]/15 bg-black/20 p-4 flex items-center gap-3">
         <CalendarPlus className="w-6 h-6 text-[var(--cream)]/70 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-sm text-[var(--cream)] font-semibold">Can't find the right match?</div>
-          <div className="text-xs text-[var(--cream)]/60">Create your own and players will join you.</div>
+          <div className="text-sm text-[var(--cream)] font-semibold">{tr("Can't find the right match?", "¿No encuentras el partido ideal?")}</div>
+          <div className="text-xs text-[var(--cream)]/60">{tr("Create your own and players will join you.", "Crea el tuyo y otros jugadores se unirán.")}</div>
         </div>
         <button
           onClick={() => navigate({ to: "/app/events/new" })}
           className="shrink-0 rounded-full border border-[var(--ball)] text-[var(--ball)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
         >
-          Create match
+          {tr("Create match", "Crear partido")}
         </button>
       </div>
 

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -522,14 +522,16 @@ function Discover() {
 }
 
 function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number } }) {
+  const tr = useTr();
   const rows = [
-    { label: "Playing Style", value: categories.playingStyle },
-    { label: "Personality", value: categories.personality },
-    { label: "Lifestyle", value: categories.lifestyle },
+    { label: tr("Playing Style", "Estilo de juego"), value: categories.playingStyle },
+    { label: tr("Personality", "Personalidad"), value: categories.personality },
+    { label: tr("Lifestyle", "Estilo de vida"), value: categories.lifestyle },
   ];
   return (
     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">Your Match Score</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match")}</div>
+
       <div className="flex items-center gap-4">
         <div className="text-display text-5xl text-[var(--cream)] leading-none">{total}%</div>
         <div className="flex-1 space-y-2.5">
@@ -549,6 +551,7 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
 }
 
 function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_at?: string | null } }) {
+  const tr = useTr();
   const [dismissed, setDismissed] = useState(false);
   if (me.photo_url) return null;
   if (typeof window !== "undefined" && sessionStorage.getItem("photo-reminder-dismissed") === "1") return null;
@@ -564,9 +567,9 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
       <div className="w-9 h-9 rounded-full bg-[var(--ball)]/20 flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-[var(--cream)]">
-          {strong ? "Add a photo — you'll get 3× more matches" : "Add a profile photo when you're ready"}
+          {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras")}
         </div>
-        <div className="text-xs text-[var(--cream)]/75">Tip: a photo with your racket 🎾 works best.</div>
+        <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.")}</div>
       </div>
       <button
         type="button"

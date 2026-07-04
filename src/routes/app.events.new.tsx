@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { createMatchEvent } from "@/lib/match-events.functions";
 import { MatchForm, type MatchFormValues } from "@/components/MatchForm";
 import { toast } from "sonner";
+import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/new")({
   component: NewEvent,
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/app/events/new")({
 
 function NewEvent() {
   const navigate = useNavigate();
+  const tr = useTr();
   const create = useServerFn(createMatchEvent);
   const [saving, setSaving] = useState(false);
 
@@ -20,14 +22,14 @@ function NewEvent() {
     setSaving(true);
     try {
       const { id } = await create({ data: v });
-      toast.success("Match called! Waiting for players.");
+      toast.success(tr("Match called! Waiting for players.", "¡Partido convocado! Esperando jugadores."));
       navigate({ to: "/app/events/$eventId", params: { eventId: id } });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not create match");
+      toast.error(e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido"));
     } finally {
       setSaving(false);
     }
   };
 
-  return <MatchForm title="CALL A MATCH" submitLabel="Call this match" onSubmit={onSubmit} saving={saving} />;
+  return <MatchForm title={tr("CALL A MATCH", "CONVOCAR PARTIDO")} submitLabel={tr("Call this match", "Convocar este partido")} onSubmit={onSubmit} saving={saving} />;
 }

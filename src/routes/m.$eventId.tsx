@@ -140,7 +140,7 @@ function PublicMatchPage() {
 
               {/* Players — tap an open spot to join */}
               <div className="pt-3">
-                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">Players</div>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{tr("Players", "Jugadores")}</div>
                 <div className="flex flex-wrap gap-2">
                   {match.participant_names.map((name, i) => (
                     <div key={`p-${i}`} className="flex items-center gap-2 bg-black/30 border border-[var(--cream)]/10 rounded-full px-3 py-1.5">

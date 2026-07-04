@@ -145,7 +145,7 @@ function EventsPage() {
         key={e.id}
         {...detailHref}
         className="rounded-2xl border border-[var(--cream)]/10 bg-black/30 px-4 py-4 flex items-center gap-3"
-        aria-label={`Open match at ${e.club_name}`}
+        aria-label={tr(`Open match at ${e.club_name}`, `Abrir partido en ${e.club_name}`)}
       >
         {/* Time */}
         <div className="flex flex-col items-center w-14 shrink-0">

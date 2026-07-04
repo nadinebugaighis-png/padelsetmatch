@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { searchClubs, type ClubResult } from "@/lib/match-events.functions";
 import { MapPin, Loader2 } from "lucide-react";
+import { useTr } from "@/lib/i18n";
+
 
 type Props = {
   value: ClubResult | null;

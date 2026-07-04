@@ -98,6 +98,7 @@ const en: Dict = {
   "disc.undoFail": "Couldn't undo",
   "disc.blocked": "Blocked. You won't see each other again.",
   "disc.blockFail": "Couldn't block",
+  "disc.privacyNote": "They won't know you liked them unless they like you back — no pressure.",
   "disc.reportSent": "Report sent. The account has been suspended for review.",
   "disc.reportFail": "Couldn't report",
   "disc.loading": "Loading the courts…",

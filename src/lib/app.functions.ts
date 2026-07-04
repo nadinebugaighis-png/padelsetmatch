@@ -342,40 +342,49 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       return false;
     }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
-    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others)
+    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others).
+    // Include the embedding so we can score by MEANING (semantic), not just exact-string equality.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { parsePgVector, cosineSim } = await import("./embeddings.server");
     const ids = [me.id, ...candidates.map((c) => c.id)];
     const { data: qaRows } = await supabaseAdmin
       .from("qa_answers" as never)
-      .select("profile_id, question, answer_norm")
+      .select("profile_id, question, answer_norm, answer_embedding")
       .in("profile_id", ids);
-    const byProfile = new Map<string, Map<string, string>>();
-    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string }> | null) ?? []).forEach((r) => {
+    type QAEntry = { norm: string; vec: number[] | null };
+    const byProfile = new Map<string, Map<string, QAEntry>>();
+    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string; answer_embedding: unknown }> | null) ?? []).forEach((r) => {
       let m = byProfile.get(r.profile_id);
       if (!m) { m = new Map(); byProfile.set(r.profile_id, m); }
-      m.set(r.question, r.answer_norm);
+      m.set(r.question, { norm: r.answer_norm, vec: parsePgVector(r.answer_embedding) });
     });
-    const myAns = byProfile.get(me.id) ?? new Map<string, string>();
+    const myAns = byProfile.get(me.id) ?? new Map<string, QAEntry>();
 
     const scored = candidates
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
-        // Shared-question bonus
-        const theirAns = byProfile.get(c.id) ?? new Map<string, string>();
+        // Semantic Q&A affinity — same question, compare answers by meaning.
+        const theirAns = byProfile.get(c.id) ?? new Map<string, QAEntry>();
         let qaBonus = 0;
         let qSame = 0;
+        let qClose = 0;
         let qShared = 0;
-        myAns.forEach((v, q) => {
-          if (theirAns.has(q)) {
-            qShared++;
-            if (theirAns.get(q) === v) { qaBonus += 5; qSame++; }
-            else qaBonus += 1;
-          }
+        myAns.forEach((mine, q) => {
+          const theirs = theirAns.get(q);
+          if (!theirs) return;
+          qShared++;
+          if (theirs.norm === mine.norm) { qaBonus += 5; qSame++; return; }
+          const sim = cosineSim(mine.vec, theirs.vec);
+          if (sim >= 0.85) { qaBonus += 4; qClose++; }
+          else if (sim >= 0.7) { qaBonus += 3; qClose++; }
+          else if (sim >= 0.55) { qaBonus += 2; }
+          else qaBonus += 1;
         });
         const bonus = Math.min(30, qaBonus);
         const finalScore = Math.min(100, score + bonus);
         const reasons2 = [...reasons];
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
+        else if (qClose >= 2) reasons2.push(`${qClose} similar answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));

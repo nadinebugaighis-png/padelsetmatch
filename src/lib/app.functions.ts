@@ -467,15 +467,18 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
           else qaBonus += 1;
         });
         const bonus = Math.min(30, qaBonus);
-        const finalScore = Math.min(100, score + bonus);
+        const learned = personalBoost(c);
+        const finalScore = Math.max(0, Math.min(100, score + bonus + learned.delta));
         const reasons2 = [...reasons];
         if (qSame >= 2) reasons2.push(`${qSame} matching answers in your Q&A`);
         else if (qClose >= 2) reasons2.push(`${qClose} similar answers in your Q&A`);
         else if (qShared >= 3) reasons2.push(`${qShared} questions both of you answered`);
+        if (learned.reason) reasons2.push(learned.reason);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
         return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
       })
+
       .filter((c) => c.score > 0)
       .sort((a, b) => {
         const today = new Date().toISOString().slice(0, 10);

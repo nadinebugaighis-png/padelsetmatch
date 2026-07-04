@@ -38,6 +38,8 @@ const en: Dict = {
   "auth.sub.signup": "We only ask what helps the match. Your photo is for matches, not the world.",
   "auth.sub.signin": "Sign back in to your padel feed.",
   "auth.google": "Continue with Google",
+  "auth.apple": "Continue with Apple",
+
   "auth.or": "or",
   "auth.email": "email",
   "auth.password": "password (min 8)",

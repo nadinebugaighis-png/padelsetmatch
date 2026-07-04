@@ -44,6 +44,9 @@ function Landing() {
         </div>
         <div className="flex items-center gap-3">
           <LangSwitch />
+          <Link to="/how-it-works" className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)] hidden sm:inline">
+            {t("land.howItWorks")}
+          </Link>
           <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="chip chip-ball">{t("land.signin")}</Link>
         </div>
       </header>
@@ -65,6 +68,12 @@ function Landing() {
             </Link>
             <ShareQR url="https://padelmatch.lovable.app" label="Join me on PadelMatch" />
           </div>
+          <Link
+            to="/how-it-works"
+            className="mt-3 inline-block text-sm text-[var(--cream)]/70 hover:text-[var(--ball)] underline underline-offset-4 decoration-[var(--cream)]/20 hover:decoration-[var(--ball)]"
+          >
+            {t("land.howItWorks")}
+          </Link>
           <p className="mt-4 text-base font-medium text-[var(--cream)]/90 max-w-md tracking-wide">
             {t("land.cta.sub")}
           </p>

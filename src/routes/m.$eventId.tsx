@@ -188,21 +188,22 @@ function PublicMatchPage() {
             <div
               role="dialog"
               aria-modal="true"
-              aria-label="Share match"
+              aria-label={tr("Share match", "Compartir partido")}
               className="w-full max-w-md rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-[var(--ball)]">Share match</div>
-                  <p className="mt-1 text-sm text-[var(--cream)]/70">Send this invitation link so players can join an open spot.</p>
+                  <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Share match", "Compartir partido")}</div>
+                  <p className="mt-1 text-sm text-[var(--cream)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que otros jugadores se unan a un hueco libre.")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShareOpen(false)}
                   className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70"
                 >
-                  Close
+                  {tr("Close", "Cerrar")}
+
                 </button>
               </div>
               <input

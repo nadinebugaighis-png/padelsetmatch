@@ -50,6 +50,9 @@ function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
 function EventsPage() {
   const navigate = useNavigate();
   const tr = useTr();
+  const { lang } = useI18n();
+  const es = lang === "es";
+
   const list = useServerFn(listOpenEvents);
   const getProfile = useServerFn(getMyProfile);
   const [myAreasOnly, setMyAreasOnly] = useState(true);

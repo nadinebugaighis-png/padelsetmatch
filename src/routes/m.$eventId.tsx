@@ -235,7 +235,7 @@ function PublicMatchPage() {
                   onClick={nativeShare}
                   className="mt-2 w-full rounded-full border border-[var(--cream)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
                 >
-                  Share with phone
+                  {tr("Share with phone", "Compartir con el móvil")}
                 </button>
               )}
             </div>

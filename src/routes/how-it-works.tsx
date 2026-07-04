@@ -2,17 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr } from "@/lib/i18n";
 import {
   Heart,
-  Shield,
-  Sparkles,
   MessageCircle,
-  Trophy,
-  Eye,
-  EyeOff,
-  Lock,
   Users,
-  MapPin,
   ArrowLeft,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -28,12 +22,10 @@ export const Route = createFileRoute("/how-it-works")({
 
 function StepCard({
   number,
-  icon,
   title,
   body,
 }: {
   number: string;
-  icon: React.ReactNode;
   title: string;
   body: string;
 }) {
@@ -44,7 +36,6 @@ function StepCard({
         <span className="w-8 h-8 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-xs font-bold flex items-center justify-center">
           {number}
         </span>
-        <span className="text-[var(--ball)]">{icon}</span>
       </div>
       <h3 className="text-display text-xl text-[var(--cream)]">{title}</h3>
       <p className="mt-2 text-sm text-[var(--cream)]/70 leading-relaxed">{body}</p>
@@ -52,27 +43,22 @@ function StepCard({
   );
 }
 
+
 function FeatureRow({
-  icon,
   title,
   body,
 }: {
-  icon: React.ReactNode;
   title: string;
   body: string;
 }) {
   return (
-    <div className="flex gap-4 items-start">
-      <div className="w-10 h-10 rounded-xl bg-[var(--ball)]/10 border border-[var(--ball)]/20 flex items-center justify-center shrink-0 text-[var(--ball)]">
-        {icon}
-      </div>
-      <div>
-        <h4 className="text-sm font-semibold text-[var(--cream)]">{title}</h4>
-        <p className="mt-1 text-sm text-[var(--cream)]/60 leading-relaxed">{body}</p>
-      </div>
+    <div>
+      <h4 className="text-base font-semibold text-[var(--cream)]">{title}</h4>
+      <p className="mt-1 text-sm text-[var(--cream)]/70 leading-relaxed">{body}</p>
     </div>
   );
 }
+
 
 function HowItWorksPage() {
   const t = useT();
@@ -96,13 +82,13 @@ function HowItWorksPage() {
             {tr("Padel is a team sport.", "El pádel es un deporte de equipo.")}
             <br />
             <span style={{ color: "var(--ball)" }}>
-              {tr("So is finding your match.", "Encontrar tu match también.")}
+              {tr("So it's important you have the right teammate.", "Así que es importante tener al compi adecuado.")}
             </span>
           </h1>
           <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-2xl leading-relaxed">
             {tr(
-              "PadelMatch is built on a simple belief: the best connections happen when people feel safe, unpressured, and free to be themselves. We use AI to find your court soulmates — but the real magic is in the game.",
-              "PadelMatch se basa en una creencia sencilla: las mejores conexiones surgen cuando la gente se siente segura, sin presión y libre de ser quien es. Usamos IA para encontrar tus almas gemelas de pista — pero la magia real está en el juego."
+              "PadelMatch app is built on a simple belief: the best connections happen when people feel safe, unpressured, and free to be themselves. We use AI to find your court soulmates — but the real magic is in the game.",
+              "La app PadelMatch se basa en una creencia sencilla: las mejores conexiones surgen cuando la gente se siente segura, sin presión y libre de ser quien es. Usamos IA para encontrar tus almas gemelas de pista — pero la magia real está en el juego."
             )}
           </p>
         </div>
@@ -124,16 +110,14 @@ function HowItWorksPage() {
           <div className="mt-8 grid md:grid-cols-2 gap-4">
             <StepCard
               number="1"
-              icon={<Sparkles className="w-4 h-4" />}
               title={tr("Create your profile", "Crea tu perfil")}
               body={tr(
-                "Tell us who you are, where you play, your level and what matters to you. Your preferences stay private — they're only used by our AI to find matches, never shown on your public profile.",
-                "Cuéntanos quién eres, dónde juegas, tu nivel y qué te importa. Tus preferencias son privadas — solo las usa nuestra IA para encontrar matches, nunca se muestran en tu perfil público."
+                "Who you are, where you play, your level and what matters to you. Your preferences stay private — they're only used by our AI to find matches, never shown on your public profile.",
+                "Quién eres, dónde juegas, tu nivel y qué te importa. Tus preferencias son privadas — solo las usa nuestra IA para encontrar matches, nunca se muestran en tu perfil público."
               )}
             />
             <StepCard
               number="2"
-              icon={<MessageCircle className="w-4 h-4" />}
               title={tr("Answer your Matchmaking code", "Responde tu Código de afinidad")}
               body={tr(
                 "Our AI generates personalized questions based on your profile. Answer as many as you like — each shared answer sharpens your matches. Skip anything that feels too personal. You're in control.",
@@ -142,7 +126,6 @@ function HowItWorksPage() {
             />
             <StepCard
               number="3"
-              icon={<Eye className="w-4 h-4" />}
               title={tr("Browse the Grid", "Explora el Grid")}
               body={tr(
                 "See players who match your level, zone and personality. Tap the ones you'd play with. They won't know you tapped them unless they tap you back — no awkwardness, no obligation.",
@@ -151,16 +134,16 @@ function HowItWorksPage() {
             />
             <StepCard
               number="4"
-              icon={<Trophy className="w-4 h-4" />}
-              title={tr("Chat & book on Playtomic", "Chatea y reserva en Playtomic")}
+              title={tr("Chat & Game", "Chatea y juega")}
               body={tr(
-                "When you both tap, a chat opens. Coordinate your match and book a public court on Playtomic — verified booking, no shared addresses, just great padel with someone you click with.",
-                "Cuando os tocáis mutuamente, se abre el chat. Coordinad el partido y reservad una pista pública en Playtomic — reserva verificada, sin compartir direcciones, solo buen pádel con alguien con quien conectas."
+                "When you both tap, a chat opens. Coordinate your match and book a public court on Playtomic — or, if someone has free access to a padel court, arrange the game right there and invite more players to join. You don't have to leave the app.",
+                "Cuando os tocáis mutuamente, se abre el chat. Coordinad el partido y reservad una pista pública en Playtomic — o, si alguien tiene acceso gratuito a una pista, organizad el partido ahí mismo e invitad a más jugadores. No tienes que salir de la app."
               )}
             />
           </div>
         </div>
       </section>
+
 
       {/* Privacy & Safety */}
       <section className="px-6 lg:px-16 py-12 border-t border-[var(--cream)]/10 bg-[var(--court-deep)]/50">
@@ -177,7 +160,6 @@ function HowItWorksPage() {
 
           <div className="mt-8 space-y-6 max-w-2xl">
             <FeatureRow
-              icon={<Lock className="w-5 h-5" />}
               title={tr("Your answers are private", "Tus respuestas son privadas")}
               body={tr(
                 "Your matchmaking answers are never shown publicly. Only when two people share an answer does it contribute to their match score. Nobody sees what you answered alone.",
@@ -185,7 +167,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<EyeOff className="w-5 h-5" />}
               title={tr("Anonymous-first likes", "Likes anónimos primero")}
               body={tr(
                 "Tap someone you like? They'll never know unless they tap you back. This removes all pressure and awkwardness — you're free to explore without fear of rejection or unwanted attention.",
@@ -193,7 +174,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<Shield className="w-5 h-5" />}
               title={tr("Safety by design", "Seguridad por diseño")}
               body={tr(
                 "We encourage booking through Playtomic for verified public courts. Block and report tools are one tap away. Reports are reviewed by real humans, and offending accounts are suspended immediately.",
@@ -201,7 +181,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<Users className="w-5 h-5" />}
               title={tr("You control your intent", "Tú controlas tu intención")}
               body={tr(
                 "Looking for padel partners, friends, or something more? Set your preferences privately. If you're only here for padel and friendship, you'll never see relationship questions — and vice versa.",
@@ -209,7 +188,6 @@ function HowItWorksPage() {
               )}
             />
             <FeatureRow
-              icon={<MapPin className="w-5 h-5" />}
               title={tr("Free court access", "Pista propia")}
               body={tr(
                 "Players with court access can mark it on their profile. It's a great way to play for free and meet new people — just coordinate through chat and enjoy the game.",

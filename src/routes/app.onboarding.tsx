@@ -568,14 +568,14 @@ function Onboarding() {
                 <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Preferred court side</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Preferred court side", "Lado de pista preferido")}</label>
             <div className="flex flex-wrap gap-2">
               {COURT_SIDES.map((s) => (
                 <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{s}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">When can you play?</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("When can you play?", "¿Cuándo puedes jugar?")}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABILITY_SLOTS.map((s) => (
                 <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{s}</button>
@@ -584,15 +584,15 @@ function Onboarding() {
 
             <label className="flex items-center gap-2 text-sm pt-1">
               <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--ball)]" />
-              Open to mixed doubles (2 men + 2 women format)
+              {tr("Open to mixed doubles (2 men + 2 women format)", "Abierto a dobles mixtos (formato 2 hombres + 2 mujeres)")}
             </label>
 
             <div className="rounded-xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-3 mt-2">
               <label className="flex items-start gap-2 text-sm">
                 <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--ball)] mt-0.5" />
                 <span>
-                  <span className="font-semibold">🎾 I have free court access</span>
-                  <span className="block text-xs text-[var(--cream)]/70 mt-0.5">Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.</span>
+                  <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis")}</span>
+                  <span className="block text-xs text-[var(--cream)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.")}</span>
                 </span>
               </label>
               {freeCourt && (
@@ -600,7 +600,7 @@ function Onboarding() {
                   className="mt-2"
                   value={freeCourtNote}
                   onChange={(e) => setFreeCourtNote(e.target.value)}
-                  placeholder="Optional: court name or area (share full address only in chat)"
+                  placeholder={tr("Optional: court name or area (share full address only in chat)", "Opcional: nombre de la pista o zona (comparte la dirección solo en el chat)")}
                   maxLength={200}
                 />
               )}

@@ -369,7 +369,7 @@ function EventsPage() {
               ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
-          aria-label="Pick a date"
+          aria-label={tr("Pick a date", "Elegir fecha")}
         >
           <CalendarDays className="w-4 h-4" />
           <input

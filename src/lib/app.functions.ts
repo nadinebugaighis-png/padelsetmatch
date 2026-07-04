@@ -1221,7 +1221,104 @@ export const getAdminStats = createServerFn({ method: "GET" })
         id: string; rating: number; message: string; created_at: string;
       }>,
     };
+
+
+// AI-generated compatibility summary between me and another profile.
+// Cached in compatibility_scores to keep it cheap and stable.
+export const getAiCompatibility = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: meRow } = await context.supabase
+      .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
+    const me = meRow as Profile | null;
+    if (!me) throw new Error("Create your profile first");
+    if (me.id === data.otherProfileId) throw new Error("Cannot compare to yourself");
+
+    const [a, b] = me.id < data.otherProfileId ? [me.id, data.otherProfileId] : [data.otherProfileId, me.id];
+
+    // 1. Cache hit?
+    const { data: cached } = await context.supabase
+      .from("compatibility_scores" as never)
+      .select("score, blurb, model_version, created_at")
+      .eq("profile_a", a)
+      .eq("profile_b", b)
+      .maybeSingle();
+    if (cached) return cached as { score: number; blurb: string; model_version: string; created_at: string };
+
+    // 2. Gather both profiles + Q&A (via admin — reading other user data)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: otherRow } = await supabaseAdmin
+      .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
+    const other = otherRow as Profile | null;
+    if (!other) throw new Error("Profile not found");
+
+    const { data: qaRows } = await supabaseAdmin
+      .from("qa_answers" as never)
+      .select("profile_id, question, answer")
+      .in("profile_id", [me.id, other.id])
+      .limit(200);
+    const qa = ((qaRows as Array<{ profile_id: string; question: string; answer: string }> | null) ?? []);
+    const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
+    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
+
+    const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
+- Padel level: ${p.level}
+- Nationality: ${p.nationality}
+- Languages: ${(p.languages ?? []).join(", ") || "n/a"}
+- Values (top): ${(p.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
+- Personal traits: ${(p.personal_traits ?? []).join(", ") || "n/a"}
+- Padel style: ${(p.padel_style ?? []).join(", ") || "n/a"}
+- Bio: ${p.bio ?? "n/a"}`;
+
+    const qaBlock = (rows: Array<{ question: string; answer: string }>) =>
+      rows.length ? rows.map((r) => `- ${r.question} → ${r.answer}`).join("\n") : "(no answers)";
+
+    const apiKey = process.env.LOVABLE_API_KEY;
+    // Fallback: produce a neutral summary if AI is not configured.
+    if (!apiKey) {
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", model_version: "fallback", created_at: new Date().toISOString() };
+      return fallback;
+    }
+
+    const { generateText } = await import("ai");
+    const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
+    const provider = createLovableAiGatewayProvider(apiKey);
+    const model = provider("google/gemini-2.5-flash");
+
+    const prompt = `You are a warm, insightful compatibility analyst for a padel-focused connection app. Given two people, judge how well they'd click — as padel partners, friends, or possibly more, depending on their stated intents. Weigh shared values, complementary personalities, communication style, life stage, and on-court compatibility. Ignore surface-level overlaps that don't matter (e.g. same nationality alone).
+
+Return ONLY valid JSON:
+{"score": <0-100 integer>, "blurb": "<one to two warm, specific sentences about why they'd click or where friction might be. Address the reader ('you two...'). Max 220 chars. No emojis.>"}
+
+${summarizeProfile(me, "PERSON A (the viewer)")}
+Q&A:
+${qaBlock(myQA)}
+
+${summarizeProfile(other, "PERSON B")}
+Q&A:
+${qaBlock(theirQA)}`;
+
+    let score = 60;
+    let blurb = "Not enough signal yet — answer more questions to sharpen this.";
+    try {
+      const res = await generateText({ model, prompt, temperature: 0.6 });
+      const text = (res.text ?? "").replace(/```json|```/g, "").trim();
+      const s = text.indexOf("{"); const e = text.lastIndexOf("}");
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string };
+      if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+      if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
+    } catch (e) {
+      blurb = e instanceof Error && e.message.includes("402")
+        ? "AI credits exhausted — top up in Settings to unlock this."
+        : blurb;
+    }
+
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, model_version: "gemini-2.5-flash-v1" };
+    await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
+    return { ...insertRow, created_at: new Date().toISOString() };
   });
+
 
 
 

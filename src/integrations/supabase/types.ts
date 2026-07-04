@@ -35,29 +35,74 @@ export type Database = {
         }
         Relationships: []
       }
+      compatibility_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          rater_profile_id: string
+          subject_profile_id: string
+          thumbs: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rater_profile_id: string
+          subject_profile_id: string
+          thumbs: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rater_profile_id?: string
+          subject_profile_id?: string
+          thumbs?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compatibility_feedback_rater_profile_id_fkey"
+            columns: ["rater_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compatibility_feedback_subject_profile_id_fkey"
+            columns: ["subject_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compatibility_scores: {
         Row: {
           blurb: string
           created_at: string
+          friction: string | null
           model_version: string
           profile_a: string
           profile_b: string
+          reasons: string[]
           score: number
         }
         Insert: {
           blurb: string
           created_at?: string
+          friction?: string | null
           model_version?: string
           profile_a: string
           profile_b: string
+          reasons?: string[]
           score: number
         }
         Update: {
           blurb?: string
           created_at?: string
+          friction?: string | null
           model_version?: string
           profile_a?: string
           profile_b?: string
+          reasons?: string[]
           score?: number
         }
         Relationships: [
@@ -339,6 +384,61 @@ export type Database = {
           {
             foreignKeyName: "match_events_host_profile_id_fkey"
             columns: ["host_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          match_id: string
+          rated_profile_id: string
+          rater_profile_id: string
+          stars: number
+          tags: string[]
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          match_id: string
+          rated_profile_id: string
+          rater_profile_id: string
+          stars: number
+          tags?: string[]
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          match_id?: string
+          rated_profile_id?: string
+          rater_profile_id?: string
+          stars?: number
+          tags?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_ratings_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_ratings_rated_profile_id_fkey"
+            columns: ["rated_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_ratings_rater_profile_id_fkey"
+            columns: ["rater_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]

@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 
 export const Route = createFileRoute("/app/onboarding")({

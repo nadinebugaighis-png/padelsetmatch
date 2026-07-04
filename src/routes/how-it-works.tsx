@@ -208,10 +208,7 @@ function HowItWorksPage() {
 
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[var(--ball)]/10 flex items-center justify-center text-[var(--ball)]">
-                <Heart className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 text-display text-lg text-[var(--cream)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Teamwork", "Trabajo en equipo")}
               </h3>
               <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
@@ -222,10 +219,7 @@ function HowItWorksPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[var(--ball)]/10 flex items-center justify-center text-[var(--ball)]">
-                <MessageCircle className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 text-display text-lg text-[var(--cream)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Communication", "Comunicación")}
               </h3>
               <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
@@ -236,10 +230,7 @@ function HowItWorksPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-14 h-14 mx-auto rounded-full bg-[var(--ball)]/10 flex items-center justify-center text-[var(--ball)]">
-                <Users className="w-6 h-6" />
-              </div>
-              <h3 className="mt-4 text-display text-lg text-[var(--cream)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Community", "Comunidad")}
               </h3>
               <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">

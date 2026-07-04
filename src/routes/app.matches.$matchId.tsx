@@ -362,7 +362,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
             type="button"
             onClick={() => setStars(n)}
             className="p-1"
-            aria-label={`${n} star${n>1?"s":""}`}
+            aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
           >
             <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
           </button>

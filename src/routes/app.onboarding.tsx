@@ -461,7 +461,7 @@ function Onboarding() {
                         maxLength={60}
                         value={b.country === CUSTOM ? "" : b.country}
                         onChange={(e) => updateBlock(i, { country: e.target.value })}
-                        placeholder="Type country name"
+                        placeholder={tr("Type country name", "Escribe el país")}
                       />
                     )}
                     {cities.length > 0 ? (

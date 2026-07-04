@@ -219,7 +219,7 @@ function PublicMatchPage() {
                   rel="noopener noreferrer"
                   className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
                 >
-                  Open link
+                  {tr("Open link", "Abrir enlace")}
                 </a>
                 <button
                   type="button"

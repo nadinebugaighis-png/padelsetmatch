@@ -342,8 +342,8 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
-            <AgeInput value={age} onCommit={setAge} placeholder="e.g. 32" />
-            <p className="text-[11px] text-[var(--cream)]/50">Enter your age (18–99), not your birth year.</p>
+            <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32")} />
+            <p className="text-[11px] text-[var(--cream)]/50">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.")}</p>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
@@ -351,15 +351,15 @@ function Onboarding() {
               ))}
             </div>
             {gender === "self-describe" && (
-              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder="Describe yourself (e.g. trans woman, genderfluid…)" maxLength={40} />
+              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)")} maxLength={40} />
             )}
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">What are you looking for?</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("What are you looking for?", "¿Qué estás buscando?")}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { id: "padel", label: "Padel partners" },
-                { id: "friends", label: "Friends" },
-                { id: "relationship", label: "Relationship" },
-                { id: "all", label: "Open to all" },
+                { id: "padel", label: tr("Padel partners", "Compis de pádel") },
+                { id: "friends", label: tr("Friends", "Amistad") },
+                { id: "relationship", label: tr("Relationship", "Relación") },
+                { id: "all", label: tr("Open to all", "Abierto a todo") },
               ].map((g) => (
                 <button
                   key={g.id}
@@ -367,6 +367,7 @@ function Onboarding() {
                   className={`chip ${goals.includes(g.id) ? "chip-ball" : ""}`}
                 >
                   {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+
                 </button>
               ))}
             </div>

@@ -113,7 +113,7 @@ function AuthPage() {
           variant="secondary"
           className="w-full mt-2 bg-black text-white hover:bg-black/90"
         >
-           Continue with Apple
+           {t("auth.apple")}
         </Button>
 
         <div className="my-5 flex items-center gap-3 text-xs text-[var(--cream)]/40 uppercase tracking-widest">

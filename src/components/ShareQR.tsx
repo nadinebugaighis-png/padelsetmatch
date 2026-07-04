@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Share2, X, Copy, Check } from "lucide-react";
+import { useTr } from "@/lib/i18n";
 
 export function ShareQR({ url, label }: { url: string; label?: string }) {
+  const tr = useTr();
+
   const [open, setOpen] = useState(false);
   const [dataUrl, setDataUrl] = useState("");
   const [copied, setCopied] = useState(false);

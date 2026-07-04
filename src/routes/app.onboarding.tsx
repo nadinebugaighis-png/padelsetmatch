@@ -501,9 +501,10 @@ function Onboarding() {
                                 onChange={(e) => updateArea(i, ai, e.target.value === "__none__" ? "" : e.target.value)}
                                 className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
                               >
-                                <option value="__none__" className="bg-[var(--court-deep)]">Area {ai + 1} (optional)</option>
+                                <option value="__none__" className="bg-[var(--court-deep)]">{tr("Area", "Zona")} {ai + 1} ({tr("optional", "opcional")})</option>
                                 {areaOpts.filter((o) => !taken.has(o)).map((o) => <option key={o} value={o} className="bg-[var(--court-deep)]">{o}</option>)}
-                                <option value={CUSTOM} className="bg-[var(--court-deep)]">+ Other (type your own)</option>
+                                <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)")}</option>
+
                               </select>
                             );
                           }

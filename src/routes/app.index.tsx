@@ -389,22 +389,65 @@ function Discover() {
                       </div>
                     )}
 
-                    {/* AI compatibility blurb — cached per pair */}
+                    {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
                     <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
                       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
-                        <Sparkles className="w-3 h-3" /> AI compatibility
+                        <Sparkles className="w-3 h-3" /> Why you two could click
                       </div>
                       {compatQ.isLoading ? (
                         <p className="text-sm text-[var(--cream)]/60 italic">Analyzing your vibe…</p>
                       ) : compatQ.data ? (
                         <>
-                          <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
+                          <div className="flex items-baseline gap-2">
+                            <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
+                          </div>
                           <p className="text-sm text-[var(--cream)]/90 mt-1 leading-relaxed">{compatQ.data.blurb}</p>
+
+                          {Array.isArray(compatQ.data.reasons) && compatQ.data.reasons.length > 0 && (
+                            <ul className="mt-3 space-y-1.5">
+                              {compatQ.data.reasons.map((r, i) => (
+                                <li key={i} className="text-[13px] text-[var(--cream)]/85 leading-snug flex gap-2">
+                                  <span className="text-[var(--ball)] mt-0.5">•</span>
+                                  <span>{r}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+
+                          {compatQ.data.friction && (
+                            <div className="mt-3 text-[12px] text-[var(--cream)]/60 leading-snug border-t border-[var(--cream)]/10 pt-2">
+                              <span className="uppercase tracking-wider text-[10px] text-[var(--cream)]/45">Watch-out · </span>
+                              {compatQ.data.friction}
+                            </div>
+                          )}
+
+                          <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">
+                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">Was this useful?</span>
+                            <button
+                              type="button"
+                              disabled={rateCompatM.isPending}
+                              onClick={() => rateCompatM.mutate(1)}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              aria-label="Helpful"
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={rateCompatM.isPending}
+                              onClick={() => rateCompatM.mutate(-1)}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--cream)]/80 text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              aria-label="Not useful"
+                            >
+                              <ThumbsDown className="w-4 h-4" />
+                            </button>
+                          </div>
                         </>
                       ) : (
                         <p className="text-sm text-[var(--cream)]/50 italic">Couldn't load AI analysis right now.</p>
                       )}
                     </div>
+
 
 
                     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">

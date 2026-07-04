@@ -419,9 +419,10 @@ function Onboarding() {
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">Where do you play?</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.</p>
+              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Where do you play?", "¿Dónde juegas?")}</label>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.")}</p>
             </div>
+
 
             <div className="space-y-3">
               {locBlocks.map((b, i) => {

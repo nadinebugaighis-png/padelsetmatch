@@ -178,7 +178,9 @@ function AuthShell() {
 }
 
 function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number }) {
+  const t = useT();
   const isHighlight = highlight && !active;
+
   return (
     <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
       <span className="relative">

@@ -320,7 +320,7 @@ function Onboarding() {
     audOk && age_min !== null && age_max !== null && age_min <= age_max,
     validBlocks.length > 0 && !!nationality && languages.length > 0 && !!level && !!courtSide,
     priorities.length >= 3,
-    !!photoUrl,
+    true,
   ];
 
   const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];

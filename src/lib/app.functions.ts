@@ -917,22 +917,33 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("Create your profile first");
+    // Best-effort semantic embedding — never blocks the save.
+    const { embedText, toPgVector } = await import("./embeddings.server");
+    const embedding = await embedText(`${data.question}\n${data.answer}`);
     // Upsert-like behaviour: delete existing same-question, then insert
     await context.supabase
       .from("qa_answers" as never)
       .delete()
       .eq("profile_id", myId)
       .eq("question", data.question);
+    const row: Record<string, unknown> = {
+      profile_id: myId,
+      question: data.question,
+      category: data.category,
+      answer: data.answer,
+      answer_norm: normalizeAnswer(data.answer),
+    };
+    if (embedding) row.answer_embedding = toPgVector(embedding);
     const { error } = await context.supabase
       .from("qa_answers" as never)
-      .insert({
-        profile_id: myId,
-        question: data.question,
-        category: data.category,
-        answer: data.answer,
-        answer_norm: normalizeAnswer(data.answer),
-      } as never);
+      .insert(row as never);
     if (error) throw new Error(error.message);
+    // Any cached AI compatibility involving me is stale — clear it.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("compatibility_scores" as never)
+      .delete()
+      .or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
     return { ok: true };
   });
 

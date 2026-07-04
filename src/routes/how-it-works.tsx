@@ -178,8 +178,8 @@ function HowItWorksPage() {
             <FeatureRow
               title={tr("You control your intent", "Tú controlas tu intención")}
               body={tr(
-                "Looking for padel partners, friends, or something more? Set your preferences privately. If you're only here for padel and friendship, you'll never see relationship questions — and vice versa.",
-                "¿Buscas compis de pádel, amigos o algo más? Configura tus preferencias en privado. Si solo estás aquí para pádel y amistad, nunca verás preguntas de relación — y viceversa."
+                "Looking for padel partners, friends, or something more? Set your preferences privately. If you're only here for padel and friendship, you'll never see relationship questions — or anyone interested in a relationship with you — and vice versa.",
+                "¿Buscas compis de pádel, amigos o algo más? Configura tus preferencias en privado. Si solo estás aquí para pádel y amistad, nunca verás preguntas de relación — ni a nadie interesado en una relación contigo — y viceversa."
               )}
             />
             <FeatureRow

@@ -144,7 +144,7 @@ function HowItWorksPage() {
       <section className="px-6 lg:px-16 py-12 border-t border-[var(--cream)]/10 bg-[var(--court-deep)]/50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-display text-3xl md:text-4xl text-[var(--cream)]">
-            {tr("Built for privacy & peace of mind", "Hecho para la privacidad y la tranquilidad")}
+            {tr("Built with your privacy in mind", "Hecho pensando en tu privacidad")}
           </h2>
           <p className="mt-2 text-[var(--cream)]/70 max-w-xl">
             {tr(

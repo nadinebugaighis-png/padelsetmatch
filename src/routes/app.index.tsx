@@ -510,6 +510,9 @@ function Discover() {
                       <MessageCircle className="w-5 h-5" />
                     </button>
                   </div>
+                  <p className="text-center text-[10px] text-[var(--cream)]/40 mt-2 leading-snug">
+                    {t("disc.privacyNote")}
+                  </p>
                 </div>
               </>
             );

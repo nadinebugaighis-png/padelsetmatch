@@ -18,6 +18,7 @@ const en: Dict = {
   "land.lede": "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with.",
   "land.cta": "START MATCH",
   "land.cta.sub": "Then book on Playtomic — or Play for free if your match has Court Access 🎾",
+  "land.howItWorks": "How it works",
 
   "land.what": "What's Playtomic?",
   "land.statUsers": "players joined",

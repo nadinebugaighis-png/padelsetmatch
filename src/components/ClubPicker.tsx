@@ -103,7 +103,7 @@ export function ClubPicker({ value, onChange }: Props) {
       )}
       {open && q.length >= 2 && !loading && results.length === 0 && (
         <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg p-3 text-xs text-[var(--cream)]/60">
-          No clubs found. Try a different name.
+          {tr("No clubs found. Try a different name.", "No se encontraron clubes. Prueba con otro nombre.")}
         </div>
       )}
     </div>

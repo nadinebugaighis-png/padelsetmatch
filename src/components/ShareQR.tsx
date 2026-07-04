@@ -44,8 +44,9 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
         className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/20 px-4 py-2 text-sm text-[var(--cream)] hover:bg-[var(--cream)]/10"
       >
         <Share2 className="w-4 h-4" />
-        Share
+        {tr("Share", "Compartir")}
       </button>
+
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">

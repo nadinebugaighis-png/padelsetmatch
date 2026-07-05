@@ -5,18 +5,23 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   cancelMatchEvent,
+  createMatchInviteLink,
   deleteEventMessage,
   deleteMatchEvent,
   editEventMessage,
   getMatchEvent,
+  inviteToMatchEvent,
   joinMatchEvent,
   leaveMatchEvent,
   listEventMessages,
+  listInvitableConnections,
+  respondToMatchInvite,
+  revokeMatchInvite,
   sendEventMessage,
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, Lock } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({

@@ -650,3 +650,250 @@ function EventDetail() {
     </div>
   );
 }
+
+function shareOriginInvite() {
+  if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
+  const { hostname, origin } = window.location;
+  if (hostname === "localhost" || hostname.includes("preview--") || hostname.includes("id-preview--")) {
+    return "https://padelmatchapp.lovable.app";
+  }
+  return origin;
+}
+
+type InvitePanelProps = {
+  eventId: string;
+  onClose: () => void;
+  listConns: (a: { data: { eventId: string } }) => Promise<{ people: Array<{ id: string; first_name: string | null; photo_url: string | null; level: string | null; gender: string | null; invited: boolean; joined: boolean }> }>;
+  invitePeople: (a: { data: { eventId: string; profileIds: string[] } }) => Promise<{ invited: number }>;
+  createLink: (a: { data: { eventId: string } }) => Promise<{ token: string; id: string }>;
+  revokeInvite: (a: { data: { inviteId: string } }) => Promise<{ ok: boolean }>;
+  invites: Array<{ id: string; invitee_profile_id: string | null; token: string | null; status: string; invitee?: { first_name?: string | null } | null }>;
+  tr: (en: string, es: string) => string;
+};
+
+function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, revokeInvite, invites, tr }: InvitePanelProps) {
+  const qc = useQueryClient();
+  const connsQ = useQuery({ queryKey: ["invitable", eventId], queryFn: () => listConns({ data: { eventId } }) });
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [linkUrl, setLinkUrl] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const toggle = (id: string) => {
+    setSelected((s) => {
+      const next = new Set(s);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const sendInvites = async () => {
+    if (selected.size === 0) return;
+    setBusy(true);
+    try {
+      const r = await invitePeople({ data: { eventId, profileIds: Array.from(selected) } });
+      toast.success(tr(`Sent ${r.invited} invite${r.invited === 1 ? "" : "s"}`, `Enviadas ${r.invited} invitaciones`));
+      setSelected(new Set());
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+      qc.invalidateQueries({ queryKey: ["invitable", eventId] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const makeLink = async () => {
+    setBusy(true);
+    try {
+      const r = await createLink({ data: { eventId } });
+      const url = `${shareOriginInvite()}/m/${eventId}?i=${r.token}`;
+      setLinkUrl(url);
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const whatsappUrl = linkUrl
+    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match — tap to join: ${linkUrl}`, `Estás invitado a mi partido de pádel — toca para unirte: ${linkUrl}`))}`
+    : null;
+
+  const copyLink = async () => {
+    if (!linkUrl) return;
+    try {
+      await navigator.clipboard.writeText(linkUrl);
+      toast.success(tr("Link copied", "Enlace copiado"));
+    } catch {
+      toast.error(tr("Could not copy the link", "No se pudo copiar el enlace"));
+    }
+  };
+
+  const people = connsQ.data?.people ?? [];
+  const directInvites = invites.filter((i) => i.invitee_profile_id);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/80 px-4 pb-4 pt-10"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Invite players", "Invitar jugadores")}</div>
+            <p className="mt-1 text-xs text-[var(--cream)]/70">
+              {tr(
+                "Invited players get first dibs. The match opens to everyone 10 hours after your first invite.",
+                "Los invitados tienen prioridad. El partido se abre a todos 10 horas después de la primera invitación.",
+              )}
+            </p>
+          </div>
+          <button onClick={onClose} className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70">
+            {tr("Close", "Cerrar")}
+          </button>
+        </div>
+
+        {/* From connections */}
+        <div className="mt-4">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
+            {tr("From your matches & friends", "De tus matches y amigos")}
+          </div>
+          {connsQ.isLoading && <div className="text-xs text-[var(--cream)]/50">{tr("Loading…", "Cargando…")}</div>}
+          {!connsQ.isLoading && people.length === 0 && (
+            <p className="text-xs text-[var(--cream)]/50">
+              {tr("No connections yet. Use the invite link below to share on WhatsApp.", "Aún no tienes conexiones. Usa el enlace de abajo para compartir por WhatsApp.")}
+            </p>
+          )}
+          <div className="grid grid-cols-3 gap-2">
+            {people.map((p) => {
+              const sel = selected.has(p.id);
+              const disabled = p.invited || p.joined;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => toggle(p.id)}
+                  className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-center transition ${
+                    disabled
+                      ? "border-[var(--cream)]/10 bg-black/20 opacity-60"
+                      : sel
+                      ? "border-[var(--ball)] bg-[var(--ball)]/15"
+                      : "border-[var(--cream)]/15 bg-black/30 hover:border-[var(--ball)]/50"
+                  }`}
+                >
+                  <div className="h-12 w-12 overflow-hidden rounded-full bg-[var(--court-deep)]">
+                    {p.photo_url && <img src={p.photo_url} alt="" className="h-full w-full object-cover" />}
+                  </div>
+                  <div className="w-full truncate text-xs text-[var(--cream)]">{p.first_name ?? "—"}</div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50">
+                    {p.joined ? tr("Joined", "Unido") : p.invited ? tr("Invited", "Invitado") : p.level ?? ""}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {selected.size > 0 && (
+            <button
+              onClick={sendInvites}
+              disabled={busy}
+              className="mt-3 w-full rounded-full bg-[var(--ball)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
+            >
+              {tr(`Send ${selected.size} invite${selected.size === 1 ? "" : "s"}`, `Enviar ${selected.size} invitaciones`)}
+            </button>
+          )}
+        </div>
+
+        {/* Invite link */}
+        <div className="mt-5 border-t border-[var(--cream)]/10 pt-4">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
+            {tr("Share an invite link", "Compartir enlace de invitación")}
+          </div>
+          {!linkUrl ? (
+            <button
+              onClick={makeLink}
+              disabled={busy}
+              className="w-full rounded-full border border-[var(--ball)]/60 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)] disabled:opacity-50"
+            >
+              {tr("Create WhatsApp invite link", "Crear enlace para WhatsApp")}
+            </button>
+          ) : (
+            <>
+              <input
+                readOnly
+                value={linkUrl}
+                onFocus={(e) => e.currentTarget.select()}
+                className="w-full rounded-full border border-[var(--cream)]/20 bg-black/30 px-4 py-2 text-xs text-[var(--cream)] outline-none"
+              />
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <a
+                  href={whatsappUrl!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-[#25D366] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+                >
+                  {tr("Send on WhatsApp", "Enviar por WhatsApp")}
+                </a>
+                <button
+                  onClick={copyLink}
+                  className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
+                >
+                  {tr("Copy link", "Copiar enlace")}
+                </button>
+              </div>
+              <p className="mt-2 text-[10px] text-[var(--cream)]/50">
+                {tr(
+                  "Anyone who opens this link and signs in gets priority to join.",
+                  "Cualquiera que abra este enlace e inicie sesión tendrá prioridad para unirse.",
+                )}
+              </p>
+            </>
+          )}
+        </div>
+
+        {/* Existing invites */}
+        {directInvites.length > 0 && (
+          <div className="mt-5 border-t border-[var(--cream)]/10 pt-4">
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
+              {tr("Invites sent", "Invitaciones enviadas")}
+            </div>
+            <ul className="space-y-1.5">
+              {directInvites.map((inv) => (
+                <li key={inv.id} className="flex items-center justify-between rounded-lg bg-black/25 px-3 py-2">
+                  <div className="text-sm text-[var(--cream)]">
+                    {inv.invitee?.first_name ?? "—"}
+                    <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--cream)]/50">
+                      {inv.status === "accepted"
+                        ? tr("Accepted", "Aceptada")
+                        : inv.status === "declined"
+                        ? tr("Can't this time", "No puede")
+                        : tr("Pending", "Pendiente")}
+                    </span>
+                  </div>
+                  {inv.status === "pending" && (
+                    <button
+                      onClick={async () => {
+                        await revokeInvite({ data: { inviteId: inv.id } });
+                        qc.invalidateQueries({ queryKey: ["event", eventId] });
+                        qc.invalidateQueries({ queryKey: ["invitable", eventId] });
+                      }}
+                      className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 hover:text-red-300"
+                    >
+                      {tr("Cancel", "Cancelar")}
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

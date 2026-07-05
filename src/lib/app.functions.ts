@@ -235,9 +235,10 @@ function scoreCandidate(me: Profile, c: Profile) {
 
   const meLikesAge = c.age >= me.age_min && c.age <= me.age_max;
   const theyLikeAge = me.age >= c.age_min && me.age <= c.age_max;
-  if (meLikesAge && theyLikeAge) { score += 22; reasons.push("Ages line up both ways"); }
-  else if (meLikesAge || theyLikeAge) { score += 8; }
-  else return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  // Hard filter: only show people inside the user's chosen age range.
+  if (!meLikesAge) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
+  if (theyLikeAge) { score += 22; reasons.push("Ages line up both ways"); }
+  else { score += 8; }
 
   const levelGap = Math.abs((LEVEL_IDX[me.level] ?? 0) - (LEVEL_IDX[c.level] ?? 0));
   if (levelGap === 0) { score += 18; reasons.push("Same padel level — fair match"); playingStyle += 40; }

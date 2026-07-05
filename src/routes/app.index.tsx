@@ -24,6 +24,7 @@ function Discover() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { t, label } = useI18n();
+  const tr = useTr();
   const getFeed = useServerFn(getDiscoverFeed);
   const like = useServerFn(likeProfile);
   const unlike = useServerFn(unlikeProfile);

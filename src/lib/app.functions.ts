@@ -129,6 +129,18 @@ export const setAwayStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const setWorldMode = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ world_mode: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profiles" as never)
+      .update({ world_mode: data.world_mode } as never)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 async function moderatePhotoWithAi(photoUrl: string): Promise<{ verdict: "approved" | "rejected"; reason: string }> {
   const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) {

@@ -156,18 +156,48 @@ function Discover() {
     if (c.looking_for === "both") return ["relationship", "friend", "padel"];
     return ["padel"];
   };
+
+  // Collect the zones/areas actually present in the current feed (smart options).
+  const zonesInFeed = (() => {
+    const set = new Set<string>();
+    all.forEach((c) => {
+      if (c.zone) set.add(c.zone.trim());
+      (c.locations ?? []).forEach((loc: string) => {
+        const parts = loc.split("|").map((s) => s.trim());
+        const area = parts[2];
+        const city = parts[1];
+        if (area) set.add(area);
+        else if (city) set.add(city);
+      });
+    });
+    return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  })();
+
+  const zoneMatches = (c: typeof all[number], zone: string) => {
+    const target = zone.toLowerCase();
+    if ((c.zone ?? "").toLowerCase().includes(target)) return true;
+    return (c.locations ?? []).some((loc: string) => loc.toLowerCase().includes(target));
+  };
+
+  const genderMatches = (c: typeof all[number], g: string) => {
+    if (g === "all") return true;
+    if (g === "mixed") {
+      // "mixed" = show both men and women (exclude non-binary/other filters aside)
+      return c.gender === "woman" || c.gender === "man";
+    }
+    return c.gender === g;
+  };
+
   const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
-      if (zoneFilter !== "all") {
-        const z = (c.zone ?? "").toLowerCase();
-        if (!z.includes(zoneFilter.toLowerCase())) return false;
-      }
+      if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
+      if (!genderMatches(c, genderFilter)) return false;
       return true;
     });
-  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0) + (genderFilter !== "all" ? 1 : 0);
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">

@@ -131,26 +131,64 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       const parts = l.split("|").map((s) => s.trim()).filter(Boolean);
       return parts[parts.length - 1];
     }).filter(Boolean)));
-    if (data.myLocations && myLocs.length === 0) {
-      return { events: [] as any[] };
+
+    const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const baseSelect = "*, participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))";
+
+    // Always include events the user is involved in (host, participant, or invited),
+    // regardless of city filter — otherwise a match joined via share link outside
+    // their areas would disappear from their Play page.
+    const involvedIds = new Set<string>();
+    if (profile) {
+      const [{ data: mine }, { data: parts }, { data: invs }] = await Promise.all([
+        supabase.from("match_events").select("id").eq("host_profile_id", profile.id).gte("starts_at", sinceIso),
+        supabase.from("match_event_participants").select("match_event_id, match_events!inner(id, starts_at)").eq("profile_id", profile.id).gte("match_events.starts_at", sinceIso),
+        supabase.from("match_event_invites").select("match_event_id, match_events!inner(id, starts_at)").eq("invitee_profile_id", profile.id).gte("match_events.starts_at", sinceIso),
+      ]);
+      (mine ?? []).forEach((r: any) => involvedIds.add(r.id));
+      (parts ?? []).forEach((r: any) => involvedIds.add(r.match_event_id));
+      (invs ?? []).forEach((r: any) => involvedIds.add(r.match_event_id));
     }
-    let q = supabase
-      .from("match_events")
-      .select("*, participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))")
-      .in("status", ["open", "full"])
-      .gte("starts_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
-      .order("starts_at", { ascending: true })
-      .limit(500);
-    if (data.myLocations && myLocs.length > 0) {
-      // Case-insensitive OR match on city
-      const ors = myLocs.map((c) => `city.ilike.${c}`).join(",");
-      q = q.or(ors);
-    } else if (data.city) {
-      q = q.ilike("city", `%${data.city}%`);
+
+    const eventsMap = new Map<string, any>();
+
+    // Area / city query (main list)
+    if (!(data.myLocations && myLocs.length === 0)) {
+      let q = supabase
+        .from("match_events")
+        .select(baseSelect)
+        .in("status", ["open", "full"])
+        .gte("starts_at", sinceIso)
+        .order("starts_at", { ascending: true })
+        .limit(500);
+      if (data.myLocations && myLocs.length > 0) {
+        // Case-insensitive PARTIAL match on city — handles "Madrid" vs "Madrid Centro"
+        // or values that include country suffixes. Escape PostgREST OR separators.
+        const safe = (s: string) => s.replace(/[,()]/g, " ").trim();
+        const ors = myLocs.map((c) => `city.ilike.%${safe(c)}%`).join(",");
+        q = q.or(ors);
+      } else if (data.city) {
+        q = q.ilike("city", `%${data.city}%`);
+      }
+      const { data: events, error } = await q;
+      if (error) throw new Error(error.message);
+      (events ?? []).forEach((e: any) => eventsMap.set(e.id, e));
     }
-    const { data: events, error } = await q;
-    if (error) throw new Error(error.message);
-    const list = (events ?? []).map((e: any) => {
+
+    // Merge in events the user is involved in but that weren't captured above
+    const missingIds = Array.from(involvedIds).filter((id) => !eventsMap.has(id));
+    if (missingIds.length > 0) {
+      const { data: extra } = await supabase
+        .from("match_events")
+        .select(baseSelect)
+        .in("id", missingIds)
+        .in("status", ["open", "full"])
+        .gte("starts_at", sinceIso);
+      (extra ?? []).forEach((e: any) => eventsMap.set(e.id, e));
+    }
+
+    const merged = Array.from(eventsMap.values()).sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
+    const list = merged.map((e: any) => {
       const filled = (e.participants?.length ?? 0) + (e.extra_confirmed ?? 0);
       const iAmHost = !!profile && e.host_profile_id === profile.id;
       const iAmParticipant = !!profile && ((e.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
@@ -158,6 +196,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     });
     return { events: data.needs ? list.filter((e) => e.needs === data.needs) : list };
   });
+
 
 // ---------- Get one ----------
 export const getMatchEvent = createServerFn({ method: "POST" })

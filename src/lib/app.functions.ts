@@ -505,6 +505,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
 
     const scored = candidates
+      .filter((c) => c.age >= me.age_min && c.age <= me.age_max)
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
         // Semantic Q&A affinity — same question, compare answers by meaning.

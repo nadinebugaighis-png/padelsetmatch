@@ -4,7 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import { ClubPicker } from "@/components/ClubPicker";
 import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
+import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
+
+
 
 
 export type MatchFormValues = {
@@ -83,6 +86,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
   const [courtBooked, setCourtBooked] = useState<boolean>(initial?.court_booked ?? false);
   const [playtomicLink, setPlaytomicLink] = useState(initial?.playtomic_link ?? "");
+  const [playtomicError, setPlaytomicError] = useState<string | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
@@ -90,6 +94,13 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
   const handleSubmit = async () => {
     if (!locationReady || !when) return;
+    const normalized = normalizePlaytomicLink(playtomicLink);
+    if (normalized.error) {
+      setPlaytomicError(tr("Enter a valid Playtomic link (playtomic.io)", "Introduce un enlace válido de Playtomic (playtomic.io)"));
+      return;
+    }
+    setPlaytomicError(null);
+
     const extraConfirmed = Math.max(0, 4 - appPlayersCount - playersNeeded);
     const values: MatchFormValues =
       locMode === "club" && club
@@ -107,7 +118,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             gender_rule: genderRule,
             extra_confirmed: extraConfirmed,
             note: note || null,
-            playtomic_link: playtomicLink || null,
+            playtomic_link: normalized.url,
             court_booked: courtBooked,
           }
         : {
@@ -124,7 +135,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             gender_rule: genderRule,
             extra_confirmed: extraConfirmed,
             note: note || null,
-            playtomic_link: playtomicLink || null,
+            playtomic_link: normalized.url,
             court_booked: courtBooked,
           };
     await onSubmit(values);
@@ -287,11 +298,24 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         </label>
         <input
           type="url"
+          inputMode="url"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
           value={playtomicLink}
-          onChange={(e) => setPlaytomicLink(e.target.value)}
+          onChange={(e) => {
+            setPlaytomicLink(e.target.value);
+            if (playtomicError) setPlaytomicError(null);
+          }}
           placeholder={tr("Playtomic booking link (optional)", "Enlace de reserva en Playtomic (opcional)")}
-          className="mt-2 w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+          className={`mt-2 w-full bg-black/30 border rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm ${playtomicError ? "border-red-400/60" : "border-[var(--cream)]/20"}`}
         />
+        {playtomicError && (
+          <p className="mt-1 text-[11px] text-red-300">{playtomicError}</p>
+        )}
+        <p className="mt-1 text-[10px] text-[var(--cream)]/50">
+          {tr("Paste the full playtomic.io booking link so players can open it directly.", "Pega el enlace completo de playtomic.io para que los jugadores puedan abrirlo directamente.")}
+        </p>
       </div>
 
       <div>

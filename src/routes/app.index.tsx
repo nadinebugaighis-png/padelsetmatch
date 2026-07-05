@@ -159,8 +159,14 @@ function Discover() {
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
+      if (levelFilter !== "all" && c.level !== levelFilter) return false;
+      if (zoneFilter !== "all") {
+        const z = (c.zone ?? "").toLowerCase();
+        if (!z.includes(zoneFilter.toLowerCase())) return false;
+      }
       return true;
     });
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">

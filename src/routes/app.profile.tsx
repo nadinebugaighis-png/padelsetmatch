@@ -280,6 +280,7 @@ function FeedbackBox() {
         <h2 className="text-display text-lg tracking-wider">{t("fb.title")}</h2>
       </div>
       <p className="text-xs text-[var(--cream)]/60 mt-1">{t("fb.sub")}</p>
+      <p className="text-[10px] text-[var(--cream)]/40 mt-1">{t("fb.anon")}</p>
 
       <div className="flex items-center gap-1 mt-3">
         {[1, 2, 3, 4, 5].map((n) => (

@@ -180,6 +180,7 @@ const en: Dict = {
   // Feedback
   "fb.title": "Make this app better",
   "fb.sub": "Suggestions, bugs, things you'd love — it all comes straight to the team.",
+  "fb.anon": "Your feedback is completely anonymous.",
   "fb.placeholder": "What would make PadelMatch better for you?",
   "fb.send": "Send",
   "fb.sending": "Sending…",
@@ -459,6 +460,7 @@ const es: Dict = {
   // Feedback
   "fb.title": "Haz esta app mejor",
   "fb.sub": "Sugerencias, errores, lo que te encantaría — llega directo al equipo.",
+  "fb.anon": "Tu feedback es completamente anónimo.",
   "fb.placeholder": "¿Qué haría PadelMatch mejor para ti?",
   "fb.send": "Enviar",
   "fb.sending": "Enviando…",

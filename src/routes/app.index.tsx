@@ -205,21 +205,23 @@ function Discover() {
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
-      <div className="flex gap-2 mt-4 flex-wrap items-center">
-        {(["all", "padel", "friend", "relationship"] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-            {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex gap-2 flex-wrap items-center">
+          {(["all", "padel", "friend", "relationship"] as const).map((f) => (
+            <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
+              {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+            </button>
+          ))}
+          <button
+            onClick={() => setWorld((w) => !w)}
+            className={`chip ${world ? "chip-ball" : ""}`}
+          >
+            {world ? t("disc.world.on") : t("disc.world.off")}
           </button>
-        ))}
-        <button
-          onClick={() => setWorld((w) => !w)}
-          className={`chip ${world ? "chip-ball" : ""}`}
-        >
-          {world ? t("disc.world.on") : t("disc.world.off")}
-        </button>
+        </div>
         <button
           onClick={() => setShowFilters((s) => !s)}
-          className={`chip ${activeFilterCount > 0 ? "chip-ball" : ""}`}
+          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--ball)]" : "text-[var(--cream)]/70"}`}
           aria-expanded={showFilters}
         >
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}

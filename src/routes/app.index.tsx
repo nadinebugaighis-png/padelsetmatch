@@ -193,7 +193,6 @@ function Discover() {
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
       if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
-      if (!genderMatches(c, genderFilter)) return false;
       return true;
     });
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0) + (genderFilter !== "all" ? 1 : 0);

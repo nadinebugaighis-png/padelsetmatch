@@ -119,7 +119,7 @@ function EventsPage() {
       }
       if (openOnly) {
         const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
-        if (needs === 0) return false;
+        if (needs === 0 && !e.iAmHost) return false;
       }
       return true;
     });

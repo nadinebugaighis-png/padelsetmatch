@@ -126,11 +126,25 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
     const rawLocs = (profile?.locations ?? []).filter((l): l is string => typeof l === "string" && l.length > 0);
-    // Locations may be stored as "Country | Region | City" — extract the city (last segment).
-    const myLocs = Array.from(new Set(rawLocs.map((l) => {
-      const parts = l.split("|").map((s) => s.trim()).filter(Boolean);
-      return parts[parts.length - 1];
-    }).filter(Boolean)));
+    // Locations are typically stored as "Country | Region | City". Some rows
+    // concatenate multiple locations without a separator, e.g.
+    // "Spain | Madrid | La Moraleja Spain | Madrid | Alcobendas". Walk in
+    // groups of 3 and collect BOTH the region (segment 2) and sub-area
+    // (segment 3) as keywords so nearby suburbs still match.
+    const keywords = new Set<string>();
+    for (const raw of rawLocs) {
+      const parts = raw.split("|").map((s) => s.trim()).filter(Boolean);
+      if (parts.length === 1) { keywords.add(parts[0]); continue; }
+      for (let i = 0; i < parts.length; i += 3) {
+        const country = parts[i];
+        const region = parts[i + 1];
+        const subcity = parts[i + 2];
+        if (region) keywords.add(region);
+        if (subcity) keywords.add(subcity);
+        if (!region && !subcity && country) keywords.add(country);
+      }
+    }
+    const myKeywords = Array.from(keywords);
 
     const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     const baseSelect = "*, participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))";
@@ -153,7 +167,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const eventsMap = new Map<string, any>();
 
     // Area / city query (main list)
-    if (!(data.myLocations && myLocs.length === 0)) {
+    if (!(data.myLocations && myKeywords.length === 0)) {
       let q = supabase
         .from("match_events")
         .select(baseSelect)
@@ -161,12 +175,17 @@ export const listOpenEvents = createServerFn({ method: "POST" })
         .gte("starts_at", sinceIso)
         .order("starts_at", { ascending: true })
         .limit(500);
-      if (data.myLocations && myLocs.length > 0) {
-        // Case-insensitive PARTIAL match on city — handles "Madrid" vs "Madrid Centro"
-        // or values that include country suffixes. Escape PostgREST OR separators.
+      if (data.myLocations && myKeywords.length > 0) {
+        // Match against BOTH city and club_address so nearby suburbs surface
+        // (e.g. user stored "Madrid" and event city is "Alcobendas" — the
+        // address usually contains "Madrid").
         const safe = (s: string) => s.replace(/[,()]/g, " ").trim();
-        const ors = myLocs.map((c) => `city.ilike.%${safe(c)}%`).join(",");
-        q = q.or(ors);
+        const ors = myKeywords.flatMap((c) => {
+          const s = safe(c);
+          if (!s) return [];
+          return [`city.ilike.%${s}%`, `club_address.ilike.%${s}%`];
+        }).join(",");
+        if (ors) q = q.or(ors);
       } else if (data.city) {
         q = q.ilike("city", `%${data.city}%`);
       }

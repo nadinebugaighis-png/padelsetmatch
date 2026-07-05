@@ -70,6 +70,11 @@ function EventDetail() {
   const sendMsg = useServerFn(sendEventMessage);
   const editMsg = useServerFn(editEventMessage);
   const deleteMsg = useServerFn(deleteEventMessage);
+  const invitePeople = useServerFn(inviteToMatchEvent);
+  const createInviteLink = useServerFn(createMatchInviteLink);
+  const listConns = useServerFn(listInvitableConnections);
+  const respondInvite = useServerFn(respondToMatchInvite);
+  const revokeInvite = useServerFn(revokeMatchInvite);
 
   const eventQ = useQuery({
     queryKey: ["event", eventId],

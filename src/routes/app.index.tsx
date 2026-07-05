@@ -75,6 +75,21 @@ function Discover() {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
   }, [feedQ.data, navigate]);
 
+  useEffect(() => {
+    if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {
+      setWorld(feedQ.data.me.world_mode);
+    }
+  }, [feedQ.data?.me?.world_mode]);
+
+  const setWorld = useServerFn(setWorldMode);
+  const setWorldM = useMutation({
+    mutationFn: (value: boolean) => setWorld({ data: { world_mode: value } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not save preference"),
+  });
+
   const likeM = useMutation({
     mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
     onSuccess: (res) => {

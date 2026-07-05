@@ -249,7 +249,11 @@ function Discover() {
             </button>
           ))}
           <button
-            onClick={() => setWorld((w) => !w)}
+            onClick={() => {
+              const next = !world;
+              setWorld(next);
+              setWorldM.mutate(next);
+            }}
             className={`chip ${world ? "chip-ball" : ""}`}
           >
             {world ? t("disc.world.on") : t("disc.world.off")}

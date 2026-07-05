@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Calendar, MapPin, Users, Share2 } from "lucide-react";
-import { getPublicMatch } from "@/lib/match-events.functions";
+import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
@@ -12,6 +12,9 @@ import { useTr } from "@/lib/i18n";
 const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/3405870a-80f1-4e7d-a4f1-4277f9982a23/padel-mixed-share.jpg";
 
 export const Route = createFileRoute("/m/$eventId")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    i: typeof s.i === "string" ? s.i : undefined,
+  }),
   head: () => {
     const title = "Join my padel match — PadelMatch";
     const description = "You're invited to a padel match on PadelMatch. Tap to grab an open spot.";
@@ -52,15 +55,28 @@ function shareOrigin() {
 
 function PublicMatchPage() {
   const { eventId } = Route.useParams();
+  const { i: inviteToken } = Route.useSearch();
   const navigate = useNavigate();
   const tr = useTr();
   const getPublic = useServerFn(getPublicMatch);
+  const claimInvite = useServerFn(claimMatchInviteByToken);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
   }, []);
+
+  // Auto-claim invite if signed in and token present, then redirect to private event page
+  useEffect(() => {
+    if (!inviteToken || hasSession !== true) return;
+    (async () => {
+      try {
+        await claimInvite({ data: { token: inviteToken } });
+        navigate({ to: "/app/events/$eventId", params: { eventId } });
+      } catch { /* ignore — fall through to public view */ }
+    })();
+  }, [inviteToken, hasSession, claimInvite, navigate, eventId]);
 
   const q = useQuery({
     queryKey: ["public-match", eventId],
@@ -92,8 +108,10 @@ function PublicMatchPage() {
   };
 
   const onJoinClick = () => {
-    if (hasSession) navigate({ to: "/app/join-setup", search: { join: eventId } as never });
-    else navigate({ to: "/auth", search: { join: eventId } as never });
+    const search: Record<string, string> = { join: eventId };
+    if (inviteToken) search.i = inviteToken;
+    if (hasSession) navigate({ to: "/app/join-setup", search: search as never });
+    else navigate({ to: "/auth", search: search as never });
   };
 
   return (

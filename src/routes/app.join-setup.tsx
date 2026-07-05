@@ -5,24 +5,26 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PADEL_LEVELS } from "@/lib/types";
 import { getMyProfile } from "@/lib/app.functions";
-import { joinMatchEvent, saveLiteProfile } from "@/lib/match-events.functions";
+import { claimMatchInviteByToken, joinMatchEvent, saveLiteProfile } from "@/lib/match-events.functions";
 import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/join-setup")({
   head: () => ({ meta: [{ title: "Quick setup — PadelMatch" }] }),
   validateSearch: (s: Record<string, unknown>) => ({
     join: typeof s.join === "string" ? s.join : undefined,
+    i: typeof s.i === "string" ? s.i : undefined,
   }),
   component: JoinSetupPage,
 });
 
 function JoinSetupPage() {
-  const { join } = Route.useSearch();
+  const { join, i: inviteToken } = Route.useSearch();
   const navigate = useNavigate();
   const tr = useTr();
   const getMe = useServerFn(getMyProfile);
   const saveLite = useServerFn(saveLiteProfile);
   const joinFn = useServerFn(joinMatchEvent);
+  const claimInvite = useServerFn(claimMatchInviteByToken);
 
   const meQ = useQuery({ queryKey: ["me"], queryFn: () => getMe() });
 
@@ -49,6 +51,9 @@ function JoinSetupPage() {
       await saveLite({ data: { first_name: firstName.trim(), level, city: city.trim() || null } });
       if (join) {
         try {
+          if (inviteToken) {
+            try { await claimInvite({ data: { token: inviteToken } }); } catch { /* ignore */ }
+          }
           await joinFn({ data: { id: join } });
           toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾"));
         } catch (e) {

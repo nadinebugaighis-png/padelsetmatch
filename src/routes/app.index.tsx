@@ -197,23 +197,25 @@ function Discover() {
       </p>
 
       <div className="flex gap-2 mt-4 flex-wrap items-center">
-        {(["all", "padel", "friend", "relationship"] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-            {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+        <div className="flex gap-2 flex-wrap items-center">
+          {(["all", "padel", "friend", "relationship"] as const).map((f) => (
+            <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
+              {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+            </button>
+          ))}
+          <button
+            onClick={() => setWorld((w) => !w)}
+            className={`chip ${world ? "chip-ball" : ""}`}
+          >
+            {world ? t("disc.world.on") : t("disc.world.off")}
           </button>
-        ))}
-        <button
-          onClick={() => setWorld((w) => !w)}
-          className={`chip ${world ? "chip-ball" : ""}`}
-        >
-          {world ? t("disc.world.on") : t("disc.world.off")}
-        </button>
+        </div>
         <button
           onClick={() => setShowFilters((s) => !s)}
-          className={`chip ${activeFilterCount > 0 ? "chip-ball" : ""}`}
+          className="text-sm text-[var(--cream)]/70 ml-auto underline-offset-4 hover:underline"
           aria-expanded={showFilters}
         >
-          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+          Filters
         </button>
       </div>
 

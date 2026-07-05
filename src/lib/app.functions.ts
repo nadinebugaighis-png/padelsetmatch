@@ -1535,14 +1535,15 @@ ${qaBlock(theirQA)}`;
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown };
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown };
       if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
       if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
       if (Array.isArray(parsed.reasons)) {
         reasons = parsed.reasons.filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
       }
-      if (typeof parsed.friction === "string" && parsed.friction.trim().length > 0 && parsed.friction.toLowerCase() !== "null") {
-        friction = parsed.friction.trim().slice(0, 160);
+      const watchRaw = typeof parsed.watch_out === "string" ? parsed.watch_out : typeof parsed.friction === "string" ? parsed.friction : "";
+      if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
+        friction = watchRaw.trim().slice(0, 160);
       }
     } catch (e) {
       blurb = e instanceof Error && e.message.includes("402")

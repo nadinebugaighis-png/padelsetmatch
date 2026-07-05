@@ -169,7 +169,14 @@ function EventDetail() {
       qc.invalidateQueries({ queryKey: ["event", eventId] });
       qc.invalidateQueries({ queryKey: ["open-events"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not join", "No te pudimos unir"));
+      const msg = e instanceof Error ? e.message : "";
+      if (msg.startsWith("INVITE_LOCK:")) {
+        const iso = msg.slice("INVITE_LOCK:".length);
+        const opensAt = new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
+        toast.error(tr(`Reserved for invited players until ${opensAt}. Come back then!`, `Reservado para invitados hasta ${opensAt}. ¡Vuelve entonces!`));
+      } else {
+        toast.error(msg || tr("Could not join", "No te pudimos unir"));
+      }
     }
   };
 

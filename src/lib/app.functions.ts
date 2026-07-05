@@ -1476,14 +1476,24 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const other = otherRow as Profile | null;
     if (!other) throw new Error("Profile not found");
 
-    const { data: qaRows } = await supabaseAdmin
+    const { data: qaRows, count: theirQaCount } = await supabaseAdmin
       .from("qa_answers" as never)
-      .select("profile_id, question, answer")
+      .select("profile_id, question, answer", { count: "exact" })
       .in("profile_id", [me.id, other.id])
       .limit(200);
     const qa = ((qaRows as Array<{ profile_id: string; question: string; answer: string }> | null) ?? []);
     const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
     const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
+
+    // Version key incorporates intents + QA volume so the cache invalidates
+    // when either person changes what they're looking for or answers more Qs.
+    const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
+    const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
+    const versionKey = `v8-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+
+    if (cached && (cached as { model_version?: string }).model_version === versionKey) {
+      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: Record<string, number> | null; model_version: string; created_at: string };
+    }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
 - Padel level: ${p.level}
@@ -1501,7 +1511,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, model_version: "fallback", created_at: new Date().toISOString() };
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as Record<string, number> | null, model_version: "fallback", created_at: new Date().toISOString() };
       return fallback;
     }
 
@@ -1510,9 +1520,10 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-2.5-flash");
 
-    const myIntents = new Set((me.intents ?? []) as string[]);
-    const theirIntents = new Set((other.intents ?? []) as string[]);
-    const sharedIntents = [...myIntents].filter((i) => theirIntents.has(i));
+    const myIntents = new Set(myIntentsArr);
+    const theirIntents = new Set(theirIntentsArr);
+    const sharedIntents = myIntentsArr.filter((i) => theirIntents.has(i));
+    const asymmetric = [...myIntents, ...theirIntents].filter((i) => !sharedIntents.includes(i));
     const focusFor = (intent: string) => {
       if (intent === "relationship") return `RELATIONSHIP FOCUS — both are open to dating. Weight (but do not limit to): shared values, emotional style, lifestyle fit and aspirations, attraction-related preferences, communication tone. Padel skill matters less here.`;
       if (intent === "padel") return `TEAMMATE FOCUS — both want a padel partner. Weight (but do not limit to): skill level, competitiveness, schedule/availability, reliability, communication, on-court role balance (e.g. right/left side, aggressive/defensive).`;
@@ -1523,18 +1534,26 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       ? sharedIntents.map(focusFor).filter(Boolean).join("\n")
       : `GENERAL FOCUS — intents don't clearly overlap. Focus on padel fit and easy friendship rather than romance.`;
 
+    const asymNote = asymmetric.length > 0 && sharedIntents.length > 0
+      ? `NOTE ON ASYMMETRIC INTENTS: one of you is also open to "${asymmetric.join(", ")}" while the other isn't. Score for the SHARED intent(s) only. You may add a single gentle line in "watch_out" that expectations differ on that dimension — never moralize, never say anyone is wrong.`
+      : "";
+
+    const requestedSubScores = sharedIntents.length > 0 ? sharedIntents : ["padel"];
+
     const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
 
 INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
 ${intentGuidance}
+${asymNote}
 
 Rules for judgment:
 - Most people can enjoy padel together and even become good friends despite different lifestyles, life stages, ages, incomes, or family situations (single, married, with or without kids). Treat differences as normal and often enriching, not as problems. Personality, shared interests, background and shared experiences matter more than surface life-stage differences.
 - Only flag something as a real consideration when the answers themselves point to a concrete thing that would actually affect playing together, getting along, or (if both want dating) building a relationship — e.g. very different available time slots, very different on-court intensity, one wants competitive tournaments and the other purely social hits.
 - Distinguish COMPLEMENTARY differences (introvert + extrovert who both value calm; aggressive + defensive on court) from actual mismatches. When unsure, treat as complementary or neutral.
 - Same nationality, same city, or both "open-minded / friendly / flexible" are filler — skip them.
-- Be specific and use their actual traits, answers, and bios. Name the thing.
-- Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 good with a couple of things to be aware of, 40-54 mixed, 0-39 poor fit. If evidence is thin, score in the 60-70 range and say so gently.
+- ANTI-HALLUCINATION: Only cite a trait, answer, or bio detail if it actually appears in the profile data above. Never invent hobbies, jobs, family status, preferences or life details. If evidence is thin, say so gently and score in the 60-70 range.
+- Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 good with a couple of things to be aware of, 40-54 mixed, 0-39 poor fit.
+- The overall "score" should reflect the intent(s) that matter to this pair. When multiple intents are shared, weight them equally.
 - The "watch_out" field is OPTIONAL and should usually be null. Only fill it when there is a concrete, evidence-based thing to gently be aware of. Never fill it for lifestyle / life-stage / personality differences alone.
 - Blurb should be warm, grounded, diplomatic and accurate — no flattery, no empty praise, no verdicts about their lives.
 
@@ -1549,13 +1568,16 @@ RESPECT & TONE RULES (very important):
 
 Return ONLY valid JSON with this exact shape:
 {
-  "score": <0-100 integer, honestly graded>,
+  "score": <0-100 integer overall, honestly graded>,
+  "sub_scores": { ${requestedSubScores.map((k) => `"${k}": <0-100 integer>`).join(", ")} },
   "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. No emojis, no flattery, no judgment.>",
-  "reasons": ["<specific reason 1, max 90 chars>", "<reason 2>", "<reason 3>"],
+  "reasons": [
+    "<REASON 1 — the single strongest concrete thing you two share, drawn from actual profile data. Max 90 chars.>",
+    "<REASON 2 — a complementary difference or how you'd balance each other. Max 90 chars.>",
+    "<REASON 3 — a small practical note (schedule, level, style, a shared Q&A answer). Max 90 chars.>"
+  ],
   "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — this is usually null.>"
 }
-
-Reasons must be specific to THIS pair and reflect the intent focus above. Mostly positive; include a gentle caveat only when the evidence clearly supports it. Exactly 3.
 
 ${summarizeProfile(me, "PERSON A (the viewer)")}
 Q&A:
@@ -1569,11 +1591,12 @@ ${qaBlock(theirQA)}`;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
+    let subScores: Record<string, number> | null = null;
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown };
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown };
       if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
       if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
       if (Array.isArray(parsed.reasons)) {
@@ -1583,16 +1606,25 @@ ${qaBlock(theirQA)}`;
       if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
         friction = watchRaw.trim().slice(0, 160);
       }
+      if (parsed.sub_scores && typeof parsed.sub_scores === "object") {
+        const clean: Record<string, number> = {};
+        for (const k of requestedSubScores) {
+          const v = (parsed.sub_scores as Record<string, unknown>)[k];
+          if (typeof v === "number") clean[k] = Math.max(0, Math.min(100, Math.round(v)));
+        }
+        if (Object.keys(clean).length > 0) subScores = clean;
+      }
     } catch (e) {
       blurb = e instanceof Error && e.message.includes("402")
         ? "AI credits exhausted — top up in Settings to unlock this."
         : blurb;
     }
 
-    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-kind-v7" };
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores, model_version: versionKey };
     await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });
+
 
 // Thumbs up/down on the AI compatibility take for a specific profile.
 export const rateAiCompatibility = createServerFn({ method: "POST" })

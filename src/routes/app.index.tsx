@@ -188,7 +188,54 @@ function Discover() {
         >
           {world ? t("disc.world.on") : t("disc.world.off")}
         </button>
+        <button
+          onClick={() => setShowFilters((s) => !s)}
+          className={`chip ${activeFilterCount > 0 ? "chip-ball" : ""}`}
+          aria-expanded={showFilters}
+        >
+          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+        </button>
       </div>
+
+      {showFilters && (
+        <div className="mt-3 p-3 rounded-xl border border-[var(--cream)]/15 bg-black/20 space-y-3">
+          <div>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Padel level</label>
+            <select
+              value={levelFilter}
+              onChange={(e) => setLevelFilter(e.target.value)}
+              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+            >
+              <option value="all">Any level</option>
+              {PADEL_LEVELS.map((lv) => (
+                <option key={lv} value={lv}>{label(lv)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Barrio / zone</label>
+            <select
+              value={zoneFilter}
+              onChange={(e) => setZoneFilter(e.target.value)}
+              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+            >
+              <option value="all">Any zone</option>
+              {MADRID_ZONES.map((z) => (
+                <option key={z} value={z}>{z}</option>
+              ))}
+            </select>
+          </div>
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
+              className="text-xs text-[var(--ball)] underline"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
       {world && (
         <p className="text-[11px] text-[var(--cream)]/60 mt-2">
           {t("disc.world.note")}

@@ -170,7 +170,7 @@ function Onboarding() {
   const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
   const togglePriority = (t: string) => {
-    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);
+    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 10 ? cur : [...cur, t]);
   };
   const movePriority = (i: number, dir: -1 | 1) => {
     setPriorities((cur) => {
@@ -188,7 +188,7 @@ function Onboarding() {
     const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
     if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
     if (priorities.includes(v)) { toast.error(t("ob.errDup")); return; }
-    if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
+    if (priorities.length >= 10) { toast.error(t("ob.errMaxTraits")); return; }
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };

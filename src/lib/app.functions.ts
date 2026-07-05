@@ -1483,9 +1483,11 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 - Padel level: ${p.level}
 - Nationality: ${p.nationality}
 - Languages: ${(p.languages ?? []).join(", ") || "n/a"}
+- Looking for: ${(p.intents ?? []).join(", ") || p.looking_for || "n/a"}
 - Values (top): ${(p.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
 - Personal traits: ${(p.personal_traits ?? []).join(", ") || "n/a"}
 - Padel style: ${(p.padel_style ?? []).join(", ") || "n/a"}
+- Availability: ${(p.availability ?? []).join(", ") || "n/a"}
 - Bio: ${p.bio ?? "n/a"}`;
 
     const qaBlock = (rows: Array<{ question: string; answer: string }>) =>

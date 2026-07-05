@@ -30,6 +30,7 @@ function Discover() {
   const block = useServerFn(blockProfile);
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
+  const reportPhotoFn = useServerFn(reportPhoto);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   const [world, setWorld] = useState(false);
   const [levelFilter, setLevelFilter] = useState<string>("all");

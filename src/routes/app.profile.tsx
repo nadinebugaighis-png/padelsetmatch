@@ -245,6 +245,14 @@ function ProfilePage() {
       <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-400/70 hover:text-red-400">
         {t("prof.delete")}
       </button>
+      <PhotoCropDialog
+        file={pendingFile}
+        onCancel={() => setPendingFile(null)}
+        onConfirm={(cropped) => {
+          setPendingFile(null);
+          onPickPhoto(cropped);
+        }}
+      />
     </main>
   );
 }

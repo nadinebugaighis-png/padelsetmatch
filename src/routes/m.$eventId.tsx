@@ -55,15 +55,28 @@ function shareOrigin() {
 
 function PublicMatchPage() {
   const { eventId } = Route.useParams();
+  const { i: inviteToken } = Route.useSearch();
   const navigate = useNavigate();
   const tr = useTr();
   const getPublic = useServerFn(getPublicMatch);
+  const claimInvite = useServerFn(claimMatchInviteByToken);
   const [hasSession, setHasSession] = useState<boolean | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
   }, []);
+
+  // Auto-claim invite if signed in and token present, then redirect to private event page
+  useEffect(() => {
+    if (!inviteToken || hasSession !== true) return;
+    (async () => {
+      try {
+        await claimInvite({ data: { token: inviteToken } });
+        navigate({ to: "/app/events/$eventId", params: { eventId } });
+      } catch { /* ignore — fall through to public view */ }
+    })();
+  }, [inviteToken, hasSession, claimInvite, navigate, eventId]);
 
   const q = useQuery({
     queryKey: ["public-match", eventId],

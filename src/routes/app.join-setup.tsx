@@ -24,6 +24,7 @@ function JoinSetupPage() {
   const getMe = useServerFn(getMyProfile);
   const saveLite = useServerFn(saveLiteProfile);
   const joinFn = useServerFn(joinMatchEvent);
+  const claimInvite = useServerFn(claimMatchInviteByToken);
 
   const meQ = useQuery({ queryKey: ["me"], queryFn: () => getMe() });
 

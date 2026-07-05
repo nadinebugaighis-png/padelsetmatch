@@ -176,9 +176,19 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     const filled = (event.participants?.length ?? 0) + (event.extra_confirmed ?? 0);
     const iAmHost = !!profile && event.host_profile_id === profile.id;
     const iAmParticipant = !!profile && ((event.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
+
+    const { data: invitesRaw } = await supabase
+      .from("match_event_invites")
+      .select("id, invitee_profile_id, token, status, created_at, responded_at, invitee:profiles!match_event_invites_invitee_profile_id_fkey(id, first_name, photo_url, level)")
+      .eq("match_event_id", data.id);
+    const invites = invitesRaw ?? [];
+    const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
+    const lockUntil = (event as any).invite_lock_until as string | null;
+    const lockActive = !!lockUntil && new Date(lockUntil).getTime() > Date.now();
+
     return {
-      event: { ...event, filled, needs: Math.max(0, 4 - filled) },
-      me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost } : null,
+      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: lockUntil, lock_active: lockActive },
+      me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
     };
   });
 
@@ -193,13 +203,30 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
     if (!profile.first_name || !profile.level) throw new Error("Please add your name and padel level first.");
     const { data: event } = await supabase
       .from("match_events")
-      .select("gender_rule, status, extra_confirmed")
+      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id")
       .eq("id", data.id)
       .maybeSingle();
     if (!event) throw new Error("Match not found");
     if (event.status !== "open") throw new Error("This match is no longer open");
     if (event.gender_rule === "men_only" && profile.gender && profile.gender !== "man") throw new Error("This match is for men only");
     if (event.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") throw new Error("This match is for women only");
+    const lockUntil = (event as any).invite_lock_until as string | null;
+    const lockActive = !!lockUntil && new Date(lockUntil).getTime() > Date.now();
+    if (lockActive && event.host_profile_id !== profile.id) {
+      const { data: inv } = await supabase
+        .from("match_event_invites")
+        .select("id, status")
+        .eq("match_event_id", data.id)
+        .eq("invitee_profile_id", profile.id)
+        .maybeSingle();
+      if (!inv) {
+        const opensAt = new Date(lockUntil!).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
+        throw new Error(`Reserved for invited players until ${opensAt}. Come back then!`);
+      }
+      if (inv.status === "pending") {
+        await supabase.from("match_event_invites").update({ status: "accepted", responded_at: new Date().toISOString() } as never).eq("id", inv.id);
+      }
+    }
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })

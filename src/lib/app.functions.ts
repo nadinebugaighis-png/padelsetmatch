@@ -1454,14 +1454,20 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const [a, b] = me.id < data.otherProfileId ? [me.id, data.otherProfileId] : [data.otherProfileId, me.id];
 
-    // 1. Cache hit?
+    // Content-aware cache key: prompt version + shared intent shape + QA volume.
+    // Regenerates when either person's intents change or they answer more Qs.
+    const { count: myQaCount } = await context.supabase
+      .from("qa_answers" as never).select("*", { count: "exact", head: true }).eq("profile_id", me.id);
+
+    // 1. Cache hit? (we build the full version key after loading the other profile below)
+
     const { data: cached } = await context.supabase
       .from("compatibility_scores" as never)
-      .select("score, blurb, reasons, friction, model_version, created_at")
+      .select("score, blurb, reasons, friction, sub_scores, model_version, created_at")
       .eq("profile_a", a)
       .eq("profile_b", b)
       .maybeSingle();
-    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-kind-v7") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
+
 
     // 2. Gather both profiles + Q&A (via admin — reading other user data)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

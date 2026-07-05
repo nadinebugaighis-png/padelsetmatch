@@ -1629,6 +1629,71 @@ export const getMyMatchRating = createServerFn({ method: "GET" })
   });
 
 
+export const reportPhoto = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      reportedProfileId: z.string().uuid(),
+      reason: z.string().min(3).max(500).default("Inappropriate photo"),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    if (myId === data.reportedProfileId) throw new Error("Cannot report yourself");
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    const { data: target } = await supabaseAdmin
+      .from("profiles" as never)
+      .select("user_id, photo_url")
+      .eq("id", data.reportedProfileId)
+      .maybeSingle();
+    const targetRow = target as { user_id: string | null; photo_url: string | null } | null;
 
+    // Log report with photo category (idempotent per reporter+target+category)
+    const { data: existing } = await supabaseAdmin
+      .from("reports" as never)
+      .select("id")
+      .eq("reporter_profile_id", myId)
+      .eq("reported_profile_id", data.reportedProfileId)
+      .eq("category", "photo")
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (!existing) {
+      await supabaseAdmin.from("reports" as never).insert({
+        reporter_profile_id: myId,
+        reported_profile_id: data.reportedProfileId,
+        reported_user_id: targetRow?.user_id ?? null,
+        reason: data.reason,
+        category: "photo",
+        status: "pending",
+      } as never);
+    }
+
+    // Auto-hide photo after 2+ distinct reporters flag it (community moderation)
+    const { data: distinct } = await supabaseAdmin
+      .from("reports" as never)
+      .select("reporter_profile_id")
+      .eq("reported_profile_id", data.reportedProfileId)
+      .eq("category", "photo")
+      .eq("status", "pending");
+    const distinctCount = new Set(
+      ((distinct as Array<{ reporter_profile_id: string }> | null) ?? []).map((r) => r.reporter_profile_id),
+    ).size;
+    if (distinctCount >= 2 && targetRow?.photo_url) {
+      await supabaseAdmin
+        .from("profiles" as never)
+        .update({
+          photo_url: null,
+          photo_moderation_status: "rejected",
+          photo_moderation_reason: "community_flagged",
+        } as never)
+        .eq("id", data.reportedProfileId);
+    }
+
+    return { ok: true, distinctCount };
+  });

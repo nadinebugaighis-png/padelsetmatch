@@ -178,6 +178,15 @@ function Discover() {
     return (c.locations ?? []).some((loc: string) => loc.toLowerCase().includes(target));
   };
 
+  const genderMatches = (c: typeof all[number], g: string) => {
+    if (g === "all") return true;
+    if (g === "mixed") {
+      // "mixed" = show both men and women (exclude non-binary/other filters aside)
+      return c.gender === "woman" || c.gender === "man";
+    }
+    return c.gender === g;
+  };
+
   const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
@@ -197,25 +206,23 @@ function Discover() {
       </p>
 
       <div className="flex gap-2 mt-4 flex-wrap items-center">
-        <div className="flex gap-2 flex-wrap items-center">
-          {(["all", "padel", "friend", "relationship"] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-              {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
-            </button>
-          ))}
-          <button
-            onClick={() => setWorld((w) => !w)}
-            className={`chip ${world ? "chip-ball" : ""}`}
-          >
-            {world ? t("disc.world.on") : t("disc.world.off")}
+        {(["all", "padel", "friend", "relationship"] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
+            {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
           </button>
-        </div>
+        ))}
+        <button
+          onClick={() => setWorld((w) => !w)}
+          className={`chip ${world ? "chip-ball" : ""}`}
+        >
+          {world ? t("disc.world.on") : t("disc.world.off")}
+        </button>
         <button
           onClick={() => setShowFilters((s) => !s)}
-          className="text-sm text-[var(--cream)]/70 ml-auto underline-offset-4 hover:underline"
+          className={`chip ${activeFilterCount > 0 ? "chip-ball" : ""}`}
           aria-expanded={showFilters}
         >
-          Filters
+          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
         </button>
       </div>
 

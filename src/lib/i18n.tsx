@@ -171,7 +171,7 @@ const en: Dict = {
   "prof.playsIn": "Plays in",
   "prof.languages": "Languages",
   "prof.privacy": "Your preferences (who you're looking for, age range, values you care about) are kept private — they're only used by the AI to find your matches, never shown on your profile. Retake the questionnaire any time to update them.",
-  "prof.retake": "Retake questionnaire",
+  "prof.retake": "Edit profile",
   "prof.delete": "Delete my account",
   "prof.deleteConfirm": "Delete your account permanently? This removes your profile, likes, matches and chats. This cannot be undone.",
   "prof.deleted": "Account deleted",

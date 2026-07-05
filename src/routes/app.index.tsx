@@ -81,9 +81,9 @@ function Discover() {
     }
   }, [feedQ.data?.me?.world_mode]);
 
-  const setWorld = useServerFn(setWorldMode);
+  const worldModeFn = useServerFn(setWorldMode);
   const setWorldM = useMutation({
-    mutationFn: (value: boolean) => setWorld({ data: { world_mode: value } }),
+    mutationFn: (value: boolean) => worldModeFn({ data: { world_mode: value } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
     },

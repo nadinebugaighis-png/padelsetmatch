@@ -12,13 +12,14 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>) => ({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,
     join: typeof s.join === "string" ? s.join : undefined,
+    i: typeof s.i === "string" ? s.i : undefined,
   }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
-  const { redirect, join } = Route.useSearch();
+  const { redirect, join, i } = Route.useSearch();
   const t = useT();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -26,13 +27,17 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
-    if (join) return { to: "/app/join-setup", search: { join } };
+    if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
     if (redirect) return { to: redirect };
     return { to: "/app" };
   };
   const oauthRedirectUri = () => {
     const base = window.location.origin;
-    if (join) return `${base}/app/join-setup?join=${encodeURIComponent(join)}`;
+    if (join) {
+      const q = new URLSearchParams({ join });
+      if (i) q.set("i", i);
+      return `${base}/app/join-setup?${q.toString()}`;
+    }
     if (redirect) return `${base}${redirect}`;
     return `${base}/app`;
   };

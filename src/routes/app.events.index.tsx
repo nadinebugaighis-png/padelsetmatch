@@ -55,7 +55,8 @@ function EventsPage() {
 
   const list = useServerFn(listOpenEvents);
   const getProfile = useServerFn(getMyProfile);
-  const [myAreasOnly, setMyAreasOnly] = useState(true);
+  const [worldwide, setWorldwide] = useState(false);
+  const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({
     queryKey: ["my-profile"],

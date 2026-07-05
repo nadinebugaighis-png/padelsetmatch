@@ -51,6 +51,9 @@ function JoinSetupPage() {
       await saveLite({ data: { first_name: firstName.trim(), level, city: city.trim() || null } });
       if (join) {
         try {
+          if (inviteToken) {
+            try { await claimInvite({ data: { token: inviteToken } }); } catch { /* ignore */ }
+          }
           await joinFn({ data: { id: join } });
           toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾"));
         } catch (e) {

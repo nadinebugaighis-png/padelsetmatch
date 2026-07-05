@@ -125,7 +125,12 @@ export const listOpenEvents = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
-    const myLocs = (profile?.locations ?? []).filter((l): l is string => typeof l === "string" && l.length > 0);
+    const rawLocs = (profile?.locations ?? []).filter((l): l is string => typeof l === "string" && l.length > 0);
+    // Locations may be stored as "Country | Region | City" — extract the city (last segment).
+    const myLocs = Array.from(new Set(rawLocs.map((l) => {
+      const parts = l.split("|").map((s) => s.trim()).filter(Boolean);
+      return parts[parts.length - 1];
+    }).filter(Boolean)));
     if (data.myLocations && myLocs.length === 0) {
       return { events: [] as any[] };
     }
@@ -137,7 +142,9 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       .order("starts_at", { ascending: true })
       .limit(500);
     if (data.myLocations && myLocs.length > 0) {
-      q = q.in("city", myLocs);
+      // Case-insensitive OR match on city
+      const ors = myLocs.map((c) => `city.ilike.${c}`).join(",");
+      q = q.or(ors);
     } else if (data.city) {
       q = q.ilike("city", `%${data.city}%`);
     }

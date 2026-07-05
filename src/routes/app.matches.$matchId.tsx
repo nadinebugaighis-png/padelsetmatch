@@ -53,6 +53,9 @@ function ChatRoom() {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` }, () => {
         qc.invalidateQueries({ queryKey: ["match", matchId] });
       })
+      .on("postgres_changes", { event: "*", schema: "public", table: "played_confirmations", filter: `match_id=eq.${matchId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["match-status", matchId] });
+      })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [matchId, qc]);

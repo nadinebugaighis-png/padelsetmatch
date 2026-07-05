@@ -57,7 +57,13 @@ function JoinSetupPage() {
           await joinFn({ data: { id: join } });
           toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾"));
         } catch (e) {
-          toast.error(e instanceof Error ? e.message : tr("Could not join", "No te pudimos unir"));
+          const msg = e instanceof Error ? e.message : "";
+          if (msg.startsWith("INVITE_LOCK:")) {
+            const opensAt = new Date(msg.slice("INVITE_LOCK:".length)).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
+            toast.error(tr(`Reserved for invited players until ${opensAt}. Come back then!`, `Reservado para invitados hasta ${opensAt}. ¡Vuelve entonces!`));
+          } else {
+            toast.error(msg || tr("Could not join", "No te pudimos unir"));
+          }
         }
         navigate({ to: "/app/events/$eventId", params: { eventId: join } });
       } else {

@@ -78,6 +78,7 @@ function ProfilePage() {
   const photoInputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const onPickPhoto = async (file: File) => {
     setUploading(true);

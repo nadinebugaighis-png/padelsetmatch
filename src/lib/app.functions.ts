@@ -1448,7 +1448,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       .eq("profile_a", a)
       .eq("profile_b", b)
       .maybeSingle();
-    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-frank-v4") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
+    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-kind-v5") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
 
     // 2. Gather both profiles + Q&A (via admin — reading other user data)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -1548,7 +1548,7 @@ ${qaBlock(theirQA)}`;
         : blurb;
     }
 
-    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-frank-v4" };
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-kind-v5" };
     await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });

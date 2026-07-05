@@ -4,7 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import { ClubPicker } from "@/components/ClubPicker";
 import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
+import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
+
+
 
 
 export type MatchFormValues = {

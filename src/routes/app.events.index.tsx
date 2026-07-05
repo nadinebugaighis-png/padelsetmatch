@@ -79,13 +79,12 @@ function EventsPage() {
   const [genderFilter, setGenderFilter] = useState<"any" | "mixed" | "women_only" | "men_only">("any");
   const [levelFilter, setLevelFilter] = useState<"any" | "beginner" | "intermediate" | "advanced">("any");
   const [cityFilter, setCityFilter] = useState("");
-  const [openOnly, setOpenOnly] = useState(false);
 
   const activeFilterCount =
     (genderFilter !== "any" ? 1 : 0) +
     (levelFilter !== "any" ? 1 : 0) +
-    (cityFilter.trim() ? 1 : 0) +
-    (openOnly ? 1 : 0); // openOnly is no longer the default
+    (worldwide ? 1 : 0) +
+    (cityFilter.trim() ? 1 : 0);
 
   const filtered = useMemo(() => {
     const arr = [...(eventsQ.data?.events ?? [])];

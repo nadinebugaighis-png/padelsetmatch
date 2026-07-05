@@ -34,6 +34,7 @@ function Discover() {
   const [world, setWorld] = useState(false);
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
+  const [genderFilter, setGenderFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
@@ -155,18 +156,48 @@ function Discover() {
     if (c.looking_for === "both") return ["relationship", "friend", "padel"];
     return ["padel"];
   };
+
+  // Collect the zones/areas actually present in the current feed (smart options).
+  const zonesInFeed = (() => {
+    const set = new Set<string>();
+    all.forEach((c) => {
+      if (c.zone) set.add(c.zone.trim());
+      (c.locations ?? []).forEach((loc: string) => {
+        const parts = loc.split("|").map((s) => s.trim());
+        const area = parts[2];
+        const city = parts[1];
+        if (area) set.add(area);
+        else if (city) set.add(city);
+      });
+    });
+    return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  })();
+
+  const zoneMatches = (c: typeof all[number], zone: string) => {
+    const target = zone.toLowerCase();
+    if ((c.zone ?? "").toLowerCase().includes(target)) return true;
+    return (c.locations ?? []).some((loc: string) => loc.toLowerCase().includes(target));
+  };
+
+  const genderMatches = (c: typeof all[number], g: string) => {
+    if (g === "all") return true;
+    if (g === "mixed") {
+      // "mixed" = show both men and women (exclude non-binary/other filters aside)
+      return c.gender === "woman" || c.gender === "man";
+    }
+    return c.gender === g;
+  };
+
   const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
-      if (zoneFilter !== "all") {
-        const z = (c.zone ?? "").toLowerCase();
-        if (!z.includes(zoneFilter.toLowerCase())) return false;
-      }
+      if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
+      if (!genderMatches(c, genderFilter)) return false;
       return true;
     });
-  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0) + (genderFilter !== "all" ? 1 : 0);
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">
@@ -220,15 +251,39 @@ function Discover() {
               className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
             >
               <option value="all">Any zone</option>
-              {MADRID_ZONES.map((z) => (
-                <option key={z} value={z}>{z}</option>
-              ))}
+              {zonesInFeed.length > 0 && (
+                <optgroup label="From players in your Grid">
+                  {zonesInFeed.map((z) => (
+                    <option key={`feed-${z}`} value={z}>{z}</option>
+                  ))}
+                </optgroup>
+              )}
+              <optgroup label="All Madrid zones">
+                {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
+                  <option key={`all-${z}`} value={z}>{z}</option>
+                ))}
+              </optgroup>
+            </select>
+            <p className="text-[10px] text-[var(--cream)]/50 mt-1">Matches on players' city, barrio or listed areas.</p>
+          </div>
+          <div>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Gender for the game</label>
+            <select
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+            >
+              <option value="all">Anyone</option>
+              <option value="woman">Women only</option>
+              <option value="man">Men only</option>
+              <option value="mixed">Mixed (women + men)</option>
+              <option value="non-binary">Non-binary</option>
             </select>
           </div>
           {activeFilterCount > 0 && (
             <button
               type="button"
-              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
+              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); setGenderFilter("all"); }}
               className="text-xs text-[var(--ball)] underline"
             >
               Clear filters

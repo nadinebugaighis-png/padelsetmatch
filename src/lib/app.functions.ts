@@ -128,17 +128,74 @@ export const setAwayStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+async function moderatePhotoWithAi(photoUrl: string): Promise<{ verdict: "approved" | "rejected"; reason: string }> {
+  const apiKey = process.env.LOVABLE_API_KEY;
+  if (!apiKey) {
+    // Fail-open if AI isn't configured; community reports still cover it.
+    return { verdict: "approved", reason: "ai_unavailable" };
+  }
+  try {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Lovable-API-Key": apiKey,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You moderate profile photos for a padel social app. Reject photos that contain: nudity, sexual content, explicit or suggestive poses, exposed genitals or breasts, hateful symbols, weapons used threateningly, graphic violence, illegal drug use, or clearly minor children shown alone as the main subject. Photos of people in normal clothing (including sportswear, swimwear on a beach/court context), group photos, or non-people photos (pets, scenery) are fine. Respond with ONLY compact JSON: {\"verdict\":\"approved\"|\"rejected\",\"reason\":\"short reason\"}",
+          },
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Moderate this profile photo." },
+              { type: "image_url", image_url: { url: photoUrl } },
+            ],
+          },
+        ],
+      }),
+    });
+    if (!res.ok) return { verdict: "approved", reason: `ai_error_${res.status}` };
+    const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+    const text = json.choices?.[0]?.message?.content ?? "";
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return { verdict: "approved", reason: "ai_no_json" };
+    const parsed = JSON.parse(match[0]) as { verdict?: string; reason?: string };
+    if (parsed.verdict === "rejected") {
+      return { verdict: "rejected", reason: String(parsed.reason ?? "inappropriate").slice(0, 200) };
+    }
+    return { verdict: "approved", reason: String(parsed.reason ?? "ok").slice(0, 200) };
+  } catch {
+    return { verdict: "approved", reason: "ai_exception" };
+  }
+}
+
 export const updateMyPhoto = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ photo_url: z.string().min(1).max(2000) }).parse(d))
   .handler(async ({ data, context }) => {
+    const moderation = await moderatePhotoWithAi(data.photo_url);
+    if (moderation.verdict === "rejected") {
+      throw new Error(
+        `Photo rejected by automated review: ${moderation.reason}. Please choose a different photo. If you believe this is a mistake, contact support.`,
+      );
+    }
     const { error } = await context.supabase
       .from("profiles" as never)
-      .update({ photo_url: data.photo_url } as never)
+      .update({
+        photo_url: data.photo_url,
+        photo_moderation_status: "approved",
+        photo_moderation_reason: moderation.reason,
+      } as never)
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
 
 function overlapCount(a: string[], b: string[]) {
   const bs = new Set(b.map((x) => x.toLowerCase()));
@@ -1572,6 +1629,71 @@ export const getMyMatchRating = createServerFn({ method: "GET" })
   });
 
 
+export const reportPhoto = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      reportedProfileId: z.string().uuid(),
+      reason: z.string().min(3).max(500).default("Inappropriate photo"),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    if (myId === data.reportedProfileId) throw new Error("Cannot report yourself");
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    const { data: target } = await supabaseAdmin
+      .from("profiles" as never)
+      .select("user_id, photo_url")
+      .eq("id", data.reportedProfileId)
+      .maybeSingle();
+    const targetRow = target as { user_id: string | null; photo_url: string | null } | null;
 
+    // Log report with photo category (idempotent per reporter+target+category)
+    const { data: existing } = await supabaseAdmin
+      .from("reports" as never)
+      .select("id")
+      .eq("reporter_profile_id", myId)
+      .eq("reported_profile_id", data.reportedProfileId)
+      .eq("category", "photo")
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (!existing) {
+      await supabaseAdmin.from("reports" as never).insert({
+        reporter_profile_id: myId,
+        reported_profile_id: data.reportedProfileId,
+        reported_user_id: targetRow?.user_id ?? null,
+        reason: data.reason,
+        category: "photo",
+        status: "pending",
+      } as never);
+    }
+
+    // Auto-hide photo after 2+ distinct reporters flag it (community moderation)
+    const { data: distinct } = await supabaseAdmin
+      .from("reports" as never)
+      .select("reporter_profile_id")
+      .eq("reported_profile_id", data.reportedProfileId)
+      .eq("category", "photo")
+      .eq("status", "pending");
+    const distinctCount = new Set(
+      ((distinct as Array<{ reporter_profile_id: string }> | null) ?? []).map((r) => r.reporter_profile_id),
+    ).size;
+    if (distinctCount >= 2 && targetRow?.photo_url) {
+      await supabaseAdmin
+        .from("profiles" as never)
+        .update({
+          photo_url: null,
+          photo_moderation_status: "rejected",
+          photo_moderation_reason: "community_flagged",
+        } as never)
+        .eq("id", data.reportedProfileId);
+    }
+
+    return { ok: true, distinctCount };
+  });

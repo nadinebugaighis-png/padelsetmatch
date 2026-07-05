@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown } from "lucide-react";
@@ -24,12 +24,14 @@ function Discover() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { t, label } = useI18n();
+  const tr = useTr();
   const getFeed = useServerFn(getDiscoverFeed);
   const like = useServerFn(likeProfile);
   const unlike = useServerFn(unlikeProfile);
   const block = useServerFn(blockProfile);
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
+  const reportPhotoFn = useServerFn(reportPhoto);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   const [world, setWorld] = useState(false);
   const [levelFilter, setLevelFilter] = useState<string>("all");
@@ -123,7 +125,26 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.reportFail")),
   });
 
+  const reportPhotoM = useMutation({
+    mutationFn: (id: string) => reportPhotoFn({ data: { reportedProfileId: id, reason: "Inappropriate photo" } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      toast.success(tr("Photo reported — thanks. Our team will review it.", "Foto reportada — gracias. Nuestro equipo la revisará."));
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not send report", "No se pudo enviar el reporte")),
+  });
+
   function handleReport(id: string, name: string) {
+    const isPhoto = window.confirm(
+      tr(
+        `Report ${name}'s PHOTO as inappropriate?\n\nOK = report the photo\nCancel = report for another reason`,
+        `¿Reportar la FOTO de ${name} como inapropiada?\n\nAceptar = reportar la foto\nCancelar = reportar por otro motivo`,
+      ),
+    );
+    if (isPhoto) {
+      reportPhotoM.mutate(id);
+      return;
+    }
     const reason = window.prompt(t("disc.reportPrompt", { name }));
     if (!reason || reason.trim().length < 3) return;
     if (!window.confirm(t("disc.reportConfirm", { name }))) return;

@@ -675,6 +675,8 @@ export type Database = {
           padel_style: string[]
           partner_interested_in: string[]
           personal_traits: string[]
+          photo_moderation_reason: string | null
+          photo_moderation_status: string
           photo_url: string | null
           played_count: number
           priorities: string[]
@@ -714,6 +716,8 @@ export type Database = {
           padel_style?: string[]
           partner_interested_in?: string[]
           personal_traits?: string[]
+          photo_moderation_reason?: string | null
+          photo_moderation_status?: string
           photo_url?: string | null
           played_count?: number
           priorities?: string[]
@@ -753,6 +757,8 @@ export type Database = {
           padel_style?: string[]
           partner_interested_in?: string[]
           personal_traits?: string[]
+          photo_moderation_reason?: string | null
+          photo_moderation_status?: string
           photo_url?: string | null
           played_count?: number
           priorities?: string[]
@@ -807,6 +813,7 @@ export type Database = {
       }
       reports: {
         Row: {
+          category: string | null
           created_at: string
           id: string
           reason: string
@@ -817,6 +824,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          category?: string | null
           created_at?: string
           id?: string
           reason: string
@@ -827,6 +835,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          category?: string | null
           created_at?: string
           id?: string
           reason?: string

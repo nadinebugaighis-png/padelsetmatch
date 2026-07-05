@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
   validateSearch: (s: Record<string, unknown>) => ({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,

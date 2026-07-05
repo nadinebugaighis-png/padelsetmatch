@@ -1448,7 +1448,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       .eq("profile_a", a)
       .eq("profile_b", b)
       .maybeSingle();
-    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-frank-v4") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
+    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-kind-v5") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
 
     // 2. Gather both profiles + Q&A (via admin — reading other user data)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -1489,28 +1489,33 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-2.5-flash");
 
-    const prompt = `You are a HONEST, frank compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Your job is NOT to be nice — it is to give the reader a realistic read so they don't waste time. Most pairs are mediocre; be willing to say so.
+    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, useful read — honest but always kind. Never make anyone feel judged for their life situation.
 
 Rules for judgment:
-- Distinguish COMPLEMENTARY differences (introvert + extrovert who both value calm; aggressive + defensive on court) from CLASHING differences (shy/introvert paired with loud/outspoken; highly competitive vs purely social; high-intensity vs casual; conflicting values, life stages, or lifestyles like party vs early-riser, kids vs no-kids, religious vs not, smoker vs non-smoker).
-- Do NOT assume opposites attract. Only call a difference "complementary" when there is real evidence it works (shared underlying value, one leads / one supports, self-awareness). Otherwise call it friction, not chemistry.
-- Same nationality, same city, or both "open-minded / friendly / flexible" are NOT reasons — they are filler. Skip them.
+- Distinguish COMPLEMENTARY differences (introvert + extrovert who both value calm; aggressive + defensive on court) from differences that may create friction (very different energy levels, competitive vs purely social, very different weekly rhythms).
+- Do NOT assume opposites attract. Only call a difference "complementary" when there is real evidence it works. Otherwise frame it neutrally as something to be aware of.
+- Same nationality, same city, or both "open-minded / friendly / flexible" are filler — skip them.
 - Be specific and use their actual traits, answers, and bios. Name the thing.
-- Grade honestly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 workable with caveats, 40-54 mediocre / mixed, 0-39 poor fit. Do NOT default to 70+. If evidence is thin, score in the 45-60 range and say so.
-- The "friction" field is REQUIRED whenever anything real could clash (personality mismatch, energy mismatch, competitive gap, lifestyle/values gap, life stage). Only return null if you genuinely can't find one — that should be uncommon.
-- Blurb must be frank, not flattering. If they're mid, say it plainly (e.g. "Decent on-court fit, but personalities pull in different directions").
-- Never use the words "wonderful", "amazing", "great connection", "click", "beautiful", or other empty praise.
-- LIFESTYLE / LIFE-STAGE gaps are real and usually reduce compatibility — do not smooth them over. Treat these as significant friction and reflect them in the score and the lifestyle read: parent vs child-free/single, married vs single-and-dating, early-riser vs night-owl, sober vs heavy drinker, smoker vs non-smoker, remote/flexible vs 9-5 corporate, big-city hustle vs slow-living, frequent-traveler vs rooted, religious/observant vs secular, very different income or free-time budgets. If one has kids and the other is single with no kids, availability, weekend rhythm, priorities and social scene rarely line up — call this out explicitly in friction and in the lifestyle framing, and lower the score accordingly unless their answers actively show it works (e.g. both explicitly OK with it, similar schedules despite the gap).
+- Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 workable with caveats, 40-54 mixed, 0-39 poor fit. If evidence is thin, score in the 55-65 range and say so.
+- The "friction" field is optional. Include it only when there is a clear, concrete watch-out grounded in their answers. If nothing real stands out, return null. Never invent friction just to fill the field.
+- Blurb should be warm and grounded — no flattery, no empty praise, no harsh verdicts.
+
+RESPECT & TONE RULES (very important):
+- Never compare one person's life situation to the other's in a way that could feel like a value judgment. Do NOT say things like "unlike them, you are single / have no kids / are not married / don't have a family". Never imply someone's life is lesser, emptier, behind, or missing something.
+- Life-stage or lifestyle topics (relationship status, kids, family, religion, income, career stage, living situation, age gap) may only be mentioned if BOTH people clearly signalled them and it is directly relevant to how they'd share time on/off court. Frame it neutrally as "different weekly rhythms" or "different availability", not as one being better than the other.
+- Do not moralize about drinking, smoking, partying, dating history, body, appearance, career choices, or income.
+- Address the reader as "you two" — never single out one person as the problem.
+- Never use the words "wonderful", "amazing", "great connection", "click", "beautiful", or other empty praise. Also avoid "sadly", "unfortunately", "shame", "wasted", "behind", "missing out".
 
 Return ONLY valid JSON with this exact shape:
 {
   "score": <0-100 integer, honestly graded>,
-  "blurb": "<one to two frank sentences addressed to the reader ('you two...'). Max 220 chars. No emojis, no flattery.>",
+  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. No emojis, no flattery, no judgment.>",
   "reasons": ["<specific reason 1, max 90 chars>", "<reason 2>", "<reason 3>"],
-  "friction": "<one short line naming the most real clash or watch-out. Null only if truly none.>"
+  "friction": "<one short, respectful line naming a concrete watch-out grounded in their answers. Null if none.>"
 }
 
-Reasons must be specific to THIS pair. Mix positives and honest caveats where relevant — they don't all need to be positive. Exactly 3.
+Reasons must be specific to THIS pair. Mix positives and honest caveats where relevant. Exactly 3.
 
 ${summarizeProfile(me, "PERSON A (the viewer)")}
 Q&A:
@@ -1543,7 +1548,7 @@ ${qaBlock(theirQA)}`;
         : blurb;
     }
 
-    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-frank-v4" };
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-kind-v5" };
     await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });

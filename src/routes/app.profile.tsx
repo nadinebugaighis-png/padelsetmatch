@@ -159,7 +159,7 @@ function ProfilePage() {
           disabled={uploading}
           onChange={(e) => {
             const f = e.target.files?.[0];
-            if (f) onPickPhoto(f);
+            if (f) setPendingFile(f);
             e.target.value = "";
           }}
         />

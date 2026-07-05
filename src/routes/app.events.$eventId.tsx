@@ -361,7 +361,23 @@ function EventDetail() {
             </a>
           )}
         </div>
+
+        {event.lock_active && event.invite_lock_until && (
+          <div className="flex items-start gap-2 rounded-xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 px-3 py-2 text-xs text-[var(--cream)]/80">
+            <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--ball)] shrink-0" />
+            <div>
+              <div className="text-[var(--ball)] uppercase tracking-widest text-[10px]">{tr("Priority window", "Ventana prioritaria")}</div>
+              <div className="mt-0.5">
+                {tr(
+                  `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
+                  `Prioridad para invitados — se abre a todos el ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
 
       {/* Players */}
       <div className="mt-4">

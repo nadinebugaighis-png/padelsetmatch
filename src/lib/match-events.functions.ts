@@ -513,3 +513,242 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+// ---------- Invites ----------
+const LOCK_HOURS = 10;
+
+function lockCutoffIso(existing: string | null | undefined, startsAtIso: string): string {
+  const now = Date.now();
+  const startsAt = new Date(startsAtIso).getTime();
+  const defaultCutoff = now + LOCK_HOURS * 60 * 60 * 1000;
+  // Don't lock past the match start
+  const cutoff = Math.min(defaultCutoff, startsAt);
+  const existingMs = existing ? new Date(existing).getTime() : 0;
+  return new Date(Math.max(existingMs, cutoff)).toISOString();
+}
+
+async function ensureLock(supabase: any, eventId: string) {
+  const { data: ev } = await supabase
+    .from("match_events")
+    .select("invite_lock_until, starts_at")
+    .eq("id", eventId)
+    .maybeSingle();
+  if (!ev) return;
+  const cutoff = lockCutoffIso(ev.invite_lock_until as string | null, ev.starts_at as string);
+  if (ev.invite_lock_until !== cutoff) {
+    await supabase.from("match_events").update({ invite_lock_until: cutoff } as never).eq("id", eventId);
+  }
+}
+
+async function assertHost(supabase: any, userId: string, eventId: string): Promise<string> {
+  const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+  if (!profile) throw new Error("No profile");
+  const { data: ev } = await supabase.from("match_events").select("host_profile_id").eq("id", eventId).maybeSingle();
+  if (!ev || ev.host_profile_id !== profile.id) throw new Error("Only the host can do that");
+  return profile.id;
+}
+
+// Invite existing players by profile id
+export const inviteToMatchEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { eventId: string; profileIds: string[] }) =>
+    z.object({ eventId: z.string().uuid(), profileIds: z.array(z.string().uuid()).min(1).max(50) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const hostId = await assertHost(supabase, userId, data.eventId);
+    const rows = data.profileIds
+      .filter((pid) => pid !== hostId)
+      .map((pid) => ({
+        match_event_id: data.eventId,
+        inviter_profile_id: hostId,
+        invitee_profile_id: pid,
+        status: "pending" as const,
+      }));
+    if (rows.length === 0) return { invited: 0 };
+    const { error } = await supabase
+      .from("match_event_invites")
+      .upsert(rows as never, { onConflict: "match_event_id,invitee_profile_id", ignoreDuplicates: true });
+    if (error) throw new Error(error.message);
+    await ensureLock(supabase, data.eventId);
+    return { invited: rows.length };
+  });
+
+// Create a shareable invite link (token)
+export const createMatchInviteLink = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { eventId: string }) => z.object({ eventId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const hostId = await assertHost(supabase, userId, data.eventId);
+    const token = crypto.randomUUID().replace(/-/g, "") + Math.random().toString(36).slice(2, 8);
+    const { data: row, error } = await supabase
+      .from("match_event_invites")
+      .insert({
+        match_event_id: data.eventId,
+        inviter_profile_id: hostId,
+        invitee_profile_id: null,
+        token,
+        status: "pending",
+      } as never)
+      .select("id, token")
+      .single();
+    if (error) throw new Error(error.message);
+    await ensureLock(supabase, data.eventId);
+    return { id: row.id, token: row.token as string };
+  });
+
+// Respond to invite (accept / decline)
+export const respondToMatchInvite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { inviteId: string; accept: boolean }) =>
+    z.object({ inviteId: z.string().uuid(), accept: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id, gender, first_name, level").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    const { data: invite } = await supabase
+      .from("match_event_invites")
+      .select("id, match_event_id, invitee_profile_id, status")
+      .eq("id", data.inviteId)
+      .maybeSingle();
+    if (!invite) throw new Error("Invite not found");
+    if (invite.invitee_profile_id !== profile.id) throw new Error("This invite isn't yours");
+    const newStatus = data.accept ? "accepted" : "declined";
+    const { error } = await supabase
+      .from("match_event_invites")
+      .update({ status: newStatus, responded_at: new Date().toISOString() } as never)
+      .eq("id", invite.id);
+    if (error) throw new Error(error.message);
+    if (data.accept) {
+      const { data: ev } = await supabase
+        .from("match_events")
+        .select("gender_rule, status, extra_confirmed")
+        .eq("id", invite.match_event_id)
+        .maybeSingle();
+      if (ev && ev.status === "open") {
+        const { count } = await supabase
+          .from("match_event_participants")
+          .select("id", { count: "exact", head: true })
+          .eq("match_event_id", invite.match_event_id);
+        if ((count ?? 0) + (ev.extra_confirmed ?? 0) < 4) {
+          await supabase
+            .from("match_event_participants")
+            .insert({ match_event_id: invite.match_event_id, profile_id: profile.id } as never);
+        }
+      }
+    }
+    return { ok: true, eventId: invite.match_event_id };
+  });
+
+// Accept a token-based invite (from WhatsApp link)
+export const claimMatchInviteByToken = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { token: string }) => z.object({ token: z.string().min(8).max(80) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("Please finish your profile first");
+    const { data: invite } = await supabase
+      .from("match_event_invites")
+      .select("id, match_event_id, invitee_profile_id, status")
+      .eq("token", data.token)
+      .maybeSingle();
+    if (!invite) throw new Error("Invite link is invalid or expired");
+    // If unclaimed, claim it for this user
+    if (!invite.invitee_profile_id) {
+      const { data: existing } = await supabase
+        .from("match_event_invites")
+        .select("id")
+        .eq("match_event_id", invite.match_event_id)
+        .eq("invitee_profile_id", profile.id)
+        .maybeSingle();
+      if (existing) {
+        // Already have a direct invite — remove token row
+        await supabase.from("match_event_invites").delete().eq("id", invite.id);
+        return { ok: true, eventId: invite.match_event_id, inviteId: existing.id };
+      }
+      await supabase
+        .from("match_event_invites")
+        .update({ invitee_profile_id: profile.id } as never)
+        .eq("id", invite.id);
+    }
+    return { ok: true, eventId: invite.match_event_id, inviteId: invite.id };
+  });
+
+// Revoke an invite (host)
+export const revokeMatchInvite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { inviteId: string }) => z.object({ inviteId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { error } = await supabase.from("match_event_invites").delete().eq("id", data.inviteId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// Suggest people to invite: my matches + friends
+export const listInvitableConnections = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { eventId: string }) => z.object({ eventId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) return { people: [] as any[] };
+
+    const [{ data: matches }, { data: friends }, { data: alreadyInvited }, { data: participants }] = await Promise.all([
+      supabase
+        .from("matches")
+        .select("profile_a, profile_b, a:profiles!matches_profile_a_fkey(id, first_name, photo_url, level, gender), b:profiles!matches_profile_b_fkey(id, first_name, photo_url, level, gender)")
+        .or(`profile_a.eq.${profile.id},profile_b.eq.${profile.id}`),
+      supabase
+        .from("friendships")
+        .select("requester_profile_id, addressee_profile_id, status, requester:profiles!friendships_requester_profile_id_fkey(id, first_name, photo_url, level, gender), addressee:profiles!friendships_addressee_profile_id_fkey(id, first_name, photo_url, level, gender)")
+        .eq("status", "accepted")
+        .or(`requester_profile_id.eq.${profile.id},addressee_profile_id.eq.${profile.id}`),
+      supabase.from("match_event_invites").select("invitee_profile_id").eq("match_event_id", data.eventId),
+      supabase.from("match_event_participants").select("profile_id").eq("match_event_id", data.eventId),
+    ]);
+
+    const seen = new Set<string>();
+    const people: Array<{ id: string; first_name: string | null; photo_url: string | null; level: string | null; gender: string | null }> = [];
+    const push = (p: any) => {
+      if (!p || !p.id || p.id === profile.id) return;
+      if (seen.has(p.id)) return;
+      seen.add(p.id);
+      people.push({ id: p.id, first_name: p.first_name ?? null, photo_url: p.photo_url ?? null, level: p.level ?? null, gender: p.gender ?? null });
+    };
+    (matches ?? []).forEach((m: any) => {
+      push(m.profile_a === profile.id ? m.b : m.a);
+    });
+    (friends ?? []).forEach((f: any) => {
+      push(f.requester_profile_id === profile.id ? f.addressee : f.requester);
+    });
+
+    const invitedIds = new Set((alreadyInvited ?? []).map((r: any) => r.invitee_profile_id).filter(Boolean));
+    const participantIds = new Set((participants ?? []).map((r: any) => r.profile_id));
+    return {
+      people: people.map((p) => ({
+        ...p,
+        invited: invitedIds.has(p.id),
+        joined: participantIds.has(p.id),
+      })),
+    };
+  });
+
+// List my pending invites (for a notification badge / list)
+export const listMyPendingInvites = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) return { invites: [] as any[] };
+    const { data } = await supabase
+      .from("match_event_invites")
+      .select("id, status, created_at, event:match_events!match_event_invites_match_event_id_fkey(id, starts_at, club_name, city, status, host:profiles!match_events_host_profile_id_fkey(first_name))")
+      .eq("invitee_profile_id", profile.id)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+    return { invites: data ?? [] };
+  });

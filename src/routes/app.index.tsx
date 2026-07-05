@@ -32,6 +32,9 @@ function Discover() {
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   const [world, setWorld] = useState(false);
+  const [levelFilter, setLevelFilter] = useState<string>("all");
+  const [zoneFilter, setZoneFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 

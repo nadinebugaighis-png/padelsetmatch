@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import {
   cancelMatchEvent,
+  claimMatchInviteByToken,
   createMatchInviteLink,
   deleteEventMessage,
   deleteMatchEvent,
@@ -26,6 +27,9 @@ import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil,
 import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    i: typeof s.i === "string" ? s.i : undefined,
+  }),
   component: EventRoute,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
   notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">Not found</div>,
@@ -58,6 +62,7 @@ function shareOrigin() {
 
 function EventDetail() {
   const { eventId } = Route.useParams();
+  const { i: inviteToken } = Route.useSearch();
   const navigate = useNavigate();
   const tr = useTr();
   const qc = useQueryClient();
@@ -76,6 +81,23 @@ function EventDetail() {
   const listConns = useServerFn(listInvitableConnections);
   const respondInvite = useServerFn(respondToMatchInvite);
   const revokeInvite = useServerFn(revokeMatchInvite);
+  const claimInvite = useServerFn(claimMatchInviteByToken);
+
+  // Auto-claim a share-link invite token if present on this URL, then strip it
+  useEffect(() => {
+    if (!inviteToken) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        await claimInvite({ data: { token: inviteToken } });
+      } catch { /* ignore — token may be already claimed or invalid */ }
+      if (cancelled) return;
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+      navigate({ to: "/app/events/$eventId", params: { eventId }, search: {}, replace: true });
+    })();
+    return () => { cancelled = true; };
+  }, [inviteToken, claimInvite, eventId, navigate, qc]);
+
 
   const eventQ = useQuery({
     queryKey: ["event", eventId],

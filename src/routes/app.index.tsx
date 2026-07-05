@@ -178,15 +178,6 @@ function Discover() {
     return (c.locations ?? []).some((loc: string) => loc.toLowerCase().includes(target));
   };
 
-  const genderMatches = (c: typeof all[number], g: string) => {
-    if (g === "all") return true;
-    if (g === "mixed") {
-      // "mixed" = show both men and women (exclude non-binary/other filters aside)
-      return c.gender === "woman" || c.gender === "man";
-    }
-    return c.gender === g;
-  };
-
   const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];

@@ -117,13 +117,9 @@ function EventsPage() {
         const hay = `${e.city ?? ""} ${e.club_name ?? ""}`.toLowerCase();
         if (!hay.includes(cityQ)) return false;
       }
-      if (openOnly) {
-        const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
-        if (needs === 0 && !e.iAmHost) return false;
-      }
       return true;
     });
-  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly, myAreasOnly]);
+  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, myAreasOnly]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, any[]>();

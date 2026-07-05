@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { useId, useRef, useState } from "react";
+import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
@@ -77,6 +78,7 @@ function ProfilePage() {
   const photoInputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const onPickPhoto = async (file: File) => {
     setUploading(true);
@@ -157,7 +159,7 @@ function ProfilePage() {
           disabled={uploading}
           onChange={(e) => {
             const f = e.target.files?.[0];
-            if (f) onPickPhoto(f);
+            if (f) setPendingFile(f);
             e.target.value = "";
           }}
         />
@@ -243,6 +245,14 @@ function ProfilePage() {
       <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-400/70 hover:text-red-400">
         {t("prof.delete")}
       </button>
+      <PhotoCropDialog
+        file={pendingFile}
+        onCancel={() => setPendingFile(null)}
+        onConfirm={(cropped) => {
+          setPendingFile(null);
+          onPickPhoto(cropped);
+        }}
+      />
     </main>
   );
 }

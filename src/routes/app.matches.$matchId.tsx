@@ -33,7 +33,12 @@ function ChatRoom() {
   const delFn = useServerFn(deleteMessage);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
-  const statusQ = useQuery({ queryKey: ["match-status", matchId], queryFn: () => statusFn({ data: { matchId } }) });
+  const statusQ = useQuery({
+    queryKey: ["match-status", matchId],
+    queryFn: () => statusFn({ data: { matchId } }),
+    refetchOnWindowFocus: true,
+    refetchInterval: (query) => (query.state.data && (query.state.data as { count: number }).count >= 2 ? false : 20_000),
+  });
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
@@ -47,6 +52,9 @@ function ChatRoom() {
       .channel(`match-${matchId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` }, () => {
         qc.invalidateQueries({ queryKey: ["match", matchId] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "played_confirmations", filter: `match_id=eq.${matchId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["match-status", matchId] });
       })
       .subscribe();
     return () => { supabase.removeChannel(ch); };

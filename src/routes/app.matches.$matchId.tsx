@@ -33,7 +33,12 @@ function ChatRoom() {
   const delFn = useServerFn(deleteMessage);
 
   const q = useQuery({ queryKey: ["match", matchId], queryFn: () => getDetail({ data: { matchId } }) });
-  const statusQ = useQuery({ queryKey: ["match-status", matchId], queryFn: () => statusFn({ data: { matchId } }) });
+  const statusQ = useQuery({
+    queryKey: ["match-status", matchId],
+    queryFn: () => statusFn({ data: { matchId } }),
+    refetchOnWindowFocus: true,
+    refetchInterval: (query) => (query.state.data && (query.state.data as { count: number }).count >= 2 ? false : 20_000),
+  });
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");

@@ -8,7 +8,7 @@ import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, Thu
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
-import { PADEL_LEVELS, MADRID_ZONES } from "@/lib/types";
+import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -38,7 +38,7 @@ function Discover() {
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[] }>(null);
 
   const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });
   const getAnswers = useServerFn(getMyQaAnswers);
@@ -354,7 +354,7 @@ function Discover() {
 
               <button
                 type="button"
-                onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities })}
+                onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations })}
                 className="absolute inset-0 w-full h-full text-left"
                 aria-label={`View ${c.first_name}'s profile`}
               />
@@ -564,12 +564,63 @@ function Discover() {
 
 
 
-                    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">About {preview.first_name}</div>
-                      {preview.bio ? (
-                        <p className="text-sm text-[var(--cream)]/90 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
-                      ) : (
-                        <p className="text-sm text-[var(--cream)]/50 italic">No bio yet.</p>
+                    {/* Me-style profile card (age intentionally omitted for privacy) */}
+                    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4 space-y-4">
+                      <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                        <Info label={tr("LEVEL", "NIVEL")} v={label(preview.level)} />
+                        {preview.gender && (
+                          <Info label={tr("GENDER", "GÉNERO")} v={preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)} />
+                        )}
+                        {preview.nationality && (
+                          <Info label={tr("NATIONALITY", "NACIONALIDAD")} v={preview.nationality} />
+                        )}
+                      </div>
+
+                      {(() => {
+                        const locs = (preview.locations ?? []).map((l) => formatLocation(decodeLocation(l)));
+                        if (locs.length === 0) return null;
+                        return (
+                          <div>
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Plays in", "Juega en")}</div>
+                            <div className="flex flex-wrap gap-2">
+                              {locs.map((l) => <span key={l} className="chip">{l}</span>)}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {(preview.languages?.length ?? 0) > 0 && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Languages", "Idiomas")}</div>
+                          <div className="flex flex-wrap gap-2">
+                            {preview.languages!.map((l) => <span key={l} className="chip">{label(l)}</span>)}
+                          </div>
+                        </div>
+                      )}
+
+                      {(preview.personal_traits?.length ?? 0) > 0 && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Personal characteristics", "Características personales")}</div>
+                          <div className="flex flex-wrap gap-2">
+                            {preview.personal_traits!.map((tt) => <span key={tt} className="chip">{label(tt)}</span>)}
+                          </div>
+                        </div>
+                      )}
+
+                      {(preview.padel_style?.length ?? 0) > 0 && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Padel style", "Estilo de pádel")}</div>
+                          <div className="flex flex-wrap gap-2">
+                            {preview.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
+                          </div>
+                        </div>
+                      )}
+
+                      {preview.bio && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`)}</div>
+                          <p className="text-sm text-[var(--cream)]/90 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
+                        </div>
                       )}
                     </div>
 
@@ -660,6 +711,16 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
     </div>
   );
 }
+
+function Info({ label, v }: { label: string; v: string }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
+      <div className="text-[var(--cream)]">{v}</div>
+    </div>
+  );
+}
+
 
 function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_at?: string | null } }) {
   const tr = useTr();

@@ -355,11 +355,15 @@ function EventDetail() {
 
         <div className="text-xs text-[var(--cream)]/60">
           {event.court_booked ? tr("✅ Court is booked", "✅ Pista reservada") : tr("🔎 Court still needed", "🔎 Falta reservar la pista")}
-          {event.playtomic_link && (
-            <a href={event.playtomic_link} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--ball)] hover:underline">
-              Playtomic <ExternalLink className="w-3 h-3" />
-            </a>
-          )}
+          {event.playtomic_link && (() => {
+            const safe = normalizePlaytomicLink(event.playtomic_link).url;
+            if (!safe) return null;
+            return (
+              <a href={safe} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--ball)] hover:underline">
+                Playtomic <ExternalLink className="w-3 h-3" />
+              </a>
+            );
+          })()}
         </div>
 
         {event.lock_active && event.invite_lock_until && (

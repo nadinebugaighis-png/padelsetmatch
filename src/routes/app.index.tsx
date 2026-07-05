@@ -34,10 +34,9 @@ function Discover() {
   const [world, setWorld] = useState(false);
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
-  const [genderFilter, setGenderFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 
   const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });
   const getAnswers = useServerFn(getMyQaAnswers);
@@ -194,10 +193,9 @@ function Discover() {
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
       if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
-      if (!genderMatches(c, genderFilter)) return false;
       return true;
     });
-  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0) + (genderFilter !== "all" ? 1 : 0);
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">
@@ -266,24 +264,10 @@ function Discover() {
             </select>
             <p className="text-[10px] text-[var(--cream)]/50 mt-1">Matches on players' city, barrio or listed areas.</p>
           </div>
-          <div>
-            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Gender for the game</label>
-            <select
-              value={genderFilter}
-              onChange={(e) => setGenderFilter(e.target.value)}
-              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
-            >
-              <option value="all">Anyone</option>
-              <option value="woman">Women only</option>
-              <option value="man">Men only</option>
-              <option value="mixed">Mixed (women + men)</option>
-              <option value="non-binary">Non-binary</option>
-            </select>
-          </div>
           {activeFilterCount > 0 && (
             <button
               type="button"
-              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); setGenderFilter("all"); }}
+              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
               className="text-xs text-[var(--ball)] underline"
             >
               Clear filters
@@ -347,7 +331,7 @@ function Discover() {
 
               <button
                 type="button"
-                onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, gender: c.gender, gender_custom: c.gender_custom, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities })}
+                onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities })}
                 className="absolute inset-0 w-full h-full text-left"
                 aria-label={`View ${c.first_name}'s profile`}
               />

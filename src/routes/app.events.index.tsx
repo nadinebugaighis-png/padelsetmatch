@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { listOpenEvents } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { CalendarDays, Users, Plus, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
+import { CalendarDays, Users, CalendarPlus, SlidersHorizontal, MessageCircle, Pencil } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/")({
@@ -451,14 +451,6 @@ function EventsPage() {
         </button>
       </div>
 
-      {/* Floating + */}
-      <button
-        onClick={() => navigate({ to: "/app/events/new" })}
-        className="fixed left-1/2 -translate-x-1/2 bottom-20 w-14 h-14 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center shadow-xl z-30"
-        aria-label={tr("Call a match", "Convocar un partido")}
-      >
-        <Plus className="w-6 h-6" strokeWidth={2.5} />
-      </button>
     </div>
   );
 }

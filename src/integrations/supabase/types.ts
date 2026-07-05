@@ -277,6 +277,64 @@ export type Database = {
           },
         ]
       }
+      match_event_invites: {
+        Row: {
+          created_at: string
+          id: string
+          invitee_profile_id: string | null
+          inviter_profile_id: string
+          match_event_id: string
+          responded_at: string | null
+          status: Database["public"]["Enums"]["match_invite_status"]
+          token: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invitee_profile_id?: string | null
+          inviter_profile_id: string
+          match_event_id: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["match_invite_status"]
+          token?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invitee_profile_id?: string | null
+          inviter_profile_id?: string
+          match_event_id?: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["match_invite_status"]
+          token?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_event_invites_invitee_profile_id_fkey"
+            columns: ["invitee_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_event_invites_inviter_profile_id_fkey"
+            columns: ["inviter_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_event_invites_match_event_id_fkey"
+            columns: ["match_event_id"]
+            isOneToOne: false
+            referencedRelation: "match_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_event_messages: {
         Row: {
           body: string
@@ -370,6 +428,7 @@ export type Database = {
           gender_rule: Database["public"]["Enums"]["match_gender_rule"]
           host_profile_id: string
           id: string
+          invite_lock_until: string | null
           level_max: string
           level_min: string
           note: string | null
@@ -392,6 +451,7 @@ export type Database = {
           gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
           host_profile_id: string
           id?: string
+          invite_lock_until?: string | null
           level_max?: string
           level_min?: string
           note?: string | null
@@ -414,6 +474,7 @@ export type Database = {
           gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
           host_profile_id?: string
           id?: string
+          invite_lock_until?: string | null
           level_max?: string
           level_min?: string
           note?: string | null
@@ -930,6 +991,7 @@ export type Database = {
       friendship_status: "pending" | "accepted"
       match_event_status: "open" | "full" | "cancelled" | "played"
       match_gender_rule: "mixed" | "men_only" | "women_only"
+      match_invite_status: "pending" | "accepted" | "declined" | "revoked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1061,6 +1123,7 @@ export const Constants = {
       friendship_status: ["pending", "accepted"],
       match_event_status: ["open", "full", "cancelled", "played"],
       match_gender_rule: ["mixed", "men_only", "women_only"],
+      match_invite_status: ["pending", "accepted", "declined", "revoked"],
     },
   },
 } as const

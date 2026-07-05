@@ -8,6 +8,7 @@ import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, Thu
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
+import { PADEL_LEVELS, MADRID_ZONES } from "@/lib/types";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({
@@ -31,6 +32,9 @@ function Discover() {
   const report = useServerFn(reportProfile);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   const [world, setWorld] = useState(false);
+  const [levelFilter, setLevelFilter] = useState<string>("all");
+  const [zoneFilter, setZoneFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; gender: string; gender_custom: string | null; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[] }>(null);
 
@@ -155,8 +159,14 @@ function Discover() {
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
+      if (levelFilter !== "all" && c.level !== levelFilter) return false;
+      if (zoneFilter !== "all") {
+        const z = (c.zone ?? "").toLowerCase();
+        if (!z.includes(zoneFilter.toLowerCase())) return false;
+      }
       return true;
     });
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
     <main className="px-4 py-5 max-w-md mx-auto">
@@ -178,7 +188,54 @@ function Discover() {
         >
           {world ? t("disc.world.on") : t("disc.world.off")}
         </button>
+        <button
+          onClick={() => setShowFilters((s) => !s)}
+          className={`chip ${activeFilterCount > 0 ? "chip-ball" : ""}`}
+          aria-expanded={showFilters}
+        >
+          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+        </button>
       </div>
+
+      {showFilters && (
+        <div className="mt-3 p-3 rounded-xl border border-[var(--cream)]/15 bg-black/20 space-y-3">
+          <div>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Padel level</label>
+            <select
+              value={levelFilter}
+              onChange={(e) => setLevelFilter(e.target.value)}
+              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+            >
+              <option value="all">Any level</option>
+              {PADEL_LEVELS.map((lv) => (
+                <option key={lv} value={lv}>{label(lv)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Barrio / zone</label>
+            <select
+              value={zoneFilter}
+              onChange={(e) => setZoneFilter(e.target.value)}
+              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+            >
+              <option value="all">Any zone</option>
+              {MADRID_ZONES.map((z) => (
+                <option key={z} value={z}>{z}</option>
+              ))}
+            </select>
+          </div>
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
+              className="text-xs text-[var(--ball)] underline"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
       {world && (
         <p className="text-[11px] text-[var(--cream)]/60 mt-2">
           {t("disc.world.note")}

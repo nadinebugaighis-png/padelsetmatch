@@ -225,11 +225,7 @@ function Discover() {
     return c.gender === g;
   };
 
-  const myIntentsList = deriveIntents((feedQ.data.me as unknown as { intents?: string[]; looking_for?: string }));
-  const meHasFilter = filter === "all" ? true : myIntentsList.includes(filter);
-  const list = (filter === "all"
-    ? all
-    : (!meHasFilter ? [] : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter))))
+  const list = (filter === "all" ? all : all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter)))
     .filter((c) => {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;

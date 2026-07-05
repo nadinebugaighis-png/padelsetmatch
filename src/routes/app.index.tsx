@@ -62,13 +62,15 @@ function Discover() {
   });
   const rateCompat = useServerFn(rateAiCompatibility);
   const rateCompatM = useMutation({
-    mutationFn: (thumbs: 1 | -1) => rateCompat({ data: { otherProfileId: preview!.id, thumbs } }),
-    onSuccess: (_r, thumbs) => {
-      qc.setQueryData(["ai-compat-fb", preview?.id], { thumbs });
-      toast.success(thumbs === 1 ? "Thanks — we'll surface more like this" : "Got it — we'll adjust");
+    mutationFn: (v: { thumbs: 1 | -1; reason?: string }) => rateCompat({ data: { otherProfileId: preview!.id, thumbs: v.thumbs, reason: v.reason } }),
+    onSuccess: (_r, v) => {
+      qc.setQueryData(["ai-compat-fb", preview?.id], { thumbs: v.thumbs });
+      if (!v.reason) toast.success(v.thumbs === 1 ? "Thanks — we'll surface more like this" : "Got it — tell us why?");
+      else toast.success("Thanks — we'll adjust");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
   });
+
 
 
   useEffect(() => {

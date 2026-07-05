@@ -712,6 +712,16 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
   );
 }
 
+function Info({ label, v }: { label: string; v: string }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
+      <div className="text-[var(--cream)]">{v}</div>
+    </div>
+  );
+}
+
+
 function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_at?: string | null } }) {
   const tr = useTr();
   const [dismissed, setDismissed] = useState(false);

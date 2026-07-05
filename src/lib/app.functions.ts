@@ -1632,6 +1632,7 @@ export const rateAiCompatibility = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({
     otherProfileId: z.string().uuid(),
     thumbs: z.union([z.literal(1), z.literal(-1)]),
+    reason: z.string().max(60).optional(),
   }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: me } = await context.supabase
@@ -1641,12 +1642,13 @@ export const rateAiCompatibility = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("compatibility_feedback" as never)
       .upsert(
-        { rater_profile_id: myId, subject_profile_id: data.otherProfileId, thumbs: data.thumbs } as never,
+        { rater_profile_id: myId, subject_profile_id: data.otherProfileId, thumbs: data.thumbs, feedback_reason: data.reason ?? null } as never,
         { onConflict: "rater_profile_id,subject_profile_id" } as never,
       );
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
 
 export const getMyAiCompatibilityFeedback = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

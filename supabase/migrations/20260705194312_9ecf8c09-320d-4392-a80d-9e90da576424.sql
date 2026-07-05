@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS match_event_invites_event_invitee_unique ON public.match_event_invites (match_event_id, invitee_profile_id) WHERE invitee_profile_id IS NOT NULL;

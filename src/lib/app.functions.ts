@@ -1446,7 +1446,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       .eq("profile_a", a)
       .eq("profile_b", b)
       .maybeSingle();
-    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-frank-v3") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
+    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-frank-v4") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
 
     // 2. Gather both profiles + Q&A (via admin — reading other user data)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -1498,6 +1498,7 @@ Rules for judgment:
 - The "friction" field is REQUIRED whenever anything real could clash (personality mismatch, energy mismatch, competitive gap, lifestyle/values gap, life stage). Only return null if you genuinely can't find one — that should be uncommon.
 - Blurb must be frank, not flattering. If they're mid, say it plainly (e.g. "Decent on-court fit, but personalities pull in different directions").
 - Never use the words "wonderful", "amazing", "great connection", "click", "beautiful", or other empty praise.
+- LIFESTYLE / LIFE-STAGE gaps are real and usually reduce compatibility — do not smooth them over. Treat these as significant friction and reflect them in the score and the lifestyle read: parent vs child-free/single, married vs single-and-dating, early-riser vs night-owl, sober vs heavy drinker, smoker vs non-smoker, remote/flexible vs 9-5 corporate, big-city hustle vs slow-living, frequent-traveler vs rooted, religious/observant vs secular, very different income or free-time budgets. If one has kids and the other is single with no kids, availability, weekend rhythm, priorities and social scene rarely line up — call this out explicitly in friction and in the lifestyle framing, and lower the score accordingly unless their answers actively show it works (e.g. both explicitly OK with it, similar schedules despite the gap).
 
 Return ONLY valid JSON with this exact shape:
 {
@@ -1540,7 +1541,7 @@ ${qaBlock(theirQA)}`;
         : blurb;
     }
 
-    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-frank-v3" };
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, model_version: "gemini-2.5-flash-frank-v4" };
     await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });

@@ -55,7 +55,8 @@ function EventsPage() {
 
   const list = useServerFn(listOpenEvents);
   const getProfile = useServerFn(getMyProfile);
-  const [myAreasOnly, setMyAreasOnly] = useState(true);
+  const [worldwide, setWorldwide] = useState(false);
+  const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({
     queryKey: ["my-profile"],
@@ -78,13 +79,12 @@ function EventsPage() {
   const [genderFilter, setGenderFilter] = useState<"any" | "mixed" | "women_only" | "men_only">("any");
   const [levelFilter, setLevelFilter] = useState<"any" | "beginner" | "intermediate" | "advanced">("any");
   const [cityFilter, setCityFilter] = useState("");
-  const [openOnly, setOpenOnly] = useState(false);
 
   const activeFilterCount =
     (genderFilter !== "any" ? 1 : 0) +
     (levelFilter !== "any" ? 1 : 0) +
-    (cityFilter.trim() ? 1 : 0) +
-    (openOnly ? 1 : 0); // openOnly is no longer the default
+    (worldwide ? 1 : 0) +
+    (cityFilter.trim() ? 1 : 0);
 
   const filtered = useMemo(() => {
     const arr = [...(eventsQ.data?.events ?? [])];
@@ -117,13 +117,9 @@ function EventsPage() {
         const hay = `${e.city ?? ""} ${e.club_name ?? ""}`.toLowerCase();
         if (!hay.includes(cityQ)) return false;
       }
-      if (openOnly) {
-        const needs = e.needs ?? Math.max(0, 4 - (e.filled ?? 0));
-        if (needs === 0 && !e.iAmHost) return false;
-      }
       return true;
     });
-  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, openOnly, myAreasOnly]);
+  }, [eventsQ.data, selectedIdx, customDate, days, genderFilter, levelFilter, cityFilter, myAreasOnly]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, any[]>();
@@ -281,43 +277,34 @@ function EventsPage() {
           <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
             <input
               type="checkbox"
-              checked={myAreasOnly}
+              checked={worldwide}
               onChange={(e) => {
                 const on = e.target.checked;
-                setMyAreasOnly(on);
-                if (on) setCityFilter("");
+                setWorldwide(on);
+                if (!on) setCityFilter("");
               }}
               className="accent-[var(--ball)]"
             />
-            {tr("Only my areas", "Solo mis zonas")}
+            {tr("Worldwide (show all cities)", "En todo el mundo (todas las ciudades)")}
           </label>
-          {!myAreasOnly && (
+          {worldwide && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("City or club", "Ciudad o club")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Filter by city or club (optional)", "Filtrar por ciudad o club (opcional)")}</div>
               <input
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
-                placeholder={tr("e.g. Alcobendas", "p. ej. Alcobendas")}
+                placeholder={tr("e.g. Barcelona", "p. ej. Barcelona")}
                 className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
               />
             </div>
           )}
-          <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
-            <input
-              type="checkbox"
-              checked={openOnly}
-              onChange={(e) => setOpenOnly(e.target.checked)}
-              className="accent-[var(--ball)]"
-            />
-            {tr("Only matches that still need players", "Solo partidos que buscan jugadores")}
-          </label>
           <div className="flex justify-between pt-1">
             <button
               onClick={() => {
                 setGenderFilter("any");
                 setLevelFilter("any");
                 setCityFilter("");
-                setOpenOnly(false);
+                setWorldwide(false);
               }}
               className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 inline-flex items-center gap-1"
             >

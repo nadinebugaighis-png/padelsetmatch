@@ -38,6 +38,7 @@ export type Database = {
       compatibility_feedback: {
         Row: {
           created_at: string
+          feedback_reason: string | null
           id: string
           rater_profile_id: string
           subject_profile_id: string
@@ -45,6 +46,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          feedback_reason?: string | null
           id?: string
           rater_profile_id: string
           subject_profile_id: string
@@ -52,6 +54,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          feedback_reason?: string | null
           id?: string
           rater_profile_id?: string
           subject_profile_id?: string
@@ -84,6 +87,7 @@ export type Database = {
           profile_b: string
           reasons: string[]
           score: number
+          sub_scores: Json | null
         }
         Insert: {
           blurb: string
@@ -94,6 +98,7 @@ export type Database = {
           profile_b: string
           reasons?: string[]
           score: number
+          sub_scores?: Json | null
         }
         Update: {
           blurb?: string
@@ -104,6 +109,7 @@ export type Database = {
           profile_b?: string
           reasons?: string[]
           score?: number
+          sub_scores?: Json | null
         }
         Relationships: [
           {

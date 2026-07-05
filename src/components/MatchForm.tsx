@@ -118,7 +118,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             gender_rule: genderRule,
             extra_confirmed: extraConfirmed,
             note: note || null,
-            playtomic_link: playtomicLink || null,
+            playtomic_link: normalized.url,
             court_booked: courtBooked,
           }
         : {

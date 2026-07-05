@@ -304,7 +304,7 @@ function EventsPage() {
                 setGenderFilter("any");
                 setLevelFilter("any");
                 setCityFilter("");
-                setOpenOnly(false);
+                setWorldwide(false);
               }}
               className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 inline-flex items-center gap-1"
             >

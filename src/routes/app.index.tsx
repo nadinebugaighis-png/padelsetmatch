@@ -251,15 +251,39 @@ function Discover() {
               className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
             >
               <option value="all">Any zone</option>
-              {MADRID_ZONES.map((z) => (
-                <option key={z} value={z}>{z}</option>
-              ))}
+              {zonesInFeed.length > 0 && (
+                <optgroup label="From players in your Grid">
+                  {zonesInFeed.map((z) => (
+                    <option key={`feed-${z}`} value={z}>{z}</option>
+                  ))}
+                </optgroup>
+              )}
+              <optgroup label="All Madrid zones">
+                {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
+                  <option key={`all-${z}`} value={z}>{z}</option>
+                ))}
+              </optgroup>
+            </select>
+            <p className="text-[10px] text-[var(--cream)]/50 mt-1">Matches on players' city, barrio or listed areas.</p>
+          </div>
+          <div>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Gender for the game</label>
+            <select
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+            >
+              <option value="all">Anyone</option>
+              <option value="woman">Women only</option>
+              <option value="man">Men only</option>
+              <option value="mixed">Mixed (women + men)</option>
+              <option value="non-binary">Non-binary</option>
             </select>
           </div>
           {activeFilterCount > 0 && (
             <button
               type="button"
-              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
+              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); setGenderFilter("all"); }}
               className="text-xs text-[var(--ball)] underline"
             >
               Clear filters

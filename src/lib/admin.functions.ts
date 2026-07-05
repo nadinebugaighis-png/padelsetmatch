@@ -141,7 +141,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
       allSignups,
       recentFeedback: (recentFeedbackRes.data ?? []) as Array<{
         id: string;
-        rating: number;
+        rating: number | null;
         message: string;
         created_at: string;
       }>,

@@ -672,30 +672,58 @@ export const respondToMatchInvite = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!invite) throw new Error("Invite not found");
     if (invite.invitee_profile_id !== profile.id) throw new Error("This invite isn't yours");
-    const newStatus = data.accept ? "accepted" : "declined";
-    const { error } = await supabase
-      .from("match_event_invites")
-      .update({ status: newStatus, responded_at: new Date().toISOString() } as never)
-      .eq("id", invite.id);
-    if (error) throw new Error(error.message);
+
     if (data.accept) {
+      if (!profile.first_name || !profile.level) {
+        throw new Error("Please add your name and padel level first.");
+      }
       const { data: ev } = await supabase
         .from("match_events")
         .select("gender_rule, status, extra_confirmed")
         .eq("id", invite.match_event_id)
         .maybeSingle();
-      if (ev && ev.status === "open") {
-        const { count } = await supabase
-          .from("match_event_participants")
-          .select("id", { count: "exact", head: true })
-          .eq("match_event_id", invite.match_event_id);
-        if ((count ?? 0) + (ev.extra_confirmed ?? 0) < 4) {
+      if (!ev) throw new Error("Match not found");
+      if (ev.status === "cancelled") throw new Error("This match was cancelled");
+      if (ev.status === "played") throw new Error("This match already happened");
+      if (ev.gender_rule === "men_only" && profile.gender && profile.gender !== "man") {
+        throw new Error("This match is for men only");
+      }
+      if (ev.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") {
+        throw new Error("This match is for women only");
+      }
+      const { count } = await supabase
+        .from("match_event_participants")
+        .select("id", { count: "exact", head: true })
+        .eq("match_event_id", invite.match_event_id);
+      // Allow accept even if event is 'full' as long as an actual slot exists
+      // (accounting for extra_confirmed placeholders). This keeps invited
+      // players prioritized when the host set extra_confirmed.
+      if ((count ?? 0) + (ev.extra_confirmed ?? 0) >= 4) {
+        // Try to reclaim a placeholder slot for the invited player.
+        const canReclaim = (ev.extra_confirmed ?? 0) > 0 && (count ?? 0) < 4;
+        if (canReclaim) {
           await supabase
-            .from("match_event_participants")
-            .insert({ match_event_id: invite.match_event_id, profile_id: profile.id } as never);
+            .from("match_events")
+            .update({ extra_confirmed: (ev.extra_confirmed ?? 0) - 1 } as never)
+            .eq("id", invite.match_event_id);
+        } else {
+          throw new Error("This match is already full");
         }
       }
+      const { error: insErr } = await supabase
+        .from("match_event_participants")
+        .insert({ match_event_id: invite.match_event_id, profile_id: profile.id } as never);
+      if (insErr && !insErr.message.includes("duplicate")) {
+        throw new Error(insErr.message);
+      }
     }
+
+    const newStatus = data.accept ? "accepted" : "declined";
+    const { error: updErr } = await supabase
+      .from("match_event_invites")
+      .update({ status: newStatus, responded_at: new Date().toISOString() } as never)
+      .eq("id", invite.id);
+    if (updErr) throw new Error(updErr.message);
     return { ok: true, eventId: invite.match_event_id };
   });
 

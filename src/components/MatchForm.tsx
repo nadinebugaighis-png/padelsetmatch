@@ -86,6 +86,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
   const [courtBooked, setCourtBooked] = useState<boolean>(initial?.court_booked ?? false);
   const [playtomicLink, setPlaytomicLink] = useState(initial?.playtomic_link ?? "");
+  const [playtomicError, setPlaytomicError] = useState<string | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
@@ -93,6 +94,13 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
   const handleSubmit = async () => {
     if (!locationReady || !when) return;
+    const normalized = normalizePlaytomicLink(playtomicLink);
+    if (normalized.error) {
+      setPlaytomicError(tr("Enter a valid Playtomic link (playtomic.io)", "Introduce un enlace válido de Playtomic (playtomic.io)"));
+      return;
+    }
+    setPlaytomicError(null);
+
     const extraConfirmed = Math.max(0, 4 - appPlayersCount - playersNeeded);
     const values: MatchFormValues =
       locMode === "club" && club

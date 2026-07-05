@@ -249,7 +249,7 @@ const en: Dict = {
   "ob.ranking": "Your ranking (top = most important)",
   "ob.pickThree": "Pick at least 3.",
   "ob.errMax3": "Up to 3 custom traits",
-  "ob.errMaxTraits": "Max 8 traits",
+  "ob.errMaxTraits": "Max 10 traits",
   // step 4
   "ob.h4": "Your padel photo",
   "ob.h4sub": "A photo of you with a racket on court — that's the whole vibe. Shown in the discover grid.",
@@ -525,7 +525,7 @@ const es: Dict = {
   "ob.ranking": "Tu orden (arriba = más importante)",
   "ob.pickThree": "Elige al menos 3.",
   "ob.errMax3": "Hasta 3 rasgos propios",
-  "ob.errMaxTraits": "Máx. 8 rasgos",
+  "ob.errMaxTraits": "Máx. 10 rasgos",
   "ob.h4": "Tu foto de pádel",
   "ob.h4sub": "Una foto tuya con pala en la pista — eso es todo. Aparece en la cuadrícula de descubrir.",
   "ob.uploading": "Subiendo…",

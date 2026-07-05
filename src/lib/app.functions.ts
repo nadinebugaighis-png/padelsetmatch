@@ -397,20 +397,10 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     });
     if (me.zone) myCities.add(me.zone.trim().toLowerCase());
 
-    const myIntents = new Set((me.intents ?? []).map((i) => String(i).toLowerCase()));
-    const iSeekRelationship = myIntents.has("relationship");
-
     const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
       if (blockedSet.has(c.id)) return false;
       const cats = hiddenMap.get(c.id);
       if (cats && cats.has("all")) return false;
-      // Hard romance-intent filter (symmetric): only surface a candidate when
-      // both sides agree on the "relationship" axis. If exactly one side has
-      // "relationship" in their intents, hide — prevents mismatched romantic
-      // approaches from either direction.
-      const theirIntents = new Set((c.intents ?? []).map((i) => String(i).toLowerCase()));
-      const theySeekRelationship = theirIntents.has("relationship");
-      if (iSeekRelationship !== theySeekRelationship) return false;
       if (world) return true;
       if (myCities.size === 0) return false;
       const theirCities = new Set<string>();

@@ -575,12 +575,6 @@ function Discover() {
                             </ul>
                           )}
 
-                          {compatQ.data.friction && (
-                            <div className="mt-3 text-[12px] text-[var(--cream)]/60 leading-snug border-t border-[var(--cream)]/10 pt-2">
-                              <span className="uppercase tracking-wider text-[10px] text-[var(--cream)]/45">Worth being aware of · </span>
-                              {compatQ.data.friction}
-                            </div>
-                          )}
 
                           <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">
                             <span className="text-[11px] text-[var(--cream)]/55 mr-1">Was this useful?</span>

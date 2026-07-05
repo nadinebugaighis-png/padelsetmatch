@@ -197,7 +197,7 @@ function AdminPage() {
           {recentFeedback.length === 0 && <p className="text-sm text-[var(--cream)]/60">No feedback yet.</p>}
           {recentFeedback.map((f) => (
             <div key={f.id} className="border border-[var(--cream)]/10 rounded-lg px-3 py-2">
-              <div className="text-sm">{"★".repeat(f.rating)}{"☆".repeat(5 - f.rating)}</div>
+              <div className="text-sm">{f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : "no rating"}</div>
               <div className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap">{f.message}</div>
               <div className="text-xs text-[var(--cream)]/50 mt-1">{new Date(f.created_at).toLocaleString()}</div>
             </div>

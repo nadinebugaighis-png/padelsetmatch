@@ -1487,17 +1487,27 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-2.5-flash");
 
-    const prompt = `You are a warm, insightful compatibility analyst for a padel-focused connection app. Given two people, judge how well they'd click — as padel partners, friends, or possibly more, depending on their stated intents. Weigh shared values, complementary personalities, communication style, life stage, and on-court compatibility. Ignore surface-level overlaps that don't matter (e.g. same nationality alone).
+    const prompt = `You are a HONEST, frank compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Your job is NOT to be nice — it is to give the reader a realistic read so they don't waste time. Most pairs are mediocre; be willing to say so.
+
+Rules for judgment:
+- Distinguish COMPLEMENTARY differences (introvert + extrovert who both value calm; aggressive + defensive on court) from CLASHING differences (shy/introvert paired with loud/outspoken; highly competitive vs purely social; high-intensity vs casual; conflicting values, life stages, or lifestyles like party vs early-riser, kids vs no-kids, religious vs not, smoker vs non-smoker).
+- Do NOT assume opposites attract. Only call a difference "complementary" when there is real evidence it works (shared underlying value, one leads / one supports, self-awareness). Otherwise call it friction, not chemistry.
+- Same nationality, same city, or both "open-minded / friendly / flexible" are NOT reasons — they are filler. Skip them.
+- Be specific and use their actual traits, answers, and bios. Name the thing.
+- Grade honestly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 workable with caveats, 40-54 mediocre / mixed, 0-39 poor fit. Do NOT default to 70+. If evidence is thin, score in the 45-60 range and say so.
+- The "friction" field is REQUIRED whenever anything real could clash (personality mismatch, energy mismatch, competitive gap, lifestyle/values gap, life stage). Only return null if you genuinely can't find one — that should be uncommon.
+- Blurb must be frank, not flattering. If they're mid, say it plainly (e.g. "Decent on-court fit, but personalities pull in different directions").
+- Never use the words "wonderful", "amazing", "great connection", "click", "beautiful", or other empty praise.
 
 Return ONLY valid JSON with this exact shape:
 {
-  "score": <0-100 integer>,
-  "blurb": "<one to two warm sentences addressed to the reader ('you two...'). Max 220 chars. No emojis.>",
-  "reasons": ["<short concrete reason 1, max 90 chars>", "<reason 2>", "<reason 3>"],
-  "friction": "<optional one short line of potential friction, or null if none stands out>"
+  "score": <0-100 integer, honestly graded>,
+  "blurb": "<one to two frank sentences addressed to the reader ('you two...'). Max 220 chars. No emojis, no flattery.>",
+  "reasons": ["<specific reason 1, max 90 chars>", "<reason 2>", "<reason 3>"],
+  "friction": "<one short line naming the most real clash or watch-out. Null only if truly none.>"
 }
 
-Reasons must be specific to THIS pair (name shared values, complementary traits, on-court fit, life stage overlap, etc.), not generic. Exactly 3 reasons.
+Reasons must be specific to THIS pair. Mix positives and honest caveats where relevant — they don't all need to be positive. Exactly 3.
 
 ${summarizeProfile(me, "PERSON A (the viewer)")}
 Q&A:

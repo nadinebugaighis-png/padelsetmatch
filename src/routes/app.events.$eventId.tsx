@@ -436,6 +436,42 @@ function EventDetail() {
         </div>
       </div>
 
+      {/* Invitee response */}
+      {me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
+        <div className="mt-4 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("You're invited", "Estás invitado")}</div>
+          <p className="mt-1 text-sm text-[var(--cream)]/80">
+            {tr(`${event.host?.first_name ?? "The host"} invited you to this match.`, `${event.host?.first_name ?? "El anfitrión"} te ha invitado a este partido.`)}
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  await respondInvite({ data: { inviteId: me!.myInvite!.id, accept: true } });
+                  toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾"));
+                  qc.invalidateQueries({ queryKey: ["event", eventId] });
+                } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
+              }}
+              className="rounded-full bg-[var(--ball)] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+            >
+              {tr("I'm in", "Voy")}
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await respondInvite({ data: { inviteId: me!.myInvite!.id, accept: false } });
+                  toast(tr("No worries — thanks for letting the host know", "Sin problema — gracias por avisar"));
+                  qc.invalidateQueries({ queryKey: ["event", eventId] });
+                } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
+              }}
+              className="rounded-full border border-[var(--cream)]/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
+            >
+              {tr("I can't this time", "No puedo esta vez")}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Actions */}
       <div className="mt-5 space-y-2">
         {canJoin && (
@@ -457,6 +493,12 @@ function EventDetail() {
         {me?.iAmHost && event.status !== "cancelled" && (
           <>
             <button
+              onClick={() => setInviteOpen(true)}
+              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
+            >
+              <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores")}
+            </button>
+            <button
               onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
               className="w-full py-2 rounded-full border border-[var(--ball)]/60 text-xs uppercase tracking-widest text-[var(--ball)]"
             >
@@ -470,10 +512,28 @@ function EventDetail() {
             </button>
           </>
         )}
-        {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && (
-          <p className="text-xs text-[var(--cream)]/50 text-center">{tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.")}</p>
+        {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
+          <p className="text-xs text-[var(--cream)]/50 text-center">
+            {event.lock_active
+              ? tr("This match is reserved for invited players right now.", "Este partido está reservado para invitados ahora mismo.")
+              : tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.")}
+          </p>
         )}
       </div>
+
+      {/* Invite panel */}
+      {inviteOpen && (
+        <InvitePanel
+          eventId={eventId}
+          onClose={() => setInviteOpen(false)}
+          listConns={listConns}
+          invitePeople={invitePeople}
+          createLink={createInviteLink}
+          revokeInvite={revokeInvite}
+          invites={event.invites ?? []}
+          tr={tr}
+        />
+      )}
 
       {/* Chat — auto-opens for participants once at least 2 players joined */}
       {me?.iAmParticipant && (event.participants?.length ?? 0) >= 2 && (

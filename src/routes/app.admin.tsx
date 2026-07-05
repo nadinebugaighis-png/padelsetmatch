@@ -1,8 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats } from "@/lib/admin.functions";
+import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin")({
   ssr: false,
@@ -23,15 +24,39 @@ export const Route = createFileRoute("/app/admin")({
 });
 
 function AdminPage() {
+  const qc = useQueryClient();
   const fetchStats = useServerFn(getAdminStats);
+  const resolveReport = useServerFn(adminResolveReport);
+  const clearPhoto = useServerFn(adminClearProfilePhoto);
+  const setSuspended = useServerFn(adminSetSuspended);
   const q = useQuery({ queryKey: ["admin-stats"], queryFn: () => fetchStats() });
+
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["admin-stats"] });
+  const resolveM = useMutation({
+    mutationFn: (vars: { reportId: string; status: "resolved" | "dismissed" }) =>
+      resolveReport({ data: vars }),
+    onSuccess: () => { toast.success("Report updated"); invalidate(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+  const clearPhotoM = useMutation({
+    mutationFn: (profileId: string) => clearPhoto({ data: { profileId } }),
+    onSuccess: () => { toast.success("Photo removed"); invalidate(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+  const suspendM = useMutation({
+    mutationFn: (vars: { profileId: string; suspend: boolean }) => setSuspended({ data: vars }),
+    onSuccess: (_, v) => { toast.success(v.suspend ? "User suspended" : "User reinstated"); invalidate(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
 
   if (q.isLoading) return <div className="p-6 text-[var(--cream)]/70">Loading…</div>;
   if (q.error || !q.data) return <div className="p-6 text-[var(--cream)]/70">Could not load admin data.</div>;
 
-  const { counts, allSignups, recentFeedback } = q.data;
+  const { counts, allSignups, recentFeedback, recentReports } = q.data;
   const incomplete = allSignups.filter((u) => !u.profile_completed);
   const completed = allSignups.filter((u) => u.profile_completed);
+  const pendingReports = recentReports.filter((r) => r.status === "pending");
+  const handledReports = recentReports.filter((r) => r.status !== "pending");
 
   return (
     <div className="max-w-3xl mx-auto p-5 space-y-8">
@@ -45,8 +70,86 @@ function AdminPage() {
         <Stat label="Profiles" value={counts.users} />
         <Stat label="Incomplete" value={counts.incomplete} />
         <Stat label="Matches" value={counts.matches} />
-        <Stat label="Reports" value={counts.reports} />
+        <Stat label="Pending reports" value={counts.reports} />
       </section>
+
+      <section>
+        <h2 className="text-display text-xl tracking-wider mb-3">Pending reports ({pendingReports.length})</h2>
+        <div className="space-y-3">
+          {pendingReports.length === 0 && <p className="text-sm text-[var(--cream)]/60">No pending reports. 🎉</p>}
+          {pendingReports.map((r) => (
+            <div key={r.id} className="border border-[var(--cream)]/15 rounded-lg p-3 space-y-2">
+              <div className="flex items-start gap-3">
+                {r.reported_photo_url ? (
+                  <img src={r.reported_photo_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
+                ) : (
+                  <div className="w-14 h-14 rounded-lg bg-[var(--cream)]/10 shrink-0" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm">
+                    <span className="font-semibold">{r.reporter_name ?? "someone"}</span>
+                    <span className="text-[var(--cream)]/60"> reported </span>
+                    <span className="font-semibold">{r.reported_name ?? "user"}</span>
+                    {r.category === "photo" && (
+                      <span className="ml-2 text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300">photo</span>
+                    )}
+                    {r.reported_suspended && (
+                      <span className="ml-2 text-[10px] uppercase tracking-widest text-red-400">suspended</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-[var(--cream)]/50">{new Date(r.created_at).toLocaleString()}</div>
+                  <p className="text-sm text-[var(--cream)]/80 mt-1 whitespace-pre-wrap">{r.reason}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {r.reported_photo_url && (
+                  <button
+                    disabled={clearPhotoM.isPending}
+                    onClick={() => { if (confirm(`Remove ${r.reported_name ?? "user"}'s photo?`)) clearPhotoM.mutate(r.reported_profile_id); }}
+                    className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-200 hover:bg-red-500/30"
+                  >Remove photo</button>
+                )}
+                {!r.reported_suspended ? (
+                  <button
+                    disabled={suspendM.isPending}
+                    onClick={() => { if (confirm(`Suspend ${r.reported_name ?? "user"}?`)) suspendM.mutate({ profileId: r.reported_profile_id, suspend: true }); }}
+                    className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-200 hover:bg-amber-500/30"
+                  >Suspend user</button>
+                ) : (
+                  <button
+                    disabled={suspendM.isPending}
+                    onClick={() => suspendM.mutate({ profileId: r.reported_profile_id, suspend: false })}
+                    className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
+                  >Reinstate</button>
+                )}
+                <button
+                  disabled={resolveM.isPending}
+                  onClick={() => resolveM.mutate({ reportId: r.id, status: "resolved" })}
+                  className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
+                >Mark resolved</button>
+                <button
+                  disabled={resolveM.isPending}
+                  onClick={() => resolveM.mutate({ reportId: r.id, status: "dismissed" })}
+                  className="text-xs px-2.5 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/20"
+                >Dismiss</button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {handledReports.length > 0 && (
+          <details className="mt-4">
+            <summary className="text-xs text-[var(--cream)]/60 cursor-pointer">Handled ({handledReports.length})</summary>
+            <div className="space-y-2 mt-2">
+              {handledReports.map((r) => (
+                <div key={r.id} className="text-xs text-[var(--cream)]/60 border border-[var(--cream)]/10 rounded px-2 py-1.5">
+                  [{r.status}] {r.reporter_name} → {r.reported_name}: {r.reason}
+                </div>
+              ))}
+            </div>
+          </details>
+        )}
+      </section>
+
 
       {incomplete.length > 0 && (
         <section>
@@ -94,7 +197,7 @@ function AdminPage() {
           {recentFeedback.length === 0 && <p className="text-sm text-[var(--cream)]/60">No feedback yet.</p>}
           {recentFeedback.map((f) => (
             <div key={f.id} className="border border-[var(--cream)]/10 rounded-lg px-3 py-2">
-              <div className="text-sm">{"★".repeat(f.rating)}{"☆".repeat(5 - f.rating)}</div>
+              <div className="text-sm">{f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : "no rating"}</div>
               <div className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap">{f.message}</div>
               <div className="text-xs text-[var(--cream)]/50 mt-1">{new Date(f.created_at).toLocaleString()}</div>
             </div>

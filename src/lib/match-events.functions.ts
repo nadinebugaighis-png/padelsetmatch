@@ -220,8 +220,7 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
         .eq("invitee_profile_id", profile.id)
         .maybeSingle();
       if (!inv) {
-        const opensAt = new Date(lockUntil!).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
-        throw new Error(`Reserved for invited players until ${opensAt}. Come back then!`);
+        throw new Error(`INVITE_LOCK:${lockUntil}`);
       }
       if (inv.status === "pending") {
         await supabase.from("match_event_invites").update({ status: "accepted", responded_at: new Date().toISOString() } as never).eq("id", inv.id);

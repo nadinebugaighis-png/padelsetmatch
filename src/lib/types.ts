@@ -210,6 +210,7 @@ export type Profile = {
   free_court_note?: string | null;
   personal_traits?: string[];
   padel_style?: string[];
+  world_mode?: boolean;
 };
 
 export type RankedCandidate = Profile & {

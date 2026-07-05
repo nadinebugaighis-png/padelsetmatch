@@ -35,6 +35,7 @@ const ProfileInput = z.object({
   sexual_orientation: z.string().max(60).nullable().optional(),
   personal_traits: z.array(z.string().min(1).max(40)).max(10).default([]),
   padel_style: z.array(z.string().min(1).max(40)).max(3).default([]),
+  world_mode: z.boolean().default(false).optional(),
 });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {
@@ -123,6 +124,18 @@ export const setAwayStatus = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("profiles" as never)
       .update({ away_until: data.away_until } as never)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const setWorldMode = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ world_mode: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profiles" as never)
+      .update({ world_mode: data.world_mode } as never)
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown } from "lucide-react";
@@ -74,6 +74,21 @@ function Discover() {
   useEffect(() => {
     if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
   }, [feedQ.data, navigate]);
+
+  useEffect(() => {
+    if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {
+      setWorld(feedQ.data.me.world_mode);
+    }
+  }, [feedQ.data?.me?.world_mode]);
+
+  const worldModeFn = useServerFn(setWorldMode);
+  const setWorldM = useMutation({
+    mutationFn: (value: boolean) => worldModeFn({ data: { world_mode: value } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not save preference"),
+  });
 
   const likeM = useMutation({
     mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
@@ -234,7 +249,11 @@ function Discover() {
             </button>
           ))}
           <button
-            onClick={() => setWorld((w) => !w)}
+            onClick={() => {
+              const next = !world;
+              setWorld(next);
+              setWorldM.mutate(next);
+            }}
             className={`chip ${world ? "chip-ball" : ""}`}
           >
             {world ? t("disc.world.on") : t("disc.world.off")}

@@ -787,6 +787,7 @@ export type Database = {
           suspended_at: string | null
           updated_at: string
           user_id: string | null
+          world_mode: boolean | null
           zone: string | null
         }
         Insert: {
@@ -828,6 +829,7 @@ export type Database = {
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
+          world_mode?: boolean | null
           zone?: string | null
         }
         Update: {
@@ -869,6 +871,7 @@ export type Database = {
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
+          world_mode?: boolean | null
           zone?: string | null
         }
         Relationships: []

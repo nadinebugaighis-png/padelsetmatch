@@ -277,36 +277,27 @@ function EventsPage() {
           <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
             <input
               type="checkbox"
-              checked={myAreasOnly}
+              checked={worldwide}
               onChange={(e) => {
                 const on = e.target.checked;
-                setMyAreasOnly(on);
-                if (on) setCityFilter("");
+                setWorldwide(on);
+                if (!on) setCityFilter("");
               }}
               className="accent-[var(--ball)]"
             />
-            {tr("Only my areas", "Solo mis zonas")}
+            {tr("Worldwide (show all cities)", "En todo el mundo (todas las ciudades)")}
           </label>
-          {!myAreasOnly && (
+          {worldwide && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("City or club", "Ciudad o club")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Filter by city or club (optional)", "Filtrar por ciudad o club (opcional)")}</div>
               <input
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
-                placeholder={tr("e.g. Alcobendas", "p. ej. Alcobendas")}
+                placeholder={tr("e.g. Barcelona", "p. ej. Barcelona")}
                 className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
               />
             </div>
           )}
-          <label className="flex items-center gap-2 text-[12px] text-[var(--cream)]/80">
-            <input
-              type="checkbox"
-              checked={openOnly}
-              onChange={(e) => setOpenOnly(e.target.checked)}
-              className="accent-[var(--ball)]"
-            />
-            {tr("Only matches that still need players", "Solo partidos que buscan jugadores")}
-          </label>
           <div className="flex justify-between pt-1">
             <button
               onClick={() => {

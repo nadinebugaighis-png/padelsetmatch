@@ -63,3 +63,48 @@ export function cultureAffinity(a: string, b: string): number {
 export function playtomicLink(city: string) {
   return `https://playtomic.io/search?q=${encodeURIComponent(city)}`;
 }
+
+/**
+ * Normalize a user-pasted Playtomic booking link.
+ * - Trims whitespace
+ * - Adds https:// if missing
+ * - Rewrites bare playtomic.com (which returns a CloudFront 403) to playtomic.io
+ * - Returns null for empty input
+ * - Returns { error } for anything that isn't a Playtomic URL
+ */
+export function normalizePlaytomicLink(
+  raw: string | null | undefined,
+): { url: string | null; error?: string } {
+  const trimmed = (raw ?? "").trim();
+  if (!trimmed) return { url: null };
+  if (trimmed.length > 500) return { url: null, error: "Link is too long" };
+
+  let candidate = trimmed;
+  if (!/^https?:\/\//i.test(candidate)) candidate = `https://${candidate}`;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(candidate);
+  } catch {
+    return { url: null, error: "Not a valid link" };
+  }
+
+  const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+  const isPlaytomic =
+    host === "playtomic.io" ||
+    host === "playtomic.com" ||
+    host.endsWith(".playtomic.io") ||
+    host.endsWith(".playtomic.com");
+  if (!isPlaytomic) return { url: null, error: "Must be a playtomic.io link" };
+
+  // playtomic.com/ (root) returns a CloudFront 403 in mobile browsers.
+  // Deep club paths like playtomic.com/clubs/... work; rewrite only the bare host.
+  if (host === "playtomic.com") {
+    if (parsed.pathname === "/" || parsed.pathname === "") {
+      parsed.hostname = "playtomic.io";
+    }
+  }
+
+  parsed.protocol = "https:";
+  return { url: parsed.toString() };
+}

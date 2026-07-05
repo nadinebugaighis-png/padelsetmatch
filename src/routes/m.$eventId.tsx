@@ -108,8 +108,10 @@ function PublicMatchPage() {
   };
 
   const onJoinClick = () => {
-    if (hasSession) navigate({ to: "/app/join-setup", search: { join: eventId } as never });
-    else navigate({ to: "/auth", search: { join: eventId } as never });
+    const search: Record<string, string> = { join: eventId };
+    if (inviteToken) search.i = inviteToken;
+    if (hasSession) navigate({ to: "/app/join-setup", search: search as never });
+    else navigate({ to: "/auth", search: search as never });
   };
 
   return (

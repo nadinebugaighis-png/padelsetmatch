@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import {
   cancelMatchEvent,
+  claimMatchInviteByToken,
   createMatchInviteLink,
   deleteEventMessage,
   deleteMatchEvent,
@@ -26,6 +27,9 @@ import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil,
 import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    i: typeof s.i === "string" ? s.i : undefined,
+  }),
   component: EventRoute,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
   notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">Not found</div>,

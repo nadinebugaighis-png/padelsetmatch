@@ -8,6 +8,7 @@ import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, Thu
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
+import { PADEL_LEVELS, MADRID_ZONES } from "@/lib/types";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({

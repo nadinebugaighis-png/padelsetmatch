@@ -298,11 +298,24 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         </label>
         <input
           type="url"
+          inputMode="url"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
           value={playtomicLink}
-          onChange={(e) => setPlaytomicLink(e.target.value)}
+          onChange={(e) => {
+            setPlaytomicLink(e.target.value);
+            if (playtomicError) setPlaytomicError(null);
+          }}
           placeholder={tr("Playtomic booking link (optional)", "Enlace de reserva en Playtomic (opcional)")}
-          className="mt-2 w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+          className={`mt-2 w-full bg-black/30 border rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm ${playtomicError ? "border-red-400/60" : "border-[var(--cream)]/20"}`}
         />
+        {playtomicError && (
+          <p className="mt-1 text-[11px] text-red-300">{playtomicError}</p>
+        )}
+        <p className="mt-1 text-[10px] text-[var(--cream)]/50">
+          {tr("Paste the full playtomic.io booking link so players can open it directly.", "Pega el enlace completo de playtomic.io para que los jugadores puedan abrirlo directamente.")}
+        </p>
       </div>
 
       <div>

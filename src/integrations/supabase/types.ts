@@ -160,6 +160,48 @@ export type Database = {
           },
         ]
       }
+      friendships: {
+        Row: {
+          addressee_profile_id: string
+          created_at: string
+          id: string
+          requester_profile_id: string
+          responded_at: string | null
+          status: Database["public"]["Enums"]["friendship_status"]
+        }
+        Insert: {
+          addressee_profile_id: string
+          created_at?: string
+          id?: string
+          requester_profile_id: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["friendship_status"]
+        }
+        Update: {
+          addressee_profile_id?: string
+          created_at?: string
+          id?: string
+          requester_profile_id?: string
+          responded_at?: string | null
+          status?: Database["public"]["Enums"]["friendship_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friendships_addressee_profile_id_fkey"
+            columns: ["addressee_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_requester_profile_id_fkey"
+            columns: ["requester_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hides: {
         Row: {
           category: string
@@ -885,6 +927,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      friendship_status: "pending" | "accepted"
       match_event_status: "open" | "full" | "cancelled" | "played"
       match_gender_rule: "mixed" | "men_only" | "women_only"
     }
@@ -1015,6 +1058,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      friendship_status: ["pending", "accepted"],
       match_event_status: ["open", "full", "cancelled", "played"],
       match_gender_rule: ["mixed", "men_only", "women_only"],
     },

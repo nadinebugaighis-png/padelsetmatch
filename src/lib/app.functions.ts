@@ -1446,7 +1446,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       .eq("profile_a", a)
       .eq("profile_b", b)
       .maybeSingle();
-    if (cached) return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
+    if (cached && (cached as { model_version?: string }).model_version === "gemini-2.5-flash-frank-v3") return cached as { score: number; blurb: string; reasons: string[]; friction: string | null; model_version: string; created_at: string };
 
     // 2. Gather both profiles + Q&A (via admin — reading other user data)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

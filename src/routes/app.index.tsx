@@ -534,18 +534,24 @@ function Discover() {
                             <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
                           </div>
 
-                          {compatQ.data.sub_scores && Object.keys(compatQ.data.sub_scores).length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-1.5">
-                              {Object.entries(compatQ.data.sub_scores).map(([k, v]) => {
-                                const label = k === "padel" ? "Padel fit" : k === "friend" ? "Friendship" : k === "relationship" ? "Romance" : k;
-                                return (
-                                  <span key={k} className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--cream)]/[0.08] border border-[var(--cream)]/10 text-[var(--cream)]/80">
-                                    {label} <span className="font-bold text-[var(--ball)]">{v}</span>
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          )}
+                          {compatQ.data.sub_scores && (() => {
+                            const myIntents = new Set(((feedQ.data?.me as { intents?: string[] } | undefined)?.intents ?? []) as string[]);
+                            const visible = Object.entries(compatQ.data.sub_scores).filter(([k]) => myIntents.has(k));
+                            if (visible.length === 0) return null;
+                            return (
+                              <div className="mt-2 flex flex-wrap gap-1.5">
+                                {visible.map(([k, v]) => {
+                                  const label = k === "padel" ? "Padel fit" : k === "friend" ? "Friendship" : k === "relationship" ? "Romance" : k;
+                                  return (
+                                    <span key={k} className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--cream)]/[0.08] border border-[var(--cream)]/10 text-[var(--cream)]/80">
+                                      {label} <span className="font-bold text-[var(--ball)]">{v}</span>
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })()}
+
 
                           <p className="text-sm text-[var(--cream)]/90 mt-2 leading-relaxed">{compatQ.data.blurb}</p>
 

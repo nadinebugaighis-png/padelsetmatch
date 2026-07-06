@@ -693,11 +693,11 @@ const fr: Dict = {
   "disc.reportConfirm": "Envoyer le signalement ? Le compte de {name} sera suspendu en attendant vérification.",
   "disc.blockConfirm": "Bloquer {name} ? Vous ne vous verrez nulle part dans l'app.",
   "disc.qaBannerTitle": "Débloque ton Code d'affinité",
-  "disc.qaBannerSub": "Réponds à quelques questions pour que l'IA trouve tes meilleurs matches de pista — personnalité, valeurs et affinités.",
+  "disc.qaBannerSub": "Réponds à quelques questions pour que l'IA trouve tes meilleurs matches de terrain — personnalité, valeurs et affinités.",
   "disc.qaBannerCta": "Commencer l'affinité →",
 
   // Matches list
-  "ml.h1": "Tes pistas",
+  "ml.h1": "Tes terrains",
   "ml.sub": "Tout le monde ici t'a retapé.",
   "ml.loading": "Chargement…",
   "ml.empty": "Pas encore de matches.",
@@ -706,7 +706,7 @@ const fr: Dict = {
   // Chat
   "chat.opening": "Ouverture du chat…",
   "chat.safetyTitle": "Sécurité d'abord :",
-  "chat.safety": "réservez le match sur Playtomic — pista publique, réservation vérifiée, sans partager d'adresses.",
+  "chat.safety": "réservez le match sur Playtomic — terrain public, réservation vérifiée, sans partager d'adresses.",
   "chat.open": "Ouvrir",
   "chat.empty": "Vous vous êtes tapés tous les deux. Dis bonjour 👋",
   "chat.placeholder": "Salut ! 👋",
@@ -804,7 +804,7 @@ const fr: Dict = {
   "ob.errMax3": "Jusqu'à 3 traits personnalisés",
   "ob.errMaxTraits": "Max. 10 traits",
   "ob.h4": "Ta photo de padel",
-  "ob.h4sub": "Une photo de toi avec une raquette sur la pista — c'est toute l'ambiance. Affichée dans le grid.",
+  "ob.h4sub": "Une photo de toi avec une raquette sur le terrain — c'est toute l'ambiance. Affichée dans le grid.",
   "ob.uploading": "Téléversement…",
   "ob.tapUpload": "Tape pour téléverser",
   "ob.uploaded": "Photo téléversée",

@@ -24,14 +24,16 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
-function dayLabels(base: Date, i: number, es: boolean = false) {
+function dayLabels(base: Date, i: number, lang: "en" | "es" | "fr" = "en") {
   const d = new Date(base);
   d.setDate(base.getDate() + i);
-  const locale = es ? "es" : undefined;
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
   const weekday = d.toLocaleDateString(locale, { weekday: "short" }).toUpperCase();
   const month = d.toLocaleDateString(locale, { month: "short" }).toUpperCase();
   const day = d.getDate();
-  const top = i === 0 ? (es ? "HOY" : "TODAY") : i === 1 ? (es ? "MAÑANA" : "TOMORROW") : weekday;
+  const todayLabel = lang === "es" ? "HOY" : lang === "fr" ? "AUJOURD'HUI" : "TODAY";
+  const tomorrowLabel = lang === "es" ? "MAÑANA" : lang === "fr" ? "DEMAIN" : "TOMORROW";
+  const top = i === 0 ? todayLabel : i === 1 ? tomorrowLabel : weekday;
   const bottom = `${month} ${day}`;
   return { top, bottom, date: d };
 }

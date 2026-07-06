@@ -518,9 +518,15 @@ function Discover() {
                     )}
 
 
-                    {preview.categories && (
-                      <MatchScoreCard total={preview.score} categories={preview.categories} />
-                    )}
+                    {compatQ.data ? (
+                      <MatchScoreCard
+                        total={compatQ.data.score}
+                        padel={typeof compatQ.data.sub_scores?.padel === "number" ? compatQ.data.sub_scores.padel : null}
+                        personality={typeof compatQ.data.sub_scores?.personality === "number" ? compatQ.data.sub_scores.personality : null}
+                      />
+                    ) : preview.categories ? (
+                      <MatchScoreCard total={preview.score} padel={preview.categories.playingStyle} personality={preview.categories.personality} />
+                    ) : null}
 
                     {preview.free_court_access && (
                       <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">

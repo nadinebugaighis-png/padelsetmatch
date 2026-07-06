@@ -353,7 +353,7 @@ function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>
       <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
-      <div>{v}</div>
+      <div className="text-sm sm:text-base font-medium text-[var(--cream)]">{v}</div>
     </div>
   );
 }

@@ -706,7 +706,7 @@ const fr: Dict = {
   // Chat
   "chat.opening": "Ouverture du chat…",
   "chat.safetyTitle": "Sécurité d'abord :",
-  "chat.safety": "réservez le match sur Playtomic — pista publique, réservation vérifiée, sans partager d'adresses.",
+  "chat.safety": "réservez le match sur Playtomic — terrain public, réservation vérifiée, sans partager d'adresses.",
   "chat.open": "Ouvrir",
   "chat.empty": "Vous vous êtes tapés tous les deux. Dis bonjour 👋",
   "chat.placeholder": "Salut ! 👋",

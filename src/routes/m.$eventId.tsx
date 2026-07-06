@@ -116,7 +116,7 @@ function PublicMatchPage() {
 
   return (
     <main className="min-h-screen bg-[var(--court-deep)]">
-      <div className="max-w-md mx-auto px-5 py-8">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
         <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelMatch</Link>
 
         {q.isLoading && <div className="mt-10 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>}

@@ -59,7 +59,7 @@ function HiddenBlockedPage() {
   ];
 
   return (
-    <main className="px-4 py-5 max-w-md mx-auto pb-24">
+    <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto pb-24">
       <Link to="/app/profile" className="inline-flex items-center gap-1 text-sm text-[var(--cream)]/70 hover:text-[var(--cream)]">
         <ArrowLeft className="w-4 h-4" /> Back to profile
       </Link>

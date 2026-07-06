@@ -172,7 +172,7 @@ function AuthShell() {
             willChange: "transform",
           }}
         >
-          <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
+          <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
             <NavTab to="/app" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
 

@@ -245,7 +245,7 @@ function Discover() {
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
-    <main className="px-4 py-5 max-w-md mx-auto">
+    <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
       <p className="text-xs text-[var(--cream)]/55 mt-2">
@@ -369,7 +369,7 @@ function Discover() {
       {list.length === 0 ? (
         <p className="mt-10 text-center text-[var(--cream)]/60 text-sm">{t("disc.empty")}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 mt-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mt-5">
           {list.map((c) => (
             <div
               key={c.id}
@@ -458,7 +458,7 @@ function Discover() {
       </Link>
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-w-sm p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[92vh] flex flex-col rounded-3xl">
+        <DialogContent className="max-w-sm sm:max-w-lg lg:max-w-2xl p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[92vh] flex flex-col rounded-3xl">
           {preview && (() => {
             const mine = feedQ.data?.me;
             const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);

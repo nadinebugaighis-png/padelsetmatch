@@ -114,7 +114,7 @@ function EditEvent() {
         }}
       />
 
-      <div className="max-w-md mx-auto px-5 pb-32 -mt-4 space-y-2">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 pb-32 -mt-4 space-y-2">
         <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 pt-4">{tr("Danger zone", "Zona de peligro", "Zone sensible")}</div>
         {event.status !== "cancelled" && (
           <button

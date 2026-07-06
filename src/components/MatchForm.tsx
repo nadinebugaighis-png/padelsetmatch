@@ -142,7 +142,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   };
 
   return (
-    <div className="max-w-md mx-auto px-5 py-6 pb-32 space-y-5">
+    <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-6 pb-32 space-y-5">
       <Link
         to="/app/events"
         className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
@@ -331,7 +331,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </div>
 
       <div className="fixed left-0 right-0 bottom-16 px-5 z-30">
-        <div className="max-w-md mx-auto">
+        <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
           <button
             onClick={handleSubmit}
             disabled={!canSave}

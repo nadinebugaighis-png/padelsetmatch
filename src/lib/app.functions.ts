@@ -1140,7 +1140,7 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       count: z.number().int().min(1).max(8).default(5),
-      lang: z.enum(["en", "es"]).default("en"),
+      lang: z.enum(["en", "es", "fr"]).default("en"),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {

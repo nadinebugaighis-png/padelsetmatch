@@ -560,8 +560,34 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         return b.score - a.score;
       });
 
+    // Override heuristic score with cached AI compatibility score when available,
+    // so the badge on the profile grid matches the AI % shown on the profile card.
+    const candIds = scored.map((c) => c.id);
+    if (candIds.length > 0) {
+      const { data: aiRows } = await supabaseAdmin
+        .from("compatibility_scores" as never)
+        .select("profile_a, profile_b, score")
+        .or(candIds.map((id) => {
+          const [a2, b2] = me.id < id ? [me.id, id] : [id, me.id];
+          return `and(profile_a.eq.${a2},profile_b.eq.${b2})`;
+        }).join(","));
+      const aiScoreByOther = new Map<string, number>();
+      ((aiRows as Array<{ profile_a: string; profile_b: string; score: number }> | null) ?? []).forEach((r) => {
+        const other = r.profile_a === me.id ? r.profile_b : r.profile_a;
+        if (typeof r.score === "number") aiScoreByOther.set(other, Math.round(r.score));
+      });
+      if (aiScoreByOther.size > 0) {
+        for (const c of scored) {
+          const ai = aiScoreByOther.get(c.id);
+          if (typeof ai === "number") c.score = ai;
+        }
+        scored.sort((a, b) => b.score - a.score);
+      }
+    }
+
     return { me, candidates: scored };
   });
+
 
 export const likeProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

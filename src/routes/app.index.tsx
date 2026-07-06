@@ -428,24 +428,6 @@ function Discover() {
                 >
                   <EyeOff className="w-3.5 h-3.5" />
                 </button>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleBlock(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
-                  aria-label={`Block ${c.first_name}`}
-                  title={t("disc.blockTitle")}
-                >
-                  <Shield className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleReport(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-red-600/80 text-[var(--cream)]"
-                  aria-label={`Report ${c.first_name}`}
-                  title={t("disc.reportTitle")}
-                >
-                  <Flag className="w-3.5 h-3.5" />
-                </button>
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">
@@ -696,6 +678,25 @@ function Discover() {
                     {preview.reasons[0] && (
                       <p className="text-xs text-[var(--cream)]/60 px-1">{preview.reasons[0]}</p>
                     )}
+
+                    <div className="flex items-center justify-center gap-4 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
+                        className="flex items-center gap-1.5 text-[11px] text-[var(--cream)]/50 hover:text-[var(--cream)]/80 transition"
+                        aria-label={`Block ${preview?.first_name ?? ""}`}
+                      >
+                        <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
+                        className="flex items-center gap-1.5 text-[11px] text-[var(--cream)]/50 hover:text-red-400/80 transition"
+                        aria-label={`Report ${preview?.first_name ?? ""}`}
+                      >
+                        <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

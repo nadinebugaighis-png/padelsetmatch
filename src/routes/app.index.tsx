@@ -537,11 +537,7 @@ function Discover() {
                         <p className="text-sm text-[var(--cream)]/60 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
                       ) : compatQ.data ? (
                         <>
-                          <div className="flex items-baseline gap-2">
-                            <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
-                          </div>
-
-                          <p className="text-sm text-[var(--cream)]/90 mt-2 leading-relaxed">{compatQ.data.blurb}</p>
+                          <p className="text-sm text-[var(--cream)]/90 leading-relaxed">{compatQ.data.blurb}</p>
 
                           {/* Padel compatibility */}
                           {(typeof compatQ.data.sub_scores?.padel === "number" || compatQ.data.sub_scores?.padel_analysis) && (

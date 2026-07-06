@@ -1598,8 +1598,6 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 ${langInstruction}
 
 INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
-
-INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
 ${intentGuidance}
 ${asymNote}
 

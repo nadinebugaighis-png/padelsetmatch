@@ -10,10 +10,10 @@ import { getPlayerCount } from "@/lib/stats.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PadelMatch — more games, better people" },
-      { name: "description", content: "The community app for padel players. Find your level, book great games, meet people worth playing with." },
-      { property: "og:title", content: "PadelMatch — more games, better people" },
-      { property: "og:description", content: "The community app for padel players. Find your level, book great games, meet people worth playing with." },
+      { title: "Padel Match App — More Friends, Better Games" },
+      { name: "description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
+      { property: "og:title", content: "Padel Match App — More Friends, Better Games" },
+      { property: "og:description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
       { property: "og:url", content: "https://padelmatchapp.lovable.app/" },
     ],
     links: [

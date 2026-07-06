@@ -6,7 +6,7 @@ import { deleteMyAccount, getMyProfile, setAwayStatus, submitFeedback, updateMyP
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, Lock, Sparkles, Star } from "lucide-react";
+import { Camera, Lock, Pencil, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";

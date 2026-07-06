@@ -284,15 +284,15 @@ function Discover() {
         </button>
       </div>
 
-      <div className="mt-2 max-w-[16rem]">
+      <div className="mt-3">
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--cream)]/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--cream)]/40" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name..."
-            className="w-full h-7 pl-7 pr-2.5 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-xs placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--ball)]/60"
+            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--ball)]/60"
           />
         </div>
       </div>
@@ -355,20 +355,6 @@ function Discover() {
       <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
 
 
-      {(matchesQ.data?.length ?? 0) > 0 && (
-        <Link to="/app/matches" className="mt-4 flex items-center gap-3 surface-card p-3 border border-[var(--ball)] rounded-xl bg-[var(--ball)]/10">
-          <div className="flex -space-x-2">
-            {matchesQ.data!.slice(0, 3).map((m) => m.other?.photo_url && (
-              <img key={m.match_id} src={m.other.photo_url} alt={m.other.first_name} className="w-9 h-9 rounded-full object-cover border-2 border-[var(--court-deep)]" />
-            ))}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-[var(--cream)]">🎾 It's a match! ({matchesQ.data!.length})</div>
-            <div className="text-xs text-[var(--cream)]/75">Tap to open your chat{matchesQ.data!.length > 1 ? "s" : ""}</div>
-          </div>
-          <MessageCircle className="w-5 h-5 text-[var(--ball)]" />
-        </Link>
-      )}
 
 
       {(qaQ.data?.length ?? 0) === 0 && (

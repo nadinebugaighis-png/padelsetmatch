@@ -23,7 +23,7 @@ export const Route = createFileRoute("/app/")({
 function Discover() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { t, label } = useI18n();
+  const { t, label, lang } = useI18n();
   const tr = useTr();
   const getFeed = useServerFn(getDiscoverFeed);
   const like = useServerFn(likeProfile);
@@ -48,8 +48,8 @@ function Discover() {
 
   const compatFn = useServerFn(getAiCompatibility);
   const compatQ = useQuery({
-    queryKey: ["ai-compat", preview?.id],
-    queryFn: () => compatFn({ data: { otherProfileId: preview!.id } }),
+    queryKey: ["ai-compat", preview?.id, lang],
+    queryFn: () => compatFn({ data: { otherProfileId: preview!.id, lang } }),
     enabled: !!preview?.id,
     staleTime: 1000 * 60 * 60,
     retry: false,

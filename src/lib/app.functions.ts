@@ -1490,7 +1490,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
 // Cached in compatibility_scores to keep it cheap and stable.
 export const getAiCompatibility = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid(), lang: z.enum(["en", "es", "fr"]).optional().default("en") }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: meRow } = await context.supabase
       .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
@@ -1535,7 +1535,8 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     // when either person changes what they're looking for or answers more Qs.
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
-    const versionKey = `v8-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const lang = data.lang ?? "en";
+    const versionKey = `v8-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
       return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: Record<string, number> | null; model_version: string; created_at: string };
@@ -1586,7 +1587,15 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const requestedSubScores = sharedIntents.length > 0 ? sharedIntents : ["padel"];
 
+    const langInstruction = lang === "es"
+      ? "Responde SIEMPRE en español."
+      : lang === "fr"
+        ? "Réponds TOUJOURS en français."
+        : "Always reply in English.";
+
     const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
+
+${langInstruction}
 
 INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
 ${intentGuidance}

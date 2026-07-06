@@ -1630,12 +1630,7 @@ Return ONLY valid JSON with this exact shape:
   },
   "padel_analysis": "<2-3 grounded sentences (max 320 chars) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
   "personality_analysis": "<2-3 grounded sentences (max 320 chars) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
-  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses above.>",
-  "reasons": [
-    "<REASON 1 — the single strongest concrete thing you two share, drawn from actual profile data. Max 90 chars.>",
-    "<REASON 2 — a complementary difference or how you'd balance each other. Max 90 chars.>",
-    "<REASON 3 — a small practical note (schedule, level, style, a shared Q&A answer). Max 90 chars.>"
-  ],
+  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses. IMPORTANT: do NOT repeat facts, traits or phrases that also appear in padel_analysis or personality_analysis. The blurb is the headline; the analyses do the detail.>",
   "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — this is usually null.>"
 }
 

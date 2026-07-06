@@ -495,7 +495,7 @@ function Discover() {
                     {/* Overlaid identity */}
                     <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
-                        {preview.score}% Match
+                        {preview.score}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
                       <div className="text-sm text-[var(--cream)]/85">{preview.zone} · {label(preview.level)}</div>
@@ -524,19 +524,19 @@ function Discover() {
 
                     {preview.free_court_access && (
                       <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 Free court access</div>
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                         {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
-                        <p className="text-[10px] text-[var(--cream)]/55 mt-1">Arrange the exact court in chat — Playtomic or their address.</p>
+                        <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
                       </div>
                     )}
 
                     {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
                     <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
                       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
-                        <Sparkles className="w-3 h-3" /> Why you two could click
+                        <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
                       </div>
                       {compatQ.isLoading ? (
-                        <p className="text-sm text-[var(--cream)]/60 italic">Analyzing your vibe…</p>
+                        <p className="text-sm text-[var(--cream)]/60 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
                       ) : compatQ.data ? (
                         <>
                           <div className="flex items-baseline gap-2">
@@ -550,7 +550,7 @@ function Discover() {
                             return (
                               <div className="mt-2 flex flex-wrap gap-1.5">
                                 {visible.map(([k, v]) => {
-                                  const label = k === "padel" ? "Padel fit" : k === "friend" ? "Friendship" : k === "relationship" ? "Romance" : k;
+                                  const label = k === "padel" ? tr("Padel fit", "Encaje padel", "Compat. padel") : k === "friend" ? tr("Friendship", "Amistad", "Amitié") : k === "relationship" ? tr("Romance", "Romance", "Romance") : k;
                                   return (
                                     <span key={k} className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--cream)]/[0.08] border border-[var(--cream)]/10 text-[var(--cream)]/80">
                                       {label} <span className="font-bold text-[var(--ball)]">{v}</span>
@@ -577,7 +577,7 @@ function Discover() {
 
 
                           <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">
-                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">Was this useful?</span>
+                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
                             <button
                               type="button"
                               disabled={rateCompatM.isPending}
@@ -600,9 +600,14 @@ function Discover() {
 
                           {compatFbQ.data?.thumbs === -1 && (
                             <div className="mt-2 flex flex-wrap gap-1.5">
-                              {["Too harsh", "Too generic", "Missed the point", "Just wrong"].map((reason) => (
+                              {[
+                                { key: "harsh", label: tr("Too harsh", "Demasiado duro", "Trop dur") },
+                                { key: "generic", label: tr("Too generic", "Demasiado genérico", "Trop générique") },
+                                { key: "missed", label: tr("Missed the point", "No dio en el clavo", "À côté de la plaque") },
+                                { key: "wrong", label: tr("Just wrong", "Directamente mal", "Complètement faux") },
+                              ].map(({ key, label: reason }) => (
                                 <button
-                                  key={reason}
+                                  key={key}
                                   type="button"
                                   disabled={rateCompatM.isPending}
                                   onClick={() => rateCompatM.mutate({ thumbs: -1, reason })}
@@ -615,11 +620,11 @@ function Discover() {
                           )}
 
                           <p className="text-[10px] text-[var(--cream)]/40 mt-1.5 leading-snug">
-                            Your feedback is completely private — only the AI sees it to learn what you like.
+                            {tr("Your feedback is completely private — only the AI sees it to learn what you like.", "Tu opinión es totalmente privada — solo la IA la ve para aprender qué te gusta.", "Ton retour est totalement privé — seule l'IA le voit pour apprendre ce que tu aimes.")}
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-[var(--cream)]/50 italic">Couldn't load AI analysis right now.</p>
+                        <p className="text-sm text-[var(--cream)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
                       )}
                     </div>
 
@@ -680,7 +685,7 @@ function Discover() {
 
                       {preview.bio && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`)}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`, `À propos de ${preview.first_name}`)}</div>
                           <p className="text-sm text-[var(--cream)]/90 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
                         </div>
                       )}
@@ -717,7 +722,7 @@ function Discover() {
                       disabled={likeM.isPending && !match}
                       className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
                     >
-                      {match ? "Send Message" : preview.liked ? "Waiting for match…" : "Like to connect"}
+                      {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
                     </button>
                     <button
                       type="button"

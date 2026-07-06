@@ -1535,7 +1535,8 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     // when either person changes what they're looking for or answers more Qs.
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
-    const versionKey = `v8-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const lang = data.lang ?? "en";
+    const versionKey = `v8-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
       return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: Record<string, number> | null; model_version: string; created_at: string };

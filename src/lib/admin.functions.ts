@@ -160,13 +160,30 @@ export const adminResolveReport = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Look up the report so we can undo the auto-block created when it was filed.
+    const { data: rep } = await supabaseAdmin
+      .from("reports" as never)
+      .select("reporter_profile_id, reported_profile_id")
+      .eq("id", data.reportId)
+      .maybeSingle();
     const { error } = await supabaseAdmin
       .from("reports" as never)
       .update({ status: data.status, reviewed_at: new Date().toISOString() } as never)
       .eq("id", data.reportId);
     if (error) throw new Error(error.message);
+    // On resolve/dismiss, remove the reporter's auto-block so the reported user
+    // can reappear in the reporter's Grid. Keep pending reports blocked.
+    const r = rep as { reporter_profile_id: string; reported_profile_id: string } | null;
+    if (r && (data.status === "resolved" || data.status === "dismissed")) {
+      await supabaseAdmin
+        .from("blocks" as never)
+        .delete()
+        .eq("blocker_profile_id", r.reporter_profile_id)
+        .eq("blocked_profile_id", r.reported_profile_id);
+    }
     return { ok: true };
   });
+
 
 export const adminClearProfilePhoto = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -369,7 +369,7 @@ function Discover() {
       {list.length === 0 ? (
         <p className="mt-10 text-center text-[var(--cream)]/60 text-sm">{t("disc.empty")}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 mt-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mt-5">
           {list.map((c) => (
             <div
               key={c.id}

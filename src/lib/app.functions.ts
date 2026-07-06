@@ -1490,7 +1490,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
 // Cached in compatibility_scores to keep it cheap and stable.
 export const getAiCompatibility = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid(), lang: z.enum(["en", "es", "fr"]).optional().default("en") }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: meRow } = await context.supabase
       .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();

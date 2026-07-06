@@ -428,24 +428,6 @@ function Discover() {
                 >
                   <EyeOff className="w-3.5 h-3.5" />
                 </button>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleBlock(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
-                  aria-label={`Block ${c.first_name}`}
-                  title={t("disc.blockTitle")}
-                >
-                  <Shield className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleReport(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-red-600/80 text-[var(--cream)]"
-                  aria-label={`Report ${c.first_name}`}
-                  title={t("disc.reportTitle")}
-                >
-                  <Flag className="w-3.5 h-3.5" />
-                </button>
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">

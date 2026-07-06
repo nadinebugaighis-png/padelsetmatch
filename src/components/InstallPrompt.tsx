@@ -113,7 +113,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
             {!safari && (
               <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">
                 <p className="text-sm font-bold text-[var(--cream)]">{tr("First open this page in Safari", "Primero abre esta página en Safari", "Ouvre d'abord cette page dans Safari")}</p>
-                <p className="mt-1 text-xs text-[var(--cream)]/65">{tr("iPhone only shows “Add to Home Screen” inside Safari.", "En iPhone, “Añadir a la pantalla de inicio” solo aparece dentro de Safari.")}</p>
+                <p className="mt-1 text-xs text-[var(--cream)]/65">{tr("iPhone only shows “Add to Home Screen” inside Safari.", "En iPhone, “Añadir a la pantalla de inicio” solo aparece dentro de Safari.", "Sur iPhone, « Sur l'écran d'accueil » n'apparaît que dans Safari.")}</p>
                 <div className="mt-3 flex gap-2">
                   <button onClick={copyLink} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[var(--ball)] px-4 py-2 text-sm font-bold text-[var(--court-deep)]">
                     {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -146,7 +146,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
                 <ArrowUpFromLine className="h-9 w-9 rounded-full bg-[var(--ball)] p-2 text-[var(--court-deep)]" />
                 <div>
                   <p className="font-semibold text-[var(--cream)]">{tr("Look for this icon at the bottom of Safari", "Busca este icono en la parte inferior de Safari", "Cherche cette icône en bas de Safari")}</p>
-                  <p className="text-xs text-[var(--cream)]/60">{tr("Then choose “Add to Home Screen”.", "Después elige “Añadir a la pantalla de inicio”.")}</p>
+                  <p className="text-xs text-[var(--cream)]/60">{tr("Then choose “Add to Home Screen”.", "Después elige “Añadir a la pantalla de inicio”.", "Puis choisis « Sur l'écran d'accueil ».")}</p>
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
                 <span className="text-display text-lg text-[var(--ball)]">1</span>
               </div>
               <div>
-                <p className="font-semibold text-[var(--cream)]">{tr("Tap the menu (⋮)", "Toca el menú (⋮)")}</p>
+                <p className="font-semibold text-[var(--cream)]">{tr("Tap the menu (⋮)", "Toca el menú (⋮)", "Appuie sur le menu (⋮)")}</p>
                 <p className="text-xs text-[var(--cream)]/60">{tr("in Chrome's top-right corner", "en la esquina superior derecha de Chrome", "en haut à droite de Chrome")}</p>
               </div>
             </div>
@@ -245,7 +245,7 @@ export function InstallPrompt() {
             <Smartphone className="w-6 h-6 text-[var(--ball)] shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-[var(--cream)]">{tr("Put PadelMatch on your phone", "Instala PadelMatch en tu móvil", "Installe PadelMatch sur ton téléphone")}</p>
-              <p className="text-xs text-[var(--ball)]">{tr("Quick guided setup →", "Instalación guiada rápida →")}</p>
+              <p className="text-xs text-[var(--ball)]">{tr("Quick guided setup →", "Instalación guiada rápida →", "Installation guidée rapide →")}</p>
             </div>
             <Download className="w-5 h-5 text-[var(--ball)] shrink-0" />
           </button>

@@ -119,7 +119,7 @@ function PublicMatchPage() {
       <div className="max-w-md mx-auto px-5 py-8">
         <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelMatch</Link>
 
-        {q.isLoading && <div className="mt-10 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…")}</div>}
+        {q.isLoading && <div className="mt-10 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
 
         {!q.isLoading && !match && (
           <div className="mt-10 text-center text-[var(--cream)]/70">
@@ -192,7 +192,7 @@ function PublicMatchPage() {
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
               <p className="text-[11px] text-[var(--cream)]/50 text-center pt-1">
-                {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.")}
+                {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
 
               </p>
             </div>

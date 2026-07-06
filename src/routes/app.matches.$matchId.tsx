@@ -94,12 +94,12 @@ function ChatRoom() {
   });
   const confirmM = useMutation({
     mutationFn: () => confirmFn({ data: { matchId } }),
-    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅", "Marqué comme joué ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't confirm", "No se pudo confirmar", "Impossible de confirmer")),
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.")),
+    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.", "Absence signalée. Merci — nous allons vérifier.")),
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar", "Impossible de signaler")),
   });
   const editM = useMutation({
@@ -173,7 +173,7 @@ function ChatRoom() {
         >
           <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
           {statusQ.data?.iConfirmed
-            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…"))
+            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓", "Joué ensemble ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…", "En attente de sa confirmation…"))
             : tr("We played a match", "Jugamos un partido", "Nous avons joué un match")}
         </button>
         <button
@@ -320,7 +320,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
   const submitM = useMutation({
     mutationFn: () => submitFn({ data: { matchId, stars, tags, comment: comment.trim() || undefined } }),
     onSuccess: () => {
-      toast.success(tr("Thanks — this makes future matches smarter", "Gracias — así mejoramos tus próximos matches"));
+      toast.success(tr("Thanks — this makes future matches smarter", "Gracias — así mejoramos tus próximos matches", "Merci — cela améliore les futurs matches"));
       qc.invalidateQueries({ queryKey: ["match-rating", matchId] });
       setExpanded(false);
     },
@@ -401,7 +401,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
       <div className="flex justify-end gap-2">
         <Button variant="outline" size="sm" onClick={() => setExpanded(false)}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
         <Button size="sm" disabled={stars === 0 || submitM.isPending} onClick={() => submitM.mutate()}>
-          {submitM.isPending ? tr("Saving…", "Guardando…") : hasRated ? tr("Update", "Actualizar", "Mettre à jour") : tr("Submit", "Enviar", "Envoyer")}
+          {submitM.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : hasRated ? tr("Update", "Actualizar", "Mettre à jour") : tr("Submit", "Enviar", "Envoyer")}
         </Button>
       </div>
     </div>

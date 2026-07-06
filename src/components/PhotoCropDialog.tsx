@@ -140,7 +140,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
           <div className="flex gap-2 justify-end">
             <Button variant="outline" onClick={onCancel} disabled={busy}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
             <Button onClick={handleConfirm} disabled={busy || !area || !!loadError || !naturalSize}>
-              {busy ? tr("Saving…", "Guardando…") : tr("Use photo", "Usar foto", "Utiliser la photo")}
+              {busy ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Use photo", "Usar foto", "Utiliser la photo")}
             </Button>
           </div>
         </div>

@@ -146,7 +146,7 @@ function EventDetail() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [msgsQ.data]);
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…")}</div>;
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
   if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
@@ -384,7 +384,7 @@ function EventDetail() {
         {event.note && <p className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap">{event.note}</p>}
 
         <div className="text-xs text-[var(--cream)]/60">
-          {event.court_booked ? tr("✅ Court is booked", "✅ Pista reservada") : tr("🔎 Court still needed", "🔎 Falta reservar la pista")}
+          {event.court_booked ? tr("✅ Court is booked", "✅ Pista reservada", "✅ Pista réservée") : tr("🔎 Court still needed", "🔎 Falta reservar la pista", "🔎 Pista encore à trouver")}
           {event.playtomic_link && (() => {
             const safe = normalizePlaytomicLink(event.playtomic_link).url;
             if (!safe) return null;
@@ -482,7 +482,7 @@ function EventDetail() {
               onClick={async () => {
                 try {
                   await respondInvite({ data: { inviteId: me!.myInvite!.id, accept: true } });
-                  toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾"));
+                  toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾", "Tu es inscrit·e ! À bientôt sur la pista 🎾"));
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
@@ -494,7 +494,7 @@ function EventDetail() {
               onClick={async () => {
                 try {
                   await respondInvite({ data: { inviteId: me!.myInvite!.id, accept: false } });
-                  toast(tr("No worries — thanks for letting the host know", "Sin problema — gracias por avisar"));
+                  toast(tr("No worries — thanks for letting the host know", "Sin problema — gracias por avisar", "Pas de souci — merci d'avoir prévenu l'hôte"));
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
@@ -542,7 +542,7 @@ function EventDetail() {
               onClick={onToggleBooked}
               className="w-full py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/80"
             >
-              {event.court_booked ? tr("Mark court not booked", "Marcar pista como no reservada", "Marquer pista non réservée") : tr("Mark court booked ✅", "Marcar pista reservada ✅")}
+              {event.court_booked ? tr("Mark court not booked", "Marcar pista como no reservada", "Marquer pista non réservée") : tr("Mark court booked ✅", "Marcar pista reservada ✅", "Marquer pista réservée ✅")}
             </button>
           </>
         )}
@@ -662,7 +662,7 @@ function EventDetail() {
                   void onSend();
                 }
               }}
-              placeholder={tr("Message the group…", "Escribe al grupo…")}
+              placeholder={tr("Message the group…", "Escribe al grupo…", "Écris au groupe…")}
               rows={1}
               enterKeyHint="send"
               className="min-h-10 min-w-0 resize-none overflow-hidden bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-base leading-6 text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none focus:ring-1 focus:ring-[var(--ball)]/60"
@@ -677,7 +677,7 @@ function EventDetail() {
             </button>
           </div>
           <p className="text-[10px] text-[var(--cream)]/50 mt-2">
-            {tr("🎾 For safety, arrange the actual court on Playtomic when possible.", "🎾 Por seguridad, reservad la pista en Playtomic siempre que podáis.")}
+            {tr("🎾 For safety, arrange the actual court on Playtomic when possible.", "🎾 Por seguridad, reservad la pista en Playtomic siempre que podáis.", "🎾 Pour la sécurité, organise la pista sur Playtomic quand c'est possible.")}
           </p>
         </div>
       )}
@@ -798,7 +798,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
           <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
             {tr("From your matches & friends", "De tus matches y amigos", "Depuis tes matches et amis")}
           </div>
-          {connsQ.isLoading && <div className="text-xs text-[var(--cream)]/50">{tr("Loading…", "Cargando…")}</div>}
+          {connsQ.isLoading && <div className="text-xs text-[var(--cream)]/50">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
           {!connsQ.isLoading && people.length === 0 && (
             <p className="text-xs text-[var(--cream)]/50">
               {tr("No connections yet. Use the invite link below to share on WhatsApp.", "Aún no tienes conexiones. Usa el enlace de abajo para compartir por WhatsApp.", "Pas encore de connexions. Utilise le lien d'invitation ci-dessous pour partager sur WhatsApp.")}

@@ -31,7 +31,7 @@ function EditEvent() {
     queryFn: () => get({ data: { id: eventId } }),
   });
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…")}</div>;
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
   if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;

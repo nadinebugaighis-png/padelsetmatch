@@ -55,7 +55,7 @@ function JoinSetupPage() {
             try { await claimInvite({ data: { token: inviteToken } }); } catch { /* ignore */ }
           }
           await joinFn({ data: { id: join } });
-          toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾"));
+          toast.success(tr("You're in! See you on court 🎾", "¡Estás dentro! Nos vemos en la pista 🎾", "Tu es inscrit·e ! À bientôt sur la pista 🎾"));
         } catch (e) {
           const msg = e instanceof Error ? e.message : "";
           if (msg.startsWith("INVITE_LOCK:")) {
@@ -82,7 +82,7 @@ function JoinSetupPage() {
         <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
         <h1 className="text-3xl text-[var(--cream)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>
         <p className="text-sm text-[var(--cream)]/70 mt-2">
-          {tr("You can complete your full profile later — this is enough to join a match.", "Puedes completar tu perfil después — con esto ya puedes unirte a un partido.")}
+          {tr("You can complete your full profile later — this is enough to join a match.", "Puedes completar tu perfil después — con esto ya puedes unirte a un partido.", "Tu peux compléter ton profil entier plus tard — c'est suffisant pour rejoindre un match.")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">
@@ -134,7 +134,7 @@ function JoinSetupPage() {
             disabled={busy}
             className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50"
           >
-            {busy ? tr("Saving…", "Guardando…") : join ? tr("Save & join the match", "Guardar y unirme al partido", "Enregistrer et rejoindre le match") : tr("Save & continue", "Guardar y continuar", "Enregistrer et continuer")}
+            {busy ? tr("Saving…", "Guardando…", "Enregistrement…") : join ? tr("Save & join the match", "Guardar y unirme al partido", "Enregistrer et rejoindre le match") : tr("Save & continue", "Guardar y continuar", "Enregistrer et continuer")}
           </button>
 
           <button

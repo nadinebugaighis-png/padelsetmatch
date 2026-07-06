@@ -334,7 +334,7 @@ function Onboarding() {
   if (profileQ.isLoading) {
     return (
       <main className="px-4 py-10 max-w-md mx-auto text-center text-[var(--cream)]/70">
-        {tr("Loading your profile…", "Cargando tu perfil…")}
+        {tr("Loading your profile…", "Cargando tu perfil…", "Chargement de ton profil…")}
       </main>
     );
   }
@@ -367,7 +367,7 @@ function Onboarding() {
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
             <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
-            <p className="text-[11px] text-[var(--cream)]/50">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.")}</p>
+            <p className="text-[11px] text-[var(--cream)]/50">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
@@ -375,7 +375,7 @@ function Onboarding() {
               ))}
             </div>
             {gender === "self-describe" && (
-              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)")} maxLength={40} />
+              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
             )}
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
             <div className="flex flex-wrap gap-2">
@@ -423,10 +423,10 @@ function Onboarding() {
                 <Input
                   value={sexualOrientation}
                   onChange={(e) => setSexualOrientation(e.target.value)}
-                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…")}
+                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…", "p. ex. hétéro, gay, bisexuel·le, queer, pansexuel·le…")}
                   maxLength={60}
                 />
-                <p className="text-[10px] text-[var(--cream)]/50">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.")}</p>
+                <p className="text-[10px] text-[var(--cream)]/50">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.", "Privé — utilisé seulement pour améliorer les matches. Pas affiché sur ton profil.")}</p>
               </div>
             )}
 
@@ -444,7 +444,7 @@ function Onboarding() {
 
             <div>
               <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.")}</p>
+              <p className="text-xs text-[var(--cream)]/50 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.", "Ajoute les endroits où tu joues — chez toi, au travail, ta maison d'été ou en voyage. Jusqu'à 3 zones par pays.")}</p>
             </div>
 
 
@@ -566,7 +566,7 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
-              <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —")}</option>
+              <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
             </select>
 
@@ -631,7 +631,7 @@ function Onboarding() {
               <label className="flex items-start gap-2 text-sm">
                 <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--ball)] mt-0.5" />
                 <span>
-                  <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis")}</span>
+                  <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis", "🎾 J'ai accès à une pista gratuitement")}</span>
                   <span className="block text-xs text-[var(--cream)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.", "Club privé, pista résidentielle ou créneaux offerts à partager avec un match. Un badge apparaîtra sur ton profil.")}</span>
                 </span>
               </label>
@@ -738,14 +738,14 @@ function Onboarding() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--cream)]/60 gap-2">
                   <Camera className="w-8 h-8" />
                   <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾")}</span>
+                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
                 </div>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
             </label>
             {!photoUrl && (
               <p className="text-[11px] text-[var(--cream)]/55 text-center">
-                {tr("No photo? No problem — you can add one anytime from your profile.", "¿Sin foto? Sin problema — puedes añadirla cuando quieras desde tu perfil.")}
+                {tr("No photo? No problem — you can add one anytime from your profile.", "¿Sin foto? Sin problema — puedes añadirla cuando quieras desde tu perfil.", "Pas de photo ? Pas de souci — tu peux en ajouter une plus tard depuis ton profil.")}
               </p>
             )}
           </>

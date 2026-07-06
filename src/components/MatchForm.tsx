@@ -294,7 +294,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Court", "Pista", "Pista")}</label>
         <label className="flex items-center gap-3 text-sm text-[var(--cream)]/80">
           <input type="checkbox" checked={courtBooked} onChange={(e) => setCourtBooked(e.target.checked)} />
-          {tr("I've booked the court ✅", "Ya reservé la pista ✅")}
+          {tr("I've booked the court ✅", "Ya reservé la pista ✅", "J'ai réservé la pista ✅")}
         </label>
         <input
           type="url"
@@ -337,7 +337,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             disabled={!canSave}
             className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
           >
-            {saving ? tr("Saving…", "Guardando…") : submitLabel}
+            {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : submitLabel}
           </button>
         </div>
       </div>

@@ -146,7 +146,7 @@ function Discover() {
     mutationFn: (id: string) => reportPhotoFn({ data: { reportedProfileId: id, reason: "Inappropriate photo" } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast.success(tr("Photo reported — thanks. Our team will review it.", "Foto reportada — gracias. Nuestro equipo la revisará."));
+      toast.success(tr("Photo reported — thanks. Our team will review it.", "Foto reportada — gracias. Nuestro equipo la revisará.", "Photo signalée — merci. Notre équipe va la vérifier."));
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not send report", "No se pudo enviar el reporte", "Impossible d'envoyer le signalement")),
   });
@@ -801,9 +801,9 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
       <div className="w-9 h-9 rounded-full bg-[var(--ball)]/20 flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-[var(--cream)]">
-          {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
+          {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
-        <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.")}</div>
+        <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
       </div>
       <button
         type="button"

@@ -495,7 +495,7 @@ function Discover() {
                     {/* Overlaid identity */}
                     <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
-                        {preview.score}% {tr("Match", "Match", "Match")}
+                        {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
                       <div className="text-sm text-[var(--cream)]/85">{preview.zone} · {label(preview.level)}</div>
@@ -518,9 +518,15 @@ function Discover() {
                     )}
 
 
-                    {preview.categories && (
-                      <MatchScoreCard total={preview.score} categories={preview.categories} />
-                    )}
+                    {compatQ.data ? (
+                      <MatchScoreCard
+                        total={compatQ.data.score}
+                        padel={typeof compatQ.data.sub_scores?.padel === "number" ? compatQ.data.sub_scores.padel : null}
+                        personality={typeof compatQ.data.sub_scores?.personality === "number" ? compatQ.data.sub_scores.personality : null}
+                      />
+                    ) : preview.categories ? (
+                      <MatchScoreCard total={preview.score} padel={preview.categories.playingStyle} personality={preview.categories.personality} />
+                    ) : null}
 
                     {preview.free_court_access && (
                       <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">
@@ -543,26 +549,37 @@ function Discover() {
                             <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
                           </div>
 
-                          {compatQ.data.sub_scores && (() => {
-                            const myIntents = new Set(((feedQ.data?.me as { intents?: string[] } | undefined)?.intents ?? []) as string[]);
-                            const visible = Object.entries(compatQ.data.sub_scores).filter(([k]) => myIntents.has(k));
-                            if (visible.length === 0) return null;
-                            return (
-                              <div className="mt-2 flex flex-wrap gap-1.5">
-                                {visible.map(([k, v]) => {
-                                  const label = k === "padel" ? tr("Padel fit", "Encaje padel", "Compat. padel") : k === "friend" ? tr("Friendship", "Amistad", "Amitié") : k === "relationship" ? tr("Romance", "Romance", "Romance") : k;
-                                  return (
-                                    <span key={k} className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--cream)]/[0.08] border border-[var(--cream)]/10 text-[var(--cream)]/80">
-                                      {label} <span className="font-bold text-[var(--ball)]">{v}</span>
-                                    </span>
-                                  );
-                                })}
-                              </div>
-                            );
-                          })()}
-
-
                           <p className="text-sm text-[var(--cream)]/90 mt-2 leading-relaxed">{compatQ.data.blurb}</p>
+
+                          {/* Padel compatibility */}
+                          {(typeof compatQ.data.sub_scores?.padel === "number" || compatQ.data.sub_scores?.padel_analysis) && (
+                            <div className="mt-3 rounded-xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-3">
+                              <div className="flex items-center justify-between mb-1.5">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
+                                {typeof compatQ.data.sub_scores?.padel === "number" && (
+                                  <div className="text-sm font-extrabold text-[var(--ball)]">{compatQ.data.sub_scores.padel}<span className="text-[11px] text-[var(--cream)]/50">/100</span></div>
+                                )}
+                              </div>
+                              {compatQ.data.sub_scores?.padel_analysis && (
+                                <p className="text-[13px] text-[var(--cream)]/85 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Personality compatibility */}
+                          {(typeof compatQ.data.sub_scores?.personality === "number" || compatQ.data.sub_scores?.personality_analysis) && (
+                            <div className="mt-2 rounded-xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-3">
+                              <div className="flex items-center justify-between mb-1.5">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
+                                {typeof compatQ.data.sub_scores?.personality === "number" && (
+                                  <div className="text-sm font-extrabold text-[var(--ball)]">{compatQ.data.sub_scores.personality}<span className="text-[11px] text-[var(--cream)]/50">/100</span></div>
+                                )}
+                              </div>
+                              {compatQ.data.sub_scores?.personality_analysis && (
+                                <p className="text-[13px] text-[var(--cream)]/85 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
+                              )}
+                            </div>
+                          )}
 
                           {Array.isArray(compatQ.data.reasons) && compatQ.data.reasons.length > 0 && (
                             <ul className="mt-3 space-y-1.5">
@@ -750,13 +767,11 @@ function Discover() {
   );
 }
 
-function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number } }) {
+function MatchScoreCard({ total, padel, personality }: { total: number; padel: number | null; personality: number | null }) {
   const tr = useTr();
-  const rows = [
-    { label: tr("Playing Style", "Estilo de juego", "Style de jeu"), value: categories.playingStyle },
-    { label: tr("Personality", "Personalidad", "Personnalité"), value: categories.personality },
-    { label: tr("Lifestyle", "Estilo de vida", "Style de vie"), value: categories.lifestyle },
-  ];
+  const rows: Array<{ label: string; value: number }> = [];
+  if (typeof padel === "number") rows.push({ label: tr("Padel", "Pádel", "Padel"), value: padel });
+  if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
       <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
@@ -775,6 +790,11 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
           ))}
         </div>
       </div>
+      {rows.length > 0 && (
+        <p className="mt-3 text-[10px] text-[var(--cream)]/50 leading-snug">
+          {tr("Overall = average of Padel and Personality.", "Total = media de Pádel y Personalidad.", "Total = moyenne de Padel et Personnalité.")}
+        </p>
+      )}
     </div>
   );
 }

@@ -1536,10 +1536,10 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v8-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionKey = `v9-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
-      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: Record<string, number> | null; model_version: string; created_at: string };
+      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
     }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
@@ -1558,7 +1558,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as Record<string, number> | null, model_version: "fallback", created_at: new Date().toISOString() };
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as null | { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string }, model_version: "fallback", created_at: new Date().toISOString() };
       return fallback;
     }
 
@@ -1585,7 +1585,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       ? `NOTE ON ASYMMETRIC INTENTS: one of you is also open to "${asymmetric.join(", ")}" while the other isn't. Score for the SHARED intent(s) only. You may add a single gentle line in "watch_out" that expectations differ on that dimension — never moralize, never say anyone is wrong.`
       : "";
 
-    const requestedSubScores = sharedIntents.length > 0 ? sharedIntents : ["padel"];
+    const extraSubs = sharedIntents.filter((k) => k === "friend" || k === "relationship");
 
     const langInstruction = lang === "es"
       ? "Responde SIEMPRE en español."
@@ -1608,7 +1608,8 @@ Rules for judgment:
 - Same nationality, same city, or both "open-minded / friendly / flexible" are filler — skip them.
 - ANTI-HALLUCINATION: Only cite a trait, answer, or bio detail if it actually appears in the profile data above. Never invent hobbies, jobs, family status, preferences or life details. If evidence is thin, say so gently and score in the 60-70 range.
 - Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 good with a couple of things to be aware of, 40-54 mixed, 0-39 poor fit.
-- The overall "score" should reflect the intent(s) that matter to this pair. When multiple intents are shared, weight them equally.
+- CRITICAL — the two sub-scores MUST match the tone of their analysis paragraphs. A 90+ score requires a genuinely enthusiastic paragraph; a 60 score requires a paragraph that explicitly names what's mixed. The blurb, reasons, and both analyses must all point at the same overall picture. Do not write a warm paragraph and then a low score, or a lukewarm paragraph and then a high score.
+- The overall picture is a blend of on-court fit (padel) and off-court fit (personality). Weight them roughly equally.
 - The "watch_out" field is OPTIONAL and should usually be null. Only fill it when there is a concrete, evidence-based thing to gently be aware of. Never fill it for lifestyle / life-stage / personality differences alone.
 - Blurb should be warm, grounded, diplomatic and accurate — no flattery, no empty praise, no verdicts about their lives.
 
@@ -1623,9 +1624,13 @@ RESPECT & TONE RULES (very important):
 
 Return ONLY valid JSON with this exact shape:
 {
-  "score": <0-100 integer overall, honestly graded>,
-  "sub_scores": { ${requestedSubScores.map((k) => `"${k}": <0-100 integer>`).join(", ")} },
-  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. No emojis, no flattery, no judgment.>",
+  "sub_scores": {
+    "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
+    "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
+  },
+  "padel_analysis": "<2-3 grounded sentences (max 320 chars) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
+  "personality_analysis": "<2-3 grounded sentences (max 320 chars) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
+  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses above.>",
   "reasons": [
     "<REASON 1 — the single strongest concrete thing you two share, drawn from actual profile data. Max 90 chars.>",
     "<REASON 2 — a complementary difference or how you'd balance each other. Max 90 chars.>",
@@ -1646,13 +1651,14 @@ ${qaBlock(theirQA)}`;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
-    let subScores: Record<string, number> | null = null;
+    type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string };
+    let subScores: SubScoresShape | null = null;
+    const allowedSubKeys = new Set(["padel", "personality", ...extraSubs]);
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown };
-      if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
       if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
       if (Array.isArray(parsed.reasons)) {
         reasons = parsed.reasons.filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
@@ -1661,13 +1667,27 @@ ${qaBlock(theirQA)}`;
       if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
         friction = watchRaw.trim().slice(0, 160);
       }
+      const cleanSub: Record<string, number> = {};
       if (parsed.sub_scores && typeof parsed.sub_scores === "object") {
-        const clean: Record<string, number> = {};
-        for (const k of requestedSubScores) {
-          const v = (parsed.sub_scores as Record<string, unknown>)[k];
-          if (typeof v === "number") clean[k] = Math.max(0, Math.min(100, Math.round(v)));
+        for (const [k, v] of Object.entries(parsed.sub_scores as Record<string, unknown>)) {
+          if (allowedSubKeys.has(k) && typeof v === "number") {
+            cleanSub[k] = Math.max(0, Math.min(100, Math.round(v)));
+          }
         }
-        if (Object.keys(clean).length > 0) subScores = clean;
+      }
+      const padelAnalysis = typeof parsed.padel_analysis === "string" ? parsed.padel_analysis.trim().slice(0, 360) : "";
+      const personalityAnalysis = typeof parsed.personality_analysis === "string" ? parsed.personality_analysis.trim().slice(0, 360) : "";
+      if (Object.keys(cleanSub).length > 0 || padelAnalysis || personalityAnalysis) {
+        subScores = { ...cleanSub, padel_analysis: padelAnalysis, personality_analysis: personalityAnalysis };
+      }
+      // Derive overall score from sub-scores so header % matches the analyses.
+      const parts: number[] = [];
+      if (typeof cleanSub.padel === "number") parts.push(cleanSub.padel);
+      if (typeof cleanSub.personality === "number") parts.push(cleanSub.personality);
+      if (parts.length > 0) {
+        score = Math.round(parts.reduce((a, b) => a + b, 0) / parts.length);
+      } else if (typeof parsed.score === "number") {
+        score = Math.max(0, Math.min(100, Math.round(parsed.score)));
       }
     } catch (e) {
       blurb = e instanceof Error && e.message.includes("402")

@@ -156,89 +156,101 @@ function ProfilePage() {
         </Link>
       </div>
       <div className="mt-4 surface-card p-5">
-        {p.photo_url && (
-          <div className="aspect-[3/4] rounded-xl overflow-hidden mb-3">
-            <img src={p.photo_url} alt={p.first_name} className="w-full h-full object-cover" />
+        <div className="flex flex-col sm:flex-row gap-5">
+          {/* Photo — top on mobile, right on desktop */}
+          <div className="order-1 sm:order-2 flex flex-col items-center sm:w-40 lg:w-44 shrink-0">
+            {p.photo_url ? (
+              <div className="w-32 sm:w-full aspect-[3/4] rounded-xl overflow-hidden">
+                <img src={p.photo_url} alt={p.first_name} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-32 sm:w-full aspect-[3/4] rounded-xl bg-[var(--muted)] flex items-center justify-center text-[var(--cream)]/30">
+                <Camera className="w-8 h-8" />
+              </div>
+            )}
+            <input
+              ref={fileRef}
+              id={photoInputId}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              disabled={uploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) setPendingFile(f);
+                e.target.value = "";
+              }}
+            />
+            <label
+              htmlFor={photoInputId}
+              aria-disabled={uploading}
+              className={buttonVariants({
+                variant: "outline",
+                size: "sm",
+                className: `mt-3 w-full ${uploading ? "pointer-events-none opacity-50" : ""}`,
+              })}
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              {uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : p.photo_url ? tr("Change photo", "Cambiar foto", "Changer la photo") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
+            </label>
           </div>
-        )}
-        <input
-          ref={fileRef}
-          id={photoInputId}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          disabled={uploading}
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) setPendingFile(f);
-            e.target.value = "";
-          }}
-        />
-        <label
-          htmlFor={photoInputId}
-          aria-disabled={uploading}
-          className={buttonVariants({
-            variant: "outline",
-            size: "sm",
-            className: `w-full mb-4 ${uploading ? "pointer-events-none opacity-50" : ""}`,
-          })}
-        >
-          <Camera className="w-4 h-4 mr-2" />
-          {uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : p.photo_url ? tr("Change photo", "Cambiar foto", "Changer la photo") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
-        </label>
 
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <Info label={t("prof.age")} v={String(p.age)} />
-          <Info label={t("prof.level")} v={label(p.level)} />
-          <Info label={t("prof.nationality")} v={p.nationality} />
-          <Info label={t("prof.gender")} v={p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender)} />
+          {/* Info — below photo on mobile, left on desktop */}
+          <div className="order-2 sm:order-1 flex-1 min-w-0">
+            <div className="grid grid-cols-2 gap-3 sm:text-base">
+              <Info label={t("prof.age")} v={String(p.age)} />
+              <Info label={t("prof.level")} v={label(p.level)} />
+              <Info label={t("prof.nationality")} v={p.nationality} />
+              <Info label={t("prof.gender")} v={p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender)} />
+            </div>
+
+            {locations.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{t("prof.playsIn")}</div>
+                <div className="flex flex-wrap gap-2">
+                  {locations.map((l) => <span key={l} className="chip">{l}</span>)}
+                </div>
+              </div>
+            )}
+
+            {p.languages?.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{t("prof.languages")}</div>
+                <div className="flex flex-wrap gap-2">
+                  {p.languages.map((l) => <span key={l} className="chip">{label(l)}</span>)}
+                </div>
+              </div>
+            )}
+
+            {p.bio && <p className="mt-4 text-sm sm:text-base text-[var(--cream)]/80">{p.bio}</p>}
+
+            {(p.personal_traits?.length ?? 0) > 0 && (
+              <div className="mt-4">
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
+                <div className="flex flex-wrap gap-2">
+                  {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
+                </div>
+              </div>
+            )}
+
+            {(p.padel_style?.length ?? 0) > 0 && (
+              <div className="mt-4">
+                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
+                <div className="flex flex-wrap gap-2">
+                  {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
+                </div>
+              </div>
+            )}
+
+            {p.free_court_access && (
+              <div className="mt-4 rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
+                {p.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{p.free_court_note}</p>}
+                <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.", "Affiché sur ta carte grid. Partage l'adresse exacte seulement en chat.")}</p>
+              </div>
+            )}
+          </div>
         </div>
-
-        {locations.length > 0 && (
-          <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{t("prof.playsIn")}</div>
-            <div className="flex flex-wrap gap-2">
-              {locations.map((l) => <span key={l} className="chip">{l}</span>)}
-            </div>
-          </div>
-        )}
-
-        {p.languages?.length > 0 && (
-          <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{t("prof.languages")}</div>
-            <div className="flex flex-wrap gap-2">
-              {p.languages.map((l) => <span key={l} className="chip">{label(l)}</span>)}
-            </div>
-          </div>
-        )}
-
-        {p.bio && <p className="mt-4 text-sm text-[var(--cream)]/80">{p.bio}</p>}
-
-        {(p.personal_traits?.length ?? 0) > 0 && (
-          <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
-            <div className="flex flex-wrap gap-2">
-              {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
-            </div>
-          </div>
-        )}
-
-        {(p.padel_style?.length ?? 0) > 0 && (
-          <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
-            <div className="flex flex-wrap gap-2">
-              {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
-            </div>
-          </div>
-        )}
-
-        {p.free_court_access && (
-          <div className="mt-4 rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
-            {p.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{p.free_court_note}</p>}
-            <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.", "Affiché sur ta carte grid. Partage l'adresse exacte seulement en chat.")}</p>
-          </div>
-        )}
       </div>
 
       <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />

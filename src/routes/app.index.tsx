@@ -48,8 +48,8 @@ function Discover() {
 
   const compatFn = useServerFn(getAiCompatibility);
   const compatQ = useQuery({
-    queryKey: ["ai-compat", preview?.id],
-    queryFn: () => compatFn({ data: { otherProfileId: preview!.id } }),
+    queryKey: ["ai-compat", preview?.id, lang],
+    queryFn: () => compatFn({ data: { otherProfileId: preview!.id, lang } }),
     enabled: !!preview?.id,
     staleTime: 1000 * 60 * 60,
     retry: false,

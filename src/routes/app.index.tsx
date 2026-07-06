@@ -577,7 +577,7 @@ function Discover() {
 
 
                           <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">
-                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">Was this useful?</span>
+                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
                             <button
                               type="button"
                               disabled={rateCompatM.isPending}

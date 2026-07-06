@@ -1595,7 +1595,9 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
 
-${langInstruction}`
+${langInstruction}
+
+INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
 
 INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
 ${intentGuidance}

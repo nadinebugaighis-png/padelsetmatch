@@ -183,8 +183,9 @@ export const listOpenEvents = createServerFn({ method: "POST" })
         const ors = myKeywords.flatMap((c) => {
           const s = safe(c);
           if (!s) return [];
-          return [`city.ilike.%${s}%`, `club_address.ilike.%${s}%`];
+          return [`city.ilike.%${s}%`, `club_address.ilike.%${s}%`, `club_name.ilike.%${s}%`];
         }).join(",");
+
         if (ors) q = q.or(ors);
       } else if (data.city) {
         q = q.ilike("city", `%${data.city}%`);

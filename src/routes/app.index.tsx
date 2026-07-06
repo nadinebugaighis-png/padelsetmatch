@@ -549,26 +549,37 @@ function Discover() {
                             <div className="text-2xl font-extrabold text-[var(--cream)]">{compatQ.data.score}<span className="text-sm text-[var(--cream)]/50">/100</span></div>
                           </div>
 
-                          {compatQ.data.sub_scores && (() => {
-                            const myIntents = new Set(((feedQ.data?.me as { intents?: string[] } | undefined)?.intents ?? []) as string[]);
-                            const visible = Object.entries(compatQ.data.sub_scores).filter(([k]) => myIntents.has(k));
-                            if (visible.length === 0) return null;
-                            return (
-                              <div className="mt-2 flex flex-wrap gap-1.5">
-                                {visible.map(([k, v]) => {
-                                  const label = k === "padel" ? tr("Padel fit", "Encaje padel", "Compat. padel") : k === "friend" ? tr("Friendship", "Amistad", "Amitié") : k === "relationship" ? tr("Romance", "Romance", "Romance") : k;
-                                  return (
-                                    <span key={k} className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--cream)]/[0.08] border border-[var(--cream)]/10 text-[var(--cream)]/80">
-                                      {label} <span className="font-bold text-[var(--ball)]">{v}</span>
-                                    </span>
-                                  );
-                                })}
-                              </div>
-                            );
-                          })()}
-
-
                           <p className="text-sm text-[var(--cream)]/90 mt-2 leading-relaxed">{compatQ.data.blurb}</p>
+
+                          {/* Padel compatibility */}
+                          {(typeof compatQ.data.sub_scores?.padel === "number" || compatQ.data.sub_scores?.padel_analysis) && (
+                            <div className="mt-3 rounded-xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-3">
+                              <div className="flex items-center justify-between mb-1.5">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
+                                {typeof compatQ.data.sub_scores?.padel === "number" && (
+                                  <div className="text-sm font-extrabold text-[var(--ball)]">{compatQ.data.sub_scores.padel}<span className="text-[11px] text-[var(--cream)]/50">/100</span></div>
+                                )}
+                              </div>
+                              {compatQ.data.sub_scores?.padel_analysis && (
+                                <p className="text-[13px] text-[var(--cream)]/85 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Personality compatibility */}
+                          {(typeof compatQ.data.sub_scores?.personality === "number" || compatQ.data.sub_scores?.personality_analysis) && (
+                            <div className="mt-2 rounded-xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-3">
+                              <div className="flex items-center justify-between mb-1.5">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
+                                {typeof compatQ.data.sub_scores?.personality === "number" && (
+                                  <div className="text-sm font-extrabold text-[var(--ball)]">{compatQ.data.sub_scores.personality}<span className="text-[11px] text-[var(--cream)]/50">/100</span></div>
+                                )}
+                              </div>
+                              {compatQ.data.sub_scores?.personality_analysis && (
+                                <p className="text-[13px] text-[var(--cream)]/85 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
+                              )}
+                            </div>
+                          )}
 
                           {Array.isArray(compatQ.data.reasons) && compatQ.data.reasons.length > 0 && (
                             <ul className="mt-3 space-y-1.5">

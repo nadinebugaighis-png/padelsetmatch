@@ -194,7 +194,7 @@ function Onboarding() {
     const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
     if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
     if (priorities.includes(v)) { toast.error(t("ob.errDup")); return; }
-    if (priorities.length >= 10) { toast.error(t("ob.errMaxTraits")); return; }
+    if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
     setPriorities((cur) => [...cur, v]);
     setCustomTrait("");
   };

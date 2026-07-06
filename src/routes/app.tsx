@@ -172,8 +172,7 @@ function AuthShell() {
             willChange: "transform",
           }}
         >
-          <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(5, minmax(0, 1fr))` }}>
-            <NavTab to="/app/questions" label={t("shell.tab.questions.short")} ariaLabel={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
+          <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
             <NavTab to="/app" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
 

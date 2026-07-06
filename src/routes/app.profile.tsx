@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { useId, useRef, useState } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
+import { QASection } from "@/components/QASection";
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
@@ -239,6 +240,8 @@ function ProfilePage() {
 
       <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">{t("prof.retake")}</Button></Link>
       <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-2" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+
+      <QASection />
 
       <FeedbackBox />
 

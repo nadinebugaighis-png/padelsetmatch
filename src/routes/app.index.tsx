@@ -354,7 +354,7 @@ function Discover() {
 
 
       {(qaQ.data?.length ?? 0) === 0 && (
-        <Link to="/app/questions" className="mt-4 block surface-card p-4 border border-[var(--ball)]/30 rounded-xl">
+        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--ball)]/30 rounded-xl">
           <div className="flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-[var(--ball)] shrink-0 mt-0.5" />
             <div>

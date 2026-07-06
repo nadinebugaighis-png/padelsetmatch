@@ -20,7 +20,7 @@ function Matches() {
   if (!isMatchesList) return <Outlet />;
 
   return (
-    <main className="px-4 py-5 max-w-md mx-auto">
+    <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       <h1 className="text-display text-4xl">{t("ml.h1")}</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">{t("ml.sub")}</p>
 

@@ -204,7 +204,7 @@ function EventsPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-5 py-6 pb-28">
+    <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-6 pb-28">
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
         <h1 className="text-display text-4xl tracking-wider leading-none">{tr("FIND", "BUSCA", "TROUVER")}<br />{tr("MATCHES", "PARTIDOS", "MATCHES")}</h1>

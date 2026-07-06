@@ -245,7 +245,7 @@ function Discover() {
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
-    <main className="px-4 py-5 max-w-md mx-auto">
+    <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
       <p className="text-xs text-[var(--cream)]/55 mt-2">

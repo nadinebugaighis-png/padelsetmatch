@@ -132,7 +132,7 @@ function ChatRoom() {
   };
 
   return (
-    <main className="max-w-md mx-auto flex flex-col h-[calc(100dvh-150px)]">
+    <main className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col h-[calc(100dvh-150px)]">
       <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--cream)]/10">
         <Link to="/app/matches" className="p-1"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="w-10 h-10 rounded-full overflow-hidden bg-[var(--cream)]/10 shrink-0">

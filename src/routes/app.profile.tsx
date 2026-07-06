@@ -135,7 +135,7 @@ function ProfilePage() {
   const p = q.data;
   if (!p) {
     return (
-      <main className="px-4 py-10 max-w-md mx-auto text-center">
+      <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center">
         <p className="text-[var(--cream)]/70">{t("prof.noProfile")}</p>
         <Link to="/app/onboarding" className="mt-4 inline-block underline">{t("prof.createLink")}</Link>
       </main>
@@ -143,7 +143,7 @@ function ProfilePage() {
   }
   const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   return (
-    <main className="px-4 py-5 max-w-md mx-auto">
+    <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       <div className="flex items-start justify-between gap-3">
         <h1 className="text-display text-4xl">{t("prof.hi", { name: p.first_name })}</h1>
         <Link

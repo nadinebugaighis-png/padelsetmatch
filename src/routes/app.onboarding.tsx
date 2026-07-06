@@ -333,14 +333,14 @@ function Onboarding() {
 
   if (profileQ.isLoading) {
     return (
-      <main className="px-4 py-10 max-w-md mx-auto text-center text-[var(--cream)]/70">
+      <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center text-[var(--cream)]/70">
         {tr("Loading your profile…", "Cargando tu perfil…", "Chargement de ton profil…")}
       </main>
     );
   }
   if (profileQ.isError) {
     return (
-      <main className="px-4 py-10 max-w-md mx-auto text-center space-y-4">
+      <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center space-y-4">
         <p className="text-[var(--cream)]/80">
           {tr("We couldn't load your profile. Please check your connection.", "No pudimos cargar tu perfil. Comprueba tu conexión.", "Impossible de charger ton profil. Vérifie ta connexion.")}
         </p>
@@ -350,7 +350,7 @@ function Onboarding() {
   }
 
   return (
-    <main className="px-4 py-6 max-w-md mx-auto">
+    <main className="px-4 py-6 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       <div className="flex items-center justify-between text-xs uppercase tracking-widest text-[var(--cream)]/60">
         <span>{t("ob.step")} {step + 1} {t("ob.of")} {steps.length}</span>
         <span>{steps[step]}</span>

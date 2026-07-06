@@ -284,6 +284,19 @@ function Discover() {
         </button>
       </div>
 
+      <div className="mt-2 max-w-[16rem]">
+        <div className="relative">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--cream)]/40" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name..."
+            className="w-full h-7 pl-7 pr-2.5 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-xs placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--ball)]/60"
+          />
+        </div>
+      </div>
+
       {showFilters && (
         <div className="mt-3 p-3 rounded-xl border border-[var(--cream)]/15 bg-black/20 space-y-3">
           <div>

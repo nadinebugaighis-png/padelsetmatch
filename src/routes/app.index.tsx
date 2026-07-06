@@ -678,6 +678,25 @@ function Discover() {
                     {preview.reasons[0] && (
                       <p className="text-xs text-[var(--cream)]/60 px-1">{preview.reasons[0]}</p>
                     )}
+
+                    <div className="flex items-center justify-center gap-4 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
+                        className="flex items-center gap-1.5 text-[11px] text-[var(--cream)]/50 hover:text-[var(--cream)]/80 transition"
+                        aria-label={`Block ${preview?.first_name ?? ""}`}
+                      >
+                        <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
+                        className="flex items-center gap-1.5 text-[11px] text-[var(--cream)]/50 hover:text-red-400/80 transition"
+                        aria-label={`Report ${preview?.first_name ?? ""}`}
+                      >
+                        <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

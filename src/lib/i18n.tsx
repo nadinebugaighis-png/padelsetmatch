@@ -583,7 +583,7 @@ const fr: Dict = {
   "land.foot": "Joue partout. Pire des cas : un nouvel ami de padel.",
   "land.preview.chip": "Aperçu",
   "land.preview.title": "Explore le Grid",
-  "land.preview.sub": "Trouve ton âme sœur de pista. Connecte-toi pour voir photos, scores et chat.",
+  "land.preview.sub": "Découvre les profils qui te correspondent. Connecte-toi pour voir les photos, les niveaux et discuter.",
   "land.preview.cta": "Inscription gratuite",
   "land.preview.unlock": "Connecte-toi pour débloquer",
   "land.preview.foot": "Aperçu uniquement. Les vrais profils apparaissent après le questionnaire.",

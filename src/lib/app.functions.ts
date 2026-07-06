@@ -1585,7 +1585,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       ? `NOTE ON ASYMMETRIC INTENTS: one of you is also open to "${asymmetric.join(", ")}" while the other isn't. Score for the SHARED intent(s) only. You may add a single gentle line in "watch_out" that expectations differ on that dimension — never moralize, never say anyone is wrong.`
       : "";
 
-    const requestedSubScores = sharedIntents.length > 0 ? sharedIntents : ["padel"];
+    const extraSubs = sharedIntents.filter((k) => k === "friend" || k === "relationship");
 
     const langInstruction = lang === "es"
       ? "Responde SIEMPRE en español."
@@ -1608,7 +1608,8 @@ Rules for judgment:
 - Same nationality, same city, or both "open-minded / friendly / flexible" are filler — skip them.
 - ANTI-HALLUCINATION: Only cite a trait, answer, or bio detail if it actually appears in the profile data above. Never invent hobbies, jobs, family status, preferences or life details. If evidence is thin, say so gently and score in the 60-70 range.
 - Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 good with a couple of things to be aware of, 40-54 mixed, 0-39 poor fit.
-- The overall "score" should reflect the intent(s) that matter to this pair. When multiple intents are shared, weight them equally.
+- CRITICAL — the two sub-scores MUST match the tone of their analysis paragraphs. A 90+ score requires a genuinely enthusiastic paragraph; a 60 score requires a paragraph that explicitly names what's mixed. The blurb, reasons, and both analyses must all point at the same overall picture. Do not write a warm paragraph and then a low score, or a lukewarm paragraph and then a high score.
+- The overall picture is a blend of on-court fit (padel) and off-court fit (personality). Weight them roughly equally.
 - The "watch_out" field is OPTIONAL and should usually be null. Only fill it when there is a concrete, evidence-based thing to gently be aware of. Never fill it for lifestyle / life-stage / personality differences alone.
 - Blurb should be warm, grounded, diplomatic and accurate — no flattery, no empty praise, no verdicts about their lives.
 
@@ -1623,9 +1624,13 @@ RESPECT & TONE RULES (very important):
 
 Return ONLY valid JSON with this exact shape:
 {
-  "score": <0-100 integer overall, honestly graded>,
-  "sub_scores": { ${requestedSubScores.map((k) => `"${k}": <0-100 integer>`).join(", ")} },
-  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. No emojis, no flattery, no judgment.>",
+  "sub_scores": {
+    "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
+    "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
+  },
+  "padel_analysis": "<2-3 grounded sentences (max 320 chars) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
+  "personality_analysis": "<2-3 grounded sentences (max 320 chars) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
+  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses above.>",
   "reasons": [
     "<REASON 1 — the single strongest concrete thing you two share, drawn from actual profile data. Max 90 chars.>",
     "<REASON 2 — a complementary difference or how you'd balance each other. Max 90 chars.>",

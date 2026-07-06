@@ -1536,7 +1536,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v9-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionKey = `v10-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
       return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
@@ -1630,12 +1630,7 @@ Return ONLY valid JSON with this exact shape:
   },
   "padel_analysis": "<2-3 grounded sentences (max 320 chars) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
   "personality_analysis": "<2-3 grounded sentences (max 320 chars) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
-  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses above.>",
-  "reasons": [
-    "<REASON 1 — the single strongest concrete thing you two share, drawn from actual profile data. Max 90 chars.>",
-    "<REASON 2 — a complementary difference or how you'd balance each other. Max 90 chars.>",
-    "<REASON 3 — a small practical note (schedule, level, style, a shared Q&A answer). Max 90 chars.>"
-  ],
+  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses. IMPORTANT: do NOT repeat facts, traits or phrases that also appear in padel_analysis or personality_analysis. The blurb is the headline; the analyses do the detail.>",
   "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — this is usually null.>"
 }
 

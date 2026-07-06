@@ -702,7 +702,7 @@ type InvitePanelProps = {
   createLink: (a: { data: { eventId: string } }) => Promise<{ token: string; id: string }>;
   revokeInvite: (a: { data: { inviteId: string } }) => Promise<{ ok: boolean }>;
   invites: Array<{ id: string; invitee_profile_id: string | null; token: string | null; status: string; invitee?: { first_name?: string | null } | null }>;
-  tr: (en: string, es: string) => string;
+  tr: (en: string, es: string, fr?: string) => string;
 };
 
 function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, revokeInvite, invites, tr }: InvitePanelProps) {

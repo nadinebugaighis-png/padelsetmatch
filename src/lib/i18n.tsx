@@ -642,7 +642,7 @@ const fr: Dict = {
 
   // Q&A page
   "qa.title": "Questions de compatibilité",
-  "qa.sub": "Réponds à autant que tu veux. Chaque réponse partagée affine tes matches. Tu peux t'arrêter quand tu veux — ta progression est sauvegardée.",
+  "qa.sub": "Réponds à autant de questions que tu le souhaites. Chaque réponse permet d'affiner tes matchs. Tu peux t'arrêter à tout moment : ta progression est automatiquement sauvegardée.",
   "qa.generate": "Générer des questions",
   "qa.generateMore": "Générer plus",
   "qa.generating": "Je réfléchis à des questions…",

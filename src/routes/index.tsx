@@ -7,14 +7,27 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
 
+import shareBanner from "@/assets/padel-share-banner.png.asset.json";
+
+const SHARE_IMAGE = `https://padelmatchapp.lovable.app${shareBanner.url}`;
+const SHARE_DESC = "Connect with Padel players nearby you, join games, discover courts, and build your community.";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Padel Match App — More Friends, Better Games" },
-      { name: "description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
+      { name: "description", content: SHARE_DESC },
       { property: "og:title", content: "Padel Match App — More Friends, Better Games" },
-      { property: "og:description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
+      { property: "og:description", content: SHARE_DESC },
       { property: "og:url", content: "https://padelmatchapp.lovable.app/" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: SHARE_IMAGE },
+      { property: "og:image:width", content: "1456" },
+      { property: "og:image:height", content: "530" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Padel Match App — More Friends, Better Games" },
+      { name: "twitter:description", content: SHARE_DESC },
+      { name: "twitter:image", content: SHARE_IMAGE },
     ],
     links: [
       { rel: "canonical", href: "https://padelmatchapp.lovable.app/" },

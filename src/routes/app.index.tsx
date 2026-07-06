@@ -533,10 +533,10 @@ function Discover() {
                     {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
                     <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
                       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
-                        <Sparkles className="w-3 h-3" /> Why you two could click
+                        <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
                       </div>
                       {compatQ.isLoading ? (
-                        <p className="text-sm text-[var(--cream)]/60 italic">Analyzing your vibe…</p>
+                        <p className="text-sm text-[var(--cream)]/60 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
                       ) : compatQ.data ? (
                         <>
                           <div className="flex items-baseline gap-2">

@@ -550,7 +550,7 @@ function Discover() {
                             return (
                               <div className="mt-2 flex flex-wrap gap-1.5">
                                 {visible.map(([k, v]) => {
-                                  const label = k === "padel" ? "Padel fit" : k === "friend" ? "Friendship" : k === "relationship" ? "Romance" : k;
+                                  const label = k === "padel" ? tr("Padel fit", "Encaje padel", "Compat. padel") : k === "friend" ? tr("Friendship", "Amistad", "Amitié") : k === "relationship" ? tr("Romance", "Romance", "Romance") : k;
                                   return (
                                     <span key={k} className="px-2 py-0.5 rounded-full text-[11px] bg-[var(--cream)]/[0.08] border border-[var(--cream)]/10 text-[var(--cream)]/80">
                                       {label} <span className="font-bold text-[var(--ball)]">{v}</span>

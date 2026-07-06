@@ -1558,7 +1558,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as Record<string, number> | null, model_version: "fallback", created_at: new Date().toISOString() };
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as null | { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string }, model_version: "fallback", created_at: new Date().toISOString() };
       return fallback;
     }
 

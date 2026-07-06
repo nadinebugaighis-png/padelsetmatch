@@ -1651,7 +1651,8 @@ ${qaBlock(theirQA)}`;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
-    let subScores: Record<string, unknown> | null = null;
+    type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string };
+    let subScores: SubScoresShape | null = null;
     const allowedSubKeys = new Set(["padel", "personality", ...extraSubs]);
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });

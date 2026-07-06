@@ -84,7 +84,7 @@ function PublicMatchPage() {
   });
 
   const match = q.data?.match;
-  const genderLabel = !match ? "" : match.gender_rule === "mixed" ? tr("Mixed", "Mixto") : match.gender_rule === "men_only" ? tr("Men only", "Solo hombres") : tr("Women only", "Solo mujeres");
+  const genderLabel = !match ? "" : match.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : match.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement") : tr("Women only", "Solo mujeres", "Femmes uniquement");
   const totalSpots = 4;
   const openSpots = match ? Math.max(0, totalSpots - (match.filled ?? 0)) : 0;
   const shareUrl = `${shareOrigin()}/m/${eventId}`;
@@ -92,9 +92,9 @@ function PublicMatchPage() {
   const copyShareLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      toast.success(tr("Link copied", "Enlace copiado"));
+      toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
     } catch {
-      toast.error(tr("Could not copy the link", "No se pudo copiar el enlace"));
+      toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));
     }
   };
 
@@ -123,9 +123,9 @@ function PublicMatchPage() {
 
         {!q.isLoading && !match && (
           <div className="mt-10 text-center text-[var(--cream)]/70">
-            <p className="text-lg">{tr("This match link isn't available.", "Este enlace de partido no está disponible.")}</p>
-            <p className="text-sm text-[var(--cream)]/50 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.")}</p>
-            <Link to="/app/events" className="inline-block mt-6 text-[var(--ball)] underline">{tr("Browse open matches", "Ver partidos abiertos")}</Link>
+            <p className="text-lg">{tr("This match link isn't available.", "Este enlace de partido no está disponible.", "Ce lien de match n'est pas disponible.")}</p>
+            <p className="text-sm text-[var(--cream)]/50 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.", "Il a peut-être été annulé ou déjà joué.")}</p>
+            <Link to="/app/events" className="inline-block mt-6 text-[var(--ball)] underline">{tr("Browse open matches", "Ver partidos abiertos", "Explorer les matches ouverts")}</Link>
 
           </div>
         )}
@@ -133,7 +133,7 @@ function PublicMatchPage() {
         {match && (
           <>
             <div className="mt-4 rounded-2xl border border-[var(--cream)]/10 bg-black/30 p-5 space-y-3">
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("You're invited", "Estás invitado")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
               <h1 className="text-2xl text-[var(--cream)] font-medium leading-tight">{match.club_name}</h1>
               {match.club_address && <p className="text-xs text-[var(--cream)]/60">{match.club_address}</p>}
 
@@ -146,19 +146,19 @@ function PublicMatchPage() {
               <div className="flex flex-wrap gap-2 pt-1">
                 <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70">{genderLabel}</span>
                 <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70">
-                  {tr("Level", "Nivel")} {match.level_min} – {match.level_max}
+                  {tr("Level", "Nivel", "Niveau")} {match.level_min} – {match.level_max}
                 </span>
               </div>
 
               {match.note && <p className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
 
               {match.host?.first_name && (
-                <p className="text-xs text-[var(--cream)]/60 pt-2">{tr("Hosted by", "Organizado por")} <span className="text-[var(--cream)]">{match.host.first_name}</span></p>
+                <p className="text-xs text-[var(--cream)]/60 pt-2">{tr("Hosted by", "Organizado por", "Organisé par")} <span className="text-[var(--cream)]">{match.host.first_name}</span></p>
               )}
 
               {/* Players — tap an open spot to join */}
               <div className="pt-3">
-                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{tr("Players", "Jugadores")}</div>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
                 <div className="flex flex-wrap gap-2">
                   {match.participant_names.map((name, i) => (
                     <div key={`p-${i}`} className="flex items-center gap-2 bg-black/30 border border-[var(--cream)]/10 rounded-full px-3 py-1.5">
@@ -173,7 +173,7 @@ function PublicMatchPage() {
                       onClick={onJoinClick}
                       className="flex items-center gap-2 border border-dashed border-[var(--ball)]/60 rounded-full px-3 py-1.5 hover:bg-[var(--ball)]/10"
                     >
-                      <span className="text-xs text-[var(--ball)]">{tr("Join open spot", "Unirme al hueco libre")}</span>
+                      <span className="text-xs text-[var(--ball)]">{tr("Join open spot", "Unirme al hueco libre", "Rejoindre la place")}</span>
                     </button>
                   ))}
                 </div>
@@ -186,10 +186,10 @@ function PublicMatchPage() {
                 disabled={openSpots === 0}
                 className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
               >
-                {openSpots === 0 ? tr("Match is full", "Partido completo") : hasSession ? tr("Join this match", "Unirme al partido") : tr("Sign up & join", "Regístrate y únete")}
+                {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
               <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
-                <Share2 className="w-4 h-4" /> {tr("Share", "Compartir")}
+                <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
               <p className="text-[11px] text-[var(--cream)]/50 text-center pt-1">
                 {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.")}
@@ -206,21 +206,21 @@ function PublicMatchPage() {
             <div
               role="dialog"
               aria-modal="true"
-              aria-label={tr("Share match", "Compartir partido")}
+              aria-label={tr("Share match", "Compartir partido", "Partager le match")}
               className="w-full max-w-md rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Share match", "Compartir partido")}</div>
-                  <p className="mt-1 text-sm text-[var(--cream)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que otros jugadores se unan a un hueco libre.")}</p>
+                  <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
+                  <p className="mt-1 text-sm text-[var(--cream)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que otros jugadores se unan a un hueco libre.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShareOpen(false)}
                   className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70"
                 >
-                  {tr("Close", "Cerrar")}
+                  {tr("Close", "Cerrar", "Fermer")}
 
                 </button>
               </div>
@@ -237,14 +237,14 @@ function PublicMatchPage() {
                   rel="noopener noreferrer"
                   className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
                 >
-                  {tr("Open link", "Abrir enlace")}
+                  {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
                 </a>
                 <button
                   type="button"
                   onClick={copyShareLink}
                   className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
                 >
-                  {tr("Copy link", "Copiar enlace")}
+                  {tr("Copy link", "Copiar enlace", "Copier le lien")}
                 </button>
               </div>
               {typeof navigator !== "undefined" && "share" in navigator && (
@@ -253,7 +253,7 @@ function PublicMatchPage() {
                   onClick={nativeShare}
                   className="mt-2 w-full rounded-full border border-[var(--cream)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
                 >
-                  {tr("Share with phone", "Compartir con el móvil")}
+                  {tr("Share with phone", "Compartir con el móvil", "Partager avec le téléphone")}
                 </button>
               )}
             </div>

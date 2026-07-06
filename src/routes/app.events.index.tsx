@@ -39,7 +39,7 @@ function dayLabels(base: Date, i: number, es: boolean = false) {
 
 function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
   const tr = useTr();
-  const label = rule === "mixed" ? tr("MIXED", "MIXTO") : rule === "men_only" ? tr("MEN", "HOMBRES") : tr("WOMEN", "MUJERES");
+  const label = rule === "mixed" ? tr("MIXED", "MIXTO", "MIXTE") : rule === "men_only" ? tr("MEN", "HOMBRES", "HOMMES") : tr("WOMEN", "MUJERES", "FEMMES");
   return (
     <div className="flex flex-col items-center justify-center text-[var(--ball)]">
       <span className="text-[10px] uppercase tracking-widest font-bold">{label}</span>
@@ -150,8 +150,8 @@ function EventsPage() {
             {(() => {
               const t = new Date(e.starts_at);
               const diff = Math.round((startOfDay(t).getTime() - today.getTime()) / 86400000);
-              if (diff === 0) return tr("TODAY", "HOY");
-              if (diff === 1) return tr("TMRW", "MAÑ");
+              if (diff === 0) return tr("TODAY", "HOY", "AUJOURD'HUI");
+              if (diff === 1) return tr("TMRW", "MAÑ", "DEMAIN");
               return t.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase();
             })()}
           </span>
@@ -161,7 +161,7 @@ function EventsPage() {
         <div className="flex-1 min-w-0">
           <div className="text-[15px] font-semibold text-[var(--cream)] truncate leading-tight">{e.club_name}</div>
           <div className="text-[11px] text-[var(--cream)]/60 mt-0.5 truncate">
-            {e.city ?? tr("Location", "Ubicación")}
+            {e.city ?? tr("Location", "Ubicación", "Lieu")}
           </div>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {e.level_min && (
@@ -178,7 +178,7 @@ function EventsPage() {
             <Users className="w-3.5 h-3.5" /> {filled}/4
           </div>
           <div className="text-[9px] uppercase tracking-widest text-[var(--cream)]/50 mt-1 text-center leading-tight">
-            {needs === 0 ? tr("Full", "Completo") : `${needs} ${needs === 1 ? tr("player", "jugador") : tr("players", "jugadores")}\n${tr("needed", "faltan")}`.split("\n").map((s, i) => <div key={i}>{s}</div>)}
+            {needs === 0 ? tr("Full", "Completo", "Complet") : `${needs} ${needs === 1 ? tr("player", "jugador", "joueur") : tr("players", "jugadores", "joueurs")}\n${tr("needed", "faltan", "recherché·s")}`.split("\n").map((s, i) => <div key={i}>{s}</div>)}
           </div>
         </div>
 
@@ -187,12 +187,12 @@ function EventsPage() {
           <GenderBadge rule={e.gender_rule} />
           <div className="flex flex-col items-stretch gap-1.5">
             <span className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
-              {e.iAmHost ? tr("View", "Ver") : e.iAmParticipant ? tr("Chat", "Chat") : tr("Join", "Unirme")}
+              {e.iAmHost ? tr("View", "Ver", "Voir") : e.iAmParticipant ? tr("Chat", "Chat", "Chat") : tr("Join", "Unirme", "Rejoindre")}
             </span>
             {(e.iAmHost || e.iAmParticipant) && (
               <span className="inline-flex items-center justify-center gap-1 text-[9px] uppercase tracking-widest text-[var(--cream)]/55">
                 {e.iAmHost ? <Pencil className="w-3 h-3" /> : <MessageCircle className="w-3 h-3" />}
-                {e.iAmHost ? tr("Edit", "Editar") : tr("Chat", "Chat")}
+                {e.iAmHost ? tr("Edit", "Editar", "Modifier") : tr("Chat", "Chat", "Chat")}
               </span>
             )}
           </div>
@@ -205,7 +205,7 @@ function EventsPage() {
     <div className="max-w-md mx-auto px-5 py-6 pb-28">
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
-        <h1 className="text-display text-4xl tracking-wider leading-none">{tr("FIND", "BUSCA")}<br />{tr("MATCHES", "PARTIDOS")}</h1>
+        <h1 className="text-display text-4xl tracking-wider leading-none">{tr("FIND", "BUSCA", "TROUVER")}<br />{tr("MATCHES", "PARTIDOS", "MATCHES")}</h1>
         <button
           type="button"
           onClick={() => setFiltersOpen((v) => !v)}
@@ -216,7 +216,7 @@ function EventsPage() {
               : "border-[var(--cream)]/25 text-[var(--cream)]"
           }`}
         >
-          <SlidersHorizontal className="w-3.5 h-3.5" /> {tr("Filters", "Filtros")}
+          <SlidersHorizontal className="w-3.5 h-3.5" /> {tr("Filters", "Filtros", "Filtres")}
           {activeFilterCount > 0 && (
             <span className="ml-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
               {activeFilterCount}
@@ -224,18 +224,18 @@ function EventsPage() {
           )}
         </button>
       </div>
-      <p className="text-sm text-[var(--cream)]/60 mb-5">{tr("Pick a match. Join the game.", "Elige un partido. Únete al juego.")}</p>
+      <p className="text-sm text-[var(--cream)]/60 mb-5">{tr("Pick a match. Join the game.", "Elige un partido. Únete al juego.", "Choisis un match. Rejoins la partie.")}</p>
 
       {filtersOpen && (
         <div className="mb-5 rounded-2xl border border-[var(--cream)]/15 bg-black/30 p-4 space-y-4">
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Gender", "Género")}</div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Gender", "Género", "Genre")}</div>
             <div className="flex flex-wrap gap-2">
               {([
-                ["any", tr("Any", "Cualquiera")],
-                ["mixed", tr("Mixed", "Mixto")],
-                ["women_only", tr("Women", "Mujeres")],
-                ["men_only", tr("Men", "Hombres")],
+                ["any", tr("Any", "Cualquiera", "Tous")],
+                ["mixed", tr("Mixed", "Mixto", "Mixte")],
+                ["women_only", tr("Women", "Mujeres", "Femmes")],
+                ["men_only", tr("Men", "Hombres", "Hommes")],
               ] as const).map(([v, l]) => (
                 <button
                   key={v}
@@ -252,13 +252,13 @@ function EventsPage() {
             </div>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Level", "Nivel")}</div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Level", "Nivel", "Niveau")}</div>
             <div className="flex flex-wrap gap-2">
               {([
-                ["any", tr("Any", "Cualquiera")],
-                ["beginner", tr("Beginner", "Principiante")],
-                ["intermediate", tr("Intermediate", "Intermedio")],
-                ["advanced", tr("Advanced", "Avanzado")],
+                ["any", tr("Any", "Cualquiera", "Tous")],
+                ["beginner", tr("Beginner", "Principiante", "Débutant")],
+                ["intermediate", tr("Intermediate", "Intermedio", "Intermédiaire")],
+                ["advanced", tr("Advanced", "Avanzado", "Avancé")],
               ] as const).map(([v, l]) => (
                 <button
                   key={v}
@@ -285,15 +285,15 @@ function EventsPage() {
               }}
               className="accent-[var(--ball)]"
             />
-            {tr("Worldwide (show all cities)", "En todo el mundo (todas las ciudades)")}
+            {tr("Worldwide (show all cities)", "En todo el mundo (todas las ciudades)", "Partout (toutes les villes)")}
           </label>
           {worldwide && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Filter by city or club (optional)", "Filtrar por ciudad o club (opcional)")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Filter by city or club (optional)", "Filtrar por ciudad o club (opcional)", "Filtrer par ville ou club (optionnel)")}</div>
               <input
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
-                placeholder={tr("e.g. Barcelona", "p. ej. Barcelona")}
+                placeholder={tr("e.g. Barcelona", "p. ej. Barcelona", "p. ex. Barcelone")}
                 className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
               />
             </div>
@@ -308,13 +308,13 @@ function EventsPage() {
               }}
               className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 inline-flex items-center gap-1"
             >
-              <X className="w-3 h-3" /> {tr("Clear", "Limpiar")}
+              <X className="w-3 h-3" /> {tr("Clear", "Limpiar", "Effacer")}
             </button>
             <button
               onClick={() => setFiltersOpen(false)}
               className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
             >
-              {tr("Show", "Mostrar")} {filtered.length}
+              {tr("Show", "Mostrar", "Afficher")} {filtered.length}
             </button>
           </div>
         </div>
@@ -330,8 +330,8 @@ function EventsPage() {
               : "border-transparent text-[var(--cream)]/70"
           }`}
         >
-          <div className="text-[10px] uppercase tracking-widest font-semibold leading-none">{tr("ALL", "TODOS")}</div>
-          <div className="text-[10px] uppercase tracking-widest opacity-70 mt-1 leading-none">{tr("UPCOMING", "PRÓXIMOS")}</div>
+          <div className="text-[10px] uppercase tracking-widest font-semibold leading-none">{tr("ALL", "TODOS", "TOUS")}</div>
+          <div className="text-[10px] uppercase tracking-widest opacity-70 mt-1 leading-none">{tr("UPCOMING", "PRÓXIMOS", "À VENIR")}</div>
         </button>
         {days.map((d, i) => {
           const active = selectedIdx === i;
@@ -356,7 +356,7 @@ function EventsPage() {
               ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
-          aria-label={tr("Pick a date", "Elegir fecha")}
+          aria-label={tr("Pick a date", "Elegir fecha", "Choisis une date")}
         >
           <CalendarDays className="w-4 h-4" />
           <input
@@ -381,7 +381,7 @@ function EventsPage() {
             <button
               type="button"
               onClick={() => { setCustomDate(""); setSelectedIdx(0); }}
-              aria-label={tr("Clear date", "Borrar fecha")}
+              aria-label={tr("Clear date", "Borrar fecha", "Effacer la date")}
               className="inline-flex"
             >
               <X className="w-3 h-3" />
@@ -396,8 +396,8 @@ function EventsPage() {
         <div className="text-center py-10 border border-dashed border-[var(--cream)]/15 rounded-xl text-[var(--cream)]/70 text-sm space-y-3">
           {myAreasOnly && !profileQ.isLoading && !profileQ.data?.locations?.length ? (
             <>
-              <p className="font-semibold">{tr("No areas selected", "Ninguna zona seleccionada")}</p>
-              <p>{tr("Add the cities where you play in your profile to see matches near you.", "Añade en tu perfil las ciudades donde juegas para ver partidos cerca.")}</p>
+              <p className="font-semibold">{tr("No areas selected", "Ninguna zona seleccionada", "Aucune zone sélectionnée")}</p>
+              <p>{tr("Add the cities where you play in your profile to see matches near you.", "Añade en tu perfil las ciudades donde juegas para ver partidos cerca.", "Ajoute les villes où tu joues dans ton profil pour voir les matches près de chez toi.")}</p>
               <Link
                 to="/app/profile"
                 className="inline-block rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
@@ -406,9 +406,9 @@ function EventsPage() {
               </Link>
             </>
           ) : myAreasOnly ? (
-            <p>{tr("No upcoming matches in your areas.", "No hay partidos próximos en tus zonas.")}</p>
+            <p>{tr("No upcoming matches in your areas.", "No hay partidos próximos en tus zonas.", "Aucun match à venir dans tes zones.")}</p>
           ) : (
-            <p>{selectedIdx === "all" ? tr("No upcoming matches yet.", "Aún no hay partidos próximos.") : tr("No open matches for this day.", "No hay partidos abiertos ese día.")}</p>
+            <p>{selectedIdx === "all" ? tr("No upcoming matches yet.", "Aún no hay partidos próximos.", "Aucun match à venir pour l'instant.") : tr("No open matches for this day.", "No hay partidos abiertos ese día.", "Aucun match ouvert pour ce jour.")}</p>
           )}
         </div>
       )}
@@ -418,9 +418,9 @@ function EventsPage() {
             const diff = Math.round((startOfDay(g.date).getTime() - today.getTime()) / 86400000);
             const label =
               diff === 0
-                ? tr("TODAY", "HOY")
+                ? tr("TODAY", "HOY", "AUJOURD'HUI")
                 : diff === 1
-                ? tr("TOMORROW", "MAÑANA")
+                ? tr("TOMORROW", "MAÑANA", "DEMAIN")
                 : g.date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }).toUpperCase();
             return (
               <div key={g.key}>
@@ -440,14 +440,14 @@ function EventsPage() {
       <div className="mt-5 rounded-2xl border border-[var(--cream)]/15 bg-black/20 p-4 flex items-center gap-3">
         <CalendarPlus className="w-6 h-6 text-[var(--cream)]/70 shrink-0" />
         <div className="flex-1 min-w-0">
-          <div className="text-sm text-[var(--cream)] font-semibold">{tr("Can't find the right match?", "¿No encuentras el partido ideal?")}</div>
-          <div className="text-xs text-[var(--cream)]/60">{tr("Create your own and players will join you.", "Crea el tuyo y otros jugadores se unirán.")}</div>
+          <div className="text-sm text-[var(--cream)] font-semibold">{tr("Can't find the right match?", "¿No encuentras el partido ideal?", "Tu ne trouves pas le bon match ?")}</div>
+          <div className="text-xs text-[var(--cream)]/60">{tr("Create your own and players will join you.", "Crea el tuyo y otros jugadores se unirán.", "Crée le tien et les joueurs te rejoindront.")}</div>
         </div>
         <button
           onClick={() => navigate({ to: "/app/events/new" })}
           className="shrink-0 rounded-full border border-[var(--ball)] text-[var(--ball)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
         >
-          {tr("Create match", "Crear partido")}
+          {tr("Create match", "Crear partido", "Créer un match")}
         </button>
       </div>
 

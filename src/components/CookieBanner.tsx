@@ -27,10 +27,10 @@ export function CookieBanner() {
           "We use essential cookies to keep you signed in and remember your language. No tracking, no ads.",
           "Usamos cookies esenciales para mantener tu sesión y recordar tu idioma. Sin rastreo ni anuncios.",
         )}{" "}
-        <Link to="/privacy" className="underline">{tr("Privacy", "Privacidad")}</Link> · <Link to="/terms" className="underline">{tr("Terms", "Términos")}</Link>
+        <Link to="/privacy" className="underline">{tr("Privacy", "Privacidad", "Confidentialité")}</Link> · <Link to="/terms" className="underline">{tr("Terms", "Términos", "Conditions")}</Link>
       </p>
       <div className="mt-2 flex justify-end">
-        <button onClick={accept} className="chip chip-ball">{tr("Got it", "Entendido")}</button>
+        <button onClick={accept} className="chip chip-ball">{tr("Got it", "Entendido", "Compris")}</button>
       </div>
     </div>
   );

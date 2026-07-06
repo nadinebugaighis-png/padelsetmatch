@@ -43,7 +43,7 @@ function JoinSetupPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !level) {
-      toast.error(tr("Add your name and padel level", "Añade tu nombre y nivel de pádel"));
+      toast.error(tr("Add your name and padel level", "Añade tu nombre y nivel de pádel", "Ajoute ton prénom et ton niveau de padel"));
       return;
     }
     setBusy(true);
@@ -62,7 +62,7 @@ function JoinSetupPage() {
             const opensAt = new Date(msg.slice("INVITE_LOCK:".length)).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
             toast.error(tr(`Reserved for invited players until ${opensAt}. Come back then!`, `Reservado para invitados hasta ${opensAt}. ¡Vuelve entonces!`));
           } else {
-            toast.error(msg || tr("Could not join", "No te pudimos unir"));
+            toast.error(msg || tr("Could not join", "No te pudimos unir", "Impossible de rejoindre"));
           }
         }
         navigate({ to: "/app/events/$eventId", params: { eventId: join } });
@@ -70,7 +70,7 @@ function JoinSetupPage() {
         navigate({ to: "/app" });
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar"));
+      toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Impossible d'enregistrer"));
     } finally {
       setBusy(false);
     }
@@ -79,15 +79,15 @@ function JoinSetupPage() {
   return (
     <main className="min-h-screen bg-[var(--court-deep)]">
       <div className="max-w-md mx-auto px-5 py-8">
-        <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("Quick setup", "Configuración rápida")}</div>
-        <h1 className="text-3xl text-[var(--cream)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.")}</h1>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
+        <h1 className="text-3xl text-[var(--cream)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>
         <p className="text-sm text-[var(--cream)]/70 mt-2">
           {tr("You can complete your full profile later — this is enough to join a match.", "Puedes completar tu perfil después — con esto ya puedes unirte a un partido.")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("First name", "Nombre")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("First name", "Nombre", "Prénom")}</label>
             <input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -99,7 +99,7 @@ function JoinSetupPage() {
           </div>
 
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Padel level", "Nivel de pádel")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
             <div className="grid grid-cols-2 gap-2 mt-2">
               {PADEL_LEVELS.map((lvl) => (
                 <button
@@ -119,7 +119,7 @@ function JoinSetupPage() {
           </div>
 
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("City (optional)", "Ciudad (opcional)")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("City (optional)", "Ciudad (opcional)", "Ville (optionnel)")}</label>
             <input
               value={city}
               onChange={(e) => setCity(e.target.value)}
@@ -134,7 +134,7 @@ function JoinSetupPage() {
             disabled={busy}
             className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50"
           >
-            {busy ? tr("Saving…", "Guardando…") : join ? tr("Save & join the match", "Guardar y unirme al partido") : tr("Save & continue", "Guardar y continuar")}
+            {busy ? tr("Saving…", "Guardando…") : join ? tr("Save & join the match", "Guardar y unirme al partido", "Enregistrer et rejoindre le match") : tr("Save & continue", "Guardar y continuar", "Enregistrer et continuer")}
           </button>
 
           <button
@@ -142,7 +142,7 @@ function JoinSetupPage() {
             onClick={() => navigate({ to: "/app/onboarding" })}
             className="w-full py-2 text-xs uppercase tracking-widest text-[var(--cream)]/60"
           >
-            {tr("Complete full profile instead", "Completar el perfil completo")}
+            {tr("Complete full profile instead", "Completar el perfil completo", "Compléter le profil entier")}
           </button>
         </form>
       </div>

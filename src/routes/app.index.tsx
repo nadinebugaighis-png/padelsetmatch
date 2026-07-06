@@ -148,7 +148,7 @@ function Discover() {
       qc.invalidateQueries({ queryKey: ["discover"] });
       toast.success(tr("Photo reported — thanks. Our team will review it.", "Foto reportada — gracias. Nuestro equipo la revisará."));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not send report", "No se pudo enviar el reporte")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not send report", "No se pudo enviar el reporte", "Impossible d'envoyer le signalement")),
   });
 
   function handleReport(id: string, name: string) {
@@ -629,12 +629,12 @@ function Discover() {
                     {/* Me-style profile card (age intentionally omitted for privacy) */}
                     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4 space-y-4">
                       <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
-                        <Info label={tr("LEVEL", "NIVEL")} v={label(preview.level)} />
+                        <Info label={tr("LEVEL", "NIVEL", "NIVEAU")} v={label(preview.level)} />
                         {preview.gender && (
-                          <Info label={tr("GENDER", "GÉNERO")} v={preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)} />
+                          <Info label={tr("GENDER", "GÉNERO", "GENRE")} v={preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)} />
                         )}
                         {preview.nationality && (
-                          <Info label={tr("NATIONALITY", "NACIONALIDAD")} v={preview.nationality} />
+                          <Info label={tr("NATIONALITY", "NACIONALIDAD", "NATIONALITÉ")} v={preview.nationality} />
                         )}
                       </div>
 
@@ -643,7 +643,7 @@ function Discover() {
                         if (locs.length === 0) return null;
                         return (
                           <div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Plays in", "Juega en")}</div>
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
                             <div className="flex flex-wrap gap-2">
                               {locs.map((l) => <span key={l} className="chip">{l}</span>)}
                             </div>
@@ -653,7 +653,7 @@ function Discover() {
 
                       {(preview.languages?.length ?? 0) > 0 && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Languages", "Idiomas")}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
                           <div className="flex flex-wrap gap-2">
                             {preview.languages!.map((l) => <span key={l} className="chip">{label(l)}</span>)}
                           </div>
@@ -662,7 +662,7 @@ function Discover() {
 
                       {(preview.personal_traits?.length ?? 0) > 0 && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Personal characteristics", "Características personales")}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
                           <div className="flex flex-wrap gap-2">
                             {preview.personal_traits!.map((tt) => <span key={tt} className="chip">{label(tt)}</span>)}
                           </div>
@@ -671,7 +671,7 @@ function Discover() {
 
                       {(preview.padel_style?.length ?? 0) > 0 && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Padel style", "Estilo de pádel")}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
                           <div className="flex flex-wrap gap-2">
                             {preview.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
                           </div>
@@ -748,13 +748,13 @@ function Discover() {
 function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number } }) {
   const tr = useTr();
   const rows = [
-    { label: tr("Playing Style", "Estilo de juego"), value: categories.playingStyle },
-    { label: tr("Personality", "Personalidad"), value: categories.personality },
-    { label: tr("Lifestyle", "Estilo de vida"), value: categories.lifestyle },
+    { label: tr("Playing Style", "Estilo de juego", "Style de jeu"), value: categories.playingStyle },
+    { label: tr("Personality", "Personalidad", "Personnalité"), value: categories.personality },
+    { label: tr("Lifestyle", "Estilo de vida", "Style de vie"), value: categories.lifestyle },
   ];
   return (
     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match")}</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
 
       <div className="flex items-center gap-4">
         <div className="text-display text-5xl text-[var(--cream)] leading-none">{total}%</div>
@@ -801,7 +801,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
       <div className="w-9 h-9 rounded-full bg-[var(--ball)]/20 flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-[var(--cream)]">
-          {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras")}
+          {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
         <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.")}</div>
       </div>

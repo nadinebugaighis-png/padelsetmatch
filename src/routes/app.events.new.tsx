@@ -22,14 +22,14 @@ function NewEvent() {
     setSaving(true);
     try {
       const { id } = await create({ data: v });
-      toast.success(tr("Match called! Waiting for players.", "¡Partido convocado! Esperando jugadores."));
+      toast.success(tr("Match called! Waiting for players.", "¡Partido convocado! Esperando jugadores.", "Match lancé ! En attente des joueurs."));
       navigate({ to: "/app/events/$eventId", params: { eventId: id } });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido"));
+      toast.error(e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido", "Impossible de créer le match"));
     } finally {
       setSaving(false);
     }
   };
 
-  return <MatchForm title={tr("CALL A MATCH", "CONVOCAR PARTIDO")} submitLabel={tr("Call this match", "Convocar este partido")} onSubmit={onSubmit} saving={saving} />;
+  return <MatchForm title={tr("CALL A MATCH", "CONVOCAR PARTIDO", "LANCER UN MATCH")} submitLabel={tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} />;
 }

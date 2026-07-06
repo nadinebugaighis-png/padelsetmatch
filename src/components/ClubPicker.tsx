@@ -60,7 +60,7 @@ export function ClubPicker({ value, onChange }: Props) {
           }}
           className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)] shrink-0"
         >
-          {tr("Change", "Cambiar")}
+          {tr("Change", "Cambiar", "Modifier")}
 
         </button>
       </div>
@@ -75,7 +75,7 @@ export function ClubPicker({ value, onChange }: Props) {
         onChange={(e) => setQ(e.target.value)}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
-        placeholder={tr("Search padel club (e.g. La Moraleja)", "Buscar club de pádel (p. ej. La Moraleja)")}
+        placeholder={tr("Search padel club (e.g. La Moraleja)", "Buscar club de pádel (p. ej. La Moraleja)", "Chercher un club de padel (p. ex. La Moraleja)")}
         className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--ball)]"
       />
       {loading && (
@@ -103,7 +103,7 @@ export function ClubPicker({ value, onChange }: Props) {
       )}
       {open && q.length >= 2 && !loading && results.length === 0 && (
         <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg p-3 text-xs text-[var(--cream)]/60">
-          {tr("No clubs found. Try a different name.", "No se encontraron clubes. Prueba con otro nombre.")}
+          {tr("No clubs found. Try a different name.", "No se encontraron clubes. Prueba con otro nombre.", "Aucun club trouvé. Essaie un autre nom.")}
         </div>
       )}
     </div>

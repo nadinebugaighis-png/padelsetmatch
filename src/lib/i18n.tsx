@@ -572,7 +572,7 @@ const fr: Dict = {
   "land.h1.a": "trouve ton",
   "land.h1.a2": "meilleur",
   "land.h1.b": "Match.",
-  "land.lede": "Découvre des joueurs qui correspondent à ton niveau, ta personnalité et ton style de vie. Que tu cherches de belles parties, de nouveaux amis ou de vraies connexions, on t'aide à trouver des gens avec qui tu accroches vraiment.",
+  "land.lede": "Trouve des joueurs qui te correspondent vraiment. Grâce à ton niveau, ta personnalité et ton style de vie, découvre des partenaires de padel avec qui partager de beaux matchs, créer des amitiés et vivre de vraies connexions.",
   "land.cta": "COMMENCER MATCH",
   "land.cta.sub": "Puis réserve sur Playtomic — ou joue gratuitement si ton match a une pista à disposition 🎾",
   "land.howItWorks": "Comment ça marche",

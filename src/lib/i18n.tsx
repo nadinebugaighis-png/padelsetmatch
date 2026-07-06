@@ -693,7 +693,7 @@ const fr: Dict = {
   "disc.reportConfirm": "Envoyer le signalement ? Le compte de {name} sera suspendu en attendant vérification.",
   "disc.blockConfirm": "Bloquer {name} ? Vous ne vous verrez nulle part dans l'app.",
   "disc.qaBannerTitle": "Débloque ton Code d'affinité",
-  "disc.qaBannerSub": "Réponds à quelques questions pour que l'IA trouve tes meilleurs matches de pista — personnalité, valeurs et affinités.",
+  "disc.qaBannerSub": "Réponds à quelques questions pour que l'IA trouve tes meilleurs matches de terrain — personnalité, valeurs et affinités.",
   "disc.qaBannerCta": "Commencer l'affinité →",
 
   // Matches list

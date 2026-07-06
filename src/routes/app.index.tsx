@@ -37,6 +37,7 @@ function Discover() {
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[] }>(null);
 

@@ -804,7 +804,7 @@ const fr: Dict = {
   "ob.errMax3": "Jusqu'à 3 traits personnalisés",
   "ob.errMaxTraits": "Max. 10 traits",
   "ob.h4": "Ta photo de padel",
-  "ob.h4sub": "Une photo de toi avec une raquette sur la pista — c'est toute l'ambiance. Affichée dans le grid.",
+  "ob.h4sub": "Une photo de toi avec une raquette sur le terrain — c'est toute l'ambiance. Affichée dans le grid.",
   "ob.uploading": "Téléversement…",
   "ob.tapUpload": "Tape pour téléverser",
   "ob.uploaded": "Photo téléversée",

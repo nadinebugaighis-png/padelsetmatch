@@ -756,13 +756,11 @@ function Discover() {
   );
 }
 
-function MatchScoreCard({ total, categories }: { total: number; categories: { playingStyle: number; personality: number; lifestyle: number } }) {
+function MatchScoreCard({ total, padel, personality }: { total: number; padel: number | null; personality: number | null }) {
   const tr = useTr();
-  const rows = [
-    { label: tr("Playing Style", "Estilo de juego", "Style de jeu"), value: categories.playingStyle },
-    { label: tr("Personality", "Personalidad", "Personnalité"), value: categories.personality },
-    { label: tr("Lifestyle", "Estilo de vida", "Style de vie"), value: categories.lifestyle },
-  ];
+  const rows: Array<{ label: string; value: number }> = [];
+  if (typeof padel === "number") rows.push({ label: tr("Padel", "Pádel", "Padel"), value: padel });
+  if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
     <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
       <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
@@ -781,6 +779,11 @@ function MatchScoreCard({ total, categories }: { total: number; categories: { pl
           ))}
         </div>
       </div>
+      {rows.length > 0 && (
+        <p className="mt-3 text-[10px] text-[var(--cream)]/50 leading-snug">
+          {tr("Overall = average of Padel and Personality.", "Total = media de Pádel y Personalidad.", "Total = moyenne de Padel et Personnalité.")}
+        </p>
+      )}
     </div>
   );
 }

@@ -697,7 +697,7 @@ const fr: Dict = {
   "disc.qaBannerCta": "Commencer l'affinité →",
 
   // Matches list
-  "ml.h1": "Tes pistas",
+  "ml.h1": "Tes terrains",
   "ml.sub": "Tout le monde ici t'a retapé.",
   "ml.loading": "Chargement…",
   "ml.empty": "Pas encore de matches.",

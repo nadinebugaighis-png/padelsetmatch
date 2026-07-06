@@ -569,16 +569,8 @@ function Discover() {
                             </div>
                           )}
 
-                          {Array.isArray(compatQ.data.reasons) && compatQ.data.reasons.length > 0 && (
-                            <ul className="mt-3 space-y-1.5">
-                              {compatQ.data.reasons.map((r, i) => (
-                                <li key={i} className="text-[13px] text-[var(--cream)]/85 leading-snug flex gap-2">
-                                  <span className="text-[var(--ball)] mt-0.5">•</span>
-                                  <span>{r}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+
+
 
 
                           <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">

@@ -66,7 +66,7 @@ function Landing() {
             <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
               {t("land.cta")}
             </Link>
-            <ShareQR url="https://padelmatch.lovable.app" label="Join me on PadelMatch" />
+            <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
           </div>
           <Link
             to="/how-it-works"

@@ -140,7 +140,10 @@ function ChatRoom() {
           {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-display text-xl leading-none">{other.first_name}</div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="text-display text-xl leading-none">{other.first_name}</div>
+            <IntentBadges intents={other.intents} looking_for={other.looking_for} compact />
+          </div>
           <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{other.zone} · {label(other.level)}</div>
         </div>
         <button onClick={onBlock} title={t("chat.block")} aria-label={t("chat.block")} className="p-1.5 rounded-full hover:bg-[var(--cream)]/10">

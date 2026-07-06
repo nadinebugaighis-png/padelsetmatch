@@ -162,7 +162,16 @@ function AuthShell() {
       <Outlet />
 
       {hasProfile && !onOnboarding && (
-        <nav className="fixed bottom-0 left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40">
+        <nav
+          className="fixed left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40"
+          style={{
+            bottom: 0,
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
+            transform: "translateZ(0)",
+            WebkitTransform: "translateZ(0)",
+            willChange: "transform",
+          }}
+        >
           <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(5, minmax(0, 1fr))` }}>
             <NavTab to="/app/questions" label={t("shell.tab.questions.short")} ariaLabel={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
             <NavTab to="/app" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />

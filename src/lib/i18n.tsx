@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type Lang = "en" | "es";
+export type Lang = "en" | "es" | "fr";
 
 export function isRTL(_lang: Lang): boolean {
   return false;
@@ -279,6 +279,7 @@ const en: Dict = {
   "welcome.hello": "Hello",
   "welcome.helloSub": "Continue in English",
   "welcome.holaSub": "Continúa en Español",
+  "welcome.bonjourSub": "Continuer en Français",
 
   // Events
   "events.myAreas": "Only my areas",
@@ -451,7 +452,7 @@ const es: Dict = {
   "prof.playsIn": "Juega en",
   "prof.languages": "Idiomas",
   "prof.privacy": "Tus preferencias (a quién buscas, rango de edad, valores que te importan) son privadas — solo las usa la IA para encontrar tus matches, nunca se muestran en tu perfil. Puedes rehacer el cuestionario cuando quieras.",
-  "prof.retake": "Rehacer el cuestionario",
+  "prof.retake": "Editar perfil",
   "prof.delete": "Borrar mi cuenta",
   "prof.deleteConfirm": "¿Borrar tu cuenta para siempre? Esto elimina tu perfil, likes, matches y chats. No se puede deshacer.",
   "prof.deleted": "Cuenta borrada",
@@ -554,6 +555,7 @@ const es: Dict = {
   "welcome.hello": "Hola",
   "welcome.helloSub": "Continue in English",
   "welcome.holaSub": "Continúa en Español",
+  "welcome.bonjourSub": "Continuer en Français",
 
   // Events
   "events.myAreas": "Solo mis zonas",
@@ -563,8 +565,284 @@ const es: Dict = {
   "events.noMatchesMyAreas": "No hay partidos próximos en tus zonas.",
 };
 
+const fr: Dict = {
+  // Landing
+  "land.signin": "Se connecter",
+  "land.chip": "Partout dans le monde · choisis ta ville",
+  "land.h1.a": "trouve ton",
+  "land.h1.a2": "meilleur",
+  "land.h1.b": "Match.",
+  "land.lede": "Découvre des joueurs qui correspondent à ton niveau, ta personnalité et ton style de vie. Que tu cherches de belles parties, de nouveaux amis ou de vraies connexions, on t'aide à trouver des gens avec qui tu accroches vraiment.",
+  "land.cta": "COMMENCER MATCH",
+  "land.cta.sub": "Puis réserve sur Playtomic — ou joue gratuitement si ton match a une pista à disposition 🎾",
+  "land.howItWorks": "Comment ça marche",
 
-const DICTS: Record<Lang, Dict> = { en, es };
+  "land.what": "C'est quoi Playtomic ?",
+  "land.statUsers": "joueurs inscrits",
+  "land.tap": "Tap. Tap en retour. On joue.",
+  "land.foot": "Joue partout. Pire des cas : un nouvel ami de padel.",
+  "land.preview.chip": "Aperçu",
+  "land.preview.title": "Explore le Grid",
+  "land.preview.sub": "Trouve ton âme sœur de pista. Connecte-toi pour voir photos, scores et chat.",
+  "land.preview.cta": "Inscription gratuite",
+  "land.preview.unlock": "Connecte-toi pour débloquer",
+  "land.preview.foot": "Aperçu uniquement. Les vrais profils apparaissent après le questionnaire.",
+
+
+  // Auth
+  "auth.back": "← Retour",
+  "auth.title.signup": "Rejoins PadelMatch",
+  "auth.title.signin": "Bon retour",
+  "auth.sub.signup": "On ne demande que ce qui aide au match. Ta photo est pour tes matches, pas pour tout le monde.",
+  "auth.sub.signin": "Reconnecte-toi à ton fil padel.",
+  "auth.google": "Continuer avec Google",
+  "auth.apple": "Continuer avec Apple",
+
+  "auth.or": "ou",
+  "auth.email": "email",
+  "auth.password": "mot de passe (min. 8)",
+  "auth.create": "Créer un compte",
+  "auth.signin": "Se connecter",
+  "auth.toggleToSignin": "Déjà un compte ? Se connecter",
+  "auth.toggleToSignup": "Nouveau ici ? Créer un compte",
+  "auth.forgot": "Mot de passe oublié ?",
+  "auth.welcome": "Bienvenue ! Tu es connecté.",
+  "auth.confirmEmail": "Compte créé — vérifie ton email pour confirmer.",
+  "auth.fail": "Échec de la connexion",
+  "auth.enterEmailFirst": "Saisis d'abord ton email",
+  "auth.resetSent": "Regarde tes emails pour le lien de réinitialisation",
+
+  // App shell
+  "shell.home": "Accueil",
+  "shell.discover": "Découvrir",
+  "shell.signout": "Se déconnecter",
+  "shell.tab.discover": "Découvrir",
+  "shell.tab.questions": "Code d'affinité",
+  "shell.tab.questions.short": "Code",
+  "shell.tab.matches": "Matchat",
+  "shell.tab.me": "Moi",
+  "shell.tab.grid": "Grid",
+  "shell.tab.play": "Jouer",
+  "shell.back.home": "Retour à l'accueil",
+  "shell.back.grid": "Retour au Grid",
+  "shell.grid": "Grid",
+  "shell.admin": "Admin",
+  "shell.core": "★ core",
+  "shell.err.title": "Un problème est survenu",
+  "shell.err.body": "Souci pour charger ton compte. Réessaie ou reconnecte-toi.",
+  "shell.err.retry": "Réessayer",
+  "shell.err.signin": "Se connecter",
+  "shell.notFound": "Introuvable",
+  "root.notFound.title": "Page introuvable",
+  "root.notFound.home": "Accueil",
+  "root.err.title": "Un problème est survenu",
+  "root.err.body": "Réessaie s'il te plaît.",
+  "root.err.retry": "Réessayer",
+
+
+  // Q&A page
+  "qa.title": "Questions de compatibilité",
+  "qa.sub": "Réponds à autant que tu veux. Chaque réponse partagée affine tes matches. Tu peux t'arrêter quand tu veux — ta progression est sauvegardée.",
+  "qa.generate": "Générer des questions",
+  "qa.generateMore": "Générer plus",
+  "qa.generating": "Je réfléchis à des questions…",
+  "qa.skip": "Passer",
+  "qa.save": "Enregistrer",
+  "qa.saved": "Enregistré",
+  "qa.empty": "Pas encore de questions — appuie sur Générer pour commencer.",
+  "qa.answeredCount": "{n} répondues",
+  "qa.yourAnswers": "Tes réponses",
+  "qa.seeMatches": "Voir qui matche →",
+  "qa.delete": "Supprimer",
+  "qa.placeholder": "Écris une courte réponse…",
+  "qa.howItWorks": "L'IA génère de nouvelles questions selon ton profil. Tes réponses ne sont jamais publiques — seules les réponses partagées améliorent ton score de match.",
+
+  // Discover
+  "disc.h1": "Tape sur ceux avec qui tu jouerais.",
+  "disc.sub": "Les taps mutuels ouvrent un chat. Ensuite, réservez sur Playtomic.",
+  "disc.scoreA": "Le",
+  "disc.scoreB": "est le",
+  "disc.scoreBold": "score de match",
+  "disc.scoreC": "— à quel point vos réponses correspondent (âge, niveau, zone, culture, valeurs). Plus haut = meilleure affinité.",
+  "disc.filter.all": "Tout le monde",
+  "disc.filter.partner": "Partenaire",
+  "disc.filter.friend": "Ami·e",
+  "disc.filter.padel": "Partenaire de padel",
+  "disc.filter.relationship": "Relation",
+  "disc.world.on": "🌍 Monde On",
+  "disc.world.off": "🌍 Monde Off",
+  "disc.world.note": "Affichage mondial (sauf ceux que tu as masqués). Désactive pour revenir à ta zone.",
+  "disc.empty": "Aucun match avec ces filtres pour l'instant.",
+  "disc.liked": "Aimé",
+  "disc.undo": "Tape pour annuler",
+  "disc.seeChats": "Voir tes chats →",
+  "disc.likeSent": "Like envoyé — s'il·elle te retape, le chat s'ouvre",
+  "disc.likeFail": "Impossible d'envoyer le like",
+  "disc.likeRemoved": "Like retiré",
+  "disc.undoFail": "Impossible d'annuler",
+  "disc.blocked": "Bloqué. Vous ne vous verrez plus.",
+  "disc.blockFail": "Impossible de bloquer",
+  "disc.privacyNote": "Il·elle ne saura pas que tu as liké tant qu'il·elle ne te like pas en retour — sans pression.",
+  "disc.reportSent": "Signalement envoyé. Le compte est suspendu pour vérification.",
+  "disc.reportFail": "Impossible de signaler",
+  "disc.loading": "Chargement des pistes…",
+  "disc.blockTitle": "Bloquer — se cacher mutuellement",
+  "disc.reportTitle": "Signaler — envoyé à l'équipe pour vérification",
+  "disc.scoreTooltip": "Score de match (0–100) : à quel point vos réponses correspondent",
+  "disc.reportPrompt": "Signaler {name} ?\n\nDécris ce qui s'est passé (harcèlement, fausse photo, abus, menaces…). Le compte est suspendu immédiatement et vérifié par notre équipe.",
+  "disc.reportConfirm": "Envoyer le signalement ? Le compte de {name} sera suspendu en attendant vérification.",
+  "disc.blockConfirm": "Bloquer {name} ? Vous ne vous verrez nulle part dans l'app.",
+  "disc.qaBannerTitle": "Débloque ton Code d'affinité",
+  "disc.qaBannerSub": "Réponds à quelques questions pour que l'IA trouve tes meilleurs matches de pista — personnalité, valeurs et affinités.",
+  "disc.qaBannerCta": "Commencer l'affinité →",
+
+  // Matches list
+  "ml.h1": "Tes pistas",
+  "ml.sub": "Tout le monde ici t'a retapé.",
+  "ml.loading": "Chargement…",
+  "ml.empty": "Pas encore de matches.",
+  "ml.discoverLink": "Découvrir des joueurs →",
+
+  // Chat
+  "chat.opening": "Ouverture du chat…",
+  "chat.safetyTitle": "Sécurité d'abord :",
+  "chat.safety": "réservez le match sur Playtomic — pista publique, réservation vérifiée, sans partager d'adresses.",
+  "chat.open": "Ouvrir",
+  "chat.empty": "Vous vous êtes tapés tous les deux. Dis bonjour 👋",
+  "chat.placeholder": "Salut ! 👋",
+  "chat.block": "Bloquer",
+  "chat.report": "Signaler",
+  "chat.blockedDone": "Bloqué.",
+  "chat.reportDone": "Signalement envoyé. Compte suspendu pour vérification.",
+  "chat.sendFail": "Envoi impossible",
+
+  // Profile
+  "prof.loading": "Chargement…",
+  "prof.noProfile": "Tu n'as pas encore de profil.",
+  "prof.createLink": "Crée ton profil →",
+  "prof.hi": "Salut, {name}",
+  "prof.age": "Âge",
+  "prof.level": "Niveau",
+  "prof.nationality": "Nationalité",
+  "prof.gender": "Genre",
+  "prof.playsIn": "Joue à",
+  "prof.languages": "Langues",
+  "prof.privacy": "Tes préférences (qui tu cherches, tranche d'âge, valeurs) restent privées — elles ne servent qu'à l'IA pour trouver tes matches, jamais affichées sur ton profil. Refais le questionnaire quand tu veux pour les mettre à jour.",
+  "prof.retake": "Modifier le profil",
+  "prof.delete": "Supprimer mon compte",
+  "prof.deleteConfirm": "Supprimer ton compte pour de bon ? Cela efface ton profil, tes likes, matches et chats. Irréversible.",
+  "prof.deleted": "Compte supprimé",
+  "prof.deleteFail": "Impossible de supprimer le compte",
+
+  // Feedback
+  "fb.title": "Améliore cette app",
+  "fb.sub": "Suggestions, bugs, ce que tu adorerais — ça arrive directement à l'équipe.",
+  "fb.anon": "Ton feedback est totalement anonyme.",
+  "fb.placeholder": "Qu'est-ce qui rendrait PadelMatch meilleur pour toi ?",
+  "fb.send": "Envoyer",
+  "fb.sending": "Envoi…",
+  "fb.thanks": "Merci — ton feedback a été envoyé.",
+  "fb.fail": "Envoi impossible. Réessaie.",
+  "fb.tooShort": "Ajoute quelques mots d'abord.",
+
+
+  // Onboarding
+  "ob.step": "Étape",
+  "ob.of": "/",
+  "ob.s0": "Toi",
+  "ob.s1": "Qui tu rencontres",
+  "ob.s2": "Padel, lieux & langues",
+  "ob.s3": "Ce qui compte",
+  "ob.s4": "Photo",
+  "ob.back": "Retour",
+  "ob.next": "Suivant",
+  "ob.start": "Commencer les matches",
+  "ob.saving": "Enregistrement…",
+  "ob.saved": "Profil enregistré",
+  "ob.saveFail": "Échec de l'enregistrement",
+  "ob.h0": "Qui es-tu ?",
+  "ob.firstName": "Prénom (seul cela est affiché)",
+  "ob.firstNamePh": "Lucía",
+  "ob.age": "Âge",
+  "ob.iAm": "Je suis",
+  "ob.lookingFor": "Je cherche",
+  "ob.privateNote": "Tes réponses ici restent privées — jamais affichées sur ton profil, jamais partagées. Tu peux refaire ce questionnaire quand tu veux.",
+  "ob.h1": "Qui veux-tu rencontrer ?",
+  "ob.audIntro1": "Choisis séparément pour l'amitié et pour une relation — tape autant que tu veux. Appuie sur",
+  "ob.audIntro2": "si tu es ouvert·e à tout le monde.",
+  "ob.audPrivate": "Utilisé seulement pour le matching — jamais affiché sur ton profil.",
+  "ob.audEveryone": "Tout le monde",
+  "ob.audFriend": "Pour l'amitié",
+  "ob.audPartner": "Pour une relation",
+  "ob.ageRange": "Tranche d'âge",
+  "ob.to": "à",
+  "ob.h2": "Padel, lieux & langues",
+  "ob.nat": "Nationalité / origine",
+  "ob.places": "Lieux où tu joues",
+  "ob.placesHelp": "Ajoute où tu vis, travailles, ta maison d'été ou une ville que tu visites. Jusqu'à 8.",
+  "ob.country": "Pays",
+  "ob.city": "Ville",
+  "ob.cityPh": "p. ex. Madrid",
+  "ob.area": "Quartier (optionnel)",
+  "ob.areaPh": "p. ex. La Moraleja, Chamberí",
+  "ob.addLocation": "Ajouter ce lieu",
+  "ob.langs": "Langues parlées",
+  "ob.padelLevel": "Niveau de padel",
+  "ob.bio": "Bio courte (optionnel)",
+  "ob.bioPh": "Frappe posée. Samedi matin, présent·e.",
+  "ob.errCountryCity": "Pays et ville obligatoires",
+  "ob.errMaxLoc": "Max. 8 lieux",
+  "ob.errDup": "Déjà ajouté",
+  "ob.h3": "Qu'est-ce qui compte pour toi ?",
+  "ob.h3sub": "Tape pour ajouter. Puis classe-les — le plus important en haut. Jusqu'à 3 à toi.",
+  "ob.h3priv": "Privé — utilisé seulement pour le matching.",
+  "ob.suggested": "Traits suggérés",
+  "ob.addOwn": "Ajoute les tiens (jusqu'à 3)",
+  "ob.addOwnPh": "p. ex. amoureux·se des animaux, foodie, lève-tôt",
+  "ob.ranking": "Ton classement (haut = plus important)",
+  "ob.pickThree": "Choisis au moins 3.",
+  "ob.errMax3": "Jusqu'à 3 traits personnalisés",
+  "ob.errMaxTraits": "Max. 10 traits",
+  "ob.h4": "Ta photo de padel",
+  "ob.h4sub": "Une photo de toi avec une raquette sur la pista — c'est toute l'ambiance. Affichée dans le grid.",
+  "ob.uploading": "Téléversement…",
+  "ob.tapUpload": "Tape pour téléverser",
+  "ob.uploaded": "Photo téléversée",
+  "ob.uploadFail": "Échec du téléversement",
+  "ob.notSignedIn": "Non connecté",
+
+  // Reset password
+  "rp.title": "Définis un nouveau mot de passe",
+  "rp.openFromEmail": "Ouvre cette page depuis le lien dans ton email de réinitialisation. Si tu es arrivé·e ici par erreur, retourne à",
+  "rp.signin": "connexion",
+  "rp.newPw": "nouveau mot de passe (min. 8)",
+  "rp.update": "Mettre à jour le mot de passe",
+  "rp.updated": "Mot de passe mis à jour — tu es connecté·e.",
+  "rp.updateFail": "Impossible de mettre à jour le mot de passe",
+
+  // Errors / 404
+  "err.404": "Page introuvable",
+  "err.goHome": "Accueil",
+  "err.title": "Cette page n'a pas chargé",
+  "err.sub": "Un problème de notre côté.",
+  "err.retry": "Réessayer",
+
+  // Welcome
+  "welcome.hello": "Bonjour",
+  "welcome.helloSub": "Continue in English",
+  "welcome.holaSub": "Continúa en Español",
+  "welcome.bonjourSub": "Continuer en Français",
+
+  // Events
+  "events.myAreas": "Seulement mes zones",
+  "events.noAreasTitle": "Aucune zone sélectionnée",
+  "events.noAreasBody": "Ajoute les villes où tu joues dans ton profil pour voir les matches près de chez toi.",
+  "events.noAreasCta": "Aller au profil →",
+  "events.noMatchesMyAreas": "Aucun match à venir dans tes zones.",
+};
+
+
+const DICTS: Record<Lang, Dict> = { en, es, fr };
 
 // Display labels for fixed enums stored in English in the DB.
 const LABELS: Record<Lang, Record<string, string>> = {
@@ -637,6 +915,69 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "Comfort (home life)": "Confort (vida en casa)",
     "Spontaneity (surprises)": "Espontaneidad (sorpresas)",
   },
+  fr: {
+    woman: "femme", man: "homme", "non-binary": "non-binaire", "self-describe": "Préfère se décrire",
+    "just starting": "je débute", casual: "casual", beginner: "débutant", intermediate: "intermédiaire", advanced: "avancé", competitive: "compétitif",
+    friend: "ami·e", partner: "partenaire", both: "les deux",
+    everyone: "tout le monde", women: "femmes", men: "hommes", "lesbian women": "femmes lesbiennes", "gay men": "hommes gays", bisexual: "bisexuel·le·s", queer: "queer",
+    // Court sides
+    right: "droite", left: "gauche",
+    // Languages
+    English: "Anglais", Spanish: "Espagnol", Portuguese: "Portugais", French: "Français",
+    Italian: "Italien", German: "Allemand", Dutch: "Néerlandais", Catalan: "Catalan",
+    Arabic: "Arabe", Russian: "Russe", Mandarin: "Mandarin", Japanese: "Japonais",
+    Swedish: "Suédois", Greek: "Grec", Turkish: "Turc", Hindi: "Hindi",
+    // Personal traits
+    Honest: "Honnête", Kind: "Gentil·le", Calm: "Calme", Curious: "Curieux·se",
+    Confident: "Confiant·e", Friendly: "Sympathique", Loyal: "Loyal·e", Patient: "Patient·e",
+    Organized: "Organisé·e", "Open-minded": "Ouvert·e d'esprit", Ambitious: "Ambitieux·se",
+    Ambidextrous: "Ambidextre", Brave: "Courageux·se", Creative: "Créatif·ve",
+    Determined: "Déterminé·e", Diplomatic: "Diplomate", Easygoing: "Facile à vivre",
+    Empathetic: "Empathique", Energetic: "Énergique", Flexible: "Flexible",
+    Generous: "Généreux·se", Humble: "Humble", Independent: "Indépendant·e",
+    Introverted: "Introverti·e", Outgoing: "Extraverti·e", Practical: "Pratique",
+    Reflective: "Réfléchi·e", Reliable: "Fiable", Serious: "Sérieux·se",
+    "Witty/funny": "Spirituel·le / drôle",
+    // Padel styles
+    Competitive: "Compétitif", Strategic: "Stratégique", Aggressive: "Agressif",
+    Defensive: "Défensif", "Team player": "Esprit d'équipe", Coachable: "Coachable",
+    "Loves tournaments": "Adore les tournois", "Just for fun": "Juste pour le fun",
+    "Always improving": "Toujours en progression", "Fitness-focused": "Axé fitness",
+    "Social player": "Joueur social",
+    // Availability slots
+    "Weekday mornings": "Matins en semaine",
+    "Weekday lunchtime": "Midis en semaine",
+    "Weekday evenings": "Soirs en semaine",
+    "Weekend mornings": "Matins le week-end",
+    "Weekend afternoons": "Après-midis le week-end",
+    "Weekend evenings": "Soirs le week-end",
+    // Priority traits
+    "Travel": "Voyages",
+    "Art": "Art",
+    "Music": "Musique",
+    "Sports": "Sports",
+    "Fitness": "Fitness",
+    "Nature": "Nature",
+    "Adventure": "Aventure",
+    "Food": "Cuisine",
+    "Learning": "Apprentissage",
+    "Ideas (conversation)": "Idées (conversation)",
+    "Humor": "Humour",
+    "Chill (relaxing)": "Chill (se détendre)",
+    "Partying": "Faire la fête",
+    "Family": "Famille",
+    "Friendship": "Amitié",
+    "Purpose (meaning)": "Sens (raison d'être)",
+    "Debate (discussion)": "Débat (discussion)",
+    "Politics": "Politique",
+    "Religion / faith": "Religion / foi",
+    "Romance": "Romance",
+    "Creativity (making)": "Créativité (créer)",
+    "Ambition (career)": "Ambition (carrière)",
+    "Social causes (activism)": "Causes sociales (militantisme)",
+    "Comfort (home life)": "Confort (vie à la maison)",
+    "Spontaneity (surprises)": "Spontanéité (surprises)",
+  },
 
 };
 
@@ -654,6 +995,7 @@ function detectBrowserLang(): Lang {
   if (typeof navigator === "undefined") return "en";
   const langs = (navigator.languages ?? [navigator.language ?? "en"]).map((s) => s.toLowerCase());
   if (langs.some((l) => l.startsWith("es"))) return "es";
+  if (langs.some((l) => l.startsWith("fr"))) return "fr";
   return "en";
 }
 
@@ -663,7 +1005,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-      if (stored === "en" || stored === "es") {
+      if (stored === "en" || stored === "es" || stored === "fr") {
         setLangState(stored);
       } else {
         setLangState(detectBrowserLang());
@@ -710,28 +1052,32 @@ export function useI18n() {
 export const useT = () => useI18n().t;
 
 // Quick inline translator for strings not yet keyed in the dictionary.
+// French is optional; when omitted, French falls back to English.
 export function useTr() {
   const { lang } = useI18n();
-  return (en: string, es: string) => (lang === "es" ? es : en);
+  return (en: string, es: string, fr?: string) => {
+    if (lang === "es") return es;
+    if (lang === "fr") return fr ?? en;
+    return en;
+  };
 }
 
 export function LangSwitch({ className = "" }: { className?: string }) {
   const { lang, setLang } = useI18n();
+  const btn = (l: Lang, label: string) => (
+    <button
+      key={l}
+      type="button"
+      onClick={() => setLang(l)}
+      className={`px-2.5 py-1 ${lang === l ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
+      aria-pressed={lang === l}
+    >{label}</button>
+  );
   return (
     <div className={`inline-flex items-center rounded-full border border-[var(--cream)]/20 text-[10px] uppercase tracking-widest overflow-hidden ${className}`}>
-      <button
-        type="button"
-        onClick={() => setLang("en")}
-        className={`px-2.5 py-1 ${lang === "en" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
-        aria-pressed={lang === "en"}
-      >EN</button>
-      <button
-        type="button"
-        onClick={() => setLang("es")}
-        className={`px-2.5 py-1 ${lang === "es" ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"}`}
-        aria-pressed={lang === "es"}
-      >ES</button>
+      {btn("en", "EN")}
+      {btn("es", "ES")}
+      {btn("fr", "FR")}
     </div>
   );
 }
-

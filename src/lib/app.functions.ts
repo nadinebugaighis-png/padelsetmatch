@@ -1290,7 +1290,7 @@ Categories must be lowercase single words (personality, values, lifestyle, statu
   });
 
 
-const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
+const FALLBACK_QUESTIONS: Record<"en" | "es" | "fr", GeneratedQuestion[]> = {
   en: [
     { question: "What's your love language?", category: "personality", options: ["Words of affirmation", "Quality time", "Physical touch", "Acts of service", "Gifts"] },
     { question: "What makes you instantly trust someone?", category: "values", options: ["Consistency", "Honesty under pressure", "Kindness to strangers", "Keeps secrets"] },

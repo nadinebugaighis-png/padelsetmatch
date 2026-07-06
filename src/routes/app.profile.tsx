@@ -107,10 +107,10 @@ function ProfilePage() {
       await updatePhoto({ data: { photo_url: signed.signedUrl } });
       await qc.invalidateQueries({ queryKey: ["my-profile"] });
       await q.refetch();
-      toast.success(tr("Photo updated", "Foto actualizada"));
+      toast.success(tr("Photo updated", "Foto actualizada", "Photo mise à jour"));
     } catch (e) {
-      const message = e instanceof Error ? e.message : tr("Upload failed", "No se pudo subir");
-      toast.error(isTransientUploadError(message) ? tr("Upload failed because the connection was busy. Please try again.", "La conexión estaba ocupada. Inténtalo de nuevo.") : message);
+      const message = e instanceof Error ? e.message : tr("Upload failed", "No se pudo subir", "Échec du téléversement");
+      toast.error(isTransientUploadError(message) ? tr("Upload failed because the connection was busy. Please try again.", "La conexión estaba ocupada. Inténtalo de nuevo.", "Échec du téléversement, connexion occupée. Réessaie.") : message);
     } finally {
       setUploading(false);
     }
@@ -173,7 +173,7 @@ function ProfilePage() {
           })}
         >
           <Camera className="w-4 h-4 mr-2" />
-          {uploading ? tr("Uploading…", "Subiendo…") : p.photo_url ? tr("Change photo", "Cambiar foto") : tr("Add photo", "Añadir foto")}
+          {uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : p.photo_url ? tr("Change photo", "Cambiar foto", "Changer la photo") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
         </label>
 
         <div className="grid grid-cols-2 gap-2 text-sm">
@@ -205,7 +205,7 @@ function ProfilePage() {
 
         {(p.personal_traits?.length ?? 0) > 0 && (
           <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Personal characteristics", "Características personales")}</div>
+            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
             <div className="flex flex-wrap gap-2">
               {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
             </div>
@@ -214,7 +214,7 @@ function ProfilePage() {
 
         {(p.padel_style?.length ?? 0) > 0 && (
           <div className="mt-4">
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Padel style", "Estilo de pádel")}</div>
+            <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-1">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
             <div className="flex flex-wrap gap-2">
               {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
             </div>
@@ -223,9 +223,9 @@ function ProfilePage() {
 
         {p.free_court_access && (
           <div className="mt-4 rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis")}</div>
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
             {p.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{p.free_court_note}</p>}
-            <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.")}</p>
+            <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.", "Affiché sur ta carte grid. Partage l'adresse exacte seulement en chat.")}</p>
           </div>
         )}
       </div>
@@ -238,7 +238,7 @@ function ProfilePage() {
       </div>
 
       <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">{t("prof.retake")}</Button></Link>
-      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-2" })}>{tr("Hidden & blocked", "Ocultos y bloqueados")}</Link>
+      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-2" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
       <FeedbackBox />
 
@@ -346,10 +346,10 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
     try {
       const payload = isAway ? null : "2999-12-31";
       await setAway({ data: { away_until: payload } });
-      toast.success(payload ? tr("Marked as on holidays", "Marcado como de vacaciones") : tr("You're available again", "Ya estás disponible de nuevo"));
+      toast.success(payload ? tr("Marked as on holidays", "Marcado como de vacaciones", "Marqué comme en vacances") : tr("You're available again", "Ya estás disponible de nuevo", "Tu es à nouveau disponible"));
       onSaved();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not update", "No se pudo actualizar"));
+      toast.error(e instanceof Error ? e.message : tr("Could not update", "No se pudo actualizar", "Impossible de mettre à jour"));
     } finally {
       setBusy(false);
     }
@@ -359,9 +359,9 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
     <div className="mt-4 surface-card p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-display text-lg tracking-wider">{tr("Availability", "Disponibilidad")}</h2>
+          <h2 className="text-display text-lg tracking-wider">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
           <p className="text-xs text-[var(--cream)]/60 mt-1">
-            {isAway ? tr("✈️ On holidays", "✈️ De vacaciones") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad")}
+            {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>
         </div>
         <button

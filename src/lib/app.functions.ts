@@ -1140,7 +1140,7 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       count: z.number().int().min(1).max(8).default(5),
-      lang: z.enum(["en", "es"]).default("en"),
+      lang: z.enum(["en", "es", "fr"]).default("en"),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -1196,23 +1196,34 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
       : !wantsRelationship
       ? " The user is looking for friendship, NOT a partner — do NOT ask about dating, romance, attraction, love languages, partner dealbreakers, wanting kids, or intimacy. Focus on padel, personality, values, and lifestyle. Ratio: ~40% padel, ~35% personality/values, ~25% lifestyle."
       : "";
-
-    const sys = (data.lang === "es"
-      ? "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla por defecto es ~35% personalidad/valores, ~30% estilo de vida y estatus (rutina diaria, situación laboral, nivel de estudios, situación sentimental actual, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Responde SIEMPRE en español."
-      : "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). Default mix: ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.")
-      + (data.lang === "es" ? intentGuidanceEs : intentGuidanceEn);
-
-    const ratioLine = padelOnly
-      ? (data.lang === "es"
-        ? "Proporción OBLIGATORIA: ~60% pádel, ~40% personalidad ligera y estilo de vida (rutina, deporte, viajes, humor, energía social, mascotas). NADA de romance, citas, pareja, hijos ni atracción."
-        : "MANDATORY ratio: ~60% padel, ~40% light personality and lifestyle (routine, fitness, travel, humor, social energy, pets). NOTHING about romance, dating, partners, kids, or attraction.")
+    const intentGuidanceFr = padelOnly
+      ? " L'utilisateur cherche UNIQUEMENT des partenaires de padel — NE pose PAS de questions sur les rencontres, relations, romance, attirance physique, langages de l'amour, dealbreakers de couple, envie d'enfants ou intimité. Concentre-toi presque tout sur le padel (style, attitude, compétitivité, disponibilité) et sur une personnalité/style de vie légers et adaptés à l'amitié. Ratio : ~60% padel, ~40% personnalité/style de vie amicaux."
       : !wantsRelationship
-      ? (data.lang === "es"
-        ? "Proporción OBLIGATORIA: ~40% pádel, ~35% personalidad/valores (humor, energía social, estilo de conflicto, ambición), ~25% estilo de vida (rutina, viajes, comida, fumar/beber, mascotas). NADA de romance, citas, pareja ni hijos."
-        : "MANDATORY ratio: ~40% padel, ~35% personality/values (humor, social energy, conflict style, ambition), ~25% lifestyle (routine, travel, food, smoking/drinking, pets). NOTHING about romance, dating, partners, or kids.")
-      : (data.lang === "es"
-        ? "Proporción: ~35% personalidad (lenguaje del amor, apego, estilo de conflicto, humor, dealbreakers, familia, ambición, energía social, comodidad con la intimidad, qué les hace sentir queridos), ~30% estilo de vida y estatus (etapa laboral, estudios, situación sentimental, hijos o querer hijos, vivienda, fumar, beber, dieta, deporte, sueño, viajes, mascotas, religión, política, mentalidad con el dinero, fin de semana ideal), ~35% pádel (lado preferido, estilo agresivo/defensivo, cómo reacciona al perder, cómo trata a compañeros, intensidad, social vs competitivo, compañero ideal)."
-        : "Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).");
+      ? " L'utilisateur cherche de l'amitié, PAS un·e partenaire — NE pose PAS de questions sur les rencontres, romance, attirance, langages de l'amour, dealbreakers de couple, envie d'enfants ou intimité. Concentre-toi sur le padel, la personnalité, les valeurs et le style de vie. Ratio : ~40% padel, ~35% personnalité/valeurs, ~25% style de vie."
+      : "";
+
+    const sysEs = "Eres una IA experta en compatibilidad y psicología relacional. Generas preguntas cortas, reveladoras y de OPCIÓN MÚLTIPLE para encontrar afinidad real entre personas (amistad, pareja o alma gemela). La mezcla por defecto es ~35% personalidad/valores, ~30% estilo de vida y estatus (rutina diaria, situación laboral, nivel de estudios, situación sentimental actual, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Responde SIEMPRE en español.";
+    const sysEn = "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). Default mix: ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.";
+    const sysFr = "Tu es une IA experte en compatibilité et psychologie relationnelle. Tu génères des questions courtes, révélatrices et à CHOIX MULTIPLE pour trouver une vraie affinité entre les personnes (amitié, partenaire ou âme sœur). Mélange par défaut : ~35% personnalité/valeurs, ~30% style de vie et statut (routine quotidienne, situation professionnelle, niveau d'études, situation sentimentale actuelle, enfants, habitudes, voyages, santé, tabac/alcool, animaux, logement, religion, politique) et ~35% padel (comment on joue, attitude sur pista, style, mentalité compétitive). Réponds TOUJOURS en français.";
+    const sys = (data.lang === "es" ? sysEs : data.lang === "fr" ? sysFr : sysEn)
+      + (data.lang === "es" ? intentGuidanceEs : data.lang === "fr" ? intentGuidanceFr : intentGuidanceEn);
+
+    const ratioEs = padelOnly
+      ? "Proporción OBLIGATORIA: ~60% pádel, ~40% personalidad ligera y estilo de vida (rutina, deporte, viajes, humor, energía social, mascotas). NADA de romance, citas, pareja, hijos ni atracción."
+      : !wantsRelationship
+      ? "Proporción OBLIGATORIA: ~40% pádel, ~35% personalidad/valores (humor, energía social, estilo de conflicto, ambición), ~25% estilo de vida (rutina, viajes, comida, fumar/beber, mascotas). NADA de romance, citas, pareja ni hijos."
+      : "Proporción: ~35% personalidad (lenguaje del amor, apego, estilo de conflicto, humor, dealbreakers, familia, ambición, energía social, comodidad con la intimidad, qué les hace sentir queridos), ~30% estilo de vida y estatus (etapa laboral, estudios, situación sentimental, hijos o querer hijos, vivienda, fumar, beber, dieta, deporte, sueño, viajes, mascotas, religión, política, mentalidad con el dinero, fin de semana ideal), ~35% pádel (lado preferido, estilo agresivo/defensivo, cómo reacciona al perder, cómo trata a compañeros, intensidad, social vs competitivo, compañero ideal).";
+    const ratioEn = padelOnly
+      ? "MANDATORY ratio: ~60% padel, ~40% light personality and lifestyle (routine, fitness, travel, humor, social energy, pets). NOTHING about romance, dating, partners, kids, or attraction."
+      : !wantsRelationship
+      ? "MANDATORY ratio: ~40% padel, ~35% personality/values (humor, social energy, conflict style, ambition), ~25% lifestyle (routine, travel, food, smoking/drinking, pets). NOTHING about romance, dating, partners, or kids."
+      : "Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).";
+    const ratioFr = padelOnly
+      ? "Ratio OBLIGATOIRE : ~60% padel, ~40% personnalité légère et style de vie (routine, fitness, voyages, humour, énergie sociale, animaux). RIEN sur la romance, les rencontres, les partenaires, les enfants ou l'attirance."
+      : !wantsRelationship
+      ? "Ratio OBLIGATOIRE : ~40% padel, ~35% personnalité/valeurs (humour, énergie sociale, style de conflit, ambition), ~25% style de vie (routine, voyages, cuisine, tabac/alcool, animaux). RIEN sur la romance, les rencontres, les partenaires ou les enfants."
+      : "Ratio : ~35% personnalité (langage de l'amour, attachement, style de conflit, humour, dealbreakers, famille, ambition, énergie sociale, aisance avec l'intimité, ce qui fait se sentir aimé), ~30% style de vie et statut (étape professionnelle, études, situation sentimentale, enfants ou envie d'enfants, logement, tabac, alcool, régime, sport, sommeil, voyages, animaux, religion, politique, rapport à l'argent, week-end idéal), ~35% padel (côté préféré, style agressif/défensif, réaction à la défaite, comportement avec les partenaires, intensité, social vs compétitif, partenaire idéal).";
+    const ratioLine = data.lang === "es" ? ratioEs : data.lang === "fr" ? ratioFr : ratioEn;
 
     const prompt = `Person context:
 - Age ${me.age}, ${me.gender === "self-describe" ? (me.gender_custom || "self-describe") : me.gender}
@@ -1279,7 +1290,7 @@ Categories must be lowercase single words (personality, values, lifestyle, statu
   });
 
 
-const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
+const FALLBACK_QUESTIONS: Record<"en" | "es" | "fr", GeneratedQuestion[]> = {
   en: [
     { question: "What's your love language?", category: "personality", options: ["Words of affirmation", "Quality time", "Physical touch", "Acts of service", "Gifts"] },
     { question: "What makes you instantly trust someone?", category: "values", options: ["Consistency", "Honesty under pressure", "Kindness to strangers", "Keeps secrets"] },
@@ -1351,6 +1362,41 @@ const FALLBACK_QUESTIONS: Record<"en" | "es", GeneratedQuestion[]> = {
     { question: "¿Horario de sueño?", category: "estilo de vida", options: ["Madrugador/a", "Noctámbulo/a", "Depende del día"] },
     { question: "¿Nivel de ambición?", category: "estatus", options: ["Enfocado/a en carrera", "Equilibrado/a", "Vida primero, trabajo segundo", "Aún descubriéndolo"] },
 
+  ],
+  fr: [
+    { question: "Quel est ton langage de l'amour ?", category: "personnalité", options: ["Paroles valorisantes", "Temps de qualité", "Contact physique", "Actes de service", "Cadeaux"] },
+    { question: "Qu'est-ce qui te fait faire confiance à quelqu'un immédiatement ?", category: "valeurs", options: ["La constance", "L'honnêteté sous pression", "La gentillesse envers les inconnus", "Garder les secrets"] },
+    { question: "Introverti·e, extraverti·e ou entre les deux ?", category: "personnalité", options: ["Introverti·e", "Extraverti·e", "Ambiverti·e"] },
+    { question: "Ton plus gros dealbreaker en couple ?", category: "dealbreakers", options: ["Malhonnêteté", "Jalousie", "Mauvais caractère", "Sans ambition", "Esprit fermé"] },
+    { question: "Quand tu es contrarié·e, tu préfères…", category: "conflit", options: ["En parler", "Être seul·e", "Un peu des deux"] },
+    { question: "Ton humour est surtout…", category: "humour", options: ["Sec/sarcastique", "Bête/espiègle", "Spirituel/malin", "Sombre", "Bon enfant"] },
+    { question: "Dimanche parfait ?", category: "style de vie", options: ["Brunch + balade", "Sport + sieste", "Plage/nature", "Maison + film", "Sortie entre amis"] },
+    { question: "Tu crois aux âmes sœurs ?", category: "valeurs", options: ["Oui", "Non", "Un peu"] },
+    { question: "Choisis une soirée :", category: "social", options: ["Dîner en tête-à-tête", "Soirée en groupe", "Fête à la maison", "Rester chez soi"] },
+    { question: "Importance d'un humour partagé ?", category: "valeurs", options: ["Essentiel", "Très", "Sympa", "Pas vraiment"] },
+    { question: "Rapport à l'argent ?", category: "style de vie", options: ["Épargner d'abord", "Dépenser en expériences", "Se faire plaisir souvent", "Investir long terme"] },
+    { question: "Quel côté du padel préfères-tu ?", category: "padel", options: ["Droite (drive)", "Gauche (revers)", "Les deux", "Encore à déterminer"] },
+    { question: "Ton style de jeu est…", category: "padel", options: ["Smasheur agressif", "Mur défensif", "Tactique/patient", "Fun avant tout"] },
+    { question: "Après un match difficile tu…", category: "padel", options: ["Je déballe tout", "Je plaisante", "Je reste silencieux·se", "J'analyse chaque point"] },
+    { question: "Ton partenaire rate une balle facile — tu…", category: "padel", options: ["L'encourage", "Reste silencieux·se", "Donne des conseils", "Je m'agace"] },
+    { question: "Ton niveau de compétitivité sur pista ?", category: "padel", options: ["Gagner à tout prix", "Compétitif mais cool", "Surtout pour le fun", "Juste pour socialiser"] },
+    { question: "Session de padel idéale ?", category: "padel", options: ["Americano amical", "Match sérieux", "Drills + match", "Partie rapide et fun"] },
+    { question: "Situation sentimentale actuelle ?", category: "statut", options: ["Célibataire", "Je rencontre du monde", "Dans une situationship", "Sortie récente d'une relation", "C'est compliqué"] },
+    { question: "Tu veux des enfants (ou plus) ?", category: "statut", options: ["Oui, sûr", "Peut-être un jour", "Je ne sais pas", "Non"] },
+    { question: "Tu as déjà des enfants ?", category: "statut", options: ["Non", "Oui, ils vivent avec moi", "Oui, à temps partiel", "Déjà grands"] },
+    { question: "Ta vie pro en ce moment ?", category: "style de vie", options: ["Salarié·e 9–18h", "Indépendant·e", "Fondateur/entrepreneur", "Études", "Entre deux"] },
+    { question: "Niveau d'études le plus élevé ?", category: "statut", options: ["Bac", "Licence", "Master", "Doctorat", "Autodidacte"] },
+    { question: "Situation de logement ?", category: "style de vie", options: ["Seul·e", "Avec mon·ma partenaire", "Avec la famille", "Colocation", "Je bouge souvent"] },
+    { question: "Tu fumes ?", category: "style de vie", options: ["Jamais", "En société", "Régulièrement", "J'essaie d'arrêter"] },
+    { question: "Habitudes d'alcool ?", category: "style de vie", options: ["Jamais", "En société", "Week-ends", "Un verre au dîner", "Sobre"] },
+    { question: "Routine sportive ?", category: "style de vie", options: ["Quotidienne", "3–4x par semaine", "Que du padel", "Quand j'en ai envie"] },
+    { question: "Type d'alimentation ?", category: "style de vie", options: ["Je mange de tout", "Plutôt sain", "Végétarien·ne", "Végan·e", "Pescétarien·ne"] },
+    { question: "À quelle fréquence voyages-tu ?", category: "style de vie", options: ["Chaque mois", "Quelques fois par an", "Une fois par an", "Rarement"] },
+    { question: "Animaux ?", category: "style de vie", options: ["Chien", "Chat", "Les deux", "Aucun", "Allergique"] },
+    { question: "Ton degré de religion ?", category: "valeurs", options: ["Très", "Spirituel·le non religieux·se", "Culturellement", "Pas du tout"] },
+    { question: "La politique compte chez un·e partenaire ?", category: "valeurs", options: ["Beaucoup", "Un peu", "Pas vraiment", "Je préfère ne pas dire"] },
+    { question: "Horaire de sommeil ?", category: "style de vie", options: ["Lève-tôt", "Couche-tard", "Ça dépend"] },
+    { question: "Niveau d'ambition ?", category: "statut", options: ["Focus carrière", "Équilibré·e", "Vie d'abord, travail ensuite", "Je cherche encore"] },
   ],
 };
 

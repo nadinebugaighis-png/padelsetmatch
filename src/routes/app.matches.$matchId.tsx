@@ -94,23 +94,23 @@ function ChatRoom() {
   });
   const confirmM = useMutation({
     mutationFn: () => confirmFn({ data: { matchId } }),
-    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't confirm", "No se pudo confirmar")),
+    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅", "Marqué comme joué ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't confirm", "No se pudo confirmar", "Impossible de confirmer")),
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.")),
-    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar")),
+    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.", "Absence signalée. Merci — nous allons vérifier.")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar", "Impossible de signaler")),
   });
   const editM = useMutation({
     mutationFn: (v: { messageId: string; body: string }) => editFn({ data: v }),
     onSuccess: () => { setEditingId(null); setEditingText(""); qc.invalidateQueries({ queryKey: ["match", matchId] }); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't edit", "No se pudo editar")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't edit", "No se pudo editar", "Impossible de modifier")),
   });
   const deleteM = useMutation({
     mutationFn: (messageId: string) => delFn({ data: { messageId } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["match", matchId] }),
-    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't delete", "No se pudo eliminar")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't delete", "No se pudo eliminar", "Impossible de supprimer")),
   });
 
 
@@ -173,15 +173,15 @@ function ChatRoom() {
         >
           <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
           {statusQ.data?.iConfirmed
-            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…"))
-            : tr("We played a match", "Jugamos un partido")}
+            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓", "Joué ensemble ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…", "En attente de sa confirmation…"))
+            : tr("We played a match", "Jugamos un partido", "Nous avons joué un match")}
         </button>
         <button
           type="button"
           onClick={onNoShow}
           className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10"
         >
-          <UserX className="w-3.5 h-3.5" /> {tr("No-show", "No-show")}
+          <UserX className="w-3.5 h-3.5" /> {tr("No-show", "No-show", "Absence")}
         </button>
 
       </div>
@@ -194,17 +194,17 @@ function ChatRoom() {
       {reportOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
           <div className="surface-card p-5 w-full max-w-sm space-y-3" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-display text-xl">{tr("Report", "Reportar")} {other.first_name}</h3>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Reason", "Motivo")}</label>
+            <h3 className="text-display text-xl">{tr("Report", "Reportar", "Signaler")} {other.first_name}</h3>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Reason", "Motivo", "Raison")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-10 px-2" value={reportReason} onChange={(e) => setReportReason(e.target.value)}>
               {REPORT_REASONS.map((r) => <option key={r} value={r} className="bg-[var(--court-deep)]">{r}</option>)}
             </select>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Details (optional)", "Detalles (opcional)")}</label>
-            <Input value={reportDetail} onChange={(e) => setReportDetail(e.target.value)} placeholder={tr("Anything else we should know?", "¿Algo más que debamos saber?")} maxLength={400} />
-            <p className="text-xs text-[var(--cream)]/60">{tr("The account will be auto-suspended immediately while our team reviews.", "La cuenta se suspenderá al instante mientras nuestro equipo la revisa.")}</p>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Details (optional)", "Detalles (opcional)", "Détails (optionnel)")}</label>
+            <Input value={reportDetail} onChange={(e) => setReportDetail(e.target.value)} placeholder={tr("Anything else we should know?", "¿Algo más que debamos saber?", "Autre chose à savoir ?")} maxLength={400} />
+            <p className="text-xs text-[var(--cream)]/60">{tr("The account will be auto-suspended immediately while our team reviews.", "La cuenta se suspenderá al instante mientras nuestro equipo la revisa.", "Le compte sera suspendu automatiquement pendant que notre équipe vérifie.")}</p>
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setReportOpen(false)}>{tr("Cancel", "Cancelar")}</Button>
-              <Button onClick={submitReport} className="bg-red-500 hover:bg-red-600 text-white">{tr("Submit report", "Enviar reporte")}</Button>
+              <Button variant="outline" onClick={() => setReportOpen(false)}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
+              <Button onClick={submitReport} className="bg-red-500 hover:bg-red-600 text-white">{tr("Submit report", "Enviar reporte", "Envoyer le signalement")}</Button>
             </div>
           </div>
         </div>
@@ -227,15 +227,15 @@ function ChatRoom() {
                     type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
                     className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-[var(--cream)]/20 text-[var(--cream)]"
-                    aria-label={tr("Edit", "Editar")}
+                    aria-label={tr("Edit", "Editar", "Modifier")}
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?"))) deleteM.mutate(m.id); }}
+                    onClick={() => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); }}
                     className="p-1.5 rounded-full bg-[var(--cream)]/10 hover:bg-red-500/20 text-[var(--cream)] hover:text-red-400"
-                    aria-label={tr("Delete", "Eliminar")}
+                    aria-label={tr("Delete", "Eliminar", "Supprimer")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -260,10 +260,10 @@ function ChatRoom() {
                       autoFocus
                     />
                     <div className="flex gap-1 justify-end">
-                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Cancel", "Cancelar")}>
+                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
                         <X className="w-3.5 h-3.5" />
                       </button>
-                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Save", "Guardar")}>
+                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Save", "Guardar", "Enregistrer")}>
                         <Check className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -271,7 +271,7 @@ function ChatRoom() {
                 ) : (
                   <>
                     {m.body}
-                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--court-deep)]/60" : "text-[var(--cream)]/50"}`}>{tr("(edited)", "(editado)")}</span>}
+                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--court-deep)]/60" : "text-[var(--cream)]/50"}`}>{tr("(edited)", "(editado)", "(modifié)")}</span>}
                   </>
                 )}
               </div>
@@ -320,11 +320,11 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
   const submitM = useMutation({
     mutationFn: () => submitFn({ data: { matchId, stars, tags, comment: comment.trim() || undefined } }),
     onSuccess: () => {
-      toast.success(tr("Thanks — this makes future matches smarter", "Gracias — así mejoramos tus próximos matches"));
+      toast.success(tr("Thanks — this makes future matches smarter", "Gracias — así mejoramos tus próximos matches", "Merci — cela améliore les futurs matches"));
       qc.invalidateQueries({ queryKey: ["match-rating", matchId] });
       setExpanded(false);
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't save", "No se pudo guardar")),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't save", "No se pudo guardar", "Impossible d'enregistrer")),
   });
 
   const hasRated = !!ratingQ.data;
@@ -337,8 +337,8 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
             <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
           ))}
         </div>
-        <span className="flex-1">{tr("You rated this match", "Valoraste este partido")}</span>
-        <button type="button" onClick={() => setExpanded(true)} className="text-[var(--ball)] underline">{tr("Edit", "Editar")}</button>
+        <span className="flex-1">{tr("You rated this match", "Valoraste este partido", "Tu as noté ce match")}</span>
+        <button type="button" onClick={() => setExpanded(true)} className="text-[var(--ball)] underline">{tr("Edit", "Editar", "Modifier")}</button>
       </div>
     );
   }
@@ -352,7 +352,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
       >
         <Star className="w-4 h-4 text-[var(--ball)]" />
         <span className="flex-1 text-left">{tr(`How was your match with ${otherName}? Rate to help us learn.`, `¿Qué tal tu partido con ${otherName}? Valóralo para ayudarnos a aprender.`)}</span>
-        <span className="text-[var(--ball)] font-semibold">{tr("Rate", "Valorar")}</span>
+        <span className="text-[var(--ball)] font-semibold">{tr("Rate", "Valorar", "Noter")}</span>
       </button>
     );
   }
@@ -360,7 +360,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
   return (
     <div className="mx-3 mt-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--court)]/60 p-3 space-y-3">
       <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Rate your match", "Valora tu partido")}</div>
+        <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
         <button type="button" onClick={() => setExpanded(false)} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>
       </div>
       <div className="flex gap-1.5 justify-center">
@@ -395,13 +395,13 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
       <Input
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder={tr("Optional note (private, helps us learn)", "Nota opcional (privada, nos ayuda a aprender)")}
+        placeholder={tr("Optional note (private, helps us learn)", "Nota opcional (privada, nos ayuda a aprender)", "Note optionnelle (privée, nous aide à apprendre)")}
         maxLength={400}
       />
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => setExpanded(false)}>{tr("Cancel", "Cancelar")}</Button>
+        <Button variant="outline" size="sm" onClick={() => setExpanded(false)}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
         <Button size="sm" disabled={stars === 0 || submitM.isPending} onClick={() => submitM.mutate()}>
-          {submitM.isPending ? tr("Saving…", "Guardando…") : hasRated ? tr("Update", "Actualizar") : tr("Submit", "Enviar")}
+          {submitM.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : hasRated ? tr("Update", "Actualizar", "Mettre à jour") : tr("Submit", "Enviar", "Envoyer")}
         </Button>
       </div>
     </div>

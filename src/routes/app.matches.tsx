@@ -49,7 +49,7 @@ function Matches() {
                   </div>
                   <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{m.other.zone} · {label(m.other.level)}</div>
                   <div className={`text-xs mt-1 truncate ${m.unread > 0 ? "text-[var(--cream)] font-medium" : "text-[var(--cream)]/70"}`}>
-                    {m.last_message ? `${m.last_message.from_me ? tr("You: ", "Tú: ") : ""}${m.last_message.body}` : m.other.bio}
+                    {m.last_message ? `${m.last_message.from_me ? tr("You: ", "Tú: ", "Toi : ") : ""}${m.last_message.body}` : m.other.bio}
                   </div>
                 </div>
               </Link>

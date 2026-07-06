@@ -96,7 +96,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
       const cropped = await getCroppedFile(url, area, "padel-photo.jpg");
       onConfirm(cropped);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not crop the photo", "No se pudo recortar la foto"));
+      toast.error(e instanceof Error ? e.message : tr("Could not crop the photo", "No se pudo recortar la foto", "Impossible de recadrer la photo"));
     } finally {
       setBusy(false);
     }
@@ -106,7 +106,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
     <Dialog open={!!file} onOpenChange={(o) => { if (!o && !busy) onCancel(); }}>
       <DialogContent className="max-w-md p-0 overflow-hidden bg-[var(--court-deep)] text-[var(--cream)] border-[var(--cream)]/15">
         <DialogHeader className="px-5 pt-5">
-          <DialogTitle>{tr("Crop your photo", "Recorta tu foto")}</DialogTitle>
+          <DialogTitle>{tr("Crop your photo", "Recorta tu foto", "Recadre ta photo")}</DialogTitle>
         </DialogHeader>
         <div className="relative w-full aspect-[3/4] bg-black">
           {url && !loadError && (
@@ -133,14 +133,14 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
         <div className="px-5 py-4 space-y-4">
           {!loadError && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Zoom", "Zoom")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Zoom", "Zoom", "Zoom")}</div>
               <Slider value={[zoom]} min={1} max={4} step={0.05} onValueChange={(v) => setZoom(v[0])} />
             </div>
           )}
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={onCancel} disabled={busy}>{tr("Cancel", "Cancelar")}</Button>
+            <Button variant="outline" onClick={onCancel} disabled={busy}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
             <Button onClick={handleConfirm} disabled={busy || !area || !!loadError || !naturalSize}>
-              {busy ? tr("Saving…", "Guardando…") : tr("Use photo", "Usar foto")}
+              {busy ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Use photo", "Usar foto", "Utiliser la photo")}
             </Button>
           </div>
         </div>

@@ -722,7 +722,7 @@ function Discover() {
                       disabled={likeM.isPending && !match}
                       className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
                     >
-                      {match ? "Send Message" : preview.liked ? "Waiting for match…" : "Like to connect"}
+                      {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
                     </button>
                     <button
                       type="button"

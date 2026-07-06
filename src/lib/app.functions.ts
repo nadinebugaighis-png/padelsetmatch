@@ -1587,7 +1587,15 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const requestedSubScores = sharedIntents.length > 0 ? sharedIntents : ["padel"];
 
+    const langInstruction = lang === "es"
+      ? "Responde SIEMPRE en español."
+      : lang === "fr"
+        ? "Réponds TOUJOURS en français."
+        : "Always reply in English.";
+
     const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
+
+${langInstruction}`
 
 INTENT-BASED FOCUS (apply the ones that fit this pair; these are guidance, not hard rules):
 ${intentGuidance}

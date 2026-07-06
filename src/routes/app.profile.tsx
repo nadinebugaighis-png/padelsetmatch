@@ -6,7 +6,7 @@ import { deleteMyAccount, getMyProfile, setAwayStatus, submitFeedback, updateMyP
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, Lock, Sparkles, Star } from "lucide-react";
+import { Camera, Lock, Pencil, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -144,7 +144,17 @@ function ProfilePage() {
   const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   return (
     <main className="px-4 py-5 max-w-md mx-auto">
-      <h1 className="text-display text-4xl">{t("prof.hi", { name: p.first_name })}</h1>
+      <div className="flex items-start justify-between gap-3">
+        <h1 className="text-display text-4xl">{t("prof.hi", { name: p.first_name })}</h1>
+        <Link
+          to="/app/onboarding"
+          aria-label={t("prof.retake")}
+          title={t("prof.retake")}
+          className="mt-2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--cream)]/20 text-[var(--cream)]/80 hover:text-[var(--ball)] hover:border-[var(--ball)]/50 transition"
+        >
+          <Pencil className="w-4 h-4" />
+        </Link>
+      </div>
       <div className="mt-4 surface-card p-5">
         {p.photo_url && (
           <div className="aspect-[3/4] rounded-xl overflow-hidden mb-3">
@@ -238,8 +248,7 @@ function ProfilePage() {
         <p>{t("prof.privacy")}</p>
       </div>
 
-      <Link to="/app/onboarding"><Button variant="outline" className="w-full mt-4">{t("prof.retake")}</Button></Link>
-      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-2" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-4" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
       <QASection />
 

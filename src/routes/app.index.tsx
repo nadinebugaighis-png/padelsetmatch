@@ -257,19 +257,6 @@ function Discover() {
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
-      <div className="flex items-center gap-2 mt-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--cream)]/50" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name..."
-            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--ball)]/60"
-          />
-        </div>
-      </div>
-
       <div className="flex items-center justify-between mt-3">
         <div className="flex gap-2 flex-wrap items-center">
           {(["all", "padel", "friend", "relationship"] as const).map((f) => (

@@ -241,6 +241,10 @@ function Discover() {
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
       if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        if (!c.first_name.toLowerCase().includes(q)) return false;
+      }
       return true;
     });
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);

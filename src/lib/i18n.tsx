@@ -658,7 +658,7 @@ const fr: Dict = {
   "qa.howItWorks": "L'IA génère de nouvelles questions selon ton profil. Tes réponses ne sont jamais publiques — seules les réponses partagées améliorent ton score de match.",
 
   // Discover
-  "disc.h1": "Tape sur ceux avec qui tu jouerais.",
+  "disc.h1": "Découvre la Grid.",
   "disc.sub": "Les taps mutuels ouvrent un chat. Ensuite, réservez sur Playtomic.",
   "disc.scoreA": "Le",
   "disc.scoreB": "est le",

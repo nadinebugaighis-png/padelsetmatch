@@ -104,13 +104,19 @@ function Onboarding() {
   useEffect(() => {
     const p = profileQ.data;
     if (p) {
-      setFirstName(p.first_name); setAge(p.age); setGender(p.gender);
+      setFirstName(p.first_name ?? "");
+      setAge(p.age ?? null);
+      setGender((p.gender ?? "") as Gender | "");
       setGenderCustom(p.gender_custom ?? "");
-      setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
+      setInterested(Array.isArray(p.interested_in) ? p.interested_in : []);
+      setAgeMin(p.age_min ?? null);
+      setAgeMax(p.age_max ?? null);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
-      setNationality(p.nationality); setLevel(p.level);
-      setPriorities(p.priorities); setLookingFor(p.looking_for);
+      setNationality(p.nationality ?? "");
+      setLevel((p.level ?? "") as PadelLevel | "");
+      setPriorities(Array.isArray(p.priorities) ? p.priorities : []);
+      setLookingFor((p.looking_for ?? "both") as LookingFor);
       // Derive simple goals + meetPref from stored intents (fallback to legacy looking_for)
       const g: string[] = [];
       const storedIntents = (p as unknown as { intents?: string[] }).intents ?? [];
@@ -324,6 +330,24 @@ function Onboarding() {
   ];
 
   const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];
+
+  if (profileQ.isLoading) {
+    return (
+      <main className="px-4 py-10 max-w-md mx-auto text-center text-[var(--cream)]/70">
+        {tr("Loading your profile…", "Cargando tu perfil…")}
+      </main>
+    );
+  }
+  if (profileQ.isError) {
+    return (
+      <main className="px-4 py-10 max-w-md mx-auto text-center space-y-4">
+        <p className="text-[var(--cream)]/80">
+          {tr("We couldn't load your profile. Please check your connection.", "No pudimos cargar tu perfil. Comprueba tu conexión.")}
+        </p>
+        <Button onClick={() => profileQ.refetch()}>{tr("Try again", "Reintentar")}</Button>
+      </main>
+    );
+  }
 
   return (
     <main className="px-4 py-6 max-w-md mx-auto">

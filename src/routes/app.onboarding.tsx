@@ -176,7 +176,7 @@ function Onboarding() {
   const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
   const togglePriority = (t: string) => {
-    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 10 ? cur : [...cur, t]);
+    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);
   };
   const movePriority = (i: number, dir: -1 | 1) => {
     setPriorities((cur) => {

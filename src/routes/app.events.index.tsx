@@ -73,7 +73,7 @@ function EventsPage() {
   });
 
   const today = startOfDay(new Date());
-  const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i, es)), [today.getTime(), es]);
+  const days = useMemo(() => Array.from({ length: 5 }, (_, i) => dayLabels(today, i, lang)), [today.getTime(), lang]);
   const [selectedIdx, setSelectedIdx] = useState<number | "all" | "custom">("all");
   const [customDate, setCustomDate] = useState<string>("");
 

@@ -53,7 +53,7 @@ function EventsPage() {
   const navigate = useNavigate();
   const tr = useTr();
   const { lang } = useI18n();
-  const es = lang === "es";
+  
 
   const list = useServerFn(listOpenEvents);
   const getProfile = useServerFn(getMyProfile);

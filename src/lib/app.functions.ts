@@ -1651,13 +1651,13 @@ ${qaBlock(theirQA)}`;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
-    let subScores: Record<string, number> | null = null;
+    let subScores: Record<string, unknown> | null = null;
+    const allowedSubKeys = new Set(["padel", "personality", ...extraSubs]);
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown };
-      if (typeof parsed.score === "number") score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
       if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
       if (Array.isArray(parsed.reasons)) {
         reasons = parsed.reasons.filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
@@ -1666,13 +1666,27 @@ ${qaBlock(theirQA)}`;
       if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
         friction = watchRaw.trim().slice(0, 160);
       }
+      const cleanSub: Record<string, number> = {};
       if (parsed.sub_scores && typeof parsed.sub_scores === "object") {
-        const clean: Record<string, number> = {};
-        for (const k of requestedSubScores) {
-          const v = (parsed.sub_scores as Record<string, unknown>)[k];
-          if (typeof v === "number") clean[k] = Math.max(0, Math.min(100, Math.round(v)));
+        for (const [k, v] of Object.entries(parsed.sub_scores as Record<string, unknown>)) {
+          if (allowedSubKeys.has(k) && typeof v === "number") {
+            cleanSub[k] = Math.max(0, Math.min(100, Math.round(v)));
+          }
         }
-        if (Object.keys(clean).length > 0) subScores = clean;
+      }
+      const padelAnalysis = typeof parsed.padel_analysis === "string" ? parsed.padel_analysis.trim().slice(0, 360) : "";
+      const personalityAnalysis = typeof parsed.personality_analysis === "string" ? parsed.personality_analysis.trim().slice(0, 360) : "";
+      if (Object.keys(cleanSub).length > 0 || padelAnalysis || personalityAnalysis) {
+        subScores = { ...cleanSub, padel_analysis: padelAnalysis, personality_analysis: personalityAnalysis };
+      }
+      // Derive overall score from sub-scores so header % matches the analyses.
+      const parts: number[] = [];
+      if (typeof cleanSub.padel === "number") parts.push(cleanSub.padel);
+      if (typeof cleanSub.personality === "number") parts.push(cleanSub.personality);
+      if (parts.length > 0) {
+        score = Math.round(parts.reduce((a, b) => a + b, 0) / parts.length);
+      } else if (typeof parsed.score === "number") {
+        score = Math.max(0, Math.min(100, Math.round(parsed.score)));
       }
     } catch (e) {
       blurb = e instanceof Error && e.message.includes("402")
@@ -1680,7 +1694,7 @@ ${qaBlock(theirQA)}`;
         : blurb;
     }
 
-    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores, model_version: versionKey };
+    const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores as never, model_version: versionKey };
     await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });

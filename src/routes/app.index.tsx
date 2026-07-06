@@ -600,9 +600,14 @@ function Discover() {
 
                           {compatFbQ.data?.thumbs === -1 && (
                             <div className="mt-2 flex flex-wrap gap-1.5">
-                              {["Too harsh", "Too generic", "Missed the point", "Just wrong"].map((reason) => (
+                              {[
+                                { key: "harsh", label: tr("Too harsh", "Demasiado duro", "Trop dur") },
+                                { key: "generic", label: tr("Too generic", "Demasiado genérico", "Trop générique") },
+                                { key: "missed", label: tr("Missed the point", "No dio en el clavo", "À côté de la plaque") },
+                                { key: "wrong", label: tr("Just wrong", "Directamente mal", "Complètement faux") },
+                              ].map(({ key, label: reason }) => (
                                 <button
-                                  key={reason}
+                                  key={key}
                                   type="button"
                                   disabled={rateCompatM.isPending}
                                   onClick={() => rateCompatM.mutate({ thumbs: -1, reason })}

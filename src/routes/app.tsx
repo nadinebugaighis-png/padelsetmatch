@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { ArrowLeft, LayoutGrid, MessageCircle, Sparkles, Trophy, User } from "lucide-react";
+import { ArrowLeft, LayoutGrid, MessageCircle, Trophy, User } from "lucide-react";
 
 import { useT, LangSwitch } from "@/lib/i18n";
 
@@ -172,8 +172,7 @@ function AuthShell() {
             willChange: "transform",
           }}
         >
-          <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(5, minmax(0, 1fr))` }}>
-            <NavTab to="/app/questions" label={t("shell.tab.questions.short")} ariaLabel={t("shell.tab.questions")} icon={<Sparkles className="w-5 h-5" />} active={path.startsWith("/app/questions")} />
+          <div className="max-w-md mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
             <NavTab to="/app" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
 

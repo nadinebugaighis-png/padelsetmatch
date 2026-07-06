@@ -104,13 +104,19 @@ function Onboarding() {
   useEffect(() => {
     const p = profileQ.data;
     if (p) {
-      setFirstName(p.first_name); setAge(p.age); setGender(p.gender);
+      setFirstName(p.first_name ?? "");
+      setAge(p.age ?? null);
+      setGender((p.gender ?? "") as Gender | "");
       setGenderCustom(p.gender_custom ?? "");
-      setInterested(p.interested_in); setAgeMin(p.age_min); setAgeMax(p.age_max);
+      setInterested(Array.isArray(p.interested_in) ? p.interested_in : []);
+      setAgeMin(p.age_min ?? null);
+      setAgeMax(p.age_max ?? null);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
-      setNationality(p.nationality); setLevel(p.level);
-      setPriorities(p.priorities); setLookingFor(p.looking_for);
+      setNationality(p.nationality ?? "");
+      setLevel((p.level ?? "") as PadelLevel | "");
+      setPriorities(Array.isArray(p.priorities) ? p.priorities : []);
+      setLookingFor((p.looking_for ?? "both") as LookingFor);
       // Derive simple goals + meetPref from stored intents (fallback to legacy looking_for)
       const g: string[] = [];
       const storedIntents = (p as unknown as { intents?: string[] }).intents ?? [];

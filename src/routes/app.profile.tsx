@@ -131,12 +131,12 @@ function ProfilePage() {
     }
   };
 
-  if (q.isLoading) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("prof.loading")}</div>;
+  if (q.isLoading) return <div className="px-4 py-10 text-center text-[var(--court-deep)]/60">{t("prof.loading")}</div>;
   const p = q.data;
   if (!p) {
     return (
       <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center">
-        <p className="text-[var(--cream)]/70">{t("prof.noProfile")}</p>
+        <p className="text-[var(--court-deep)]/70">{t("prof.noProfile")}</p>
         <Link to="/app/onboarding" className="mt-4 inline-block underline">{t("prof.createLink")}</Link>
       </main>
     );
@@ -160,10 +160,10 @@ function ProfilePage() {
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--cream)]/20 shadow-lg"
+                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--court-deep)]/20 shadow-lg"
               />
             ) : (
-              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--cream)]/30 border-2 border-[var(--cream)]/15">
+              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--court-deep)]/30 border-2 border-[var(--court-deep)]/15">
                 <Camera className="w-8 h-8" />
               </div>
             )}
@@ -195,16 +195,16 @@ function ProfilePage() {
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <h1 className="text-display text-2xl sm:text-4xl leading-tight truncate">{p.first_name}</h1>
-                <p className="mt-0.5 text-xs sm:text-sm text-[var(--cream)]/75">
+                <p className="mt-0.5 text-xs sm:text-sm text-[var(--court-deep)]/75">
                   {p.age} · {label(p.level)} · {p.nationality}
                 </p>
-                <p className="text-xs sm:text-sm text-[var(--cream)]/55">{genderLabel}</p>
+                <p className="text-xs sm:text-sm text-[var(--court-deep)]/55">{genderLabel}</p>
               </div>
               <Link
                 to="/app/onboarding"
                 aria-label={t("prof.retake")}
                 title={t("prof.retake")}
-                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-8 sm:h-9 rounded-full border border-[var(--cream)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--cream)]/80 hover:text-[var(--cream)] hover:border-[var(--cream)]/50 transition shrink-0"
+                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-8 sm:h-9 rounded-full border border-[var(--court-deep)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--court-deep)]/80 hover:text-[var(--court-deep)] hover:border-[var(--court-deep)]/50 transition shrink-0"
               >
                 <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 {tr("Edit", "Editar", "Éditer")}
@@ -214,7 +214,7 @@ function ProfilePage() {
         </div>
 
         {p.bio && (
-          <p className="mt-3 text-sm leading-relaxed text-[var(--cream)]/85 italic border-l-2 border-[var(--cream)]/20 pl-3">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--court-deep)]/85 italic border-l-2 border-[var(--court-deep)]/20 pl-3">
             {p.bio}
           </p>
         )}
@@ -258,14 +258,14 @@ function ProfilePage() {
           </div>
 
           {p.free_court_access && (
-            <div className="mt-4 rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/10 p-3">
+            <div className="mt-4 rounded-xl border border-[var(--court-deep)]/30 bg-[var(--court-deep)]/5 p-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider shrink-0">
                   {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
                 </span>
-                {p.free_court_note && <span className="text-xs text-[var(--cream)]/85">{p.free_court_note}</span>}
+                {p.free_court_note && <span className="text-xs text-[var(--court-deep)]/85">{p.free_court_note}</span>}
               </div>
-              <p className="text-[10px] text-[var(--cream)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
+              <p className="text-[10px] text-[var(--court-deep)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
             </div>
           )}
         </div>
@@ -273,7 +273,7 @@ function ProfilePage() {
 
       <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-      <div className="mt-3 surface-card p-3 flex items-start gap-2 text-xs text-[var(--cream)]/70">
+      <div className="mt-3 surface-card p-3 flex items-start gap-2 text-xs text-[var(--court-deep)]/70">
         <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
         <p>{t("prof.privacy")}</p>
       </div>
@@ -328,11 +328,11 @@ function FeedbackBox() {
   return (
     <div className="mt-6 surface-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-[var(--cream)]" />
+        <Sparkles className="w-4 h-4 text-[var(--court-deep)]" />
         <h2 className="text-display text-lg tracking-wider">{t("fb.title")}</h2>
       </div>
-      <p className="text-xs text-[var(--cream)]/60 mt-1">{t("fb.sub")}</p>
-      <p className="text-[10px] text-[var(--cream)]/40 mt-1">{t("fb.anon")}</p>
+      <p className="text-xs text-[var(--court-deep)]/60 mt-1">{t("fb.sub")}</p>
+      <p className="text-[10px] text-[var(--court-deep)]/40 mt-1">{t("fb.anon")}</p>
 
       <div className="flex items-center gap-1 mt-3">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -344,7 +344,7 @@ function FeedbackBox() {
             className="p-1"
           >
             <Star
-              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--cream)] text-[var(--cream)]" : "text-[var(--cream)]/40"}`}
+              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--clay)] text-[var(--court-deep)]" : "text-[var(--court-deep)]/40"}`}
             />
           </button>
         ))}
@@ -358,7 +358,7 @@ function FeedbackBox() {
         maxLength={2000}
       />
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[10px] text-[var(--cream)]/50">{msg.length}/2000</span>
+        <span className="text-[10px] text-[var(--court-deep)]/50">{msg.length}/2000</span>
         <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm">
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>
@@ -370,7 +370,7 @@ function FeedbackBox() {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-2 font-medium">{title}</div>
+      <div className="text-[11px] uppercase tracking-widest text-[var(--court-deep)]/60 mb-2 font-medium">{title}</div>
       {children}
     </div>
   );
@@ -379,8 +379,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
-      <div className="text-sm sm:text-base font-medium text-[var(--cream)]">{v}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">{label}</div>
+      <div className="text-sm sm:text-base font-medium text-[var(--court-deep)]">{v}</div>
     </div>
   );
 }
@@ -411,7 +411,7 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-display text-lg tracking-wider">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
-          <p className="text-xs text-[var(--cream)]/60 mt-1">
+          <p className="text-xs text-[var(--court-deep)]/60 mt-1">
             {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>
         </div>
@@ -419,13 +419,13 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
           type="button"
           onClick={toggle}
           disabled={busy}
-          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-amber-500" : "bg-[var(--cream)]/25"}`}
+          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-amber-500" : "bg-[var(--court-deep)]/12"}`}
           aria-label="Toggle holiday status"
         >
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
       </div>
-      <p className="mt-3 text-[10px] text-[var(--cream)]/55">
+      <p className="mt-3 text-[10px] text-[var(--court-deep)]/55">
         {tr(
           'When on holidays, other players see an "On holidays" badge on your card and you drop to the bottom of their grid.',
           'Cuando estás de vacaciones, los demás ven una etiqueta "De vacaciones" en tu tarjeta y apareces al final de la cuadrícula.',

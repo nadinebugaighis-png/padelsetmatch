@@ -14,9 +14,9 @@ import { useI18n, useTr } from "@/lib/i18n";
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
   errorComponent: ({ error }) => (
-    <div className="p-6 text-center text-[var(--cream)]/70">{error.message}</div>
+    <div className="p-6 text-center text-[var(--court-deep)]/70">{error.message}</div>
   ),
-  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">—</div>,
+  notFoundComponent: () => <div className="p-6 text-center text-[var(--court-deep)]/70">—</div>,
 });
 
 const HOURS = Array.from({ length: 17 }, (_, i) => 7 + i); // 07..23
@@ -178,7 +178,7 @@ function EventsPage() {
             <br />
             {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
           </h1>
-          <p className="text-sm text-[var(--cream)]/60 mt-2">
+          <p className="text-sm text-[var(--court-deep)]/60 mt-2">
             {tr(
               "Tap an hour you're free. Others join. Done.",
               "Toca una hora libre. Otros se unen. Listo.",
@@ -192,7 +192,7 @@ function EventsPage() {
           className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-widest ${
             worldwide
               ? "border-[var(--ball)] text-[var(--ball)]"
-              : "border-[var(--cream)]/25 text-[var(--cream)]/80"
+              : "border-[var(--court-deep)]/25 text-[var(--court-deep)]/80"
           }`}
           title={tr("Toggle world / my areas", "Alternar mundo / mis zonas", "Basculer monde / mes zones")}
         >
@@ -202,21 +202,21 @@ function EventsPage() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">
         <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
         <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
         <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
         <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
         <Link
           to="/app/events/new"
-          className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
+          className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--court-deep)]/70 hover:text-[var(--court-deep)]"
         >
           <Settings2 className="w-3 h-3" /> {tr("Advanced", "Avanzado", "Avancé")}
         </Link>
       </div>
 
       {/* Grid */}
-      <div className="rounded-2xl border border-[var(--cream)]/10 overflow-hidden bg-black/20">
+      <div className="rounded-2xl border border-[var(--court-deep)]/10 overflow-hidden bg-[var(--cream-deep)]/50">
         <div
           ref={scrollRef}
           className="overflow-auto"
@@ -230,7 +230,7 @@ function EventsPage() {
             }}
           >
             {/* Corner */}
-            <div className="sticky top-0 left-0 z-30 bg-[var(--court-deep)] border-b border-r border-[var(--cream)]/10 h-12" />
+            <div className="sticky top-0 left-0 z-30 bg-[var(--court-deep)] border-b border-r border-[var(--court-deep)]/10 h-12" />
             {/* Day headers */}
             {days.map((d, i) => {
               const label = formatDay(d, lang, 0, i, tr);
@@ -238,8 +238,8 @@ function EventsPage() {
               return (
                 <div
                   key={i}
-                  className={`sticky top-0 z-20 h-12 border-b border-[var(--cream)]/10 flex flex-col items-center justify-center bg-[var(--court-deep)] ${
-                    isToday ? "text-[var(--ball)]" : "text-[var(--cream)]/80"
+                  className={`sticky top-0 z-20 h-12 border-b border-[var(--court-deep)]/10 flex flex-col items-center justify-center bg-[var(--court-deep)] ${
+                    isToday ? "text-[var(--ball)]" : "text-[var(--court-deep)]/80"
                   }`}
                 >
                   <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
@@ -314,8 +314,8 @@ function RowCells({
   const stripe = hour % 2 === 0 ? "bg-[var(--cream)]/[0.02]" : "";
   return (
     <>
-      <div className={`sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--cream)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
-        isCurrentHour ? "text-[var(--ball)]" : "text-[var(--cream)]/55"
+      <div className={`sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--court-deep)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
+        isCurrentHour ? "text-[var(--ball)]" : "text-[var(--court-deep)]/55"
       }`}>
         {String(hour).padStart(2, "0")}
       </div>
@@ -334,7 +334,7 @@ function RowCells({
             type="button"
             disabled={isPending || past}
             onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--cream)]/5 flex items-center justify-center relative ${stripe} ${
+            className={`border-b border-r border-[var(--court-deep)]/5 flex items-center justify-center relative ${stripe} ${
               past
                 ? "opacity-25 cursor-not-allowed"
                 : "hover:bg-[var(--cream)]/8 active:bg-[var(--cream)]/12 transition-colors"
@@ -346,7 +346,7 @@ function RowCells({
             )}
           >
             {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
-              <span className="w-1 h-1 rounded-full bg-[var(--cream)]/20" />
+              <span className="w-1 h-1 rounded-full bg-[var(--court-deep)]/10" />
             )}
             {isPending && (
               <span className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -378,15 +378,15 @@ function slotColor(filled: number, mine: boolean) {
   }
   if (filled >= 1) {
     return {
-      wrap: `bg-[var(--cream)]/12 text-[var(--cream)] ${mine ? "ring-1 ring-[var(--ball)]" : ""}`,
+      wrap: `bg-[var(--cream)]/12 text-[var(--court-deep)] ${mine ? "ring-1 ring-[var(--ball)]" : ""}`,
       pip: "bg-[var(--cream)]",
-      empty: "bg-[var(--cream)]/25",
+      empty: "bg-[var(--court-deep)]/12",
     };
   }
   return {
-    wrap: "bg-transparent text-[var(--cream)]/70",
+    wrap: "bg-transparent text-[var(--court-deep)]/70",
     pip: "bg-[var(--cream)]/70",
-    empty: "bg-[var(--cream)]/20",
+    empty: "bg-[var(--court-deep)]/10",
   };
 }
 
@@ -452,14 +452,14 @@ function QuickSheet({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-sm bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--cream)]/15 p-5 space-y-4"
+        className="w-full sm:max-w-sm bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--court-deep)]/15 p-5 space-y-4"
       >
         <div>
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">
             {tr("Match called", "Partido convocado", "Match lancé")}
           </div>
-          <div className="text-display text-2xl tracking-wider text-[var(--cream)] mt-1">{when}</div>
-          <p className="text-sm text-[var(--cream)]/70 mt-2">
+          <div className="text-display text-2xl tracking-wider text-[var(--court-deep)] mt-1">{when}</div>
+          <p className="text-sm text-[var(--court-deep)]/70 mt-2">
             {tr(
               "You're in. Add a club or invite players — or leave it and let others join.",
               "Estás dentro. Añade club o invita jugadores, o déjalo y que otros se unan.",
@@ -470,13 +470,13 @@ function QuickSheet({
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-            className="rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+            className="rounded-full border border-[var(--court-deep)]/25 text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
           >
             <MapPin className="w-3.5 h-3.5" /> {tr("Add club", "Añadir club", "Ajouter club")}
           </button>
           <button
             onClick={() => navigate({ to: "/app/events/$eventId", params: { eventId } })}
-            className="rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+            className="rounded-full border border-[var(--court-deep)]/25 text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
           >
             <RacketIcon className="w-3.5 h-3.5" /> {tr("Invite", "Invitar", "Inviter")}
           </button>
@@ -489,7 +489,7 @@ function QuickSheet({
         </button>
         <button
           onClick={() => navigate({ to: "/app/events/$eventId", params: { eventId } })}
-          className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
+          className="w-full text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60"
         >
           {tr("Open match", "Ir al partido", "Voir le match")} →
         </button>
@@ -526,14 +526,14 @@ function SlotSheet({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-md bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--cream)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--court-deep)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
       >
         <div>
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">
             {tr("Matches at", "Partidos a las", "Matchs à")}
           </div>
-          <div className="text-display text-2xl tracking-wider text-[var(--cream)] mt-1">{when}</div>
-          <p className="text-xs text-[var(--cream)]/60 mt-1">
+          <div className="text-display text-2xl tracking-wider text-[var(--court-deep)] mt-1">{when}</div>
+          <p className="text-xs text-[var(--court-deep)]/60 mt-1">
             {events.length}{" "}
             {events.length === 1
               ? tr("match", "partido", "match")
@@ -550,17 +550,17 @@ function SlotSheet({
             return (
               <li
                 key={e.id}
-                className="rounded-xl border border-[var(--cream)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3"
+                className="rounded-xl border border-[var(--court-deep)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3"
               >
                 <button
                   type="button"
                   onClick={() => onOpen(e.id)}
                   className="flex-1 min-w-0 text-left"
                 >
-                  <div className="text-sm text-[var(--cream)] font-semibold truncate">
+                  <div className="text-sm text-[var(--court-deep)] font-semibold truncate">
                     {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
                   </div>
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mt-0.5">
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/55 mt-0.5">
                     {e.filled}/4 · {e.gender_rule === "mixed"
                       ? tr("Mixed", "Mixto", "Mixte")
                       : e.gender_rule === "men_only"
@@ -584,7 +584,7 @@ function SlotSheet({
                   <button
                     type="button"
                     onClick={() => onOpen(e.id)}
-                    className="shrink-0 rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
+                    className="shrink-0 rounded-full border border-[var(--court-deep)]/25 text-[var(--court-deep)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
                   >
                     {tr("Open", "Abrir", "Ouvrir")}
                   </button>
@@ -605,7 +605,7 @@ function SlotSheet({
 
         <button
           onClick={onClose}
-          className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
+          className="w-full text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60"
         >
           {tr("Close", "Cerrar", "Fermer")}
         </button>

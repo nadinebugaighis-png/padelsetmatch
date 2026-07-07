@@ -182,7 +182,7 @@ function Discover() {
     blockM.mutate(id);
   }
 
-  if (feedQ.isLoading) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("disc.loading")}</div>;
+  if (feedQ.isLoading) return <div className="px-4 py-10 text-center text-[var(--court-deep)]/60">{t("disc.loading")}</div>;
   if (!feedQ.data?.me) return null;
 
   const all = feedQ.data.candidates;
@@ -252,8 +252,8 @@ function Discover() {
   return (
     <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
-      <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
-      <p className="text-xs text-[var(--cream)]/55 mt-2">
+      <p className="text-sm text-[var(--court-deep)]/70 mt-1">{t("disc.sub")}</p>
+      <p className="text-xs text-[var(--court-deep)]/55 mt-2">
         {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
@@ -277,7 +277,7 @@ function Discover() {
         </div>
         <button
           onClick={() => setShowFilters((s) => !s)}
-          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--cream)]" : "text-[var(--cream)]/70"}`}
+          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--court-deep)]" : "text-[var(--court-deep)]/70"}`}
           aria-expanded={showFilters}
         >
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -286,25 +286,25 @@ function Discover() {
 
       <div className="mt-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--cream)]/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--court-deep)]/40" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name..."
-            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--cream)]/60"
+            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--court-deep)]/20 bg-[var(--cream-deep)] text-[var(--court-deep)] text-sm placeholder:text-[var(--court-deep)]/35 focus:outline-none focus:border-[var(--court-deep)]/60"
           />
         </div>
       </div>
 
       {showFilters && (
-        <div className="mt-3 p-3 rounded-xl border border-[var(--cream)]/15 bg-black/20 space-y-3">
+        <div className="mt-3 p-3 rounded-xl border border-[var(--court-deep)]/15 bg-[var(--court-deep)]/5 space-y-3">
           <div>
-            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Padel level</label>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--court-deep)]/60 mb-1.5">Padel level</label>
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+              className="w-full h-9 rounded-md border border-[var(--court-deep)]/20 bg-[var(--cream-deep)] text-[var(--court-deep)] px-2 text-sm"
             >
               <option value="all">Any level</option>
               {PADEL_LEVELS.map((lv) => (
@@ -313,11 +313,11 @@ function Discover() {
             </select>
           </div>
           <div>
-            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Barrio / zone</label>
+            <label className="block text-[11px] uppercase tracking-widest text-[var(--court-deep)]/60 mb-1.5">Barrio / zone</label>
             <select
               value={zoneFilter}
               onChange={(e) => setZoneFilter(e.target.value)}
-              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
+              className="w-full h-9 rounded-md border border-[var(--court-deep)]/20 bg-[var(--cream-deep)] text-[var(--court-deep)] px-2 text-sm"
             >
               <option value="all">Any zone</option>
               {zonesInFeed.length > 0 && (
@@ -333,13 +333,13 @@ function Discover() {
                 ))}
               </optgroup>
             </select>
-            <p className="text-[10px] text-[var(--cream)]/50 mt-1">Matches on players' city, barrio or listed areas.</p>
+            <p className="text-[10px] text-[var(--court-deep)]/50 mt-1">Matches on players' city, barrio or listed areas.</p>
           </div>
           {activeFilterCount > 0 && (
             <button
               type="button"
               onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
-              className="text-xs text-[var(--cream)] underline"
+              className="text-xs text-[var(--court-deep)] underline"
             >
               Clear filters
             </button>
@@ -347,7 +347,7 @@ function Discover() {
         </div>
       )}
       {world && (
-        <p className="text-[11px] text-[var(--cream)]/60 mt-2">
+        <p className="text-[11px] text-[var(--court-deep)]/60 mt-2">
           {t("disc.world.note")}
         </p>
       )}
@@ -358,26 +358,26 @@ function Discover() {
 
 
       {(qaQ.data?.length ?? 0) === 0 && (
-        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--cream)]/30 rounded-xl">
+        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--court-deep)]/30 rounded-xl">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-[var(--cream)] shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-[var(--court-deep)] shrink-0 mt-0.5" />
             <div>
-              <div className="text-sm font-semibold text-[var(--cream)]">{t("disc.qaBannerTitle")}</div>
-              <div className="text-xs text-[var(--cream)]/70 mt-1">{t("disc.qaBannerSub")}</div>
-              <div className="mt-2 text-xs text-[var(--cream)] underline">{t("disc.qaBannerCta")}</div>
+              <div className="text-sm font-semibold text-[var(--court-deep)]">{t("disc.qaBannerTitle")}</div>
+              <div className="text-xs text-[var(--court-deep)]/70 mt-1">{t("disc.qaBannerSub")}</div>
+              <div className="mt-2 text-xs text-[var(--court-deep)] underline">{t("disc.qaBannerCta")}</div>
             </div>
           </div>
         </Link>
       )}
 
       {list.length === 0 ? (
-        <p className="mt-10 text-center text-[var(--cream)]/60 text-sm">{t("disc.empty")}</p>
+        <p className="mt-10 text-center text-[var(--court-deep)]/60 text-sm">{t("disc.empty")}</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mt-5">
           {list.map((c) => (
             <div
               key={c.id}
-              className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10"
+              className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--court-deep)]/10"
             >
               {c.photo_url && (
                 <img src={c.photo_url} alt={c.first_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105" />
@@ -401,14 +401,14 @@ function Discover() {
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >
-                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]/70"}`} />
+                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--court-deep)]/70"}`} />
               </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--court-deep)]"
                   aria-label={`Hide ${c.first_name}`}
                   title="Not interested — hide from my Grid"
                 >
@@ -418,7 +418,7 @@ function Discover() {
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}</div>
-                <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
+                <div className="text-[11px] uppercase tracking-widest text-[var(--court-deep)]/80 mt-1">{c.zone} · {label(c.level)}</div>
                 {(() => {
                   const au = (c as any).away_until as string | null | undefined;
                   if (!au || au < new Date().toISOString().slice(0, 10)) return null;
@@ -439,12 +439,12 @@ function Discover() {
         </div>
       )}
 
-      <Link to="/app/matches" className="mt-8 block text-center text-sm text-[var(--cream)]/60 underline">
+      <Link to="/app/matches" className="mt-8 block text-center text-sm text-[var(--court-deep)]/60 underline">
         {t("disc.seeChats")}
       </Link>
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-w-sm sm:max-w-lg lg:max-w-2xl p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[92vh] flex flex-col rounded-3xl">
+        <DialogContent className="max-w-sm sm:max-w-lg lg:max-w-2xl p-0 overflow-hidden bg-[var(--cream-deep)] border-[var(--court-deep)]/15 max-h-[92vh] flex flex-col rounded-3xl">
           {preview && (() => {
             const mine = feedQ.data?.me;
             const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
@@ -472,7 +472,7 @@ function Discover() {
                     <button
                       type="button"
                       onClick={() => setPreview(null)}
-                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55"
+                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--court-deep)] hover:bg-black/55"
                       aria-label="Back"
                     >
                       <ArrowLeft className="w-4 h-4" />
@@ -483,8 +483,8 @@ function Discover() {
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
-                      <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
-                      <div className="text-sm text-[var(--cream)]/85">{preview.zone} · {label(preview.level)}</div>
+                      <div className="text-display text-[44px] leading-[0.95] text-[var(--court-deep)] uppercase tracking-tight">{preview.first_name},</div>
+                      <div className="text-sm text-[var(--court-deep)]/85">{preview.zone} · {label(preview.level)}</div>
                     </div>
                   </div>
 
@@ -495,7 +495,7 @@ function Discover() {
                         {sharedChips.map((w) => (
                           <span
                             key={w}
-                            className="px-4 py-2 rounded-full text-[13px] font-medium bg-[var(--cream)]/[0.06] text-[var(--cream)]/90 border border-[var(--cream)]/10"
+                            className="px-4 py-2 rounded-full text-[13px] font-medium bg-[var(--cream)]/[0.06] text-[var(--court-deep)]/90 border border-[var(--court-deep)]/10"
                           >
                             {w}
                           </span>
@@ -509,35 +509,35 @@ function Discover() {
                     {preview.free_court_access && (
                       <div className="rounded-2xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-4">
                         <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
-                        {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
-                        <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
+                        {preview.free_court_note && <p className="text-xs text-[var(--court-deep)]/80 mt-2">{preview.free_court_note}</p>}
+                        <p className="text-[10px] text-[var(--court-deep)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
                       </div>
                     )}
 
                     {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
-                    <div className="rounded-2xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-4">
-                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--cream)] mb-2">
+                    <div className="rounded-2xl border border-[var(--court-deep)]/30 bg-[var(--cream)]/5 p-4">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)] mb-2">
                         <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
                       </div>
                       {compatQ.isLoading ? (
-                        <p className="text-sm text-[var(--cream)]/60 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
+                        <p className="text-sm text-[var(--court-deep)]/60 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
                       ) : compatQ.data ? (
                         <>
-                          <p className="text-sm text-[var(--cream)]/90 leading-relaxed">{compatQ.data.blurb}</p>
+                          <p className="text-sm text-[var(--court-deep)]/90 leading-relaxed">{compatQ.data.blurb}</p>
 
                           {/* Padel compatibility — text only, no rating */}
                           {compatQ.data.sub_scores?.padel_analysis && (
-                            <div className="mt-3 rounded-xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-3">
-                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-1.5">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
-                              <p className="text-[13px] text-[var(--cream)]/85 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
+                            <div className="mt-3 rounded-xl border border-[var(--court-deep)]/10 bg-[var(--court)]/40 p-3">
+                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-1.5">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
+                              <p className="text-[13px] text-[var(--court-deep)]/85 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
                             </div>
                           )}
 
                           {/* Personality compatibility — text only, no rating */}
                           {compatQ.data.sub_scores?.personality_analysis && (
-                            <div className="mt-2 rounded-xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-3">
-                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-1.5">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
-                              <p className="text-[13px] text-[var(--cream)]/85 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
+                            <div className="mt-2 rounded-xl border border-[var(--court-deep)]/10 bg-[var(--court)]/40 p-3">
+                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-1.5">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
+                              <p className="text-[13px] text-[var(--court-deep)]/85 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
                             </div>
                           )}
 
@@ -546,13 +546,13 @@ function Discover() {
 
 
 
-                          <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--cream)]/10">
-                            <span className="text-[11px] text-[var(--cream)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
+                          <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--court-deep)]/10">
+                            <span className="text-[11px] text-[var(--court-deep)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
                             <button
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--court-deep)]/70 hover:bg-[var(--cream)]/15"}`}
                               aria-label="Helpful"
                             >
                               <ThumbsUp className="w-4 h-4" />
@@ -561,7 +561,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: -1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ball)]/80 text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ball)]/80 text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--court-deep)]/70 hover:bg-[var(--cream)]/15"}`}
                               aria-label="Not useful"
                             >
                               <ThumbsDown className="w-4 h-4" />
@@ -581,7 +581,7 @@ function Discover() {
                                   type="button"
                                   disabled={rateCompatM.isPending}
                                   onClick={() => rateCompatM.mutate({ thumbs: -1, reason })}
-                                  className="px-2.5 py-1 rounded-full text-[11px] bg-[var(--cream)]/[0.06] border border-[var(--cream)]/10 text-[var(--cream)]/75 hover:bg-[var(--cream)]/[0.12]"
+                                  className="px-2.5 py-1 rounded-full text-[11px] bg-[var(--cream)]/[0.06] border border-[var(--court-deep)]/10 text-[var(--court-deep)]/75 hover:bg-[var(--cream)]/[0.12]"
                                 >
                                   {reason}
                                 </button>
@@ -589,12 +589,12 @@ function Discover() {
                             </div>
                           )}
 
-                          <p className="text-[10px] text-[var(--cream)]/40 mt-1.5 leading-snug">
+                          <p className="text-[10px] text-[var(--court-deep)]/40 mt-1.5 leading-snug">
                             {tr("Your feedback is completely private — only the AI sees it to learn what you like.", "Tu opinión es totalmente privada — solo la IA la ve para aprender qué te gusta.", "Ton retour est totalement privé — seule l'IA le voit pour apprendre ce que tu aimes.")}
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-[var(--cream)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
+                        <p className="text-sm text-[var(--court-deep)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
                       )}
                     </div>
 
@@ -602,7 +602,7 @@ function Discover() {
 
 
                     {/* Me-style profile card (age intentionally omitted for privacy) */}
-                    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4 space-y-4">
+                    <div className="rounded-2xl border border-[var(--court-deep)]/10 bg-[var(--court)]/40 p-4 space-y-4">
                       <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
                         <Info label={tr("LEVEL", "NIVEL", "NIVEAU")} v={label(preview.level)} />
                         {preview.gender && (
@@ -618,7 +618,7 @@ function Discover() {
                         if (locs.length === 0) return null;
                         return (
                           <div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
                             <div className="flex flex-wrap gap-2">
                               {locs.map((l) => <span key={l} className="chip">{l}</span>)}
                             </div>
@@ -628,7 +628,7 @@ function Discover() {
 
                       {(preview.languages?.length ?? 0) > 0 && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
                           <div className="flex flex-wrap gap-2">
                             {preview.languages!.map((l) => <span key={l} className="chip">{label(l)}</span>)}
                           </div>
@@ -637,7 +637,7 @@ function Discover() {
 
                       {(preview.personal_traits?.length ?? 0) > 0 && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-2">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
                           <div className="flex flex-wrap gap-2">
                             {preview.personal_traits!.map((tt) => <span key={tt} className="chip">{label(tt)}</span>)}
                           </div>
@@ -646,7 +646,7 @@ function Discover() {
 
                       {(preview.padel_style?.length ?? 0) > 0 && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-2">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
                           <div className="flex flex-wrap gap-2">
                             {preview.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
                           </div>
@@ -655,21 +655,21 @@ function Discover() {
 
                       {preview.bio && (
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`, `À propos de ${preview.first_name}`)}</div>
-                          <p className="text-sm text-[var(--cream)]/90 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`, `À propos de ${preview.first_name}`)}</div>
+                          <p className="text-sm text-[var(--court-deep)]/90 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
                         </div>
                       )}
                     </div>
 
                     {preview.reasons[0] && (
-                      <p className="text-xs text-[var(--cream)]/60 px-1">{preview.reasons[0]}</p>
+                      <p className="text-xs text-[var(--court-deep)]/60 px-1">{preview.reasons[0]}</p>
                     )}
 
                     <div className="flex items-center justify-center gap-4 pt-2">
                       <button
                         type="button"
                         onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
-                        className="flex items-center gap-1.5 text-[11px] text-[var(--cream)]/50 hover:text-[var(--cream)]/80 transition"
+                        className="flex items-center gap-1.5 text-[11px] text-[var(--court-deep)]/50 hover:text-[var(--court-deep)]/80 transition"
                         aria-label={`Block ${preview?.first_name ?? ""}`}
                       >
                         <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
@@ -677,7 +677,7 @@ function Discover() {
                       <button
                         type="button"
                         onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
-                        className="flex items-center gap-1.5 text-[11px] text-[var(--cream)]/50 hover:text-red-400/80 transition"
+                        className="flex items-center gap-1.5 text-[11px] text-[var(--court-deep)]/50 hover:text-red-400/80 transition"
                         aria-label={`Report ${preview?.first_name ?? ""}`}
                       >
                         <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
@@ -719,13 +719,13 @@ function Discover() {
                         if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }
                       }}
                       disabled={!match}
-                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--court)] border border-[var(--cream)]/10 flex items-center justify-center text-[var(--cream)] disabled:opacity-40"
+                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--court)] border border-[var(--court-deep)]/10 flex items-center justify-center text-[var(--court-deep)] disabled:opacity-40"
                       aria-label="Open chat"
                     >
                       <MessageCircle className="w-5 h-5" />
                     </button>
                   </div>
-                  <p className="text-center text-[10px] text-[var(--cream)]/40 mt-2 leading-snug">
+                  <p className="text-center text-[10px] text-[var(--court-deep)]/40 mt-2 leading-snug">
                     {t("disc.privacyNote")}
                   </p>
                 </div>
@@ -745,25 +745,25 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
   if (typeof padel === "number") rows.push({ label: tr("Padel", "Pádel", "Padel"), value: padel });
   if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
-    <div className="rounded-2xl border border-[var(--cream)]/10 bg-[var(--court)]/40 p-4">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
+    <div className="rounded-2xl border border-[var(--court-deep)]/10 bg-[var(--court)]/40 p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--court-deep)]/60 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
 
       <div className="flex items-center gap-4">
-        <div className="text-display text-5xl text-[var(--cream)] leading-none">{total}%</div>
+        <div className="text-display text-5xl text-[var(--court-deep)] leading-none">{total}%</div>
         <div className="flex-1 space-y-2.5">
           {rows.map((r) => (
             <div key={r.label} className="flex items-center gap-2">
-              <div className="text-[11px] text-[var(--cream)]/70 w-20 shrink-0 text-right">{r.label}</div>
+              <div className="text-[11px] text-[var(--court-deep)]/70 w-20 shrink-0 text-right">{r.label}</div>
               <div className="flex-1 h-1.5 rounded-full bg-[var(--cream)]/10 overflow-hidden">
                 <div className="h-full rounded-full bg-[var(--cream)]/70" style={{ width: `${r.value}%` }} />
               </div>
-              <div className="text-[11px] font-semibold text-[var(--cream)]/80 w-8 shrink-0 text-right">{r.value}%</div>
+              <div className="text-[11px] font-semibold text-[var(--court-deep)]/80 w-8 shrink-0 text-right">{r.value}%</div>
             </div>
           ))}
         </div>
       </div>
       {rows.length > 0 && (
-        <p className="mt-3 text-[10px] text-[var(--cream)]/50 leading-snug">
+        <p className="mt-3 text-[10px] text-[var(--court-deep)]/50 leading-snug">
           {tr("Overall = average of Padel and Personality.", "Total = media de Pádel y Personalidad.", "Total = moyenne de Padel et Personnalité.")}
         </p>
       )}
@@ -774,8 +774,8 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
 function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
-      <div className="text-[var(--cream)]">{v}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">{label}</div>
+      <div className="text-[var(--court-deep)]">{v}</div>
     </div>
   );
 }
@@ -793,14 +793,14 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
   return (
     <Link
       to="/app/profile"
-      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--cream)] bg-[var(--cream)]/10" : "border-[var(--cream)]/15"}`}
+      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--cream)] bg-[var(--cream)]/10" : "border-[var(--court-deep)]/15"}`}
     >
       <div className="w-9 h-9 rounded-full bg-[var(--cream)]/20 flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold text-[var(--cream)]">
+        <div className="text-sm font-semibold text-[var(--court-deep)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
-        <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
+        <div className="text-xs text-[var(--court-deep)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
       </div>
       <button
         type="button"
@@ -810,7 +810,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
           sessionStorage.setItem("photo-reminder-dismissed", "1");
           setDismissed(true);
         }}
-        className="p-1 text-[var(--cream)]/50 hover:text-[var(--cream)]"
+        className="p-1 text-[var(--court-deep)]/50 hover:text-[var(--court-deep)]"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

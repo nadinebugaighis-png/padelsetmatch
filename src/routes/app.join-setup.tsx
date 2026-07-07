@@ -79,27 +79,27 @@ function JoinSetupPage() {
   return (
     <main className="min-h-screen bg-[var(--court-deep)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
-        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
-        <h1 className="text-3xl text-[var(--cream)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>
-        <p className="text-sm text-[var(--cream)]/70 mt-2">
+        <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
+        <h1 className="text-3xl text-[var(--court-deep)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>
+        <p className="text-sm text-[var(--court-deep)]/70 mt-2">
           {tr("You can complete your full profile later — this is enough to join a match.", "Puedes completar tu perfil después — con esto ya puedes unirte a un partido.", "Tu peux compléter ton profil entier plus tard — c'est suffisant pour rejoindre un match.")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("First name", "Nombre", "Prénom")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--court-deep)]/60">{tr("First name", "Nombre", "Prénom")}</label>
             <input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="Alex"
               maxLength={40}
               required
-              className="w-full mt-1 bg-black/30 border border-[var(--cream)]/20 rounded-xl px-4 py-3 text-[var(--cream)] placeholder:text-[var(--cream)]/40"
+              className="w-full mt-1 bg-[var(--cream-deep)] border border-[var(--court-deep)]/20 rounded-xl px-4 py-3 text-[var(--court-deep)] placeholder:text-[var(--court-deep)]/40"
             />
           </div>
 
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--court-deep)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
             <div className="grid grid-cols-2 gap-2 mt-2">
               {PADEL_LEVELS.map((lvl) => (
                 <button
@@ -109,7 +109,7 @@ function JoinSetupPage() {
                   className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
                     level === lvl
                       ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]"
-                      : "border-[var(--cream)]/20 text-[var(--cream)]/80"
+                      : "border-[var(--court-deep)]/20 text-[var(--court-deep)]/80"
                   }`}
                 >
                   {lvl}
@@ -119,13 +119,13 @@ function JoinSetupPage() {
           </div>
 
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("City (optional)", "Ciudad (opcional)", "Ville (optionnel)")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--court-deep)]/60">{tr("City (optional)", "Ciudad (opcional)", "Ville (optionnel)")}</label>
             <input
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="Madrid"
               maxLength={120}
-              className="w-full mt-1 bg-black/30 border border-[var(--cream)]/20 rounded-xl px-4 py-3 text-[var(--cream)] placeholder:text-[var(--cream)]/40"
+              className="w-full mt-1 bg-[var(--cream-deep)] border border-[var(--court-deep)]/20 rounded-xl px-4 py-3 text-[var(--court-deep)] placeholder:text-[var(--court-deep)]/40"
             />
           </div>
 
@@ -140,7 +140,7 @@ function JoinSetupPage() {
           <button
             type="button"
             onClick={() => navigate({ to: "/app/onboarding" })}
-            className="w-full py-2 text-xs uppercase tracking-widest text-[var(--cream)]/60"
+            className="w-full py-2 text-xs uppercase tracking-widest text-[var(--court-deep)]/60"
           >
             {tr("Complete full profile instead", "Completar el perfil completo", "Compléter le profil entier")}
           </button>

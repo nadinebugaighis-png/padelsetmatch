@@ -339,7 +339,7 @@ function EventsPage() {
         <SearchResults
           events={visibleEvents}
           search={search}
-          onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+          onOpen={(id: string) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
         />
       )}
     </div>

@@ -397,11 +397,11 @@ function Discover() {
                 type="button"
                 disabled={likeM.isPending || unlikeM.isPending}
                 onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
-                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-black/50"}`}
+                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-[var(--court-deep)]/80 ring-1 ring-[var(--cream)]/70"}`}
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >
-                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]/70"}`} />
+                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]"}`} />
               </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">
@@ -697,10 +697,10 @@ function Discover() {
                         const wasLiked = preview.liked;
                         if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
                       }}
-                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--ball)] flex items-center justify-center transition-transform active:scale-90"
+                      className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition-transform active:scale-90 ${preview.liked ? "bg-[var(--ball)]" : "bg-[var(--court-deep)] ring-1 ring-[var(--cream)]/70"}`}
                       aria-label={preview.liked ? "Unlike" : "Like"}
                     >
-                      <Heart className={`w-5 h-5 text-[var(--court-deep)] ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
+                      <Heart className={`w-5 h-5 ${preview.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]"}`} />
                     </button>
                     <button
                       type="button"

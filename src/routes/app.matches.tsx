@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getMyMatches } from "@/lib/app.functions";
 import { useI18n, useTr } from "@/lib/i18n";
-import { IntentBadges } from "@/components/IntentBadge";
+
 
 export const Route = createFileRoute("/app/matches")({
   component: Matches,

@@ -44,13 +44,13 @@ export function ClubPicker({ value, onChange }: Props) {
 
   if (value) {
     return (
-      <div className="rounded-lg border border-[var(--cream)]/20 bg-black/30 p-3 flex items-start justify-between gap-3">
+      <div className="rounded-lg border border-foreground/20 bg-foreground/5 p-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-sm text-[var(--cream)]">
-            <MapPin className="w-4 h-4 text-[var(--cream)]" />
+          <div className="flex items-center gap-2 text-sm text-foreground">
+            <MapPin className="w-4 h-4 text-primary" />
             <span className="font-medium truncate">{value.name}</span>
           </div>
-          {value.address && <div className="text-xs text-[var(--cream)]/60 mt-1 truncate">{value.address}</div>}
+          {value.address && <div className="text-xs text-foreground/60 mt-1 truncate">{value.address}</div>}
         </div>
         <button
           type="button"
@@ -58,7 +58,7 @@ export function ClubPicker({ value, onChange }: Props) {
             onChange(null);
             setQ("");
           }}
-          className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)] shrink-0"
+          className="text-xs uppercase tracking-widest text-foreground/60 hover:text-foreground shrink-0"
         >
           {tr("Change", "Cambiar", "Modifier")}
 
@@ -76,13 +76,13 @@ export function ClubPicker({ value, onChange }: Props) {
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
         placeholder={tr("Search padel club (e.g. La Moraleja)", "Buscar club de pádel (p. ej. La Moraleja)", "Chercher un club de padel (p. ex. La Moraleja)")}
-        className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--cream)]"
+        className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary"
       />
       {loading && (
-        <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-[var(--cream)]/60" />
+        <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-primary/60" />
       )}
       {open && results.length > 0 && (
-        <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg overflow-hidden shadow-xl max-h-72 overflow-y-auto">
+        <div className="absolute z-50 mt-1 left-0 right-0 bg-background border border-foreground/20 rounded-lg overflow-hidden shadow-xl max-h-72 overflow-y-auto">
           {results.map((r) => (
             <button
               key={r.place_id}
@@ -93,16 +93,16 @@ export function ClubPicker({ value, onChange }: Props) {
                 setQ("");
                 setOpen(false);
               }}
-              className="w-full text-left px-3 py-2 hover:bg-[var(--cream)]/10 border-b border-[var(--cream)]/5 last:border-b-0"
+              className="w-full text-left px-3 py-2 hover:bg-foreground/5 border-b border-foreground/5 last:border-b-0"
             >
-              <div className="text-sm text-[var(--cream)] truncate">{r.name}</div>
-              <div className="text-xs text-[var(--cream)]/50 truncate">{r.address}</div>
+              <div className="text-sm text-foreground truncate">{r.name}</div>
+              <div className="text-xs text-foreground/50 truncate">{r.address}</div>
             </button>
           ))}
         </div>
       )}
       {open && q.length >= 2 && !loading && results.length === 0 && (
-        <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg p-3 text-xs text-[var(--cream)]/60">
+        <div className="absolute z-50 mt-1 left-0 right-0 bg-background border border-foreground/20 rounded-lg p-3 text-xs text-foreground/60">
           {tr("No clubs found. Try a different name.", "No se encontraron clubes. Prueba con otro nombre.", "Aucun club trouvé. Essaie un autre nom.")}
         </div>
       )}

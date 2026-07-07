@@ -145,7 +145,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
     <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-6 pb-32 space-y-5">
       <Link
         to="/app/events"
-        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
+        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-foreground/70 hover:text-foreground"
       >
         <ArrowLeft className="w-4 h-4" /> {tr("Find matches", "Buscar partidos", "Trouver des matches")}
       </Link>
@@ -153,7 +153,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Where", "Dónde", "Où")}</label>
+        <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Where", "Dónde", "Où")}</label>
         <div className="grid grid-cols-2 gap-2 mb-2">
           {[
             { v: "club" as const, l: tr("Padel club", "Club de pádel", "Club de padel") },
@@ -165,8 +165,8 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setLocMode(o.v)}
               className={`py-2 rounded-lg border text-sm ${
                 locMode === o.v
-                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
-                  : "border-[var(--cream)]/15 text-[var(--cream)]/70"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-foreground/15 text-foreground/70"
               }`}
             >
               {o.l}
@@ -182,16 +182,16 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               value={customAddress}
               onChange={(e) => setCustomAddress(e.target.value)}
               placeholder={tr("Street address", "Dirección", "Adresse postale")}
-              className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+              className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground placeholder:text-foreground/40 text-sm"
             />
             <input
               type="text"
               value={customCity}
               onChange={(e) => setCustomCity(e.target.value)}
               placeholder={tr("City / area (optional)", "Ciudad / zona (opcional)", "Ville / zone (optionnel)")}
-              className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+              className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground placeholder:text-foreground/40 text-sm"
             />
-            <p className="text-[11px] text-[var(--cream)]/50">
+            <p className="text-[11px] text-foreground/50">
               {tr("Use this for residential / private courts that aren't on Google.", "Úsalo para pistas privadas o residenciales que no están en Google.", "À utiliser pour les pistas résidentielles / privées qui ne sont pas sur Google.")}
             </p>
           </div>
@@ -199,17 +199,17 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Date & time", "Fecha y hora", "Date et heure")}</label>
+        <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Date & time", "Fecha y hora", "Date et heure")}</label>
         <input
           type="datetime-local"
           value={when}
           onChange={(e) => setWhen(e.target.value)}
-          className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)]"
+          className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground"
         />
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Players needed", "Jugadores que faltan", "Joueurs recherchés")}</label>
+        <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Players needed", "Jugadores que faltan", "Joueurs recherchés")}</label>
         <div className="grid grid-cols-4 gap-2">
           {Array.from({ length: maxNeeded + 1 }, (_, i) => maxNeeded - i).map((n) => (
             <button
@@ -218,15 +218,15 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setPlayersNeeded(n)}
               className={`py-2 rounded-lg border text-sm ${
                 playersNeeded === n
-                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
-                  : "border-[var(--cream)]/15 text-[var(--cream)]/70"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-foreground/15 text-foreground/70"
               }`}
             >
               {n}
             </button>
           ))}
         </div>
-        <p className="text-xs text-[var(--cream)]/50 mt-1.5">
+        <p className="text-xs text-foreground/50 mt-1.5">
           {playersNeeded === 0
             ? tr("This match is full.", "Este partido está completo.", "Ce match est complet.")
             : tr(
@@ -238,7 +238,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Open to", "Abierto a", "Ouvert à")}</label>
+        <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Open to", "Abierto a", "Ouvert à")}</label>
         <div className="grid grid-cols-3 gap-2">
           {[
             { v: "mixed" as const, l: tr("Mixed", "Mixto", "Mixte") },
@@ -251,8 +251,8 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setGenderRule(o.v)}
               className={`py-2 rounded-lg border text-sm ${
                 genderRule === o.v
-                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
-                  : "border-[var(--cream)]/15 text-[var(--cream)]/70"
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-foreground/15 text-foreground/70"
               }`}
             >
               {o.l}
@@ -265,11 +265,11 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Level min", "Nivel mín.", "Niveau min.")}</label>
+          <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Level min", "Nivel mín.", "Niveau min.")}</label>
           <select
             value={levelMin}
             onChange={(e) => setLevelMin(e.target.value as any)}
-            className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)]"
+            className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground"
           >
             {PADEL_LEVELS.map((l) => (
               <option key={l} value={l}>{l}</option>
@@ -277,11 +277,11 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
           </select>
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Level max", "Nivel máx.", "Niveau max.")}</label>
+          <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Level max", "Nivel máx.", "Niveau max.")}</label>
           <select
             value={levelMax}
             onChange={(e) => setLevelMax(e.target.value as any)}
-            className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)]"
+            className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground"
           >
             {PADEL_LEVELS.map((l) => (
               <option key={l} value={l}>{l}</option>
@@ -291,8 +291,8 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Court", "Pista", "Pista")}</label>
-        <label className="flex items-center gap-3 text-sm text-[var(--cream)]/80">
+        <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Court", "Pista", "Pista")}</label>
+        <label className="flex items-center gap-3 text-sm text-foreground/80">
           <input type="checkbox" checked={courtBooked} onChange={(e) => setCourtBooked(e.target.checked)} />
           {tr("I've booked the court ✅", "Ya reservé la pista ✅", "J'ai réservé la pista ✅")}
         </label>
@@ -308,25 +308,25 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             if (playtomicError) setPlaytomicError(null);
           }}
           placeholder={tr("Playtomic booking link (optional)", "Enlace de reserva en Playtomic (opcional)", "Lien de réservation Playtomic (optionnel)")}
-          className={`mt-2 w-full bg-black/30 border rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm ${playtomicError ? "border-red-400/60" : "border-[var(--cream)]/20"}`}
+          className={`mt-2 w-full bg-foreground/5 border rounded-lg px-3 py-2.5 text-foreground placeholder:text-foreground/40 text-sm ${playtomicError ? "border-destructive/60" : "border-foreground/20"}`}
         />
         {playtomicError && (
-          <p className="mt-1 text-[11px] text-red-300">{playtomicError}</p>
+          <p className="mt-1 text-[11px] text-destructive">{playtomicError}</p>
         )}
-        <p className="mt-1 text-[10px] text-[var(--cream)]/50">
+        <p className="mt-1 text-[10px] text-foreground/50">
           {tr("Paste the full playtomic.io booking link so players can open it directly.", "Pega el enlace completo de playtomic.io para que los jugadores puedan abrirlo directamente.", "Colle le lien complet de réservation playtomic.io pour que les joueurs puissent l'ouvrir directement.")}
         </p>
       </div>
 
       <div>
-        <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60 block mb-2">{tr("Note (optional)", "Nota (opcional)", "Note (optionnel)")}</label>
+        <label className="text-xs uppercase tracking-widest text-foreground/60 block mb-2">{tr("Note (optional)", "Nota (opcional)", "Note (optionnel)")}</label>
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
           maxLength={500}
           rows={2}
           placeholder={tr("Bring extra balls, etc.", "Traed pelotas de sobra, etc.", "Apporter des balles en plus, etc.")}
-          className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm"
+          className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground placeholder:text-foreground/40 text-sm"
         />
       </div>
 

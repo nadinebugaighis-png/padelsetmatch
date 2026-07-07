@@ -1700,8 +1700,8 @@ ${qaBlock(theirQA)}`;
           }
         }
       }
-      const padelAnalysis = typeof parsed.padel_analysis === "string" ? parsed.padel_analysis.trim().slice(0, 360) : "";
-      const personalityAnalysis = typeof parsed.personality_analysis === "string" ? parsed.personality_analysis.trim().slice(0, 360) : "";
+      const padelAnalysis = typeof parsed.padel_analysis === "string" ? parsed.padel_analysis.trim().slice(0, 700) : "";
+      const personalityAnalysis = typeof parsed.personality_analysis === "string" ? parsed.personality_analysis.trim().slice(0, 700) : "";
       if (Object.keys(cleanSub).length > 0 || padelAnalysis || personalityAnalysis) {
         subScores = { ...cleanSub, padel_analysis: padelAnalysis, personality_analysis: personalityAnalysis };
       }

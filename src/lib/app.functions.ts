@@ -659,13 +659,15 @@ export const getMyMatches = createServerFn({ method: "GET" })
       const matchMsgs = allMsgs.filter((x) => x.match_id === row.id);
       const last = matchMsgs[0];
       const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
+      const other = map.get(row.profile_a === myId ? row.profile_b : row.profile_a);
       return {
         match_id: row.id,
         created_at: row.created_at,
         last_message_at: row.last_message_at,
         last_message: last ? { body: last.body, created_at: last.created_at, from_me: last.sender_profile_id === myId } : null,
         unread,
-        other: map.get(row.profile_a === myId ? row.profile_b : row.profile_a),
+        other,
+        shared_intents: other ? sharedIntents(me, other) : [],
       };
     }).filter((x) => x.other);
   });

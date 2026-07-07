@@ -141,15 +141,14 @@ function AuthShell() {
             </Link>
           )}
           <Link to="/app" className="flex items-center gap-2 min-w-0">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--cream)] ball-glow" />
-            <span className="text-display text-xl tracking-wider truncate">PADEL · MATCH</span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ball)] ball-glow" />
+            <span className="text-display text-xl tracking-wider truncate text-[var(--ball)]">PADEL · MATCH</span>
           </Link>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           {isAdmin && (
-            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--cream)] hover:opacity-80">
+            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
               {t("shell.admin")}
-
             </Link>
           )}
           <LangSwitch />

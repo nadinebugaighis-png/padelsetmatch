@@ -30,33 +30,34 @@ export function PlayMenuIcon({ className, ...rest }: SVGProps<SVGSVGElement>) {
           {/* Everything white = visible */}
           <rect width="24" height="24" fill="white" />
           {/* Punch out perforation dots */}
-          <g transform="rotate(-18 12 8)">
+          <g transform="rotate(18 12 8)">
             {dots.map(([x, y], i) => (
               <circle key={i} cx={x} cy={y} r={0.55} fill="black" />
             ))}
           </g>
           {/* Punch out grip stripes on the handle */}
           <g
-            transform="rotate(-18 12 8)"
+            transform="rotate(18 12 8)"
             stroke="black"
-            strokeWidth={0.55}
+            strokeWidth={0.45}
             strokeLinecap="round"
           >
-            <line x1="6.4" y1="17.4" x2="9.4" y2="17.4" />
-            <line x1="6.4" y1="18.6" x2="9.4" y2="18.6" />
-            <line x1="6.4" y1="19.8" x2="9.4" y2="19.8" />
+            <line x1="10.8" y1="17.8" x2="13.2" y2="17.8" />
+            <line x1="10.8" y1="18.8" x2="13.2" y2="18.8" />
+            <line x1="10.8" y1="19.8" x2="13.2" y2="19.8" />
+            <line x1="10.8" y1="20.8" x2="13.2" y2="20.8" />
           </g>
         </mask>
       </defs>
 
       <g mask="url(#racket-mask)">
-        {/* Racket head + handle, tilted -18°. Head ellipse + handle rect. */}
-        <g transform="rotate(-18 12 8)">
+        {/* Racket head + handle, tilted +18° so handle runs to bottom-left. */}
+        <g transform="rotate(18 12 8)">
           <ellipse cx="12" cy="7.5" rx="5.2" ry="6" />
-          {/* Neck triangle bridging head bottom to handle */}
-          <path d="M9.5 12.5 L14.5 12.5 L13.2 14.5 L10.8 14.5 Z" />
+          {/* Neck bridging head bottom to handle */}
+          <path d="M9.6 12.4 L14.4 12.4 L13.2 15 L10.8 15 Z" />
           {/* Handle */}
-          <rect x="10.8" y="13.5" width="2.4" height="8" rx="0.6" />
+          <rect x="10.8" y="14.5" width="2.4" height="7" rx="0.6" />
         </g>
       </g>
 

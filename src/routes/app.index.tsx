@@ -460,7 +460,7 @@ function Discover() {
                   {c.free_court_access && (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[var(--ball)]/25 text-[var(--cream)] text-[10px] font-semibold">🎾 Free court</span>
                   )}
-                  {(c.reasons ?? []).slice(0, 3).map((r) => (
+                  {(c.reasons ?? []).slice(0, 3).map((r: string) => (
                     <span key={r} className="inline-flex items-center px-2 py-0.5 rounded-full bg-[var(--secondary)] text-[var(--cream)]/80 text-[10px] font-medium">{r}</span>
                   ))}
                 </div>

@@ -143,22 +143,28 @@ function ProfilePage() {
   }
   const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
+  const hasDetails =
+    locations.length > 0 ||
+    (p.languages?.length ?? 0) > 0 ||
+    (p.personal_traits?.length ?? 0) > 0 ||
+    (p.padel_style?.length ?? 0) > 0;
+
   return (
-    <main className="px-4 py-6 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-      {/* Hero: big photo + name + quick edit */}
-      <div className="surface-card p-6 sm:p-7">
-        <div className="flex flex-col items-center sm:flex-row sm:items-start sm:gap-7">
+    <main className="px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
+      {/* Hero: compact photo + name side-by-side, even on mobile */}
+      <div className="surface-card p-4 sm:p-6">
+        <div className="flex items-start gap-4 sm:gap-6">
           {/* Photo */}
           <div className="relative shrink-0">
             {p.photo_url ? (
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-40 h-40 sm:w-44 sm:h-44 rounded-full object-cover border-2 border-[var(--cream)]/20 shadow-lg"
+                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--cream)]/20 shadow-lg"
               />
             ) : (
-              <div className="w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--cream)]/30 border-2 border-[var(--cream)]/15">
-                <Camera className="w-10 h-10" />
+              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--cream)]/30 border-2 border-[var(--cream)]/15">
+                <Camera className="w-8 h-8" />
               </div>
             )}
             <input
@@ -178,103 +184,101 @@ function ProfilePage() {
               htmlFor={photoInputId}
               aria-disabled={uploading}
               title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute bottom-1 right-1 inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--ball)] text-[var(--court-deep)] shadow-md border-2 border-[var(--court-deep)]/10 cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+              className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--ball)] text-[var(--court-deep)] shadow-md border-2 border-[var(--court-deep)]/10 cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
             >
-              <Camera className="w-5 h-5" />
+              <Camera className="w-4 h-4" />
             </label>
           </div>
 
           {/* Name + meta */}
-          <div className="mt-5 sm:mt-0 flex-1 min-w-0 text-center sm:text-left">
-            <div className="flex items-start justify-center sm:justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h1 className="text-display text-3xl sm:text-4xl leading-tight">{p.first_name}</h1>
-                <p className="mt-1 text-sm text-[var(--cream)]/70">
+                <h1 className="text-display text-2xl sm:text-4xl leading-tight truncate">{p.first_name}</h1>
+                <p className="mt-0.5 text-xs sm:text-sm text-[var(--cream)]/75">
                   {p.age} · {label(p.level)} · {p.nationality}
                 </p>
-                <p className="text-sm text-[var(--cream)]/60">{genderLabel}</p>
+                <p className="text-xs sm:text-sm text-[var(--cream)]/55">{genderLabel}</p>
               </div>
               <Link
                 to="/app/onboarding"
                 aria-label={t("prof.retake")}
                 title={t("prof.retake")}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full border border-[var(--cream)]/25 text-xs uppercase tracking-widest text-[var(--cream)]/80 hover:text-[var(--cream)] hover:border-[var(--cream)]/50 transition shrink-0"
+                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-8 sm:h-9 rounded-full border border-[var(--cream)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--cream)]/80 hover:text-[var(--cream)] hover:border-[var(--cream)]/50 transition shrink-0"
               >
-                <Pencil className="w-3.5 h-3.5" />
+                <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 {tr("Edit", "Editar", "Éditer")}
               </Link>
             </div>
-
-            {p.bio && (
-              <p className="mt-4 text-[15px] leading-relaxed text-[var(--cream)]/85 italic border-l-2 border-[var(--cream)]/20 pl-3 text-left">
-                {p.bio}
-              </p>
-            )}
-
-            <Link
-              to="/app/onboarding"
-              className="sm:hidden mt-4 inline-flex items-center gap-1.5 px-4 h-9 rounded-full border border-[var(--cream)]/25 text-xs uppercase tracking-widest text-[var(--cream)]/80"
-            >
-              <Pencil className="w-3.5 h-3.5" />
-              {tr("Edit profile", "Editar perfil", "Éditer le profil")}
-            </Link>
           </div>
         </div>
+
+        {p.bio && (
+          <p className="mt-3 text-sm leading-relaxed text-[var(--cream)]/85 italic border-l-2 border-[var(--cream)]/20 pl-3">
+            {p.bio}
+          </p>
+        )}
       </div>
 
-      {/* Details */}
-      <div className="mt-4 surface-card p-5 sm:p-6 space-y-5">
-        {locations.length > 0 && (
-          <Section title={t("prof.playsIn")}>
-            <div className="flex flex-wrap gap-2">
-              {locations.map((l) => <span key={l} className="chip">{l}</span>)}
-            </div>
-          </Section>
-        )}
+      {/* Details — dense grid, one card, inline labels */}
+      {hasDetails && (
+        <div className="mt-3 surface-card p-4 sm:p-5">
+          <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+            {locations.length > 0 && (
+              <Section title={t("prof.playsIn")}>
+                <div className="flex flex-wrap gap-1.5">
+                  {locations.map((l) => <span key={l} className="chip">{l}</span>)}
+                </div>
+              </Section>
+            )}
 
-        {p.languages?.length > 0 && (
-          <Section title={t("prof.languages")}>
-            <div className="flex flex-wrap gap-2">
-              {p.languages.map((l) => <span key={l} className="chip">{label(l)}</span>)}
-            </div>
-          </Section>
-        )}
+            {p.languages?.length > 0 && (
+              <Section title={t("prof.languages")}>
+                <div className="flex flex-wrap gap-1.5">
+                  {p.languages.map((l) => <span key={l} className="chip">{label(l)}</span>)}
+                </div>
+              </Section>
+            )}
 
-        {(p.personal_traits?.length ?? 0) > 0 && (
-          <Section title={tr("Personal characteristics", "Características personales", "Traits personnels")}>
-            <div className="flex flex-wrap gap-2">
-              {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
-            </div>
-          </Section>
-        )}
+            {(p.personal_traits?.length ?? 0) > 0 && (
+              <Section title={tr("Personal characteristics", "Características personales", "Traits personnels")}>
+                <div className="flex flex-wrap gap-1.5">
+                  {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
+                </div>
+              </Section>
+            )}
 
-        {(p.padel_style?.length ?? 0) > 0 && (
-          <Section title={tr("Padel style", "Estilo de pádel", "Style de padel")}>
-            <div className="flex flex-wrap gap-2">
-              {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
-            </div>
-          </Section>
-        )}
-
-        {p.free_court_access && (
-          <div className="rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/10 p-4">
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">
-              {tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}
-            </div>
-            {p.free_court_note && <p className="text-sm text-[var(--cream)]/85 mt-2.5">{p.free_court_note}</p>}
-            <p className="text-[11px] text-[var(--cream)]/55 mt-1.5">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.", "Affiché sur ta carte grid. Partage l'adresse exacte seulement en chat.")}</p>
+            {(p.padel_style?.length ?? 0) > 0 && (
+              <Section title={tr("Padel style", "Estilo de pádel", "Style de padel")}>
+                <div className="flex flex-wrap gap-1.5">
+                  {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
+                </div>
+              </Section>
+            )}
           </div>
-        )}
-      </div>
+
+          {p.free_court_access && (
+            <div className="mt-4 rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/10 p-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                  {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
+                </span>
+                {p.free_court_note && <span className="text-xs text-[var(--cream)]/85">{p.free_court_note}</span>}
+              </div>
+              <p className="text-[10px] text-[var(--cream)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-      <div className="mt-4 surface-card p-4 flex items-start gap-3 text-sm text-[var(--cream)]/70">
-        <Lock className="w-4 h-4 mt-0.5 shrink-0" />
+      <div className="mt-3 surface-card p-3 flex items-start gap-2 text-xs text-[var(--cream)]/70">
+        <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
         <p>{t("prof.privacy")}</p>
       </div>
 
-      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-4" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-3" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
       <QASection />
 

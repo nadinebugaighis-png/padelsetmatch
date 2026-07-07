@@ -397,7 +397,7 @@ function Discover() {
                 type="button"
                 disabled={likeM.isPending || unlikeM.isPending}
                 onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
-                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-black/50"}`}
+                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--cream)]" : "bg-black/50"}`}
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >

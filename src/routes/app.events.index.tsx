@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { Users, MapPin, Settings2 } from "lucide-react";
+import { MapPin, Settings2 } from "lucide-react";
 import { RacketIcon } from "@/components/RacketIcon";
 
 
@@ -198,16 +198,11 @@ function EventsPage() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/55">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full border border-[var(--cream)]/25" /> {tr("Free", "Libre", "Libre")}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--cream)]/30" /> {tr("Some in", "Algunos", "Certains")}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--ball)]" /> {tr("Full 4", "Completo", "Complet")}
-        </span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+        <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
+        <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
+        <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
+        <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
         <Link
           to="/app/events/new"
           className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
@@ -294,9 +289,14 @@ function RowCells({
   onTap: (d: Date, h: number) => void;
   tr: ReturnType<typeof useTr>;
 }) {
+  const nowH = new Date().getHours();
+  const isCurrentHour = hour === nowH;
+  const stripe = hour % 2 === 0 ? "bg-[var(--cream)]/[0.02]" : "";
   return (
     <>
-      <div className="sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--cream)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest text-[var(--cream)]/55 font-semibold">
+      <div className={`sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--cream)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
+        isCurrentHour ? "text-[var(--ball)]" : "text-[var(--cream)]/55"
+      }`}>
         {String(hour).padStart(2, "0")}
       </div>
       {days.map((d, i) => {
@@ -307,15 +307,18 @@ function RowCells({
         const startsAt = new Date(d);
         startsAt.setHours(hour, 0, 0, 0);
         const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
+        const isNowCell = isCurrentHour && i === 0 && !past;
         return (
           <button
             key={i}
             type="button"
             disabled={isPending || past}
             onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--cream)]/5 flex items-center justify-center relative ${
-              past ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--cream)]/5 active:bg-[var(--cream)]/10"
-            }`}
+            className={`border-b border-r border-[var(--cream)]/5 flex items-center justify-center relative ${stripe} ${
+              past
+                ? "opacity-25 cursor-not-allowed"
+                : "hover:bg-[var(--cream)]/8 active:bg-[var(--cream)]/12 transition-colors"
+            } ${isNowCell ? "ring-1 ring-inset ring-[var(--ball)]/40" : ""}`}
             aria-label={tr(
               `${primary ? "Open" : "Add"} ${hour}:00 ${d.toDateString()}`,
               `${primary ? "Abrir" : "Añadir"} ${hour}:00`,
@@ -323,7 +326,7 @@ function RowCells({
             )}
           >
             {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--cream)]/15" />
+              <span className="w-1 h-1 rounded-full bg-[var(--cream)]/20" />
             )}
             {isPending && (
               <span className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -337,26 +340,76 @@ function RowCells({
   );
 }
 
-function CellPill({ e, extra }: { e: EventLite; extra: number }) {
-  const filled = e.filled ?? 0;
-  const full = filled >= 4;
-  const mine = e.iAmHost || e.iAmParticipant;
+function slotColor(filled: number, mine: boolean) {
+  if (filled >= 4) {
+    return {
+      wrap: "bg-[var(--ball)] text-[var(--court-deep)]",
+      pip: "bg-[var(--court-deep)]",
+      empty: "bg-[var(--court-deep)]/30",
+    };
+  }
+  if (filled === 3) {
+    // Almost full — warm accent so it pops
+    return {
+      wrap: `bg-[color-mix(in_oklab,var(--ball)_22%,transparent)] text-[var(--ball)] ring-1 ${mine ? "ring-[var(--cream)]" : "ring-[var(--ball)]/60"}`,
+      pip: "bg-[var(--ball)]",
+      empty: "bg-[var(--ball)]/25",
+    };
+  }
+  if (filled >= 1) {
+    return {
+      wrap: `bg-[var(--cream)]/12 text-[var(--cream)] ${mine ? "ring-1 ring-[var(--ball)]" : ""}`,
+      pip: "bg-[var(--cream)]",
+      empty: "bg-[var(--cream)]/25",
+    };
+  }
+  return {
+    wrap: "bg-transparent text-[var(--cream)]/70",
+    pip: "bg-[var(--cream)]/70",
+    empty: "bg-[var(--cream)]/20",
+  };
+}
+
+function SlotPips({ filled, pip, empty }: { filled: number; pip: string; empty: string }) {
   return (
-    <div
-      className={`flex items-center gap-1 px-1.5 py-1 rounded-full text-[10px] font-bold leading-none ${
-        full
-          ? "bg-[var(--ball)] text-[var(--court-deep)]"
-          : mine
-          ? "bg-[var(--cream)]/25 text-[var(--cream)] ring-1 ring-[var(--ball)]"
-          : "bg-[var(--cream)]/15 text-[var(--cream)]"
-      }`}
-    >
-      <Users className="w-2.5 h-2.5" />
-      <span>{filled}/4</span>
-      {extra > 0 && <span className="opacity-70">+{extra}</span>}
+    <div className="flex items-center gap-[2px]">
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className={`w-[5px] h-[5px] rounded-full ${i < filled ? pip : empty}`}
+        />
+      ))}
     </div>
   );
 }
+
+function LegendDots({ filled, label, accent }: { filled: number; label: string; accent?: boolean }) {
+  const colors = slotColor(filled, false);
+  return (
+    <span className={`inline-flex items-center gap-1.5 ${accent ? "text-[var(--ball)]" : ""}`}>
+      <SlotPips filled={filled} pip={colors.pip} empty={colors.empty} />
+      {label}
+    </span>
+  );
+}
+
+function CellPill({ e, extra }: { e: EventLite; extra: number }) {
+  const filled = e.filled ?? 0;
+  const mine = e.iAmHost || e.iAmParticipant;
+  const c = slotColor(filled, mine);
+  return (
+    <div
+      className={`flex flex-col items-center justify-center gap-[3px] px-1.5 py-1 rounded-lg leading-none ${c.wrap}`}
+    >
+      <SlotPips filled={filled} pip={c.pip} empty={c.empty} />
+      <span className="text-[9px] font-bold tracking-wider">
+        {filled >= 4 ? "4/4" : `${filled}/4`}
+        {extra > 0 && <span className="opacity-70 ml-0.5">+{extra}</span>}
+      </span>
+    </div>
+  );
+}
+
 
 function QuickSheet({
   eventId,

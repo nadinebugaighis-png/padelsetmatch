@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { MapPin, Settings2 } from "lucide-react";
+import { MapPin, Settings2, Search, X } from "lucide-react";
 import { RacketIcon } from "@/components/RacketIcon";
 
 
@@ -50,7 +50,8 @@ type EventLite = {
   status: string;
   club_name: string;
   gender_rule: "mixed" | "men_only" | "women_only";
-  participants?: Array<{ profiles?: { first_name?: string; photo_url?: string | null } | null }>;
+  host?: { first_name?: string } | null;
+  participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
 };
 
 function EventsPage() {

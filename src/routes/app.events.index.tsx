@@ -43,7 +43,7 @@ function GenderBadge({ rule }: { rule: "mixed" | "men_only" | "women_only" }) {
   const tr = useTr();
   const label = rule === "mixed" ? tr("MIXED", "MIXTO", "MIXTE") : rule === "men_only" ? tr("MEN", "HOMBRES", "HOMMES") : tr("WOMEN", "MUJERES", "FEMMES");
   return (
-    <div className="flex flex-col items-center justify-center text-[var(--ball)]">
+    <div className="flex flex-col items-center justify-center text-[var(--cream)]">
       <span className="text-[10px] uppercase tracking-widest font-bold">{label}</span>
     </div>
   );
@@ -188,7 +188,7 @@ function EventsPage() {
         <div className="flex items-center gap-2 shrink-0">
           <GenderBadge rule={e.gender_rule} />
           <div className="flex flex-col items-stretch gap-1.5">
-            <span className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
+            <span className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
               {e.iAmHost ? tr("View", "Ver", "Voir") : e.iAmParticipant ? tr("Chat", "Chat", "Chat") : tr("Join", "Unirme", "Rejoindre")}
             </span>
             {(e.iAmHost || e.iAmParticipant) && (
@@ -214,13 +214,13 @@ function EventsPage() {
           aria-expanded={filtersOpen}
           className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[11px] uppercase tracking-widest ${
             filtersOpen || activeFilterCount > 0
-              ? "border-[var(--ball)] text-[var(--ball)]"
+              ? "border-[var(--cream)] text-[var(--cream)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]"
           }`}
         >
           <SlidersHorizontal className="w-3.5 h-3.5" /> {tr("Filters", "Filtros", "Filtres")}
           {activeFilterCount > 0 && (
-            <span className="ml-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
+            <span className="ml-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
               {activeFilterCount}
             </span>
           )}

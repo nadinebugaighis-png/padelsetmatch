@@ -150,7 +150,7 @@ function ProfilePage() {
           to="/app/onboarding"
           aria-label={t("prof.retake")}
           title={t("prof.retake")}
-          className="mt-2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--cream)]/20 text-[var(--cream)]/80 hover:text-[var(--ball)] hover:border-[var(--ball)]/50 transition"
+          className="mt-2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--cream)]/20 text-[var(--cream)]/80 hover:text-[var(--cream)] hover:border-[var(--cream)]/50 transition"
         >
           <Pencil className="w-4 h-4" />
         </Link>

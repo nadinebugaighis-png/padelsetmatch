@@ -5,6 +5,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { Users, MapPin, Settings2 } from "lucide-react";
+import { RacketIcon } from "@/components/RacketIcon";
+
 
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";

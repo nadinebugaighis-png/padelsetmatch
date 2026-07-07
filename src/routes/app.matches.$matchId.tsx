@@ -290,7 +290,7 @@ function ChatRoom() {
         className="px-3 py-3 border-t border-[var(--cream)]/10 flex gap-2"
       >
         <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={messages.length === 0 ? t("chat.placeholder") : ""} />
-        <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending}><Send className="w-4 h-4" /></Button>
+        <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending} className="bg-[var(--ball)] text-[var(--court-deep)] hover:bg-[var(--ball)]/90"><Send className="w-4 h-4" /></Button>
       </form>
     </main>
   );
@@ -389,7 +389,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
               key={tag}
               type="button"
               onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--cream)] text-[var(--court-deep)] border-[var(--cream)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
             >
               {displayLabel}
             </button>

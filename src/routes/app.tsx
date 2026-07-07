@@ -185,7 +185,48 @@ function AuthShell() {
 
       </header>
 
+      {hasProfile && !onOnboarding && visibleInvites.length > 0 && (
+        <div className="border-b border-[var(--ball)]/30 bg-[var(--ball)]/10">
+          <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 space-y-2">
+            {visibleInvites.slice(0, 3).map((inv) => {
+              const ev = inv.event!;
+              const when = new Date(ev.starts_at).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+              const host = ev.host?.first_name ?? tr("Someone", "Alguien", "Quelqu'un");
+              const where = ev.club_name ?? ev.city ?? "";
+              return (
+                <div key={inv.id} className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-[var(--ball)] shrink-0" />
+                  <Link
+                    to="/app/events/$eventId"
+                    params={{ eventId: ev.id }}
+                    className="flex-1 min-w-0 text-sm text-[var(--cream)] hover:opacity-80"
+                  >
+                    <span className="font-semibold text-[var(--ball)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
+                    <span className="text-[var(--cream)]/80">
+                      {tr(
+                        `by ${host} · ${when}${where ? " · " + where : ""} — tap to view`,
+                        `por ${host} · ${when}${where ? " · " + where : ""} — toca para ver`,
+                        `par ${host} · ${when}${where ? " · " + where : ""} — appuie pour voir`,
+                      )}
+                    </span>
+                  </Link>
+                  <button
+                    onClick={() => setDismissedIds((d) => [...d, inv.id])}
+                    aria-label={tr("Dismiss", "Descartar", "Fermer")}
+                    className="text-[var(--cream)]/50 hover:text-[var(--cream)] shrink-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <Outlet />
+
+
 
       {hasProfile && !onOnboarding && (
         <nav

@@ -18,20 +18,20 @@ export function PlayMenuIcon({ className, ...rest }: SVGProps<SVGSVGElement>) {
       className={className}
       {...rest}
     >
-      {/* racket head — kept compact and shifted left to make room for the ball */}
+      {/* racket head — slightly larger, shifted left to balance the ball */}
       <ellipse
-        cx="9"
-        cy="9"
-        rx="4.5"
-        ry="5.5"
-        transform="rotate(35 9 9)"
+        cx="8.8"
+        cy="8.6"
+        rx="5"
+        ry="6.2"
+        transform="rotate(35 8.8 8.6)"
       />
       {/* handle */}
-      <path d="M8 13.5 3 18.5" />
+      <path d="M7.6 13.8 2.8 18.6" />
       {/* padel ball — small circle with seam arcs on the right */}
-      <circle cx="17.5" cy="13.5" r="2.8" />
-      <path d="M16.2 12.2a2.2 2.2 0 0 1 2.6 0" />
-      <path d="M16.2 14.8a2.2 2.2 0 0 0 2.6 0" />
+      <circle cx="18" cy="13.5" r="2.8" />
+      <path d="M16.7 12.2a2.2 2.2 0 0 1 2.6 0" />
+      <path d="M16.7 14.8a2.2 2.2 0 0 0 2.6 0" />
     </svg>
   );
 }

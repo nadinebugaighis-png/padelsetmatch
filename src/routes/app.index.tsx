@@ -384,7 +384,10 @@ function Discover() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
               {!c.liked && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
-              <div className="absolute top-2 right-2 chip chip-ball text-[10px]" title={t("disc.scoreTooltip")}>{c.score}</div>
+              <div className={`absolute top-2 right-2 z-10 chip text-[10px] ${c.liked ? "chip-ball ring-1 ring-[var(--cream)]" : "bg-[var(--court)]/60 text-[var(--cream)]"}`} title={t("disc.scoreTooltip")}>
+                {c.score}
+                {c.liked && <span className="ml-1 inline-block w-1 h-1 rounded-full bg-[var(--court-deep)]" />}
+              </div>
 
               <button
                 type="button"
@@ -392,17 +395,6 @@ function Discover() {
                 className="absolute inset-0 w-full h-full text-left"
                 aria-label={`View ${c.first_name}'s profile`}
               />
-
-              <button
-                type="button"
-                disabled={likeM.isPending || unlikeM.isPending}
-                onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
-                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-black/50"}`}
-                aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
-                title={c.liked ? t("disc.undo") : "Like"}
-              >
-                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--cream)]/70"}`} />
-              </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">
                 <button

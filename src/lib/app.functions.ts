@@ -250,7 +250,7 @@ function scoreCandidate(me: Profile, c: Profile) {
   const theyLikeAge = me.age >= c.age_min && me.age <= c.age_max;
   // Hard filter: only show people inside the user's chosen age range.
   if (!meLikesAge) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  if (theyLikeAge) { score += 22; reasons.push("Ages line up both ways"); }
+  if (theyLikeAge) { score += 22; }
   else { score += 8; }
 
   const levelGap = Math.abs((LEVEL_IDX[me.level] ?? 0) - (LEVEL_IDX[c.level] ?? 0));

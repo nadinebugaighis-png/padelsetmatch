@@ -47,7 +47,7 @@ export function ClubPicker({ value, onChange }: Props) {
       <div className="rounded-lg border border-[var(--cream)]/20 bg-black/30 p-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-sm text-[var(--cream)]">
-            <MapPin className="w-4 h-4 text-[var(--cream)]" />
+            <MapPin className="w-4 h-4 text-[var(--ball)]" />
             <span className="font-medium truncate">{value.name}</span>
           </div>
           {value.address && <div className="text-xs text-[var(--cream)]/60 mt-1 truncate">{value.address}</div>}
@@ -58,7 +58,7 @@ export function ClubPicker({ value, onChange }: Props) {
             onChange(null);
             setQ("");
           }}
-          className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)] shrink-0"
+          className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)] shrink-0"
         >
           {tr("Change", "Cambiar", "Modifier")}
 
@@ -76,7 +76,7 @@ export function ClubPicker({ value, onChange }: Props) {
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
         placeholder={tr("Search padel club (e.g. La Moraleja)", "Buscar club de pádel (p. ej. La Moraleja)", "Chercher un club de padel (p. ex. La Moraleja)")}
-        className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--cream)]"
+        className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--ball)]"
       />
       {loading && (
         <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-[var(--cream)]/60" />
@@ -93,7 +93,7 @@ export function ClubPicker({ value, onChange }: Props) {
                 setQ("");
                 setOpen(false);
               }}
-              className="w-full text-left px-3 py-2 hover:bg-[var(--cream)]/10 border-b border-[var(--cream)]/5 last:border-b-0"
+              className="w-full text-left px-3 py-2 hover:bg-[var(--ball)]/10 border-b border-[var(--cream)]/5 last:border-b-0"
             >
               <div className="text-sm text-[var(--cream)] truncate">{r.name}</div>
               <div className="text-xs text-[var(--cream)]/50 truncate">{r.address}</div>

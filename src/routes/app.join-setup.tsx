@@ -79,7 +79,7 @@ function JoinSetupPage() {
   return (
     <main className="min-h-screen bg-[var(--court-deep)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
-        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
         <h1 className="text-3xl text-[var(--cream)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>
         <p className="text-sm text-[var(--cream)]/70 mt-2">
           {tr("You can complete your full profile later — this is enough to join a match.", "Puedes completar tu perfil después — con esto ya puedes unirte a un partido.", "Tu peux compléter ton profil entier plus tard — c'est suffisant pour rejoindre un match.")}
@@ -108,7 +108,7 @@ function JoinSetupPage() {
                   onClick={() => setLevel(lvl)}
                   className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
                     level === lvl
-                      ? "bg-[var(--cream)] text-[var(--court-deep)] border-[var(--cream)]"
+                      ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]"
                       : "border-[var(--cream)]/20 text-[var(--cream)]/80"
                   }`}
                 >
@@ -132,7 +132,7 @@ function JoinSetupPage() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50"
+            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50"
           >
             {busy ? tr("Saving…", "Guardando…", "Enregistrement…") : join ? tr("Save & join the match", "Guardar y unirme al partido", "Enregistrer et rejoindre le match") : tr("Save & continue", "Guardar y continuar", "Enregistrer et continuer")}
           </button>

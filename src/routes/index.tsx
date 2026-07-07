@@ -52,12 +52,12 @@ function Landing() {
     <main className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="inline-block w-3 h-3 rounded-full bg-[var(--cream)] ball-glow" />
+          <span className="inline-block w-3 h-3 rounded-full bg-[var(--ball)] ball-glow" />
           <span className="text-display text-2xl tracking-wider">PADEL · MATCH</span>
         </div>
         <div className="flex items-center gap-3">
           <LangSwitch />
-          <Link to="/how-it-works" className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)] hidden sm:inline">
+          <Link to="/how-it-works" className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)] hidden sm:inline">
             {t("land.howItWorks")}
           </Link>
           <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="chip chip-ball">{t("land.signin")}</Link>
@@ -70,20 +70,20 @@ function Landing() {
           <h1 className="text-display text-7xl md:text-8xl lg:text-9xl leading-[0.9]">
             {t("land.h1.a")}<br />
             {t("land.h1.a2")}<br />
-            <span style={{ color: "var(--cream)" }}>{t("land.h1.b")}</span>
+            <span style={{ color: "var(--ball)" }}>{t("land.h1.b")}</span>
           </h1>
           <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-md">
             {t("land.lede")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
+            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
               {t("land.cta")}
             </Link>
             <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
           </div>
           <Link
             to="/how-it-works"
-            className="mt-4 inline-block text-base font-semibold text-[var(--cream)] hover:opacity-80 underline underline-offset-4 decoration-2 decoration-[var(--cream)]/40 hover:decoration-[var(--cream)]"
+            className="mt-4 inline-block text-base font-semibold text-[var(--ball)] hover:opacity-80 underline underline-offset-4 decoration-2 decoration-[var(--ball)]/40 hover:decoration-[var(--ball)]"
           >
             {t("land.howItWorks")} →
           </Link>
@@ -99,7 +99,7 @@ function Landing() {
 
           <button
             onClick={install.openModal}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--cream)] px-5 py-2.5 text-sm font-bold text-[var(--cream)] hover:bg-[var(--cream)] hover:text-[var(--court-deep)] transition"
+            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--ball)] px-5 py-2.5 text-sm font-bold text-[var(--ball)] hover:bg-[var(--ball)] hover:text-[var(--court-deep)] transition"
           >
             <Smartphone className="w-4 h-4" />
             Add to your home screen
@@ -126,7 +126,7 @@ function Landing() {
             <h2 className="text-display text-4xl md:text-5xl">{t("land.preview.title")}</h2>
             <p className="mt-2 text-[var(--cream)]/70 max-w-lg">{t("land.preview.sub")}</p>
           </div>
-          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
+          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
             {t("land.preview.cta")}
           </Link>
         </div>
@@ -140,13 +140,13 @@ function Landing() {
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--cream)] text-[var(--court-deep)] rounded-full px-2 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--ball)] text-[var(--court-deep)] rounded-full px-2 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--cream)]">
                 <div className="text-display text-xl">{p.name}</div>
                 <div className="text-xs opacity-80">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
-                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
+                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
               </div>
             </div>
           ))}

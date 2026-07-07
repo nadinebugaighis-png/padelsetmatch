@@ -91,10 +91,24 @@ function EventsPage() {
     [today.getTime()],
   );
 
-  // Bucket events by (day-hour).
+  const searchLower = search.trim().toLowerCase();
+
+  function eventMatchesName(e: EventLite) {
+    if (!searchLower) return true;
+    const hostName = e.host?.first_name ?? "";
+    if (hostName.toLowerCase().includes(searchLower)) return true;
+    return e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower)) ?? false;
+  }
+
+  const visibleEvents = useMemo(
+    () => ((eventsQ.data?.events ?? []) as EventLite[]).filter(eventMatchesName),
+    [eventsQ.data, searchLower],
+  );
+
+  // Bucket events by (day-hour). When searching, only show matching events.
   const buckets = useMemo(() => {
     const map = new Map<string, EventLite[]>();
-    for (const e of (eventsQ.data?.events ?? []) as EventLite[]) {
+    for (const e of visibleEvents) {
       const d = new Date(e.starts_at);
       const key = slotKey(startOfDay(d), d.getHours());
       const arr = map.get(key) ?? [];
@@ -102,7 +116,7 @@ function EventsPage() {
       map.set(key, arr);
     }
     return map;
-  }, [eventsQ.data]);
+  }, [visibleEvents]);
 
   const [pending, setPending] = useState<string | null>(null);
   const [sheet, setSheet] = useState<{ eventId: string; startsAt: string } | null>(null);

@@ -104,9 +104,10 @@
 
 .dark {
   /* Keep parity — app renders on cream regardless. */
-  --background: var(--cream);
-  --foreground: var(--court);
+  --background: var(--court-deep);
+  --foreground: var(--cream);
 }
+
 
 @layer base {
   * { border-color: var(--color-border); }

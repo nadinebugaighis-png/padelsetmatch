@@ -389,7 +389,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
               key={tag}
               type="button"
               onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--cream)] text-[var(--court-deep)] border-[var(--cream)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
             >
               {displayLabel}
             </button>

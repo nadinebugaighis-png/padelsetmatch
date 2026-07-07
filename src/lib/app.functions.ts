@@ -723,6 +723,7 @@ export const getMatchDetail = createServerFn({ method: "GET" })
       my_profile_id: myId,
       other: stripPrivateFields(other as Profile) as unknown as Profile,
       shared,
+      shared_intents: sharedIntents(meP, otP),
       messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string; edited_at: string | null }> | null) ?? []),
     };
   });

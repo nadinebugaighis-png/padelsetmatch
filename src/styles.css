@@ -57,7 +57,7 @@
   --clay: oklch(0.6 0.13 35);               /* Madrid clay */
   --clay-deep: oklch(0.5 0.13 32);
   --cream: oklch(1 0 0);             /* bright white text */
-  --ball: oklch(0.85 0.10 110);             /* mellow Wimbledon yellow-green */
+  --ball: oklch(0.93 0.12 110);             /* bright Wimbledon yellow-green */
 
   --background: var(--court-deep);
   --foreground: var(--cream);

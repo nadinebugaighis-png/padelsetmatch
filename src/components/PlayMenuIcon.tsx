@@ -1,11 +1,12 @@
 import type { SVGProps } from "react";
 
 /**
- * Padel "Play" tab icon — tilted teardrop racket with a wrapped grip
- * handle at the bottom-left and a seamed tennis ball at the bottom-right,
- * mirroring the classic padel logo composition.
+ * Padel "Play" tab icon — tilted teardrop racket with a long wrapped-grip
+ * handle running to the bottom-left and a seamed tennis ball resting at
+ * the bottom-right, matching the classic padel logo silhouette.
  */
 export function PlayMenuIcon({ className, ...rest }: SVGProps<SVGSVGElement>) {
+  const bg = "var(--surface, #0f1a1a)";
   return (
     <svg
       viewBox="0 0 24 24"
@@ -14,38 +15,40 @@ export function PlayMenuIcon({ className, ...rest }: SVGProps<SVGSVGElement>) {
       className={className}
       {...rest}
     >
-      <g transform="rotate(-22 12 12)">
-        {/* Racket head + neck + handle silhouette */}
-        <path d="M12 1.5c-3.7 0-6.7 3-6.7 7 0 3.35 2.2 6.2 5.2 6.85l-.35 1.5c-.1.4.05.8.4 1l.7.4-1.1 3.5c-.15.5.15 1 .65 1.1l1.6.35c.5.1 1-.2 1.1-.7l.85-3.6.75-.25c.35-.15.55-.55.45-.95l-.35-1.4c3-.65 5.2-3.5 5.2-6.85 0-4-3-7-6.7-7Z" />
-        {/* Perforation dots on the head (subtractive) */}
-        <g fill="var(--surface, #0f1a1a)">
-          <circle cx="9.6" cy="5.2" r="0.55" />
-          <circle cx="12" cy="4.7" r="0.55" />
-          <circle cx="14.4" cy="5.2" r="0.55" />
-          <circle cx="8.6" cy="7.3" r="0.55" />
-          <circle cx="11" cy="7" r="0.55" />
-          <circle cx="13.4" cy="7" r="0.55" />
-          <circle cx="15.4" cy="7.3" r="0.55" />
-          <circle cx="9.4" cy="9.3" r="0.55" />
-          <circle cx="12" cy="9.1" r="0.55" />
-          <circle cx="14.6" cy="9.3" r="0.55" />
-          <circle cx="10.6" cy="11.3" r="0.55" />
-          <circle cx="13.4" cy="11.3" r="0.55" />
-        </g>
-        {/* Grip wrap stripes on the handle */}
-        <g stroke="var(--surface, #0f1a1a)" strokeWidth={0.45} strokeLinecap="round" fill="none">
-          <path d="M11.15 18.7 12.9 19.1" />
-          <path d="M10.95 19.6 12.7 20" />
-          <path d="M10.75 20.5 12.5 20.9" />
-        </g>
+      {/* Racket: head (teardrop) + throat + long handle, tilted ~15° */}
+      <path d="M14.9 2.1c-3.5-1.15-7.35.9-8.5 4.5-1.05 3.3.5 6.8 3.5 8.25l-1.05 1.3-4.5 5.15a1.1 1.1 0 0 0 .1 1.55l.55.5a1.1 1.1 0 0 0 1.55-.1l4.5-5.15 1.05-1.3c3.15.9 6.6-.75 7.65-4.05 1.15-3.6-1.35-9.5-4.85-10.65Z" />
+
+      {/* Perforation dots on the head (subtractive) */}
+      <g fill={bg}>
+        <circle cx="10.4" cy="5.6" r="0.55" />
+        <circle cx="12.4" cy="5" r="0.55" />
+        <circle cx="14.4" cy="5.4" r="0.55" />
+        <circle cx="9.6" cy="7.4" r="0.55" />
+        <circle cx="11.6" cy="7" r="0.55" />
+        <circle cx="13.6" cy="7.2" r="0.55" />
+        <circle cx="15.4" cy="7.6" r="0.55" />
+        <circle cx="9.2" cy="9.3" r="0.55" />
+        <circle cx="11.2" cy="9" r="0.55" />
+        <circle cx="13.2" cy="9.1" r="0.55" />
+        <circle cx="15" cy="9.5" r="0.55" />
+        <circle cx="9.5" cy="11.1" r="0.55" />
+        <circle cx="11.4" cy="10.9" r="0.55" />
+        <circle cx="13.2" cy="11.1" r="0.55" />
       </g>
-      {/* Tennis ball at bottom-right with equator seam */}
-      <circle cx="18.5" cy="18.5" r="3.3" />
+
+      {/* Grip wrap stripes on the handle end */}
+      <g stroke={bg} strokeWidth={0.45} strokeLinecap="round" fill="none">
+        <path d="M4.4 20.1 6.1 21.6" />
+        <path d="M3.6 21 5.3 22.5" />
+      </g>
+
+      {/* Tennis ball with single equator seam */}
+      <circle cx="18.6" cy="19.2" r="3" />
       <path
-        d="M15.3 18.5c1.9-1.15 4.5-1.15 6.4 0"
+        d="M15.7 19.2c1.7-1 4.1-1 5.8 0"
         fill="none"
-        stroke="var(--surface, #0f1a1a)"
-        strokeWidth={0.7}
+        stroke={bg}
+        strokeWidth={0.65}
         strokeLinecap="round"
       />
     </svg>

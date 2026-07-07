@@ -104,6 +104,7 @@ function EventsPage() {
 
   const [pending, setPending] = useState<string | null>(null);
   const [sheet, setSheet] = useState<{ eventId: string; startsAt: string } | null>(null);
+  const [slotSheet, setSlotSheet] = useState<{ startsAt: string; events: EventLite[] } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Scroll to a reasonable morning hour on first load
@@ -115,43 +116,13 @@ function EventsPage() {
     if (rowIdx > 0) scrollRef.current.scrollTop = rowIdx * 56 - 40;
   }, []);
 
-  async function handleCellTap(date: Date, hour: number) {
-    const key = slotKey(date, hour);
-    if (pending) return;
-    const startsAt = new Date(date);
-    startsAt.setHours(hour, 0, 0, 0);
-    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
-      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
-      return;
-    }
-    const existing = buckets.get(key) ?? [];
-    // If user is already in one, open it.
-    const mine = existing.find((e) => e.iAmParticipant || e.iAmHost);
-    if (mine) {
-      navigate({ to: "/app/events/$eventId", params: { eventId: mine.id } });
-      return;
-    }
-    // If there's an open match to join, join it (fastest path).
-    const joinable = existing.find((e) => e.needs > 0 && e.status === "open");
-    if (joinable) {
-      setPending(key);
-      try {
-        await join({ data: { id: joinable.id } });
-        toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"));
-        await qc.invalidateQueries({ queryKey: ["open-events"] });
-        navigate({ to: "/app/events/$eventId", params: { eventId: joinable.id } });
-      } catch (e) {
-        toast.error(e instanceof Error ? e.message : tr("Could not join", "No se pudo unir", "Impossible de rejoindre"));
-      } finally {
-        setPending(null);
-      }
-      return;
-    }
-    // Otherwise quick-create
+  async function quickCreateAt(startsAt: Date) {
+    const key = slotKey(startOfDay(startsAt), startsAt.getHours());
     setPending(key);
     try {
       const { id } = await quickCreate({ data: { starts_at: startsAt.toISOString() } });
       await qc.invalidateQueries({ queryKey: ["open-events"] });
+      setSlotSheet(null);
       setSheet({ eventId: id, startsAt: startsAt.toISOString() });
     } catch (e) {
       const msg = e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido", "Impossible de créer le match");
@@ -162,6 +133,39 @@ function EventsPage() {
     } finally {
       setPending(null);
     }
+  }
+
+  async function joinEvent(id: string) {
+    setPending(id);
+    try {
+      await join({ data: { id } });
+      toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"));
+      await qc.invalidateQueries({ queryKey: ["open-events"] });
+      setSlotSheet(null);
+      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not join", "No se pudo unir", "Impossible de rejoindre"));
+    } finally {
+      setPending(null);
+    }
+  }
+
+  async function handleCellTap(date: Date, hour: number) {
+    if (pending) return;
+    const startsAt = new Date(date);
+    startsAt.setHours(hour, 0, 0, 0);
+    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
+      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
+      return;
+    }
+    const key = slotKey(date, hour);
+    const existing = buckets.get(key) ?? [];
+    if (existing.length === 0) {
+      await quickCreateAt(startsAt);
+      return;
+    }
+    // Show picker of all matches at this hour + option to start another.
+    setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
   }
 
   return (

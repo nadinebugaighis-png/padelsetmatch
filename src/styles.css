@@ -1,8 +1,11 @@
-@import "@fontsource/bebas-neue/400.css";
-@import "@fontsource/barlow/400.css";
-@import "@fontsource/barlow/500.css";
-@import "@fontsource/barlow/600.css";
-@import "@fontsource/barlow/700.css";
+@import "@fontsource/fraunces/400.css";
+@import "@fontsource/fraunces/500.css";
+@import "@fontsource/fraunces/600.css";
+@import "@fontsource/fraunces/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -10,8 +13,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * "Court at Dusk" — Madrid padel-dating, anonymous-first.
- * Deep court teal, warm Madrid clay, cream paper, padel-ball glow.
+ * "The Padel Society" — premium, elegant, luxury sports club.
+ * Cream paper, deep forest green ink, lime accent. Wimbledon calm.
  */
 
 @theme inline {
@@ -43,60 +46,60 @@
   --color-clay: var(--clay);
   --color-cream: var(--cream);
   --color-ball: var(--ball);
-  --font-display: "Bebas Neue", "Impact", sans-serif;
-  --font-sans: "Barlow", system-ui, sans-serif;
+  --font-display: "Fraunces", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.875rem;
 
-  /* Court at Dusk palette */
-  --court: oklch(0.32 0.04 180);            /* deep padel teal */
-  --court-deep: oklch(0.22 0.03 180);
-  --clay: oklch(0.6 0.13 35);               /* Madrid clay */
-  --clay-deep: oklch(0.5 0.13 32);
-  --cream: oklch(1 0 0);             /* bright white text */
-  --ball: oklch(0.93 0.12 110);             /* bright Wimbledon yellow-green */
+  /* Padel Society palette — cream paper, deep forest green, lime */
+  --court: oklch(0.28 0.055 155);           /* deep forest green (ink) */
+  --court-deep: oklch(0.22 0.05 155);
+  --clay: oklch(0.4 0.09 150);              /* mid green */
+  --clay-deep: oklch(0.28 0.055 155);
+  --cream: oklch(0.975 0.012 95);           /* warm off-white paper */
+  --ball: oklch(0.88 0.18 118);             /* lime accent */
 
-  --background: var(--court-deep);
-  --foreground: var(--cream);
+  --background: var(--cream);
+  --foreground: var(--court);
 
-  --card: oklch(0.28 0.035 180);
-  --card-foreground: var(--cream);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--court);
 
-  --popover: oklch(0.26 0.035 180);
-  --popover-foreground: var(--cream);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--court);
 
-  --primary: var(--clay);
+  --primary: var(--court);
   --primary-foreground: var(--cream);
 
-  --secondary: oklch(0.36 0.04 180);
-  --secondary-foreground: var(--cream);
+  --secondary: oklch(0.94 0.015 95);
+  --secondary-foreground: var(--court);
 
-  --muted: oklch(0.3 0.025 180);
-  --muted-foreground: oklch(0.72 0.02 80);
+  --muted: oklch(0.94 0.012 95);
+  --muted-foreground: oklch(0.48 0.02 155);
 
   --accent: var(--ball);
-  --accent-foreground: var(--court-deep);
+  --accent-foreground: var(--court);
 
-  --destructive: oklch(0.55 0.22 28);
+  --destructive: oklch(0.55 0.2 28);
   --destructive-foreground: var(--cream);
 
-  --border: oklch(0.4 0.03 180 / 0.4);
-  --input: oklch(0.4 0.03 180 / 0.5);
-  --ring: var(--clay);
+  --border: oklch(0.88 0.015 95);
+  --input: oklch(0.9 0.015 95);
+  --ring: var(--court);
 
-  --shadow-court: 0 30px 80px -30px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(0.45 0.03 180 / 0.3);
-  --shadow-glow: 0 0 60px -10px oklch(0.6 0.13 35 / 0.45);
-  --gradient-dusk: linear-gradient(160deg, oklch(0.22 0.03 180) 0%, oklch(0.28 0.05 200) 45%, oklch(0.32 0.08 35) 100%);
-  --gradient-clay: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
+  --shadow-court: 0 20px 60px -30px oklch(0.28 0.055 155 / 0.25), 0 1px 0 0 oklch(0.88 0.015 95 / 0.6);
+  --shadow-glow: 0 0 40px -10px oklch(0.88 0.18 118 / 0.5);
+  --gradient-dusk: linear-gradient(180deg, oklch(0.978 0.012 95) 0%, oklch(0.965 0.015 95) 100%);
+  --gradient-clay: linear-gradient(135deg, var(--court) 0%, var(--court-deep) 100%);
 }
 
 .dark {
-  /* App is dark by default. Keep parity. */
-  --background: var(--court-deep);
-  --foreground: var(--cream);
+  /* Keep parity — app renders on cream regardless. */
+  --background: var(--cream);
+  --foreground: var(--court);
 }
 
 @layer base {
@@ -107,7 +110,7 @@
     background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "ss02";
+    font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -129,45 +132,47 @@
 
   h1, h2, h3, .display {
     font-family: var(--font-display);
-    letter-spacing: 0.01em;
-    line-height: 0.95;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
   }
 }
 
-@utility text-display { font-family: var(--font-display); letter-spacing: 0.02em; }
+@utility text-display { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; }
 @utility surface-card {
-  background: oklch(0.28 0.035 180 / 0.7);
-  backdrop-filter: blur(14px);
-  border: 1px solid oklch(0.45 0.03 180 / 0.3);
-  border-radius: var(--radius-xl);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 1px 2px oklch(0.28 0.055 155 / 0.04), 0 12px 40px -24px oklch(0.28 0.055 155 / 0.18);
 }
 @utility surface-cream {
   background: var(--cream);
-  color: var(--court-deep);
+  color: var(--court);
 }
 @utility chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.65rem;
   border-radius: 999px;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 600;
-  border: 1px solid oklch(0.45 0.03 180 / 0.45);
-  background: oklch(0.32 0.04 180 / 0.6);
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  color: var(--court);
 }
 @utility chip-ball {
   background: var(--ball);
-  color: var(--court-deep);
+  color: var(--court);
   border-color: transparent;
 }
 @utility chip-clay {
-  background: var(--clay);
+  background: var(--court);
   color: var(--cream);
   border-color: transparent;
 }
 @utility ball-glow {
-  box-shadow: 0 0 0 4px oklch(0.32 0.04 180), 0 0 40px -4px var(--ball);
+  box-shadow: 0 0 0 4px var(--cream), 0 0 30px -4px var(--ball);
 }

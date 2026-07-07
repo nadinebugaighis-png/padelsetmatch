@@ -158,9 +158,9 @@ function ChatRoom() {
         href={playtomicLink(other.zone)}
         target="_blank"
         rel="noreferrer"
-        className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-3 py-2 text-xs text-[var(--cream)]"
+        className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 px-3 py-2 text-xs text-[var(--cream)]"
       >
-        <ShieldCheck className="w-4 h-4 text-[var(--ball)] shrink-0" />
+        <ShieldCheck className="w-4 h-4 text-[var(--cream)] shrink-0" />
         <span className="flex-1">
           <b>{t("chat.safetyTitle")}</b> {t("chat.safety")}
         </span>
@@ -175,7 +175,7 @@ function ChatRoom() {
           disabled={statusQ.data?.iConfirmed || confirmM.isPending}
           className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--cream)]/15 bg-[var(--cream)]/5 px-3 py-2 text-xs hover:bg-[var(--cream)]/10 disabled:opacity-60"
         >
-          <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
+          <Check className="w-3.5 h-3.5 text-[var(--cream)]" />
           {statusQ.data?.iConfirmed
             ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓", "Joué ensemble ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…", "En attente de sa confirmation…"))
             : tr("We played a match", "Jugamos un partido", "Nous avons joué un match")}
@@ -245,7 +245,7 @@ function ChatRoom() {
                   </button>
                 </div>
               )}
-              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
+              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--cream)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
                 {isEditing ? (
                   <form
                     onSubmit={(e) => {

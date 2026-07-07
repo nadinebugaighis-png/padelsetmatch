@@ -384,7 +384,7 @@ function Discover() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
               {!c.liked && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
-              <div className="absolute top-2 right-2 chip chip-ball text-[10px]" title={t("disc.scoreTooltip")}>{c.score}</div>
+              <div className="absolute top-2 right-2 chip bg-white text-[var(--court-deep)] border-white text-[10px]" title={t("disc.scoreTooltip")}>{c.score}</div>
 
               <button
                 type="button"

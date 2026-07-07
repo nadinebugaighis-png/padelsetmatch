@@ -153,8 +153,8 @@
   box-shadow: 0 1px 2px oklch(0.28 0.055 155 / 0.04), 0 12px 40px -24px oklch(0.28 0.055 155 / 0.18);
 }
 @utility surface-cream {
-  background: var(--cream);
-  color: var(--court);
+  background: var(--court-deep);
+  color: var(--cream);
 }
 @utility chip {
   display: inline-flex;
@@ -168,18 +168,20 @@
   font-weight: 600;
   border: 1px solid var(--border);
   background: var(--secondary);
-  color: var(--court);
+  color: var(--cream);
 }
 @utility chip-ball {
   background: var(--ball);
-  color: var(--court);
+  color: var(--cream);
   border-color: transparent;
 }
 @utility chip-clay {
   background: var(--court);
-  color: var(--cream);
+  color: var(--court-deep);
   border-color: transparent;
 }
 @utility ball-glow {
-  box-shadow: 0 0 0 4px var(--cream), 0 0 30px -4px var(--ball);
+  box-shadow: 0 0 0 4px var(--court-deep), 0 0 30px -4px var(--ball);
+}
+
 }

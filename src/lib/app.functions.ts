@@ -633,9 +633,10 @@ export const unlikeProfile = createServerFn({ method: "POST" })
 export const getMyMatches = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: me } = await context.supabase
-      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
-    const myId = (me as { id: string } | null)?.id;
+    const { data: meRow } = await context.supabase
+      .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
+    const me = meRow as Profile | null;
+    const myId = me?.id;
     if (!myId) return [];
     const { data: matches } = await context.supabase
       .from("matches" as never)
@@ -658,13 +659,15 @@ export const getMyMatches = createServerFn({ method: "GET" })
       const matchMsgs = allMsgs.filter((x) => x.match_id === row.id);
       const last = matchMsgs[0];
       const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
+      const other = map.get(row.profile_a === myId ? row.profile_b : row.profile_a);
       return {
         match_id: row.id,
         created_at: row.created_at,
         last_message_at: row.last_message_at,
         last_message: last ? { body: last.body, created_at: last.created_at, from_me: last.sender_profile_id === myId } : null,
         unread,
-        other: map.get(row.profile_a === myId ? row.profile_b : row.profile_a),
+        other,
+        shared_intents: other ? sharedIntents(me, other) : [],
       };
     }).filter((x) => x.other);
   });
@@ -720,6 +723,7 @@ export const getMatchDetail = createServerFn({ method: "GET" })
       my_profile_id: myId,
       other: stripPrivateFields(other as Profile) as unknown as Profile,
       shared,
+      shared_intents: sharedIntents(meP, otP),
       messages: ((messages as Array<{ id: string; match_id: string; sender_profile_id: string; body: string; created_at: string; edited_at: string | null }> | null) ?? []),
     };
   });

@@ -8,10 +8,7 @@ import { listMyPendingInvites } from "@/lib/match-events.functions";
 import { ArrowLeft, LayoutGrid, MessageCircle, User, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { RacketIcon } from "@/components/RacketIcon";
-import { useTr } from "@/lib/i18n";
-
-
-import { useT, LangSwitch } from "@/lib/i18n";
+import { useT, useTr, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {

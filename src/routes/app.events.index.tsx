@@ -332,26 +332,76 @@ function RowCells({
   );
 }
 
-function CellPill({ e, extra }: { e: EventLite; extra: number }) {
-  const filled = e.filled ?? 0;
-  const full = filled >= 4;
-  const mine = e.iAmHost || e.iAmParticipant;
+function slotColor(filled: number, mine: boolean) {
+  if (filled >= 4) {
+    return {
+      wrap: "bg-[var(--ball)] text-[var(--court-deep)]",
+      pip: "bg-[var(--court-deep)]",
+      empty: "bg-[var(--court-deep)]/30",
+    };
+  }
+  if (filled === 3) {
+    // Almost full — warm accent so it pops
+    return {
+      wrap: `bg-[color-mix(in_oklab,var(--ball)_22%,transparent)] text-[var(--ball)] ring-1 ${mine ? "ring-[var(--cream)]" : "ring-[var(--ball)]/60"}`,
+      pip: "bg-[var(--ball)]",
+      empty: "bg-[var(--ball)]/25",
+    };
+  }
+  if (filled >= 1) {
+    return {
+      wrap: `bg-[var(--cream)]/12 text-[var(--cream)] ${mine ? "ring-1 ring-[var(--ball)]" : ""}`,
+      pip: "bg-[var(--cream)]",
+      empty: "bg-[var(--cream)]/25",
+    };
+  }
+  return {
+    wrap: "bg-transparent text-[var(--cream)]/70",
+    pip: "bg-[var(--cream)]/70",
+    empty: "bg-[var(--cream)]/20",
+  };
+}
+
+function SlotPips({ filled, pip, empty }: { filled: number; pip: string; empty: string }) {
   return (
-    <div
-      className={`flex items-center gap-1 px-1.5 py-1 rounded-full text-[10px] font-bold leading-none ${
-        full
-          ? "bg-[var(--ball)] text-[var(--court-deep)]"
-          : mine
-          ? "bg-[var(--cream)]/25 text-[var(--cream)] ring-1 ring-[var(--ball)]"
-          : "bg-[var(--cream)]/15 text-[var(--cream)]"
-      }`}
-    >
-      <Users className="w-2.5 h-2.5" />
-      <span>{filled}/4</span>
-      {extra > 0 && <span className="opacity-70">+{extra}</span>}
+    <div className="flex items-center gap-[2px]">
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className={`w-[5px] h-[5px] rounded-full ${i < filled ? pip : empty}`}
+        />
+      ))}
     </div>
   );
 }
+
+function LegendDots({ filled, label, accent }: { filled: number; label: string; accent?: boolean }) {
+  const colors = slotColor(filled, false);
+  return (
+    <span className={`inline-flex items-center gap-1.5 ${accent ? "text-[var(--ball)]" : ""}`}>
+      <SlotPips filled={filled} pip={colors.pip} empty={colors.empty} />
+      {label}
+    </span>
+  );
+}
+
+function CellPill({ e, extra }: { e: EventLite; extra: number }) {
+  const filled = e.filled ?? 0;
+  const mine = e.iAmHost || e.iAmParticipant;
+  const c = slotColor(filled, mine);
+  return (
+    <div
+      className={`flex flex-col items-center justify-center gap-[3px] px-1.5 py-1 rounded-lg leading-none ${c.wrap}`}
+    >
+      <SlotPips filled={filled} pip={c.pip} empty={c.empty} />
+      <span className="text-[9px] font-bold tracking-wider">
+        {filled >= 4 ? "4/4" : `${filled}/4`}
+        {extra > 0 && <span className="opacity-70 ml-0.5">+{extra}</span>}
+      </span>
+    </div>
+  );
+}
+
 
 function QuickSheet({
   eventId,

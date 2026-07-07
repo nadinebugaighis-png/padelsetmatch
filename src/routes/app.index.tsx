@@ -415,7 +415,7 @@ function Discover() {
                       toast.info(`Connect with ${c.first_name} first to request a match`);
                       return;
                     }
-                    toast.success(`Play request sent to ${c.first_name}`);
+                    navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                   }}
                   className={`p-1.5 rounded-full bg-black/55 hover:bg-black/75 transition ${c.liked ? "text-[var(--ball)]" : "text-[var(--cream)]/35"}`}
                   aria-label={`Request to play with ${c.first_name}`}
@@ -440,6 +440,7 @@ function Discover() {
 
                 </button>
               </div>
+
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-10 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}</div>

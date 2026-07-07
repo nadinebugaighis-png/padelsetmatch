@@ -244,7 +244,7 @@ function EventsPage() {
                   onClick={() => setGenderFilter(v)}
                   className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
                     genderFilter === v
-                      ? "border-[var(--ball)] text-[var(--ball)]"
+                      ? "border-[var(--cream)] text-[var(--cream)]"
                       : "border-[var(--cream)]/25 text-[var(--cream)]/80"
                   }`}
                 >
@@ -267,7 +267,7 @@ function EventsPage() {
                   onClick={() => setLevelFilter(v)}
                   className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
                     levelFilter === v
-                      ? "border-[var(--ball)] text-[var(--ball)]"
+                      ? "border-[var(--cream)] text-[var(--cream)]"
                       : "border-[var(--cream)]/25 text-[var(--cream)]/80"
                   }`}
                 >
@@ -285,7 +285,7 @@ function EventsPage() {
                 setWorldwide(on);
                 if (!on) setCityFilter("");
               }}
-              className="accent-[var(--ball)]"
+              className="accent-[var(--cream)]"
             />
             {tr("Worldwide (show all cities)", "En todo el mundo (todas las ciudades)", "Partout (toutes les villes)")}
           </label>
@@ -296,7 +296,7 @@ function EventsPage() {
                 value={cityFilter}
                 onChange={(e) => setCityFilter(e.target.value)}
                 placeholder={tr("e.g. Barcelona", "p. ej. Barcelona", "p. ex. Barcelone")}
-                className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--ball)]"
+                className="w-full rounded-full bg-black/40 border border-[var(--cream)]/20 text-[var(--cream)] placeholder:text-[var(--cream)]/40 text-sm px-4 py-2 outline-none focus:border-[var(--cream)]"
               />
             </div>
           )}

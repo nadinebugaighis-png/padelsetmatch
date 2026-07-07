@@ -289,9 +289,14 @@ function RowCells({
   onTap: (d: Date, h: number) => void;
   tr: ReturnType<typeof useTr>;
 }) {
+  const nowH = new Date().getHours();
+  const isCurrentHour = hour === nowH;
+  const stripe = hour % 2 === 0 ? "bg-[var(--cream)]/[0.02]" : "";
   return (
     <>
-      <div className="sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--cream)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest text-[var(--cream)]/55 font-semibold">
+      <div className={`sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--cream)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
+        isCurrentHour ? "text-[var(--ball)]" : "text-[var(--cream)]/55"
+      }`}>
         {String(hour).padStart(2, "0")}
       </div>
       {days.map((d, i) => {
@@ -302,15 +307,18 @@ function RowCells({
         const startsAt = new Date(d);
         startsAt.setHours(hour, 0, 0, 0);
         const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
+        const isNowCell = isCurrentHour && i === 0 && !past;
         return (
           <button
             key={i}
             type="button"
             disabled={isPending || past}
             onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--cream)]/5 flex items-center justify-center relative ${
-              past ? "opacity-30 cursor-not-allowed" : "hover:bg-[var(--cream)]/5 active:bg-[var(--cream)]/10"
-            }`}
+            className={`border-b border-r border-[var(--cream)]/5 flex items-center justify-center relative ${stripe} ${
+              past
+                ? "opacity-25 cursor-not-allowed"
+                : "hover:bg-[var(--cream)]/8 active:bg-[var(--cream)]/12 transition-colors"
+            } ${isNowCell ? "ring-1 ring-inset ring-[var(--ball)]/40" : ""}`}
             aria-label={tr(
               `${primary ? "Open" : "Add"} ${hour}:00 ${d.toDateString()}`,
               `${primary ? "Abrir" : "Añadir"} ${hour}:00`,
@@ -318,7 +326,7 @@ function RowCells({
             )}
           >
             {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--cream)]/15" />
+              <span className="w-1 h-1 rounded-full bg-[var(--cream)]/20" />
             )}
             {isPending && (
               <span className="absolute inset-0 flex items-center justify-center bg-black/40">

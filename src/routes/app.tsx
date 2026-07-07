@@ -86,6 +86,8 @@ function AuthShell() {
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);
+  const getInvites = useServerFn(listMyPendingInvites);
+  const tr = useTr();
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
     try {
@@ -103,6 +105,30 @@ function AuthShell() {
     queryFn: () => safe(() => checkAdmin()),
     retry: false,
   });
+  const invitesQ = useQuery({
+    queryKey: ["my-pending-invites"],
+    queryFn: () => safe(() => getInvites()),
+    enabled: !!profileQ.data,
+    retry: false,
+    refetchOnWindowFocus: true,
+  });
+  const rawInvites = (invitesQ.data?.invites ?? []) as Array<{
+    id: string;
+    event: { id: string; starts_at: string; club_name: string | null; city: string | null; status: string; host: { first_name: string | null } | null } | null;
+  }>;
+  const invites = rawInvites.filter((i) => i.event && new Date(i.event.starts_at).getTime() > Date.now() && i.event.status !== "cancelled");
+
+  const [dismissedIds, setDismissedIds] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem("invite-banner-dismissed") ?? "[]"); } catch { return []; }
+  });
+  const visibleInvites = invites.filter((i) => !dismissedIds.includes(i.id));
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("invite-banner-dismissed", JSON.stringify(dismissedIds));
+  }, [dismissedIds]);
+
 
 
   const onSignOut = async () => {

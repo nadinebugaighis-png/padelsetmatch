@@ -54,7 +54,7 @@ function AppErrorFallback({ reset }: { reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => { reset(); window.location.reload(); }}
-            className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+            className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
             {t("shell.err.retry")}
           </button>
@@ -123,7 +123,7 @@ function AuthShell() {
             <Link
               to="/"
               aria-label={t("shell.back.home")}
-              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
+              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{t("shell.home")}</span>
@@ -132,7 +132,7 @@ function AuthShell() {
             <Link
               to="/app"
               aria-label={t("shell.back.grid")}
-              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--ball)]"
+              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{t("shell.grid")}</span>
@@ -140,13 +140,13 @@ function AuthShell() {
             </Link>
           )}
           <Link to="/app" className="flex items-center gap-2 min-w-0">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ball)] ball-glow" />
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--cream)] ball-glow" />
             <span className="text-display text-xl tracking-wider truncate">PADEL · MATCH</span>
           </Link>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           {isAdmin && (
-            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
+            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--cream)] hover:opacity-80">
               {t("shell.admin")}
 
             </Link>
@@ -190,19 +190,19 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--ball)]" : isHighlight ? "text-[var(--ball)]" : "text-[var(--cream)]/60"}`}>
+    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--cream)]" : "text-[var(--cream)]/60"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold flex items-center justify-center ball-glow">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold flex items-center justify-center ball-glow">{badge > 9 ? "9+" : badge}</span>
         )}
         {isHighlight && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--ball)] ball-glow animate-ping" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--cream)] ball-glow animate-ping" />
         )}
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
       {isHighlight && (
-        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ball)] opacity-90">{t("shell.core")}</span>
+        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--cream)] opacity-90">{t("shell.core")}</span>
       )}
     </Link>
   );

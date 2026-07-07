@@ -150,7 +150,7 @@ function ProfilePage() {
           to="/app/onboarding"
           aria-label={t("prof.retake")}
           title={t("prof.retake")}
-          className="mt-2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--cream)]/20 text-[var(--cream)]/80 hover:text-[var(--ball)] hover:border-[var(--ball)]/50 transition"
+          className="mt-2 inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--cream)]/20 text-[var(--cream)]/80 hover:text-[var(--cream)] hover:border-[var(--cream)]/50 transition"
         >
           <Pencil className="w-4 h-4" />
         </Link>
@@ -243,8 +243,8 @@ function ProfilePage() {
             )}
 
             {p.free_court_access && (
-              <div className="mt-4 rounded-lg border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
-                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
+              <div className="mt-4 rounded-lg border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-3">
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
                 {p.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{p.free_court_note}</p>}
                 <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.", "Affiché sur ta carte grid. Partage l'adresse exacte seulement en chat.")}</p>
               </div>
@@ -310,7 +310,7 @@ function FeedbackBox() {
   return (
     <div className="mt-6 surface-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-[var(--ball)]" />
+        <Sparkles className="w-4 h-4 text-[var(--cream)]" />
         <h2 className="text-display text-lg tracking-wider">{t("fb.title")}</h2>
       </div>
       <p className="text-xs text-[var(--cream)]/60 mt-1">{t("fb.sub")}</p>
@@ -326,7 +326,7 @@ function FeedbackBox() {
             className="p-1"
           >
             <Star
-              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--ball)] text-[var(--ball)]" : "text-[var(--cream)]/40"}`}
+              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--cream)] text-[var(--cream)]" : "text-[var(--cream)]/40"}`}
             />
           </button>
         ))}

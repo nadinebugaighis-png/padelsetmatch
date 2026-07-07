@@ -159,7 +159,7 @@
   background: oklch(0.32 0.04 180 / 0.6);
 }
 @utility chip-ball {
-  background: var(--ball);
+  background: var(--cream);
   color: var(--court-deep);
   border-color: transparent;
 }
@@ -168,11 +168,6 @@
   color: var(--cream);
   border-color: transparent;
 }
-@utility chip-cream {
-  background: var(--cream);
-  color: var(--court-deep);
-  border-color: transparent;
-}
 @utility ball-glow {
-  box-shadow: 0 0 0 4px oklch(0.32 0.04 180), 0 0 40px -4px var(--ball);
+  box-shadow: 0 0 0 4px oklch(0.32 0.04 180), 0 0 40px -4px var(--cream);
 }

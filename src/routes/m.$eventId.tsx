@@ -125,7 +125,7 @@ function PublicMatchPage() {
           <div className="mt-10 text-center text-[var(--cream)]/70">
             <p className="text-lg">{tr("This match link isn't available.", "Este enlace de partido no está disponible.", "Ce lien de match n'est pas disponible.")}</p>
             <p className="text-sm text-[var(--cream)]/50 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.", "Il a peut-être été annulé ou déjà joué.")}</p>
-            <Link to="/app/events" className="inline-block mt-6 text-[var(--ball)] underline">{tr("Browse open matches", "Ver partidos abiertos", "Explorer les matches ouverts")}</Link>
+            <Link to="/app/events" className="inline-block mt-6 text-[var(--cream)] underline">{tr("Browse open matches", "Ver partidos abiertos", "Explorer les matches ouverts")}</Link>
 
           </div>
         )}
@@ -133,7 +133,7 @@ function PublicMatchPage() {
         {match && (
           <>
             <div className="mt-4 rounded-2xl border border-[var(--cream)]/10 bg-black/30 p-5 space-y-3">
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
               <h1 className="text-2xl text-[var(--cream)] font-medium leading-tight">{match.club_name}</h1>
               {match.club_address && <p className="text-xs text-[var(--cream)]/60">{match.club_address}</p>}
 
@@ -171,9 +171,9 @@ function PublicMatchPage() {
                       key={`o-${i}`}
                       type="button"
                       onClick={onJoinClick}
-                      className="flex items-center gap-2 border border-dashed border-[var(--ball)]/60 rounded-full px-3 py-1.5 hover:bg-[var(--ball)]/10"
+                      className="flex items-center gap-2 border border-dashed border-[var(--cream)]/60 rounded-full px-3 py-1.5 hover:bg-[var(--cream)]/10"
                     >
-                      <span className="text-xs text-[var(--ball)]">{tr("Join open spot", "Unirme al hueco libre", "Rejoindre la place")}</span>
+                      <span className="text-xs text-[var(--cream)]">{tr("Join open spot", "Unirme al hueco libre", "Rejoindre la place")}</span>
                     </button>
                   ))}
                 </div>
@@ -184,11 +184,11 @@ function PublicMatchPage() {
               <button
                 onClick={onJoinClick}
                 disabled={openSpots === 0}
-                className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
+                className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
               >
                 {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
-              <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ball)]/50 text-[var(--ball)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
+              <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--cream)]/50 text-[var(--cream)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
               <p className="text-[11px] text-[var(--cream)]/50 text-center pt-1">
@@ -212,7 +212,7 @@ function PublicMatchPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
+                  <div className="text-xs uppercase tracking-widest text-[var(--cream)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
                   <p className="mt-1 text-sm text-[var(--cream)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que otros jugadores se unan a un hueco libre.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
                 </div>
                 <button
@@ -235,14 +235,14 @@ function PublicMatchPage() {
                   href={shareUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+                  className="rounded-full bg-[var(--cream)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
                 >
                   {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
                 </a>
                 <button
                   type="button"
                   onClick={copyShareLink}
-                  className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
+                  className="rounded-full border border-[var(--cream)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]"
                 >
                   {tr("Copy link", "Copiar enlace", "Copier le lien")}
                 </button>

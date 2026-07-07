@@ -158,9 +158,9 @@ function ChatRoom() {
         href={playtomicLink(other.zone)}
         target="_blank"
         rel="noreferrer"
-        className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-3 py-2 text-xs text-[var(--cream)]"
+        className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 px-3 py-2 text-xs text-[var(--cream)]"
       >
-        <ShieldCheck className="w-4 h-4 text-[var(--ball)] shrink-0" />
+        <ShieldCheck className="w-4 h-4 text-[var(--cream)] shrink-0" />
         <span className="flex-1">
           <b>{t("chat.safetyTitle")}</b> {t("chat.safety")}
         </span>
@@ -175,7 +175,7 @@ function ChatRoom() {
           disabled={statusQ.data?.iConfirmed || confirmM.isPending}
           className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--cream)]/15 bg-[var(--cream)]/5 px-3 py-2 text-xs hover:bg-[var(--cream)]/10 disabled:opacity-60"
         >
-          <Check className="w-3.5 h-3.5 text-[var(--ball)]" />
+          <Check className="w-3.5 h-3.5 text-[var(--cream)]" />
           {statusQ.data?.iConfirmed
             ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓", "Joué ensemble ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…", "En attente de sa confirmation…"))
             : tr("We played a match", "Jugamos un partido", "Nous avons joué un match")}
@@ -245,7 +245,7 @@ function ChatRoom() {
                   </button>
                 </div>
               )}
-              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
+              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--cream)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
                 {isEditing ? (
                   <form
                     onSubmit={(e) => {
@@ -338,11 +338,11 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
       <div className="mx-3 mt-2 rounded-xl border border-[var(--cream)]/10 bg-[var(--cream)]/5 px-3 py-2 text-xs text-[var(--cream)]/70 flex items-center gap-2">
         <div className="flex">
           {[1,2,3,4,5].map((n) => (
-            <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
+            <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--cream)] fill-[var(--cream)]" : "text-[var(--cream)]/25"}`} />
           ))}
         </div>
         <span className="flex-1">{tr("You rated this match", "Valoraste este partido", "Tu as noté ce match")}</span>
-        <button type="button" onClick={() => setExpanded(true)} className="text-[var(--ball)] underline">{tr("Edit", "Editar", "Modifier")}</button>
+        <button type="button" onClick={() => setExpanded(true)} className="text-[var(--cream)] underline">{tr("Edit", "Editar", "Modifier")}</button>
       </div>
     );
   }
@@ -352,17 +352,17 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="mx-3 mt-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-3 py-2.5 text-xs text-[var(--cream)] flex items-center gap-2 hover:bg-[var(--ball)]/15 transition"
+        className="mx-3 mt-2 rounded-xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 px-3 py-2.5 text-xs text-[var(--cream)] flex items-center gap-2 hover:bg-[var(--cream)]/15 transition"
       >
-        <Star className="w-4 h-4 text-[var(--ball)]" />
+        <Star className="w-4 h-4 text-[var(--cream)]" />
         <span className="flex-1 text-left">{tr(`How was your match with ${otherName}? Rate to help us learn.`, `¿Qué tal tu partido con ${otherName}? Valóralo para ayudarnos a aprender.`)}</span>
-        <span className="text-[var(--ball)] font-semibold">{tr("Rate", "Valorar", "Noter")}</span>
+        <span className="text-[var(--cream)] font-semibold">{tr("Rate", "Valorar", "Noter")}</span>
       </button>
     );
   }
 
   return (
-    <div className="mx-3 mt-2 rounded-xl border border-[var(--ball)]/40 bg-[var(--court)]/60 p-3 space-y-3">
+    <div className="mx-3 mt-2 rounded-xl border border-[var(--cream)]/40 bg-[var(--court)]/60 p-3 space-y-3">
       <div className="flex items-center justify-between">
         <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
         <button type="button" onClick={() => setExpanded(false)} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>
@@ -376,7 +376,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
             className="p-1"
             aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
           >
-            <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ball)] fill-[var(--ball)]" : "text-[var(--cream)]/25"}`} />
+            <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--cream)] fill-[var(--cream)]" : "text-[var(--cream)]/25"}`} />
           </button>
         ))}
       </div>
@@ -389,7 +389,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
               key={tag}
               type="button"
               onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--cream)] text-[var(--court-deep)] border-[var(--cream)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
             >
               {displayLabel}
             </button>

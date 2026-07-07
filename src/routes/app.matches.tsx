@@ -40,13 +40,13 @@ function Matches() {
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-[var(--cream)]/10 shrink-0 relative">
                   {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
                   {m.unread > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold flex items-center justify-center ball-glow">{m.unread > 9 ? "9+" : m.unread}</span>
+                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-bold flex items-center justify-center ball-glow">{m.unread > 9 ? "9+" : m.unread}</span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <div className="text-display text-2xl">{m.other.first_name}</div>
-                    {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--ball)] ball-glow" />}
+                    {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--cream)] ball-glow" />}
                   </div>
                   <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{m.other.zone} · {label(m.other.level)}</div>
                   <div className={`text-xs mt-1 truncate ${m.unread > 0 ? "text-[var(--cream)] font-medium" : "text-[var(--cream)]/70"}`}>

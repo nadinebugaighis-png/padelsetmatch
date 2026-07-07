@@ -4,11 +4,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { ArrowLeft, LayoutGrid, MessageCircle, User } from "lucide-react";
+import { listMyPendingInvites } from "@/lib/match-events.functions";
+import { ArrowLeft, LayoutGrid, MessageCircle, User, Mail, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { RacketIcon } from "@/components/RacketIcon";
-
-
-import { useT, LangSwitch } from "@/lib/i18n";
+import { useT, useTr, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -86,6 +86,8 @@ function AuthShell() {
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);
+  const getInvites = useServerFn(listMyPendingInvites);
+  const tr = useTr();
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
     try {
@@ -103,6 +105,30 @@ function AuthShell() {
     queryFn: () => safe(() => checkAdmin()),
     retry: false,
   });
+  const invitesQ = useQuery({
+    queryKey: ["my-pending-invites"],
+    queryFn: () => safe(() => getInvites()),
+    enabled: !!profileQ.data,
+    retry: false,
+    refetchOnWindowFocus: true,
+  });
+  const rawInvites = (invitesQ.data?.invites ?? []) as Array<{
+    id: string;
+    event: { id: string; starts_at: string; club_name: string | null; city: string | null; status: string; host: { first_name: string | null } | null } | null;
+  }>;
+  const invites = rawInvites.filter((i) => i.event && new Date(i.event.starts_at).getTime() > Date.now() && i.event.status !== "cancelled");
+
+  const [dismissedIds, setDismissedIds] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem("invite-banner-dismissed") ?? "[]"); } catch { return []; }
+  });
+  const visibleInvites = invites.filter((i) => !dismissedIds.includes(i.id));
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("invite-banner-dismissed", JSON.stringify(dismissedIds));
+  }, [dismissedIds]);
+
 
 
   const onSignOut = async () => {
@@ -159,7 +185,48 @@ function AuthShell() {
 
       </header>
 
+      {hasProfile && !onOnboarding && visibleInvites.length > 0 && (
+        <div className="border-b border-[var(--ball)]/30 bg-[var(--ball)]/10">
+          <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 space-y-2">
+            {visibleInvites.slice(0, 3).map((inv) => {
+              const ev = inv.event!;
+              const when = new Date(ev.starts_at).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+              const host = ev.host?.first_name ?? tr("Someone", "Alguien", "Quelqu'un");
+              const where = ev.club_name ?? ev.city ?? "";
+              return (
+                <div key={inv.id} className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-[var(--ball)] shrink-0" />
+                  <Link
+                    to="/app/events/$eventId"
+                    params={{ eventId: ev.id }}
+                    className="flex-1 min-w-0 text-sm text-[var(--cream)] hover:opacity-80"
+                  >
+                    <span className="font-semibold text-[var(--ball)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
+                    <span className="text-[var(--cream)]/80">
+                      {tr(
+                        `by ${host} · ${when}${where ? " · " + where : ""} — tap to view`,
+                        `por ${host} · ${when}${where ? " · " + where : ""} — toca para ver`,
+                        `par ${host} · ${when}${where ? " · " + where : ""} — appuie pour voir`,
+                      )}
+                    </span>
+                  </Link>
+                  <button
+                    onClick={() => setDismissedIds((d) => [...d, inv.id])}
+                    aria-label={tr("Dismiss", "Descartar", "Fermer")}
+                    className="text-[var(--cream)]/50 hover:text-[var(--cream)] shrink-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <Outlet />
+
+
 
       {hasProfile && !onOnboarding && (
         <nav

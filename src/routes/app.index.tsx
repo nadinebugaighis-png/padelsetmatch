@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Heart } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -388,6 +388,25 @@ function Discover() {
               <div className="absolute bottom-3 right-2 z-10 w-6 h-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-[10px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
                 {c.score}
               </div>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (c.liked) unlikeM.mutate(c.id);
+                  else likeM.mutate(c.id);
+                }}
+                className="absolute top-2 right-2 z-10 p-1 rounded-full bg-black/55 hover:bg-black/75 transition"
+                aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
+                title={c.liked ? "Connected" : "Like to connect"}
+              >
+                <Heart
+                  className={`w-3.5 h-3.5 transition ${c.liked ? "text-[var(--ball)]" : "text-[var(--cream)]/70"}`}
+                  fill={c.liked ? "currentColor" : "none"}
+                  strokeWidth={2}
+                />
+              </button>
+
 
 
               <button

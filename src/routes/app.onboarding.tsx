@@ -356,7 +356,7 @@ function Onboarding() {
         <span>{steps[step]}</span>
       </div>
       <div className="h-1 mt-2 rounded-full bg-[var(--cream)]/10 overflow-hidden">
-        <div className="h-full bg-[var(--cream)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+        <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
       </div>
 
       <div className="mt-6 surface-card p-5 space-y-4">
@@ -551,7 +551,7 @@ function Onboarding() {
                       </div>
                     )}
                     {isReal(b.country) && !isReal(b.city) && (
-                      <p className="text-[11px] text-[var(--cream)]/80">
+                      <p className="text-[11px] text-[var(--ball)]/80">
                         {tr("Choose a city too so we can show nearby players.", "Elige también una ciudad para poder mostrar jugadores cerca.", "Choisis aussi une ville pour qu'on puisse montrer les joueurs à proximité.")}
                       </p>
                     )}
@@ -623,13 +623,13 @@ function Onboarding() {
             </div>
 
             <label className="flex items-center gap-2 text-sm pt-1">
-              <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--cream)]" />
+              <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--ball)]" />
               {tr("Open to mixed doubles (2 men + 2 women format)", "Abierto a dobles mixtos (formato 2 hombres + 2 mujeres)", "Ouvert au double mixte (format 2 hommes + 2 femmes)")}
             </label>
 
-            <div className="rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-3 mt-2">
+            <div className="rounded-xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-3 mt-2">
               <label className="flex items-start gap-2 text-sm">
-                <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--cream)] mt-0.5" />
+                <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--ball)] mt-0.5" />
                 <span>
                   <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis", "🎾 J'ai accès à une pista gratuitement")}</span>
                   <span className="block text-xs text-[var(--cream)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.", "Club privé, pista résidentielle ou créneaux offerts à partager avec un match. Un badge apparaîtra sur ton profil.")}</span>
@@ -686,7 +686,7 @@ function Onboarding() {
                 <ul className="space-y-2">
                   {priorities.map((tr, i) => (
                     <li key={tr} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
-                      <span className="text-[var(--cream)] font-bold w-6">{i + 1}.</span>
+                      <span className="text-[var(--ball)] font-bold w-6">{i + 1}.</span>
                       <span className="flex-1 capitalize">{label(tr)}</span>
                       <button onClick={() => movePriority(i, -1)} disabled={i === 0} className="p-1 disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
                       <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} className="p-1 disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>

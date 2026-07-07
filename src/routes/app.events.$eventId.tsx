@@ -273,7 +273,7 @@ function EventDetail() {
         <button
           type="button"
           onClick={() => setShareOpen(true)}
-          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)] border border-[var(--cream)]/40 rounded-full px-3 py-1"
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ball)] border border-[var(--ball)]/40 rounded-full px-3 py-1"
         >
           <Share2 className="w-3.5 h-3.5" /> {tr("Share", "Compartir", "Partager")}
         </button>
@@ -293,7 +293,7 @@ function EventDetail() {
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs uppercase tracking-widest text-[var(--cream)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
+                <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
                 <p className="mt-1 text-sm text-[var(--cream)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que los jugadores ocupen un hueco.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
               </div>
               <button
@@ -315,14 +315,14 @@ function EventDetail() {
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-[var(--cream)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+                className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
               >
                 {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
               </a>
               <button
                 type="button"
                 onClick={copyShareLink}
-                className="rounded-full border border-[var(--cream)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]"
+                className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
               >
                 {tr("Copy link", "Copiar enlace", "Copier le lien")}
               </button>
@@ -352,7 +352,7 @@ function EventDetail() {
                 ? "bg-red-500/20 text-red-300"
                 : event.needs === 0
                 ? "bg-[var(--cream)]/10 text-[var(--cream)]/70"
-                : "bg-[var(--cream)]/20 text-[var(--cream)]"
+                : "bg-[var(--ball)]/20 text-[var(--ball)]"
             }`}
           >
             {event.status === "cancelled" ? tr("Cancelled", "Cancelado", "Annulé") : event.needs === 0 ? tr("Full", "Completo", "Complet") : tr(`Needs ${event.needs}`, `Faltan ${event.needs}`)}
@@ -376,7 +376,7 @@ function EventDetail() {
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--cream)] hover:underline"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--ball)] hover:underline"
         >
           <MapPin className="w-3.5 h-3.5" /> {tr("Open in Google Maps", "Abrir en Google Maps", "Ouvrir dans Google Maps")}
         </a>
@@ -389,7 +389,7 @@ function EventDetail() {
             const safe = normalizePlaytomicLink(event.playtomic_link).url;
             if (!safe) return null;
             return (
-              <a href={safe} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--cream)] hover:underline">
+              <a href={safe} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--ball)] hover:underline">
                 Playtomic <ExternalLink className="w-3 h-3" />
               </a>
             );
@@ -397,10 +397,10 @@ function EventDetail() {
         </div>
 
         {event.lock_active && event.invite_lock_until && (
-          <div className="flex items-start gap-2 rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 px-3 py-2 text-xs text-[var(--cream)]/80">
-            <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--cream)] shrink-0" />
+          <div className="flex items-start gap-2 rounded-xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 px-3 py-2 text-xs text-[var(--cream)]/80">
+            <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--ball)] shrink-0" />
             <div>
-              <div className="text-[var(--cream)] uppercase tracking-widest text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
+              <div className="text-[var(--ball)] uppercase tracking-widest text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
               <div className="mt-0.5">
                 {tr(
                   `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
@@ -429,7 +429,7 @@ function EventDetail() {
                 title={isMe && !isHost ? tr("Tap to leave the match", "Toca para salir del partido", "Appuie pour quitter le match") : ""}
                 className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
                   isMe && !isHost
-                    ? "bg-[var(--cream)]/10 border-[var(--cream)]/40 hover:bg-[var(--cream)]/20 cursor-pointer"
+                    ? "bg-[var(--ball)]/10 border-[var(--ball)]/40 hover:bg-[var(--ball)]/20 cursor-pointer"
                     : "bg-black/30 border-[var(--cream)]/10 cursor-default"
                 }`}
               >
@@ -458,11 +458,11 @@ function EventDetail() {
               title={canJoin ? tr("Tap to join this spot", "Toca para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
               className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
                 canJoin
-                  ? "border-[var(--cream)]/60 hover:bg-[var(--cream)]/10 cursor-pointer"
-                  : "border-[var(--cream)]/30 opacity-60 cursor-not-allowed"
+                  ? "border-[var(--ball)]/60 hover:bg-[var(--ball)]/10 cursor-pointer"
+                  : "border-[var(--ball)]/30 opacity-60 cursor-not-allowed"
               }`}
             >
-              <span className="text-xs text-[var(--cream)]">
+              <span className="text-xs text-[var(--ball)]">
                 {canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
               </span>
             </button>
@@ -472,8 +472,8 @@ function EventDetail() {
 
       {/* Invitee response */}
       {me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
-        <div className="mt-4 rounded-xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-3">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
+        <div className="mt-4 rounded-xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-3">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ball)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
           <p className="mt-1 text-sm text-[var(--cream)]/80">
             {tr(`${event.host?.first_name ?? "The host"} invited you to this match.`, `${event.host?.first_name ?? "El anfitrión"} te ha invitado a este partido.`)}
           </p>
@@ -486,7 +486,7 @@ function EventDetail() {
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
-              className="rounded-full bg-[var(--cream)] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+              className="rounded-full bg-[var(--ball)] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
             >
               {tr("I'm in", "Voy", "Je suis partant·e")}
             </button>
@@ -511,7 +511,7 @@ function EventDetail() {
         {canJoin && (
           <button
             onClick={onJoin}
-            className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold"
+            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold"
           >
             {tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
@@ -528,13 +528,13 @@ function EventDetail() {
           <>
             <button
               onClick={() => setInviteOpen(true)}
-              className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
             >
               <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
             </button>
             <button
               onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-              className="w-full py-2 rounded-full border border-[var(--cream)]/60 text-xs uppercase tracking-widest text-[var(--cream)]"
+              className="w-full py-2 rounded-full border border-[var(--ball)]/60 text-xs uppercase tracking-widest text-[var(--ball)]"
             >
               {tr("Edit match", "Editar partido", "Modifier le match")}
             </button>
@@ -590,7 +590,7 @@ function EventDetail() {
                     <div
                       className={`${mine ? "max-w-[min(100%,18rem)]" : "max-w-[min(100%,19rem)]"} min-w-0 rounded-2xl px-3 py-2 text-base ${
                       mine
-                        ? "bg-[var(--cream)]/25 text-[var(--cream)]"
+                        ? "bg-[var(--ball)]/25 text-[var(--cream)]"
                         : "bg-[var(--court-deep)] border border-[var(--cream)]/10 text-[var(--cream)]"
                     }`}
                     >
@@ -607,7 +607,7 @@ function EventDetail() {
                           <textarea
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
-                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--cream)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--cream)]/60"
+                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--cream)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--ball)]/60"
                             rows={2}
                             autoFocus
                           />
@@ -615,7 +615,7 @@ function EventDetail() {
                             <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--cream)]/10" aria-label="Cancel">
                               <X className="h-4 w-4" />
                             </button>
-                            <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--cream)] text-[var(--court-deep)]" aria-label="Save">
+                            <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)]" aria-label="Save">
                               <Check className="h-4 w-4" />
                             </button>
                           </div>
@@ -665,12 +665,12 @@ function EventDetail() {
               placeholder={tr("Message the group…", "Escribe al grupo…", "Écris au groupe…")}
               rows={1}
               enterKeyHint="send"
-              className="min-h-10 min-w-0 resize-none overflow-hidden bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-base leading-6 text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none focus:ring-1 focus:ring-[var(--cream)]/60"
+              className="min-h-10 min-w-0 resize-none overflow-hidden bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-base leading-6 text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none focus:ring-1 focus:ring-[var(--ball)]/60"
             />
             <button
               type="button"
               onClick={onSend}
-              className="w-10 h-10 shrink-0 rounded-full bg-[var(--cream)] text-[var(--court-deep)] flex items-center justify-center"
+              className="w-10 h-10 shrink-0 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center"
               aria-label="Send"
             >
               <Send className="w-4 h-4" />
@@ -780,7 +780,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]">{tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}</div>
+            <div className="text-xs uppercase tracking-widest text-[var(--ball)]">{tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}</div>
             <p className="mt-1 text-xs text-[var(--cream)]/70">
               {tr(
                 "Invited players get first dibs. The match opens to everyone 10 hours after your first invite.",
@@ -818,8 +818,8 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                     disabled
                       ? "border-[var(--cream)]/10 bg-black/20 opacity-60"
                       : sel
-                      ? "border-[var(--cream)] bg-[var(--cream)]/15"
-                      : "border-[var(--cream)]/15 bg-black/30 hover:border-[var(--cream)]/50"
+                      ? "border-[var(--ball)] bg-[var(--ball)]/15"
+                      : "border-[var(--cream)]/15 bg-black/30 hover:border-[var(--ball)]/50"
                   }`}
                 >
                   <div className="h-12 w-12 overflow-hidden rounded-full bg-[var(--court-deep)]">
@@ -837,7 +837,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
             <button
               onClick={sendInvites}
               disabled={busy}
-              className="mt-3 w-full rounded-full bg-[var(--cream)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
+              className="mt-3 w-full rounded-full bg-[var(--ball)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
             >
               {tr(`Send ${selected.size} invite${selected.size === 1 ? "" : "s"}`, `Enviar ${selected.size} invitaciones`)}
             </button>
@@ -853,7 +853,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
             <button
               onClick={makeLink}
               disabled={busy}
-              className="w-full rounded-full border border-[var(--cream)]/60 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)] disabled:opacity-50"
+              className="w-full rounded-full border border-[var(--ball)]/60 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)] disabled:opacity-50"
             >
               {tr("Create WhatsApp invite link", "Crear enlace para WhatsApp", "Créer un lien d'invitation WhatsApp")}
             </button>
@@ -876,7 +876,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                 </a>
                 <button
                   onClick={copyLink}
-                  className="rounded-full border border-[var(--cream)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]"
+                  className="rounded-full border border-[var(--ball)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ball)]"
                 >
                   {tr("Copy link", "Copiar enlace", "Copier le lien")}
                 </button>

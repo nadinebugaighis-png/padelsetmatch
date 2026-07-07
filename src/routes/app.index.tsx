@@ -254,7 +254,7 @@ function Discover() {
       <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
       <p className="text-xs text-[var(--cream)]/55 mt-2">
-        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
+        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
       <div className="flex items-center justify-between mt-3">
@@ -277,7 +277,7 @@ function Discover() {
         </div>
         <button
           onClick={() => setShowFilters((s) => !s)}
-          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--cream)]" : "text-[var(--cream)]/70"}`}
+          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--ball)]" : "text-[var(--cream)]/70"}`}
           aria-expanded={showFilters}
         >
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -292,7 +292,7 @@ function Discover() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name..."
-            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--cream)]/60"
+            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--ball)]/60"
           />
         </div>
       </div>
@@ -339,7 +339,7 @@ function Discover() {
             <button
               type="button"
               onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
-              className="text-xs text-[var(--cream)] underline"
+              className="text-xs text-[var(--ball)] underline"
             >
               Clear filters
             </button>
@@ -358,13 +358,13 @@ function Discover() {
 
 
       {(qaQ.data?.length ?? 0) === 0 && (
-        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--cream)]/30 rounded-xl">
+        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--ball)]/30 rounded-xl">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-[var(--cream)] shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-[var(--ball)] shrink-0 mt-0.5" />
             <div>
               <div className="text-sm font-semibold text-[var(--cream)]">{t("disc.qaBannerTitle")}</div>
               <div className="text-xs text-[var(--cream)]/70 mt-1">{t("disc.qaBannerSub")}</div>
-              <div className="mt-2 text-xs text-[var(--cream)] underline">{t("disc.qaBannerCta")}</div>
+              <div className="mt-2 text-xs text-[var(--ball)] underline">{t("disc.qaBannerCta")}</div>
             </div>
           </div>
         </Link>
@@ -397,7 +397,7 @@ function Discover() {
                 type="button"
                 disabled={likeM.isPending || unlikeM.isPending}
                 onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
-                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--cream)]" : "bg-black/50"}`}
+                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-black/50"}`}
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >
@@ -429,7 +429,7 @@ function Discover() {
                   );
                 })()}
                 {c.free_court_access && (
-                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
+                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
                 )}
               </div>
 
@@ -480,7 +480,7 @@ function Discover() {
 
                     {/* Overlaid identity */}
                     <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
@@ -507,16 +507,16 @@ function Discover() {
                     {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}
 
                     {preview.free_court_access && (
-                      <div className="rounded-2xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-4">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                      <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                         {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
                         <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
                       </div>
                     )}
 
                     {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
-                    <div className="rounded-2xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-4">
-                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--cream)] mb-2">
+                    <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
                         <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
                       </div>
                       {compatQ.isLoading ? (
@@ -552,7 +552,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--cream)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
                               aria-label="Helpful"
                             >
                               <ThumbsUp className="w-4 h-4" />
@@ -697,7 +697,7 @@ function Discover() {
                         const wasLiked = preview.liked;
                         if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
                       }}
-                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--cream)] flex items-center justify-center transition-transform active:scale-90"
+                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--ball)] flex items-center justify-center transition-transform active:scale-90"
                       aria-label={preview.liked ? "Unlike" : "Like"}
                     >
                       <Heart className={`w-5 h-5 text-[var(--court-deep)] ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
@@ -709,7 +709,7 @@ function Discover() {
                         if (!preview.liked) likeM.mutate(preview.id);
                       }}
                       disabled={likeM.isPending && !match}
-                      className="flex-1 h-11 rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
+                      className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
                     >
                       {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
                     </button>
@@ -793,9 +793,9 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
   return (
     <Link
       to="/app/profile"
-      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--cream)] bg-[var(--cream)]/10" : "border-[var(--cream)]/15"}`}
+      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--ball)] bg-[var(--ball)]/10" : "border-[var(--cream)]/15"}`}
     >
-      <div className="w-9 h-9 rounded-full bg-[var(--cream)]/20 flex items-center justify-center text-lg">📸</div>
+      <div className="w-9 h-9 rounded-full bg-[var(--ball)]/20 flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-[var(--cream)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}

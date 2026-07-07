@@ -26,9 +26,9 @@ function StepCard({
 }) {
   return (
     <div className="surface-card p-6 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--ball)]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--cream)]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="flex items-center gap-3 mb-3">
-        <span className="w-8 h-8 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-xs font-bold flex items-center justify-center">
+        <span className="w-8 h-8 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-xs font-bold flex items-center justify-center">
           {number}
         </span>
       </div>
@@ -65,7 +65,7 @@ function HowItWorksPage() {
       <section className="px-6 lg:px-16 pt-6 pb-12 max-w-4xl mx-auto">
         <Link
           to="/"
-          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--ball)]"
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]"
         >
           <ArrowLeft className="w-4 h-4" />
           {tr("Back to home", "Volver al inicio", "Retour à l'accueil")}
@@ -76,7 +76,7 @@ function HowItWorksPage() {
           <h1 className="text-display text-5xl md:text-6xl lg:text-7xl text-[var(--cream)] leading-[0.95]">
             {tr("Padel is a team sport.", "El pádel es un deporte de equipo.", "Le padel est un sport d'équipe.")}
             <br />
-            <span style={{ color: "var(--ball)" }}>
+            <span style={{ color: "var(--cream)" }}>
               {tr("So it's important you have the right teammate.", "Así que es importante tener al compi adecuado.", "Il faut donc avoir le bon coéquipier.")}
             </span>
           </h1>
@@ -217,7 +217,7 @@ function HowItWorksPage() {
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined }}
-              className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-8 py-3 hover:opacity-90"
+              className="inline-flex items-center rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-semibold px-8 py-3 hover:opacity-90"
             >
               {tr("Join free", "Únete gratis", "Inscription gratuite")}
             </Link>

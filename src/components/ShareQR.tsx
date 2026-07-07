@@ -72,7 +72,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
             <div className="mt-4 flex items-center justify-center gap-2">
               <button
                 onClick={copy}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-xs hover:opacity-90"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-semibold px-4 py-2 text-xs hover:opacity-90"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 {copied ? tr("Copied", "Copiado", "Copié") : tr("Copy link", "Copiar enlace", "Copier le lien")}

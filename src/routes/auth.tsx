@@ -129,7 +129,7 @@ function AuthPage() {
         <form onSubmit={submit} className="space-y-3">
           <Input type="email" required placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} />
           <Input type="password" required minLength={8} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Button type="submit" disabled={loading} className="w-full bg-[var(--ball)] text-[var(--court-deep)] hover:bg-[var(--ball)]/90 font-semibold uppercase tracking-widest">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
+          <Button type="submit" disabled={loading} className="w-full bg-[var(--cream)] text-[var(--court-deep)] hover:bg-[var(--cream)]/90 font-semibold uppercase tracking-widest">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
         </form>
 
         <div className="mt-4 flex items-center justify-between text-sm">
@@ -147,7 +147,7 @@ function AuthPage() {
                 if (error) toast.error(error.message);
                 else toast.success(t("auth.resetSent"));
               }}
-              className="text-[var(--cream)]/60 hover:text-[var(--ball)]"
+              className="text-[var(--cream)]/60 hover:text-[var(--cream)]"
             >
               {t("auth.forgot")}
             </button>

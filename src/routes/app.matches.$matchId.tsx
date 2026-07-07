@@ -245,7 +245,7 @@ function ChatRoom() {
                   </button>
                 </div>
               )}
-              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--cream)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
+              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm ${mine ? "bg-[var(--cream)] text-[var(--cream)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
                 {isEditing ? (
                   <form
                     onSubmit={(e) => {
@@ -259,15 +259,15 @@ function ChatRoom() {
                     <textarea
                       value={editingText}
                       onChange={(e) => setEditingText(e.target.value)}
-                      className="w-full bg-[var(--court-deep)]/20 text-[var(--court-deep)] rounded p-1.5 text-base resize-none"
+                      className="w-full bg-[var(--court-deep)]/20 text-[var(--cream)] rounded p-1.5 text-base resize-none"
                       rows={2}
                       autoFocus
                     />
                     <div className="flex gap-1 justify-end">
-                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
+                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--cream)]/10" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
                         <X className="w-3.5 h-3.5" />
                       </button>
-                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--court-deep)]/10" aria-label={tr("Save", "Guardar", "Enregistrer")}>
+                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--cream)]/10" aria-label={tr("Save", "Guardar", "Enregistrer")}>
                         <Check className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -275,7 +275,7 @@ function ChatRoom() {
                 ) : (
                   <>
                     {m.body}
-                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--court-deep)]/60" : "text-[var(--cream)]/50"}`}>{tr("(edited)", "(editado)", "(modifié)")}</span>}
+                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--cream)]/60" : "text-[var(--cream)]/50"}`}>{tr("(edited)", "(editado)", "(modifié)")}</span>}
                   </>
                 )}
               </div>
@@ -290,7 +290,7 @@ function ChatRoom() {
         className="px-3 py-3 border-t border-[var(--cream)]/10 flex gap-2"
       >
         <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={messages.length === 0 ? t("chat.placeholder") : ""} />
-        <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending} className="bg-[var(--ball)] text-[var(--court-deep)] hover:bg-[var(--ball)]/90"><Send className="w-4 h-4" /></Button>
+        <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending} className="bg-[var(--ball)] text-[var(--cream)] hover:bg-[var(--ball)]/90"><Send className="w-4 h-4" /></Button>
       </form>
     </main>
   );
@@ -389,7 +389,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
               key={tag}
               type="button"
               onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
+              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ball)] text-[var(--cream)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80 hover:bg-[var(--cream)]/5"}`}
             >
               {displayLabel}
             </button>

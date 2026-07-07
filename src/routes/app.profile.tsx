@@ -184,7 +184,7 @@ function ProfilePage() {
               htmlFor={photoInputId}
               aria-disabled={uploading}
               title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--ball)] text-[var(--court-deep)] shadow-md border-2 border-[var(--court-deep)]/10 cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+              className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--ball)] text-[var(--cream)] shadow-md border-2 border-[var(--cream)]/10 cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
             >
               <Camera className="w-4 h-4" />
             </label>
@@ -260,7 +260,7 @@ function ProfilePage() {
           {p.free_court_access && (
             <div className="mt-4 rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/10 p-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--cream)] text-[10px] font-bold uppercase tracking-wider shrink-0">
                   {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
                 </span>
                 {p.free_court_note && <span className="text-xs text-[var(--cream)]/85">{p.free_court_note}</span>}

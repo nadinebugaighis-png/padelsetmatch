@@ -480,7 +480,7 @@ function Discover() {
 
                     {/* Overlaid identity */}
                     <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
@@ -507,16 +507,16 @@ function Discover() {
                     {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}
 
                     {preview.free_court_access && (
-                      <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 p-4">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                      <div className="rounded-2xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-4">
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                         {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
                         <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
                       </div>
                     )}
 
                     {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
-                    <div className="rounded-2xl border border-[var(--ball)]/30 bg-[var(--ball)]/5 p-4">
-                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ball)] mb-2">
+                    <div className="rounded-2xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-4">
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--cream)] mb-2">
                         <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
                       </div>
                       {compatQ.isLoading ? (
@@ -552,7 +552,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--cream)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
                               aria-label="Helpful"
                             >
                               <ThumbsUp className="w-4 h-4" />

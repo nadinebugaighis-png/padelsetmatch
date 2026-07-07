@@ -66,6 +66,7 @@ function EventsPage() {
   const getProfile = useServerFn(getMyProfile);
 
   const [worldwide, setWorldwide] = useState(false);
+  const [search, setSearch] = useState("");
   const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({

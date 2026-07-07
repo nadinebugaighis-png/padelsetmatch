@@ -402,7 +402,7 @@ function EventsPage() {
               <p>{tr("Add the cities where you play in your profile to see matches near you.", "Añade en tu perfil las ciudades donde juegas para ver partidos cerca.", "Ajoute les villes où tu joues dans ton profil pour voir les matches près de chez toi.")}</p>
               <Link
                 to="/app/profile"
-                className="inline-block rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+                className="inline-block rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
               >
                 {tr("Go to profile →", "Ir al perfil →", "Aller au profil →")}
               </Link>
@@ -447,7 +447,7 @@ function EventsPage() {
         </div>
         <button
           onClick={() => navigate({ to: "/app/events/new" })}
-          className="shrink-0 rounded-full border border-[var(--ball)] text-[var(--ball)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          className="shrink-0 rounded-full border border-[var(--cream)] text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
         >
           {tr("Create match", "Crear partido", "Créer un match")}
         </button>

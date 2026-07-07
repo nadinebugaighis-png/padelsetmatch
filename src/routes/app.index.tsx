@@ -397,7 +397,7 @@ function Discover() {
                 type="button"
                 disabled={likeM.isPending || unlikeM.isPending}
                 onClick={(e) => { e.stopPropagation(); c.liked ? unlikeM.mutate(c.id) : likeM.mutate(c.id); }}
-                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--ball)]" : "bg-black/50"}`}
+                className={`absolute bottom-2 right-2 z-10 p-1.5 rounded-full transition ${c.liked ? "bg-[var(--cream)]" : "bg-black/50"}`}
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >
@@ -429,7 +429,7 @@ function Discover() {
                   );
                 })()}
                 {c.free_court_access && (
-                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
+                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
                 )}
               </div>
 

@@ -16,28 +16,31 @@ import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
 import { CookieBanner } from "@/components/CookieBanner";
 
-function readLang(): "en" | "es" {
+function readLang(): "en" | "es" | "fr" {
   try {
     const stored = typeof localStorage !== "undefined" ? localStorage.getItem("padel_lang_v1") : null;
-    if (stored === "es" || stored === "en") return stored;
+    if (stored === "es" || stored === "en" || stored === "fr") return stored;
   } catch { /* ignore */ }
   if (typeof navigator !== "undefined") {
     const langs = (navigator.languages ?? [navigator.language ?? "en"]).map((s) => s.toLowerCase());
     if (langs.some((l) => l.startsWith("es"))) return "es";
+    if (langs.some((l) => l.startsWith("fr"))) return "fr";
   }
   return "en";
 }
 
 function NotFoundComponent() {
-  const es = readLang() === "es";
+  const lang = readLang();
+  const title = lang === "es" ? "Página no encontrada" : lang === "fr" ? "Page non trouvée" : "Page not found";
+  const cta = lang === "es" ? "Ir al inicio" : lang === "fr" ? "Retour à l'accueil" : "Go home";
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--cream)] px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold">{es ? "Página no encontrada" : "Page not found"}</h2>
+        <h1 className="text-7xl font-bold text-[var(--court-deep)]">404</h1>
+        <h2 className="mt-4 text-xl font-semibold text-[var(--court-deep)]">{title}</h2>
         <div className="mt-6">
-          <Link to="/" className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-            {es ? "Ir al inicio" : "Go home"}
+          <Link to="/" className="inline-flex items-center justify-center bg-[var(--clay)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--clay-deep)]">
+            {cta}
           </Link>
         </div>
       </div>
@@ -48,21 +51,24 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  const es = readLang() === "es";
+  const lang = readLang();
+  const title = lang === "es" ? "Algo salió mal" : lang === "fr" ? "Une erreur s'est produite" : "Something went wrong";
+  const body = lang === "es" ? "Inténtalo de nuevo." : lang === "fr" ? "Veuillez réessayer." : "Please try again.";
+  const retry = lang === "es" ? "Reintentar" : lang === "fr" ? "Réessayer" : "Retry";
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--cream)] px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold">{es ? "Algo salió mal" : "Something went wrong"}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{es ? "Inténtalo de nuevo." : "Please try again."}</p>
+        <h1 className="text-xl font-semibold text-[var(--court-deep)]">{title}</h1>
+        <p className="mt-2 text-sm text-[var(--court)]/70">{body}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => { router.invalidate(); reset(); }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex items-center justify-center bg-[var(--clay)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--clay-deep)]"
           >
-            {es ? "Reintentar" : "Retry"}
+            {retry}
           </button>
         </div>
       </div>
@@ -71,13 +77,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#0d2929" },
+      { name: "theme-color", content: "#F5F2ED" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "Padel Match App — More Friends, Better Games" },
@@ -95,8 +100,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "manifest", href: "/manifest.json" },
       { rel: "icon", type: "image/png", href: "/icon-192.png" },
       { rel: "apple-touch-icon", href: "/icon-192.png" },

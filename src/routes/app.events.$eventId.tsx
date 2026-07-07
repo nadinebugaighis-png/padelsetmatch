@@ -837,7 +837,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
             <button
               onClick={sendInvites}
               disabled={busy}
-              className="mt-3 w-full rounded-full bg-[var(--cream)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
+              className="mt-3 w-full rounded-full bg-[var(--ball)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
             >
               {tr(`Send ${selected.size} invite${selected.size === 1 ? "" : "s"}`, `Enviar ${selected.size} invitaciones`)}
             </button>

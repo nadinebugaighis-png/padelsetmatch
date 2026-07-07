@@ -198,16 +198,11 @@ function EventsPage() {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/55">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full border border-[var(--cream)]/25" /> {tr("Free", "Libre", "Libre")}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--cream)]/30" /> {tr("Some in", "Algunos", "Certains")}
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--ball)]" /> {tr("Full 4", "Completo", "Complet")}
-        </span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+        <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
+        <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
+        <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
+        <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
         <Link
           to="/app/events/new"
           className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"

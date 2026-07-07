@@ -1658,8 +1658,8 @@ Return ONLY valid JSON with this exact shape:
     "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
     "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
-  "padel_analysis": "<2-3 grounded sentences (max 320 chars) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
-  "personality_analysis": "<2-3 grounded sentences (max 320 chars) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
+  "padel_analysis": "<2-4 complete sentences (max 600 chars, always end with a full stop) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
+  "personality_analysis": "<2-4 complete sentences (max 600 chars, always end with a full stop) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
   "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses. IMPORTANT: do NOT repeat facts, traits or phrases that also appear in padel_analysis or personality_analysis. The blurb is the headline; the analyses do the detail.>",
   "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — this is usually null.>"
 }

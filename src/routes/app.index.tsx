@@ -384,10 +384,10 @@ function Discover() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
               {!c.liked && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
-              <div className={`absolute top-2 right-2 z-10 chip text-[10px] ${c.liked ? "chip-ball ring-1 ring-[var(--cream)]" : "bg-[var(--court)]/60 text-[var(--cream)]"}`} title={t("disc.scoreTooltip")}>
+              <div className="absolute bottom-3 right-3 z-10 w-8 h-8 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-xs font-bold shadow-lg" title={t("disc.scoreTooltip")}>
                 {c.score}
-                {c.liked && <span className="ml-1 inline-block w-1 h-1 rounded-full bg-[var(--court-deep)]" />}
               </div>
+
 
               <button
                 type="button"

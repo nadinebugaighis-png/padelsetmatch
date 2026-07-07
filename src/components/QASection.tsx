@@ -73,7 +73,7 @@ export function QASection() {
   return (
     <section className="mt-6 surface-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-[var(--ball)]" />
+        <Sparkles className="w-5 h-5 text-[var(--cream)]" />
         <h2 className="text-display text-2xl">{t("qa.title")}</h2>
       </div>
       <p className="mt-2 text-sm text-[var(--cream)]/70">{t("qa.sub")}</p>
@@ -118,7 +118,7 @@ export function QASection() {
                           submit.mutate({ question: q.question, category: q.category, answer: opt });
                         }}
                         disabled={submit.isPending}
-                        className={`chip ${selected ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : ""}`}
+                        className={`chip ${selected ? "bg-[var(--cream)] text-[var(--court-deep)] font-bold" : ""}`}
                       >
                         {opt}
                       </button>
@@ -151,7 +151,7 @@ export function QASection() {
                   <div className="min-w-0">
                     <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50">{a.category}</div>
                     <div className="text-sm text-[var(--cream)]/90">{a.question}</div>
-                    <div className="text-sm mt-1 text-[var(--ball)]">{a.answer}</div>
+                    <div className="text-sm mt-1 text-[var(--cream)]">{a.answer}</div>
                   </div>
                   <button
                     onClick={() => del.mutate(a.id)}

@@ -420,15 +420,23 @@ function Discover() {
                   aria-label={`Request to play with ${c.first_name}`}
                   title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
-                    <path
-                      fill="currentColor"
-                      fillRule="evenodd"
-                      stroke="none"
-                      d="M9 3 A6 6 0 1 1 9 15 A6 6 0 1 1 9 3 M9 4.5 A1.5 1.5 0 1 0 9 7.5 A1.5 1.5 0 1 0 9 4.5 M12 6 A1.5 1.5 0 1 0 12 9 A1.5 1.5 0 1 0 12 6 M9 10.5 A1.5 1.5 0 1 0 9 13.5 A1.5 1.5 0 1 0 9 10.5 M6 6 A1.5 1.5 0 1 0 6 9 A1.5 1.5 0 1 0 6 6"
-                    />
-                    <line x1="13.5" y1="13.5" x2="20" y2="20" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                    {/* round padel racket head */}
+                    <circle cx="9" cy="9" r="6" />
+                    {/* handle */}
+                    <path d="M13 13l5 5" strokeWidth="2.4" />
+                    {/* string holes */}
+                    <circle cx="7.5" cy="7.5" r="0.5" fill="currentColor" stroke="none" />
+                    <circle cx="9" cy="7.5" r="0.5" fill="currentColor" stroke="none" />
+                    <circle cx="10.5" cy="7.5" r="0.5" fill="currentColor" stroke="none" />
+                    <circle cx="7.5" cy="9" r="0.5" fill="currentColor" stroke="none" />
+                    <circle cx="9" cy="9" r="0.5" fill="currentColor" stroke="none" />
+                    <circle cx="10.5" cy="9" r="0.5" fill="currentColor" stroke="none" />
+                    <circle cx="9" cy="10.5" r="0.5" fill="currentColor" stroke="none" />
+                    {/* invite + badge */}
+                    <path d="M18 5h4M20 3v4" strokeWidth="2" />
                   </svg>
+
                 </button>
               </div>
 

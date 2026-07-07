@@ -334,6 +334,14 @@ function EventsPage() {
           onClose={() => setSheet(null)}
         />
       )}
+      {/* Search results list */}
+      {searchLower && (
+        <SearchResults
+          events={visibleEvents}
+          search={search}
+          onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+        />
+      )}
     </div>
   );
 }

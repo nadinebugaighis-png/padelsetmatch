@@ -260,7 +260,7 @@ function Discover() {
       <div className="flex items-center justify-between mt-3">
         <div className="flex gap-2 flex-wrap items-center">
           {(["all", "padel", "friend", "relationship"] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
+            <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-cream" : ""}`}>
               {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
             </button>
           ))}

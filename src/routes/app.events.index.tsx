@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { Users, MapPin, Settings2 } from "lucide-react";
+import { MapPin, Settings2 } from "lucide-react";
 import { RacketIcon } from "@/components/RacketIcon";
 
 

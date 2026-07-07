@@ -310,7 +310,7 @@ function FeedbackBox() {
   return (
     <div className="mt-6 surface-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-[var(--ball)]" />
+        <Sparkles className="w-4 h-4 text-[var(--cream)]" />
         <h2 className="text-display text-lg tracking-wider">{t("fb.title")}</h2>
       </div>
       <p className="text-xs text-[var(--cream)]/60 mt-1">{t("fb.sub")}</p>
@@ -326,7 +326,7 @@ function FeedbackBox() {
             className="p-1"
           >
             <Star
-              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--ball)] text-[var(--ball)]" : "text-[var(--cream)]/40"}`}
+              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--cream)] text-[var(--cream)]" : "text-[var(--cream)]/40"}`}
             />
           </button>
         ))}

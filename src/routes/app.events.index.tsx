@@ -266,6 +266,22 @@ function EventsPage() {
         </div>
       </div>
 
+      {/* Slot picker (multiple matches at the same hour) */}
+      {slotSheet && (
+        <SlotSheet
+          startsAt={slotSheet.startsAt}
+          events={slotSheet.events}
+          pending={pending}
+          onClose={() => setSlotSheet(null)}
+          onJoin={joinEvent}
+          onOpen={(id) => {
+            setSlotSheet(null);
+            navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+          }}
+          onStartAnother={() => quickCreateAt(new Date(slotSheet.startsAt))}
+        />
+      )}
+
       {/* Quick-create follow-up sheet */}
       {sheet && (
         <QuickSheet

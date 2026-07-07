@@ -756,9 +756,6 @@ function Discover() {
                     </button>
                   </div>
                 </div>
-                <p className="absolute bottom-1 left-0 right-0 text-center text-[10px] text-[var(--cream)]/40 leading-snug">
-                  {t("disc.privacyNote")}
-                </p>
               </>
             );
           })()}

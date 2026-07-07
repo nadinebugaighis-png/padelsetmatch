@@ -384,7 +384,7 @@ function Discover() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
               {!c.liked && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
-              <div className="absolute bottom-3 right-2 z-10 w-5 h-5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-[9px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
+              <div className="absolute bottom-3 right-2 z-10 w-6 h-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-[10px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
                 {c.score}
               </div>
 
@@ -408,7 +408,7 @@ function Discover() {
                 </button>
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 p-3 pr-9 pointer-events-none">
+              <div className="absolute bottom-0 left-0 right-0 p-3 pr-10 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}</div>
                 <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
                 {(() => {

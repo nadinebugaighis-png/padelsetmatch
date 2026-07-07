@@ -380,10 +380,11 @@ function Discover() {
               className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10"
             >
               {c.photo_url && (
-                <img src={c.photo_url} alt={c.first_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105" />
+                <img src={c.photo_url} alt={c.first_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover brightness-110 transition-transform group-hover:scale-105" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
-              {!c.liked && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
+              {!c.liked && <div className="absolute inset-0 bg-black/40 pointer-events-none" />}
+
               <div className="absolute bottom-3 right-2 z-10 w-6 h-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-[10px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
                 {c.score}
               </div>

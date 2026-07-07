@@ -730,7 +730,7 @@ function Onboarding() {
               {photoUrl ? (
                 <>
                   <img src={photoUrl} alt="you" className="absolute inset-0 w-full h-full object-cover" />
-                  <button onClick={(e) => { e.preventDefault(); setPhotoUrl(null); }} className="absolute top-2 right-2 bg-black/60 rounded-full p-1.5">
+                  <button onClick={(e) => { e.preventDefault(); setPhotoUrl(null); }} className="absolute top-2 right-2 bg-[var(--court-deep)]/10 rounded-full p-1.5">
                     <X className="w-4 h-4" />
                   </button>
                 </>

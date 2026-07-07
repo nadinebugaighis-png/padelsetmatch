@@ -44,17 +44,17 @@ function ResetPasswordPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
+    <main className="min-h-screen flex items-center justify-center px-4 bg-[var(--cream)]">
       <div className="w-full max-w-md surface-card p-8">
-        <h1 className="text-display text-4xl">{t("rp.title")}</h1>
+        <h1 className="text-display text-4xl text-[var(--court-deep)]">{t("rp.title")}</h1>
         {!ready ? (
-          <p className="text-sm text-[var(--cream)]/70 mt-3">
-            {t("rp.openFromEmail")} <a href="/auth" className="underline">{t("rp.signin")}</a>.
+          <p className="text-sm text-[var(--court)]/70 mt-3">
+            {t("rp.openFromEmail")} <a href="/auth" className="underline text-[var(--clay)]">{t("rp.signin")}</a>.
           </p>
         ) : (
           <form onSubmit={submit} className="space-y-3 mt-5">
             <Input type="password" required minLength={8} placeholder={t("rp.newPw")} value={password} onChange={(e) => setPassword(e.target.value)} />
-            <Button type="submit" disabled={loading} className="w-full">{t("rp.update")}</Button>
+            <Button type="submit" disabled={loading} className="w-full bg-[var(--clay)] text-white hover:bg-[var(--clay-deep)]">{t("rp.update")}</Button>
           </form>
         )}
       </div>

@@ -90,10 +90,10 @@ function AdminPage() {
                     <span className="text-[var(--court-deep)]/60"> reported </span>
                     <span className="font-semibold">{r.reported_name ?? "user"}</span>
                     {r.category === "photo" && (
-                      <span className="ml-2 text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300">photo</span>
+                      <span className="ml-2 text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-destructive">photo</span>
                     )}
                     {r.reported_suspended && (
-                      <span className="ml-2 text-[10px] uppercase tracking-widest text-red-400">suspended</span>
+                      <span className="ml-2 text-[10px] uppercase tracking-widest text-destructive">suspended</span>
                     )}
                   </div>
                   <div className="text-xs text-[var(--court-deep)]/50">{new Date(r.created_at).toLocaleString()}</div>
@@ -105,26 +105,26 @@ function AdminPage() {
                   <button
                     disabled={clearPhotoM.isPending}
                     onClick={() => { if (confirm(`Remove ${r.reported_name ?? "user"}'s photo?`)) clearPhotoM.mutate(r.reported_profile_id); }}
-                    className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-200 hover:bg-red-500/30"
+                    className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-destructive hover:bg-red-500/30"
                   >Remove photo</button>
                 )}
                 {!r.reported_suspended ? (
                   <button
                     disabled={suspendM.isPending}
                     onClick={() => { if (confirm(`Suspend ${r.reported_name ?? "user"}?`)) suspendM.mutate({ profileId: r.reported_profile_id, suspend: true }); }}
-                    className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-200 hover:bg-amber-500/30"
+                    className="text-xs px-2.5 py-1 rounded-full bg-[var(--clay)]/20 text-[var(--clay)] hover:bg-[var(--clay)]/30"
                   >Suspend user</button>
                 ) : (
                   <button
                     disabled={suspendM.isPending}
                     onClick={() => suspendM.mutate({ profileId: r.reported_profile_id, suspend: false })}
-                    className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
+                    className="text-xs px-2.5 py-1 rounded-full bg-[var(--court)]/20 text-[var(--court)] hover:bg-[var(--court)]/30"
                   >Reinstate</button>
                 )}
                 <button
                   disabled={resolveM.isPending}
                   onClick={() => resolveM.mutate({ reportId: r.id, status: "resolved" })}
-                  className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
+                  className="text-xs px-2.5 py-1 rounded-full bg-[var(--court)]/20 text-[var(--court)] hover:bg-[var(--court)]/30"
                 >Mark resolved</button>
                 <button
                   disabled={resolveM.isPending}
@@ -179,7 +179,7 @@ function AdminPage() {
               <div className="min-w-0">
                 <div className="truncate">
                   {u.first_name}{u.age ? `, ${u.age}` : ""} · <span className="text-[var(--court-deep)]/60">{u.zone ?? "—"}</span>
-                  {u.suspended && <span className="ml-2 text-xs text-red-400">suspended</span>}
+                  {u.suspended && <span className="ml-2 text-xs text-destructive">suspended</span>}
                 </div>
                 <div className="text-xs text-[var(--court-deep)]/50 truncate">
                   {u.email} · joined {new Date(u.signed_up_at).toLocaleDateString()}

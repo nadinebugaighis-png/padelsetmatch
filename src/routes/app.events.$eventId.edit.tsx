@@ -9,8 +9,8 @@ import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId/edit")({
   component: EditEvent,
-  errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">—</div>,
+  errorComponent: ({ error }) => <div className="p-6 text-[var(--court-deep)]/70">{error.message}</div>,
+  notFoundComponent: () => <div className="p-6 text-[var(--court-deep)]/70">—</div>,
 });
 
 
@@ -31,12 +31,12 @@ function EditEvent() {
     queryFn: () => get({ data: { id: eventId } }),
   });
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--court-deep)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
-  if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
+  if (!event) return <div className="p-6 text-center text-[var(--court-deep)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
   if (!me?.iAmHost) {
-    return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Only the host can edit this match.", "Solo el organizador puede editar este partido.", "Seul l'hôte peut modifier ce match.")}</div>;
+    return <div className="p-6 text-center text-[var(--court-deep)]/60">{tr("Only the host can edit this match.", "Solo el organizador puede editar este partido.", "Seul l'hôte peut modifier ce match.")}</div>;
   }
 
   const onSubmit = async (v: MatchFormValues) => {
@@ -115,12 +115,12 @@ function EditEvent() {
       />
 
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 pb-32 -mt-4 space-y-2">
-        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 pt-4">{tr("Danger zone", "Zona de peligro", "Zone sensible")}</div>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/50 pt-4">{tr("Danger zone", "Zona de peligro", "Zone sensible")}</div>
         {event.status !== "cancelled" && (
           <button
             onClick={onCancel}
             disabled={busy}
-            className="w-full py-2 rounded-full border border-red-500/40 text-xs uppercase tracking-widest text-red-300 disabled:opacity-50"
+            className="w-full py-2 rounded-full border border-red-500/40 text-xs uppercase tracking-widest text-destructive disabled:opacity-50"
           >
             {tr("Cancel match", "Cancelar partido", "Annuler le match")}
           </button>
@@ -128,7 +128,7 @@ function EditEvent() {
         <button
           onClick={onDelete}
           disabled={busy}
-          className="w-full py-2 rounded-full border border-red-500/60 bg-red-500/10 text-xs uppercase tracking-widest text-red-300 disabled:opacity-50"
+          className="w-full py-2 rounded-full border border-red-500/60 bg-red-500/10 text-xs uppercase tracking-widest text-destructive disabled:opacity-50"
         >
           {tr("Delete match", "Eliminar partido", "Supprimer le match")}
         </button>

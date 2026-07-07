@@ -230,7 +230,7 @@ function EventsPage() {
             }}
           >
             {/* Corner */}
-            <div className="sticky top-0 left-0 z-30 bg-[var(--court-deep)] border-b border-r border-[var(--court-deep)]/10 h-12" />
+            <div className="sticky top-0 left-0 z-30 bg-[var(--cream-deep)] border-b border-r border-[var(--court-deep)]/10 h-12" />
             {/* Day headers */}
             {days.map((d, i) => {
               const label = formatDay(d, lang, 0, i, tr);
@@ -238,7 +238,7 @@ function EventsPage() {
               return (
                 <div
                   key={i}
-                  className={`sticky top-0 z-20 h-12 border-b border-[var(--court-deep)]/10 flex flex-col items-center justify-center bg-[var(--court-deep)] ${
+                  className={`sticky top-0 z-20 h-12 border-b border-[var(--court-deep)]/10 flex flex-col items-center justify-center bg-[var(--cream-deep)] ${
                     isToday ? "text-[var(--ball)]" : "text-[var(--court-deep)]/80"
                   }`}
                 >
@@ -314,7 +314,7 @@ function RowCells({
   const stripe = hour % 2 === 0 ? "bg-[var(--cream)]/[0.02]" : "";
   return (
     <>
-      <div className={`sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--court-deep)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
+      <div className={`sticky left-0 z-10 bg-[var(--cream-deep)] border-r border-b border-[var(--court-deep)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
         isCurrentHour ? "text-[var(--ball)]" : "text-[var(--court-deep)]/55"
       }`}>
         {String(hour).padStart(2, "0")}
@@ -346,10 +346,10 @@ function RowCells({
             )}
           >
             {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
-              <span className="w-1 h-1 rounded-full bg-[var(--court-deep)]/10" />
+              <span className="w-1 h-1 rounded-full bg-[var(--cream-deep)]/10" />
             )}
             {isPending && (
-              <span className="absolute inset-0 flex items-center justify-center bg-black/40">
+              <span className="absolute inset-0 flex items-center justify-center bg-[var(--court-deep)]/10">
                 <span className="w-4 h-4 rounded-full border-2 border-[var(--ball)] border-t-transparent animate-spin" />
               </span>
             )}
@@ -364,8 +364,8 @@ function slotColor(filled: number, mine: boolean) {
   if (filled >= 4) {
     return {
       wrap: "bg-[var(--ball)] text-[var(--court-deep)]",
-      pip: "bg-[var(--court-deep)]",
-      empty: "bg-[var(--court-deep)]/30",
+      pip: "bg-[var(--cream-deep)]",
+      empty: "bg-[var(--cream-deep)]/30",
     };
   }
   if (filled === 3) {
@@ -380,13 +380,13 @@ function slotColor(filled: number, mine: boolean) {
     return {
       wrap: `bg-[var(--cream)]/12 text-[var(--court-deep)] ${mine ? "ring-1 ring-[var(--ball)]" : ""}`,
       pip: "bg-[var(--cream)]",
-      empty: "bg-[var(--court-deep)]/12",
+      empty: "bg-[var(--cream-deep)]/12",
     };
   }
   return {
     wrap: "bg-transparent text-[var(--court-deep)]/70",
     pip: "bg-[var(--cream)]/70",
-    empty: "bg-[var(--court-deep)]/10",
+    empty: "bg-[var(--cream-deep)]/10",
   };
 }
 
@@ -449,10 +449,10 @@ function QuickSheet({
     hour12: false,
   });
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--court-deep)]/10" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-sm bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--court-deep)]/15 p-5 space-y-4"
+        className="w-full sm:max-w-sm bg-[var(--cream-deep)] border-t sm:border sm:rounded-2xl border-[var(--court-deep)]/15 p-5 space-y-4"
       >
         <div>
           <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">
@@ -523,10 +523,10 @@ function SlotSheet({
     hour12: false,
   });
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--court-deep)]/10" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-md bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--court-deep)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-[var(--cream-deep)] border-t sm:border sm:rounded-2xl border-[var(--court-deep)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
       >
         <div>
           <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60">

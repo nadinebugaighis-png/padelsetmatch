@@ -401,14 +401,14 @@ function Discover() {
                 aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                 title={c.liked ? t("disc.undo") : "Like"}
               >
-                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-[var(--court-deep)]/70"}`} />
+                <Heart className={`w-3.5 h-3.5 ${c.liked ? "fill-[var(--court-deep)] text-[var(--court-deep)]" : "text-white/70"}`} />
               </button>
 
               <div className="absolute top-2 left-2 z-10 flex gap-1">
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--court-deep)]"
+                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-white"
                   aria-label={`Hide ${c.first_name}`}
                   title="Not interested — hide from my Grid"
                 >
@@ -417,8 +417,8 @@ function Discover() {
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-12 pointer-events-none">
-                <div className="text-display text-2xl leading-none">{c.first_name}</div>
-                <div className="text-[11px] uppercase tracking-widest text-[var(--court-deep)]/80 mt-1">{c.zone} · {label(c.level)}</div>
+                <div className="text-display text-2xl leading-none text-white">{c.first_name}</div>
+                <div className="text-[11px] uppercase tracking-widest text-white/80 mt-1">{c.zone} · {label(c.level)}</div>
                 {(() => {
                   const au = (c as any).away_until as string | null | undefined;
                   if (!au || au < new Date().toISOString().slice(0, 10)) return null;
@@ -472,7 +472,7 @@ function Discover() {
                     <button
                       type="button"
                       onClick={() => setPreview(null)}
-                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--court-deep)] hover:bg-black/55"
+                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/55"
                       aria-label="Back"
                     >
                       <ArrowLeft className="w-4 h-4" />
@@ -483,8 +483,8 @@ function Discover() {
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
-                      <div className="text-display text-[44px] leading-[0.95] text-[var(--court-deep)] uppercase tracking-tight">{preview.first_name},</div>
-                      <div className="text-sm text-[var(--court-deep)]/85">{preview.zone} · {label(preview.level)}</div>
+                      <div className="text-display text-[44px] leading-[0.95] text-white uppercase tracking-tight">{preview.first_name},</div>
+                      <div className="text-sm text-white/85">{preview.zone} · {label(preview.level)}</div>
                     </div>
                   </div>
 

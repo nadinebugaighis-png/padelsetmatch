@@ -165,7 +165,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setLocMode(o.v)}
               className={`py-2 rounded-lg border text-sm ${
                 locMode === o.v
-                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
+                  ? "border-primary bg-primary/10 text-primary"
                   : "border-foreground/15 text-foreground/70"
               }`}
             >
@@ -218,7 +218,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setPlayersNeeded(n)}
               className={`py-2 rounded-lg border text-sm ${
                 playersNeeded === n
-                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
+                  ? "border-primary bg-primary/10 text-primary"
                   : "border-foreground/15 text-foreground/70"
               }`}
             >
@@ -251,7 +251,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setGenderRule(o.v)}
               className={`py-2 rounded-lg border text-sm ${
                 genderRule === o.v
-                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
+                  ? "border-primary bg-primary/10 text-primary"
                   : "border-foreground/15 text-foreground/70"
               }`}
             >

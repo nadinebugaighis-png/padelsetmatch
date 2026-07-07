@@ -73,7 +73,7 @@ export function QASection() {
   return (
     <section className="mt-6 surface-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-foreground" />
+        <Sparkles className="w-5 h-5 text-primary" />
         <h2 className="text-display text-2xl">{t("qa.title")}</h2>
       </div>
       <p className="mt-2 text-sm text-foreground/70">{t("qa.sub")}</p>

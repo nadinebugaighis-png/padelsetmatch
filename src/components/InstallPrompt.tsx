@@ -86,7 +86,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
     return (
       <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-6" onClick={onClose}>
         <div className="surface-card max-w-sm w-full p-8 text-center" onClick={(e) => e.stopPropagation()}>
-          <Smartphone className="w-12 h-12 text-foreground mx-auto mb-4" />
+          <Smartphone className="w-12 h-12 text-primary mx-auto mb-4" />
           <h3 className="text-display text-2xl text-foreground">{tr("Already installed!", "¡Ya está instalada!", "Déjà installée !")}</h3>
           <p className="mt-2 text-foreground/70">{tr("Open PadelMatch from your home screen for the full app experience.", "Abre PadelMatch desde tu pantalla de inicio para la experiencia completa.", "Ouvre PadelMatch depuis ton écran d'accueil pour l'expérience complète.")}</p>
           <button onClick={onClose} className="mt-6 inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">{tr("Close", "Cerrar", "Fermer")}</button>
@@ -128,22 +128,22 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
 
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="rounded-2xl bg-foreground/8 p-4">
-                <Share className="mx-auto h-8 w-8 text-foreground" />
+                <Share className="mx-auto h-8 w-8 text-primary" />
                 <p className="mt-3 text-xs font-bold text-foreground">{tr("Tap Share", "Toca Compartir", "Appuie sur Partager")}</p>
               </div>
               <div className="rounded-2xl bg-foreground/8 p-4">
-                <PlusSquare className="mx-auto h-8 w-8 text-foreground" />
+                <PlusSquare className="mx-auto h-8 w-8 text-primary" />
                 <p className="mt-3 text-xs font-bold text-foreground">{tr("Add Home", "Añadir a Inicio", "Écran d'accueil")}</p>
               </div>
               <div className="rounded-2xl bg-foreground/8 p-4">
-                <CheckCircle2 className="mx-auto h-8 w-8 text-foreground" />
+                <CheckCircle2 className="mx-auto h-8 w-8 text-primary" />
                 <p className="mt-3 text-xs font-bold text-foreground">{tr("Tap Add", "Toca Añadir", "Appuie sur Ajouter")}</p>
               </div>
             </div>
 
             <div className="rounded-2xl border border-foreground/10 p-4">
               <div className="flex items-center gap-3">
-                <ArrowUpFromLine className="h-9 w-9 rounded-full bg-foreground p-2 text-[var(--court-deep)]" />
+                <ArrowUpFromLine className="h-9 w-9 rounded-full bg-foreground p-2 text-background" />
                 <div>
                   <p className="font-semibold text-foreground">{tr("Look for this icon at the bottom of Safari", "Busca este icono en la parte inferior de Safari", "Cherche cette icône en bas de Safari")}</p>
                   <p className="text-xs text-foreground/60">{tr("Then choose “Add to Home Screen”.", "Después elige “Añadir a la pantalla de inicio”.", "Puis choisis « Sur l'écran d'accueil ».")}</p>
@@ -155,7 +155,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
 
         {android && deferredPrompt && (
           <div className="text-center py-4">
-            <Smartphone className="w-16 h-16 text-foreground mx-auto mb-4" />
+            <Smartphone className="w-16 h-16 text-primary mx-auto mb-4" />
             <p className="text-lg font-semibold text-foreground mb-6">{tr("One tap and you're set", "Un toque y listo", "Un appui et c'est fait")}</p>
             <button
               onClick={handleNativeInstall}
@@ -192,7 +192,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
 
         {!ios && !android && (
           <div className="text-center py-4">
-            <Smartphone className="w-16 h-16 text-foreground mx-auto mb-4" />
+            <Smartphone className="w-16 h-16 text-primary mx-auto mb-4" />
             <p className="text-lg font-semibold text-foreground mb-2">{tr("Open it from your phone", "Ábrela desde tu móvil", "Ouvre-la depuis ton téléphone")}</p>
             <p className="text-sm text-foreground/70 mb-6">{tr("Scan or share the link, then add it to the home screen from the phone browser.", "Escanea o comparte el enlace y añádela a la pantalla de inicio desde el navegador del móvil.", "Scanne ou partage le lien, puis ajoute-le à l'écran d'accueil depuis le navigateur du téléphone.")}</p>
             <div className="mb-5 flex justify-center gap-2">

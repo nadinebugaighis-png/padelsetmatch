@@ -31,8 +31,8 @@ export const Route = createFileRoute("/app/events/$eventId")({
     i: typeof s.i === "string" ? s.i : undefined,
   }),
   component: EventRoute,
-  errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">Not found</div>,
+  errorComponent: ({ error }) => <div className="p-6 text-[var(--court-deep)]/70">{error.message}</div>,
+  notFoundComponent: () => <div className="p-6 text-[var(--court-deep)]/70">Not found</div>,
 });
 
 function EventRoute() {
@@ -146,10 +146,10 @@ function EventDetail() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [msgsQ.data]);
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--court-deep)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
-  if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
+  if (!event) return <div className="p-6 text-center text-[var(--court-deep)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
 
   const mapsUrl = event.club_place_id
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
@@ -267,13 +267,13 @@ function EventDetail() {
   return (
     <div className="mx-auto w-full max-w-md max-w-[100dvw] overflow-x-hidden px-5 py-4 pb-32">
       <div className="flex items-center justify-between mb-3">
-        <Link to="/app/events" className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60">
+        <Link to="/app/events" className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--court-deep)]/60">
           <ArrowLeft className="w-4 h-4" /> {tr("All matches", "Todos los partidos", "Tous les matches")}
         </Link>
         <button
           type="button"
           onClick={() => setShareOpen(true)}
-          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)] border border-[var(--cream)]/40 rounded-full px-3 py-1"
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--court-deep)] border border-[var(--court-deep)]/40 rounded-full px-3 py-1"
         >
           <Share2 className="w-3.5 h-3.5" /> {tr("Share", "Compartir", "Partager")}
         </button>
@@ -288,18 +288,18 @@ function EventDetail() {
             role="dialog"
             aria-modal="true"
             aria-label={tr("Share match", "Compartir partido", "Partager le match")}
-            className="w-full max-w-md rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+            className="w-full max-w-md rounded-2xl border border-[var(--court-deep)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs uppercase tracking-widest text-[var(--cream)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
-                <p className="mt-1 text-sm text-[var(--cream)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que los jugadores ocupen un hueco.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
+                <div className="text-xs uppercase tracking-widest text-[var(--court-deep)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
+                <p className="mt-1 text-sm text-[var(--court-deep)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que los jugadores ocupen un hueco.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShareOpen(false)}
-                className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70"
+                className="rounded-full border border-[var(--court-deep)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--court-deep)]/70"
               >
                 {tr("Close", "Cerrar", "Fermer")}
               </button>
@@ -308,7 +308,7 @@ function EventDetail() {
               readOnly
               value={shareUrl}
               onFocus={(e) => e.currentTarget.select()}
-              className="mt-4 w-full rounded-full border border-[var(--cream)]/20 bg-black/30 px-4 py-2 text-sm text-[var(--cream)] outline-none"
+              className="mt-4 w-full rounded-full border border-[var(--court-deep)]/20 bg-[var(--cream-deep)] px-4 py-2 text-sm text-[var(--court-deep)] outline-none"
             />
             <div className="mt-3 grid grid-cols-2 gap-2">
               <a
@@ -322,7 +322,7 @@ function EventDetail() {
               <button
                 type="button"
                 onClick={copyShareLink}
-                className="rounded-full border border-[var(--cream)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]"
+                className="rounded-full border border-[var(--court-deep)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
               >
                 {tr("Copy link", "Copiar enlace", "Copier le lien")}
               </button>
@@ -331,7 +331,7 @@ function EventDetail() {
               <button
                 type="button"
                 onClick={nativeShare}
-                className="mt-2 w-full rounded-full border border-[var(--cream)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
+                className="mt-2 w-full rounded-full border border-[var(--court-deep)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]/80"
               >
                 {tr("Share with phone", "Compartir desde el móvil", "Partager avec le téléphone")}
               </button>
@@ -340,26 +340,26 @@ function EventDetail() {
         </div>
       )}
 
-      <div className="rounded-xl border border-[var(--cream)]/10 bg-black/30 p-4 space-y-3">
+      <div className="rounded-xl border border-[var(--court-deep)]/10 bg-[var(--cream-deep)] p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-lg font-medium text-[var(--cream)] truncate">{event.club_name}</h1>
-            {event.club_address && <div className="text-xs text-[var(--cream)]/60 truncate">{event.club_address}</div>}
+            <h1 className="text-lg font-medium text-[var(--court-deep)] truncate">{event.club_name}</h1>
+            {event.club_address && <div className="text-xs text-[var(--court-deep)]/60 truncate">{event.club_address}</div>}
           </div>
           <span
             className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full whitespace-nowrap ${
               event.status === "cancelled"
-                ? "bg-red-500/20 text-red-300"
+                ? "bg-red-500/20 text-destructive"
                 : event.needs === 0
-                ? "bg-[var(--cream)]/10 text-[var(--cream)]/70"
-                : "bg-[var(--cream)]/20 text-[var(--cream)]"
+                ? "bg-[var(--court-deep)]/5 text-[var(--court-deep)]/70"
+                : "bg-[var(--court-deep)]/10 text-[var(--court-deep)]"
             }`}
           >
             {event.status === "cancelled" ? tr("Cancelled", "Cancelado", "Annulé") : event.needs === 0 ? tr("Full", "Completo", "Complet") : tr(`Needs ${event.needs}`, `Faltan ${event.needs}`)}
           </span>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-[var(--cream)]/70 flex-wrap">
+        <div className="flex items-center gap-3 text-xs text-[var(--court-deep)]/70 flex-wrap">
           <span className="inline-flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5" /> {fmtWhen(event.starts_at)}
           </span>
@@ -376,20 +376,20 @@ function EventDetail() {
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--cream)] hover:underline"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--court-deep)] hover:underline"
         >
           <MapPin className="w-3.5 h-3.5" /> {tr("Open in Google Maps", "Abrir en Google Maps", "Ouvrir dans Google Maps")}
         </a>
 
-        {event.note && <p className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap">{event.note}</p>}
+        {event.note && <p className="text-sm text-[var(--court-deep)]/80 whitespace-pre-wrap">{event.note}</p>}
 
-        <div className="text-xs text-[var(--cream)]/60">
+        <div className="text-xs text-[var(--court-deep)]/60">
           {event.court_booked ? tr("✅ Court is booked", "✅ Pista reservada", "✅ Pista réservée") : tr("🔎 Court still needed", "🔎 Falta reservar la pista", "🔎 Pista encore à trouver")}
           {event.playtomic_link && (() => {
             const safe = normalizePlaytomicLink(event.playtomic_link).url;
             if (!safe) return null;
             return (
-              <a href={safe} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--cream)] hover:underline">
+              <a href={safe} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--court-deep)] hover:underline">
                 Playtomic <ExternalLink className="w-3 h-3" />
               </a>
             );
@@ -397,10 +397,10 @@ function EventDetail() {
         </div>
 
         {event.lock_active && event.invite_lock_until && (
-          <div className="flex items-start gap-2 rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 px-3 py-2 text-xs text-[var(--cream)]/80">
-            <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--cream)] shrink-0" />
+          <div className="flex items-start gap-2 rounded-xl border border-[var(--court-deep)]/30 bg-[var(--cream)]/5 px-3 py-2 text-xs text-[var(--court-deep)]/80">
+            <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--court-deep)] shrink-0" />
             <div>
-              <div className="text-[var(--cream)] uppercase tracking-widest text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
+              <div className="text-[var(--court-deep)] uppercase tracking-widest text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
               <div className="mt-0.5">
                 {tr(
                   `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
@@ -415,7 +415,7 @@ function EventDetail() {
 
       {/* Players */}
       <div className="mt-4">
-        <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
+        <div className="text-xs uppercase tracking-widest text-[var(--court-deep)]/60 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
         <div className="flex flex-wrap gap-2">
           {(event.participants ?? []).map((p: any) => {
             const isMe = p.profile_id === me?.id;
@@ -429,8 +429,8 @@ function EventDetail() {
                 title={isMe && !isHost ? tr("Tap to leave the match", "Toca para salir del partido", "Appuie pour quitter le match") : ""}
                 className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
                   isMe && !isHost
-                    ? "bg-[var(--cream)]/10 border-[var(--cream)]/40 hover:bg-[var(--cream)]/20 cursor-pointer"
-                    : "bg-black/30 border-[var(--cream)]/10 cursor-default"
+                    ? "bg-[var(--court-deep)]/5 border-[var(--court-deep)]/40 hover:bg-[var(--court-deep)]/10 cursor-pointer"
+                    : "bg-[var(--cream-deep)] border-[var(--court-deep)]/10 cursor-default"
                 }`}
               >
                 <div className="w-7 h-7 rounded-full bg-[var(--court-deep)] overflow-hidden">
@@ -438,15 +438,15 @@ function EventDetail() {
                     <img src={p.profiles.photo_url} alt="" className="w-full h-full object-cover" />
                   )}
                 </div>
-                <span className="text-xs text-[var(--cream)]">
+                <span className="text-xs text-[var(--court-deep)]">
                   {p.profiles?.first_name}{isMe ? tr(" (you)", " (tú)", " (toi)") : ""}
                 </span>
               </button>
             );
           })}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
-            <div key={`x-${i}`} className="flex items-center gap-2 bg-black/20 border border-dashed border-[var(--cream)]/15 rounded-full px-3 py-1.5">
-              <span className="text-xs text-[var(--cream)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
+            <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--court-deep)]/10 border border-dashed border-[var(--court-deep)]/15 rounded-full px-3 py-1.5">
+              <span className="text-xs text-[var(--court-deep)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
             </div>
           ))}
           {Array.from({ length: event.needs }).map((_, i) => (
@@ -458,11 +458,11 @@ function EventDetail() {
               title={canJoin ? tr("Tap to join this spot", "Toca para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
               className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
                 canJoin
-                  ? "border-[var(--cream)]/60 hover:bg-[var(--cream)]/10 cursor-pointer"
-                  : "border-[var(--cream)]/30 opacity-60 cursor-not-allowed"
+                  ? "border-[var(--court-deep)]/60 hover:bg-[var(--court-deep)]/5 cursor-pointer"
+                  : "border-[var(--court-deep)]/30 opacity-60 cursor-not-allowed"
               }`}
             >
-              <span className="text-xs text-[var(--cream)]">
+              <span className="text-xs text-[var(--court-deep)]">
                 {canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
               </span>
             </button>
@@ -472,9 +472,9 @@ function EventDetail() {
 
       {/* Invitee response */}
       {me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
-        <div className="mt-4 rounded-xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-3">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
-          <p className="mt-1 text-sm text-[var(--cream)]/80">
+        <div className="mt-4 rounded-xl border border-[var(--court-deep)]/40 bg-[var(--court-deep)]/5 p-3">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
+          <p className="mt-1 text-sm text-[var(--court-deep)]/80">
             {tr(`${event.host?.first_name ?? "The host"} invited you to this match.`, `${event.host?.first_name ?? "El anfitrión"} te ha invitado a este partido.`)}
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -498,7 +498,7 @@ function EventDetail() {
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
-              className="rounded-full border border-[var(--cream)]/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]/80"
+              className="rounded-full border border-[var(--court-deep)]/25 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]/80"
             >
               {tr("I can't this time", "No puedo esta vez", "Je ne peux pas cette fois")}
             </button>
@@ -519,7 +519,7 @@ function EventDetail() {
         {me?.iAmParticipant && !me?.iAmHost && (
           <button
             onClick={onLeave}
-            className="w-full py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/70"
+            className="w-full py-2 rounded-full border border-[var(--court-deep)]/20 text-xs uppercase tracking-widest text-[var(--court-deep)]/70"
           >
             {tr("Leave match", "Salir del partido", "Quitter le match")}
           </button>
@@ -534,20 +534,20 @@ function EventDetail() {
             </button>
             <button
               onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-              className="w-full py-2 rounded-full border border-[var(--cream)]/60 text-xs uppercase tracking-widest text-[var(--cream)]"
+              className="w-full py-2 rounded-full border border-[var(--court-deep)]/60 text-xs uppercase tracking-widest text-[var(--court-deep)]"
             >
               {tr("Edit match", "Editar partido", "Modifier le match")}
             </button>
             <button
               onClick={onToggleBooked}
-              className="w-full py-2 rounded-full border border-[var(--cream)]/20 text-xs uppercase tracking-widest text-[var(--cream)]/80"
+              className="w-full py-2 rounded-full border border-[var(--court-deep)]/20 text-xs uppercase tracking-widest text-[var(--court-deep)]/80"
             >
               {event.court_booked ? tr("Mark court not booked", "Marcar pista como no reservada", "Marquer pista non réservée") : tr("Mark court booked ✅", "Marcar pista reservada ✅", "Marquer pista réservée ✅")}
             </button>
           </>
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
-          <p className="text-xs text-[var(--cream)]/50 text-center">
+          <p className="text-xs text-[var(--court-deep)]/50 text-center">
             {event.lock_active
               ? tr("This match is reserved for invited players right now.", "Este partido está reservado para invitados ahora mismo.", "Ce match est réservé aux joueurs invités pour l'instant.")
               : tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
@@ -573,13 +573,13 @@ function EventDetail() {
       {me?.iAmParticipant && (event.participants?.length ?? 0) >= 2 && (
 
         <div id="event-chat" className="mt-6 scroll-mt-6">
-          <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60 mb-2">{tr("Group chat", "Chat del grupo", "Chat de groupe")}</div>
+          <div className="text-xs uppercase tracking-widest text-[var(--court-deep)]/60 mb-2">{tr("Group chat", "Chat del grupo", "Chat de groupe")}</div>
           <div
             ref={scrollRef}
-            className="h-72 w-full max-w-full overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-[var(--cream)]/10 bg-black/30 p-3 space-y-3"
+            className="h-72 w-full max-w-full overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-[var(--court-deep)]/10 bg-[var(--cream-deep)] p-3 space-y-3"
           >
             {msgsQ.data?.messages.length === 0 && (
-              <div className="text-center text-xs text-[var(--cream)]/50 py-8">{tr("No messages yet. Say hi!", "Aún no hay mensajes. ¡Saluda!", "Pas encore de messages. Dis bonjour !")}</div>
+              <div className="text-center text-xs text-[var(--court-deep)]/50 py-8">{tr("No messages yet. Say hi!", "Aún no hay mensajes. ¡Saluda!", "Pas encore de messages. Dis bonjour !")}</div>
             )}
             {msgsQ.data?.messages.map((m: any) => {
               const mine = m.sender_profile_id === me?.id;
@@ -590,12 +590,12 @@ function EventDetail() {
                     <div
                       className={`${mine ? "max-w-[min(100%,18rem)]" : "max-w-[min(100%,19rem)]"} min-w-0 rounded-2xl px-3 py-2 text-base ${
                       mine
-                        ? "bg-[var(--cream)]/25 text-[var(--cream)]"
-                        : "bg-[var(--court-deep)] border border-[var(--cream)]/10 text-[var(--cream)]"
+                        ? "bg-[var(--court-deep)]/12 text-[var(--court-deep)]"
+                        : "bg-[var(--court-deep)] border border-[var(--court-deep)]/10 text-[var(--court-deep)]"
                     }`}
                     >
                       {!mine && !isEditing && (
-                        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-0.5">
+                        <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/50 mb-0.5">
                           {m.sender?.first_name}
                         </div>
                       )}
@@ -607,12 +607,12 @@ function EventDetail() {
                           <textarea
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
-                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--cream)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--cream)]/60"
+                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--court-deep)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--cream)]/60"
                             rows={2}
                             autoFocus
                           />
                           <div className="flex justify-end gap-1">
-                            <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--cream)]/10" aria-label="Cancel">
+                            <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--court-deep)]/5" aria-label="Cancel">
                               <X className="h-4 w-4" />
                             </button>
                             <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)]" aria-label="Save">
@@ -623,7 +623,7 @@ function EventDetail() {
                       ) : (
                         <div className="whitespace-pre-wrap break-words">
                           {m.body}
-                          {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--cream)]/50">{tr("(edited)", "(editado)", "(modifié)")}</span>}
+                          {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--court-deep)]/50">{tr("(edited)", "(editado)", "(modifié)")}</span>}
                         </div>
                       )}
                     </div>
@@ -632,7 +632,7 @@ function EventDetail() {
                         <button
                           type="button"
                           onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2 text-[10px] uppercase tracking-wider text-[var(--cream)] hover:bg-[var(--cream)]/20"
+                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--court-deep)]/5 px-2 text-[10px] uppercase tracking-wider text-[var(--court-deep)] hover:bg-[var(--court-deep)]/10"
                           aria-label="Edit message"
                         >
                           <Pencil className="h-3 w-3" /> {tr("Edit", "Editar", "Modifier")}
@@ -640,7 +640,7 @@ function EventDetail() {
                         <button
                           type="button"
                           onClick={() => onDeleteMessage(m.id)}
-                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--cream)]/10 px-2 text-[10px] uppercase tracking-wider text-[var(--cream)] hover:bg-red-500/20 hover:text-red-300"
+                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--court-deep)]/5 px-2 text-[10px] uppercase tracking-wider text-[var(--court-deep)] hover:bg-red-500/20 hover:text-destructive"
                           aria-label="Delete message"
                         >
                           <Trash2 className="h-3 w-3" /> {tr("Delete", "Borrar", "Supprimer")}
@@ -665,7 +665,7 @@ function EventDetail() {
               placeholder={tr("Message the group…", "Escribe al grupo…", "Écris au groupe…")}
               rows={1}
               enterKeyHint="send"
-              className="min-h-10 min-w-0 resize-none overflow-hidden bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-base leading-6 text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none focus:ring-1 focus:ring-[var(--cream)]/60"
+              className="min-h-10 min-w-0 resize-none overflow-hidden bg-[var(--cream-deep)] border border-[var(--court-deep)]/20 rounded-full px-4 py-2 text-base leading-6 text-[var(--court-deep)] placeholder:text-[var(--court-deep)]/40 outline-none focus:ring-1 focus:ring-[var(--cream)]/60"
             />
             <button
               type="button"
@@ -676,7 +676,7 @@ function EventDetail() {
               <Send className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-[10px] text-[var(--cream)]/50 mt-2">
+          <p className="text-[10px] text-[var(--court-deep)]/50 mt-2">
             {tr("🎾 For safety, arrange the actual court on Playtomic when possible.", "🎾 Por seguridad, reservad la pista en Playtomic siempre que podáis.", "🎾 Pour la sécurité, organise la pista sur Playtomic quand c'est possible.")}
           </p>
         </div>
@@ -775,32 +775,32 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+        className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--court-deep)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-xs uppercase tracking-widest text-[var(--cream)]">{tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}</div>
-            <p className="mt-1 text-xs text-[var(--cream)]/70">
+            <div className="text-xs uppercase tracking-widest text-[var(--court-deep)]">{tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}</div>
+            <p className="mt-1 text-xs text-[var(--court-deep)]/70">
               {tr(
                 "Invited players get first dibs. The match opens to everyone 10 hours after your first invite.",
                 "Los invitados tienen prioridad. El partido se abre a todos 10 horas después de la primera invitación.",
               )}
             </p>
           </div>
-          <button onClick={onClose} className="rounded-full border border-[var(--cream)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--cream)]/70">
+          <button onClick={onClose} className="rounded-full border border-[var(--court-deep)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--court-deep)]/70">
             {tr("Close", "Cerrar", "Fermer")}
           </button>
         </div>
 
         {/* From connections */}
         <div className="mt-4">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60 mb-2">
             {tr("From your matches & friends", "De tus matches y amigos", "Depuis tes matches et amis")}
           </div>
-          {connsQ.isLoading && <div className="text-xs text-[var(--cream)]/50">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
+          {connsQ.isLoading && <div className="text-xs text-[var(--court-deep)]/50">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
           {!connsQ.isLoading && people.length === 0 && (
-            <p className="text-xs text-[var(--cream)]/50">
+            <p className="text-xs text-[var(--court-deep)]/50">
               {tr("No connections yet. Use the invite link below to share on WhatsApp.", "Aún no tienes conexiones. Usa el enlace de abajo para compartir por WhatsApp.", "Pas encore de connexions. Utilise le lien d'invitation ci-dessous pour partager sur WhatsApp.")}
             </p>
           )}
@@ -816,17 +816,17 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                   onClick={() => toggle(p.id)}
                   className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-center transition ${
                     disabled
-                      ? "border-[var(--cream)]/10 bg-black/20 opacity-60"
+                      ? "border-[var(--court-deep)]/10 bg-[var(--court-deep)]/10 opacity-60"
                       : sel
-                      ? "border-[var(--cream)] bg-[var(--cream)]/15"
-                      : "border-[var(--cream)]/15 bg-black/30 hover:border-[var(--cream)]/50"
+                      ? "border-[var(--court-deep)] bg-[var(--cream)]/15"
+                      : "border-[var(--court-deep)]/15 bg-[var(--cream-deep)] hover:border-[var(--court-deep)]/50"
                   }`}
                 >
                   <div className="h-12 w-12 overflow-hidden rounded-full bg-[var(--court-deep)]">
                     {p.photo_url && <img src={p.photo_url} alt="" className="h-full w-full object-cover" />}
                   </div>
-                  <div className="w-full truncate text-xs text-[var(--cream)]">{p.first_name ?? "—"}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50">
+                  <div className="w-full truncate text-xs text-[var(--court-deep)]">{p.first_name ?? "—"}</div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/50">
                     {p.joined ? tr("Joined", "Unido", "Inscrit") : p.invited ? tr("Invited", "Invitado", "Invité") : p.level ?? ""}
                   </div>
                 </button>
@@ -845,15 +845,15 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
         </div>
 
         {/* Invite link */}
-        <div className="mt-5 border-t border-[var(--cream)]/10 pt-4">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
+        <div className="mt-5 border-t border-[var(--court-deep)]/10 pt-4">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60 mb-2">
             {tr("Share an invite link", "Compartir enlace de invitación", "Partager un lien d'invitation")}
           </div>
           {!linkUrl ? (
             <button
               onClick={makeLink}
               disabled={busy}
-              className="w-full rounded-full border border-[var(--cream)]/60 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)] disabled:opacity-50"
+              className="w-full rounded-full border border-[var(--court-deep)]/60 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
             >
               {tr("Create WhatsApp invite link", "Crear enlace para WhatsApp", "Créer un lien d'invitation WhatsApp")}
             </button>
@@ -863,7 +863,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                 readOnly
                 value={linkUrl}
                 onFocus={(e) => e.currentTarget.select()}
-                className="w-full rounded-full border border-[var(--cream)]/20 bg-black/30 px-4 py-2 text-xs text-[var(--cream)] outline-none"
+                className="w-full rounded-full border border-[var(--court-deep)]/20 bg-[var(--cream-deep)] px-4 py-2 text-xs text-[var(--court-deep)] outline-none"
               />
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <a
@@ -876,12 +876,12 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                 </a>
                 <button
                   onClick={copyLink}
-                  className="rounded-full border border-[var(--cream)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--cream)]"
+                  className="rounded-full border border-[var(--court-deep)]/50 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
                 >
                   {tr("Copy link", "Copiar enlace", "Copier le lien")}
                 </button>
               </div>
-              <p className="mt-2 text-[10px] text-[var(--cream)]/50">
+              <p className="mt-2 text-[10px] text-[var(--court-deep)]/50">
                 {tr(
                   "Anyone who opens this link and signs in gets priority to join.",
                   "Cualquiera que abra este enlace e inicie sesión tendrá prioridad para unirse.",
@@ -893,16 +893,16 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
 
         {/* Existing invites */}
         {directInvites.length > 0 && (
-          <div className="mt-5 border-t border-[var(--cream)]/10 pt-4">
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mb-2">
+          <div className="mt-5 border-t border-[var(--court-deep)]/10 pt-4">
+            <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/60 mb-2">
               {tr("Invites sent", "Invitaciones enviadas", "Invitations envoyées")}
             </div>
             <ul className="space-y-1.5">
               {directInvites.map((inv) => (
-                <li key={inv.id} className="flex items-center justify-between rounded-lg bg-black/25 px-3 py-2">
-                  <div className="text-sm text-[var(--cream)]">
+                <li key={inv.id} className="flex items-center justify-between rounded-lg bg-[var(--court-deep)]/10 px-3 py-2">
+                  <div className="text-sm text-[var(--court-deep)]">
                     {inv.invitee?.first_name ?? "—"}
-                    <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--cream)]/50">
+                    <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--court-deep)]/50">
                       {inv.status === "accepted"
                         ? tr("Accepted", "Aceptada", "Accepté")
                         : inv.status === "declined"
@@ -917,7 +917,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                         qc.invalidateQueries({ queryKey: ["event", eventId] });
                         qc.invalidateQueries({ queryKey: ["invitable", eventId] });
                       }}
-                      className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 hover:text-red-300"
+                      className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]/50 hover:text-destructive"
                     >
                       {tr("Cancel", "Cancelar", "Annuler")}
                     </button>

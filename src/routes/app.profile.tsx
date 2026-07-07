@@ -284,7 +284,7 @@ function ProfilePage() {
 
       <FeedbackBox />
 
-      <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-400/70 hover:text-red-400">
+      <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-destructive/70 hover:text-destructive">
         {t("prof.delete")}
       </button>
       <PhotoCropDialog
@@ -419,7 +419,7 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
           type="button"
           onClick={toggle}
           disabled={busy}
-          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-amber-500" : "bg-[var(--court-deep)]/12"}`}
+          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-[var(--clay)]" : "bg-[var(--court-deep)]/12"}`}
           aria-label="Toggle holiday status"
         >
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />

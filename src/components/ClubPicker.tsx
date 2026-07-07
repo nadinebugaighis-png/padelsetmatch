@@ -47,7 +47,7 @@ export function ClubPicker({ value, onChange }: Props) {
       <div className="rounded-lg border border-foreground/20 bg-foreground/5 p-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-sm text-foreground">
-            <MapPin className="w-4 h-4 text-foreground" />
+            <MapPin className="w-4 h-4 text-primary" />
             <span className="font-medium truncate">{value.name}</span>
           </div>
           {value.address && <div className="text-xs text-foreground/60 mt-1 truncate">{value.address}</div>}
@@ -79,7 +79,7 @@ export function ClubPicker({ value, onChange }: Props) {
         className="w-full bg-foreground/5 border border-foreground/20 rounded-lg px-3 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary"
       />
       {loading && (
-        <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-foreground/60" />
+        <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-primary/60" />
       )}
       {open && results.length > 0 && (
         <div className="absolute z-50 mt-1 left-0 right-0 bg-background border border-foreground/20 rounded-lg overflow-hidden shadow-xl max-h-72 overflow-y-auto">

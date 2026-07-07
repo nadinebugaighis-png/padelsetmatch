@@ -275,7 +275,7 @@ function ChatRoom() {
                 ) : (
                   <>
                     {m.body}
-                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--court-deep)]/60" : "text-[var(--court-deep)]/50"}`}>{tr("(edited)", "(editado)", "(modifié)")}</span>}
+                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-white/60" : "text-[var(--court-deep)]/50"}`}>{tr("(edited)", "(editado)", "(modifié)")}</span>}
                   </>
                 )}
               </div>
@@ -338,7 +338,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
       <div className="mx-3 mt-2 rounded-xl border border-[var(--court-deep)]/10 bg-[var(--court-deep)]/5 px-3 py-2 text-xs text-[var(--court-deep)]/70 flex items-center gap-2">
         <div className="flex">
           {[1,2,3,4,5].map((n) => (
-            <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--court-deep)] fill-[var(--cream)]" : "text-[var(--court-deep)]/25"}`} />
+            <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--court-deep)] fill-[var(--ball)]" : "text-[var(--court-deep)]/25"}`} />
           ))}
         </div>
         <span className="flex-1">{tr("You rated this match", "Valoraste este partido", "Tu as noté ce match")}</span>
@@ -376,7 +376,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
             className="p-1"
             aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
           >
-            <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--court-deep)] fill-[var(--cream)]" : "text-[var(--court-deep)]/25"}`} />
+            <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--court-deep)] fill-[var(--ball)]" : "text-[var(--court-deep)]/25"}`} />
           </button>
         ))}
       </div>

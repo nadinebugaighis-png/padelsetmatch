@@ -77,7 +77,7 @@ function JoinSetupPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--court-deep)]">
+    <main className="min-h-screen bg-[var(--cream)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
         <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
         <h1 className="text-3xl text-[var(--court-deep)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>

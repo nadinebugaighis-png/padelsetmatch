@@ -273,12 +273,12 @@ function ProfilePage() {
 
       <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-      <div className="mt-4 surface-card p-4 flex items-start gap-3 text-sm text-[var(--cream)]/70">
-        <Lock className="w-4 h-4 mt-0.5 shrink-0" />
+      <div className="mt-3 surface-card p-3 flex items-start gap-2 text-xs text-[var(--cream)]/70">
+        <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
         <p>{t("prof.privacy")}</p>
       </div>
 
-      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-4" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-3" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
       <QASection />
 

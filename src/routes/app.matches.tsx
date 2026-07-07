@@ -46,7 +46,6 @@ function Matches() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <div className="text-display text-2xl">{m.other.first_name}</div>
-                    <IntentBadges intents={m.other.intents} looking_for={m.other.looking_for} compact />
                     {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--ball)] ball-glow" />}
                   </div>
                   <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{m.other.zone} · {label(m.other.level)}</div>

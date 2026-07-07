@@ -165,7 +165,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setLocMode(o.v)}
               className={`py-2 rounded-lg border text-sm ${
                 locMode === o.v
-                  ? "border-[var(--cream)] bg-[var(--cream)]/15 text-[var(--cream)]"
+                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
                   : "border-[var(--cream)]/15 text-[var(--cream)]/70"
               }`}
             >
@@ -218,7 +218,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setPlayersNeeded(n)}
               className={`py-2 rounded-lg border text-sm ${
                 playersNeeded === n
-                  ? "border-[var(--cream)] bg-[var(--cream)]/15 text-[var(--cream)]"
+                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
                   : "border-[var(--cream)]/15 text-[var(--cream)]/70"
               }`}
             >
@@ -251,7 +251,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               onClick={() => setGenderRule(o.v)}
               className={`py-2 rounded-lg border text-sm ${
                 genderRule === o.v
-                  ? "border-[var(--cream)] bg-[var(--cream)]/15 text-[var(--cream)]"
+                  ? "border-[var(--ball)] bg-[var(--ball)]/15 text-[var(--ball)]"
                   : "border-[var(--cream)]/15 text-[var(--cream)]/70"
               }`}
             >
@@ -335,7 +335,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
           <button
             onClick={handleSubmit}
             disabled={!canSave}
-            className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
+            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
           >
             {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : submitLabel}
           </button>

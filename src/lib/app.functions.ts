@@ -633,9 +633,10 @@ export const unlikeProfile = createServerFn({ method: "POST" })
 export const getMyMatches = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: me } = await context.supabase
-      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
-    const myId = (me as { id: string } | null)?.id;
+    const { data: meRow } = await context.supabase
+      .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
+    const me = meRow as Profile | null;
+    const myId = me?.id;
     if (!myId) return [];
     const { data: matches } = await context.supabase
       .from("matches" as never)

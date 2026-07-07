@@ -314,7 +314,7 @@ function EventsPage() {
             </button>
             <button
               onClick={() => setFiltersOpen(false)}
-              className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+              className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
             >
               {tr("Show", "Mostrar", "Afficher")} {filtered.length}
             </button>
@@ -328,7 +328,7 @@ function EventsPage() {
           onClick={() => setSelectedIdx("all")}
           className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
             selectedIdx === "all"
-              ? "border-[var(--ball)] text-[var(--ball)]"
+              ? "border-[var(--cream)] text-[var(--cream)]"
               : "border-transparent text-[var(--cream)]/70"
           }`}
         >
@@ -343,7 +343,7 @@ function EventsPage() {
               onClick={() => setSelectedIdx(i)}
               className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
                 active
-                  ? "border-[var(--ball)] text-[var(--ball)]"
+                  ? "border-[var(--cream)] text-[var(--cream)]"
                   : "border-transparent text-[var(--cream)]/70"
               }`}
             >
@@ -355,7 +355,7 @@ function EventsPage() {
         <label
           className={`relative shrink-0 rounded-full border w-11 h-11 flex items-center justify-center cursor-pointer ${
             selectedIdx === "custom"
-              ? "border-[var(--ball)] text-[var(--ball)]"
+              ? "border-[var(--cream)] text-[var(--cream)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
           aria-label={tr("Pick a date", "Elegir fecha", "Choisis une date")}

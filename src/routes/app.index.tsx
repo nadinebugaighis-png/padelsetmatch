@@ -408,7 +408,7 @@ function Discover() {
                 </button>
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 p-3 pr-9 pointer-events-none">
+              <div className="absolute bottom-0 left-0 right-0 p-3 pr-10 pointer-events-none">
                 <div className="text-display text-2xl leading-none">{c.first_name}</div>
                 <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
                 {(() => {

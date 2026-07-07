@@ -716,32 +716,18 @@ function Discover() {
 
                 {/* Floating glass action island */}
                 <div className="absolute bottom-4 left-4 right-4 flex justify-center">
-                  <div className="flex items-center gap-2 bg-[var(--court)]/70 backdrop-blur-xl border border-[var(--cream)]/10 rounded-full p-1.5 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)]">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                        if (!preview.liked) likeM.mutate(preview.id);
-                      }}
-                      disabled={likeM.isPending && !match}
-                      className="h-9 px-5 rounded-full border border-[var(--ball)] text-[var(--ball)] bg-transparent font-semibold uppercase tracking-[0.1em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:bg-[var(--ball)]/10"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }
-                      }}
-                      disabled={!match}
-                      className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center transition active:scale-90 border ${match ? "border-[var(--ball)] text-[var(--ball)] hover:bg-[var(--ball)]/10" : "border-[var(--cream)]/20 text-[var(--cream)]/30"}`}
-                      aria-label="Open chat"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                      if (!preview.liked) likeM.mutate(preview.id);
+                    }}
+                    disabled={likeM.isPending && !match}
+                    className="h-9 px-5 rounded-full border border-[var(--ball)] text-[var(--ball)] bg-transparent font-semibold uppercase tracking-[0.1em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:bg-[var(--ball)]/10 backdrop-blur-xl bg-[var(--court)]/70 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)]"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
+                  </button>
                 </div>
               </>
             );

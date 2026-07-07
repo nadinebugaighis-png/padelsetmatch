@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -716,45 +716,18 @@ function Discover() {
 
                 {/* Floating glass action island */}
                 <div className="absolute bottom-4 left-4 right-4 flex justify-center">
-                  <div className="flex items-center gap-2 bg-[var(--court)]/70 backdrop-blur-xl border border-[var(--cream)]/10 rounded-full p-2 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)]">
-                    <button
-                      type="button"
-                      disabled={likeM.isPending || unlikeM.isPending}
-                      onClick={() => {
-                        const id = preview.id;
-                        const wasLiked = preview.liked;
-                        if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
-                      }}
-                      className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition active:scale-90 border border-[var(--cream)]/5 ${preview.liked ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/5 text-[var(--cream)]/60 hover:bg-[var(--cream)]/10 hover:text-[var(--cream)]"}`}
-                      aria-label={preview.liked ? "Unlike" : "Like"}
-                    >
-                      <Heart className={`w-5 h-5 ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                        if (!preview.liked) likeM.mutate(preview.id);
-                      }}
-                      disabled={likeM.isPending && !match}
-                      className="h-11 px-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold uppercase tracking-[0.12em] text-[12px] flex items-center justify-center transition active:scale-[0.98] disabled:opacity-70 shadow-[0_4px_20px_-6px_rgba(239,209,8,0.25)] hover:bg-[var(--ball)]/90"
-                    >
-                      {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }
-                      }}
-                      disabled={!match}
-                      className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition active:scale-90 border border-[var(--cream)]/5 ${match ? "bg-[var(--cream)]/5 text-[var(--cream)] hover:bg-[var(--cream)]/10" : "bg-[var(--cream)]/5 text-[var(--cream)]/30"}`}
-                      aria-label="Open chat"
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                      if (!preview.liked) likeM.mutate(preview.id);
+                    }}
+                    disabled={likeM.isPending && !match}
+                    className="h-9 px-5 rounded-full border border-[var(--ball)] text-[var(--ball)] bg-transparent font-semibold uppercase tracking-[0.1em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:bg-[var(--ball)]/10 backdrop-blur-xl bg-[var(--court)]/70 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)]"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
+                  </button>
                 </div>
               </>
             );

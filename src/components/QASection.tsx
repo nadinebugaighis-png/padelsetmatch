@@ -118,7 +118,7 @@ export function QASection() {
                           submit.mutate({ question: q.question, category: q.category, answer: opt });
                         }}
                         disabled={submit.isPending}
-                        className={`chip ${selected ? "bg-[var(--cream)] text-[var(--court-deep)] font-bold" : ""}`}
+                        className={`chip ${selected ? "chip-ball" : ""}`}
                       >
                         {opt}
                       </button>

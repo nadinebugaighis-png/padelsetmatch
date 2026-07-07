@@ -378,7 +378,7 @@ function EventsPage() {
 
       {selectedIdx === "custom" && customDate && (
         <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ball)] text-[var(--ball)] text-[11px] uppercase tracking-widest px-3 py-1.5">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)] text-[var(--cream)] text-[11px] uppercase tracking-widest px-3 py-1.5">
             {new Date(customDate + "T00:00:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
             <button
               type="button"

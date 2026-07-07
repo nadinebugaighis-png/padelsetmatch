@@ -150,7 +150,7 @@ function ProfilePage() {
     (p.padel_style?.length ?? 0) > 0;
 
   return (
-    <main className="px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
+    <main className="px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto">
       {/* Hero: compact photo + name side-by-side, even on mobile */}
       <div className="surface-card p-4 sm:p-6">
         <div className="flex items-start gap-4 sm:gap-6">

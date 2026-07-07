@@ -421,12 +421,13 @@ function Discover() {
                   title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
-                    <g transform="rotate(-40 8 8)">
-                      <ellipse cx="8" cy="8" rx="5" ry="6.5" />
-                      <path d="M3 8h10" strokeWidth="1" />
-                      <path d="M8 2v12" strokeWidth="1" />
-                    </g>
-                    <line x1="12.5" y1="12.5" x2="20" y2="20" />
+                    <path
+                      fill="currentColor"
+                      fillRule="evenodd"
+                      stroke="none"
+                      d="M9 3 A6 6 0 1 1 9 15 A6 6 0 1 1 9 3 M9 4.5 A1.5 1.5 0 1 0 9 7.5 A1.5 1.5 0 1 0 9 4.5 M12 6 A1.5 1.5 0 1 0 12 9 A1.5 1.5 0 1 0 12 6 M9 10.5 A1.5 1.5 0 1 0 9 13.5 A1.5 1.5 0 1 0 9 10.5 M6 6 A1.5 1.5 0 1 0 6 9 A1.5 1.5 0 1 0 6 6"
+                    />
+                    <line x1="13.5" y1="13.5" x2="20" y2="20" />
                   </svg>
                 </button>
               </div>

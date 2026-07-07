@@ -406,6 +406,26 @@ function Discover() {
                 >
                   <EyeOff className="w-3.5 h-3.5" />
                 </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!c.liked) {
+                      toast.info(`Connect with ${c.first_name} first to request a match`);
+                      return;
+                    }
+                    toast.success(`Play request sent to ${c.first_name}`);
+                  }}
+                  className={`p-1.5 rounded-full bg-black/55 hover:bg-black/75 transition ${c.liked ? "text-[var(--ball)]" : "text-[var(--cream)]/35"}`}
+                  aria-label={`Request to play with ${c.first_name}`}
+                  title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                    <ellipse cx="9" cy="9" rx="6" ry="6" />
+                    <line x1="13.5" y1="13.5" x2="20" y2="20" />
+                    <path d="M5.5 6.5l7 5M6.5 5.5l5 7M4 9h10M9 4v10" strokeWidth="1" />
+                  </svg>
+                </button>
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-3 pr-10 pointer-events-none">

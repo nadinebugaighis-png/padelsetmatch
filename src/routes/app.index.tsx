@@ -389,6 +389,25 @@ function Discover() {
                 {c.score}
               </div>
 
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (c.liked) unlikeM.mutate(c.id);
+                  else likeM.mutate(c.id);
+                }}
+                className="absolute top-2 right-2 z-10 p-1 rounded-full bg-black/55 hover:bg-black/75 transition"
+                aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
+                title={c.liked ? "Connected" : "Like to connect"}
+              >
+                <Heart
+                  className={`w-3.5 h-3.5 transition ${c.liked ? "text-[var(--ball)]" : "text-[var(--cream)]/70"}`}
+                  fill={c.liked ? "currentColor" : "none"}
+                  strokeWidth={2}
+                />
+              </button>
+
+
 
               <button
                 type="button"

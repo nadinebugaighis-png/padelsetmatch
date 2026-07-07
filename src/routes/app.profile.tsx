@@ -363,7 +363,7 @@ function FeedbackBox() {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
       <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-2 font-medium">{title}</div>

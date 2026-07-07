@@ -1,52 +1,44 @@
 ## Goal
-Let anyone share a match they created. Recipients open a public link, see the match, and can sign up with **just name + padel level** to join instantly. Full profile (photo, priorities, zones, etc.) becomes optional and can be completed later.
 
-## What I'll build
+Make finding and calling a padel match nearly one-tap. Replace the current "Find matches" list and long "Call a match" form with a single 14-day × hourly grid where users mark themselves available. A match auto-creates when a slot is tapped; other players join it with one tap. Club and invites become optional follow-ups, not blockers.
 
-### 1. Public shareable match page
-- New public route `/m/$eventId` (top-level, SSR-enabled, no auth gate) that renders match details: host name, sport-level, date/time, club, address, players joined vs needed, gender/level tags.
-- Uses a public server fn (publishable-key client, narrow `TO anon` SELECT on `match_events` + host profile name/level only — no PII).
-- OG tags in `head()` from loader data so the link previews nicely on WhatsApp / iMessage.
-- CTAs:
-  - Signed in + onboarded → "Join this match" button (calls existing join fn).
-  - Signed in + not onboarded → "Add your name & level to join" (goes to lite-onboarding, redirects back).
-  - Not signed in → "Sign up to join" (goes to `/auth?redirect=/m/<id>&join=1`).
+## The grid
 
-### 2. Lite onboarding (name + level only)
-- New `/app/join-setup` (under `_authenticated` equivalent, i.e. `app.*`) that shows only:
-  - First name
-  - Padel level (beginner / intermediate / advanced / competitive)
-  - Optional: primary city (prefilled from match's city so grid isn't empty)
-- Saves a partial profile with an `onboarding_stage = 'lite'` flag. Discover grid / matches still require full onboarding, but joining a match does not.
-- After save, if there's a pending `?join=<eventId>`, auto-join and route to the match page.
+- Rows: hours 07:00 → 23:00 (17 slots).
+- Columns: today + next 13 days (horizontally scrollable, sticky day header, sticky hour column).
+- Each cell shows:
+  - Empty → subtle dot, tap = "I'm available".
+  - 1–3 players → up to 3 mini avatars + `N/4` counter; tap = join.
+  - Full (4) → filled racket-green pill; tap = open chat/detail.
+  - You're in it → highlighted ring.
+- Long-press / secondary tap on a cell you host → quick sheet to add club, invite friends, edit level/gender.
 
-### 3. Full onboarding stays optional
-- Existing multi-step onboarding becomes reachable from Profile ("Complete your profile") and from a soft banner on the app shell.
-- Guard changes: routes that need a full profile (Discover, being matched-with) check `onboarding_stage === 'complete'`; joining/creating matches only needs `lite`.
+## Tap flow (minimum clicks)
 
-### 4. Share affordance on match page
-- On `/app/events/$eventId` (host + participants view), add a **Share** button using the existing `ShareQR` component with URL `https://<origin>/m/<eventId>`. Native share sheet + QR + copy link.
+1. Tap empty slot → instant availability created (auto-defaults: mixed, your level, no club yet). Toast: "You're in. Add a club or invite friends?" with two chips.
+2. Tap a slot with players → instant join (same friction as list view today).
+3. Optional follow-ups from the toast or the slot sheet:
+   - Add club (opens existing ClubPicker inline).
+   - Invite players (opens existing invite flow).
 
-### 5. Auth flow tweak
-- `/auth` reads `redirect` search param and returns there after sign-in/sign-up (already partially supported; verify + wire for `/m/*`).
-- Default new signups to `onboarding_stage = 'lite'` (not `pending_full`) so they aren't forced into the long questionnaire.
+No mandatory form. The detailed form remains reachable via a small "Advanced" link for power users (mirrors the current MatchForm).
 
-## Data model changes
-- `profiles.onboarding_stage text default 'none'` — values: `none` | `lite` | `complete`.
-- Backfill: existing rows with photo+priorities → `complete`; others → `lite` if they have name+level else `none`.
-- New public RLS policy: `TO anon SELECT` on `match_events` for open/full non-cancelled events (safe columns only via the server fn's column projection).
-- New public RLS policy: `TO anon SELECT` on `profiles` for `id, first_name, level` **only** — enforced by column projection in the server fn, plus a `SECURITY DEFINER` function `public_match_view(eventId)` that returns a whitelisted shape. Simpler + safer than opening the whole table.
+## Icon change
 
-## Technical section
-- Server fn `getPublicMatch(eventId)` in `src/lib/match-events.functions.ts` — no `requireSupabaseAuth`, uses server publishable client, calls `public_match_view` RPC.
-- Server fn `saveLiteProfile({ first_name, level, city? })` with `requireSupabaseAuth`.
-- Update `joinMatchEvent` to accept lite profiles (currently likely requires full profile — verify and relax).
-- `src/routes/m.$eventId.tsx` (public) — loader → `getPublicMatch`, `head()` sets title/desc/OG/twitter from loader data, `errorComponent` + `notFoundComponent` required.
-- `src/routes/app.join-setup.tsx` — lite form.
-- `/auth` handles `redirect` param on all success paths (email, Google, Apple).
+Swap the `Play`-style icons on home banners / CTAs for a padel racket icon. Lucide has no racket, so use a small inline SVG component `RacketIcon` (oval head with strings + short handle) and replace usages in banners on `src/routes/app.index.tsx`, `src/routes/index.tsx`, and the "call a match" CTA.
 
-## Out of scope (ask if you want them)
-- Guest RSVP without account (would need spam controls).
-- SMS/email invites.
+## Scope of file changes
 
-Approve and I'll ship it.
+- `src/routes/app.events.index.tsx` — rewrite as `ScheduleGrid` (keep filters collapsed, keep worldwide/my-areas toggle, keep i18n).
+- `src/components/RacketIcon.tsx` — new inline SVG icon.
+- `src/routes/app.index.tsx`, `src/routes/index.tsx` — replace play icons with `RacketIcon` in the hero/CTA banners.
+- `src/lib/match-events.functions.ts` — add `quickCreateMatchEvent({ starts_at })` that inserts a minimal event (default level range, mixed, no club) and returns id. Keeps existing `createMatchEvent` for the advanced form.
+- Keep `app.events.new.tsx` reachable but downgrade its entry point to "Advanced" from the grid header.
+
+## Technical notes
+
+- Grid built as CSS grid with `sticky` first column/header row; mobile-first, 56px cell height, horizontal scroll snap per day column.
+- Uses existing `listOpenEvents` output — bucket events by `(day, hourFloor)` into a Map for O(1) cell lookup.
+- Quick-create hits `quickCreateMatchEvent` then optimistically inserts into the query cache and opens a lightweight bottom sheet with "Add club" / "Invite" / "Done".
+- Follow-up sheet reuses `ClubPicker` and the existing invite server fn — no new backend work beyond the quick-create wrapper.
+- No DB schema change; `club_name` becomes nullable in UI ("Location TBD" placeholder). If DB requires non-null, quick-create writes `"TBD"` and the detail page prompts host to set it.

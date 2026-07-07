@@ -690,7 +690,7 @@ function Discover() {
                       <p className="text-xs text-[var(--cream)]/60 px-1">{preview.reasons[0]}</p>
                     )}
 
-                    <div className="flex items-center justify-center gap-4 pt-2">
+                    <div className="flex items-center justify-center gap-4 pt-2 pb-6">
                       <button
                         type="button"
                         onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
@@ -708,6 +708,9 @@ function Discover() {
                         <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
                       </button>
                     </div>
+                    <p className="text-center text-[10px] text-[var(--cream)]/40 leading-snug pb-24">
+                      {t("disc.privacyNote")}
+                    </p>
                   </div>
                 </div>
 

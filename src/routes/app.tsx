@@ -11,7 +11,6 @@ import { RacketIcon } from "@/components/RacketIcon";
 import { useT, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({
-  ssr: false,
   beforeLoad: async () => {
     // getSession recovers from localStorage and refreshes the token if expired.
     // If the stored refresh token is stale (e.g. right after signup on a device

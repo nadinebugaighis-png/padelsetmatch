@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin")({
-  ssr: false,
   beforeLoad: async () => {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });

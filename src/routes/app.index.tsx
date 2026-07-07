@@ -270,7 +270,7 @@ function Discover() {
               setWorld(next);
               setWorldM.mutate(next);
             }}
-            className={`chip ${world ? "chip-ball" : ""}`}
+            className={`chip ${world ? "chip-cream" : ""}`}
           >
             {world ? t("disc.world.on") : t("disc.world.off")}
           </button>

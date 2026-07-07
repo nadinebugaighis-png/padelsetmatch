@@ -339,7 +339,7 @@ function Discover() {
             <button
               type="button"
               onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
-              className="text-xs text-[var(--ball)] underline"
+              className="text-xs text-[var(--cream)] underline"
             >
               Clear filters
             </button>
@@ -793,9 +793,9 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
   return (
     <Link
       to="/app/profile"
-      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--ball)] bg-[var(--ball)]/10" : "border-[var(--cream)]/15"}`}
+      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--cream)] bg-[var(--cream)]/10" : "border-[var(--cream)]/15"}`}
     >
-      <div className="w-9 h-9 rounded-full bg-[var(--ball)]/20 flex items-center justify-center text-lg">📸</div>
+      <div className="w-9 h-9 rounded-full bg-[var(--cream)]/20 flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-[var(--cream)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}

@@ -244,7 +244,7 @@ function EventsPage() {
                   onClick={() => setGenderFilter(v)}
                   className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
                     genderFilter === v
-                      ? "border-[var(--cream)] text-[var(--cream)]"
+                      ? "border-[var(--ball)] text-[var(--ball)]"
                       : "border-[var(--cream)]/25 text-[var(--cream)]/80"
                   }`}
                 >
@@ -267,7 +267,7 @@ function EventsPage() {
                   onClick={() => setLevelFilter(v)}
                   className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
                     levelFilter === v
-                      ? "border-[var(--cream)] text-[var(--cream)]"
+                      ? "border-[var(--ball)] text-[var(--ball)]"
                       : "border-[var(--cream)]/25 text-[var(--cream)]/80"
                   }`}
                 >
@@ -328,7 +328,7 @@ function EventsPage() {
           onClick={() => setSelectedIdx("all")}
           className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
             selectedIdx === "all"
-              ? "border-[var(--cream)] text-[var(--cream)]"
+              ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-transparent text-[var(--cream)]/70"
           }`}
         >
@@ -343,7 +343,7 @@ function EventsPage() {
               onClick={() => setSelectedIdx(i)}
               className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
                 active
-                  ? "border-[var(--cream)] text-[var(--cream)]"
+                  ? "border-[var(--ball)] text-[var(--ball)]"
                   : "border-transparent text-[var(--cream)]/70"
               }`}
             >

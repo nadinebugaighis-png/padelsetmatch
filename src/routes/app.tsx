@@ -4,8 +4,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { ArrowLeft, LayoutGrid, MessageCircle, User } from "lucide-react";
+import { listMyPendingInvites } from "@/lib/match-events.functions";
+import { ArrowLeft, LayoutGrid, MessageCircle, User, Mail, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { RacketIcon } from "@/components/RacketIcon";
+import { useTr } from "@/lib/i18n";
 
 
 import { useT, LangSwitch } from "@/lib/i18n";

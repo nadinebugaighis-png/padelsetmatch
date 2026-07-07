@@ -177,6 +177,10 @@ function EventsPage() {
     const key = slotKey(date, hour);
     const existing = buckets.get(key) ?? [];
     if (existing.length === 0) {
+      if (searchLower) {
+        toast.info(tr("Clear search to create a match here.", "Borra la búsqueda para crear aquí.", "Effacez la recherche pour créer ici."));
+        return;
+      }
       await quickCreateAt(startsAt);
       return;
     }

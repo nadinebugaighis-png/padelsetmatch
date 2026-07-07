@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { MapPin, Settings2 } from "lucide-react";
+import { MapPin, Settings2, Search, X } from "lucide-react";
 import { RacketIcon } from "@/components/RacketIcon";
 
 
@@ -50,7 +50,8 @@ type EventLite = {
   status: string;
   club_name: string;
   gender_rule: "mixed" | "men_only" | "women_only";
-  participants?: Array<{ profiles?: { first_name?: string; photo_url?: string | null } | null }>;
+  host?: { first_name?: string } | null;
+  participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
 };
 
 function EventsPage() {
@@ -65,6 +66,7 @@ function EventsPage() {
   const getProfile = useServerFn(getMyProfile);
 
   const [worldwide, setWorldwide] = useState(false);
+  const [search, setSearch] = useState("");
   const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({
@@ -89,10 +91,24 @@ function EventsPage() {
     [today.getTime()],
   );
 
-  // Bucket events by (day-hour).
+  const searchLower = search.trim().toLowerCase();
+
+  function eventMatchesName(e: EventLite) {
+    if (!searchLower) return true;
+    const hostName = e.host?.first_name ?? "";
+    if (hostName.toLowerCase().includes(searchLower)) return true;
+    return e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower)) ?? false;
+  }
+
+  const visibleEvents = useMemo(
+    () => ((eventsQ.data?.events ?? []) as EventLite[]).filter(eventMatchesName),
+    [eventsQ.data, searchLower],
+  );
+
+  // Bucket events by (day-hour). When searching, only show matching events.
   const buckets = useMemo(() => {
     const map = new Map<string, EventLite[]>();
-    for (const e of (eventsQ.data?.events ?? []) as EventLite[]) {
+    for (const e of visibleEvents) {
       const d = new Date(e.starts_at);
       const key = slotKey(startOfDay(d), d.getHours());
       const arr = map.get(key) ?? [];
@@ -100,7 +116,7 @@ function EventsPage() {
       map.set(key, arr);
     }
     return map;
-  }, [eventsQ.data]);
+  }, [visibleEvents]);
 
   const [pending, setPending] = useState<string | null>(null);
   const [sheet, setSheet] = useState<{ eventId: string; startsAt: string } | null>(null);
@@ -161,6 +177,10 @@ function EventsPage() {
     const key = slotKey(date, hour);
     const existing = buckets.get(key) ?? [];
     if (existing.length === 0) {
+      if (searchLower) {
+        toast.info(tr("Clear search to create a match here.", "Borra la búsqueda para crear aquí.", "Effacez la recherche pour créer ici."));
+        return;
+      }
       await quickCreateAt(startsAt);
       return;
     }
@@ -199,6 +219,30 @@ function EventsPage() {
           <MapPin className="w-3 h-3" />
           {worldwide ? tr("World", "Mundo", "Monde") : tr("My areas", "Mis zonas", "Mes zones")}
         </button>
+      </div>
+
+      {/* Search by name */}
+      <div className="relative mb-4">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--cream)]/50 pointer-events-none">
+          <Search className="w-4 h-4" />
+        </div>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
+          className="w-full rounded-full bg-[var(--cream)]/8 border border-[var(--cream)]/15 pl-9 pr-9 py-2 text-sm text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--ball)]/60 focus:ring-1 focus:ring-[var(--ball)]/30"
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--cream)]/50 hover:text-[var(--cream)]"
+            aria-label={tr("Clear search", "Limpiar búsqueda", "Effacer la recherche")}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Legend */}
@@ -288,6 +332,14 @@ function EventsPage() {
           eventId={sheet.eventId}
           startsAt={sheet.startsAt}
           onClose={() => setSheet(null)}
+        />
+      )}
+      {/* Search results list */}
+      {searchLower && (
+        <SearchResults
+          events={visibleEvents}
+          search={search}
+          onOpen={(id: string) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
         />
       )}
     </div>
@@ -494,6 +546,82 @@ function QuickSheet({
           {tr("Open match", "Ir al partido", "Voir le match")} →
         </button>
       </div>
+    </div>
+  );
+}
+
+function SearchResults({
+  events,
+  search,
+  onOpen,
+}: {
+  events: EventLite[];
+  search: string;
+  onOpen: (id: string) => void;
+}) {
+  const tr = useTr();
+  const grouped = useMemo(() => {
+    const map = new Map<string, EventLite[]>();
+    for (const e of events) {
+      const day = startOfDay(new Date(e.starts_at)).toISOString();
+      const arr = map.get(day) ?? [];
+      arr.push(e);
+      map.set(day, arr);
+    }
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [events]);
+
+  const searchedName = search.trim();
+
+  return (
+    <div className="mt-6 space-y-4">
+      <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">
+        {events.length}{" "}
+        {events.length === 1
+          ? tr("match", "partido", "match")
+          : tr("matches", "partidos", "matchs")}{" "}
+        {tr("for", "para", "pour")} “{searchedName}”
+      </div>
+      {grouped.map(([dayIso, list]) => {
+        const day = new Date(dayIso);
+        const dayLabel = day.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
+        return (
+          <div key={dayIso}>
+            <div className="text-[11px] uppercase tracking-widest text-[var(--ball)] mb-2">{dayLabel}</div>
+            <ul className="space-y-2">
+              {list.map((e) => {
+                const start = new Date(e.starts_at);
+                const time = start.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false });
+                const isHost = e.host?.first_name?.toLowerCase().includes(searchedName.toLowerCase());
+                return (
+                  <li key={e.id}>
+                    <button
+                      type="button"
+                      onClick={() => onOpen(e.id)}
+                      className="w-full text-left rounded-xl border border-[var(--cream)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3 hover:bg-[var(--cream)]/[0.06]"
+                    >
+                      <div className="flex flex-col items-center justify-center w-12 shrink-0">
+                        <span className="text-display text-lg leading-none text-[var(--cream)]">{time}</span>
+                        <span className="text-[9px] uppercase tracking-widest text-[var(--cream)]/50">{e.filled}/4</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm text-[var(--cream)] font-semibold truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</div>
+                        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mt-0.5">
+                          {e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : e.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
+                          {" · "}
+                          {isHost ? tr("Host", "Anfitrión", "Hôte") : tr("Player", "Jugador", "Joueur")}
+                          {e.iAmHost && ` · ${tr("You", "Tú", "Toi")}`}
+                        </div>
+                      </div>
+                      <span className="text-[var(--cream)]/50 text-lg">→</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
     </div>
   );
 }

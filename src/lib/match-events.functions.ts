@@ -200,7 +200,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const myKeywords = Array.from(keywords);
 
     const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
-    const baseSelect = "*, participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))";
+    const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))";
 
     // Always include events the user is involved in (host, participant, or invited),
     // regardless of city filter — otherwise a match joined via share link outside

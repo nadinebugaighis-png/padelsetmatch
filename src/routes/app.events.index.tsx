@@ -221,6 +221,30 @@ function EventsPage() {
         </button>
       </div>
 
+      {/* Search by name */}
+      <div className="relative mb-4">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--cream)]/50 pointer-events-none">
+          <Search className="w-4 h-4" />
+        </div>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
+          className="w-full rounded-full bg-[var(--cream)]/8 border border-[var(--cream)]/15 pl-9 pr-9 py-2 text-sm text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--ball)]/60 focus:ring-1 focus:ring-[var(--ball)]/30"
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--cream)]/50 hover:text-[var(--cream)]"
+            aria-label={tr("Clear search", "Limpiar búsqueda", "Effacer la recherche")}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
         <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />

@@ -40,7 +40,7 @@ function Matches() {
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-[var(--cream)]/10 shrink-0 relative">
                   {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
                   {m.unread > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--ball)] text-[var(--cream)] text-[11px] font-bold flex items-center justify-center ball-glow">{m.unread > 9 ? "9+" : m.unread}</span>
+                    <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold flex items-center justify-center ball-glow">{m.unread > 9 ? "9+" : m.unread}</span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">

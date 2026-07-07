@@ -76,7 +76,7 @@ function Landing() {
             {t("land.lede")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--cream)] font-semibold px-6 py-3 hover:opacity-90">
+            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
               {t("land.cta")}
             </Link>
             <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
@@ -99,7 +99,7 @@ function Landing() {
 
           <button
             onClick={install.openModal}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--cream)] px-5 py-2.5 text-sm font-bold text-[var(--cream)] hover:bg-[var(--ball)] hover:text-[var(--cream)] hover:border-[var(--ball)] transition"
+            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--cream)] px-5 py-2.5 text-sm font-bold text-[var(--cream)] hover:bg-[var(--ball)] hover:text-[var(--court-deep)] hover:border-[var(--ball)] transition"
           >
             <Smartphone className="w-4 h-4" />
             Add to your home screen
@@ -126,7 +126,7 @@ function Landing() {
             <h2 className="text-display text-4xl md:text-5xl">{t("land.preview.title")}</h2>
             <p className="mt-2 text-[var(--cream)]/70 max-w-lg">{t("land.preview.sub")}</p>
           </div>
-          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--cream)] font-semibold px-5 py-2.5 hover:opacity-90">
+          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
             {t("land.preview.cta")}
           </Link>
         </div>
@@ -140,13 +140,13 @@ function Landing() {
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--ball)] text-[var(--cream)] rounded-full px-2 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--ball)] text-[var(--court-deep)] rounded-full px-2 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--cream)]">
                 <div className="text-display text-xl">{p.name}</div>
                 <div className="text-xs opacity-80">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
-                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ball)] text-[var(--cream)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
+                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
               </div>
             </div>
           ))}

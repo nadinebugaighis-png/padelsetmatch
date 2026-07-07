@@ -415,7 +415,7 @@ function RowCells({
 function slotColor(filled: number, mine: boolean) {
   if (filled >= 4) {
     return {
-      wrap: "bg-[var(--ball)] text-[var(--cream)]",
+      wrap: "bg-[var(--ball)] text-[var(--court-deep)]",
       pip: "bg-[var(--court-deep)]",
       empty: "bg-[var(--court-deep)]/30",
     };
@@ -535,7 +535,7 @@ function QuickSheet({
         </div>
         <button
           onClick={onClose}
-          className="w-full rounded-full bg-[var(--ball)] text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+          className="w-full rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold py-2.5"
         >
           {tr("Done", "Listo", "Terminé")}
         </button>
@@ -702,7 +702,7 @@ function SlotSheet({
                     type="button"
                     disabled={isPending}
                     onClick={() => onJoin(e.id)}
-                    className="shrink-0 rounded-full bg-[var(--ball)] text-[var(--cream)] text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
+                    className="shrink-0 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
                   >
                     {isPending
                       ? tr("Joining…", "Uniéndose…", "…")

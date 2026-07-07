@@ -89,7 +89,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
           <Smartphone className="w-12 h-12 text-[var(--cream)] mx-auto mb-4" />
           <h3 className="text-display text-2xl text-[var(--cream)]">{tr("Already installed!", "¡Ya está instalada!", "Déjà installée !")}</h3>
           <p className="mt-2 text-[var(--cream)]/70">{tr("Open PadelMatch from your home screen for the full app experience.", "Abre PadelMatch desde tu pantalla de inicio para la experiencia completa.", "Ouvre PadelMatch depuis ton écran d'accueil pour l'expérience complète.")}</p>
-          <button onClick={onClose} className="mt-6 inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--cream)] font-semibold px-6 py-3 hover:opacity-90">{tr("Close", "Cerrar", "Fermer")}</button>
+          <button onClick={onClose} className="mt-6 inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">{tr("Close", "Cerrar", "Fermer")}</button>
         </div>
       </div>
     );
@@ -115,7 +115,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
                 <p className="text-sm font-bold text-[var(--cream)]">{tr("First open this page in Safari", "Primero abre esta página en Safari", "Ouvre d'abord cette page dans Safari")}</p>
                 <p className="mt-1 text-xs text-[var(--cream)]/65">{tr("iPhone only shows “Add to Home Screen” inside Safari.", "En iPhone, “Añadir a la pantalla de inicio” solo aparece dentro de Safari.", "Sur iPhone, « Sur l'écran d'accueil » n'apparaît que dans Safari.")}</p>
                 <div className="mt-3 flex gap-2">
-                  <button onClick={copyLink} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[var(--ball)] px-4 py-2 text-sm font-bold text-[var(--cream)]">
+                  <button onClick={copyLink} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[var(--ball)] px-4 py-2 text-sm font-bold text-[var(--court-deep)]">
                     {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                     {copied ? tr("Copied", "Copiado", "Copié") : tr("Copy link", "Copiar enlace", "Copier le lien")}
                   </button>
@@ -143,7 +143,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
 
             <div className="rounded-2xl border border-[var(--cream)]/10 p-4">
               <div className="flex items-center gap-3">
-                <ArrowUpFromLine className="h-9 w-9 rounded-full bg-[var(--cream)] p-2 text-[var(--cream)]" />
+                <ArrowUpFromLine className="h-9 w-9 rounded-full bg-[var(--cream)] p-2 text-[var(--court-deep)]" />
                 <div>
                   <p className="font-semibold text-[var(--cream)]">{tr("Look for this icon at the bottom of Safari", "Busca este icono en la parte inferior de Safari", "Cherche cette icône en bas de Safari")}</p>
                   <p className="text-xs text-[var(--cream)]/60">{tr("Then choose “Add to Home Screen”.", "Después elige “Añadir a la pantalla de inicio”.", "Puis choisis « Sur l'écran d'accueil ».")}</p>
@@ -159,7 +159,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
             <p className="text-lg font-semibold text-[var(--cream)] mb-6">{tr("One tap and you're set", "Un toque y listo", "Un appui et c'est fait")}</p>
             <button
               onClick={handleNativeInstall}
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--ball)] text-[var(--cream)] font-bold px-8 py-4 text-lg hover:opacity-90 shadow-lg"
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold px-8 py-4 text-lg hover:opacity-90 shadow-lg"
             >
               <Download className="w-5 h-5" />
               {tr("Add app now", "Añadir app ahora", "Ajouter l'app maintenant")}
@@ -196,7 +196,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
             <p className="text-lg font-semibold text-[var(--cream)] mb-2">{tr("Open it from your phone", "Ábrela desde tu móvil", "Ouvre-la depuis ton téléphone")}</p>
             <p className="text-sm text-[var(--cream)]/70 mb-6">{tr("Scan or share the link, then add it to the home screen from the phone browser.", "Escanea o comparte el enlace y añádela a la pantalla de inicio desde el navegador del móvil.", "Scanne ou partage le lien, puis ajoute-le à l'écran d'accueil depuis le navigateur du téléphone.")}</p>
             <div className="mb-5 flex justify-center gap-2">
-              <button onClick={copyLink} className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/25 px-4 py-2 text-sm text-[var(--cream)] hover:bg-[var(--ball)] hover:text-[var(--cream)] hover:border-[var(--ball)]">
+              <button onClick={copyLink} className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/25 px-4 py-2 text-sm text-[var(--cream)] hover:bg-[var(--ball)] hover:text-[var(--court-deep)] hover:border-[var(--ball)]">
                 {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {copied ? tr("Copied", "Copiado", "Copié") : tr("Copy link", "Copiar enlace", "Copier le lien")}
               </button>
@@ -205,7 +205,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
                 {tr("Share", "Compartir", "Partager")}
               </button>
             </div>
-            <button onClick={onClose} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--cream)] font-semibold px-6 py-3 hover:opacity-90">{tr("Got it", "Entendido", "Compris")}</button>
+            <button onClick={onClose} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">{tr("Got it", "Entendido", "Compris")}</button>
           </div>
         )}
       </div>

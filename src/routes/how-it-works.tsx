@@ -28,7 +28,7 @@ function StepCard({
     <div className="surface-card p-6 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--cream)]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="flex items-center gap-3 mb-3">
-        <span className="w-8 h-8 rounded-full bg-[var(--cream)] text-[var(--cream)] text-xs font-bold flex items-center justify-center">
+        <span className="w-8 h-8 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-xs font-bold flex items-center justify-center">
           {number}
         </span>
       </div>
@@ -217,7 +217,7 @@ function HowItWorksPage() {
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined }}
-              className="inline-flex items-center rounded-full bg-[var(--cream)] text-[var(--cream)] font-semibold px-8 py-3 hover:opacity-90"
+              className="inline-flex items-center rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-semibold px-8 py-3 hover:opacity-90"
             >
               {tr("Join free", "Únete gratis", "Inscription gratuite")}
             </Link>

@@ -55,7 +55,7 @@ function AppErrorFallback({ reset }: { reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => { reset(); window.location.reload(); }}
-            className="rounded-full bg-[var(--cream)] text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+            className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
             {t("shell.err.retry")}
           </button>
@@ -261,7 +261,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--cream)] text-[var(--cream)] text-[10px] font-bold flex items-center justify-center ball-glow">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold flex items-center justify-center ball-glow">{badge > 9 ? "9+" : badge}</span>
         )}
         {isHighlight && (
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--cream)] ball-glow animate-ping" />

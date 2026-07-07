@@ -1069,7 +1069,7 @@ export function LangSwitch({ className = "" }: { className?: string }) {
       key={l}
       type="button"
       onClick={() => setLang(l)}
-      className={`px-2.5 py-1 ${lang === l ? "bg-[var(--ball)] text-[var(--cream)] font-bold" : "text-[var(--ball)]/70 hover:text-[var(--ball)]"}`}
+      className={`px-2.5 py-1 ${lang === l ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--ball)]/70 hover:text-[var(--ball)]"}`}
       aria-pressed={lang === l}
     >{label}</button>
   );

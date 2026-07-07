@@ -108,7 +108,7 @@ function JoinSetupPage() {
                   onClick={() => setLevel(lvl)}
                   className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
                     level === lvl
-                      ? "bg-[var(--ball)] text-[var(--cream)] border-[var(--ball)]"
+                      ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]"
                       : "border-[var(--cream)]/20 text-[var(--cream)]/80"
                   }`}
                 >
@@ -132,7 +132,7 @@ function JoinSetupPage() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--cream)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50"
+            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50"
           >
             {busy ? tr("Saving…", "Guardando…", "Enregistrement…") : join ? tr("Save & join the match", "Guardar y unirme al partido", "Enregistrer et rejoindre le match") : tr("Save & continue", "Guardar y continuar", "Enregistrer et continuer")}
           </button>

@@ -116,6 +116,59 @@ export const createMatchEvent = createServerFn({ method: "POST" })
     return { id: created.id };
   });
 
+// ---------- Quick create (one-tap from schedule grid) ----------
+export const quickCreateMatchEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { starts_at: string }) =>
+    z.object({ starts_at: z.string().min(1) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id, level, locations")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!profile) throw new Error("Please add your name and padel level first.");
+    if (!profile.level) throw new Error("Please add your padel level first.");
+    const level = profile.level as (typeof PADEL_LEVELS)[number];
+    // Derive a default city from the user's first saved location if any.
+    let city: string | null = null;
+    const rawLocs = (profile.locations ?? []).filter(
+      (l): l is string => typeof l === "string" && l.length > 0,
+    );
+    if (rawLocs[0]) {
+      const parts = rawLocs[0].split("|").map((s) => s.trim()).filter(Boolean);
+      city = parts[parts.length - 1] || parts[0] || null;
+    }
+    const { data: created, error } = await supabase
+      .from("match_events")
+      .insert({
+        starts_at: data.starts_at,
+        club_name: "TBD",
+        club_address: null,
+        club_place_id: null,
+        club_lat: null,
+        club_lng: null,
+        city,
+        country: null,
+        level_min: level,
+        level_max: level,
+        gender_rule: "mixed",
+        extra_confirmed: 0,
+        note: null,
+        playtomic_link: null,
+        court_booked: false,
+        host_profile_id: profile.id,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { id: created.id };
+  });
+
+
+
 // ---------- List open events ----------
 export const listOpenEvents = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -4,7 +4,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { ArrowLeft, LayoutGrid, MessageCircle, Trophy, User } from "lucide-react";
+import { ArrowLeft, LayoutGrid, MessageCircle, User } from "lucide-react";
+import { RacketIcon } from "@/components/RacketIcon";
+
 
 import { useT, LangSwitch } from "@/lib/i18n";
 
@@ -174,7 +176,7 @@ function AuthShell() {
         >
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
             <NavTab to="/app" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path === "/app" || path === "/app/"} />
-            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<Trophy className="w-5 h-5" />} active={path.startsWith("/app/events")} />
+            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<RacketIcon className="w-5 h-5" />} active={path.startsWith("/app/events")} />
 
             <NavTab to="/app/matches" label={t("shell.tab.matches")} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />

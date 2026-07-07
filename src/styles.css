@@ -101,6 +101,10 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  *::selection {
+    background: var(--ball);
+    color: var(--cream);
+  }
 
   html, body {
     background: var(--gradient-dusk);
@@ -133,6 +137,7 @@
     line-height: 0.95;
   }
 }
+
 
 @utility text-display { font-family: var(--font-display); letter-spacing: 0.02em; }
 @utility surface-card {

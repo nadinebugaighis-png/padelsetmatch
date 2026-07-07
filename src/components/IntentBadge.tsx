@@ -44,7 +44,7 @@ export function IntentBadges({
         return (
           <span
             key={intent}
-            className={`inline-flex items-center rounded-full border border-foreground/20 bg-foreground/5 text-foreground ${compact ? "text-[10px] px-1.5 py-0.5" : "text-[11px] px-2 py-0.5"} font-medium`}
+            className={`inline-flex items-center rounded-full border border-[var(--cream)]/20 bg-[var(--cream)]/10 text-[var(--cream)] ${compact ? "text-[10px] px-1.5 py-0.5" : "text-[11px] px-2 py-0.5"} font-medium`}
           >
             {label}
           </span>

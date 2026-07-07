@@ -92,18 +92,18 @@ function AuthPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 bg-[var(--cream)]">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md surface-card p-8">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--court)]/60 hover:text-[var(--court-deep)]">{t("auth.back")}</Link>
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("auth.back")}</Link>
           <LangSwitch />
         </div>
-        <h1 className="text-display text-5xl mt-3 text-[var(--court-deep)]">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
-        <p className="text-sm text-[var(--court)]/70 mt-2">
+        <h1 className="text-display text-5xl mt-3">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
+        <p className="text-sm text-[var(--cream)]/70 mt-2">
           {mode === "signup" ? t("auth.sub.signup") : t("auth.sub.signin")}
         </p>
 
-        <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6 bg-[var(--court)] text-white hover:bg-[var(--court-deep)]">
+        <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
            {t("auth.google")}
         </Button>
         <Button
@@ -121,18 +121,18 @@ function AuthPage() {
            {t("auth.apple")}
         </Button>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-[var(--court)]/40 uppercase tracking-widest">
-          <div className="flex-1 h-px bg-[var(--court)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--court)]/15" />
+        <div className="my-5 flex items-center gap-3 text-xs text-[var(--cream)]/40 uppercase tracking-widest">
+          <div className="flex-1 h-px bg-[var(--cream)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--cream)]/15" />
         </div>
 
         <form onSubmit={submit} className="space-y-3">
           <Input type="email" required placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} />
           <Input type="password" required minLength={8} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Button type="submit" disabled={loading} className="w-full bg-[var(--clay)] text-white hover:bg-[var(--clay-deep)] font-semibold uppercase tracking-widest">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
+          <Button type="submit" disabled={loading} className="w-full bg-[var(--ball)] text-[var(--court-deep)] hover:bg-[var(--ball)]/90 font-semibold uppercase tracking-widest">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
         </form>
 
         <div className="mt-4 flex items-center justify-between text-sm">
-          <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="text-[var(--court)]/60 hover:text-[var(--clay)]">
+          <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="text-[var(--cream)]/60 hover:text-[var(--cream)]">
             {mode === "signup" ? t("auth.toggleToSignin") : t("auth.toggleToSignup")}
           </button>
           {mode === "signin" && (
@@ -146,7 +146,7 @@ function AuthPage() {
                 if (error) toast.error(error.message);
                 else toast.success(t("auth.resetSent"));
               }}
-              className="text-[var(--court)]/60 hover:text-[var(--clay)]"
+              className="text-[var(--cream)]/60 hover:text-[var(--cream)]"
             >
               {t("auth.forgot")}
             </button>

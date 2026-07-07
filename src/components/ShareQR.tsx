@@ -41,7 +41,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-4 py-2 text-sm text-foreground hover:bg-foreground/5"
+        className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)]/20 px-4 py-2 text-sm text-[var(--cream)] hover:bg-[var(--cream)]/10"
       >
         <Share2 className="w-4 h-4" />
         {tr("Share", "Compartir", "Partager")}
@@ -54,19 +54,19 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
           <div className="relative surface-card p-6 max-w-xs w-full text-center">
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-foreground/50 hover:text-foreground"
+              className="absolute top-3 right-3 text-[var(--cream)]/50 hover:text-[var(--cream)]"
               aria-label={tr("Close", "Cerrar", "Fermer")}
             >
               <X className="w-4 h-4" />
             </button>
             <p className="text-display text-lg tracking-wider">{tr("Share PadelMatch", "Compartir PadelMatch", "Partager PadelMatch")}</p>
-            <p className="text-xs text-foreground/60 mt-1">{tr("Scan to open", "Escanea para abrir", "Scanne pour ouvrir")}</p>
+            <p className="text-xs text-[var(--cream)]/60 mt-1">{tr("Scan to open", "Escanea para abrir", "Scanne pour ouvrir")}</p>
 
 
             {dataUrl ? (
               <img src={dataUrl} alt={tr("QR code", "Código QR", "Code QR")} className="mx-auto mt-4 rounded-lg" width={280} height={280} />
             ) : (
-              <div className="mx-auto mt-4 w-[280px] h-[280px] rounded-lg bg-foreground/5 animate-pulse" />
+              <div className="mx-auto mt-4 w-[280px] h-[280px] rounded-lg bg-[var(--cream)]/10 animate-pulse" />
             )}
 
             <div className="mt-4 flex items-center justify-center gap-2">
@@ -80,7 +80,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
               {typeof navigator.share === "function" && (
                 <button
                   onClick={nativeShare}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-foreground/20 px-4 py-2 text-xs text-foreground hover:bg-foreground/5"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[var(--cream)]/20 px-4 py-2 text-xs text-[var(--cream)] hover:bg-[var(--cream)]/10"
                 >
                   <Share2 className="w-3.5 h-3.5" />
                   {tr("Share", "Compartir", "Partager")}

@@ -73,13 +73,13 @@ export function QASection() {
   return (
     <section className="mt-6 surface-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-5 h-5 text-primary" />
+        <Sparkles className="w-5 h-5 text-[var(--cream)]" />
         <h2 className="text-display text-2xl">{t("qa.title")}</h2>
       </div>
-      <p className="mt-2 text-sm text-foreground/70">{t("qa.sub")}</p>
-      <p className="mt-2 text-[11px] text-foreground/50">{t("qa.howItWorks")}</p>
+      <p className="mt-2 text-sm text-[var(--cream)]/70">{t("qa.sub")}</p>
+      <p className="mt-2 text-[11px] text-[var(--cream)]/50">{t("qa.howItWorks")}</p>
 
-      <div className="mt-3 text-xs text-foreground/70">
+      <div className="mt-3 text-xs text-[var(--cream)]/70">
         <span>{t("qa.answeredCount", { n: String(answered.length) })}</span>
       </div>
 
@@ -101,9 +101,9 @@ export function QASection() {
         {queue.map((q) => {
           const value = draft[q.question] ?? "";
           return (
-            <div key={q.question} className="rounded-xl border border-foreground/10 p-4">
-              <div className="text-[10px] uppercase tracking-widest text-foreground/50">{q.category}</div>
-              <div className="text-sm mt-1 text-foreground">{q.question}</div>
+            <div key={q.question} className="rounded-xl border border-[var(--cream)]/10 p-4">
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50">{q.category}</div>
+              <div className="text-sm mt-1 text-[var(--cream)]">{q.question}</div>
 
               {q.options && q.options.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -146,16 +146,16 @@ export function QASection() {
           <h3 className="text-display text-base tracking-wider mb-2">{t("qa.yourAnswers")}</h3>
           <div className="space-y-2">
             {answered.map((a) => (
-              <div key={a.id} className="rounded-lg border border-foreground/10 p-3">
+              <div key={a.id} className="rounded-lg border border-[var(--cream)]/10 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="text-[10px] uppercase tracking-widest text-foreground/50">{a.category}</div>
-                    <div className="text-sm text-foreground/90">{a.question}</div>
-                    <div className="text-sm mt-1 text-foreground">{a.answer}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50">{a.category}</div>
+                    <div className="text-sm text-[var(--cream)]/90">{a.question}</div>
+                    <div className="text-sm mt-1 text-[var(--cream)]">{a.answer}</div>
                   </div>
                   <button
                     onClick={() => del.mutate(a.id)}
-                    className="text-foreground/40 hover:text-red-400 p-1"
+                    className="text-[var(--cream)]/40 hover:text-red-400 p-1"
                     aria-label={t("qa.delete")}
                   >
                     <Trash2 className="w-4 h-4" />

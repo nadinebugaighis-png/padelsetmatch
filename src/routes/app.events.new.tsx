@@ -8,8 +8,8 @@ import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/new")({
   component: NewEvent,
-  errorComponent: ({ error }) => <div className="p-6 text-[var(--court-deep)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-[var(--court-deep)]/70">Not found</div>,
+  errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error.message}</div>,
+  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">Not found</div>,
 });
 
 function NewEvent() {

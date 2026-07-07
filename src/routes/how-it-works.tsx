@@ -26,14 +26,14 @@ function StepCard({
 }) {
   return (
     <div className="surface-card p-6 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--clay)]/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--cream)]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="flex items-center gap-3 mb-3">
         <span className="w-8 h-8 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-xs font-bold flex items-center justify-center">
           {number}
         </span>
       </div>
-      <h3 className="text-display text-xl text-[var(--court-deep)]">{title}</h3>
-      <p className="mt-2 text-sm text-[var(--court-deep)]/70 leading-relaxed">{body}</p>
+      <h3 className="text-display text-xl text-[var(--cream)]">{title}</h3>
+      <p className="mt-2 text-sm text-[var(--cream)]/70 leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -48,8 +48,8 @@ function FeatureRow({
 }) {
   return (
     <div>
-      <h4 className="text-base font-semibold text-[var(--court-deep)]">{title}</h4>
-      <p className="mt-1 text-sm text-[var(--court-deep)]/70 leading-relaxed">{body}</p>
+      <h4 className="text-base font-semibold text-[var(--cream)]">{title}</h4>
+      <p className="mt-1 text-sm text-[var(--cream)]/70 leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -60,12 +60,12 @@ function HowItWorksPage() {
   const tr = useTr();
 
   return (
-    <main className="min-h-screen bg-[var(--cream)]">
+    <main className="min-h-screen">
       {/* Hero */}
       <section className="px-6 lg:px-16 pt-6 pb-12 max-w-4xl mx-auto">
         <Link
           to="/"
-          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--court-deep)]/60 hover:text-[var(--court-deep)]"
+          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]"
         >
           <ArrowLeft className="w-4 h-4" />
           {tr("Back to home", "Volver al inicio", "Retour à l'accueil")}
@@ -73,26 +73,26 @@ function HowItWorksPage() {
 
         <div className="mt-8">
           <p className="chip chip-clay mb-4">{tr("The social game", "El juego social", "Le jeu social")}</p>
-          <h1 className="text-display text-5xl md:text-6xl lg:text-7xl text-[var(--court-deep)] leading-[0.95]">
+          <h1 className="text-display text-5xl md:text-6xl lg:text-7xl text-[var(--cream)] leading-[0.95]">
             {tr("Padel is a team sport.", "El pádel es un deporte de equipo.", "Le padel est un sport d'équipe.")}
             <br />
-            <span style={{ color: "var(--clay)" }}>
+            <span style={{ color: "var(--cream)" }}>
               {tr("So it's important you have the right teammate.", "Así que es importante tener al compi adecuado.", "Il faut donc avoir le bon coéquipier.")}
             </span>
           </h1>
-          <p className="mt-6 text-lg text-[var(--court-deep)]/80 max-w-2xl leading-relaxed">
+          <p className="mt-6 text-lg text-[var(--cream)]/80 max-w-2xl leading-relaxed">
             {tr("PadelMatch is built on one simple idea: padel is more fun when you play with people who match your energy. We use AI to connect you with compatible players, help you discover free courts and games, and spend less time searching so you can spend more time playing. Great matches that lead to teammates, lasting friendships, or even something more — but every connection starts with a great game.", "PadelMatch se basa en una idea sencilla: el pádel es más divertido cuando juegas con gente que comparte tu energía. Usamos IA para conectarte con jugadores compatibles, ayudarte a descubrir pistas y partidos gratuitos, y pasar menos tiempo buscando para poder pasar más tiempo jugando. Grandes matches que llevan a compañeros de equipo, amistades duraderas o incluso algo más — pero cada conexión empieza con un gran partido.", "PadelMatch repose sur une idée simple : le padel est plus fun quand tu joues avec des gens qui matchent ton énergie. On utilise l'IA pour te connecter à des joueurs compatibles, te faire découvrir des pistas et des parties gratuites, et te faire passer moins de temps à chercher pour en passer plus à jouer. De beaux matches qui mènent à des coéquipiers, des amitiés durables, voire plus — mais chaque connexion commence par une bonne partie.")}
           </p>
         </div>
       </section>
 
       {/* Steps */}
-      <section className="px-6 lg:px-16 py-12 border-t border-[var(--court)]/10">
+      <section className="px-6 lg:px-16 py-12 border-t border-[var(--cream)]/10">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-display text-3xl md:text-4xl text-[var(--court-deep)]">
+          <h2 className="text-display text-3xl md:text-4xl text-[var(--cream)]">
             {tr("How it works", "Cómo funciona", "Comment ça marche")}
           </h2>
-          <p className="mt-2 text-[var(--court-deep)]/70 max-w-xl">
+          <p className="mt-2 text-[var(--cream)]/70 max-w-xl">
             {tr("Four simple steps from signup to your first match on court.", "Cuatro pasos sencillos desde el registro hasta tu primer match en pista.", "Quatre étapes simples de l'inscription à ton premier match sur pista.")}
           </p>
 
@@ -123,12 +123,12 @@ function HowItWorksPage() {
 
 
       {/* Privacy & Safety */}
-      <section className="px-6 lg:px-16 py-12 border-t border-[var(--court)]/10 bg-[var(--court-deep)]/5">
+      <section className="px-6 lg:px-16 py-12 border-t border-[var(--cream)]/10 bg-[var(--court-deep)]/50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-display text-3xl md:text-4xl text-[var(--court-deep)]">
+          <h2 className="text-display text-3xl md:text-4xl text-[var(--cream)]">
             {tr("Built with your privacy in mind", "Hecho pensando en tu privacidad", "Conçu en pensant à ta vie privée")}
           </h2>
-          <p className="mt-2 text-[var(--court-deep)]/70 max-w-xl">
+          <p className="mt-2 text-[var(--cream)]/70 max-w-xl">
             {tr("We believe you should enjoy the journey without worrying about your data or feeling exposed.", "Creemos que deberías disfrutar del camino sin preocuparte por tus datos ni sentirte expuesto.", "Nous pensons que tu dois profiter du parcours sans t'inquiéter pour tes données ni te sentir exposé·e.")}
           </p>
 
@@ -166,37 +166,37 @@ function HowItWorksPage() {
       </section>
 
       {/* The philosophy */}
-      <section className="px-6 lg:px-16 py-12 border-t border-[var(--court)]/10">
+      <section className="px-6 lg:px-16 py-12 border-t border-[var(--cream)]/10">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-display text-3xl md:text-4xl text-[var(--court-deep)]">
+          <h2 className="text-display text-3xl md:text-4xl text-[var(--cream)]">
             {tr("Why padel changes everything", "Por qué el pádel lo cambia todo", "Pourquoi le padel change tout")}
           </h2>
-          <p className="mt-2 text-[var(--court-deep)]/70 max-w-2xl">
+          <p className="mt-2 text-[var(--cream)]/70 max-w-2xl">
             {tr("Padel isn't just a sport — it's a social experience built on communication, teamwork and trust. Every match is a chance to meet someone new in a fun, low-pressure environment.", "El pádel no es solo un deporte — es una experiencia social basada en la comunicación, el trabajo en equipo y la confianza. Cada partido es una oportunidad de conocer a alguien nuevo en un ambiente divertido y sin presión.", "Le padel n'est pas qu'un sport — c'est une expérience sociale bâtie sur la communication, l'esprit d'équipe et la confiance. Chaque match est l'occasion de rencontrer quelqu'un de nouveau dans un cadre fun et sans pression.")}
           </p>
 
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             <div className="text-center">
-              <h3 className="text-display text-lg text-[var(--court-deep)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Teamwork", "Trabajo en equipo", "Esprit d'équipe")}
               </h3>
-              <p className="mt-2 text-sm text-[var(--court-deep)]/60 px-2">
+              <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
                 {tr("You win or lose together. Padel teaches you to read your partner, communicate without words, and build trust fast.", "Ganas o pierdes juntos. El pádel te enseña a leer a tu compi, comunicarte sin palabras y generar confianza rápido.", "Tu gagnes ou perds ensemble. Le padel t'apprend à lire ton partenaire, communiquer sans mots et créer la confiance vite.")}
               </p>
             </div>
             <div className="text-center">
-              <h3 className="text-display text-lg text-[var(--court-deep)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Communication", "Comunicación", "Communication")}
               </h3>
-              <p className="mt-2 text-sm text-[var(--court-deep)]/60 px-2">
+              <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
                 {tr("Every rally is a conversation. You learn how someone thinks under pressure, how they celebrate wins, and how they handle mistakes.", "Cada punto es una conversación. Aprendes cómo piensa alguien bajo presión, cómo celebra las victorias y cómo gestiona los errores.", "Chaque échange est une conversation. Tu apprends comment quelqu'un pense sous pression, célèbre les victoires et gère les erreurs.")}
               </p>
             </div>
             <div className="text-center">
-              <h3 className="text-display text-lg text-[var(--court-deep)]">
+              <h3 className="text-display text-lg text-[var(--cream)]">
                 {tr("Community", "Comunidad", "Communauté")}
               </h3>
-              <p className="mt-2 text-sm text-[var(--court-deep)]/60 px-2">
+              <p className="mt-2 text-sm text-[var(--cream)]/60 px-2">
                 {tr("The padel community is welcoming and diverse. Whether you're a beginner or a pro, there's always someone to play with and learn from.", "La comunidad de pádel es acogedora y diversa. Ya seas principiante o pro, siempre hay alguien con quien jugar y de quien aprender.", "La communauté padel est accueillante et diverse. Que tu sois débutant·e ou pro, il y a toujours quelqu'un avec qui jouer et apprendre.")}
               </p>
             </div>
@@ -205,12 +205,12 @@ function HowItWorksPage() {
       </section>
 
       {/* CTA */}
-      <section className="px-6 lg:px-16 py-16 border-t border-[var(--court)]/10 text-center">
+      <section className="px-6 lg:px-16 py-16 border-t border-[var(--cream)]/10 text-center">
         <div className="max-w-xl mx-auto">
-          <h2 className="text-display text-4xl md:text-5xl text-[var(--court-deep)]">
+          <h2 className="text-display text-4xl md:text-5xl text-[var(--cream)]">
             {tr("Ready to find your match?", "¿Listo para encontrar tu match?", "Prêt·e à trouver ton match ?")}
           </h2>
-          <p className="mt-4 text-[var(--court-deep)]/70">
+          <p className="mt-4 text-[var(--cream)]/70">
             {tr("Join thousands of players worldwide. Your next great game — and maybe your next great friend — is one tap away.", "Únete a miles de jugadores en todo el mundo. Tu próximo gran partido — y quizás tu próximo gran amigo — está a un toque.", "Rejoins des milliers de joueurs partout dans le monde. Ton prochain super match — et peut-être ton prochain super ami — est à un tap.")}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -223,7 +223,7 @@ function HowItWorksPage() {
             </Link>
             <Link
               to="/"
-              className="inline-flex items-center rounded-full border border-[var(--cream)]/30 text-[var(--court-deep)] font-semibold px-8 py-3 hover:bg-[var(--clay)]/10"
+              className="inline-flex items-center rounded-full border border-[var(--cream)]/30 text-[var(--cream)] font-semibold px-8 py-3 hover:bg-[var(--cream)]/5"
             >
               {tr("Back to home", "Volver al inicio", "Retour à l'accueil")}
             </Link>
@@ -231,11 +231,11 @@ function HowItWorksPage() {
         </div>
       </section>
 
-      <footer className="px-6 py-6 text-xs text-[var(--court-deep)]/50 flex flex-wrap items-center justify-between gap-3 max-w-4xl mx-auto">
+      <footer className="px-6 py-6 text-xs text-[var(--cream)]/50 flex flex-wrap items-center justify-between gap-3 max-w-4xl mx-auto">
         <span>{t("land.foot")}</span>
         <span className="flex gap-4">
-          <Link to="/terms" className="hover:text-[var(--court-deep)]">Terms</Link>
-          <Link to="/privacy" className="hover:text-[var(--court-deep)]">Privacy</Link>
+          <Link to="/terms" className="hover:text-[var(--cream)]">Terms</Link>
+          <Link to="/privacy" className="hover:text-[var(--cream)]">Privacy</Link>
         </span>
       </footer>
     </main>

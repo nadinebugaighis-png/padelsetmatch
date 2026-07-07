@@ -356,7 +356,7 @@ function Onboarding() {
         <span>{steps[step]}</span>
       </div>
       <div className="h-1 mt-2 rounded-full bg-[var(--cream)]/10 overflow-hidden">
-        <div className="h-full bg-[var(--cream)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+        <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
       </div>
 
       <div className="mt-6 surface-card p-5 space-y-4">

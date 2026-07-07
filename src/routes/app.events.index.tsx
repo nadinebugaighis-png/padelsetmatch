@@ -188,7 +188,7 @@ function EventsPage() {
         <div className="flex items-center gap-2 shrink-0">
           <GenderBadge rule={e.gender_rule} />
           <div className="flex flex-col items-stretch gap-1.5">
-            <span className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
+            <span className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2 text-center">
               {e.iAmHost ? tr("View", "Ver", "Voir") : e.iAmParticipant ? tr("Chat", "Chat", "Chat") : tr("Join", "Unirme", "Rejoindre")}
             </span>
             {(e.iAmHost || e.iAmParticipant) && (
@@ -220,7 +220,7 @@ function EventsPage() {
         >
           <SlidersHorizontal className="w-3.5 h-3.5" /> {tr("Filters", "Filtros", "Filtres")}
           {activeFilterCount > 0 && (
-            <span className="ml-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
+            <span className="ml-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold px-1.5 min-w-[18px] text-center">
               {activeFilterCount}
             </span>
           )}
@@ -244,7 +244,7 @@ function EventsPage() {
                   onClick={() => setGenderFilter(v)}
                   className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
                     genderFilter === v
-                      ? "border-[var(--cream)] text-[var(--cream)]"
+                      ? "border-[var(--ball)] text-[var(--ball)]"
                       : "border-[var(--cream)]/25 text-[var(--cream)]/80"
                   }`}
                 >
@@ -267,7 +267,7 @@ function EventsPage() {
                   onClick={() => setLevelFilter(v)}
                   className={`text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full border ${
                     levelFilter === v
-                      ? "border-[var(--cream)] text-[var(--cream)]"
+                      ? "border-[var(--ball)] text-[var(--ball)]"
                       : "border-[var(--cream)]/25 text-[var(--cream)]/80"
                   }`}
                 >
@@ -328,7 +328,7 @@ function EventsPage() {
           onClick={() => setSelectedIdx("all")}
           className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
             selectedIdx === "all"
-              ? "border-[var(--cream)] text-[var(--cream)]"
+              ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-transparent text-[var(--cream)]/70"
           }`}
         >
@@ -343,7 +343,7 @@ function EventsPage() {
               onClick={() => setSelectedIdx(i)}
               className={`shrink-0 rounded-full border px-3 py-2 text-center min-w-[64px] ${
                 active
-                  ? "border-[var(--cream)] text-[var(--cream)]"
+                  ? "border-[var(--ball)] text-[var(--ball)]"
                   : "border-transparent text-[var(--cream)]/70"
               }`}
             >
@@ -355,7 +355,7 @@ function EventsPage() {
         <label
           className={`relative shrink-0 rounded-full border w-11 h-11 flex items-center justify-center cursor-pointer ${
             selectedIdx === "custom"
-              ? "border-[var(--cream)] text-[var(--cream)]"
+              ? "border-[var(--ball)] text-[var(--ball)]"
               : "border-[var(--cream)]/25 text-[var(--cream)]/70"
           }`}
           aria-label={tr("Pick a date", "Elegir fecha", "Choisis une date")}
@@ -378,7 +378,7 @@ function EventsPage() {
 
       {selectedIdx === "custom" && customDate && (
         <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--cream)] text-[var(--cream)] text-[11px] uppercase tracking-widest px-3 py-1.5">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ball)] text-[var(--ball)] text-[11px] uppercase tracking-widest px-3 py-1.5">
             {new Date(customDate + "T00:00:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
             <button
               type="button"
@@ -402,7 +402,7 @@ function EventsPage() {
               <p>{tr("Add the cities where you play in your profile to see matches near you.", "Añade en tu perfil las ciudades donde juegas para ver partidos cerca.", "Ajoute les villes où tu joues dans ton profil pour voir les matches près de chez toi.")}</p>
               <Link
                 to="/app/profile"
-                className="inline-block rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+                className="inline-block rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
               >
                 {tr("Go to profile →", "Ir al perfil →", "Aller au profil →")}
               </Link>

@@ -315,7 +315,7 @@ function EventDetail() {
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-[var(--cream)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+                className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
               >
                 {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
               </a>
@@ -486,7 +486,7 @@ function EventDetail() {
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
-              className="rounded-full bg-[var(--cream)] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+              className="rounded-full bg-[var(--ball)] px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
             >
               {tr("I'm in", "Voy", "Je suis partant·e")}
             </button>
@@ -511,7 +511,7 @@ function EventDetail() {
         {canJoin && (
           <button
             onClick={onJoin}
-            className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold"
+            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold"
           >
             {tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
@@ -528,7 +528,7 @@ function EventDetail() {
           <>
             <button
               onClick={() => setInviteOpen(true)}
-              className="w-full py-3 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
             >
               <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
             </button>
@@ -615,7 +615,7 @@ function EventDetail() {
                             <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--cream)]/10" aria-label="Cancel">
                               <X className="h-4 w-4" />
                             </button>
-                            <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--cream)] text-[var(--court-deep)]" aria-label="Save">
+                            <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)]" aria-label="Save">
                               <Check className="h-4 w-4" />
                             </button>
                           </div>
@@ -670,7 +670,7 @@ function EventDetail() {
             <button
               type="button"
               onClick={onSend}
-              className="w-10 h-10 shrink-0 rounded-full bg-[var(--cream)] text-[var(--court-deep)] flex items-center justify-center"
+              className="w-10 h-10 shrink-0 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center"
               aria-label="Send"
             >
               <Send className="w-4 h-4" />
@@ -837,7 +837,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
             <button
               onClick={sendInvites}
               disabled={busy}
-              className="mt-3 w-full rounded-full bg-[var(--cream)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
+              className="mt-3 w-full rounded-full bg-[var(--ball)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)] disabled:opacity-50"
             >
               {tr(`Send ${selected.size} invite${selected.size === 1 ? "" : "s"}`, `Enviar ${selected.size} invitaciones`)}
             </button>

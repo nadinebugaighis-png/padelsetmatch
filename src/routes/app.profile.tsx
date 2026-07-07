@@ -244,7 +244,7 @@ function ProfilePage() {
 
             {p.free_court_access && (
               <div className="mt-4 rounded-lg border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-3">
-                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">{tr("🎾 Free court access", "🎾 Pista gratis", "🎾 Pista gratuite")}</div>
                 {p.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{p.free_court_note}</p>}
                 <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Shown on your grid card. Share the exact address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección exacta solo en el chat.", "Affiché sur ta carte grid. Partage l'adresse exacte seulement en chat.")}</p>
               </div>

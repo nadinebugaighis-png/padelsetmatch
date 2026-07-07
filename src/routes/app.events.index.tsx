@@ -497,3 +497,119 @@ function QuickSheet({
     </div>
   );
 }
+
+function SlotSheet({
+  startsAt,
+  events,
+  pending,
+  onClose,
+  onJoin,
+  onOpen,
+  onStartAnother,
+}: {
+  startsAt: string;
+  events: EventLite[];
+  pending: string | null;
+  onClose: () => void;
+  onJoin: (id: string) => void;
+  onOpen: (id: string) => void;
+  onStartAnother: () => void;
+}) {
+  const tr = useTr();
+  const when = new Date(startsAt).toLocaleString(undefined, {
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
+      <div
+        onClick={(ev) => ev.stopPropagation()}
+        className="w-full sm:max-w-md bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--cream)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+      >
+        <div>
+          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+            {tr("Matches at", "Partidos a las", "Matchs à")}
+          </div>
+          <div className="text-display text-2xl tracking-wider text-[var(--cream)] mt-1">{when}</div>
+          <p className="text-xs text-[var(--cream)]/60 mt-1">
+            {events.length}{" "}
+            {events.length === 1
+              ? tr("match", "partido", "match")
+              : tr("matches", "partidos", "matchs")}
+          </p>
+        </div>
+
+        <ul className="space-y-2">
+          {events.map((e) => {
+            const mine = e.iAmHost || e.iAmParticipant;
+            const full = e.filled >= 4;
+            const canJoin = !mine && !full && e.status === "open";
+            const isPending = pending === e.id;
+            return (
+              <li
+                key={e.id}
+                className="rounded-xl border border-[var(--cream)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3"
+              >
+                <button
+                  type="button"
+                  onClick={() => onOpen(e.id)}
+                  className="flex-1 min-w-0 text-left"
+                >
+                  <div className="text-sm text-[var(--cream)] font-semibold truncate">
+                    {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mt-0.5">
+                    {e.filled}/4 · {e.gender_rule === "mixed"
+                      ? tr("Mixed", "Mixto", "Mixte")
+                      : e.gender_rule === "men_only"
+                        ? tr("Men", "Hombres", "Hommes")
+                        : tr("Women", "Mujeres", "Femmes")}
+                    {mine && ` · ${tr("You're in", "Estás dentro", "Vous êtes dedans")}`}
+                  </div>
+                </button>
+                {canJoin ? (
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => onJoin(e.id)}
+                    className="shrink-0 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
+                  >
+                    {isPending
+                      ? tr("Joining…", "Uniéndose…", "…")
+                      : tr("Join", "Unirme", "Rejoindre")}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onOpen(e.id)}
+                    className="shrink-0 rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
+                  >
+                    {tr("Open", "Abrir", "Ouvrir")}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        <button
+          type="button"
+          onClick={onStartAnother}
+          disabled={!!pending}
+          className="w-full rounded-full border border-dashed border-[var(--ball)]/60 text-[var(--ball)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+        >
+          + {tr("Start another match at this time", "Convocar otro partido a esta hora", "Lancer un autre match à cette heure")}
+        </button>
+
+        <button
+          onClick={onClose}
+          className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
+        >
+          {tr("Close", "Cerrar", "Fermer")}
+        </button>
+      </div>
+    </div>
+  );
+}

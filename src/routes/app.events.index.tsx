@@ -104,6 +104,7 @@ function EventsPage() {
 
   const [pending, setPending] = useState<string | null>(null);
   const [sheet, setSheet] = useState<{ eventId: string; startsAt: string } | null>(null);
+  const [slotSheet, setSlotSheet] = useState<{ startsAt: string; events: EventLite[] } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Scroll to a reasonable morning hour on first load
@@ -115,43 +116,13 @@ function EventsPage() {
     if (rowIdx > 0) scrollRef.current.scrollTop = rowIdx * 56 - 40;
   }, []);
 
-  async function handleCellTap(date: Date, hour: number) {
-    const key = slotKey(date, hour);
-    if (pending) return;
-    const startsAt = new Date(date);
-    startsAt.setHours(hour, 0, 0, 0);
-    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
-      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
-      return;
-    }
-    const existing = buckets.get(key) ?? [];
-    // If user is already in one, open it.
-    const mine = existing.find((e) => e.iAmParticipant || e.iAmHost);
-    if (mine) {
-      navigate({ to: "/app/events/$eventId", params: { eventId: mine.id } });
-      return;
-    }
-    // If there's an open match to join, join it (fastest path).
-    const joinable = existing.find((e) => e.needs > 0 && e.status === "open");
-    if (joinable) {
-      setPending(key);
-      try {
-        await join({ data: { id: joinable.id } });
-        toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"));
-        await qc.invalidateQueries({ queryKey: ["open-events"] });
-        navigate({ to: "/app/events/$eventId", params: { eventId: joinable.id } });
-      } catch (e) {
-        toast.error(e instanceof Error ? e.message : tr("Could not join", "No se pudo unir", "Impossible de rejoindre"));
-      } finally {
-        setPending(null);
-      }
-      return;
-    }
-    // Otherwise quick-create
+  async function quickCreateAt(startsAt: Date) {
+    const key = slotKey(startOfDay(startsAt), startsAt.getHours());
     setPending(key);
     try {
       const { id } = await quickCreate({ data: { starts_at: startsAt.toISOString() } });
       await qc.invalidateQueries({ queryKey: ["open-events"] });
+      setSlotSheet(null);
       setSheet({ eventId: id, startsAt: startsAt.toISOString() });
     } catch (e) {
       const msg = e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido", "Impossible de créer le match");
@@ -162,6 +133,39 @@ function EventsPage() {
     } finally {
       setPending(null);
     }
+  }
+
+  async function joinEvent(id: string) {
+    setPending(id);
+    try {
+      await join({ data: { id } });
+      toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"));
+      await qc.invalidateQueries({ queryKey: ["open-events"] });
+      setSlotSheet(null);
+      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not join", "No se pudo unir", "Impossible de rejoindre"));
+    } finally {
+      setPending(null);
+    }
+  }
+
+  async function handleCellTap(date: Date, hour: number) {
+    if (pending) return;
+    const startsAt = new Date(date);
+    startsAt.setHours(hour, 0, 0, 0);
+    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
+      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
+      return;
+    }
+    const key = slotKey(date, hour);
+    const existing = buckets.get(key) ?? [];
+    if (existing.length === 0) {
+      await quickCreateAt(startsAt);
+      return;
+    }
+    // Show picker of all matches at this hour + option to start another.
+    setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
   }
 
   return (
@@ -261,6 +265,22 @@ function EventsPage() {
           </div>
         </div>
       </div>
+
+      {/* Slot picker (multiple matches at the same hour) */}
+      {slotSheet && (
+        <SlotSheet
+          startsAt={slotSheet.startsAt}
+          events={slotSheet.events}
+          pending={pending}
+          onClose={() => setSlotSheet(null)}
+          onJoin={joinEvent}
+          onOpen={(id) => {
+            setSlotSheet(null);
+            navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+          }}
+          onStartAnother={() => quickCreateAt(new Date(slotSheet.startsAt))}
+        />
+      )}
 
       {/* Quick-create follow-up sheet */}
       {sheet && (
@@ -472,6 +492,122 @@ function QuickSheet({
           className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
         >
           {tr("Open match", "Ir al partido", "Voir le match")} →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SlotSheet({
+  startsAt,
+  events,
+  pending,
+  onClose,
+  onJoin,
+  onOpen,
+  onStartAnother,
+}: {
+  startsAt: string;
+  events: EventLite[];
+  pending: string | null;
+  onClose: () => void;
+  onJoin: (id: string) => void;
+  onOpen: (id: string) => void;
+  onStartAnother: () => void;
+}) {
+  const tr = useTr();
+  const when = new Date(startsAt).toLocaleString(undefined, {
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
+      <div
+        onClick={(ev) => ev.stopPropagation()}
+        className="w-full sm:max-w-md bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--cream)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+      >
+        <div>
+          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+            {tr("Matches at", "Partidos a las", "Matchs à")}
+          </div>
+          <div className="text-display text-2xl tracking-wider text-[var(--cream)] mt-1">{when}</div>
+          <p className="text-xs text-[var(--cream)]/60 mt-1">
+            {events.length}{" "}
+            {events.length === 1
+              ? tr("match", "partido", "match")
+              : tr("matches", "partidos", "matchs")}
+          </p>
+        </div>
+
+        <ul className="space-y-2">
+          {events.map((e) => {
+            const mine = e.iAmHost || e.iAmParticipant;
+            const full = e.filled >= 4;
+            const canJoin = !mine && !full && e.status === "open";
+            const isPending = pending === e.id;
+            return (
+              <li
+                key={e.id}
+                className="rounded-xl border border-[var(--cream)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3"
+              >
+                <button
+                  type="button"
+                  onClick={() => onOpen(e.id)}
+                  className="flex-1 min-w-0 text-left"
+                >
+                  <div className="text-sm text-[var(--cream)] font-semibold truncate">
+                    {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mt-0.5">
+                    {e.filled}/4 · {e.gender_rule === "mixed"
+                      ? tr("Mixed", "Mixto", "Mixte")
+                      : e.gender_rule === "men_only"
+                        ? tr("Men", "Hombres", "Hommes")
+                        : tr("Women", "Mujeres", "Femmes")}
+                    {mine && ` · ${tr("You're in", "Estás dentro", "Vous êtes dedans")}`}
+                  </div>
+                </button>
+                {canJoin ? (
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => onJoin(e.id)}
+                    className="shrink-0 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
+                  >
+                    {isPending
+                      ? tr("Joining…", "Uniéndose…", "…")
+                      : tr("Join", "Unirme", "Rejoindre")}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onOpen(e.id)}
+                    className="shrink-0 rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
+                  >
+                    {tr("Open", "Abrir", "Ouvrir")}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        <button
+          type="button"
+          onClick={onStartAnother}
+          disabled={!!pending}
+          className="w-full rounded-full border border-dashed border-[var(--ball)]/60 text-[var(--ball)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+        >
+          + {tr("Start another match at this time", "Convocar otro partido a esta hora", "Lancer un autre match à cette heure")}
+        </button>
+
+        <button
+          onClick={onClose}
+          className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
+        >
+          {tr("Close", "Cerrar", "Fermer")}
         </button>
       </div>
     </div>

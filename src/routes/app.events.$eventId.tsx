@@ -281,14 +281,14 @@ function EventDetail() {
 
       {shareOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/80 px-4 pb-4 pt-10"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/10 px-4 pb-4 pt-10"
           onClick={() => setShareOpen(false)}
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-label={tr("Share match", "Compartir partido", "Partager le match")}
-            className="w-full max-w-md rounded-2xl border border-[var(--court-deep)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+            className="w-full max-w-md rounded-2xl border border-[var(--court-deep)]/15 surface-card p-4 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">
@@ -351,7 +351,7 @@ function EventDetail() {
               event.status === "cancelled"
                 ? "bg-red-500/20 text-destructive"
                 : event.needs === 0
-                ? "bg-[var(--court-deep)]/5 text-[var(--court-deep)]/70"
+                ? "bg-[var(--court-deep)]/10 text-[var(--court-deep)]/70"
                 : "bg-[var(--court-deep)]/10 text-[var(--court-deep)]"
             }`}
           >
@@ -429,11 +429,11 @@ function EventDetail() {
                 title={isMe && !isHost ? tr("Tap to leave the match", "Toca para salir del partido", "Appuie pour quitter le match") : ""}
                 className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
                   isMe && !isHost
-                    ? "bg-[var(--court-deep)]/5 border-[var(--court-deep)]/40 hover:bg-[var(--court-deep)]/10 cursor-pointer"
+                    ? "bg-[var(--court-deep)]/10 border-[var(--court-deep)]/40 hover:bg-[var(--court-deep)]/10 cursor-pointer"
                     : "bg-[var(--cream-deep)] border-[var(--court-deep)]/10 cursor-default"
                 }`}
               >
-                <div className="w-7 h-7 rounded-full bg-[var(--court-deep)] overflow-hidden">
+                <div className="w-7 h-7 rounded-full surface-card overflow-hidden">
                   {p.profiles?.photo_url && (
                     <img src={p.profiles.photo_url} alt="" className="w-full h-full object-cover" />
                   )}
@@ -458,7 +458,7 @@ function EventDetail() {
               title={canJoin ? tr("Tap to join this spot", "Toca para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
               className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
                 canJoin
-                  ? "border-[var(--court-deep)]/60 hover:bg-[var(--court-deep)]/5 cursor-pointer"
+                  ? "border-[var(--court-deep)]/60 hover:bg-[var(--court-deep)]/10 cursor-pointer"
                   : "border-[var(--court-deep)]/30 opacity-60 cursor-not-allowed"
               }`}
             >
@@ -472,7 +472,7 @@ function EventDetail() {
 
       {/* Invitee response */}
       {me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
-        <div className="mt-4 rounded-xl border border-[var(--court-deep)]/40 bg-[var(--court-deep)]/5 p-3">
+        <div className="mt-4 rounded-xl border border-[var(--court-deep)]/40 bg-[var(--court-deep)]/10 p-3">
           <div className="text-[10px] uppercase tracking-widest text-[var(--court-deep)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
           <p className="mt-1 text-sm text-[var(--court-deep)]/80">
             {tr(`${event.host?.first_name ?? "The host"} invited you to this match.`, `${event.host?.first_name ?? "El anfitrión"} te ha invitado a este partido.`)}
@@ -590,8 +590,8 @@ function EventDetail() {
                     <div
                       className={`${mine ? "max-w-[min(100%,18rem)]" : "max-w-[min(100%,19rem)]"} min-w-0 rounded-2xl px-3 py-2 text-base ${
                       mine
-                        ? "bg-[var(--court-deep)]/12 text-[var(--court-deep)]"
-                        : "bg-[var(--court-deep)] border border-[var(--court-deep)]/10 text-[var(--court-deep)]"
+                        ? "bg-[var(--court-deep)]/10 text-[var(--court-deep)]"
+                        : "surface-card border border-[var(--court-deep)]/10 text-[var(--court-deep)]"
                     }`}
                     >
                       {!mine && !isEditing && (
@@ -607,12 +607,12 @@ function EventDetail() {
                           <textarea
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
-                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/30 p-2 text-base text-[var(--court-deep)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--cream)]/60"
+                            className="w-full resize-none rounded-md bg-[var(--court-deep)]/10 p-2 text-base text-[var(--court-deep)] outline-none ring-1 ring-[var(--cream)]/20 focus:ring-[var(--cream)]/60"
                             rows={2}
                             autoFocus
                           />
                           <div className="flex justify-end gap-1">
-                            <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--court-deep)]/5" aria-label="Cancel">
+                            <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-[var(--court-deep)]/10" aria-label="Cancel">
                               <X className="h-4 w-4" />
                             </button>
                             <button type="submit" className="grid h-8 w-8 place-items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)]" aria-label="Save">
@@ -632,7 +632,7 @@ function EventDetail() {
                         <button
                           type="button"
                           onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--court-deep)]/5 px-2 text-[10px] uppercase tracking-wider text-[var(--court-deep)] hover:bg-[var(--court-deep)]/10"
+                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--court-deep)]/10 px-2 text-[10px] uppercase tracking-wider text-[var(--court-deep)] hover:bg-[var(--court-deep)]/10"
                           aria-label="Edit message"
                         >
                           <Pencil className="h-3 w-3" /> {tr("Edit", "Editar", "Modifier")}
@@ -640,7 +640,7 @@ function EventDetail() {
                         <button
                           type="button"
                           onClick={() => onDeleteMessage(m.id)}
-                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--court-deep)]/5 px-2 text-[10px] uppercase tracking-wider text-[var(--court-deep)] hover:bg-red-500/20 hover:text-destructive"
+                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--court-deep)]/10 px-2 text-[10px] uppercase tracking-wider text-[var(--court-deep)] hover:bg-red-500/20 hover:text-destructive"
                           aria-label="Delete message"
                         >
                           <Trash2 className="h-3 w-3" /> {tr("Delete", "Borrar", "Supprimer")}
@@ -769,13 +769,13 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/80 px-4 pb-4 pt-10"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--court-deep)]/10 px-4 pb-4 pt-10"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--court-deep)]/15 bg-[var(--court-deep)] p-4 shadow-2xl"
+        className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--court-deep)]/15 surface-card p-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
@@ -822,7 +822,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
                       : "border-[var(--court-deep)]/15 bg-[var(--cream-deep)] hover:border-[var(--court-deep)]/50"
                   }`}
                 >
-                  <div className="h-12 w-12 overflow-hidden rounded-full bg-[var(--court-deep)]">
+                  <div className="h-12 w-12 overflow-hidden rounded-full surface-card">
                     {p.photo_url && <img src={p.photo_url} alt="" className="h-full w-full object-cover" />}
                   </div>
                   <div className="w-full truncate text-xs text-[var(--court-deep)]">{p.first_name ?? "—"}</div>

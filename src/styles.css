@@ -57,7 +57,7 @@
   --clay: oklch(0.64 0.14 35);              /* Madrid clay, punchier */
   --clay-deep: oklch(0.54 0.13 32);         /* warm clay shadow */
   --cream: oklch(1 0 0);                    /* bright white text */
-  --ball: #c1ea2f;                          /* electric lime */
+  --ball: #c3c456;                          /* muted olive-lime */
 
   --background: var(--court-deep);
   --foreground: var(--cream);

@@ -51,31 +51,31 @@
 :root {
   --radius: 0.5rem;
 
-  /* Court at Dusk palette — brightened for daylight readability */
-  --court: oklch(0.52 0.05 180);            /* deep padel teal, lifted */
-  --court-deep: oklch(0.42 0.04 180);       /* lighter base background */
-  --clay: oklch(0.68 0.14 35);              /* Madrid clay, punchier */
-  --clay-deep: oklch(0.58 0.13 32);         /* warm clay shadow */
-  --cream: oklch(1 0 0);                    /* bright white text */
-  --ball: #c3c456;                          /* muted olive-lime */
+  /* Court at Dusk palette */
+  --court: oklch(0.32 0.04 180);            /* deep padel teal */
+  --court-deep: oklch(0.22 0.03 180);
+  --clay: oklch(0.6 0.13 35);               /* Madrid clay */
+  --clay-deep: oklch(0.5 0.13 32);
+  --cream: oklch(1 0 0);             /* bright white text */
+  --ball: oklch(0.93 0.12 110);             /* bright Wimbledon yellow-green */
 
   --background: var(--court-deep);
   --foreground: var(--cream);
 
-  --card: oklch(0.48 0.04 180);
+  --card: oklch(0.28 0.035 180);
   --card-foreground: var(--cream);
 
-  --popover: oklch(0.46 0.04 180);
+  --popover: oklch(0.26 0.035 180);
   --popover-foreground: var(--cream);
 
   --primary: var(--clay);
   --primary-foreground: var(--cream);
 
-  --secondary: oklch(0.56 0.05 180);
+  --secondary: oklch(0.36 0.04 180);
   --secondary-foreground: var(--cream);
 
-  --muted: oklch(0.50 0.03 180);
-  --muted-foreground: oklch(0.80 0.02 80);
+  --muted: oklch(0.3 0.025 180);
+  --muted-foreground: oklch(0.72 0.02 80);
 
   --accent: var(--ball);
   --accent-foreground: var(--court-deep);
@@ -83,13 +83,13 @@
   --destructive: oklch(0.55 0.22 28);
   --destructive-foreground: var(--cream);
 
-  --border: oklch(0.58 0.04 180 / 0.45);
-  --input: oklch(0.58 0.04 180 / 0.55);
+  --border: oklch(0.4 0.03 180 / 0.4);
+  --input: oklch(0.4 0.03 180 / 0.5);
   --ring: var(--clay);
 
-  --shadow-court: 0 30px 80px -30px oklch(0 0 0 / 0.45), 0 0 0 1px oklch(0.65 0.04 180 / 0.3);
-  --shadow-glow: 0 0 60px -10px oklch(0.6 0.13 35 / 0.55);
-  --gradient-dusk: linear-gradient(160deg, oklch(0.42 0.04 180) 0%, oklch(0.48 0.05 200) 45%, oklch(0.52 0.09 35) 100%);
+  --shadow-court: 0 30px 80px -30px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(0.45 0.03 180 / 0.3);
+  --shadow-glow: 0 0 60px -10px oklch(0.6 0.13 35 / 0.45);
+  --gradient-dusk: linear-gradient(160deg, oklch(0.22 0.03 180) 0%, oklch(0.28 0.05 200) 45%, oklch(0.32 0.08 35) 100%);
   --gradient-clay: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
 }
 
@@ -99,13 +99,8 @@
   --foreground: var(--cream);
 }
 
-
 @layer base {
   * { border-color: var(--color-border); }
-  *::selection {
-    background: var(--ball);
-    color: var(--cream);
-  }
 
   html, body {
     background: var(--gradient-dusk);
@@ -139,12 +134,11 @@
   }
 }
 
-
 @utility text-display { font-family: var(--font-display); letter-spacing: 0.02em; }
 @utility surface-card {
-  background: oklch(0.48 0.04 180 / 0.7);
+  background: oklch(0.28 0.035 180 / 0.7);
   backdrop-filter: blur(14px);
-  border: 1px solid oklch(0.65 0.04 180 / 0.3);
+  border: 1px solid oklch(0.45 0.03 180 / 0.3);
   border-radius: var(--radius-xl);
 }
 @utility surface-cream {
@@ -161,8 +155,8 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 600;
-  border: 1px solid oklch(0.65 0.04 180 / 0.45);
-  background: oklch(0.52 0.05 180 / 0.6);
+  border: 1px solid oklch(0.45 0.03 180 / 0.45);
+  background: oklch(0.32 0.04 180 / 0.6);
 }
 @utility chip-ball {
   background: var(--ball);
@@ -175,6 +169,5 @@
   border-color: transparent;
 }
 @utility ball-glow {
-  box-shadow: 0 0 0 4px oklch(0.52 0.05 180), 0 0 40px -4px var(--ball);
+  box-shadow: 0 0 0 4px oklch(0.32 0.04 180), 0 0 40px -4px var(--ball);
 }
-

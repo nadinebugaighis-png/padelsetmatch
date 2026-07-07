@@ -7,7 +7,7 @@ import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites } from "@/lib/match-events.functions";
 import { ArrowLeft, LayoutGrid, MessageCircle, User, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { RacketIcon } from "@/components/RacketIcon";
+import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({

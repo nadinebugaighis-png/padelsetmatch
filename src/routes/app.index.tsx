@@ -711,9 +711,9 @@ function Discover() {
                   </div>
                 </div>
 
-                {/* Sticky bottom action bar */}
-                <div className="absolute bottom-0 left-0 right-0 px-4 pt-6 pb-4 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/90 to-transparent">
-                  <div className="flex items-center gap-2.5">
+                {/* Floating glass action island */}
+                <div className="absolute bottom-4 left-4 right-4 flex justify-center">
+                  <div className="flex items-center gap-2 bg-[var(--court)]/70 backdrop-blur-xl border border-[var(--cream)]/10 rounded-full p-2 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.45)]">
                     <button
                       type="button"
                       disabled={likeM.isPending || unlikeM.isPending}
@@ -722,11 +722,12 @@ function Discover() {
                         const wasLiked = preview.liked;
                         if (wasLiked) unlikeM.mutate(id); else likeM.mutate(id);
                       }}
-                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--ball)] flex items-center justify-center transition-transform active:scale-90"
+                      className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition active:scale-90 border border-[var(--cream)]/5 ${preview.liked ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/5 text-[var(--cream)]/60 hover:bg-[var(--cream)]/10 hover:text-[var(--cream)]"}`}
                       aria-label={preview.liked ? "Unlike" : "Like"}
                     >
-                      <Heart className={`w-5 h-5 text-[var(--court-deep)] ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
+                      <Heart className={`w-5 h-5 ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
                     </button>
+
                     <button
                       type="button"
                       onClick={() => {
@@ -734,26 +735,27 @@ function Discover() {
                         if (!preview.liked) likeM.mutate(preview.id);
                       }}
                       disabled={likeM.isPending && !match}
-                      className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
+                      className="h-11 px-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold uppercase tracking-[0.12em] text-[12px] flex items-center justify-center transition active:scale-[0.98] disabled:opacity-70 shadow-[0_4px_20px_-6px_rgba(239,209,8,0.25)] hover:bg-[var(--ball)]/90"
                     >
                       {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
                     </button>
+
                     <button
                       type="button"
                       onClick={() => {
                         if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); }
                       }}
                       disabled={!match}
-                      className="w-11 h-11 shrink-0 rounded-full bg-[var(--court)] border border-[var(--cream)]/10 flex items-center justify-center text-[var(--cream)] disabled:opacity-40"
+                      className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center transition active:scale-90 border border-[var(--cream)]/5 ${match ? "bg-[var(--cream)]/5 text-[var(--cream)] hover:bg-[var(--cream)]/10" : "bg-[var(--cream)]/5 text-[var(--cream)]/30"}`}
                       aria-label="Open chat"
                     >
                       <MessageCircle className="w-5 h-5" />
                     </button>
                   </div>
-                  <p className="text-center text-[10px] text-[var(--cream)]/40 mt-2 leading-snug">
-                    {t("disc.privacyNote")}
-                  </p>
                 </div>
+                <p className="absolute bottom-1 left-0 right-0 text-center text-[10px] text-[var(--cream)]/40 leading-snug">
+                  {t("disc.privacyNote")}
+                </p>
               </>
             );
           })()}

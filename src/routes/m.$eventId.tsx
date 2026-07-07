@@ -184,7 +184,7 @@ function PublicMatchPage() {
               <button
                 onClick={onJoinClick}
                 disabled={openSpots === 0}
-                className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
+                className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--cream)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
               >
                 {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
@@ -235,7 +235,7 @@ function PublicMatchPage() {
                   href={shareUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--court-deep)]"
+                  className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--cream)]"
                 >
                   {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
                 </a>

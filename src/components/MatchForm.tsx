@@ -335,7 +335,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
           <button
             onClick={handleSubmit}
             disabled={!canSave}
-            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
+            className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--cream)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
           >
             {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : submitLabel}
           </button>

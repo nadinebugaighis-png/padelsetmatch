@@ -254,7 +254,7 @@ function Discover() {
       <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
       <p className="text-xs text-[var(--cream)]/55 mt-2">
-        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
+        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--cream)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
       <div className="flex items-center justify-between mt-3">
@@ -385,7 +385,7 @@ function Discover() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
               {!c.liked && <div className="absolute inset-0 bg-black/40 pointer-events-none" />}
 
-              <div className="absolute bottom-3 right-2 z-10 w-6 h-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-[10px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
+              <div className="absolute bottom-3 right-2 z-10 w-6 h-6 rounded-full bg-[var(--ball)] text-[var(--cream)] flex items-center justify-center text-[10px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
                 {c.score}
               </div>
 
@@ -454,7 +454,7 @@ function Discover() {
                   );
                 })()}
                 {c.free_court_access && (
-                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
+                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--cream)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
                 )}
               </div>
 
@@ -491,7 +491,7 @@ function Discover() {
                     ) : (
                       <div className="w-full aspect-[3/4] bg-[var(--court)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--cream)] via-[var(--cream)]/30 to-transparent pointer-events-none" />
 
                     {/* Top controls */}
                     <button
@@ -505,7 +505,7 @@ function Discover() {
 
                     {/* Overlaid identity */}
                     <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--cream)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
@@ -533,7 +533,7 @@ function Discover() {
 
                     {preview.free_court_access && (
                       <div className="rounded-2xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-4">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--cream)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                         {preview.free_court_note && <p className="text-xs text-[var(--cream)]/80 mt-2">{preview.free_court_note}</p>}
                         <p className="text-[10px] text-[var(--cream)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
                       </div>
@@ -577,7 +577,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--cream)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
                               aria-label="Helpful"
                             >
                               <ThumbsUp className="w-4 h-4" />
@@ -586,7 +586,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: -1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ball)]/80 text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ball)]/80 text-[var(--cream)]" : "bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/15"}`}
                               aria-label="Not useful"
                             >
                               <ThumbsDown className="w-4 h-4" />
@@ -712,7 +712,7 @@ function Discover() {
                 </div>
 
                 {/* Sticky bottom action bar */}
-                <div className="absolute bottom-0 left-0 right-0 px-4 pt-6 pb-4 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/90 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 px-4 pt-6 pb-4 bg-gradient-to-t from-[var(--cream)] via-[var(--cream)]/90 to-transparent">
                   <div className="flex items-center gap-2.5">
                     <button
                       type="button"
@@ -725,7 +725,7 @@ function Discover() {
                       className="w-11 h-11 shrink-0 rounded-full bg-[var(--ball)] flex items-center justify-center transition-transform active:scale-90"
                       aria-label={preview.liked ? "Unlike" : "Like"}
                     >
-                      <Heart className={`w-5 h-5 text-[var(--court-deep)] ${preview.liked ? "fill-[var(--court-deep)]" : ""}`} />
+                      <Heart className={`w-5 h-5 text-[var(--cream)] ${preview.liked ? "fill-[var(--cream)]" : ""}`} />
                     </button>
                     <button
                       type="button"
@@ -734,7 +734,7 @@ function Discover() {
                         if (!preview.liked) likeM.mutate(preview.id);
                       }}
                       disabled={likeM.isPending && !match}
-                      className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
+                      className="flex-1 h-11 rounded-full bg-[var(--ball)] text-[var(--cream)] font-extrabold uppercase tracking-[0.15em] text-[13px] flex items-center justify-center disabled:opacity-70"
                     >
                       {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
                     </button>

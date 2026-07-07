@@ -363,6 +363,15 @@ function FeedbackBox() {
   );
 }
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-2 font-medium">{title}</div>
+      {children}
+    </div>
+  );
+}
+
 function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>

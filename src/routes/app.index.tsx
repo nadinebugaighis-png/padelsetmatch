@@ -254,7 +254,7 @@ function Discover() {
       <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
       <p className="text-xs text-[var(--cream)]/55 mt-2">
-        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
+        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--cream)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
       </p>
 
       <div className="flex items-center justify-between mt-3">
@@ -277,7 +277,7 @@ function Discover() {
         </div>
         <button
           onClick={() => setShowFilters((s) => !s)}
-          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--ball)]" : "text-[var(--cream)]/70"}`}
+          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--cream)]" : "text-[var(--cream)]/70"}`}
           aria-expanded={showFilters}
         >
           Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -292,7 +292,7 @@ function Discover() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name..."
-            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--ball)]/60"
+            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--cream)]/60"
           />
         </div>
       </div>
@@ -358,13 +358,13 @@ function Discover() {
 
 
       {(qaQ.data?.length ?? 0) === 0 && (
-        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--ball)]/30 rounded-xl">
+        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--cream)]/30 rounded-xl">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-[var(--ball)] shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-[var(--cream)] shrink-0 mt-0.5" />
             <div>
               <div className="text-sm font-semibold text-[var(--cream)]">{t("disc.qaBannerTitle")}</div>
               <div className="text-xs text-[var(--cream)]/70 mt-1">{t("disc.qaBannerSub")}</div>
-              <div className="mt-2 text-xs text-[var(--ball)] underline">{t("disc.qaBannerCta")}</div>
+              <div className="mt-2 text-xs text-[var(--cream)] underline">{t("disc.qaBannerCta")}</div>
             </div>
           </div>
         </Link>

@@ -28,7 +28,6 @@ type CardDef = {
 
 function Home() {
   const navigate = useNavigate();
-  const t = useT();
   const tr = useTr();
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);

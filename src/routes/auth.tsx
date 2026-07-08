@@ -97,15 +97,19 @@ function AuthPage() {
   };
 
   return (
-    <main className="programme-page min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md programme-card p-8">
+    <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md programme-card p-8 sm:p-10">
 
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{t("auth.back")}</Link>
+          <Link to="/" className="text-xs uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
           <LangSwitch />
         </div>
-        <h1 className="text-display text-5xl mt-3">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
-        <p className="text-sm text-[var(--ink)]/70 mt-2">
+        <div className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
+          {mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}
+        </div>
+        <h1 className="text-display text-5xl mt-2 leading-none">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
+        <p className="text-[15px] text-[var(--ink)]/70 mt-3 leading-relaxed">
           {mode === "signup" ? t("auth.sub.signup") : t("auth.sub.signin")}
         </p>
 

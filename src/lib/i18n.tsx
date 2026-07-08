@@ -17,7 +17,7 @@ const en: Dict = {
   "land.h1.b": "Match.",
   "land.lede": "Discover players who match your level, personality and lifestyle. Whether you're looking for great games, new friends or meaningful connections, we'll help you find people you genuinely click with.",
   "land.cta": "START MATCH",
-  "land.cta.sub": "Then book on Playtomic — or Play for free if your match has Court Access 🎾",
+  "land.cta.sub": "Join matches, meet players, and start playing.",
   "land.howItWorks": "How it works",
 
   "land.what": "What's Playtomic?",
@@ -299,7 +299,7 @@ const es: Dict = {
   "land.h1.b": "Match.",
   "land.lede": "Descubre jugadores que encajan con tu nivel, personalidad y estilo de vida. Ya sea para grandes partidos, nuevos amigos o conexiones reales, te ayudamos a encontrar gente con la que de verdad conectas.",
   "land.cta": "INICIAR MATCH",
-  "land.cta.sub": "Luego reservas en Playtomic — o juegas gratis si tu match tiene pista propia 🎾",
+  "land.cta.sub": "Únete a partidos, conoce jugadores y empieza a jugar.",
   "land.howItWorks": "Cómo funciona",
 
   "land.what": "¿Qué es Playtomic?",
@@ -576,7 +576,7 @@ const fr: Dict = {
   "land.h1.b": "Match.",
   "land.lede": "Trouve des joueurs qui te correspondent vraiment. Grâce à ton niveau, ta personnalité et ton style de vie, découvre des partenaires de padel avec qui partager de beaux matchs, créer des amitiés et vivre de vraies connexions.",
   "land.cta": "COMMENCER MATCH",
-  "land.cta.sub": "Puis réserve sur Playtomic — où joue gratuitement si tu as un terrain de padel à ta disposition 🎾",
+  "land.cta.sub": "Rejoins des matchs, rencontre des joueurs et commence à jouer.",
   "land.howItWorks": "Comment ça marche",
 
   "land.what": "C'est quoi Playtomic ?",

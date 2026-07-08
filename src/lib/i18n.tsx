@@ -11,7 +11,6 @@ type Dict = Record<string, string>;
 const en: Dict = {
   // Landing
   "land.signin": "Sign in",
-  "land.chip": "Worldwide · pick your city",
   "land.h1.a": "find your",
   "land.h1.a2": "best",
   "land.h1.b": "Match.",

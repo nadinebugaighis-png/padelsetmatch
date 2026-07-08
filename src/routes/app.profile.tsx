@@ -148,22 +148,22 @@ function ProfilePage() {
     (p.languages?.length ?? 0) > 0;
 
   return (
-    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-8 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
 
       {/* Hero: compact photo + name side-by-side, even on mobile */}
-      <div className="programme-card p-4 sm:p-6">
-        <div className="flex items-start gap-4 sm:gap-6">
+      <div className="programme-card p-4 sm:p-5">
+        <div className="flex items-start gap-3 sm:gap-5">
           {/* Photo */}
           <div className="relative shrink-0">
             {p.photo_url ? (
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-24 h-24 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow-lg"
+                className="w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
               />
             ) : (
-              <div className="w-24 h-24 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
-                <Camera className="w-8 h-8" />
+              <div className="w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+                <Camera className="w-6 h-6" />
               </div>
             )}
             <input
@@ -183,9 +183,9 @@ function ProfilePage() {
               htmlFor={photoInputId}
               aria-disabled={uploading}
               title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-3.5 h-3.5" />
             </label>
           </div>
 
@@ -193,7 +193,7 @@ function ProfilePage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h1 className="text-serif text-2xl sm:text-4xl lg:text-5xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+                <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
                 <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
                   {p.age} · {label(p.level)} · {p.nationality}
                 </p>
@@ -203,7 +203,7 @@ function ProfilePage() {
                 to="/app/onboarding"
                 aria-label={t("prof.retake")}
                 title={t("prof.retake")}
-                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-8 sm:h-9 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
+                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-7 sm:h-8 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
               >
                 <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 {tr("Edit", "Editar", "Éditer")}
@@ -213,7 +213,7 @@ function ProfilePage() {
         </div>
 
         {p.bio && (
-          <p className="mt-3 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
+          <p className="mt-2 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
             {p.bio}
           </p>
         )}
@@ -245,7 +245,7 @@ function ProfilePage() {
 
 
               {p.free_court_access && (
-                <div className="mt-4 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
+                <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
                       {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}

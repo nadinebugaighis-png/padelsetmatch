@@ -47,7 +47,13 @@
   --color-clay: var(--clay);
   --color-cream: var(--cream);
   --color-ball: var(--ball);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-plum: var(--plum);
+  --color-grass: var(--grass);
   --font-display: "Bebas Neue", "Impact", sans-serif;
+  --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Barlow", system-ui, sans-serif;
 }
 

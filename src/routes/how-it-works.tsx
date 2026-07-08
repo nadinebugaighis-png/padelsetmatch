@@ -137,7 +137,7 @@ function HowItWorksPage() {
             />
             <StepCard
               number="3"
-              title={tr("Browse the Grid", "Explora el Grid", "Explore le Grid")}
+              title={tr("Browse the Home", "Explora el Home", "Explore le Home")}
               body={tr("See players who match your level, zone and personality. Tap the ones you'd play with. They won't know you tapped them unless they tap you back — no awkwardness, no obligation.", "Ve jugadores que encajan con tu nivel, zona y personalidad. Toca con quien jugarías. No sabrán que les has dado a conectar a menos que te lo devuelvan — sin awkwardness, sin obligación.", "Vois les joueurs qui matchent ton niveau, ta zone et ta personnalité. Tape ceux avec qui tu jouerais. Ils ne sauront pas que tu les as tapés tant qu'ils ne te tapent pas en retour — pas de gêne, pas d'obligation.")}
             />
             <StepCard
@@ -191,13 +191,13 @@ function HowItWorksPage() {
             />
             <FeatureRow
               icon={Shield}
-              title={tr("Your grid is yours alone", "Tu grid es solo tuyo", "Ton grid n'appartient qu'à toi")}
-              body={tr("No one can see who you've tapped, skipped, or matched with on your grid. Your activity stays completely private — there is no public feed or visibility into anyone else's grid.", "Nadie puede ver a quién has dado a conectar, a quién has saltado o con quién has hecho match en tu grid. Tu actividad es completamente privada — no hay feed público ni visibilidad del grid de nadie más.", "Personne ne peut voir qui tu as tapé, passé ou matché sur ton grid. Ton activité reste totalement privée — il n'y a pas de fil public ni de visibilité sur le grid des autres.")}
+              title={tr("Your Home grid is yours alone", "Tu home grid es solo tuyo", "Ton home grid n'appartient qu'à toi")}
+              body={tr("No one can see who you've tapped, skipped, or matched with on your Home grid. Your activity stays completely private — there is no public feed or visibility into anyone else's Home grid.", "Nadie puede ver a quién has dado a conectar, a quién has saltado o con quién has hecho match en tu home grid. Tu actividad es completamente privada — no hay feed público ni visibilidad del home grid de nadie más.", "Personne ne peut voir qui tu as tapé, passé ou matché sur ton home grid. Ton activité reste totalement privée — il n'y a pas de fil public ni de visibilité sur le home grid des autres.")}
             />
             <FeatureRow
               icon={Users}
               title={tr("Hide someone, disappear from theirs", "Oculta a alguien y desaparece del suyo", "Masque quelqu'un, disparais du sien")}
-              body={tr("Not interested in someone for any reason? Hide them and you'll automatically be removed from their grid too. Clean, mutual, and completely drama-free.", "¿No te interesa alguien por cualquier motivo? Ocúltalo y tú desaparecerás automáticamente de su grid también. Limpio, mutuo y sin dramas.", "Pas intéressé·e par quelqu'un pour une raison quelconque ? Masque-le et tu disparais automatiquement de son grid aussi. Propre, mutuel, et sans drame.")}
+              body={tr("Not interested in someone for any reason? Hide them and you'll automatically be removed from their Home grid too. Clean, mutual, and completely drama-free.", "¿No te interesa alguien por cualquier motivo? Ocúltalo y tú desaparecerás automáticamente de su home grid también. Limpio, mutuo y sin dramas.", "Pas intéressé·e par quelqu'un pour une raison quelconque ? Masque-le et tu disparais automatiquement de son home grid aussi. Propre, mutuel, et sans drame.")}
             />
           </div>
         </div>

@@ -13,7 +13,7 @@ import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/li
 export const Route = createFileRoute("/app/grid")({
   head: () => ({
     meta: [
-      { title: "Discover players · PadelMatch" },
+      { title: "Home · PadelMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -129,7 +129,7 @@ function Discover() {
     mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast("Hidden from your Grid — manage in Profile → Hidden & blocked", { duration: 2400 });
+      toast("Hidden from your Home grid — manage in Profile → Hidden & blocked", { duration: 2400 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not hide"),
   });
@@ -345,7 +345,7 @@ function Discover() {
               >
                 <option value="all">Any zone</option>
                 {zonesInFeed.length > 0 && (
-                  <optgroup label="From players in your Grid">
+                <optgroup label="From players in your Home grid">
                     {zonesInFeed.map((z) => (
                       <option key={`feed-${z}`} value={z}>{z}</option>
                     ))}
@@ -423,7 +423,7 @@ function Discover() {
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
                           className="w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
                           aria-label={`Hide ${c.first_name}`}
-                          title="Not interested — hide from my Grid"
+                          title="Not interested — hide from my Home grid"
                         >
                           <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
                         </button>

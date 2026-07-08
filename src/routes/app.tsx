@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites } from "@/lib/match-events.functions";
-import { LayoutGrid, MessageCircle, User, Mail, X, Users } from "lucide-react";
+import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
@@ -214,7 +214,7 @@ function AuthShell() {
           }}
         >
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
-            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-4 h-4" />} active={path.startsWith("/app/grid")} />
+            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" />} active={path.startsWith("/app/grid")} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-5 h-5" />} active={path.startsWith("/app/events")} />
 
             <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" />} active={path.startsWith("/app/connect")} />

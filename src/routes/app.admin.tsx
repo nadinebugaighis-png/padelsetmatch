@@ -114,7 +114,7 @@ function AdminPage() {
         <div className="space-y-4">
           <Card title="At a glance">
             <ul className="text-sm text-[var(--ink)]/85 space-y-1.5">
-              <li>· <b>{completed.length}</b> completed profiles visible in the Grid</li>
+              <li>· <b>{completed.length}</b> completed profiles visible in the Home grid</li>
               <li>· <b>{incomplete.length}</b> users signed up but haven't finished onboarding</li>
               <li>· <b>{counts.matches}</b> matches created to date</li>
               <li>· <b>{pendingReports.length}</b> reports waiting on you</li>
@@ -219,7 +219,7 @@ function AdminPage() {
         <div className="space-y-4">
           {incomplete.length > 0 && (
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
-              <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Grid.</p>
+              <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>
               <div className="space-y-1.5">
                 {incomplete.map((u) => (
                   <div key={u.user_id} className="rounded-lg bg-amber-500/5 border border-amber-500/25 px-3 py-2">

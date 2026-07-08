@@ -637,9 +637,6 @@ function Discover() {
                             </div>
                           )}
 
-                          <p className="text-[10px] text-[var(--ink)]/45 mt-1.5 leading-snug">
-                            {tr("Your feedback is completely private — only the AI sees it to learn what you like.", "Tu opinión es totalmente privada — solo la IA la ve para aprender qué te gusta.", "Ton retour est totalement privé — seule l'IA le voit pour apprendre ce que tu aimes.")}
-                          </p>
                         </>
                       ) : (
                         <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>

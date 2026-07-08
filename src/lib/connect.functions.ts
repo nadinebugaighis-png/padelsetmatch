@@ -188,3 +188,26 @@ export const deleteConnectComment = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true };
   });
+
+export const getConnectLatest = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const nowIso = new Date().toISOString();
+    const [{ data: posts }, { data: comments }] = await Promise.all([
+      context.supabase
+        .from("connect_posts" as never)
+        .select("created_at")
+        .gt("expires_at", nowIso)
+        .order("created_at", { ascending: false })
+        .limit(1),
+      context.supabase
+        .from("connect_comments" as never)
+        .select("created_at")
+        .order("created_at", { ascending: false })
+        .limit(1),
+    ]);
+    const latestPost = ((posts ?? []) as Array<{ created_at: string }>)[0]?.created_at ?? null;
+    const latestComment = ((comments ?? []) as Array<{ created_at: string }>)[0]?.created_at ?? null;
+    const latest = [latestPost, latestComment].filter(Boolean).sort().slice(-1)[0] ?? null;
+    return { latest: latest as string | null };
+  });

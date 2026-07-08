@@ -680,23 +680,6 @@ function Discover() {
                         </div>
                       )}
 
-                      {(preview.personal_traits?.length ?? 0) > 0 && (
-                        <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Personal characteristics", "Características personales", "Traits personnels")}</div>
-                          <div className="flex flex-wrap gap-2">
-                            {preview.personal_traits!.map((tt) => <span key={tt} className="chip">{label(tt)}</span>)}
-                          </div>
-                        </div>
-                      )}
-
-                      {(preview.padel_style?.length ?? 0) > 0 && (
-                        <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Padel style", "Estilo de pádel", "Style de padel")}</div>
-                          <div className="flex flex-wrap gap-2">
-                            {preview.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
-                          </div>
-                        </div>
-                      )}
 
                       {preview.bio && (
                         <div>

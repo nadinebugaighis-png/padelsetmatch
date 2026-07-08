@@ -146,15 +146,7 @@ function AuthShell() {
     <div className="min-h-screen pb-24 programme-page">
       <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <Link
-            to="/app"
-            aria-label={t("shell.back.home")}
-            className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ink)]/70 hover:text-[var(--ink)]"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>{t("shell.home")}</span>
-          </Link>
-          <Link to="/app" className="flex items-center gap-2 min-w-0">
+          <Link to="/app/grid" className="flex items-center gap-2 min-w-0">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--grass)] ink-ring" />
             <span className="text-serif text-xl tracking-wider truncate text-[var(--ink)]">PADEL · MATCH</span>
           </Link>

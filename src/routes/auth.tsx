@@ -101,10 +101,11 @@ function AuthPage() {
     <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md programme-card p-8 sm:p-10">
 
-        <div className="flex items-center justify-between">
-          <Link to="/" className="text-xs uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
+        <div className="flex items-center justify-between gap-3">
+          <BrandMark size="sm" />
           <LangSwitch />
         </div>
+        <Link to="/" className="mt-4 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
         <div className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
           {mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}

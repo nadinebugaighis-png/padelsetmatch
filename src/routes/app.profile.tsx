@@ -337,7 +337,7 @@ function FeedbackBox() {
         maxLength={2000}
       />
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[10px] text-[var(--ink)]/50">{msg.length}/2000</span>
+        <span className="text-[10px] text-[var(--ink)]/50">{msg.length >= 1800 ? `${msg.length}/2000` : ""}</span>
         <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm" variant="outline">
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>

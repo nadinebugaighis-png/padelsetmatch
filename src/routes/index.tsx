@@ -53,89 +53,107 @@ function Landing() {
   });
   const count = countQ.data?.count ?? 0;
   const install = useInstallModal();
+  const chipClass =
+    "inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/15 bg-white/70 backdrop-blur px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ink)]/70";
+  const primaryBtn =
+    "inline-flex items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-7 py-3.5 tracking-wide hover:brightness-110 shadow-[0_14px_40px_-16px_rgba(15,62,46,0.5)] transition";
   return (
     <main className="programme-page min-h-screen flex flex-col">
-      <header className="px-6 py-5 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ink)] ring-4 ring-[var(--grass)]/40" />
-          <span className="text-display text-2xl tracking-tight">PADEL·MATCH</span>
+      <header className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5">
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ink)] ring-4 ring-[var(--grass)]/35" />
+          <span className="text-display text-xl sm:text-2xl tracking-tight">PADEL·MATCH</span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <LangSwitch />
-          <Link to="/how-it-works" className="text-xs uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)] hidden sm:inline">
+          <Link to="/how-it-works" className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] hidden sm:inline">
             {t("land.howItWorks")}
           </Link>
           <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.15em] px-4 py-1.5 hover:brightness-110 transition">{t("land.signin")}</Link>
         </div>
       </header>
 
-      <section className="flex-1 grid lg:grid-cols-2 gap-10 items-center px-6 lg:px-16 py-10">
+      <section className="flex-1 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center px-5 sm:px-8 lg:px-16 py-10 sm:py-14">
         <div className="max-w-xl">
-          <p className="chip chip-clay mb-6">{t("land.chip")}</p>
-          <h1 className="text-display text-7xl md:text-8xl lg:text-9xl leading-[0.9]">
+          <p className={chipClass + " mb-6"}>
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
+            {t("land.chip")}
+          </p>
+          <h1 className="text-display text-[3.25rem] leading-[0.95] sm:text-7xl md:text-8xl lg:text-[7.5rem] lg:leading-[0.92] tracking-[-0.02em]">
             {t("land.h1.a")}<br />
             {t("land.h1.a2")}<br />
-            <span style={{ color: "var(--ink)" }}>{t("land.h1.b")}</span>
+            <span className="text-[var(--ink)]/50">{t("land.h1.b")}</span>
           </h1>
-          <p className="mt-6 text-lg text-[var(--ink)]/80 max-w-md">
+          <p className="mt-7 text-base sm:text-lg text-[var(--ink)]/70 max-w-md leading-relaxed">
             {t("land.lede")}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-7 py-3.5 tracking-wide hover:brightness-110 shadow-[0_14px_40px_-12px_rgba(15,62,46,0.45)] transition">
+
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className={primaryBtn}>
               {t("land.cta")}
             </Link>
             <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
           </div>
-          <Link
-            to="/how-it-works"
-            className="mt-4 inline-block text-base font-semibold text-[var(--ink)] hover:opacity-80 underline underline-offset-4 decoration-2 decoration-[var(--ink)]/40 hover:decoration-[var(--ink)]"
-          >
-            {t("land.howItWorks")} →
-          </Link>
 
-          <p className="mt-4 text-base font-medium text-[var(--ink)]/90 max-w-md tracking-wide">
+          <p className="mt-5 text-sm text-[var(--ink)]/60 max-w-md">
             {t("land.cta.sub")}
           </p>
 
-          <div className="mt-10 text-sm text-[var(--ink)]/60">
-            <span className="text-display text-4xl text-[var(--ink)]">{count}</span>
-            <br />{t("land.statUsers")}
+          <div className="mt-10 flex items-center gap-6 flex-wrap">
+            <div className="flex items-baseline gap-2.5">
+              <span className="text-display text-4xl text-[var(--ink)]">{count.toLocaleString()}</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-[var(--ink)]/55">{t("land.statUsers")}</span>
+            </div>
+            <span className="h-6 w-px bg-[var(--ink)]/15 hidden sm:block" />
+            <Link
+              to="/how-it-works"
+              className="text-sm font-medium text-[var(--ink)]/80 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/25 hover:decoration-[var(--ink)]"
+            >
+              {t("land.howItWorks")} →
+            </Link>
           </div>
 
           <button
             onClick={install.openModal}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--ink)] px-5 py-2.5 text-sm font-bold text-[var(--ink)] hover:bg-[var(--grass)] hover:text-[var(--ink)] hover:border-[var(--grass)] transition"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/20 px-5 py-2.5 text-sm font-medium text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
           >
             <Smartphone className="w-4 h-4" />
             Add to your home screen
           </button>
         </div>
+
         <div className="hidden lg:block">
-          <div className="surface-card p-8 rotate-2">
-            <div className="grid grid-cols-2 gap-3">
-              {LANDING_TILES.map((src, i) => (
-                <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--ink)]/10">
-                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
-                </div>
-              ))}
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-[2rem] bg-[var(--grass)]/20 blur-2xl" aria-hidden />
+            <div className="relative surface-card p-7 rotate-1">
+              <div className="grid grid-cols-2 gap-3">
+                {LANDING_TILES.map((src, i) => (
+                  <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--ink)]/10">
+                    <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/55">{t("land.tap")}</p>
             </div>
-            <p className="mt-4 text-xs uppercase tracking-widest text-[var(--ink)]/60">{t("land.tap")}</p>
           </div>
         </div>
       </section>
 
-      <section className="px-6 lg:px-16 py-12 border-t border-[var(--ink)]/10">
-        <div className="flex items-end justify-between mb-6 flex-wrap gap-3">
-          <div>
-            <p className="chip chip-clay mb-3">{t("land.preview.chip")}</p>
-            <h2 className="text-display text-4xl md:text-5xl">{t("land.preview.title")}</h2>
-            <p className="mt-2 text-[var(--ink)]/70 max-w-lg">{t("land.preview.sub")}</p>
+      <section className="px-5 sm:px-8 lg:px-16 py-14 sm:py-16 border-t border-[var(--ink)]/10">
+        <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
+          <div className="max-w-lg">
+            <p className={chipClass + " mb-4"}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
+              {t("land.preview.chip")}
+            </p>
+            <h2 className="text-display text-4xl md:text-5xl tracking-[-0.01em]">{t("land.preview.title")}</h2>
+            <p className="mt-3 text-[var(--ink)]/65 leading-relaxed">{t("land.preview.sub")}</p>
           </div>
           <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-6 py-2.5 tracking-wide hover:brightness-110 transition">
             {t("land.preview.cta")}
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
             { src: LANDING_TILES[0], name: "Lucía", city: "Madrid", score: 92 },
             { src: LANDING_TILES[1], name: "Marc", city: "Barcelona", score: 88 },
@@ -144,28 +162,27 @@ function Landing() {
           ].map((p, i) => (
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--grass)] text-[var(--ink)] rounded-full px-2.5 py-1">{p.score}</span>
-              <div className="absolute bottom-3 left-3 right-3 text-[var(--ink)]">
-                <div className="text-display text-xl">{p.name}</div>
-                <div className="text-xs opacity-80">{p.city}</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/80 via-[var(--ink)]/20 to-transparent" />
+              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--grass)] text-[var(--ink)] rounded-full px-2.5 py-1">{p.score}</span>
+              <div className="absolute bottom-3 left-3 right-3 text-[var(--paper)]">
+                <div className="text-display text-xl leading-tight">{p.name}</div>
+                <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>
               </div>
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
-                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</Link>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-[var(--ink)]/50 backdrop-blur-sm">
+                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--paper)] text-[var(--ink)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</Link>
               </div>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-xs text-[var(--ink)]/50">{t("land.preview.foot")}</p>
+        <p className="mt-5 text-xs text-[var(--ink)]/50">{t("land.preview.foot")}</p>
       </section>
 
-
-      <footer className="px-6 py-6 text-xs text-[var(--ink)]/50 flex flex-wrap items-center justify-between gap-3">
+      <footer className="px-5 sm:px-8 lg:px-16 py-8 text-xs text-[var(--ink)]/50 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--ink)]/10">
         <span>{t("land.foot")}</span>
-        <span className="flex gap-4">
+        <span className="flex gap-5">
           <Link to="/terms" className="hover:text-[var(--ink)]">Terms</Link>
           <Link to="/privacy" className="hover:text-[var(--ink)]">Privacy</Link>
-          <span>v0.1</span>
+          <span className="opacity-70">v0.1</span>
         </span>
       </footer>
       <InstallModal open={install.open} onClose={install.closeModal} />

@@ -622,6 +622,7 @@ const fr: Dict = {
   "shell.tab.questions": "Code d'affinité",
   "shell.tab.questions.short": "Code",
   "shell.tab.matches": "Matchat",
+  "shell.tab.connect": "Connect",
   "shell.tab.me": "Moi",
   "shell.tab.grid": "Grid",
   "shell.tab.play": "Jouer",

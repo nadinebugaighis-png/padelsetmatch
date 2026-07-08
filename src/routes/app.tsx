@@ -89,6 +89,7 @@ function AuthShell() {
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);
   const getInvites = useServerFn(listMyPendingInvites);
+  const getConnect = useServerFn(getConnectLatest);
   const tr = useTr();
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {

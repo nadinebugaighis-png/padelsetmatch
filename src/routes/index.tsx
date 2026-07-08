@@ -208,7 +208,7 @@ function Landing() {
             </div>
           ))}
         </div>
-        <p className="mt-5 text-xs text-[var(--ink)]/50">{t("land.preview.foot")}</p>
+        
       </section>
 
       {/* Dark green footer bar */}

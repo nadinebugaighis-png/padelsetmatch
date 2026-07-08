@@ -348,7 +348,7 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
   }
 
   return (
-    <div className="mx-3 mt-2 rounded-xl border border-[var(--ink)]/40 bg-[var(--court)]/60 p-3 space-y-3">
+    <div className="mx-3 mt-2 rounded-xl border border-[var(--ink)]/12 bg-white p-3 space-y-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
         <button type="button" onClick={() => setExpanded(false)} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>

@@ -588,11 +588,21 @@ function Discover() {
                         <>
                           <p className="text-sm text-[var(--ink)]/85 leading-relaxed">{compatQ.data.blurb}</p>
 
+                          {/* Padel compatibility — text only, no rating */}
+                          {compatQ.data.sub_scores?.padel_analysis && (
+                            <div className="mt-3 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
+                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
+                              <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
+                            </div>
+                          )}
 
-
-
-
-
+                          {/* Personality compatibility — text only, no rating */}
+                          {compatQ.data.sub_scores?.personality_analysis && (
+                            <div className="mt-2 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
+                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
+                              <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
+                            </div>
+                          )}
 
                           <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--ink)]/10">
                             <span className="text-[11px] text-[var(--ink)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>

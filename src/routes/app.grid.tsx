@@ -508,7 +508,7 @@ function Discover() {
 
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
-        <DialogContent className="max-w-sm sm:max-w-lg lg:max-w-2xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/10 text-[var(--ink)] max-h-[92vh] flex flex-col rounded-3xl">
+        <DialogContent className="max-w-sm sm:max-w-md lg:max-w-3xl xl:max-w-4xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/10 text-[var(--ink)] max-h-[92vh] flex flex-col rounded-3xl">
           {preview && (() => {
             const mine = feedQ.data?.me;
             const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
@@ -522,28 +522,28 @@ function Discover() {
             return (
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
-                <div className="overflow-y-auto flex-1">
-                  {/* Hero photo */}
-                  <div className="relative">
+                <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
+                  {/* Hero photo — smaller on desktop, side-by-side layout */}
+                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full">
                     {preview.photo_url ? (
-                      <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] object-cover" />
+                      <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-full lg:min-h-0 object-cover" />
                     ) : (
-                      <div className="w-full aspect-[3/4] bg-[var(--paper-2)]" />
+                      <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-full bg-[var(--paper-2)]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none lg:hidden" />
 
-                    {/* Top controls */}
+                    {/* Top controls — mobile only */}
                     <button
                       type="button"
                       onClick={() => setPreview(null)}
-                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55"
+                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
                       aria-label="Back"
                     >
                       <ArrowLeft className="w-4 h-4" />
                     </button>
 
-                    {/* Overlaid identity */}
-                    <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
+                    {/* Overlaid identity — mobile only */}
+                    <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5 lg:hidden">
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
@@ -552,179 +552,192 @@ function Discover() {
                     </div>
                   </div>
 
-                  {/* Body */}
-                  <div className="px-5 pt-4 pb-28 space-y-4">
-                    {sharedChips.length > 0 && (
-                      <div className="flex flex-wrap gap-2.5">
-                        {sharedChips.map((w) => (
-                          <span
-                            key={w}
-                            className="px-4 py-2 rounded-full text-[13px] font-medium bg-[var(--ink)]/[0.04] text-[var(--ink)] border border-[var(--ink)]/10"
-                          >
-                            {w}
-                          </span>
-                        ))}
+                  {/* Body — scrollable on desktop */}
+                  <div className="lg:w-[60%] lg:overflow-y-auto">
+                    <div className="px-5 pt-4 pb-28 lg:px-6 lg:pt-6 lg:pb-24 space-y-4">
+                      {/* Desktop header */}
+                      <div className="hidden lg:flex lg:items-start lg:justify-between lg:gap-4">
+                        <div>
+                          <div className="text-display text-3xl xl:text-4xl leading-[0.95] text-[var(--ink)] uppercase tracking-tight">{preview.first_name}</div>
+                          <div className="text-sm text-[var(--ink)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                        </div>
+                        <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-sm font-extrabold tracking-widest uppercase">
+                          {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                        </div>
                       </div>
-                    )}
 
-
-                    {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}
-
-                    {preview.free_court_access && (
-                      <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
-                        {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
-                        
-                      </div>
-                    )}
-
-                    {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
-                    <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
-                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2">
-                        <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
-                      </div>
-                      {compatQ.isLoading ? (
-                        <p className="text-sm text-[var(--ink)]/55 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
-                      ) : compatQ.data ? (
-                        <>
-                          <p className="text-sm text-[var(--ink)]/85 leading-relaxed">{compatQ.data.blurb}</p>
-
-                          {/* Padel compatibility — text only, no rating */}
-                          {compatQ.data.sub_scores?.padel_analysis && (
-                            <div className="mt-3 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
-                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
-                              <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
-                            </div>
-                          )}
-
-                          {/* Personality compatibility — text only, no rating */}
-                          {compatQ.data.sub_scores?.personality_analysis && (
-                            <div className="mt-2 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
-                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
-                              <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
-                            </div>
-                          )}
-
-                          <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--ink)]/10">
-                            <span className="text-[11px] text-[var(--ink)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
-                            <button
-                              type="button"
-                              disabled={rateCompatM.isPending}
-                              onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
-                              aria-label="Helpful"
+                      {sharedChips.length > 0 && (
+                        <div className="flex flex-wrap gap-2.5">
+                          {sharedChips.map((w) => (
+                            <span
+                              key={w}
+                              className="px-4 py-2 rounded-full text-[13px] font-medium bg-[var(--ink)]/[0.04] text-[var(--ink)] border border-[var(--ink)]/10"
                             >
-                              <ThumbsUp className="w-4 h-4" />
-                            </button>
-                            <button
-                              type="button"
-                              disabled={rateCompatM.isPending}
-                              onClick={() => rateCompatM.mutate({ thumbs: -1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ink)]/70 text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
-                              aria-label="Not useful"
-                            >
-                              <ThumbsDown className="w-4 h-4" />
-                            </button>
-                          </div>
-
-                          {compatFbQ.data?.thumbs === -1 && (
-                            <div className="mt-2 flex flex-wrap gap-1.5">
-                              {[
-                                { key: "harsh", label: tr("Too harsh", "Demasiado duro", "Trop dur") },
-                                { key: "generic", label: tr("Too generic", "Demasiado genérico", "Trop générique") },
-                                { key: "missed", label: tr("Missed the point", "No dio en el clavo", "À côté de la plaque") },
-                                { key: "wrong", label: tr("Just wrong", "Directamente mal", "Complètement faux") },
-                              ].map(({ key, label: reason }) => (
-                                <button
-                                  key={key}
-                                  type="button"
-                                  disabled={rateCompatM.isPending}
-                                  onClick={() => rateCompatM.mutate({ thumbs: -1, reason })}
-                                  className="px-2.5 py-1 rounded-full text-[11px] bg-[var(--ink)]/[0.04] border border-[var(--ink)]/10 text-[var(--ink)]/75 hover:bg-[var(--ink)]/[0.08]"
-                                >
-                                  {reason}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-
-                        </>
-                      ) : (
-                        <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
+                              {w}
+                            </span>
+                          ))}
+                        </div>
                       )}
-                    </div>
 
 
+                      {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}
 
+                      {preview.free_court_access && (
+                        <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
+                          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                          {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
+                          
+                        </div>
+                      )}
 
-                    {/* Me-style profile card (age intentionally omitted for privacy) */}
-                    <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">
-                      <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
-                        <Info label={tr("LEVEL", "NIVEL", "NIVEAU")} v={label(preview.level)} />
-                        {preview.gender && (
-                          <Info label={tr("GENDER", "GÉNERO", "GENRE")} v={preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)} />
-                        )}
-                        {preview.nationality && (
-                          <Info label={tr("NATIONALITY", "NACIONALIDAD", "NATIONALITÉ")} v={preview.nationality} />
+                      {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
+                      <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
+                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2">
+                          <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
+                        </div>
+                        {compatQ.isLoading ? (
+                          <p className="text-sm text-[var(--ink)]/55 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
+                        ) : compatQ.data ? (
+                          <>
+                            <p className="text-sm text-[var(--ink)]/85 leading-relaxed">{compatQ.data.blurb}</p>
+
+                            {/* Padel compatibility — text only, no rating */}
+                            {compatQ.data.sub_scores?.padel_analysis && (
+                              <div className="mt-3 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
+                                <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
+                              </div>
+                            )}
+
+                            {/* Personality compatibility — text only, no rating */}
+                            {compatQ.data.sub_scores?.personality_analysis && (
+                              <div className="mt-2 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
+                                <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
+                              </div>
+                            )}
+
+                            <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--ink)]/10">
+                              <span className="text-[11px] text-[var(--ink)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
+                              <button
+                                type="button"
+                                disabled={rateCompatM.isPending}
+                                onClick={() => rateCompatM.mutate({ thumbs: 1 })}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
+                                aria-label="Helpful"
+                              >
+                                <ThumbsUp className="w-4 h-4" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={rateCompatM.isPending}
+                                onClick={() => rateCompatM.mutate({ thumbs: -1 })}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ink)]/70 text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
+                                aria-label="Not useful"
+                              >
+                                <ThumbsDown className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            {compatFbQ.data?.thumbs === -1 && (
+                              <div className="mt-2 flex flex-wrap gap-1.5">
+                                {[
+                                  { key: "harsh", label: tr("Too harsh", "Demasiado duro", "Trop dur") },
+                                  { key: "generic", label: tr("Too generic", "Demasiado genérico", "Trop générique") },
+                                  { key: "missed", label: tr("Missed the point", "No dio en el clavo", "À côté de la plaque") },
+                                  { key: "wrong", label: tr("Just wrong", "Directamente mal", "Complètement faux") },
+                                ].map(({ key, label: reason }) => (
+                                  <button
+                                    key={key}
+                                    type="button"
+                                    disabled={rateCompatM.isPending}
+                                    onClick={() => rateCompatM.mutate({ thumbs: -1, reason })}
+                                    className="px-2.5 py-1 rounded-full text-[11px] bg-[var(--ink)]/[0.04] border border-[var(--ink)]/10 text-[var(--ink)]/75 hover:bg-[var(--ink)]/[0.08]"
+                                  >
+                                    {reason}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+
+                          </>
+                        ) : (
+                          <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
                         )}
                       </div>
 
-                      {(() => {
-                        const locs = (preview.locations ?? []).map((l) => formatLocation(decodeLocation(l)));
-                        if (locs.length === 0) return null;
-                        return (
+
+
+
+                      {/* Me-style profile card (age intentionally omitted for privacy) */}
+                      <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">
+                        <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
+                          <Info label={tr("LEVEL", "NIVEL", "NIVEAU")} v={label(preview.level)} />
+                          {preview.gender && (
+                            <Info label={tr("GENDER", "GÉNERO", "GENRE")} v={preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)} />
+                          )}
+                          {preview.nationality && (
+                            <Info label={tr("NATIONALITY", "NACIONALIDAD", "NATIONALITÉ")} v={preview.nationality} />
+                          )}
+                        </div>
+
+                        {(() => {
+                          const locs = (preview.locations ?? []).map((l) => formatLocation(decodeLocation(l)));
+                          if (locs.length === 0) return null;
+                          return (
+                            <div>
+                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
+                              <div className="flex flex-wrap gap-2">
+                                {locs.map((l) => <span key={l} className="chip">{l}</span>)}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {(preview.languages?.length ?? 0) > 0 && (
                           <div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
                             <div className="flex flex-wrap gap-2">
-                              {locs.map((l) => <span key={l} className="chip">{l}</span>)}
+                              {preview.languages!.map((l) => <span key={l} className="chip">{label(l)}</span>)}
                             </div>
                           </div>
-                        );
-                      })()}
+                        )}
 
-                      {(preview.languages?.length ?? 0) > 0 && (
-                        <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
-                          <div className="flex flex-wrap gap-2">
-                            {preview.languages!.map((l) => <span key={l} className="chip">{label(l)}</span>)}
+
+                        {preview.bio && (
+                          <div>
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`, `À propos de ${preview.first_name}`)}</div>
+                            <p className="text-sm text-[var(--ink)]/85 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
 
 
-                      {preview.bio && (
-                        <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`, `À propos de ${preview.first_name}`)}</div>
-                          <p className="text-sm text-[var(--ink)]/85 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
-                        </div>
-                      )}
+                      <div className="flex items-center justify-center gap-4 pt-2 pb-6">
+                        <button
+                          type="button"
+                          onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
+                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/50 hover:text-[var(--ink)]/80 transition"
+                          aria-label={`Block ${preview?.first_name ?? ""}`}
+                        >
+                          <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
+                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/50 hover:text-red-500/80 transition"
+                          aria-label={`Report ${preview?.first_name ?? ""}`}
+                        >
+                          <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
+                        </button>
+                      </div>
+                      <div className="pb-24 lg:pb-0" />
                     </div>
-
-
-                    <div className="flex items-center justify-center gap-4 pt-2 pb-6">
-                      <button
-                        type="button"
-                        onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
-                        className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/50 hover:text-[var(--ink)]/80 transition"
-                        aria-label={`Block ${preview?.first_name ?? ""}`}
-                      >
-                        <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
-                        className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/50 hover:text-red-500/80 transition"
-                        aria-label={`Report ${preview?.first_name ?? ""}`}
-                      >
-                        <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
-                      </button>
-                    </div>
-                    <div className="pb-24" />
                   </div>
                 </div>
 
                 {/* Floating glass action island */}
-                <div className="absolute bottom-4 left-4 right-4 flex justify-center">
+                <div className="absolute bottom-4 left-4 right-4 lg:left-auto lg:right-6 lg:bottom-6 flex justify-center lg:justify-end">
                   <button
                     type="button"
                     onClick={() => {

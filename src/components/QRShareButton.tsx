@@ -22,9 +22,9 @@ export function QRShareButton() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Show QR code to share app"
-        className="fixed bottom-4 right-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-[color:var(--ink,#0d2929)] shadow-lg transition hover:scale-105 hover:shadow-xl md:h-12 md:w-12"
+        className="fixed bottom-20 right-3 z-50 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-[color:var(--ink,#0d2929)] shadow-lg transition hover:scale-105 hover:shadow-xl md:bottom-4 md:right-4 md:h-12 md:w-12"
       >
-        <QrCode className="h-5 w-5 md:h-6 md:w-6" />
+        <QrCode className="h-4 w-4 md:h-6 md:w-6" />
       </button>
 
       {open && (

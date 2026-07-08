@@ -59,7 +59,7 @@
 
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
   /* Court at Dusk palette */
   --court: oklch(0.32 0.04 180);            /* deep padel teal */
@@ -100,14 +100,21 @@
   --destructive: oklch(0.55 0.22 28);
   --destructive-foreground: var(--cream);
 
-  --border: oklch(0.4 0.03 180 / 0.4);
-  --input: oklch(0.4 0.03 180 / 0.5);
+  --border: oklch(0.4 0.03 180 / 0.32);
+  --input: oklch(0.4 0.03 180 / 0.4);
   --ring: var(--clay);
 
-  --shadow-court: 0 30px 80px -30px oklch(0 0 0 / 0.6), 0 0 0 1px oklch(0.45 0.03 180 / 0.3);
-  --shadow-glow: 0 0 60px -10px oklch(0.6 0.13 35 / 0.45);
+  --shadow-court: 0 30px 80px -30px oklch(0 0 0 / 0.5), 0 0 0 1px oklch(0.45 0.03 180 / 0.22);
+  --shadow-glow: 0 0 60px -10px oklch(0.6 0.13 35 / 0.4);
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px -12px oklch(0 0 0 / 0.12);
+  --shadow-elevated: 0 2px 4px oklch(0 0 0 / 0.05), 0 20px 40px -20px oklch(0 0 0 / 0.18);
   --gradient-dusk: linear-gradient(160deg, oklch(0.22 0.03 180) 0%, oklch(0.28 0.05 200) 45%, oklch(0.32 0.08 35) 100%);
   --gradient-clay: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
 }
 
 .dark {

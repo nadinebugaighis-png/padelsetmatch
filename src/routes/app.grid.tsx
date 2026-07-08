@@ -524,8 +524,9 @@ function Discover() {
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
                   {/* Hero photo — Polaroid-style white frame on desktop and mobile */}
-                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-3 sm:p-4 lg:p-5 flex flex-col justify-center">
-                    <div className="relative bg-white p-2.5 sm:p-3 lg:p-3.5 shadow-[0_12px_40px_-12px_rgba(31,58,46,0.25)] rounded-sm lg:rounded-md">
+                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 sm:p-4 lg:p-5 flex flex-col justify-center">
+                    <div className="relative bg-white p-3 sm:p-3.5 lg:p-3.5 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md">
+
                       {preview.photo_url ? (
                         <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
                       ) : (

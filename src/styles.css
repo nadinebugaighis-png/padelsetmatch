@@ -246,8 +246,9 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-weight: 600;
-  border: 1px solid oklch(0.5 0.03 180 / 0.35);
-  background: oklch(0.32 0.04 180 / 0.55);
+  border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+  background: var(--paper);
+  color: var(--ink);
 }
 @utility chip-ink {
   display: inline-flex;
@@ -266,7 +267,7 @@
 @utility chip-ball {
   background: var(--ink);
   color: var(--paper);
-  border-color: transparent;
+  border-color: var(--ink);
 }
 @utility chip-clay {
   background: var(--clay);

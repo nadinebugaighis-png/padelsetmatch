@@ -115,6 +115,27 @@ function AuthShell() {
     retry: false,
     refetchOnWindowFocus: true,
   });
+  const connectQ = useQuery({
+    queryKey: ["connect-latest"],
+    queryFn: () => safe(() => getConnect()),
+    enabled: !!profileQ.data,
+    retry: false,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const [connectSeen, setConnectSeen] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("connect-last-seen") ?? "";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!path.startsWith("/app/connect")) return;
+    const now = new Date().toISOString();
+    localStorage.setItem("connect-last-seen", now);
+    setConnectSeen(now);
+  }, [path]);
+  const connectLatest = connectQ.data?.latest ?? null;
+  const connectHasNew = !!connectLatest && (!connectSeen || connectLatest > connectSeen);
   const rawInvites = (invitesQ.data?.invites ?? []) as Array<{
     id: string;
     event: { id: string; starts_at: string; club_name: string | null; city: string | null; status: string; host: { first_name: string | null } | null } | null;

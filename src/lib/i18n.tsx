@@ -63,6 +63,7 @@ const en: Dict = {
   "shell.tab.questions": "Matchmaking code",
   "shell.tab.questions.short": "Code",
   "shell.tab.matches": "Matchat",
+  "shell.tab.connect": "Connect",
   "shell.tab.me": "Me",
   "shell.tab.grid": "Grid",
   "shell.tab.play": "Play",

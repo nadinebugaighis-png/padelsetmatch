@@ -260,6 +260,8 @@ function ProfilePage() {
 
           <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
+          <MessagesRow />
+
           <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
         </div>
 

@@ -107,7 +107,7 @@ function Landing() {
       {/* Hero — full viewport on mobile, compact viewport-fit on desktop */}
       <section className="relative z-10 min-h-[100dvh] flex flex-col justify-start sm:justify-center px-5 sm:px-8 lg:px-16 pt-8 sm:pt-10 lg:pt-0 pb-6 lg:min-h-[calc(100dvh-64px)]">
         <div className="max-w-xl">
-          <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
+          <p className="mt-10 sm:mt-0 inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
             <Globe2 className="w-3.5 h-3.5" strokeWidth={2} />
             {t("land.chip")}
           </p>

@@ -148,7 +148,8 @@ function ProfilePage() {
     (p.languages?.length ?? 0) > 0;
 
   return (
-    <main className="programme-page px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-8 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
+
       {/* Hero: compact photo + name side-by-side, even on mobile */}
       <div className="programme-card p-4 sm:p-6">
         <div className="flex items-start gap-4 sm:gap-6">

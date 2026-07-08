@@ -689,9 +689,6 @@ function Discover() {
                       )}
                     </div>
 
-                    {preview.reasons[0] && (
-                      <p className="text-xs text-[var(--ink)]/60 px-1">{preview.reasons[0]}</p>
-                    )}
 
                     <div className="flex items-center justify-center gap-4 pt-2 pb-6">
                       <button

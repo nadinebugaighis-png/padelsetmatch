@@ -90,7 +90,7 @@ function Landing() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 px-5 sm:px-8 lg:px-16 pt-6 pb-4 flex items-center justify-between">
+      <header className="relative z-10 px-5 sm:px-8 lg:px-16 pt-3 lg:pt-4 pb-2 lg:pb-3 flex items-center justify-between">
         <BrandMark />
         <div className="flex items-center gap-2.5">
           <LangSwitch />
@@ -105,24 +105,24 @@ function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-6 lg:pt-4 pb-10 lg:pb-6 lg:min-h-[calc(100vh-72px)] lg:flex lg:flex-col lg:justify-center">
+      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-2 lg:pt-0 pb-6 lg:flex lg:flex-col lg:justify-center lg:min-h-[calc(100dvh-64px)]">
         <div className="max-w-xl">
           <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
             <Globe2 className="w-3.5 h-3.5" strokeWidth={2} />
             {t("land.chip")}
           </p>
 
-          <h1 className="text-serif mt-4 lg:mt-3 uppercase text-[var(--ink)] leading-[0.92] tracking-[-0.015em] text-[3.25rem] sm:text-6xl md:text-7xl lg:text-[6.5rem]">
+          <h1 className="text-serif mt-2 lg:mt-1 uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.5rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.5rem] xl:text-[5rem]">
             <span className="block">{t("land.h1.a")}</span>
             <span className="block">{t("land.h1.a2")}</span>
             <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>
           </h1>
 
-          <p className="mt-5 lg:mt-4 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.6]">
+          <p className="mt-3 lg:mt-2 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.55]">
             {t("land.lede")}
           </p>
 
-          <div className="mt-6 lg:mt-5 flex flex-wrap items-center gap-3">
+          <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-3">
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined }}
@@ -138,20 +138,20 @@ function Landing() {
 
           <Link
             to="/how-it-works"
-            className="mt-6 lg:mt-4 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
+            className="mt-3 lg:mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
           >
             {t("land.howItWorks")} <ArrowRight className="w-4 h-4" />
           </Link>
 
-          <p className="mt-4 lg:mt-3 text-sm text-[var(--ink)]/70 max-w-sm leading-relaxed">
+          <p className="mt-2 lg:mt-1 text-sm text-[var(--ink)]/70 max-w-sm leading-relaxed">
             {t("land.cta.sub")}
           </p>
         </div>
 
         {/* Stats row */}
-        <div className="mt-8 lg:mt-6 max-w-xl grid grid-cols-[auto_1px_1fr] items-center gap-5 sm:gap-6">
+        <div className="mt-5 lg:mt-4 max-w-xl grid grid-cols-[auto_1px_1fr] items-center gap-5 sm:gap-6">
           <div>
-            <div className="text-serif text-4xl lg:text-5xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
+            <div className="text-serif text-3xl lg:text-4xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
             <div className="mt-1 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
           </div>
           <div className="h-12 w-px bg-[var(--ink)]/15" />

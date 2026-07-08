@@ -160,6 +160,7 @@ function RootComponent() {
         <Outlet />
         <Toaster richColors position="top-center" />
         <CookieBanner />
+        <QRShareButton />
       </I18nProvider>
     </QueryClientProvider>
   );

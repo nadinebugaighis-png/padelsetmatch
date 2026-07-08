@@ -345,6 +345,7 @@ const es: Dict = {
   "shell.tab.questions": "Código de afinidad",
   "shell.tab.questions.short": "Código",
   "shell.tab.matches": "Matchat",
+  "shell.tab.connect": "Connect",
   "shell.tab.me": "Yo",
   "shell.tab.grid": "Grid",
   "shell.tab.play": "Jugar",

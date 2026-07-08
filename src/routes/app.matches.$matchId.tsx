@@ -201,7 +201,7 @@ function ChatRoom() {
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {messages.length === 0 && (
           <div className="text-center text-sm text-[var(--ink)]/60 mt-10">
             {t("chat.empty")}
@@ -210,10 +210,16 @@ function ChatRoom() {
         {messages.map((m) => {
           const mine = m.sender_profile_id === my_profile_id;
           const isEditing = editingId === m.id;
+          const time = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
           return (
-            <div key={m.id} className={`group flex items-end gap-1.5 ${mine ? "justify-end" : "justify-start"}`}>
+            <div key={m.id} className={`group flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}>
+              {!mine && (
+                <div className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0 mb-1">
+                  {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
+                </div>
+              )}
               {mine && !isEditing && (
-                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity mb-1">
                   <button
                     type="button"
                     onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
@@ -232,7 +238,7 @@ function ChatRoom() {
                   </button>
                 </div>
               )}
-              <div className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-[0_1px_2px_rgba(15,62,46,0.06)] ${mine ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)]" : "bg-white text-[var(--ink)] border border-[var(--ink)]/12"}`}>
+              <div className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed shadow-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm border border-[var(--ink)]" : "bg-white text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/15"}`}>
                 {isEditing ? (
                   <form
                     onSubmit={(e) => {
@@ -261,8 +267,11 @@ function ChatRoom() {
                   </form>
                 ) : (
                   <>
-                    {m.body}
-                    {m.edited_at && <span className={`ml-1.5 text-[10px] ${mine ? "text-[var(--paper)]/70" : "text-[var(--ink)]/50"}`}>{tr("(edited)", "(editado)", "(modifié)")}</span>}
+                    <p className="whitespace-pre-wrap">{m.body}</p>
+                    <div className={`mt-1 flex items-center gap-1.5 text-[10px] ${mine ? "text-[var(--paper)]/70" : "text-[var(--ink)]/50"}`}>
+                      <span>{time}</span>
+                      {m.edited_at && <span>{tr("(edited)", "(editado)", "(modifié)")}</span>}
+                    </div>
                   </>
                 )}
               </div>

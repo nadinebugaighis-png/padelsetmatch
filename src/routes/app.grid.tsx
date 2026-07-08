@@ -523,32 +523,34 @@ function Discover() {
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
-                  {/* Hero photo — smaller on desktop, side-by-side layout */}
-                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full">
-                    {preview.photo_url ? (
-                      <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-full lg:min-h-0 object-cover" />
-                    ) : (
-                      <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-full bg-[var(--paper-2)]" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none lg:hidden" />
+                  {/* Hero photo — Polaroid-style white frame on desktop and mobile */}
+                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-3 sm:p-4 lg:p-5 flex flex-col justify-center">
+                    <div className="relative bg-white p-2.5 sm:p-3 lg:p-3.5 shadow-[0_12px_40px_-12px_rgba(31,58,46,0.25)] rounded-sm lg:rounded-md">
+                      {preview.photo_url ? (
+                        <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
+                      ) : (
+                        <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] bg-[var(--paper-2)]" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none lg:hidden" />
 
-                    {/* Top controls — mobile only */}
-                    <button
-                      type="button"
-                      onClick={() => setPreview(null)}
-                      className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
-                      aria-label="Back"
-                    >
-                      <ArrowLeft className="w-4 h-4" />
-                    </button>
+                      {/* Top controls — mobile only */}
+                      <button
+                        type="button"
+                        onClick={() => setPreview(null)}
+                        className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
+                        aria-label="Back"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                      </button>
 
-                    {/* Overlaid identity — mobile only */}
-                    <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5 lg:hidden">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
-                        {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                      {/* Overlaid identity — mobile only */}
+                      <div className="absolute left-0 right-0 bottom-0 px-5 pb-5 lg:hidden">
+                        <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
+                          {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                        </div>
+                        <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight mt-1.5">{preview.first_name},</div>
+                        <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}</div>
                       </div>
-                      <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
-                      <div className="text-sm text-[var(--cream)]/85">{preview.zone} · {label(preview.level)}</div>
                     </div>
                   </div>
 

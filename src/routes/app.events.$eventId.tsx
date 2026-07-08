@@ -448,8 +448,12 @@ function EventDetail() {
 
 
       {/* Players */}
-      <div className="mt-4">
-        <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
+      <div className="mt-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/60">{tr("Lineup", "Alineación", "Composition")}</div>
+          <div className="flex-1 h-px bg-[var(--ink)]/10" />
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/4</div>
+        </div>
         <div className="flex flex-wrap gap-2">
           {(event.participants ?? []).map((p: any) => {
             const isMe = p.profile_id === me?.id;

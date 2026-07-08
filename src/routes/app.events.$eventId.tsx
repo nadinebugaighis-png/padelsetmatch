@@ -353,49 +353,49 @@ function EventDetail() {
             ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70 border-[var(--ink)]/15", label: tr("Full", "Completo", "Complet") }
             : { cls: "bg-[var(--grass)]/30 text-[var(--ink)] border-[var(--ink)]/15", label: tr(`Needs ${event.needs}`, `Faltan ${event.needs}`) };
         return (
-          <section className="rounded-2xl border border-[var(--ink)]/10 bg-white shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.25)] overflow-hidden">
-            {/* Date banner */}
-            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch border-b border-[var(--ink)]/10 bg-[var(--paper-2)]/50">
-              <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-3 sm:py-4 border-r border-[var(--ink)]/10 min-w-[92px] sm:min-w-[120px] shrink-0">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{weekday}</div>
-                <div className="text-serif text-4xl sm:text-5xl leading-none text-[var(--ink)] mt-0.5">{day}</div>
-                <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mt-1">{monthYear}</div>
+          <section className="rounded-2xl border border-[var(--ink)]/15 bg-white shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.25)] overflow-hidden">
+            {/* Date banner — ink background for strong contrast */}
+            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch border-b border-[var(--ink)]/15 bg-[var(--ink)]">
+              <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-3 sm:py-4 border-r border-[var(--paper)]/15 min-w-[92px] sm:min-w-[120px] shrink-0">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--paper)]/70">{weekday}</div>
+                <div className="text-serif text-4xl sm:text-5xl leading-none text-[var(--paper)] mt-0.5">{day}</div>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--paper)]/70 mt-1">{monthYear}</div>
               </div>
               <div className="min-w-0 flex flex-col justify-between px-4 sm:px-6 py-3 sm:py-4 gap-1">
                 <div className="flex items-start justify-between gap-2 min-w-0">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60 truncate">{tr("Match at", "Partido en", "Match à")}</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--paper)]/70 truncate">{tr("Match at", "Partido en", "Match à")}</div>
                   <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${statusChip.cls}`}>
                     {statusChip.label}
                   </span>
                 </div>
-                <h1 className="text-serif text-xl sm:text-2xl leading-tight text-[var(--ink)] truncate mt-1">{event.club_name}</h1>
-                <div className="text-[11px] sm:text-xs text-[var(--ink)]/60 truncate">{event.club_address ?? event.city ?? ""}</div>
+                <h1 className="text-serif text-xl sm:text-2xl leading-tight text-[var(--paper)] truncate mt-1">{event.club_name}</h1>
+                <div className="text-[11px] sm:text-xs text-[var(--paper)]/70 truncate">{event.club_address ?? event.city ?? ""}</div>
               </div>
             </div>
 
             {/* Meta strip */}
-            <div className="grid grid-cols-3 divide-x divide-[var(--ink)]/10 border-b border-[var(--ink)]/10 text-center">
+            <div className="grid grid-cols-3 divide-x divide-[var(--ink)]/10 border-b border-[var(--ink)]/10 text-center bg-[var(--paper-2)]/40">
               <div className="px-2 py-3 sm:py-4 min-w-0">
-                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Time", "Hora", "Heure")}</div>
-                <div className="text-sm sm:text-base font-medium text-[var(--ink)] mt-0.5 truncate">{time}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Time", "Hora", "Heure")}</div>
+                <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5 truncate">{time}</div>
               </div>
               <div className="px-2 py-3 sm:py-4 min-w-0">
-                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Players", "Jugadores", "Joueurs")}</div>
-                <div className="text-sm sm:text-base font-medium text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/40">/4</span></div>
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Players", "Jugadores", "Joueurs")}</div>
+                <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/50">/4</span></div>
               </div>
               <div className="px-2 py-3 sm:py-4 min-w-0">
-                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Level", "Nivel", "Niveau")}</div>
-                <div className="text-sm sm:text-base font-medium text-[var(--ink)] mt-0.5">{event.level_min}<span className="text-[var(--ink)]/40 mx-0.5">–</span>{event.level_max}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")}</div>
+                <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5">{event.level_min}<span className="text-[var(--ink)]/50 mx-0.5">–</span>{event.level_max}</div>
               </div>
             </div>
 
             {/* Details */}
             <div className="px-4 py-3 space-y-2.5">
-              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70">
+              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />
                 {genderLabel}
-                <span className="text-[var(--ink)]/20">·</span>
-                <span className={event.court_booked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}>
+                <span className="text-[var(--ink)]/40">·</span>
+                <span className={event.court_booked ? "text-[var(--ink)] font-semibold" : "text-[var(--ink)]/80"}>
                   {event.court_booked ? tr("Court booked", "Pista reservada", "Pista réservée") : tr("Court to book", "Falta pista", "Pista à réserver")}
                 </span>
               </div>
@@ -405,34 +405,34 @@ function EventDetail() {
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[var(--ink)] hover:text-[var(--plum)] transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[var(--ink)] hover:text-[var(--plum)] transition-colors font-medium"
                 >
                   <MapPin className="w-3.5 h-3.5" /> {tr("Google Maps", "Google Maps", "Google Maps")}
-                  <ExternalLink className="w-3 h-3 opacity-60" />
+                  <ExternalLink className="w-3 h-3 opacity-80" />
                 </a>
                 {event.playtomic_link && (() => {
                   const safe = normalizePlaytomicLink(event.playtomic_link).url;
                   if (!safe) return null;
                   return (
-                    <a href={safe} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[var(--ink)] hover:text-[var(--plum)] transition-colors">
-                      Playtomic <ExternalLink className="w-3 h-3 opacity-60" />
+                    <a href={safe} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[var(--ink)] hover:text-[var(--plum)] transition-colors font-medium">
+                      Playtomic <ExternalLink className="w-3 h-3 opacity-80" />
                     </a>
                   );
                 })()}
               </div>
 
               {event.note && (
-                <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap pt-1 border-t border-[var(--ink)]/8">
+                <p className="text-sm text-[var(--ink)] whitespace-pre-wrap pt-1 border-t border-[var(--ink)]/10">
                   {event.note}
                 </p>
               )}
             </div>
 
             {event.lock_active && event.invite_lock_until && (
-              <div className="flex items-start gap-2 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/60 px-4 py-3 text-xs text-[var(--ink)]/80">
+              <div className="flex items-start gap-2 border-t border-[var(--ink)]/15 bg-[var(--plum)]/[0.08] px-4 py-3 text-xs text-[var(--ink)]">
                 <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--plum)] shrink-0" />
                 <div>
-                  <div className="text-[var(--ink)] uppercase tracking-[0.2em] text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
+                  <div className="text-[var(--ink)] uppercase tracking-[0.2em] text-[10px] font-semibold">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
                   <div className="mt-0.5">
                     {tr(
                       `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,

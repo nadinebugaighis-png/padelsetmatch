@@ -708,9 +708,7 @@ function Discover() {
                         <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
                       </button>
                     </div>
-                    <p className="text-center text-[10px] text-[var(--ink)]/45 leading-snug pb-24">
-                      {t("disc.privacyNote")}
-                    </p>
+                    <div className="pb-24" />
                   </div>
                 </div>
 

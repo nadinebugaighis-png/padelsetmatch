@@ -311,8 +311,7 @@ function FeedbackBox() {
         <Sparkles className="w-4 h-4 text-[var(--ink)]" />
         <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{t("fb.title")}</h2>
       </div>
-      <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.sub")}</p>
-      <p className="text-[10px] text-[var(--ink)]/40 mt-1">{t("fb.anon")}</p>
+      <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.anon")} · {t("fb.sub")}</p>
 
       <div className="flex items-center gap-1 mt-3">
         {[1, 2, 3, 4, 5].map((n) => (

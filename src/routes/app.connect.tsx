@@ -255,10 +255,10 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
   const [body, setBody] = useState(post?.body ?? "");
 
   const mut = useMutation({
-    mutationFn: () =>
-      isEdit
-        ? update({ data: { id: post!.id, category, city: city || null, title, body } })
-        : create({ data: { category, city: city || null, title, body } }),
+    mutationFn: async () => {
+      if (isEdit) return await update({ data: { id: post!.id, category, city: city || null, title, body } });
+      return await create({ data: { category, city: city || null, title, body } });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
       toast.success(isEdit ? tr("Updated", "Actualizado", "Mis à jour") : tr("Posted", "Publicado", "Publié"));

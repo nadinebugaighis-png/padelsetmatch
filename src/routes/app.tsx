@@ -233,7 +233,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--ink)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--ink)]/55"}`}>
+    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/55"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
@@ -245,7 +245,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
       {active && (
-        <span className="absolute bottom-2 w-1 h-1 rounded-full bg-[var(--ink)]" />
+        <span className="absolute bottom-2 w-1 h-1 rounded-full bg-[var(--cream)]" />
       )}
       {isHighlight && (
         <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--plum)] opacity-90">{t("shell.core")}</span>

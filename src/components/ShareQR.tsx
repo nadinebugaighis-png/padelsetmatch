@@ -41,7 +41,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/20 px-4 py-2 text-sm text-[var(--ink)] hover:bg-[var(--ink)]/5"
+        className="inline-flex items-center gap-2 rounded-full bg-[var(--paper)] border border-[var(--ink)]/30 px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-[0_6px_18px_-6px_rgba(15,62,46,0.18)] hover:bg-[var(--ink)] hover:text-[var(--paper)] hover:border-[var(--ink)] transition"
       >
         <Share2 className="w-4 h-4" />
         {tr("Share", "Compartir", "Partager")}

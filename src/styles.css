@@ -156,6 +156,25 @@
 @utility programme-page {
   background: var(--paper);
   color: var(--ink);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-2);
+  --muted-foreground: color-mix(in oklab, var(--ink) 70%, transparent);
+  --accent: var(--plum);
+  --accent-foreground: var(--paper);
+  --destructive: oklch(0.55 0.22 28);
+  --destructive-foreground: var(--paper);
+  --border: color-mix(in oklab, var(--ink) 15%, transparent);
+  --input: color-mix(in oklab, var(--ink) 15%, transparent);
+  --ring: var(--plum);
 }
 @utility programme-card {
   background: #ffffff;

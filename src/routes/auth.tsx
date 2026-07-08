@@ -31,6 +31,11 @@ function AuthPage() {
     if (redirect) return { to: redirect };
     return { to: "/app" };
   };
+  const signupTarget = (): { to: string; search?: Record<string, string> } => {
+    if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
+    if (redirect) return { to: redirect };
+    return { to: "/app/onboarding" };
+  };
   const oauthRedirectUri = () => {
     const base = window.location.origin;
     if (join) {
@@ -62,7 +67,7 @@ function AuthPage() {
         if (error) throw error;
         if (data.session) {
           toast.success(t("auth.welcome"));
-          navigate(afterAuthTarget() as never);
+          navigate(signupTarget() as never);
         } else {
           toast.success(t("auth.confirmEmail"));
           setMode("signin");

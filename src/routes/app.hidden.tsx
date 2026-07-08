@@ -32,7 +32,7 @@ function HiddenBlockedPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["hidden-blocked"] });
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast.success("Unhidden — back in your Grid");
+      toast.success("Unhidden — back in your Home grid");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not unhide"),
   });
@@ -65,7 +65,7 @@ function HiddenBlockedPage() {
       </Link>
       <h1 className="text-display text-3xl mt-3">Hidden &amp; blocked</h1>
       <p className="text-sm text-[var(--cream)]/70 mt-1">
-        Unhide anyone to bring them back to your Grid. Blocking is separate — you'll never see each other while blocked.
+        Unhide anyone to bring them back to your Home grid. Blocking is separate — you'll never see each other while blocked.
       </p>
 
       {q.isLoading && <p className="mt-8 text-sm text-[var(--cream)]/60">Loading…</p>}

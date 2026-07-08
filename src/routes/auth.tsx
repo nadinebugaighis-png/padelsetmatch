@@ -134,7 +134,7 @@ function AuthPage() {
         <form onSubmit={submit} className="space-y-3">
           <Input type="email" required placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} />
           <Input type="password" required minLength={8} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Button type="submit" disabled={loading} className="w-full bg-[var(--ball)] text-[var(--court-deep)] hover:bg-[var(--ball)]/90 font-semibold uppercase tracking-widest">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
+          <Button type="submit" disabled={loading} className="w-full h-11 bg-[var(--ink)] text-[var(--paper)] hover:brightness-110 font-semibold uppercase tracking-[0.15em] shadow-[0_10px_30px_-12px_rgba(15,62,46,0.45)]">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
         </form>
 
         <div className="mt-4 flex items-center justify-between text-sm">

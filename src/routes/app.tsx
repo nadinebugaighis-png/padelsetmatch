@@ -146,26 +146,14 @@ function AuthShell() {
     <div className="min-h-screen pb-24">
       <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--cream)]/10 gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          {path === "/app" || path === "/app/" ? (
-            <Link
-              to="/"
-              aria-label={t("shell.back.home")}
-              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t("shell.home")}</span>
-            </Link>
-          ) : (
-            <Link
-              to="/app"
-              aria-label={t("shell.back.grid")}
-              className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t("shell.grid")}</span>
-
-            </Link>
-          )}
+          <Link
+            to="/app"
+            aria-label={t("shell.back.home")}
+            className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t("shell.home")}</span>
+          </Link>
           <Link to="/app" className="flex items-center gap-2 min-w-0">
             <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ball)] ball-glow" />
             <span className="text-display text-xl tracking-wider truncate">PADEL · MATCH</span>

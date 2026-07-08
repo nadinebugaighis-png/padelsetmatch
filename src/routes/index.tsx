@@ -112,7 +112,7 @@ function Landing() {
             {t("land.chip")}
           </p>
 
-          <h1 className="text-serif mt-8 sm:mt-2 lg:mt-1 uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.5rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.5rem] xl:text-[5rem]">
+          <h1 className="text-serif mt-12 sm:mt-2 lg:mt-1 uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.5rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.5rem] xl:text-[5rem]">
             <span className="block">{t("land.h1.a")}</span>
             <span className="block">{t("land.h1.a2")}</span>
             <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>

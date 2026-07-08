@@ -253,7 +253,7 @@ function Discover() {
     <main className="programme-page px-5 py-7 min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
         <h1 className="text-serif text-[38px] leading-[0.95] uppercase text-[var(--ink)]">{t("disc.h1")}</h1>
-        <p className="text-serif italic text-[15px] text-[var(--ink)]/75 mt-2">{t("disc.sub")}</p>
+        <p className="text-serif italic text-[32px] leading-[1.05] text-[var(--ink)]/75 mt-2">{t("disc.sub")}</p>
 
         <div className="mt-5 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 flex items-start gap-3">
           <div className="shrink-0 w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center text-[11px] font-bold">87</div>

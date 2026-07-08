@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites } from "@/lib/match-events.functions";
+import { getConnectLatest } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
@@ -88,6 +89,7 @@ function AuthShell() {
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);
   const getInvites = useServerFn(listMyPendingInvites);
+  const getConnect = useServerFn(getConnectLatest);
   const tr = useTr();
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
@@ -113,6 +115,27 @@ function AuthShell() {
     retry: false,
     refetchOnWindowFocus: true,
   });
+  const connectQ = useQuery({
+    queryKey: ["connect-latest"],
+    queryFn: () => safe(() => getConnect()),
+    enabled: !!profileQ.data,
+    retry: false,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const [connectSeen, setConnectSeen] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("connect-last-seen") ?? "";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!path.startsWith("/app/connect")) return;
+    const now = new Date().toISOString();
+    localStorage.setItem("connect-last-seen", now);
+    setConnectSeen(now);
+  }, [path]);
+  const connectLatest = connectQ.data?.latest ?? null;
+  const connectHasNew = !!connectLatest && (!connectSeen || connectLatest > connectSeen);
   const rawInvites = (invitesQ.data?.invites ?? []) as Array<{
     id: string;
     event: { id: string; starts_at: string; club_name: string | null; city: string | null; status: string; host: { first_name: string | null } | null } | null;
@@ -217,7 +240,7 @@ function AuthShell() {
             <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-6 h-6" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} />
+            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>
@@ -226,7 +249,7 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number }) {
+function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number; dot?: boolean }) {
   const t = useT();
   const isHighlight = highlight && !active;
 
@@ -236,6 +259,9 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
         {icon}
         {!!badge && badge > 0 && (
           <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
+        )}
+        {dot && !active && (!badge || badge <= 0) && (
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
         )}
         {isHighlight && (
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)] ink-ring animate-ping" />

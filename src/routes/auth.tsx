@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { useT, LangSwitch } from "@/lib/i18n";
+import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/auth")({
@@ -22,6 +22,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const { redirect, join, i } = Route.useSearch();
   const t = useT();
+  const tr = useTr();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,7 +80,22 @@ function AuthPage() {
         navigate(afterAuthTarget() as never);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("auth.fail"));
+      const raw = err instanceof Error ? err.message : "";
+      const status = (err as { status?: number } | null)?.status;
+      const isRateLimit =
+        status === 429 ||
+        /rate limit|too many|for security purposes/i.test(raw);
+      if (isRateLimit) {
+        toast.error(
+          tr(
+            "Too many attempts. Please wait a moment and try again.",
+            "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+            "Trop de tentatives. Patiente un instant puis réessaie.",
+          ),
+        );
+      } else {
+        toast.error(raw || t("auth.fail"));
+      }
     } finally {
       setLoading(false);
     }

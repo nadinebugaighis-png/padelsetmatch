@@ -67,7 +67,7 @@ function AuthPage() {
         if (error) throw error;
         if (data.session) {
           toast.success(t("auth.welcome"));
-          navigate(afterAuthTarget() as never);
+          navigate(signupTarget() as never);
         } else {
           toast.success(t("auth.confirmEmail"));
           setMode("signin");

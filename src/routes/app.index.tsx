@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { LayoutGrid, MessageCircle, User } from "lucide-react";
 import { getMyProfile, getMyMatches } from "@/lib/app.functions";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
-import { useT, useTr } from "@/lib/i18n";
+import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/")({
   head: () => ({

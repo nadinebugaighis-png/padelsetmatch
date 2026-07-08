@@ -17,7 +17,6 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
@@ -25,6 +24,7 @@ import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
+import { Route as AppGridRouteImport } from './routes/app.grid'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
@@ -72,11 +72,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
 const MEventIdRoute = MEventIdRouteImport.update({
   id: '/m/$eventId',
   path: '/m/$eventId',
@@ -110,6 +105,11 @@ const AppJoinSetupRoute = AppJoinSetupRouteImport.update({
 const AppHiddenRoute = AppHiddenRouteImport.update({
   id: '/hidden',
   path: '/hidden',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGridRoute = AppGridRouteImport.update({
+  id: '/grid',
+  path: '/grid',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminRoute = AppAdminRouteImport.update({
@@ -153,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
   '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
@@ -160,7 +161,6 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/m/$eventId': typeof MEventIdRoute
-  '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -169,6 +169,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/how-it-works': typeof HowItWorksRoute
   '/privacy': typeof PrivacyRoute
@@ -176,6 +177,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
   '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
@@ -183,7 +185,6 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/m/$eventId': typeof MEventIdRoute
-  '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -201,6 +202,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
   '/app/join-setup': typeof AppJoinSetupRoute
   '/app/matches': typeof AppMatchesRouteWithChildren
@@ -208,7 +210,6 @@ export interface FileRoutesById {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/m/$eventId': typeof MEventIdRoute
-  '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -227,6 +228,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/app/admin'
+    | '/app/grid'
     | '/app/hidden'
     | '/app/join-setup'
     | '/app/matches'
@@ -234,7 +236,6 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/questions'
     | '/m/$eventId'
-    | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -243,6 +244,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app'
     | '/auth'
     | '/how-it-works'
     | '/privacy'
@@ -250,6 +252,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/app/admin'
+    | '/app/grid'
     | '/app/hidden'
     | '/app/join-setup'
     | '/app/matches'
@@ -257,7 +260,6 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/questions'
     | '/m/$eventId'
-    | '/app'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -274,6 +276,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/app/admin'
+    | '/app/grid'
     | '/app/hidden'
     | '/app/join-setup'
     | '/app/matches'
@@ -281,7 +284,6 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/questions'
     | '/m/$eventId'
-    | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -359,13 +361,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/m/$eventId': {
       id: '/m/$eventId'
       path: '/m/$eventId'
@@ -413,6 +408,13 @@ declare module '@tanstack/react-router' {
       path: '/hidden'
       fullPath: '/app/hidden'
       preLoaderRoute: typeof AppHiddenRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/grid': {
+      id: '/app/grid'
+      path: '/grid'
+      fullPath: '/app/grid'
+      preLoaderRoute: typeof AppGridRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin': {
@@ -485,13 +487,13 @@ const AppEventsEventIdRouteWithChildren =
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppGridRoute: typeof AppGridRoute
   AppHiddenRoute: typeof AppHiddenRoute
   AppJoinSetupRoute: typeof AppJoinSetupRoute
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
   AppQuestionsRoute: typeof AppQuestionsRoute
-  AppIndexRoute: typeof AppIndexRoute
   AppEventsEventIdRoute: typeof AppEventsEventIdRouteWithChildren
   AppEventsNewRoute: typeof AppEventsNewRoute
   AppEventsIndexRoute: typeof AppEventsIndexRoute
@@ -499,13 +501,13 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppGridRoute: AppGridRoute,
   AppHiddenRoute: AppHiddenRoute,
   AppJoinSetupRoute: AppJoinSetupRoute,
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
   AppQuestionsRoute: AppQuestionsRoute,
-  AppIndexRoute: AppIndexRoute,
   AppEventsEventIdRoute: AppEventsEventIdRouteWithChildren,
   AppEventsNewRoute: AppEventsNewRoute,
   AppEventsIndexRoute: AppEventsIndexRoute,
@@ -527,13 +529,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

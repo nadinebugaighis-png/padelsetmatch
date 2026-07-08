@@ -199,7 +199,7 @@ function Landing() {
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/80 via-[var(--ink)]/20 to-transparent" />
-              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--plum)] text-[var(--paper)] rounded-full px-2.5 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--paper)] text-[var(--ink)] border border-[var(--ink)]/10 rounded-full px-2.5 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--paper)]">
                 <div className="text-serif text-xl leading-tight">{p.name}</div>
                 <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>

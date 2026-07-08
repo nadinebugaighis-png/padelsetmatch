@@ -433,7 +433,7 @@ function Discover() {
                         aria-label={`Request to play with ${c.first_name}`}
                         title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
                       >
-                        <Play className="w-3.5 h-3.5" fill="currentColor" strokeWidth={1.5} />
+                        <Zap className="w-3.5 h-3.5" fill="currentColor" strokeWidth={1.5} />
 
                       </button>
                     </div>

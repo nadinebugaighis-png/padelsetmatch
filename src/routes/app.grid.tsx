@@ -250,25 +250,25 @@ function Discover() {
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
-    <main className="programme-page px-5 py-7 min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-        <h1 className="text-serif text-[38px] leading-[0.95] uppercase text-[var(--ink)]">{t("disc.h1")}</h1>
-        <p className="text-serif italic text-[32px] leading-[1.05] text-[var(--ink)]/75 mt-2">{t("disc.sub")}</p>
+        <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[32px] sm:text-[38px] lg:text-[44px] xl:text-[52px]">{t("disc.h1")}</h1>
+        <p className="text-serif italic text-[var(--ink)]/70 mt-2 leading-[1.15] text-[20px] sm:text-[22px] lg:text-[24px] xl:text-[26px]">{t("disc.sub")}</p>
 
-        <div className="mt-5 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 flex items-start gap-3">
+        <div className="mt-5 lg:mt-6 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 lg:p-4 flex items-start gap-3">
           <div className="shrink-0 w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center text-[13px] font-bold">87</div>
-          <p className="text-[13px] leading-snug text-[var(--ink)]/75">
+          <p className="text-[13px] lg:text-[14px] leading-snug text-[var(--ink)]/75">
             {t("disc.scoreA")} <b className="text-[var(--ink)]">{t("disc.scoreBold")}</b> {t("disc.scoreB")} {t("disc.scoreC")}
           </p>
         </div>
 
-        <div className="mt-6">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="mt-5 lg:mt-6">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             {(["all", "padel", "friend", "relationship"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] transition sm:px-5 sm:py-2.5 sm:text-[12px] md:px-6 md:py-3 md:text-[13px] lg:px-6 lg:py-3 lg:text-[14px] xl:px-7 xl:py-3.5 xl:text-[15px] ${
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] sm:text-[12px] lg:text-[12.5px] font-semibold uppercase tracking-[0.14em] transition ${
                   filter === f
                     ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
                     : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
@@ -283,13 +283,13 @@ function Discover() {
                 setWorld(next);
                 setWorldM.mutate(next);
               }}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] transition inline-flex items-center gap-1.5 sm:px-5 sm:py-2.5 sm:text-[12px] md:px-6 md:py-3 md:text-[13px] lg:px-6 lg:py-3 lg:text-[14px] xl:px-7 xl:py-3.5 xl:text-[15px] ${
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] sm:text-[12px] lg:text-[12.5px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
                 world
                   ? "bg-[var(--plum)] text-white border border-[var(--plum)] shadow-sm"
                   : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
               }`}
             >
-              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
+              <Globe className="w-3.5 h-3.5" />
               {world ? t("disc.world.on") : t("disc.world.off")}
             </button>
           </div>
@@ -303,12 +303,12 @@ function Discover() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name..."
-              className="w-full h-10 pl-10 pr-3 rounded-lg border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
+              className="w-full h-10 lg:h-11 pl-10 pr-3 rounded-full border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] lg:text-[14px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
             />
           </div>
           <button
             onClick={() => setShowFilters((s) => !s)}
-            className={`h-10 rounded-full px-4 text-[11px] sm:text-[12px] lg:text-[13px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
+            className={`h-10 lg:h-11 rounded-full px-4 lg:px-5 text-[11px] lg:text-[12px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
               activeFilterCount > 0
                 ? "text-[var(--plum)] border-[var(--plum)]/40 bg-[var(--plum)]/[0.06]"
                 : "text-[var(--ink)]/70 border-[var(--ink)]/20 bg-white hover:bg-[var(--ink)]/5"
@@ -316,9 +316,10 @@ function Discover() {
             aria-expanded={showFilters}
           >
             Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
-            <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
           </button>
         </div>
+
 
         {showFilters && (
           <div className="mt-3 p-3 rounded-xl border border-[var(--ink)]/15 bg-white space-y-3">

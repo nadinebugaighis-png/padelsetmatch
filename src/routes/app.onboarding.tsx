@@ -663,7 +663,7 @@ function Onboarding() {
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-serif text-lg flex items-center gap-2">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>
-                  {tr("What matters most in a match", "Qué es lo más importante", "Ce qui compte le plus")}
+                  {tr("Your top values", "Tus valores principales", "Tes valeurs principales")}
                 </h3>
                 <span className={`text-[11px] font-medium ${priorities.length >= 3 ? "text-[var(--grass)]" : "text-[var(--ink)]/55"}`}>
                   {priorities.length}/3 {tr("min", "mín", "min")}

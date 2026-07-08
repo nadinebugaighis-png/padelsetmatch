@@ -8,6 +8,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
 
 import shareBanner from "@/assets/padel-share-banner.png.asset.json";
+import landing1 from "@/assets/landing1.jpg.asset.json";
+import landing2 from "@/assets/landing2.jpg.asset.json";
+import landing3 from "@/assets/landing3.jpg.asset.json";
+import landing4 from "@/assets/landing4.jpg.asset.json";
+const LANDING_TILES = [landing1.url, landing2.url, landing3.url, landing4.url];
 
 const SHARE_IMAGE = `https://padelmatchapp.lovable.app${shareBanner.url}`;
 const SHARE_DESC = "Connect with Padel players nearby you, join games, discover courts, and build your community.";

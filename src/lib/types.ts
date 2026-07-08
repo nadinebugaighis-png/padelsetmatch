@@ -41,13 +41,18 @@ export const PRIORITY_TRAITS = [
 
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 
-export const PERSONAL_TRAITS = [
+export const PERSONAL_STRENGTHS = [
   "Honest", "Kind", "Calm", "Curious", "Confident", "Friendly", "Loyal", "Patient",
   "Organized", "Open-minded", "Ambitious", "Ambidextrous", "Brave", "Creative",
   "Determined", "Diplomatic", "Easygoing", "Empathetic", "Energetic", "Flexible",
   "Generous", "Humble", "Independent", "Introverted", "Outgoing", "Practical",
   "Reflective", "Reliable", "Serious", "Witty/funny",
 ] as const;
+export const HONEST_EDGES = [
+  "Direct", "Reserved", "Quiet", "Sensitive", "Emotional",
+  "Impatient", "Stubborn", "Perfectionist",
+] as const;
+export const PERSONAL_TRAITS = [...PERSONAL_STRENGTHS, ...HONEST_EDGES] as const;
 export type PersonalTrait = (typeof PERSONAL_TRAITS)[number];
 
 export const PADEL_STYLES = [

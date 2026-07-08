@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
-  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
-  PADEL_STYLES, PERSONAL_TRAITS,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  PADEL_STYLES, PERSONAL_STRENGTHS,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,
@@ -699,24 +699,52 @@ function Onboarding() {
             )}
 
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Personal characteristics (pick up to 10)", "Características personales (elige hasta 10)", "Traits personnels (jusqu'à 10)")}</label>
-            <div className="flex flex-wrap gap-2">
-              {PERSONAL_TRAITS.map((pt) => {
-                const on = personalTraits.includes(pt);
-                return (
-                  <button
-                    key={pt}
-                    type="button"
-                    onClick={() =>
-                      setPersonalTraits((cur) =>
-                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                      )
-                    }
-                    className={`chip ${on ? "chip-ball" : ""}`}
-                  >
-                    {on ? "✓ " : "+ "}{label(pt)}
-                  </button>
-                );
-              })}
+            <p className="text-[11px] text-[var(--cream)]/50 -mt-1">{tr("Pick a mix — a few strengths and a couple of honest edges make your profile feel real.", "Elige una mezcla — algunas fortalezas y un par de aristas honestas hacen que tu perfil se sienta real.", "Choisis un mélange — quelques forces et deux petits défauts assumés rendent ton profil vrai.")}</p>
+
+            <div className="space-y-2">
+              <p className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70">{tr("Strengths", "Fortalezas", "Forces")}</p>
+              <div className="flex flex-wrap gap-2">
+                {PERSONAL_STRENGTHS.map((pt) => {
+                  const on = personalTraits.includes(pt);
+                  return (
+                    <button
+                      key={pt}
+                      type="button"
+                      onClick={() =>
+                        setPersonalTraits((cur) =>
+                          cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                        )
+                      }
+                      className={`chip ${on ? "chip-ball" : ""}`}
+                    >
+                      {on ? "✓ " : "+ "}{label(pt)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70">{tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
+              <div className="flex flex-wrap gap-2">
+                {HONEST_EDGES.map((pt) => {
+                  const on = personalTraits.includes(pt);
+                  return (
+                    <button
+                      key={pt}
+                      type="button"
+                      onClick={() =>
+                        setPersonalTraits((cur) =>
+                          cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                        )
+                      }
+                      className={`chip ${on ? "chip-ball" : ""}`}
+                    >
+                      {on ? "✓ " : "+ "}{label(pt)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 {tr("selected", "seleccionados", "sélectionnés")}</p>
 

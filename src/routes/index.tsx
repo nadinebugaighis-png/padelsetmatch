@@ -105,28 +105,28 @@ function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-6 pb-14">
+      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-6 lg:pt-4 pb-10 lg:pb-6 lg:min-h-screen lg:max-h-screen lg:flex lg:flex-col lg:justify-center lg:overflow-hidden">
         <div className="max-w-xl">
-          <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
+          <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
             <Globe2 className="w-3.5 h-3.5" strokeWidth={2} />
             {t("land.chip")}
           </p>
 
-          <h1 className="text-serif mt-6 uppercase text-[var(--ink)] leading-[0.92] tracking-[-0.015em] text-[3.75rem] sm:text-7xl md:text-8xl lg:text-[8.5rem]">
+          <h1 className="text-serif mt-4 lg:mt-3 uppercase text-[var(--ink)] leading-[0.92] tracking-[-0.015em] text-[3.25rem] sm:text-6xl md:text-7xl lg:text-[6.5rem]">
             <span className="block">{t("land.h1.a")}</span>
             <span className="block">{t("land.h1.a2")}</span>
             <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>
           </h1>
 
-          <p className="mt-7 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.65]">
+          <p className="mt-5 lg:mt-4 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.6]">
             {t("land.lede")}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-6 lg:mt-5 flex flex-wrap items-center gap-3">
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined }}
-              className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
+              className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
             >
               {t("land.cta")}
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[var(--paper)]/15 group-hover:translate-x-0.5 transition">
@@ -138,28 +138,28 @@ function Landing() {
 
           <Link
             to="/how-it-works"
-            className="mt-8 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
+            className="mt-6 lg:mt-4 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
           >
             {t("land.howItWorks")} <ArrowRight className="w-4 h-4" />
           </Link>
 
-          <p className="mt-5 text-sm text-[var(--ink)]/70 max-w-sm leading-relaxed">
+          <p className="mt-4 lg:mt-3 text-sm text-[var(--ink)]/70 max-w-sm leading-relaxed">
             {t("land.cta.sub")}
           </p>
         </div>
 
         {/* Stats row */}
-        <div className="mt-14 sm:mt-16 max-w-xl grid grid-cols-[auto_1px_1fr] items-center gap-5 sm:gap-6">
+        <div className="mt-8 lg:mt-6 max-w-xl grid grid-cols-[auto_1px_1fr] items-center gap-5 sm:gap-6">
           <div>
-            <div className="text-serif text-5xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
-            <div className="mt-1.5 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
+            <div className="text-serif text-4xl lg:text-5xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
+            <div className="mt-1 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
           </div>
-          <div className="h-14 w-px bg-[var(--ink)]/15" />
+          <div className="h-12 w-px bg-[var(--ink)]/15" />
           <button
             onClick={install.openModal}
             className="flex items-center gap-3 text-left group"
           >
-            <span className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] transition">
+            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] transition">
               <Smartphone className="w-4 h-4" />
             </span>
             <span className="text-sm font-medium text-[var(--ink)] leading-tight">

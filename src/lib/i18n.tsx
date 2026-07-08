@@ -292,7 +292,6 @@ const en: Dict = {
 const es: Dict = {
   // Landing
   "land.signin": "Iniciar sesión",
-  "land.chip": "En todo el mundo · elige tu ciudad",
   "land.h1.a": "encuentra tu",
   "land.h1.a2": "mejor",
   "land.h1.b": "Match.",

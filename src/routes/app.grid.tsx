@@ -256,8 +256,8 @@ function Discover() {
         <p className="text-serif italic text-[32px] leading-[1.05] text-[var(--ink)]/75 mt-2">{t("disc.sub")}</p>
 
         <div className="mt-5 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 flex items-start gap-3">
-          <div className="shrink-0 w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center text-[11px] font-bold">87</div>
-          <p className="text-[11px] leading-snug text-[var(--ink)]/75">
+          <div className="shrink-0 w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center text-[13px] font-bold">87</div>
+          <p className="text-[13px] leading-snug text-[var(--ink)]/75">
             {t("disc.scoreA")} <b className="text-[var(--ink)]">{t("disc.scoreBold")}</b> {t("disc.scoreB")} {t("disc.scoreC")}
           </p>
         </div>

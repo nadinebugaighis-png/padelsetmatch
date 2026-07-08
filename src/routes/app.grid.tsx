@@ -538,7 +538,7 @@ function Discover() {
 
                     {/* Overlaid identity */}
                     <div className="absolute left-0 right-0 bottom-0 px-5 pb-4 space-y-1.5">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold tracking-widest uppercase">
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
                         {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight">{preview.first_name},</div>
@@ -566,7 +566,7 @@ function Discover() {
 
                     {preview.free_court_access && (
                       <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                         {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
                         <p className="text-[10px] text-[var(--ink)]/55 mt-1">{tr("Arrange the exact court in chat — Playtomic or their address.", "Coordinen la pista exacta por chat — Playtomic o su dirección.", "Organisez le terrain exact par chat — Playtomic ou leur adresse.")}</p>
                       </div>
@@ -610,7 +610,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
                               aria-label="Helpful"
                             >
                               <ThumbsUp className="w-4 h-4" />
@@ -619,7 +619,7 @@ function Discover() {
                               type="button"
                               disabled={rateCompatM.isPending}
                               onClick={() => rateCompatM.mutate({ thumbs: -1 })}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ball)]/80 text-[var(--court-deep)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ink)]/70 text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
                               aria-label="Not useful"
                             >
                               <ThumbsDown className="w-4 h-4" />

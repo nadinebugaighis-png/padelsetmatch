@@ -137,7 +137,7 @@ function HowItWorksPage() {
             />
             <StepCard
               number="3"
-              title={tr("Browse the Grid", "Explora el Grid", "Explore le Grid")}
+              title={tr("Browse the Home", "Explora el Home", "Explore le Home")}
               body={tr("See players who match your level, zone and personality. Tap the ones you'd play with. They won't know you tapped them unless they tap you back — no awkwardness, no obligation.", "Ve jugadores que encajan con tu nivel, zona y personalidad. Toca con quien jugarías. No sabrán que les has dado a conectar a menos que te lo devuelvan — sin awkwardness, sin obligación.", "Vois les joueurs qui matchent ton niveau, ta zone et ta personnalité. Tape ceux avec qui tu jouerais. Ils ne sauront pas que tu les as tapés tant qu'ils ne te tapent pas en retour — pas de gêne, pas d'obligation.")}
             />
             <StepCard

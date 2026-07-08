@@ -7,77 +7,87 @@ type Props = {
 };
 
 /**
- * Padel-ball mark + "PADEL·MATCH" serif wordmark.
- * Ball uses the grass tone with a subtle white seam — a nod to a real padel ball,
- * kept small and precise so it reads as a mark, not a decoration.
+ * Sophisticated PadelMatch mark:
+ *  – an elongated pill-shaped tennis/padel ball in the app's grass green,
+ *    with a soft radial highlight and a single curved white seam
+ *  – "PadelMatch" as one refined serif wordmark, light weight, mixed case
  */
 export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
-  const dim = size === "sm" ? 26 : size === "lg" ? 40 : 32;
-  const wordSize =
+  const ballH = size === "sm" ? 22 : size === "lg" ? 34 : 26;
+  const ballW = Math.round(ballH * 1.55); // pill ratio
+  const word =
     size === "sm"
-      ? "text-[15px] tracking-[0.22em]"
+      ? "text-[19px]"
       : size === "lg"
-      ? "text-[22px] tracking-[0.2em]"
-      : "text-[17px] tracking-[0.22em]";
+      ? "text-[30px]"
+      : "text-[23px]";
   const gap = size === "sm" ? "gap-2.5" : "gap-3";
 
   return (
     <Link
       to={to}
       className={`inline-flex items-center ${gap} ${className}`}
-      aria-label="Padel Match — home"
+      aria-label="PadelMatch — home"
     >
-      <PadelBall size={dim} />
-      <span className={`text-serif uppercase font-semibold text-[var(--ink)] leading-none ${wordSize}`}>
-        Padel<span className="text-[var(--ink)]/35 mx-[0.15em]">·</span>Match
+      <PadelBallPill w={ballW} h={ballH} />
+      <span
+        className={`text-serif text-[var(--ink)] leading-none tracking-[-0.01em] ${word}`}
+        style={{ fontWeight: 400 }}
+      >
+        Padel<span className="italic text-[var(--plum)]">Match</span>
       </span>
     </Link>
   );
 }
 
-function PadelBall({ size }: { size: number }) {
-  const id = "pb-" + size;
+function PadelBallPill({ w, h }: { w: number; h: number }) {
+  const id = "pb" + w + h;
   return (
     <svg
-      width={size}
-      height={size}
-      viewBox="0 0 40 40"
+      width={w}
+      height={h}
+      viewBox="0 0 62 40"
       aria-hidden
       className="shrink-0"
     >
       <defs>
-        <radialGradient id={`${id}-fill`} cx="35%" cy="30%" r="80%">
+        <linearGradient id={`${id}-fill`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="#C9F08A" />
           <stop offset="55%" stopColor="var(--grass)" />
-          <stop offset="100%" stopColor="#6FB03A" />
-        </radialGradient>
-        <radialGradient id={`${id}-hi`} cx="30%" cy="25%" r="35%">
+          <stop offset="100%" stopColor="#7DBF3E" />
+        </linearGradient>
+        <radialGradient id={`${id}-hi`} cx="30%" cy="28%" r="55%">
           <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.55" />
           <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
         </radialGradient>
       </defs>
+
       {/* soft ground shadow */}
-      <ellipse cx="20" cy="35.5" rx="10" ry="1.6" fill="var(--ink)" opacity="0.14" />
-      {/* ball body */}
-      <circle cx="20" cy="19" r="16" fill={`url(#${id}-fill)`} stroke="var(--ink)" strokeOpacity="0.18" strokeWidth="0.75" />
-      {/* highlight */}
-      <circle cx="20" cy="19" r="16" fill={`url(#${id}-hi)`} />
-      {/* seams */}
-      <path
-        d="M6 15 C 12 11.5, 28 11.5, 34 15"
-        fill="none"
-        stroke="#FFFFFF"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-        opacity="0.9"
+      <ellipse cx="31" cy="37" rx="18" ry="1.4" fill="var(--ink)" opacity="0.18" />
+
+      {/* pill body */}
+      <rect
+        x="3"
+        y="4"
+        width="56"
+        height="32"
+        rx="16"
+        fill={`url(#${id}-fill)`}
+        stroke="var(--ink)"
+        strokeOpacity="0.22"
+        strokeWidth="0.75"
       />
+      {/* highlight */}
+      <rect x="3" y="4" width="56" height="32" rx="16" fill={`url(#${id}-hi)`} />
+
+      {/* single elegant seam */}
       <path
-        d="M6 23 C 12 26.5, 28 26.5, 34 23"
+        d="M8 20 C 20 10, 42 10, 54 20"
         fill="none"
         stroke="#FFFFFF"
-        strokeWidth="1.1"
+        strokeWidth="1.2"
         strokeLinecap="round"
-        opacity="0.9"
+        opacity="0.95"
       />
     </svg>
   );

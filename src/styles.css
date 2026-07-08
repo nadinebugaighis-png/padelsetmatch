@@ -69,6 +69,13 @@
   --cream: oklch(1 0 0);             /* bright white text */
   --ball: #EFD108;             /* bright padel yellow */
 
+  /* Wimbledon "Programme" palette (light editorial pages) */
+  --paper: #FDFBF7;
+  --paper-2: #EAE7E0;
+  --ink: #0F3E2E;
+  --plum: #482E92;
+  --grass: #A5E358;
+
   --background: var(--court-deep);
   --foreground: var(--cream);
 

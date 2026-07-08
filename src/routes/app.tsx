@@ -48,21 +48,21 @@ export const Route = createFileRoute("/app")({
 function AppErrorFallback({ reset }: { reset: () => void }) {
   const t = useT();
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 text-center">
+    <div className="min-h-screen flex items-center justify-center px-6 text-center programme-page">
       <div className="max-w-sm">
-        <h1 className="text-display text-3xl tracking-wider text-[var(--cream)]">{t("shell.err.title")}</h1>
-        <p className="mt-3 text-sm text-[var(--cream)]/70">{t("shell.err.body")}</p>
+        <h1 className="text-serif text-3xl tracking-wider text-[var(--ink)]">{t("shell.err.title")}</h1>
+        <p className="mt-3 text-sm text-[var(--ink)]/70">{t("shell.err.body")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => { reset(); window.location.reload(); }}
-            className="rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+            className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
             {t("shell.err.retry")}
           </button>
           <Link
             to="/auth"
             search={{ redirect: undefined, join: undefined }}
-            className="rounded-full border border-[var(--cream)]/30 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+            className="rounded-full border border-[var(--ink)]/30 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
             {t("shell.err.signin")}
           </Link>
@@ -74,7 +74,7 @@ function AppErrorFallback({ reset }: { reset: () => void }) {
 
 function AppNotFoundFallback() {
   const t = useT();
-  return <div className="min-h-screen flex items-center justify-center text-[var(--cream)]/70">{t("shell.notFound")}</div>;
+  return <div className="min-h-screen flex items-center justify-center text-[var(--ink)]/70">{t("shell.notFound")}</div>;
 }
 
 
@@ -143,30 +143,30 @@ function AuthShell() {
   const isAdmin = adminQ.data === true;
 
   return (
-    <div className="min-h-screen pb-24">
-      <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--cream)]/10 gap-3">
+    <div className="min-h-screen pb-24 programme-page">
+      <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             to="/app"
             aria-label={t("shell.back.home")}
-            className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
+            className="flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ink)]/70 hover:text-[var(--ink)]"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>{t("shell.home")}</span>
           </Link>
           <Link to="/app" className="flex items-center gap-2 min-w-0">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ball)] ball-glow" />
-            <span className="text-display text-xl tracking-wider truncate">PADEL · MATCH</span>
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--grass)] ink-ring" />
+            <span className="text-serif text-xl tracking-wider truncate text-[var(--ink)]">PADEL · MATCH</span>
           </Link>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           {isAdmin && (
-            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--ball)] hover:opacity-80">
+            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--plum)] hover:opacity-80">
               {t("shell.admin")}
             </Link>
           )}
-          <LangSwitch />
-          <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]">
+          <LangSwitch variant="light" />
+          <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)]">
             {t("shell.signout")}
           </button>
         </div>
@@ -174,7 +174,7 @@ function AuthShell() {
       </header>
 
       {hasProfile && !onOnboarding && visibleInvites.length > 0 && (
-        <div className="border-b border-[var(--ball)]/30 bg-[var(--ball)]/10">
+        <div className="border-b border-[var(--ink)]/10 bg-[var(--paper-2)]">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 space-y-2">
             {visibleInvites.slice(0, 3).map((inv) => {
               const ev = inv.event!;
@@ -183,14 +183,14 @@ function AuthShell() {
               const where = ev.club_name ?? ev.city ?? "";
               return (
                 <div key={inv.id} className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-[var(--ball)] shrink-0" />
+                  <Mail className="w-4 h-4 text-[var(--plum)] shrink-0" />
                   <Link
                     to="/app/events/$eventId"
                     params={{ eventId: ev.id }}
-                    className="flex-1 min-w-0 text-sm text-[var(--cream)] hover:opacity-80"
+                    className="flex-1 min-w-0 text-sm text-[var(--ink)] hover:opacity-80"
                   >
-                    <span className="font-semibold text-[var(--ball)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
-                    <span className="text-[var(--cream)]/80">
+                    <span className="font-semibold text-[var(--plum)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
+                    <span className="text-[var(--ink)]/80">
                       {tr(
                         `by ${host} · ${when}${where ? " · " + where : ""} — tap to view`,
                         `por ${host} · ${when}${where ? " · " + where : ""} — toca para ver`,
@@ -201,7 +201,7 @@ function AuthShell() {
                   <button
                     onClick={() => setDismissedIds((d) => [...d, inv.id])}
                     aria-label={tr("Dismiss", "Descartar", "Fermer")}
-                    className="text-[var(--cream)]/50 hover:text-[var(--cream)] shrink-0"
+                    className="text-[var(--ink)]/50 hover:text-[var(--ink)] shrink-0"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -214,11 +214,9 @@ function AuthShell() {
 
       <Outlet />
 
-
-
       {hasProfile && !onOnboarding && (
         <nav
-          className="fixed left-0 right-0 backdrop-blur bg-[var(--court-deep)]/85 border-t border-[var(--cream)]/10 z-40"
+          className="fixed left-0 right-0 programme-nav z-40"
           style={{
             bottom: 0,
             paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -245,19 +243,22 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--cream)]" : "text-[var(--cream)]/60"}`}>
+    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--ink)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--ink)]/55"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[10px] font-bold flex items-center justify-center ball-glow">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
         )}
         {isHighlight && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--cream)] ball-glow animate-ping" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)] ink-ring animate-ping" />
         )}
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
+      {active && (
+        <span className="absolute bottom-2 w-1 h-1 rounded-full bg-[var(--ink)]" />
+      )}
       {isHighlight && (
-        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--cream)] opacity-90">{t("shell.core")}</span>
+        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--plum)] opacity-90">{t("shell.core")}</span>
       )}
     </Link>
   );

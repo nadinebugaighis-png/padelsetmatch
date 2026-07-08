@@ -189,78 +189,79 @@ function EventsPage() {
   }
 
   return (
-    <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-6 pb-28">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-1 gap-3">
-        <div className="min-w-0">
-          <h1 className="text-display text-3xl sm:text-4xl tracking-wider leading-none">
-            {tr("PLAN", "PLANEA", "PLANIFIER")}
-            <br />
-            {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
-          </h1>
-          <p className="text-sm text-[var(--cream)]/60 mt-2">
-            {tr(
-              "Tap an hour you're free. Others join. Done.",
-              "Toca una hora libre. Otros se unen. Listo.",
-              "Touche une heure libre. Les autres rejoignent.",
-            )}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setWorldwide((v) => !v)}
-          className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-widest ${
-            worldwide
-              ? "border-[var(--ball)] text-[var(--ball)]"
-              : "border-[var(--cream)]/25 text-[var(--cream)]/80"
-          }`}
-          title={tr("Toggle world / my areas", "Alternar mundo / mis zonas", "Basculer monde / mes zones")}
-        >
-          <MapPin className="w-3 h-3" />
-          {worldwide ? tr("World", "Mundo", "Monde") : tr("My areas", "Mis zonas", "Mes zones")}
-        </button>
-      </div>
-
-      {/* Search by name */}
-      <div className="relative mb-4">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--cream)]/50 pointer-events-none">
-          <Search className="w-4 h-4" />
-        </div>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
-          className="w-full rounded-full bg-[var(--cream)]/8 border border-[var(--cream)]/15 pl-9 pr-9 py-2 text-sm text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--ball)]/60 focus:ring-1 focus:ring-[var(--ball)]/30"
-        />
-        {search && (
+    <div className="programme-page min-h-[calc(100vh-4rem)]">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-6 pb-28">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-1 gap-3">
+          <div className="min-w-0">
+            <h1 className="text-serif text-3xl sm:text-4xl tracking-wider leading-none text-[var(--ink)]">
+              {tr("PLAN", "PLANEA", "PLANIFIER")}
+              <br />
+              {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
+            </h1>
+            <p className="text-sm text-[var(--ink)]/60 mt-2">
+              {tr(
+                "Tap an hour you're free. Others join. Done.",
+                "Toca una hora libre. Otros se unen. Listo.",
+                "Touche une heure libre. Les autres rejoignent.",
+              )}
+            </p>
+          </div>
           <button
             type="button"
-            onClick={() => setSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--cream)]/50 hover:text-[var(--cream)]"
-            aria-label={tr("Clear search", "Limpiar búsqueda", "Effacer la recherche")}
+            onClick={() => setWorldwide((v) => !v)}
+            className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-widest ${
+              worldwide
+                ? "border-[var(--plum)] text-[var(--plum)]"
+                : "border-[var(--ink)]/25 text-[var(--ink)]/80"
+            }`}
+            title={tr("Toggle world / my areas", "Alternar mundo / mis zonas", "Basculer monde / mes zones")}
           >
-            <X className="w-4 h-4" />
+            <MapPin className="w-3 h-3" />
+            {worldwide ? tr("World", "Mundo", "Monde") : tr("My areas", "Mis zonas", "Mes zones")}
           </button>
-        )}
-      </div>
+        </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+        {/* Search by name */}
+        <div className="relative mb-4">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 pointer-events-none">
+            <Search className="w-4 h-4" />
+          </div>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
+            className="w-full rounded-full bg-[var(--ink)]/[0.04] border border-[var(--ink)]/15 pl-9 pr-9 py-2 text-sm text-[var(--ink)] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 focus:ring-1 focus:ring-[var(--ink)]/10"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 hover:text-[var(--ink)]"
+              aria-label={tr("Clear search", "Limpiar búsqueda", "Effacer la recherche")}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
         <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
         <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
         <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
         <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
         <Link
           to="/app/events/new"
-          className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)]"
+          className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/70 hover:text-[var(--ink)]"
         >
           <Settings2 className="w-3 h-3" /> {tr("Advanced", "Avanzado", "Avancé")}
         </Link>
       </div>
 
       {/* Grid */}
-      <div className="rounded-2xl border border-[var(--cream)]/10 overflow-hidden bg-black/20">
+      <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
         <div
           ref={scrollRef}
           className="overflow-auto"
@@ -274,7 +275,7 @@ function EventsPage() {
             }}
           >
             {/* Corner */}
-            <div className="sticky top-0 left-0 z-30 bg-[var(--court-deep)] border-b border-r border-[var(--cream)]/10 h-12" />
+            <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
             {/* Day headers */}
             {days.map((d, i) => {
               const label = formatDay(d, lang, 0, i, tr);
@@ -282,8 +283,8 @@ function EventsPage() {
               return (
                 <div
                   key={i}
-                  className={`sticky top-0 z-20 h-12 border-b border-[var(--cream)]/10 flex flex-col items-center justify-center bg-[var(--court-deep)] ${
-                    isToday ? "text-[var(--ball)]" : "text-[var(--cream)]/80"
+                  className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
+                    isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
                   }`}
                 >
                   <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
@@ -342,6 +343,7 @@ function EventsPage() {
           onOpen={(id: string) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
         />
       )}
+      </div>
     </div>
   );
 }
@@ -363,11 +365,11 @@ function RowCells({
 }) {
   const nowH = new Date().getHours();
   const isCurrentHour = hour === nowH;
-  const stripe = hour % 2 === 0 ? "bg-[var(--cream)]/[0.02]" : "";
+  const stripe = hour % 2 === 0 ? "bg-[var(--ink)]/[0.02]" : "";
   return (
     <>
-      <div className={`sticky left-0 z-10 bg-[var(--court-deep)] border-r border-b border-[var(--cream)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
-        isCurrentHour ? "text-[var(--ball)]" : "text-[var(--cream)]/55"
+      <div className={`sticky left-0 z-10 bg-[var(--paper)] border-r border-b border-[var(--ink)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
+        isCurrentHour ? "text-[var(--plum)]" : "text-[var(--ink)]/55"
       }`}>
         {String(hour).padStart(2, "0")}
       </div>
@@ -386,11 +388,11 @@ function RowCells({
             type="button"
             disabled={isPending || past}
             onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--cream)]/5 flex items-center justify-center relative ${stripe} ${
+            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative ${stripe} ${
               past
                 ? "opacity-25 cursor-not-allowed"
-                : "hover:bg-[var(--cream)]/8 active:bg-[var(--cream)]/12 transition-colors"
-            } ${isNowCell ? "ring-1 ring-inset ring-[var(--ball)]/40" : ""}`}
+                : "hover:bg-[var(--ink)]/5 active:bg-[var(--ink)]/8 transition-colors"
+            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""}`}
             aria-label={tr(
               `${primary ? "Open" : "Add"} ${hour}:00 ${d.toDateString()}`,
               `${primary ? "Abrir" : "Añadir"} ${hour}:00`,
@@ -398,11 +400,11 @@ function RowCells({
             )}
           >
             {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
-              <span className="w-1 h-1 rounded-full bg-[var(--cream)]/20" />
+              <span className="w-1 h-1 rounded-full bg-[var(--ink)]/20" />
             )}
             {isPending && (
-              <span className="absolute inset-0 flex items-center justify-center bg-black/40">
-                <span className="w-4 h-4 rounded-full border-2 border-[var(--ball)] border-t-transparent animate-spin" />
+              <span className="absolute inset-0 flex items-center justify-center bg-[var(--ink)]/10">
+                <span className="w-4 h-4 rounded-full border-2 border-[var(--plum)] border-t-transparent animate-spin" />
               </span>
             )}
           </button>
@@ -415,30 +417,30 @@ function RowCells({
 function slotColor(filled: number, mine: boolean) {
   if (filled >= 4) {
     return {
-      wrap: "bg-[var(--ball)] text-[var(--court-deep)]",
-      pip: "bg-[var(--court-deep)]",
-      empty: "bg-[var(--court-deep)]/30",
+      wrap: "bg-[var(--ink)] text-[var(--paper)]",
+      pip: "bg-[var(--paper)]",
+      empty: "bg-[var(--paper)]/30",
     };
   }
   if (filled === 3) {
-    // Almost full — warm accent so it pops
+    // Almost full — plum accent so it pops
     return {
-      wrap: `bg-[color-mix(in_oklab,var(--ball)_22%,transparent)] text-[var(--ball)] ring-1 ${mine ? "ring-[var(--cream)]" : "ring-[var(--ball)]/60"}`,
-      pip: "bg-[var(--ball)]",
-      empty: "bg-[var(--ball)]/25",
+      wrap: `bg-[color-mix(in_oklab,var(--plum)_22%,transparent)] text-[var(--plum)] ring-1 ${mine ? "ring-[var(--ink)]" : "ring-[var(--plum)]/60"}`,
+      pip: "bg-[var(--plum)]",
+      empty: "bg-[var(--plum)]/25",
     };
   }
   if (filled >= 1) {
     return {
-      wrap: `bg-[var(--cream)]/12 text-[var(--cream)] ${mine ? "ring-1 ring-[var(--ball)]" : ""}`,
-      pip: "bg-[var(--cream)]",
-      empty: "bg-[var(--cream)]/25",
+      wrap: `bg-[var(--ink)]/12 text-[var(--ink)] ${mine ? "ring-1 ring-[var(--plum)]" : ""}`,
+      pip: "bg-[var(--ink)]",
+      empty: "bg-[var(--ink)]/25",
     };
   }
   return {
-    wrap: "bg-transparent text-[var(--cream)]/70",
-    pip: "bg-[var(--cream)]/70",
-    empty: "bg-[var(--cream)]/20",
+    wrap: "bg-transparent text-[var(--ink)]/70",
+    pip: "bg-[var(--ink)]/70",
+    empty: "bg-[var(--ink)]/20",
   };
 }
 
@@ -458,7 +460,7 @@ function SlotPips({ filled, pip, empty }: { filled: number; pip: string; empty: 
 function LegendDots({ filled, label, accent }: { filled: number; label: string; accent?: boolean }) {
   const colors = slotColor(filled, false);
   return (
-    <span className={`inline-flex items-center gap-1.5 ${accent ? "text-[var(--ball)]" : ""}`}>
+    <span className={`inline-flex items-center gap-1.5 ${accent ? "text-[var(--plum)]" : ""}`}>
       <SlotPips filled={filled} pip={colors.pip} empty={colors.empty} />
       {label}
     </span>
@@ -501,17 +503,17 @@ function QuickSheet({
     hour12: false,
   });
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-sm bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--cream)]/15 p-5 space-y-4"
+        className="w-full sm:max-w-sm bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/15 p-5 space-y-4"
       >
         <div>
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
             {tr("Match called", "Partido convocado", "Match lancé")}
           </div>
-          <div className="text-display text-2xl tracking-wider text-[var(--cream)] mt-1">{when}</div>
-          <p className="text-sm text-[var(--cream)]/70 mt-2">
+          <div className="text-serif text-2xl tracking-wider text-[var(--ink)] mt-1">{when}</div>
+          <p className="text-sm text-[var(--ink)]/70 mt-2">
             {tr(
               "You're in. Add a club or invite players — or leave it and let others join.",
               "Estás dentro. Añade club o invita jugadores, o déjalo y que otros se unan.",
@@ -522,26 +524,26 @@ function QuickSheet({
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-            className="rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+            className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
           >
             <MapPin className="w-3.5 h-3.5" /> {tr("Add club", "Añadir club", "Ajouter club")}
           </button>
           <button
             onClick={() => navigate({ to: "/app/events/$eventId", params: { eventId } })}
-            className="rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+            className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
           >
             <RacketIcon className="w-3.5 h-3.5" /> {tr("Invite", "Invitar", "Inviter")}
           </button>
         </div>
         <button
           onClick={onClose}
-          className="w-full rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+          className="w-full rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold py-2.5"
         >
           {tr("Done", "Listo", "Terminé")}
         </button>
         <button
           onClick={() => navigate({ to: "/app/events/$eventId", params: { eventId } })}
-          className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
+          className="w-full text-[10px] uppercase tracking-widest text-[var(--ink)]/60"
         >
           {tr("Open match", "Ir al partido", "Voir le match")} →
         </button>
@@ -575,7 +577,7 @@ function SearchResults({
 
   return (
     <div className="mt-6 space-y-4">
-      <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">
+      <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60">
         {events.length}{" "}
         {events.length === 1
           ? tr("match", "partido", "match")
@@ -587,7 +589,7 @@ function SearchResults({
         const dayLabel = day.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
         return (
           <div key={dayIso}>
-            <div className="text-[11px] uppercase tracking-widest text-[var(--ball)] mb-2">{dayLabel}</div>
+            <div className="text-[11px] uppercase tracking-widest text-[var(--plum)] mb-2">{dayLabel}</div>
             <ul className="space-y-2">
               {list.map((e) => {
                 const start = new Date(e.starts_at);
@@ -598,22 +600,22 @@ function SearchResults({
                     <button
                       type="button"
                       onClick={() => onOpen(e.id)}
-                      className="w-full text-left rounded-xl border border-[var(--cream)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3 hover:bg-[var(--cream)]/[0.06]"
+                      className="w-full text-left rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3 hover:bg-[var(--ink)]/[0.05]"
                     >
                       <div className="flex flex-col items-center justify-center w-12 shrink-0">
-                        <span className="text-display text-lg leading-none text-[var(--cream)]">{time}</span>
-                        <span className="text-[9px] uppercase tracking-widest text-[var(--cream)]/50">{e.filled}/4</span>
+                        <span className="text-serif text-lg leading-none text-[var(--ink)]">{time}</span>
+                        <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/50">{e.filled}/4</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm text-[var(--cream)] font-semibold truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</div>
-                        <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mt-0.5">
+                        <div className="text-sm text-[var(--ink)] font-semibold truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</div>
+                        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-0.5">
                           {e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : e.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
                           {" · "}
                           {isHost ? tr("Host", "Anfitrión", "Hôte") : tr("Player", "Jugador", "Joueur")}
                           {e.iAmHost && ` · ${tr("You", "Tú", "Toi")}`}
                         </div>
                       </div>
-                      <span className="text-[var(--cream)]/50 text-lg">→</span>
+                      <span className="text-[var(--ink)]/50 text-lg">→</span>
                     </button>
                   </li>
                 );
@@ -651,17 +653,17 @@ function SlotSheet({
     hour12: false,
   });
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-md bg-[var(--court-deep)] border-t sm:border sm:rounded-2xl border-[var(--cream)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
       >
         <div>
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
             {tr("Matches at", "Partidos a las", "Matchs à")}
           </div>
-          <div className="text-display text-2xl tracking-wider text-[var(--cream)] mt-1">{when}</div>
-          <p className="text-xs text-[var(--cream)]/60 mt-1">
+          <div className="text-serif text-2xl tracking-wider text-[var(--ink)] mt-1">{when}</div>
+          <p className="text-xs text-[var(--ink)]/60 mt-1">
             {events.length}{" "}
             {events.length === 1
               ? tr("match", "partido", "match")
@@ -678,17 +680,17 @@ function SlotSheet({
             return (
               <li
                 key={e.id}
-                className="rounded-xl border border-[var(--cream)]/12 bg-[var(--cream)]/[0.03] p-3 flex items-center gap-3"
+                className="rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3"
               >
                 <button
                   type="button"
                   onClick={() => onOpen(e.id)}
                   className="flex-1 min-w-0 text-left"
                 >
-                  <div className="text-sm text-[var(--cream)] font-semibold truncate">
+                  <div className="text-sm text-[var(--ink)] font-semibold truncate">
                     {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
                   </div>
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/55 mt-0.5">
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-0.5">
                     {e.filled}/4 · {e.gender_rule === "mixed"
                       ? tr("Mixed", "Mixto", "Mixte")
                       : e.gender_rule === "men_only"
@@ -702,7 +704,7 @@ function SlotSheet({
                     type="button"
                     disabled={isPending}
                     onClick={() => onJoin(e.id)}
-                    className="shrink-0 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
+                    className="shrink-0 rounded-full bg-[var(--plum)] text-white text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
                   >
                     {isPending
                       ? tr("Joining…", "Uniéndose…", "…")
@@ -712,7 +714,7 @@ function SlotSheet({
                   <button
                     type="button"
                     onClick={() => onOpen(e.id)}
-                    className="shrink-0 rounded-full border border-[var(--cream)]/25 text-[var(--cream)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
+                    className="shrink-0 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
                   >
                     {tr("Open", "Abrir", "Ouvrir")}
                   </button>
@@ -726,14 +728,14 @@ function SlotSheet({
           type="button"
           onClick={onStartAnother}
           disabled={!!pending}
-          className="w-full rounded-full border border-dashed border-[var(--ball)]/60 text-[var(--ball)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+          className="w-full rounded-full border border-dashed border-[var(--plum)]/60 text-[var(--plum)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
         >
           + {tr("Start another match at this time", "Convocar otro partido a esta hora", "Lancer un autre match à cette heure")}
         </button>
 
         <button
           onClick={onClose}
-          className="w-full text-[10px] uppercase tracking-widest text-[var(--cream)]/60"
+          className="w-full text-[10px] uppercase tracking-widest text-[var(--ink)]/60"
         >
           {tr("Close", "Cerrar", "Fermer")}
         </button>

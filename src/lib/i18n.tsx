@@ -1062,19 +1062,29 @@ export function useTr() {
   };
 }
 
-export function LangSwitch({ className = "" }: { className?: string }) {
+export function LangSwitch({ className = "", variant = "dark" }: { className?: string; variant?: "dark" | "light" }) {
   const { lang, setLang } = useI18n();
+  const isLight = variant === "light";
+  const activeClass = isLight
+    ? "bg-[var(--ink)] text-[var(--paper)] font-bold"
+    : "bg-[var(--ball)] text-[var(--court-deep)] font-bold";
+  const inactiveClass = isLight
+    ? "text-[var(--ink)]/70 hover:text-[var(--ink)]"
+    : "text-[var(--ball)]/70 hover:text-[var(--ball)]";
+  const borderClass = isLight
+    ? "border-[var(--ink)]/25"
+    : "border-[var(--ball)]/30";
   const btn = (l: Lang, label: string) => (
     <button
       key={l}
       type="button"
       onClick={() => setLang(l)}
-      className={`px-2.5 py-1 ${lang === l ? "bg-[var(--ball)] text-[var(--court-deep)] font-bold" : "text-[var(--ball)]/70 hover:text-[var(--ball)]"}`}
+      className={`px-2.5 py-1 ${lang === l ? activeClass : inactiveClass}`}
       aria-pressed={lang === l}
     >{label}</button>
   );
   return (
-    <div className={`inline-flex items-center rounded-full border border-[var(--ball)]/30 text-[10px] uppercase tracking-widest overflow-hidden ${className}`}>
+    <div className={`inline-flex items-center rounded-full border ${borderClass} text-[10px] uppercase tracking-widest overflow-hidden ${className}`}>
       {btn("en", "EN")}
       {btn("es", "ES")}
       {btn("fr", "FR")}

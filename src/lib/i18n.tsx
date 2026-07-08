@@ -102,7 +102,7 @@ const en: Dict = {
 
   // Discover
   "disc.h1": "Tap who you'd play.",
-  "disc.sub": "Mutual taps open a chat. Then book on Playtomic.",
+  "disc.sub": "Mutual taps open a chat.",
   "disc.scoreA": "The",
   "disc.scoreB": "badge is the",
   "disc.scoreBold": "match score",
@@ -383,7 +383,7 @@ const es: Dict = {
 
   // Discover
   "disc.h1": "Toca con quién jugarías.",
-  "disc.sub": "Si os tocáis mutuamente, se abre el chat. Luego reservad en Playtomic.",
+  "disc.sub": "Si os tocáis mutuamente, se abre el chat.",
   "disc.scoreA": "El",
   "disc.scoreB": "es la",
   "disc.scoreBold": "puntuación de match",
@@ -659,7 +659,7 @@ const fr: Dict = {
 
   // Discover
   "disc.h1": "Découvre la Grid.",
-  "disc.sub": "Les taps mutuels ouvrent un chat. Ensuite, réservez sur Playtomic.",
+  "disc.sub": "Les taps mutuels ouvrent un chat.",
   "disc.scoreA": "Le",
   "disc.scoreB": "est le",
   "disc.scoreBold": "score de match",

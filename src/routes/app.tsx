@@ -214,11 +214,11 @@ function AuthShell() {
           }}
         >
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
-            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" />} active={path.startsWith("/app/grid")} />
-            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-5 h-5" />} active={path.startsWith("/app/events")} />
+            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-6 h-6" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" />} active={path.startsWith("/app/connect")} />
-            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} />
+            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>
       )}
@@ -231,7 +231,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[60px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/55"}`}>
+    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1 px-1 text-[11px] font-semibold uppercase tracking-[0.1em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (

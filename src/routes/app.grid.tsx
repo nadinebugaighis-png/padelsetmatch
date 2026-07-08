@@ -405,73 +405,71 @@ function Discover() {
                   key={c.id}
                   className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md"
                 >
-                  <div className="relative bg-[var(--paper-2)] p-2.5 pb-0 overflow-hidden">
-                    {/* Polaroid-style photo frame */}
-                    <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
-                      <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
-                        {c.photo_url && (
-                          <img src={c.photo_url} alt={c.first_name} loading="lazy" className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${!c.liked ? "grayscale-[35%]" : ""}`} />
-                        )}
-                        {!c.photo_url && (
-                          <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
-                            {c.first_name.charAt(0)}
-                          </div>
-                        )}
-
-                        <div className="absolute top-2 left-2 z-10 flex gap-1.5">
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                            className="w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
-                            aria-label={`Hide ${c.first_name}`}
-                            title="Not interested — hide from my Grid"
-                          >
-                            <EyeOff className="w-3 h-3" strokeWidth={1.6} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!c.liked) {
-                                toast.info(`Connect with ${c.first_name} first to request a match`);
-                                return;
-                              }
-                              navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
-                            }}
-                            className={`w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
-                            aria-label={`Request to play with ${c.first_name}`}
-                            title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
-                          >
-                            <Zap className="w-3 h-3" fill="currentColor" strokeWidth={1.5} />
-
-                          </button>
+                  {/* Polaroid-style photo frame */}
+                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                      {c.photo_url && (
+                        <img src={c.photo_url} alt={c.first_name} loading="lazy" className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${!c.liked ? "grayscale-[35%]" : ""}`} />
+                      )}
+                      {!c.photo_url && (
+                        <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
+                          {c.first_name.charAt(0)}
                         </div>
+                      )}
 
+                      <div className="absolute top-2 left-2 z-10 flex gap-1.5">
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
+                          className="w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
+                          aria-label={`Hide ${c.first_name}`}
+                          title="Not interested — hide from my Grid"
+                        >
+                          <EyeOff className="w-3 h-3" strokeWidth={1.6} />
+                        </button>
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (c.liked) unlikeM.mutate(c.id);
-                            else likeM.mutate(c.id);
+                            if (!c.liked) {
+                              toast.info(`Connect with ${c.first_name} first to request a match`);
+                              return;
+                            }
+                            navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                           }}
-                          className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
-                          aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
-                          title={c.liked ? "Connected" : "Like to connect"}
+                          className={`w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
+                          aria-label={`Request to play with ${c.first_name}`}
+                          title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
                         >
-                          <Heart
-                            className={`w-3 h-3 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
-                            fill={c.liked ? "currentColor" : "none"}
-                            strokeWidth={1.6}
-                          />
-                        </button>
+                          <Zap className="w-3 h-3" fill="currentColor" strokeWidth={1.5} />
 
-                        <button
-                          type="button"
-                          onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations })}
-                          className="absolute inset-0 w-full h-full text-left"
-                          aria-label={`View ${c.first_name}'s profile`}
-                        />
+                        </button>
                       </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (c.liked) unlikeM.mutate(c.id);
+                          else likeM.mutate(c.id);
+                        }}
+                        className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
+                        aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
+                        title={c.liked ? "Connected" : "Like to connect"}
+                      >
+                        <Heart
+                          className={`w-3 h-3 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
+                          fill={c.liked ? "currentColor" : "none"}
+                          strokeWidth={1.6}
+                        />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations })}
+                        className="absolute inset-0 w-full h-full text-left"
+                        aria-label={`View ${c.first_name}'s profile`}
+                      />
                     </div>
                   </div>
 

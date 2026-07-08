@@ -94,8 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "manifest", href: "/manifest.json" },
-      { rel: "icon", type: "image/png", href: "/icon-192.png" },
-      { rel: "apple-touch-icon", href: "/icon-192.png" },
+      { rel: "icon", type: "image/jpeg", href: "/padel-icon.jpg" },
+      { rel: "apple-touch-icon", href: "/padel-icon.jpg" },
     ],
     scripts: [
       {

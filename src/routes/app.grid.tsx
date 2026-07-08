@@ -182,8 +182,8 @@ function Discover() {
     blockM.mutate(id);
   }
 
-  if (feedQ.isLoading) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("disc.loading")}</div>;
-  if (!feedQ.data?.me) return null;
+  if (feedQ.isLoading) return <div className="programme-page px-5 py-10 text-center text-[var(--ink)]/60 min-h-[calc(100vh-4rem)]">{t("disc.loading")}</div>;
+  if (!feedQ.data?.me) return <div className="programme-page px-5 py-10 text-center text-[var(--ink)]/60 min-h-[calc(100vh-4rem)]">{t("disc.loading")}</div>;
 
   const all = feedQ.data.candidates;
   const activeCat = filter === "all" ? null : filter;

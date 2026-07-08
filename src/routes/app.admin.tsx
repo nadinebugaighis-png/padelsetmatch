@@ -52,8 +52,8 @@ function AdminPage() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
 
-  if (q.isLoading) return <div className="p-6 text-[var(--cream)]/70">Loading…</div>;
-  if (q.error || !q.data) return <div className="p-6 text-[var(--cream)]/70">Could not load admin data.</div>;
+  if (q.isLoading) return <div className="p-6 text-[var(--ink)]/70">Loading…</div>;
+  if (q.error || !q.data) return <div className="p-6 text-[var(--ink)]/70">Could not load admin data.</div>;
 
   const { counts, allSignups, recentFeedback, recentReports } = q.data;
   const incomplete = allSignups.filter((u) => !u.profile_completed);
@@ -91,7 +91,7 @@ function AdminPage() {
       </section>
 
       {/* Tab switcher */}
-      <nav className="flex gap-1 p-1 rounded-full bg-[var(--cream)]/8 border border-[var(--cream)]/10">
+      <nav className="flex gap-1 p-1 rounded-full bg-[var(--ink)]/8 border border-[var(--ink)]/10">
         {([
           ["overview", "Overview"],
           ["reports", `Reports${pendingReports.length ? ` · ${pendingReports.length}` : ""}`],
@@ -102,7 +102,7 @@ function AdminPage() {
             key={id}
             onClick={() => setTab(id)}
             className={`flex-1 text-[11px] font-semibold py-1.5 rounded-full transition ${
-              tab === id ? "bg-[var(--grass)] text-[var(--ink)]" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"
+              tab === id ? "bg-[var(--grass)] text-[var(--ink)]" : "text-[var(--ink)]/70 hover:text-[var(--ink)]"
             }`}
           >
             {label}
@@ -113,7 +113,7 @@ function AdminPage() {
       {tab === "overview" && (
         <div className="space-y-4">
           <Card title="At a glance">
-            <ul className="text-sm text-[var(--cream)]/85 space-y-1.5">
+            <ul className="text-sm text-[var(--ink)]/85 space-y-1.5">
               <li>· <b>{completed.length}</b> completed profiles visible in the Grid</li>
               <li>· <b>{incomplete.length}</b> users signed up but haven't finished onboarding</li>
               <li>· <b>{counts.matches}</b> matches created to date</li>
@@ -123,7 +123,7 @@ function AdminPage() {
           </Card>
           {pendingReports.length > 0 && (
             <Card title="Needs attention" tone="danger">
-              <p className="text-sm text-[var(--cream)]/80 mb-2">You have {pendingReports.length} pending report{pendingReports.length === 1 ? "" : "s"} to review.</p>
+              <p className="text-sm text-[var(--ink)]/80 mb-2">You have {pendingReports.length} pending report{pendingReports.length === 1 ? "" : "s"} to review.</p>
               <button onClick={() => setTab("reports")} className="text-xs px-3 py-1.5 rounded-full bg-[var(--grass)] text-[var(--ink)] font-semibold">
                 Review reports →
               </button>
@@ -136,19 +136,19 @@ function AdminPage() {
         <div className="space-y-4">
           <Card title={`Pending (${pendingReports.length})`} tone={pendingReports.length ? "danger" : "default"}>
             <div className="space-y-3">
-              {pendingReports.length === 0 && <p className="text-sm text-[var(--cream)]/60">All clear. 🎉</p>}
+              {pendingReports.length === 0 && <p className="text-sm text-[var(--ink)]/60">All clear. 🎉</p>}
               {pendingReports.map((r) => (
-                <div key={r.id} className="rounded-xl bg-[var(--cream)]/5 border border-[var(--cream)]/10 p-3 space-y-2">
+                <div key={r.id} className="rounded-xl bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3 space-y-2">
                   <div className="flex items-start gap-3">
                     {r.reported_photo_url ? (
                       <img src={r.reported_photo_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
                     ) : (
-                      <div className="w-14 h-14 rounded-lg bg-[var(--cream)]/10 shrink-0" />
+                      <div className="w-14 h-14 rounded-lg bg-[var(--ink)]/10 shrink-0" />
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="text-sm leading-snug">
                         <span className="font-semibold">{r.reporter_name ?? "someone"}</span>
-                        <span className="text-[var(--cream)]/60"> reported </span>
+                        <span className="text-[var(--ink)]/60"> reported </span>
                         <span className="font-semibold">{r.reported_name ?? "user"}</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-1">
@@ -158,9 +158,9 @@ function AdminPage() {
                         {r.reported_suspended && (
                           <span className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300">suspended</span>
                         )}
-                        <span className="text-[10px] text-[var(--cream)]/50">{new Date(r.created_at).toLocaleString()}</span>
+                        <span className="text-[10px] text-[var(--ink)]/50">{new Date(r.created_at).toLocaleString()}</span>
                       </div>
-                      <p className="text-sm text-[var(--cream)]/85 mt-2 whitespace-pre-wrap bg-[var(--ink)]/40 rounded-md px-2 py-1.5 border border-[var(--cream)]/5">{r.reason}</p>
+                      <p className="text-sm text-[var(--ink)]/85 mt-2 whitespace-pre-wrap bg-[var(--ink)]/40 rounded-md px-2 py-1.5 border border-[var(--ink)]/5">{r.reason}</p>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -192,7 +192,7 @@ function AdminPage() {
                     <button
                       disabled={resolveM.isPending}
                       onClick={() => resolveM.mutate({ reportId: r.id, status: "dismissed" })}
-                      className="text-xs px-2.5 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/20"
+                      className="text-xs px-2.5 py-1 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]/70 hover:bg-[var(--ink)]/20"
                     >Dismiss</button>
                   </div>
                 </div>
@@ -204,8 +204,8 @@ function AdminPage() {
             <Card title={`Handled (${handledReports.length})`}>
               <div className="space-y-1.5">
                 {handledReports.map((r) => (
-                  <div key={r.id} className="text-xs text-[var(--cream)]/65 rounded-md px-2 py-1.5 bg-[var(--cream)]/5">
-                    <span className={`inline-block text-[9px] uppercase tracking-widest mr-1.5 px-1.5 py-0.5 rounded-full ${r.status === "resolved" ? "bg-emerald-500/20 text-emerald-300" : "bg-[var(--cream)]/10 text-[var(--cream)]/60"}`}>{r.status}</span>
+                  <div key={r.id} className="text-xs text-[var(--ink)]/65 rounded-md px-2 py-1.5 bg-[var(--ink)]/5">
+                    <span className={`inline-block text-[9px] uppercase tracking-widest mr-1.5 px-1.5 py-0.5 rounded-full ${r.status === "resolved" ? "bg-emerald-500/20 text-emerald-300" : "bg-[var(--ink)]/10 text-[var(--ink)]/60"}`}>{r.status}</span>
                     {r.reporter_name} → {r.reported_name}: {r.reason}
                   </div>
                 ))}
@@ -219,12 +219,12 @@ function AdminPage() {
         <div className="space-y-4">
           {incomplete.length > 0 && (
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
-              <p className="text-xs text-[var(--cream)]/60 mb-2">Signed up but never finished onboarding — not visible in the Grid.</p>
+              <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Grid.</p>
               <div className="space-y-1.5">
                 {incomplete.map((u) => (
                   <div key={u.user_id} className="rounded-lg bg-amber-500/5 border border-amber-500/25 px-3 py-2">
                     <div className="truncate text-sm">{u.email ?? "(no email)"}</div>
-                    <div className="text-xs text-[var(--cream)]/55">
+                    <div className="text-xs text-[var(--ink)]/55">
                       {new Date(u.signed_up_at).toLocaleDateString()}
                       {!u.email_confirmed && <span className="ml-2 text-amber-400">email unconfirmed</span>}
                     </div>
@@ -236,18 +236,18 @@ function AdminPage() {
 
           <Card title={`Active members (${completed.length})`}>
             <div className="space-y-1.5">
-              {completed.length === 0 && <p className="text-sm text-[var(--cream)]/60">No members yet.</p>}
+              {completed.length === 0 && <p className="text-sm text-[var(--ink)]/60">No members yet.</p>}
               {completed.map((u) => (
-                <div key={u.user_id} className="rounded-lg bg-[var(--cream)]/5 border border-[var(--cream)]/10 px-3 py-2">
+                <div key={u.user_id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 px-3 py-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm">
                         <span className="font-semibold">{u.first_name}</span>
-                        {u.age ? <span className="text-[var(--cream)]/60">, {u.age}</span> : null}
-                        <span className="text-[var(--cream)]/40"> · </span>
-                        <span className="text-[var(--cream)]/70">{u.zone ?? "—"}</span>
+                        {u.age ? <span className="text-[var(--ink)]/60">, {u.age}</span> : null}
+                        <span className="text-[var(--ink)]/40"> · </span>
+                        <span className="text-[var(--ink)]/70">{u.zone ?? "—"}</span>
                       </div>
-                      <div className="text-xs text-[var(--cream)]/50 truncate">{u.email}</div>
+                      <div className="text-xs text-[var(--ink)]/50 truncate">{u.email}</div>
                     </div>
                     {u.suspended && (
                       <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300 shrink-0">suspended</span>
@@ -263,14 +263,14 @@ function AdminPage() {
       {tab === "feedback" && (
         <Card title={`Recent feedback (${recentFeedback.length})`}>
           <div className="space-y-2">
-            {recentFeedback.length === 0 && <p className="text-sm text-[var(--cream)]/60">No feedback yet.</p>}
+            {recentFeedback.length === 0 && <p className="text-sm text-[var(--ink)]/60">No feedback yet.</p>}
             {recentFeedback.map((f) => (
-              <div key={f.id} className="rounded-lg bg-[var(--cream)]/5 border border-[var(--cream)]/10 p-3">
+              <div key={f.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3">
                 <div className="text-sm text-[var(--grass)]">
-                  {f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : <span className="text-[var(--cream)]/40">no rating</span>}
+                  {f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : <span className="text-[var(--ink)]/40">no rating</span>}
                 </div>
-                <div className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap mt-1">{f.message}</div>
-                <div className="text-xs text-[var(--cream)]/50 mt-1.5">{new Date(f.created_at).toLocaleString()}</div>
+                <div className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap mt-1">{f.message}</div>
+                <div className="text-xs text-[var(--ink)]/50 mt-1.5">{new Date(f.created_at).toLocaleString()}</div>
               </div>
             ))}
           </div>
@@ -284,31 +284,31 @@ function Card({ title, children, tone = "default" }: { title: string; children: 
   const border =
     tone === "danger" ? "border-red-400/30" :
     tone === "warn" ? "border-amber-400/30" :
-    "border-[var(--cream)]/10";
+    "border-[var(--ink)]/10";
   return (
-    <div className={`rounded-2xl bg-[var(--cream)]/5 border ${border} p-4`}>
-      <h2 className="text-display text-base tracking-tight mb-3 text-[var(--cream)]">{title}</h2>
+    <div className={`rounded-2xl bg-[var(--ink)]/5 border ${border} p-4`}>
+      <h2 className="text-display text-base tracking-tight mb-3 text-[var(--ink)]">{title}</h2>
       {children}
     </div>
   );
 }
 
 function BigStat({ label, value, accent, danger }: { label: string; value: number; accent?: boolean; danger?: boolean }) {
-  const bg = danger ? "bg-red-500/15 border-red-400/30" : accent ? "bg-[var(--grass)]/15 border-[var(--grass)]/40" : "bg-[var(--cream)]/5 border-[var(--cream)]/10";
-  const valColor = danger ? "text-red-200" : accent ? "text-[var(--grass)]" : "text-[var(--cream)]";
+  const bg = danger ? "bg-red-500/15 border-red-400/30" : accent ? "bg-[var(--grass)]/15 border-[var(--grass)]/40" : "bg-[var(--ink)]/5 border-[var(--ink)]/10";
+  const valColor = danger ? "text-red-200" : accent ? "text-[var(--grass)]" : "text-[var(--ink)]";
   return (
     <div className={`rounded-2xl border ${bg} p-3 text-center`}>
       <div className={`text-display text-3xl tracking-tight ${valColor}`}>{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mt-0.5">{label}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mt-0.5">{label}</div>
     </div>
   );
 }
 
 function MiniStat({ label, value, warn }: { label: string; value: number; warn?: boolean }) {
   return (
-    <div className={`rounded-xl border ${warn ? "border-amber-400/25 bg-amber-500/5" : "border-[var(--cream)]/10 bg-[var(--cream)]/5"} px-3 py-2 flex items-center justify-between`}>
-      <span className="text-xs text-[var(--cream)]/70">{label}</span>
-      <span className={`text-lg text-display ${warn ? "text-amber-300" : "text-[var(--cream)]"}`}>{value}</span>
+    <div className={`rounded-xl border ${warn ? "border-amber-400/25 bg-amber-500/5" : "border-[var(--ink)]/10 bg-[var(--ink)]/5"} px-3 py-2 flex items-center justify-between`}>
+      <span className="text-xs text-[var(--ink)]/70">{label}</span>
+      <span className={`text-lg text-display ${warn ? "text-amber-300" : "text-[var(--ink)]"}`}>{value}</span>
     </div>
   );
 }

@@ -285,7 +285,7 @@
 @utility chip-ball {
   background: var(--ink);
   color: var(--paper);
-  border-color: var(--ink);
+  border-color: transparent;
 }
 @utility chip-clay {
   background: var(--clay);

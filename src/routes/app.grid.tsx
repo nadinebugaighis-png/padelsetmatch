@@ -295,7 +295,7 @@ function Discover() {
           </div>
           <button
             onClick={() => setShowFilters((s) => !s)}
-            className={`rounded-full px-4 py-2 lg:px-5 lg:py-3 text-[11px] sm:text-[12px] lg:text-[13px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
+            className={`rounded-full px-4 py-2 lg:px-4 lg:py-2.5 xl:px-5 xl:py-3 text-[11px] sm:text-[12px] lg:text-[12px] xl:text-[13px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
               activeFilterCount > 0
                 ? "text-[var(--plum)] border-[var(--plum)]/40 bg-[var(--plum)]/[0.06]"
                 : "text-[var(--ink)]/70 border-[var(--ink)]/20 bg-white hover:bg-[var(--ink)]/5"

@@ -428,25 +428,25 @@ function MessagesRow() {
   return (
     <Link
       to="/app/matches"
-      className="flex items-center justify-between gap-3 w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-3 hover:border-[var(--ink)]/30 transition-colors"
+      className="group flex items-center justify-between gap-3 w-full rounded-2xl border border-[var(--plum)]/30 bg-gradient-to-r from-[var(--plum)] to-[var(--plum)]/90 px-4 py-3.5 shadow-[0_8px_24px_-12px_color-mix(in_oklab,var(--plum)_55%,transparent)] hover:shadow-[0_12px_28px_-10px_color-mix(in_oklab,var(--plum)_60%,transparent)] hover:scale-[1.01] transition-all"
     >
-      <div className="flex items-center gap-3">
-        <div className="relative">
-          <MessageCircle className="w-5 h-5 text-[var(--plum)]" />
+      <div className="flex items-center gap-3.5">
+        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[var(--paper)]/15 backdrop-blur-sm">
+          <MessageCircle className="w-5 h-5 text-[var(--paper)]" />
           {unread > 0 && (
-            <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center">{unread > 9 ? "9+" : unread}</span>
+            <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold flex items-center justify-center border-2 border-[var(--plum)]">{unread > 9 ? "9+" : unread}</span>
           )}
         </div>
         <div>
-          <div className="text-sm font-semibold text-[var(--ink)]">{tr("Messages", "Mensajes", "Messages")}</div>
-          <div className="text-[11px] text-[var(--ink)]/60">
+          <div className="text-[15px] sm:text-base font-bold text-[var(--paper)] tracking-tight">{tr("Messages", "Mensajes", "Messages")}</div>
+          <div className="text-[12px] text-[var(--paper)]/80">
             {count > 0
               ? tr(`${count} conversation${count > 1 ? "s" : ""}`, `${count} conversación${count > 1 ? "es" : ""}`, `${count} conversation${count > 1 ? "s" : ""}`)
               : tr("Chat with your matches", "Chatea con tus matches", "Discute avec tes matchs")}
           </div>
         </div>
       </div>
-      <span className="text-[var(--ink)]/40">›</span>
+      <span className="text-[var(--paper)]/80 text-lg group-hover:text-[var(--paper)] transition-colors">›</span>
     </Link>
   );
 }

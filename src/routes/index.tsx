@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
+import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { Smartphone, ArrowRight, Globe2 } from "lucide-react";
 import { useT, LangSwitch } from "@/lib/i18n";

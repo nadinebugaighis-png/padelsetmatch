@@ -286,7 +286,37 @@ function ChatRoom() {
 const RATING_TAGS_EN = ["Great vibe", "Skill match", "Would play again", "Punctual", "Communicative", "Fun off-court", "Mismatched level", "Low energy"];
 const RATING_TAGS_ES = ["Buen rollo", "Nivel similar", "Repetiría", "Puntual", "Comunicativo", "Divertido fuera de pista", "Nivel distinto", "Poca energía"];
 
-function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: string }) {
+function MatchRatingTrigger({ matchId, otherName }: { matchId: string; otherName: string }) {
+  const tr = useTr();
+  const getRatingFn = useServerFn(getMyMatchRating);
+  const ratingQ = useQuery({
+    queryKey: ["match-rating", matchId],
+    queryFn: () => getRatingFn({ data: { matchId } }),
+  });
+  const [open, setOpen] = useState(false);
+  const hasRated = !!ratingQ.data;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        title={hasRated ? tr("You rated this match", "Valoraste este partido", "Tu as noté ce match") : tr(`Rate your match with ${otherName}`, `Valora tu partido con ${otherName}`, `Note ton match avec ${otherName}`)}
+        aria-label={hasRated ? tr("You rated this match", "Valoraste este partido", "Tu as noté ce match") : tr(`Rate your match with ${otherName}`, `Valora tu partido con ${otherName}`, `Note ton match avec ${otherName}`)}
+        className="relative p-1.5 rounded-full hover:bg-[var(--ink)]/10 transition"
+      >
+        <Star className={`w-4 h-4 ${hasRated ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]"}`} />
+        {!hasRated && <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />}
+      </button>
+
+      {open && (
+        <MatchRatingPanel matchId={matchId} otherName={otherName} onClose={() => setOpen(false)} />
+      )}
+    </>
+  );
+}
+
+function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; otherName: string; onClose: () => void }) {
   const qc = useQueryClient();
   const tr = useTr();
   const getRatingFn = useServerFn(getMyMatchRating);
@@ -295,7 +325,6 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
     queryKey: ["match-rating", matchId],
     queryFn: () => getRatingFn({ data: { matchId } }),
   });
-  const [expanded, setExpanded] = useState(false);
   const [stars, setStars] = useState(0);
   const [tags, setTags] = useState<string[]>([]);
   const [comment, setComment] = useState("");
@@ -313,87 +342,61 @@ function MatchRatingPanel({ matchId, otherName }: { matchId: string; otherName: 
     onSuccess: () => {
       toast.success(tr("Thanks — this makes future matches smarter", "Gracias — así mejoramos tus próximos matches", "Merci — cela améliore les futurs matches"));
       qc.invalidateQueries({ queryKey: ["match-rating", matchId] });
-      setExpanded(false);
+      onClose();
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't save", "No se pudo guardar", "Impossible d'enregistrer")),
   });
 
   const hasRated = !!ratingQ.data;
 
-  if (!expanded && hasRated) {
-    return (
-      <div className="mx-3 mt-2 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 px-3 py-2 text-xs text-[var(--ink)]/70 flex items-center gap-2">
-        <div className="flex">
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" onClick={onClose}>
+      <div className="w-full max-w-sm rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] p-4 space-y-3 shadow-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between">
+          <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
+          <button type="button" onClick={onClose} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>
+        </div>
+        <div className="flex gap-1.5 justify-center">
           {[1,2,3,4,5].map((n) => (
-            <Star key={n} className={`w-3.5 h-3.5 ${n <= (ratingQ.data?.stars ?? 0) ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]/25"}`} />
+            <button
+              key={n}
+              type="button"
+              onClick={() => setStars(n)}
+              className="p-1"
+              aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
+            >
+              <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]/25"}`} />
+            </button>
           ))}
         </div>
-        <span className="flex-1">{tr("You rated this match", "Valoraste este partido", "Tu as noté ce match")}</span>
-        <button type="button" onClick={() => setExpanded(true)} className="text-[var(--ink)] underline">{tr("Edit", "Editar", "Modifier")}</button>
-      </div>
-    );
-  }
-
-  if (!expanded) {
-    return (
-      <button
-        type="button"
-        onClick={() => setExpanded(true)}
-        className="mx-3 mt-2 rounded-xl border border-[var(--ink)]/40 bg-[var(--ink)]/10 px-3 py-2.5 text-xs text-[var(--ink)] flex items-center gap-2 hover:bg-[var(--ink)]/15 transition"
-      >
-        <Star className="w-4 h-4 text-[var(--ink)]" />
-        <span className="flex-1 text-left">{tr(`How was your match with ${otherName}? Rate to help us learn.`, `¿Qué tal tu partido con ${otherName}? Valóralo para ayudarnos a aprender.`)}</span>
-        <span className="text-[var(--ink)] font-semibold">{tr("Rate", "Valorar", "Noter")}</span>
-      </button>
-    );
-  }
-
-  return (
-    <div className="mx-3 mt-2 rounded-xl border border-[var(--ink)]/12 bg-white p-3 space-y-3 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
-        <button type="button" onClick={() => setExpanded(false)} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>
-      </div>
-      <div className="flex gap-1.5 justify-center">
-        {[1,2,3,4,5].map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => setStars(n)}
-            className="p-1"
-            aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
-          >
-            <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]/25"}`} />
-          </button>
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-1.5">
-        {RATING_TAGS_EN.map((tag, i) => {
-          const active = tags.includes(tag);
-          const displayLabel = tr(tag, RATING_TAGS_ES[i] ?? tag);
-          return (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-              className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
-            >
-              {displayLabel}
-            </button>
-          );
-        })}
-      </div>
-      <Input
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        placeholder={tr("Optional note (private, helps us learn)", "Nota opcional (privada, nos ayuda a aprender)", "Note optionnelle (privée, nous aide à apprendre)")}
-        maxLength={400}
-      />
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={() => setExpanded(false)}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
-        <Button size="sm" disabled={stars === 0 || submitM.isPending} onClick={() => submitM.mutate()}>
-          {submitM.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : hasRated ? tr("Update", "Actualizar", "Mettre à jour") : tr("Submit", "Enviar", "Envoyer")}
-        </Button>
+        <div className="flex flex-wrap gap-1.5">
+          {RATING_TAGS_EN.map((tag, i) => {
+            const active = tags.includes(tag);
+            const displayLabel = tr(tag, RATING_TAGS_ES[i] ?? tag);
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
+                className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
+              >
+                {displayLabel}
+              </button>
+            );
+          })}
+        </div>
+        <Input
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder={tr("Optional note (private, helps us learn)", "Nota opcional (privada, nos ayuda a aprender)", "Note optionnelle (privée, nous aide à apprendre)")}
+          maxLength={400}
+        />
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" size="sm" onClick={onClose}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
+          <Button size="sm" disabled={stars === 0 || submitM.isPending} onClick={() => submitM.mutate()}>
+            {submitM.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : hasRated ? tr("Update", "Actualizar", "Mettre à jour") : tr("Submit", "Enviar", "Envoyer")}
+          </Button>
+        </div>
       </div>
     </div>
   );

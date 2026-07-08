@@ -433,11 +433,8 @@ function Discover() {
                         aria-label={`Request to play with ${c.first_name}`}
                         title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
                       >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
-                          <circle cx="9" cy="9" r="6" />
-                          <path d="M13 13l5 5" />
-                          <path d="M18 5h4M20 3v4" />
-                        </svg>
+                        <Play className="w-3.5 h-3.5" fill="currentColor" strokeWidth={1.5} />
+
                       </button>
                     </div>
 

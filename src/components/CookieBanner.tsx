@@ -21,16 +21,16 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="fixed bottom-3 left-3 right-3 z-50 max-w-xl mx-auto rounded-2xl border border-[var(--cream)]/15 bg-[var(--court-deep)]/95 backdrop-blur p-4 shadow-2xl">
-      <p className="text-xs text-[var(--cream)]/85">
+    <div className="fixed bottom-3 left-3 right-3 z-50 max-w-xl mx-auto rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)]/95 backdrop-blur p-4 shadow-2xl">
+      <p className="text-xs text-[var(--ink)]/85">
         {tr(
           "We use essential cookies to keep you signed in and remember your language. No tracking, no ads.",
           "Usamos cookies esenciales para mantener tu sesión y recordar tu idioma. Sin rastreo ni anuncios.",
         )}{" "}
-        <Link to="/privacy" className="underline">{tr("Privacy", "Privacidad", "Confidentialité")}</Link> · <Link to="/terms" className="underline">{tr("Terms", "Términos", "Conditions")}</Link>
+        <Link to="/privacy" className="underline text-[var(--plum)]">{tr("Privacy", "Privacidad", "Confidentialité")}</Link> · <Link to="/terms" className="underline text-[var(--plum)]">{tr("Terms", "Términos", "Conditions")}</Link>
       </p>
       <div className="mt-2 flex justify-end">
-        <button onClick={accept} className="chip chip-ball">{tr("Got it", "Entendido", "Compris")}</button>
+        <button onClick={accept} className="chip-ink bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]">{tr("Got it", "Entendido", "Compris")}</button>
       </div>
     </div>
   );

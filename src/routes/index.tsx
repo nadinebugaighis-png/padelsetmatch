@@ -137,10 +137,10 @@ function Landing() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { src: "/landing/grid1.jpg", name: "Lucía", city: "Madrid", score: 92 },
-            { src: "/landing/grid2.jpg", name: "Marc", city: "Barcelona", score: 88 },
-            { src: "/landing/grid3.jpg", name: "Aisha", city: "Dubai", score: 85 },
-            { src: "/landing/grid4.jpg", name: "Kenji", city: "Tokyo", score: 81 },
+            { src: LANDING_TILES[0], name: "Lucía", city: "Madrid", score: 92 },
+            { src: LANDING_TILES[1], name: "Marc", city: "Barcelona", score: 88 },
+            { src: LANDING_TILES[2], name: "Aisha", city: "Dubai", score: 85 },
+            { src: LANDING_TILES[3], name: "Kenji", city: "Tokyo", score: 81 },
           ].map((p, i) => (
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />

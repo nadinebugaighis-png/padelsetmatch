@@ -875,6 +875,9 @@ const LABELS: Record<Lang, Record<string, string>> = {
     Introverted: "Introvertido", Outgoing: "Extrovertido", Practical: "Práctico",
     Reflective: "Reflexivo", Reliable: "Fiable", Serious: "Serio",
     "Witty/funny": "Ingenioso/gracioso",
+    Direct: "Directo", Reserved: "Reservado", Quiet: "Callado",
+    Sensitive: "Sensible", Emotional: "Emocional", Impatient: "Impaciente",
+    Stubborn: "Terco", Perfectionist: "Perfeccionista",
     // Padel styles
     Competitive: "Competitivo", Strategic: "Estratégico", Aggressive: "Agresivo",
     Defensive: "Defensivo", "Team player": "Jugador de equipo", Coachable: "Enseñable",

@@ -22,13 +22,13 @@ export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
       : "text-[17px] tracking-[0.13em]";
   const gap = size === "sm" ? "gap-2" : "gap-2.5";
 
+  void ballW; void ballH; void gap;
   return (
     <Link
       to={to}
-      className={`inline-flex items-center ${gap} ${className}`}
+      className={`inline-flex items-center ${className}`}
       aria-label="Padel Match — home"
     >
-      <PadelBallPill w={ballW} h={ballH} />
       <span
         className={`text-serif uppercase text-[var(--ink)] leading-none ${word}`}
         style={{ fontWeight: 700 }}

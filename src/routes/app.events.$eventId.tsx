@@ -348,10 +348,10 @@ function EventDetail() {
         const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
         const statusChip =
           event.status === "cancelled"
-            ? { cls: "bg-red-500/10 text-red-700 border-red-500/20", label: tr("Cancelled", "Cancelado", "Annulé") }
+            ? { cls: "bg-red-500/20 text-red-100 border-red-400/30", label: tr("Cancelled", "Cancelado", "Annulé") }
             : event.needs === 0
-            ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70 border-[var(--ink)]/15", label: tr("Full", "Completo", "Complet") }
-            : { cls: "bg-[var(--grass)]/30 text-[var(--ink)] border-[var(--ink)]/15", label: tr(`Needs ${event.needs}`, `Faltan ${event.needs}`) };
+            ? { cls: "bg-[var(--paper)]/15 text-[var(--paper)] border-[var(--paper)]/30", label: tr("Full", "Completo", "Complet") }
+            : { cls: "bg-[var(--grass)] text-[var(--ink)] border-[var(--grass)]", label: tr(`Needs ${event.needs}`, `Faltan ${event.needs}`) };
         return (
           <section className="rounded-2xl border border-[var(--ink)]/15 bg-white shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.25)] overflow-hidden">
             {/* Date banner — ink background for strong contrast */}

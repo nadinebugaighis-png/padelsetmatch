@@ -266,14 +266,14 @@ function EventDetail() {
 
   return (
     <div className="mx-auto w-full max-w-md max-w-[100dvw] overflow-x-hidden px-5 py-4 pb-32">
-      <div className="flex items-center justify-between mb-3">
-        <Link to="/app/events" className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ink)]/60">
-          <ArrowLeft className="w-4 h-4" /> {tr("All matches", "Todos los partidos", "Tous les matches")}
+      <div className="flex items-center justify-between mb-4">
+        <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> {tr("All matches", "Todos los partidos", "Tous les matches")}
         </Link>
         <button
           type="button"
           onClick={() => setShareOpen(true)}
-          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[var(--ink)] border border-[var(--ink)]/25 rounded-full px-3 py-1"
+          className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)] border border-[var(--ink)]/20 hover:border-[var(--ink)]/40 rounded-full px-3.5 py-1.5 transition-colors"
         >
           <Share2 className="w-3.5 h-3.5" /> {tr("Share", "Compartir", "Partager")}
         </button>

@@ -57,7 +57,7 @@ function Landing() {
     <main className="programme-page min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="inline-block w-3 h-3 rounded-full bg-[var(--ink)] ball-glow" />
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ink)] ring-4 ring-[var(--grass)]/40" />
           <span className="text-display text-2xl tracking-tight">PADEL·MATCH</span>
         </Link>
         <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ function Landing() {
           <Link to="/how-it-works" className="text-xs uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)] hidden sm:inline">
             {t("land.howItWorks")}
           </Link>
-          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="chip chip-ball">{t("land.signin")}</Link>
+          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.15em] px-4 py-1.5 hover:brightness-110 transition">{t("land.signin")}</Link>
         </div>
       </header>
 
@@ -81,7 +81,7 @@ function Landing() {
             {t("land.lede")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">
+            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-7 py-3.5 tracking-wide hover:brightness-110 shadow-[0_14px_40px_-12px_rgba(15,62,46,0.45)] transition">
               {t("land.cta")}
             </Link>
             <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
@@ -104,7 +104,7 @@ function Landing() {
 
           <button
             onClick={install.openModal}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--ink)] px-5 py-2.5 text-sm font-bold text-[var(--ink)] hover:bg-[var(--ball)] hover:text-[var(--court-deep)] hover:border-[var(--ball)] transition"
+            className="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[var(--ink)] px-5 py-2.5 text-sm font-bold text-[var(--ink)] hover:bg-[var(--grass)] hover:text-[var(--ink)] hover:border-[var(--grass)] transition"
           >
             <Smartphone className="w-4 h-4" />
             Add to your home screen
@@ -131,7 +131,7 @@ function Landing() {
             <h2 className="text-display text-4xl md:text-5xl">{t("land.preview.title")}</h2>
             <p className="mt-2 text-[var(--ink)]/70 max-w-lg">{t("land.preview.sub")}</p>
           </div>
-          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-5 py-2.5 hover:opacity-90">
+          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-6 py-2.5 tracking-wide hover:brightness-110 transition">
             {t("land.preview.cta")}
           </Link>
         </div>
@@ -145,13 +145,13 @@ function Landing() {
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--ball)] text-[var(--court-deep)] rounded-full px-2 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-xs font-semibold bg-[var(--grass)] text-[var(--ink)] rounded-full px-2.5 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--ink)]">
                 <div className="text-display text-xl">{p.name}</div>
                 <div className="text-xs opacity-80">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
-                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-4 py-2 text-sm">{t("land.preview.unlock")}</Link>
+                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</Link>
               </div>
             </div>
           ))}

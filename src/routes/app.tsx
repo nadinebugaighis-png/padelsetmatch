@@ -249,7 +249,7 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number }) {
+function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number; dot?: boolean }) {
   const t = useT();
   const isHighlight = highlight && !active;
 
@@ -259,6 +259,9 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
         {icon}
         {!!badge && badge > 0 && (
           <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
+        )}
+        {dot && !active && (!badge || badge <= 0) && (
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
         )}
         {isHighlight && (
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)] ink-ring animate-ping" />

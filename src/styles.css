@@ -67,7 +67,7 @@
   --clay: oklch(0.6 0.13 35);               /* Madrid clay */
   --clay-deep: oklch(0.5 0.13 32);
   --cream: oklch(1 0 0);             /* bright white text */
-  --ball: #EFD108;             /* bright padel yellow */
+  --ball: #A5E358;             /* grass green — unified accent */
 
   /* Wimbledon "Programme" palette (light editorial pages) */
   --paper: #FDFBF7;
@@ -264,8 +264,8 @@
   color: var(--ink);
 }
 @utility chip-ball {
-  background: var(--ball);
-  color: var(--court-deep);
+  background: var(--ink);
+  color: var(--paper);
   border-color: transparent;
 }
 @utility chip-clay {

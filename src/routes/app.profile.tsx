@@ -219,6 +219,11 @@ function ProfilePage() {
         )}
       </div>
 
+      {/* Messages — placed right under name & photo for quick access */}
+      <div className="mt-3 sm:mt-4">
+        <MessagesRow />
+      </div>
+
       <div className="mt-3 sm:mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2">
         <div className="space-y-3 sm:space-y-4">
           {/* Details — dense grid, one card, inline labels */}
@@ -259,8 +264,6 @@ function ProfilePage() {
           )}
 
           <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
-
-          <MessagesRow />
 
           <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
         </div>

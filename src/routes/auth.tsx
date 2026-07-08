@@ -97,8 +97,9 @@ function AuthPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md surface-card p-8">
+    <main className="programme-page min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md programme-card p-8">
+
         <div className="flex items-center justify-between">
           <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{t("auth.back")}</Link>
           <LangSwitch />

@@ -371,7 +371,7 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
-                <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
+                <button key={g} onClick={() => setGender(g)} className={`chip-paper ${gender === g ? "chip-paper-selected" : ""}`}>{label(g)}</button>
               ))}
             </div>
             {gender === "self-describe" && (
@@ -388,7 +388,7 @@ function Onboarding() {
                 <button
                   key={g.id}
                   onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
-                  className={`chip ${goals.includes(g.id) ? "chip-ball" : ""}`}
+                  className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
                 >
                   {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
 
@@ -407,7 +407,7 @@ function Onboarding() {
                 <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
                 <div className="flex flex-wrap gap-2">
                   {(["men", "women", "everyone"] as const).map((o) => (
-                    <button key={o} onClick={() => setMeetPref(o)} className={`chip ${meetPref === o ? "chip-ball" : ""}`}>
+                    <button key={o} onClick={() => setMeetPref(o)} className={`chip-paper ${meetPref === o ? "chip-paper-selected" : ""}`}>
                       {o === "men" ? tr("Men", "Hombres", "Hommes") : o === "women" ? tr("Women", "Mujeres", "Femmes") : tr("Everyone", "Todos", "Tout le monde")}
                     </button>
                   ))}
@@ -575,7 +575,7 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
             <div className="flex flex-wrap gap-2">
               {LANGUAGES.map((l) => (
-                <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{label(l)}</button>
+                <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
               ))}
             </div>
 
@@ -592,7 +592,7 @@ function Onboarding() {
                         cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
                       )
                     }
-                    className={`chip ${on ? "chip-ball" : ""}`}
+                    className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
                   >
                     {on ? "✓ " : "+ "}{label(s)}
                   </button>
@@ -604,20 +604,20 @@ function Onboarding() {
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (
-                <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
+                <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
               ))}
             </div>
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
             <div className="flex flex-wrap gap-2">
               {COURT_SIDES.map((s) => (
-                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{label(s)}</button>
+                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip-paper ${courtSide === s ? "chip-paper-selected" : ""}`}>{label(s)}</button>
               ))}
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("When can you play?", "¿Cuándo puedes jugar?", "Quand peux-tu jouer ?")}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABILITY_SLOTS.map((s) => (
-                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{label(s)}</button>
+                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip-paper ${availability.includes(s) ? "chip-paper-selected" : ""}`}>{label(s)}</button>
               ))}
 
             </div>
@@ -661,7 +661,7 @@ function Onboarding() {
               {PRIORITY_TRAITS.map((tr) => {
                 const picked = priorities.includes(tr);
                 return (
-                  <button key={tr} onClick={() => togglePriority(tr)} className={`chip ${picked ? "chip-ball" : ""}`}>
+                  <button key={tr} onClick={() => togglePriority(tr)} className={`chip-paper ${picked ? "chip-paper-selected" : ""}`}>
                     {picked ? "✓ " : "+ "}{label(tr)}
                   </button>
                 );
@@ -715,7 +715,7 @@ function Onboarding() {
                           cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
                         )
                       }
-                      className={`chip ${on ? "chip-ball" : ""}`}
+                      className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
                     >
                       {on ? "✓ " : "+ "}{label(pt)}
                     </button>
@@ -738,7 +738,7 @@ function Onboarding() {
                           cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
                         )
                       }
-                      className={`chip ${on ? "chip-ball" : ""}`}
+                      className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
                     >
                       {on ? "✓ " : "+ "}{label(pt)}
                     </button>

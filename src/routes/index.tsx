@@ -105,7 +105,7 @@ function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-6 lg:pt-4 pb-10 lg:pb-6 lg:min-h-screen lg:max-h-screen lg:flex lg:flex-col lg:justify-center lg:overflow-hidden">
+      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-6 lg:pt-4 pb-10 lg:pb-6 lg:min-h-[calc(100vh-72px)] lg:flex lg:flex-col lg:justify-center">
         <div className="max-w-xl">
           <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
             <Globe2 className="w-3.5 h-3.5" strokeWidth={2} />

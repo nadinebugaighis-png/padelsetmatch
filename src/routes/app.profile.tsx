@@ -249,7 +249,7 @@ function ProfilePage() {
                 </span>
                 {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
               </div>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
+              
             </div>
           )}
         </div>

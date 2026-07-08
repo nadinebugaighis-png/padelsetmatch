@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { ShareQR } from "@/components/ShareQR";
-import { Smartphone } from "lucide-react";
+import { Smartphone, ArrowRight, Globe2 } from "lucide-react";
 import { useT, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
 
 import shareBanner from "@/assets/padel-share-banner.png.asset.json";
+import court from "@/assets/landing-court.jpg.asset.json";
 import landing1 from "@/assets/landing1.jpg.asset.json";
 import landing2 from "@/assets/landing2.jpg.asset.json";
 import landing3 from "@/assets/landing3.jpg.asset.json";
@@ -53,103 +54,131 @@ function Landing() {
   });
   const count = countQ.data?.count ?? 0;
   const install = useInstallModal();
-  const chipClass =
-    "inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/15 bg-white/70 backdrop-blur px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--ink)]/70";
-  const primaryBtn =
-    "inline-flex items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-7 py-3.5 tracking-wide hover:brightness-110 shadow-[0_14px_40px_-16px_rgba(15,62,46,0.5)] transition";
+
   return (
-    <main className="programme-page min-h-screen flex flex-col">
-      <header className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between">
+    <main className="programme-page min-h-screen flex flex-col relative overflow-hidden">
+      {/* Court image bleeds from right, softly fading into paper */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-[62%] sm:w-[52%] lg:w-[46%] z-0">
+        <img
+          src={court.url}
+          alt=""
+          className="w-full h-full object-cover object-left"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, var(--paper) 0%, color-mix(in oklab, var(--paper) 85%, transparent) 12%, transparent 40%)",
+          }}
+        />
+      </div>
+
+      {/* Header */}
+      <header className="relative z-10 px-5 sm:px-8 lg:px-16 pt-6 pb-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--ink)] ring-4 ring-[var(--grass)]/35" />
-          <span className="text-display text-xl sm:text-2xl tracking-tight">PADEL·MATCH</span>
+          <span className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+          </span>
+          <span className="text-serif text-[15px] sm:text-base font-semibold tracking-[0.18em] uppercase text-[var(--ink)]">
+            Padel Match
+          </span>
         </Link>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <LangSwitch />
-          <Link to="/how-it-works" className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] hidden sm:inline">
-            {t("land.howItWorks")}
+        <div className="flex items-center gap-2">
+          <div className="rounded-full border border-[var(--ink)]/20 bg-[var(--paper)]/70 backdrop-blur px-1">
+            <LangSwitch />
+          </div>
+          <Link
+            to="/auth"
+            search={{ redirect: undefined, join: undefined }}
+            className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2 hover:brightness-110 transition"
+          >
+            {t("land.signin")}
           </Link>
-          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.15em] px-4 py-1.5 hover:brightness-110 transition">{t("land.signin")}</Link>
         </div>
       </header>
 
-      <section className="flex-1 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center px-5 sm:px-8 lg:px-16 py-10 sm:py-14">
+      {/* Hero */}
+      <section className="relative z-10 flex-1 px-5 sm:px-8 lg:px-16 pt-6 pb-14">
         <div className="max-w-xl">
-          <p className={chipClass + " mb-6"}>
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
+          <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_25%,transparent)] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
+            <Globe2 className="w-3.5 h-3.5" strokeWidth={2} />
             {t("land.chip")}
           </p>
-          <h1 className="text-display text-[3.25rem] leading-[0.95] sm:text-7xl md:text-8xl lg:text-[7.5rem] lg:leading-[0.92] tracking-[-0.02em]">
-            {t("land.h1.a")}<br />
-            {t("land.h1.a2")}<br />
-            <span className="text-[var(--ink)]/50">{t("land.h1.b")}</span>
+
+          <h1 className="text-serif mt-6 uppercase text-[var(--ink)] leading-[0.92] tracking-[-0.015em] text-[3.75rem] sm:text-7xl md:text-8xl lg:text-[8.5rem]">
+            <span className="block">{t("land.h1.a")}</span>
+            <span className="block">{t("land.h1.a2")}</span>
+            <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>
           </h1>
-          <p className="mt-7 text-base sm:text-lg text-[var(--ink)]/70 max-w-md leading-relaxed">
+
+          <p className="mt-7 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.65]">
             {t("land.lede")}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link to="/auth" search={{ redirect: undefined, join: undefined }} className={primaryBtn}>
+            <Link
+              to="/auth"
+              search={{ redirect: undefined, join: undefined }}
+              className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
+            >
               {t("land.cta")}
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[var(--paper)]/15 group-hover:translate-x-0.5 transition">
+                <ArrowRight className="w-4 h-4" />
+              </span>
             </Link>
             <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
           </div>
 
-          <p className="mt-5 text-sm text-[var(--ink)]/60 max-w-md">
+          <Link
+            to="/how-it-works"
+            className="mt-8 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
+          >
+            {t("land.howItWorks")} <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <p className="mt-5 text-sm text-[var(--ink)]/70 max-w-sm leading-relaxed">
             {t("land.cta.sub")}
           </p>
-
-          <div className="mt-10 flex items-center gap-6 flex-wrap">
-            <div className="flex items-baseline gap-2.5">
-              <span className="text-display text-4xl text-[var(--ink)]">{count.toLocaleString()}</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-[var(--ink)]/55">{t("land.statUsers")}</span>
-            </div>
-            <span className="h-6 w-px bg-[var(--ink)]/15 hidden sm:block" />
-            <Link
-              to="/how-it-works"
-              className="text-sm font-medium text-[var(--ink)]/80 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/25 hover:decoration-[var(--ink)]"
-            >
-              {t("land.howItWorks")} →
-            </Link>
-          </div>
-
-          <button
-            onClick={install.openModal}
-            className="mt-8 inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/20 px-5 py-2.5 text-sm font-medium text-[var(--ink)] hover:border-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
-          >
-            <Smartphone className="w-4 h-4" />
-            Add to your home screen
-          </button>
         </div>
 
-        <div className="hidden lg:block">
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-[2rem] bg-[var(--grass)]/20 blur-2xl" aria-hidden />
-            <div className="relative surface-card p-7 rotate-1">
-              <div className="grid grid-cols-2 gap-3">
-                {LANDING_TILES.map((src, i) => (
-                  <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--ink)]/10">
-                    <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                ))}
-              </div>
-              <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/55">{t("land.tap")}</p>
-            </div>
+        {/* Stats row */}
+        <div className="mt-14 sm:mt-16 max-w-xl grid grid-cols-[auto_1px_1fr] items-center gap-5 sm:gap-6">
+          <div>
+            <div className="text-serif text-5xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
+            <div className="mt-1.5 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
           </div>
+          <div className="h-14 w-px bg-[var(--ink)]/15" />
+          <button
+            onClick={install.openModal}
+            className="flex items-center gap-3 text-left group"
+          >
+            <span className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] transition">
+              <Smartphone className="w-4 h-4" />
+            </span>
+            <span className="text-sm font-medium text-[var(--ink)] leading-tight">
+              Add to your<br />home screen
+            </span>
+          </button>
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-14 sm:py-16 border-t border-[var(--ink)]/10">
+      {/* Preview strip (kept, restyled subtly) */}
+      <section className="relative z-10 px-5 sm:px-8 lg:px-16 pt-10 pb-14 border-t border-[var(--ink)]/10 bg-[var(--paper)]/85 backdrop-blur">
         <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
           <div className="max-w-lg">
-            <p className={chipClass + " mb-4"}>
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
+            <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_14%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_22%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
               {t("land.preview.chip")}
             </p>
-            <h2 className="text-display text-4xl md:text-5xl tracking-[-0.01em]">{t("land.preview.title")}</h2>
+            <h2 className="text-serif mt-4 text-4xl md:text-5xl uppercase tracking-[-0.01em] text-[var(--ink)]">
+              {t("land.preview.title")}
+            </h2>
             <p className="mt-3 text-[var(--ink)]/65 leading-relaxed">{t("land.preview.sub")}</p>
           </div>
-          <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold px-6 py-2.5 tracking-wide hover:brightness-110 transition">
+          <Link
+            to="/auth"
+            search={{ redirect: undefined, join: undefined }}
+            className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.16em] text-[12px] px-5 py-2.5 hover:brightness-110 transition"
+          >
             {t("land.preview.cta")}
           </Link>
         </div>
@@ -163,9 +192,9 @@ function Landing() {
             <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/80 via-[var(--ink)]/20 to-transparent" />
-              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--grass)] text-[var(--ink)] rounded-full px-2.5 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--plum)] text-[var(--paper)] rounded-full px-2.5 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--paper)]">
-                <div className="text-display text-xl leading-tight">{p.name}</div>
+                <div className="text-serif text-xl leading-tight">{p.name}</div>
                 <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-[var(--ink)]/50 backdrop-blur-sm">
@@ -177,13 +206,22 @@ function Landing() {
         <p className="mt-5 text-xs text-[var(--ink)]/50">{t("land.preview.foot")}</p>
       </section>
 
-      <footer className="px-5 sm:px-8 lg:px-16 py-8 text-xs text-[var(--ink)]/50 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--ink)]/10">
-        <span>{t("land.foot")}</span>
-        <span className="flex gap-5">
-          <Link to="/terms" className="hover:text-[var(--ink)]">Terms</Link>
-          <Link to="/privacy" className="hover:text-[var(--ink)]">Privacy</Link>
-          <span className="opacity-70">v0.1</span>
-        </span>
+      {/* Dark green footer bar */}
+      <footer className="relative z-10 bg-[var(--ink)] text-[var(--paper)]">
+        <div className="h-1.5 bg-[var(--plum)]" aria-hidden />
+        <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--paper)]/30">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+            </span>
+            <span className="text-sm tracking-wide">padelmatchapp.lovable.app</span>
+          </div>
+          <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70">
+            <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>
+            <Link to="/privacy" className="hover:text-[var(--paper)]">Privacy</Link>
+            <span>v0.1</span>
+          </div>
+        </div>
       </footer>
       <InstallModal open={install.open} onClose={install.closeModal} />
     </main>

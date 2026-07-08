@@ -97,14 +97,15 @@ function AuthPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md surface-card p-8">
+    <main className="programme-page min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md programme-card p-8">
+
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("auth.back")}</Link>
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{t("auth.back")}</Link>
           <LangSwitch />
         </div>
         <h1 className="text-display text-5xl mt-3">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
-        <p className="text-sm text-[var(--cream)]/70 mt-2">
+        <p className="text-sm text-[var(--ink)]/70 mt-2">
           {mode === "signup" ? t("auth.sub.signup") : t("auth.sub.signin")}
         </p>
 
@@ -126,8 +127,8 @@ function AuthPage() {
            {t("auth.apple")}
         </Button>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-[var(--cream)]/40 uppercase tracking-widest">
-          <div className="flex-1 h-px bg-[var(--cream)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--cream)]/15" />
+        <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/40 uppercase tracking-widest">
+          <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
         </div>
 
         <form onSubmit={submit} className="space-y-3">
@@ -137,7 +138,7 @@ function AuthPage() {
         </form>
 
         <div className="mt-4 flex items-center justify-between text-sm">
-          <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="text-[var(--cream)]/60 hover:text-[var(--cream)]">
+          <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")} className="text-[var(--ink)]/60 hover:text-[var(--ink)]">
             {mode === "signup" ? t("auth.toggleToSignin") : t("auth.toggleToSignup")}
           </button>
           {mode === "signin" && (
@@ -151,7 +152,7 @@ function AuthPage() {
                 if (error) toast.error(error.message);
                 else toast.success(t("auth.resetSent"));
               }}
-              className="text-[var(--cream)]/60 hover:text-[var(--cream)]"
+              className="text-[var(--ink)]/60 hover:text-[var(--ink)]"
             >
               {t("auth.forgot")}
             </button>

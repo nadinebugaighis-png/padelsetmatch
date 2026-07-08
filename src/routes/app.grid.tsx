@@ -285,8 +285,8 @@ function Discover() {
               }}
               className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
                 world
-                  ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
-                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
+                  ? "bg-[var(--plum)] text-[var(--paper)] border border-[var(--plum)] shadow-sm"
+                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--plum)]/5 hover:border-[var(--plum)]/40"
               }`}
             >
               <Globe className="w-3.5 h-3.5" />

@@ -143,7 +143,7 @@ export function QASection() {
 
       {answered.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-serif text-base tracking-wider mb-2 text-[var(--ink)]">{t("qa.yourAnswers")}</h3>
+          <h3 className="text-serif text-base tracking-tight mb-2 text-[var(--ink)]">{t("qa.yourAnswers")}</h3>
           <div className="space-y-2">
             {answered.map((a) => (
               <div key={a.id} className="rounded-lg border border-[var(--ink)]/10 p-3">

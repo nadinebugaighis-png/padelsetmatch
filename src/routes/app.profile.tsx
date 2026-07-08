@@ -329,7 +329,7 @@ function FeedbackBox() {
     <div className="mt-6 programme-card p-5">
       <div className="flex items-center gap-2">
         <Sparkles className="w-4 h-4 text-[var(--ink)]" />
-        <h2 className="text-serif text-lg tracking-wider text-[var(--ink)]">{t("fb.title")}</h2>
+        <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{t("fb.title")}</h2>
       </div>
       <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.sub")}</p>
       <p className="text-[10px] text-[var(--ink)]/40 mt-1">{t("fb.anon")}</p>
@@ -410,7 +410,7 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
     <div className="mt-4 programme-card p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-serif text-lg tracking-wider text-[var(--ink)]">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
+          <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
           <p className="text-xs text-[var(--ink)]/60 mt-1">
             {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>

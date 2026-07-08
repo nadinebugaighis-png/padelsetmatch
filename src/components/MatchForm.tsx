@@ -149,7 +149,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       >
         <ArrowLeft className="w-4 h-4" /> {tr("Find matches", "Buscar partidos", "Trouver des matches")}
       </Link>
-      <h1 className="text-display text-2xl tracking-wider">{title}</h1>
+      <h1 className="text-display text-2xl tracking-tight">{title}</h1>
 
 
       <div>

@@ -50,7 +50,7 @@ function AppErrorFallback({ reset }: { reset: () => void }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-6 text-center programme-page">
       <div className="max-w-sm">
-        <h1 className="text-serif text-3xl tracking-wider text-[var(--ink)]">{t("shell.err.title")}</h1>
+        <h1 className="text-serif text-3xl tracking-tight text-[var(--ink)]">{t("shell.err.title")}</h1>
         <p className="mt-3 text-sm text-[var(--ink)]/70">{t("shell.err.body")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button

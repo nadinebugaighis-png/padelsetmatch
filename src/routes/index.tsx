@@ -65,6 +65,15 @@ function Landing() {
           alt=""
           className="w-full h-full object-cover object-left"
         />
+        {/* Padel-court green tint on the wall */}
+        <div
+          className="absolute inset-0 mix-blend-multiply"
+          style={{ background: "rgba(87, 118, 90, 0.55)" }}
+        />
+        <div
+          className="absolute inset-0 mix-blend-overlay"
+          style={{ background: "rgba(60, 90, 65, 0.25)" }}
+        />
         <div
           className="absolute inset-0"
           style={{

@@ -829,14 +829,14 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
   return (
     <Link
       to="/app/profile"
-      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--cream)] bg-[var(--cream)]/10" : "border-[var(--cream)]/15"}`}
+      className={`mt-4 flex items-center gap-3 programme-card p-3 ${strong ? "ring-1 ring-[var(--ink)]/30" : ""}`}
     >
-      <div className="w-9 h-9 rounded-full bg-[var(--cream)]/20 flex items-center justify-center text-lg">📸</div>
+      <div className="w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold text-[var(--cream)]">
+        <div className="text-serif text-[15px] text-[var(--ink)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
-        <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
+        <div className="text-xs text-[var(--ink)]/65">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
       </div>
       <button
         type="button"
@@ -846,7 +846,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
           sessionStorage.setItem("photo-reminder-dismissed", "1");
           setDismissed(true);
         }}
-        className="p-1 text-[var(--cream)]/50 hover:text-[var(--cream)]"
+        className="p-1 text-[var(--ink)]/50 hover:text-[var(--ink)]"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

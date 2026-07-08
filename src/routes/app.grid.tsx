@@ -250,243 +250,259 @@ function Discover() {
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
 
   return (
-    <main className="px-4 py-5 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-      <h1 className="text-display text-4xl">{t("disc.h1")}</h1>
-      <p className="text-sm text-[var(--cream)]/70 mt-1">{t("disc.sub")}</p>
-      <p className="text-xs text-[var(--cream)]/55 mt-2">
-        {t("disc.scoreA")} <span className="inline-block align-middle px-1.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-bold">87</span> {t("disc.scoreB")} <b>{t("disc.scoreBold")}</b> {t("disc.scoreC")}
-      </p>
+    <main className="programme-page px-5 py-7 min-h-[calc(100vh-4rem)]">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
+        <h1 className="text-serif text-[38px] leading-[0.95] uppercase text-[var(--ink)]">{t("disc.h1")}</h1>
+        <p className="text-serif italic text-[15px] text-[var(--ink)]/75 mt-2">{t("disc.sub")}</p>
 
-      <div className="flex items-center justify-between mt-3">
-        <div className="flex gap-2 flex-wrap items-center">
-          {(["all", "padel", "friend", "relationship"] as const).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={`chip ${filter === f ? "chip-ball" : ""}`}>
-              {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+        <div className="mt-5 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 flex items-start gap-3">
+          <div className="shrink-0 w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center text-[11px] font-bold">87</div>
+          <p className="text-[11px] leading-snug text-[var(--ink)]/75">
+            {t("disc.scoreA")} <b className="text-[var(--ink)]">{t("disc.scoreBold")}</b> {t("disc.scoreB")} {t("disc.scoreC")}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between mt-5 gap-2">
+          <div className="flex gap-2 flex-wrap items-center">
+            {(["all", "padel", "friend", "relationship"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.15em] transition ${
+                  filter === f
+                    ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)]"
+                    : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                }`}
+              >
+                {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+              </button>
+            ))}
+            <button
+              onClick={() => {
+                const next = !world;
+                setWorld(next);
+                setWorldM.mutate(next);
+              }}
+              className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.15em] transition ${
+                world
+                  ? "bg-[var(--plum)] text-white border border-[var(--plum)]"
+                  : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+              }`}
+            >
+              {world ? t("disc.world.on") : t("disc.world.off")}
             </button>
-          ))}
+          </div>
           <button
-            onClick={() => {
-              const next = !world;
-              setWorld(next);
-              setWorldM.mutate(next);
-            }}
-            className={`chip ${world ? "chip-ball" : ""}`}
+            onClick={() => setShowFilters((s) => !s)}
+            className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shrink-0 ${activeFilterCount > 0 ? "text-[var(--plum)]" : "text-[var(--ink)]/70"}`}
+            aria-expanded={showFilters}
           >
-            {world ? t("disc.world.on") : t("disc.world.off")}
+            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
           </button>
         </div>
-        <button
-          onClick={() => setShowFilters((s) => !s)}
-          className={`text-sm font-medium ${activeFilterCount > 0 ? "text-[var(--cream)]" : "text-[var(--cream)]/70"}`}
-          aria-expanded={showFilters}
-        >
-          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
-        </button>
-      </div>
 
-      <div className="mt-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--cream)]/40" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name..."
-            className="w-full h-9 pl-9 pr-3 rounded-full border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] text-sm placeholder:text-[var(--cream)]/35 focus:outline-none focus:border-[var(--cream)]/60"
-          />
-        </div>
-      </div>
-
-      {showFilters && (
-        <div className="mt-3 p-3 rounded-xl border border-[var(--cream)]/15 bg-black/20 space-y-3">
-          <div>
-            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Padel level</label>
-            <select
-              value={levelFilter}
-              onChange={(e) => setLevelFilter(e.target.value)}
-              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
-            >
-              <option value="all">Any level</option>
-              {PADEL_LEVELS.map((lv) => (
-                <option key={lv} value={lv}>{label(lv)}</option>
-              ))}
-            </select>
+        <div className="mt-4">
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/40" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name..."
+              className="w-full h-10 pl-10 pr-3 rounded-lg border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
+            />
           </div>
-          <div>
-            <label className="block text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-1.5">Barrio / zone</label>
-            <select
-              value={zoneFilter}
-              onChange={(e) => setZoneFilter(e.target.value)}
-              className="w-full h-9 rounded-md border border-[var(--cream)]/20 bg-[var(--court-deep)] text-[var(--cream)] px-2 text-sm"
-            >
-              <option value="all">Any zone</option>
-              {zonesInFeed.length > 0 && (
-                <optgroup label="From players in your Grid">
-                  {zonesInFeed.map((z) => (
-                    <option key={`feed-${z}`} value={z}>{z}</option>
+        </div>
+
+        {showFilters && (
+          <div className="mt-3 p-3 rounded-xl border border-[var(--ink)]/15 bg-white space-y-3">
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">Padel level</label>
+              <select
+                value={levelFilter}
+                onChange={(e) => setLevelFilter(e.target.value)}
+                className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
+              >
+                <option value="all">Any level</option>
+                {PADEL_LEVELS.map((lv) => (
+                  <option key={lv} value={lv}>{label(lv)}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">Barrio / zone</label>
+              <select
+                value={zoneFilter}
+                onChange={(e) => setZoneFilter(e.target.value)}
+                className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
+              >
+                <option value="all">Any zone</option>
+                {zonesInFeed.length > 0 && (
+                  <optgroup label="From players in your Grid">
+                    {zonesInFeed.map((z) => (
+                      <option key={`feed-${z}`} value={z}>{z}</option>
+                    ))}
+                  </optgroup>
+                )}
+                <optgroup label="All Madrid zones">
+                  {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
+                    <option key={`all-${z}`} value={z}>{z}</option>
                   ))}
                 </optgroup>
-              )}
-              <optgroup label="All Madrid zones">
-                {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
-                  <option key={`all-${z}`} value={z}>{z}</option>
-                ))}
-              </optgroup>
-            </select>
-            <p className="text-[10px] text-[var(--cream)]/50 mt-1">Matches on players' city, barrio or listed areas.</p>
-          </div>
-          {activeFilterCount > 0 && (
-            <button
-              type="button"
-              onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
-              className="text-xs text-[var(--cream)] underline"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-      )}
-      {world && (
-        <p className="text-[11px] text-[var(--cream)]/60 mt-2">
-          {t("disc.world.note")}
-        </p>
-      )}
-
-      <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
-
-
-
-
-      {(qaQ.data?.length ?? 0) === 0 && (
-        <Link to="/app/profile" className="mt-4 block surface-card p-4 border border-[var(--cream)]/30 rounded-xl">
-          <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-[var(--cream)] shrink-0 mt-0.5" />
-            <div>
-              <div className="text-sm font-semibold text-[var(--cream)]">{t("disc.qaBannerTitle")}</div>
-              <div className="text-xs text-[var(--cream)]/70 mt-1">{t("disc.qaBannerSub")}</div>
-              <div className="mt-2 text-xs text-[var(--cream)] underline">{t("disc.qaBannerCta")}</div>
+              </select>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">Matches on players' city, barrio or listed areas.</p>
             </div>
-          </div>
-        </Link>
-      )}
-
-      {list.length === 0 ? (
-        <p className="mt-10 text-center text-[var(--cream)]/60 text-sm">{t("disc.empty")}</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mt-5">
-          {list.map((c) => (
-            <div
-              key={c.id}
-              className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--cream)]/10"
-            >
-              {c.photo_url && (
-                <img src={c.photo_url} alt={c.first_name} loading="lazy" className="absolute inset-0 w-full h-full object-cover brightness-110 transition-transform group-hover:scale-105" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
-              {!c.liked && <div className="absolute inset-0 bg-black/40 pointer-events-none" />}
-
-              <div className="absolute bottom-3 right-2 z-10 w-6 h-6 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center text-[10px] font-bold shadow-lg" title={t("disc.scoreTooltip")}>
-                {c.score}
-              </div>
-
+            {activeFilterCount > 0 && (
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (c.liked) unlikeM.mutate(c.id);
-                  else likeM.mutate(c.id);
-                }}
-                className="absolute top-2 right-2 z-10 p-1 rounded-full bg-black/55 hover:bg-black/75 transition"
-                aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
-                title={c.liked ? "Connected" : "Like to connect"}
+                onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
+                className="text-[11px] text-[var(--plum)] underline font-semibold"
               >
-                <Heart
-                  className={`w-3.5 h-3.5 transition ${c.liked ? "text-[var(--ball)]" : "text-[var(--cream)]/70"}`}
-                  fill={c.liked ? "currentColor" : "none"}
-                  strokeWidth={2}
-                />
+                Clear filters
               </button>
+            )}
+          </div>
+        )}
+        {world && (
+          <p className="text-[11px] text-[var(--ink)]/60 italic mt-3">
+            {t("disc.world.note")}
+          </p>
+        )}
 
+        <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
 
-
-              <button
-                type="button"
-                onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations })}
-                className="absolute inset-0 w-full h-full text-left"
-                aria-label={`View ${c.first_name}'s profile`}
-              />
-
-              <div className="absolute top-2 left-2 z-10 flex gap-1">
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                  className="p-1.5 rounded-full bg-black/55 hover:bg-black/75 text-[var(--cream)]"
-                  aria-label={`Hide ${c.first_name}`}
-                  title="Not interested — hide from my Grid"
-                >
-                  <EyeOff className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!c.liked) {
-                      toast.info(`Connect with ${c.first_name} first to request a match`);
-                      return;
-                    }
-                    navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
-                  }}
-                  className={`p-1.5 rounded-full bg-black/55 hover:bg-black/75 transition ${c.liked ? "text-[var(--ball)]" : "text-[var(--cream)]/35"}`}
-                  aria-label={`Request to play with ${c.first_name}`}
-                  title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                    {/* round padel racket head */}
-                    <circle cx="9" cy="9" r="6" />
-                    {/* handle */}
-                    <path d="M13 13l5 5" strokeWidth="2.4" />
-                    {/* string holes */}
-                    <circle cx="7.5" cy="7.5" r="0.5" fill="currentColor" stroke="none" />
-                    <circle cx="9" cy="7.5" r="0.5" fill="currentColor" stroke="none" />
-                    <circle cx="10.5" cy="7.5" r="0.5" fill="currentColor" stroke="none" />
-                    <circle cx="7.5" cy="9" r="0.5" fill="currentColor" stroke="none" />
-                    <circle cx="9" cy="9" r="0.5" fill="currentColor" stroke="none" />
-                    <circle cx="10.5" cy="9" r="0.5" fill="currentColor" stroke="none" />
-                    <circle cx="9" cy="10.5" r="0.5" fill="currentColor" stroke="none" />
-                    {/* invite + badge */}
-                    <path d="M18 5h4M20 3v4" strokeWidth="2" />
-                  </svg>
-
-                </button>
+        {(qaQ.data?.length ?? 0) === 0 && (
+          <Link to="/app/profile" className="mt-4 block programme-card p-4">
+            <div className="flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-[var(--ink)] shrink-0 mt-0.5" />
+              <div>
+                <div className="text-serif text-base text-[var(--ink)]">{t("disc.qaBannerTitle")}</div>
+                <div className="text-xs text-[var(--ink)]/70 mt-1">{t("disc.qaBannerSub")}</div>
+                <div className="mt-2 text-[11px] text-[var(--plum)] font-bold uppercase tracking-widest">{t("disc.qaBannerCta")} →</div>
               </div>
-
-
-              <div className="absolute bottom-0 left-0 right-0 p-3 pr-10 pointer-events-none">
-                <div className="text-display text-2xl leading-none">{c.first_name}</div>
-                <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/80 mt-1">{c.zone} · {label(c.level)}</div>
-                {(() => {
-                  const au = (c as any).away_until as string | null | undefined;
-                  if (!au || au < new Date().toISOString().slice(0, 10)) return null;
-                  return (
-                    <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-500/90 text-black text-[10px] font-bold uppercase tracking-wider">
-                      ✈️ On holidays
-                    </div>
-                  );
-                })()}
-                {c.free_court_access && (
-                  <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider">🎾 Free court</div>
-                )}
-              </div>
-
-
             </div>
-          ))}
-        </div>
-      )}
+          </Link>
+        )}
 
-      <Link to="/app/matches" className="mt-8 block text-center text-sm text-[var(--cream)]/60 underline">
-        {t("disc.seeChats")}
-      </Link>
+        {list.length === 0 ? (
+          <p className="mt-10 text-center text-[var(--ink)]/60 text-sm italic">{t("disc.empty")}</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
+            {list.map((c) => {
+              const away = (() => {
+                const au = (c as unknown as { away_until?: string | null }).away_until;
+                return !!(au && au >= new Date().toISOString().slice(0, 10));
+              })();
+              return (
+                <div
+                  key={c.id}
+                  className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md"
+                >
+                  <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                    {c.photo_url && (
+                      <img src={c.photo_url} alt={c.first_name} loading="lazy" className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${!c.liked ? "grayscale-[35%]" : ""}`} />
+                    )}
+                    {!c.photo_url && (
+                      <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
+                        {c.first_name.charAt(0)}
+                      </div>
+                    )}
+
+                    <div className="absolute top-2 left-2 z-10 flex gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
+                        className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
+                        aria-label={`Hide ${c.first_name}`}
+                        title="Not interested — hide from my Grid"
+                      >
+                        <EyeOff className="w-3.5 h-3.5" strokeWidth={1.6} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!c.liked) {
+                            toast.info(`Connect with ${c.first_name} first to request a match`);
+                            return;
+                          }
+                          navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
+                        }}
+                        className={`w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
+                        aria-label={`Request to play with ${c.first_name}`}
+                        title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                          <circle cx="9" cy="9" r="6" />
+                          <path d="M13 13l5 5" />
+                          <path d="M18 5h4M20 3v4" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (c.liked) unlikeM.mutate(c.id);
+                        else likeM.mutate(c.id);
+                      }}
+                      className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
+                      aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
+                      title={c.liked ? "Connected" : "Like to connect"}
+                    >
+                      <Heart
+                        className={`w-3.5 h-3.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
+                        fill={c.liked ? "currentColor" : "none"}
+                        strokeWidth={1.6}
+                      />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations })}
+                      className="absolute inset-0 w-full h-full text-left"
+                      aria-label={`View ${c.first_name}'s profile`}
+                    />
+                  </div>
+
+                  <div className="p-3 bg-white">
+                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
+                      {c.zone} · {label(c.level)}
+                    </p>
+                    {away && (
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
+                        ✈ On holidays
+                      </div>
+                    )}
+                    <div className="mt-2 flex items-center justify-between">
+                      {c.free_court_access ? (
+                        <span className="px-2 py-0.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)] text-[8px] font-bold uppercase tracking-tight flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
+                          Free Court
+                        </span>
+                      ) : <span />}
+                      <div
+                        className="w-6 h-6 rounded-full border border-[var(--ink)] text-[var(--ink)] text-[10px] flex items-center justify-center font-bold"
+                        title={t("disc.scoreTooltip")}
+                      >
+                        {c.score}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <Link to="/app/matches" className="mt-10 block text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--plum)] hover:opacity-80">
+          {t("disc.seeChats")} →
+        </Link>
+      </div>
+
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
         <DialogContent className="max-w-sm sm:max-w-lg lg:max-w-2xl p-0 overflow-hidden bg-[var(--court-deep)] border-[var(--cream)]/15 max-h-[92vh] flex flex-col rounded-3xl">
@@ -813,14 +829,14 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
   return (
     <Link
       to="/app/profile"
-      className={`mt-4 flex items-center gap-3 surface-card p-3 rounded-xl border ${strong ? "border-[var(--cream)] bg-[var(--cream)]/10" : "border-[var(--cream)]/15"}`}
+      className={`mt-4 flex items-center gap-3 programme-card p-3 ${strong ? "ring-1 ring-[var(--ink)]/30" : ""}`}
     >
-      <div className="w-9 h-9 rounded-full bg-[var(--cream)]/20 flex items-center justify-center text-lg">📸</div>
+      <div className="w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold text-[var(--cream)]">
+        <div className="text-serif text-[15px] text-[var(--ink)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
-        <div className="text-xs text-[var(--cream)]/75">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
+        <div className="text-xs text-[var(--ink)]/65">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
       </div>
       <button
         type="button"
@@ -830,7 +846,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
           sessionStorage.setItem("photo-reminder-dismissed", "1");
           setDismissed(true);
         }}
-        className="p-1 text-[var(--cream)]/50 hover:text-[var(--cream)]"
+        className="p-1 text-[var(--ink)]/50 hover:text-[var(--ink)]"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />

@@ -3,6 +3,10 @@
 @import "@fontsource/barlow/500.css";
 @import "@fontsource/barlow/600.css";
 @import "@fontsource/barlow/700.css";
+@import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/600.css";
+@import "@fontsource/playfair-display/400-italic.css";
+@import "@fontsource/barlow/700.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -43,7 +47,13 @@
   --color-clay: var(--clay);
   --color-cream: var(--cream);
   --color-ball: var(--ball);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-plum: var(--plum);
+  --color-grass: var(--grass);
   --font-display: "Bebas Neue", "Impact", sans-serif;
+  --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Barlow", system-ui, sans-serif;
 }
 
@@ -58,6 +68,13 @@
   --clay-deep: oklch(0.5 0.13 32);
   --cream: oklch(1 0 0);             /* bright white text */
   --ball: #EFD108;             /* bright padel yellow */
+
+  /* Wimbledon "Programme" palette (light editorial pages) */
+  --paper: #FDFBF7;
+  --paper-2: #EAE7E0;
+  --ink: #0F3E2E;
+  --plum: #482E92;
+  --grass: #A5E358;
 
   --background: var(--court-deep);
   --foreground: var(--cream);
@@ -135,6 +152,17 @@
 }
 
 @utility text-display { font-family: var(--font-display); letter-spacing: 0.02em; }
+@utility text-serif { font-family: var(--font-serif); letter-spacing: -0.005em; }
+@utility programme-page {
+  background: var(--paper);
+  color: var(--ink);
+}
+@utility programme-card {
+  background: #ffffff;
+  border: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 6%, transparent);
+}
 @utility surface-card {
   background: oklch(0.28 0.035 180 / 0.7);
   backdrop-filter: blur(14px);

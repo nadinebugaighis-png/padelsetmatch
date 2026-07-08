@@ -407,11 +407,11 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
   };
 
   return (
-    <div className="mt-4 surface-card p-5">
+    <div className="mt-4 programme-card p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-display text-lg tracking-wider">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
-          <p className="text-xs text-[var(--cream)]/60 mt-1">
+          <h2 className="text-serif text-lg tracking-wider text-[var(--ink)]">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
+          <p className="text-xs text-[var(--ink)]/60 mt-1">
             {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>
         </div>
@@ -419,13 +419,13 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
           type="button"
           onClick={toggle}
           disabled={busy}
-          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-amber-500" : "bg-[var(--cream)]/25"}`}
+          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}
           aria-label="Toggle holiday status"
         >
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
       </div>
-      <p className="mt-3 text-[10px] text-[var(--cream)]/55">
+      <p className="mt-3 text-[10px] text-[var(--ink)]/55">
         {tr(
           'When on holidays, other players see an "On holidays" badge on your card and you drop to the bottom of their grid.',
           'Cuando estás de vacaciones, los demás ven una etiqueta "De vacaciones" en tu tarjeta y apareces al final de la cuadrícula.',

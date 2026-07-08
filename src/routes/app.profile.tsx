@@ -403,13 +403,6 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
         >
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
-      </div>
-      <p className="mt-3 text-[10px] text-[var(--ink)]/55">
-        {tr(
-          'When on holidays, other players see an "On holidays" badge on your card and you drop to the bottom of their grid.',
-          'Cuando estás de vacaciones, los demás ven una etiqueta "De vacaciones" en tu tarjeta y apareces al final de la cuadrícula.',
-        )}
-      </p>
     </div>
   );
 }

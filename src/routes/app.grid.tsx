@@ -268,7 +268,7 @@ function Discover() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] sm:text-[12px] lg:text-[12.5px] font-semibold uppercase tracking-[0.14em] transition ${
+                className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition ${
                   filter === f
                     ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
                     : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
@@ -283,9 +283,9 @@ function Discover() {
                 setWorld(next);
                 setWorldM.mutate(next);
               }}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] sm:text-[12px] lg:text-[12.5px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
+              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
                 world
-                  ? "bg-[var(--plum)] text-white border border-[var(--plum)] shadow-sm"
+                  ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
                   : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
               }`}
             >
@@ -295,7 +295,7 @@ function Discover() {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex items-center gap-2 sm:gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/40" />
             <input
@@ -303,14 +303,14 @@ function Discover() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name..."
-              className="w-full h-10 lg:h-11 pl-10 pr-3 rounded-full border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] lg:text-[14px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
+              className="w-full h-10 pl-10 pr-3 rounded-full border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
             />
           </div>
           <button
             onClick={() => setShowFilters((s) => !s)}
-            className={`h-10 lg:h-11 rounded-full px-4 lg:px-5 text-[11px] lg:text-[12px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
+            className={`h-9 rounded-full px-3.5 text-[11px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
               activeFilterCount > 0
-                ? "text-[var(--plum)] border-[var(--plum)]/40 bg-[var(--plum)]/[0.06]"
+                ? "text-[var(--ink)] border-[var(--ink)]/40 bg-[var(--ink)]/[0.06]"
                 : "text-[var(--ink)]/70 border-[var(--ink)]/20 bg-white hover:bg-[var(--ink)]/5"
             }`}
             aria-expanded={showFilters}

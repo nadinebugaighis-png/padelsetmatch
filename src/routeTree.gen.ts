@@ -17,6 +17,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
@@ -71,6 +72,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
 } as any)
 const MEventIdRoute = MEventIdRouteImport.update({
   id: '/m/$eventId',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -169,7 +176,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/how-it-works': typeof HowItWorksRoute
   '/privacy': typeof PrivacyRoute
@@ -185,6 +191,7 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -210,6 +217,7 @@ export interface FileRoutesById {
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -236,6 +244,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/questions'
     | '/m/$eventId'
+    | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -244,7 +253,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app'
     | '/auth'
     | '/how-it-works'
     | '/privacy'
@@ -260,6 +268,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/questions'
     | '/m/$eventId'
+    | '/app'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/questions'
     | '/m/$eventId'
+    | '/app/'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -360,6 +370,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/m/$eventId': {
       id: '/m/$eventId'
@@ -494,6 +511,7 @@ interface AppRouteChildren {
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
   AppQuestionsRoute: typeof AppQuestionsRoute
+  AppIndexRoute: typeof AppIndexRoute
   AppEventsEventIdRoute: typeof AppEventsEventIdRouteWithChildren
   AppEventsNewRoute: typeof AppEventsNewRoute
   AppEventsIndexRoute: typeof AppEventsIndexRoute
@@ -508,6 +526,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
   AppQuestionsRoute: AppQuestionsRoute,
+  AppIndexRoute: AppIndexRoute,
   AppEventsEventIdRoute: AppEventsEventIdRouteWithChildren,
   AppEventsNewRoute: AppEventsNewRoute,
   AppEventsIndexRoute: AppEventsIndexRoute,

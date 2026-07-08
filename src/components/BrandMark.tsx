@@ -9,10 +9,10 @@ type Props = {
 export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
   const word =
     size === "sm"
-      ? "text-[18px]"
+      ? "text-[18px] md:text-[21px] lg:text-[24px]"
       : size === "lg"
-      ? "text-[30px]"
-      : "text-[23px]";
+      ? "text-[30px] md:text-[36px] lg:text-[42px]"
+      : "text-[23px] md:text-[28px] lg:text-[32px]";
 
   return (
     <Link

@@ -26,6 +26,7 @@ import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
 import { Route as AppGridRouteImport } from './routes/app.grid'
+import { Route as AppConnectRouteImport } from './routes/app.connect'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
@@ -118,6 +119,11 @@ const AppGridRoute = AppGridRouteImport.update({
   path: '/grid',
   getParentRoute: () => AppRoute,
 } as any)
+const AppConnectRoute = AppConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
   '/app/join-setup': typeof AppJoinSetupRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
   '/app/join-setup': typeof AppJoinSetupRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
   '/app/join-setup': typeof AppJoinSetupRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/app/admin'
+    | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
     | '/app/join-setup'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/app/admin'
+    | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
     | '/app/join-setup'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/app/admin'
+    | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
     | '/app/join-setup'
@@ -434,6 +446,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGridRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/connect': {
+      id: '/app/connect'
+      path: '/connect'
+      fullPath: '/app/connect'
+      preLoaderRoute: typeof AppConnectRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin': {
       id: '/app/admin'
       path: '/admin'
@@ -504,6 +523,7 @@ const AppEventsEventIdRouteWithChildren =
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppConnectRoute: typeof AppConnectRoute
   AppGridRoute: typeof AppGridRoute
   AppHiddenRoute: typeof AppHiddenRoute
   AppJoinSetupRoute: typeof AppJoinSetupRoute
@@ -519,6 +539,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppConnectRoute: AppConnectRoute,
   AppGridRoute: AppGridRoute,
   AppHiddenRoute: AppHiddenRoute,
   AppJoinSetupRoute: AppJoinSetupRoute,

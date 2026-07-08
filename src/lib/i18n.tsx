@@ -11,7 +11,6 @@ type Dict = Record<string, string>;
 const en: Dict = {
   // Landing
   "land.signin": "Sign in",
-  "land.chip": "Worldwide · pick your city",
   "land.h1.a": "find your",
   "land.h1.a2": "best",
   "land.h1.b": "Match.",
@@ -293,7 +292,6 @@ const en: Dict = {
 const es: Dict = {
   // Landing
   "land.signin": "Iniciar sesión",
-  "land.chip": "En todo el mundo · elige tu ciudad",
   "land.h1.a": "encuentra tu",
   "land.h1.a2": "mejor",
   "land.h1.b": "Match.",
@@ -570,7 +568,6 @@ const es: Dict = {
 const fr: Dict = {
   // Landing
   "land.signin": "Se connecter",
-  "land.chip": "Partout dans le monde · choisis ta ville",
   "land.h1.a": "trouve ton",
   "land.h1.a2": "meilleur",
   "land.h1.b": "Match.",

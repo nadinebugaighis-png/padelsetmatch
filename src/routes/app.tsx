@@ -240,7 +240,7 @@ function AuthShell() {
             <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-6 h-6" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} />
+            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
             <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-[22px] h-[22px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>

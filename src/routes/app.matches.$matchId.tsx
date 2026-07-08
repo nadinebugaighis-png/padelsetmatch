@@ -145,6 +145,11 @@ function ChatRoom() {
           </div>
           <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60">{other.zone} · {label(other.level)}</div>
         </div>
+
+        {statusQ.data && statusQ.data.count >= 2 && (
+          <MatchRatingTrigger matchId={matchId} otherName={other.first_name} />
+        )}
+
         <button onClick={onBlock} title={t("chat.block")} aria-label={t("chat.block")} className="p-1.5 rounded-full hover:bg-[var(--ink)]/10">
           <Shield className="w-4 h-4" />
         </button>
@@ -175,10 +180,6 @@ function ChatRoom() {
         </button>
 
       </div>
-
-      {statusQ.data && statusQ.data.count >= 2 && (
-        <MatchRatingPanel matchId={matchId} otherName={other.first_name} />
-      )}
 
 
       {reportOpen && (

@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Heart, Zap } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Heart, Zap, Globe } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -262,16 +262,16 @@ function Discover() {
           </p>
         </div>
 
-        <div className="flex items-center justify-between mt-5 gap-2">
-          <div className="flex gap-2 flex-wrap items-center">
+        <div className="mt-6">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {(["all", "padel", "friend", "relationship"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.15em] transition ${
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] transition sm:px-5 sm:py-2.5 sm:text-[12px] md:px-6 md:py-3 md:text-[13px] lg:px-6 lg:py-3 lg:text-[14px] xl:px-7 xl:py-3.5 xl:text-[15px] ${
                   filter === f
-                    ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)]"
-                    : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                    ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
+                    : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
                 }`}
               >
                 {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
@@ -283,27 +283,20 @@ function Discover() {
                 setWorld(next);
                 setWorldM.mutate(next);
               }}
-              className={`px-3.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.15em] transition ${
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] transition inline-flex items-center gap-1.5 sm:px-5 sm:py-2.5 sm:text-[12px] md:px-6 md:py-3 md:text-[13px] lg:px-6 lg:py-3 lg:text-[14px] xl:px-7 xl:py-3.5 xl:text-[15px] ${
                 world
-                  ? "bg-[var(--plum)] text-white border border-[var(--plum)]"
-                  : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                  ? "bg-[var(--plum)] text-white border border-[var(--plum)] shadow-sm"
+                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
               }`}
             >
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
               {world ? t("disc.world.on") : t("disc.world.off")}
             </button>
           </div>
-          <button
-            onClick={() => setShowFilters((s) => !s)}
-            className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shrink-0 ${activeFilterCount > 0 ? "text-[var(--plum)]" : "text-[var(--ink)]/70"}`}
-            aria-expanded={showFilters}
-          >
-            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
-          </button>
         </div>
 
-        <div className="mt-4">
-          <div className="relative">
+        <div className="mt-4 flex items-center gap-3">
+          <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/40" />
             <input
               type="text"
@@ -313,6 +306,18 @@ function Discover() {
               className="w-full h-10 pl-10 pr-3 rounded-lg border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
             />
           </div>
+          <button
+            onClick={() => setShowFilters((s) => !s)}
+            className={`h-10 rounded-full px-4 text-[11px] sm:text-[12px] lg:text-[13px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
+              activeFilterCount > 0
+                ? "text-[var(--plum)] border-[var(--plum)]/40 bg-[var(--plum)]/[0.06]"
+                : "text-[var(--ink)]/70 border-[var(--ink)]/20 bg-white hover:bg-[var(--ink)]/5"
+            }`}
+            aria-expanded={showFilters}
+          >
+            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+            <svg className="w-3.5 h-3.5 lg:w-4 lg:h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
+          </button>
         </div>
 
         {showFilters && (

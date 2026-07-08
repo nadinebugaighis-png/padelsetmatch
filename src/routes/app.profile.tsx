@@ -145,9 +145,7 @@ function ProfilePage() {
   const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
   const hasDetails =
     locations.length > 0 ||
-    (p.languages?.length ?? 0) > 0 ||
-    (p.personal_traits?.length ?? 0) > 0 ||
-    (p.padel_style?.length ?? 0) > 0;
+    (p.languages?.length ?? 0) > 0;
 
   return (
     <main className="programme-page px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto min-h-[calc(100vh-4rem)]">
@@ -240,22 +238,8 @@ function ProfilePage() {
               </Section>
             )}
 
-            {(p.personal_traits?.length ?? 0) > 0 && (
-              <Section title={tr("Personal characteristics", "Características personales", "Traits personnels")}>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.personal_traits!.map((trait) => <span key={trait} className="chip-ink">{label(trait)}</span>)}
-                </div>
-              </Section>
-            )}
-
-            {(p.padel_style?.length ?? 0) > 0 && (
-              <Section title={tr("Padel style", "Estilo de pádel", "Style de padel")}>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.padel_style!.map((s) => <span key={s} className="chip-ink">{label(s)}</span>)}
-                </div>
-              </Section>
-            )}
           </div>
+
 
           {p.free_court_access && (
             <div className="mt-4 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
@@ -265,7 +249,7 @@ function ProfilePage() {
                 </span>
                 {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
               </div>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
+              
             </div>
           )}
         </div>
@@ -273,10 +257,6 @@ function ProfilePage() {
 
       <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-      <div className="mt-3 programme-card p-3 flex items-start gap-2 text-xs text-[var(--ink)]/70">
-        <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-        <p>{t("prof.privacy")}</p>
-      </div>
 
       <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-3" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
@@ -331,8 +311,7 @@ function FeedbackBox() {
         <Sparkles className="w-4 h-4 text-[var(--ink)]" />
         <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{t("fb.title")}</h2>
       </div>
-      <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.sub")}</p>
-      <p className="text-[10px] text-[var(--ink)]/40 mt-1">{t("fb.anon")}</p>
+      <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.anon")} · {t("fb.sub")}</p>
 
       <div className="flex items-center gap-1 mt-3">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -358,7 +337,7 @@ function FeedbackBox() {
         maxLength={2000}
       />
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[10px] text-[var(--ink)]/50">{msg.length}/2000</span>
+        <span className="text-[10px] text-[var(--ink)]/50">{msg.length >= 1800 ? `${msg.length}/2000` : ""}</span>
         <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm" variant="outline">
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>
@@ -425,12 +404,6 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
       </div>
-      <p className="mt-3 text-[10px] text-[var(--ink)]/55">
-        {tr(
-          'When on holidays, other players see an "On holidays" badge on your card and you drop to the bottom of their grid.',
-          'Cuando estás de vacaciones, los demás ven una etiqueta "De vacaciones" en tu tarjeta y apareces al final de la cuadrícula.',
-        )}
-      </p>
     </div>
   );
 }

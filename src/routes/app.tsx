@@ -214,11 +214,11 @@ function AuthShell() {
           }}
         >
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
-            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-5 h-5" />} active={path.startsWith("/app/grid")} />
-            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />
+            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-6 h-6" />} active={path.startsWith("/app/grid")} />
+            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-8 h-8" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/matches" label={t("shell.tab.matches")} icon={<MessageCircle className="w-5 h-5" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
-            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" />} active={path.startsWith("/app/profile")} />
+            <NavTab to="/app/matches" label={t("shell.tab.matches")} icon={<MessageCircle className="w-6 h-6" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-6 h-6" />} active={path.startsWith("/app/profile")} />
           </div>
         </nav>
       )}

@@ -145,18 +145,15 @@ function AuthShell() {
   return (
     <div className="min-h-screen pb-24 programme-page">
       <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3">
-        <div className="flex items-center gap-3 min-w-0">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--grass)] ink-ring" />
-            <span className="text-serif text-xl tracking-tight truncate text-[var(--ink)]">PADEL·MATCH</span>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <BrandMark size="sm" />
+        <div className="flex items-center gap-2.5 shrink-0">
           {isAdmin && (
-            <Link to="/app/admin" className="text-xs uppercase tracking-widest text-[var(--plum)] hover:opacity-80">
+            <Link to="/app/admin" className="text-[11px] uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80">
               {t("shell.admin")}
             </Link>
           )}
-          <LangSwitch variant="light" />
-          <button onClick={onSignOut} className="text-xs uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)]">
+          <LangSwitch />
+          <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/55 hover:text-[var(--ink)]">
             {t("shell.signout")}
           </button>
         </div>

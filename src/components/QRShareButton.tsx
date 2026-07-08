@@ -62,7 +62,7 @@ export function QRShareButton() {
             <button
               type="button"
               onClick={copyLink}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[color:var(--ink,#0d2929)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-[var(--ink)]/20 bg-white px-4 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5"
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copied ? "Copied" : "Copy link"}

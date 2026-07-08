@@ -113,7 +113,7 @@ function Landing() {
         <div className="hidden lg:block">
           <div className="surface-card p-8 rotate-2">
             <div className="grid grid-cols-2 gap-3">
-              {["/landing/grid1.jpg", "/landing/grid2.jpg", "/landing/grid3.jpg", "/landing/grid4.jpg"].map((src, i) => (
+              {LANDING_TILES.map((src, i) => (
                 <div key={i} className="aspect-[3/4] rounded-xl overflow-hidden border border-[var(--ink)]/10">
                   <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
                 </div>

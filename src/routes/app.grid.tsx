@@ -283,11 +283,11 @@ function Discover() {
                 setWorld(next);
                 setWorldM.mutate(next);
               }}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] transition inline-flex items-center gap-1.5 sm:px-5 sm:py-2.5 sm:text-[12px] md:px-6 md:py-3 md:text-[13px] lg:px-7 lg:py-3.5 lg:text-[15px] ${
-                world
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] transition inline-flex items-center gap-1.5 sm:px-5 sm:py-2.5 sm:text-[12px] md:px-6 md:py-3 md:text-[13px] lg:px-6 lg:py-3 lg:text-[13px] xl:px-7 xl:py-3.5 xl:text-[14px] ${
+                  world
                   ? "bg-[var(--plum)] text-white border border-[var(--plum)] shadow-sm"
                   : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
-              }`}
+                }`}
             >
               <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
               {world ? t("disc.world.on") : t("disc.world.off")}

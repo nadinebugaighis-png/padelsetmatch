@@ -190,16 +190,16 @@ function EventsPage() {
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-6 pb-28">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-28">
         {/* Header */}
         <div className="flex items-start justify-between mb-1 gap-3">
           <div className="min-w-0">
-            <h1 className="text-serif text-3xl sm:text-4xl tracking-tight leading-none text-[var(--ink)]">
+            <h1 className="text-serif text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[var(--ink)]">
               {tr("PLAN", "PLANEA", "PLANIFIER")}
               <br />
               {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
             </h1>
-            <p className="text-sm text-[var(--ink)]/60 mt-2">
+            <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
               {tr(
                 "Tap an hour you're free. Others join. Done.",
                 "Toca una hora libre. Otros se unen. Listo.",

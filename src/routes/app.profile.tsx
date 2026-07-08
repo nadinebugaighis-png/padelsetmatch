@@ -148,7 +148,8 @@ function ProfilePage() {
     (p.languages?.length ?? 0) > 0;
 
   return (
-    <main className="programme-page px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-8 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
+
       {/* Hero: compact photo + name side-by-side, even on mobile */}
       <div className="programme-card p-4 sm:p-6">
         <div className="flex items-start gap-4 sm:gap-6">
@@ -158,10 +159,10 @@ function ProfilePage() {
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow-lg"
+                className="w-24 h-24 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow-lg"
               />
             ) : (
-              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+              <div className="w-24 h-24 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
                 <Camera className="w-8 h-8" />
               </div>
             )}
@@ -192,7 +193,7 @@ function ProfilePage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h1 className="text-serif text-2xl sm:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+                <h1 className="text-serif text-2xl sm:text-4xl lg:text-5xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
                 <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
                   {p.age} · {label(p.level)} · {p.nationality}
                 </p>
@@ -218,55 +219,60 @@ function ProfilePage() {
         )}
       </div>
 
-      {/* Details — dense grid, one card, inline labels */}
-      {hasDetails && (
-        <div className="mt-3 programme-card p-4 sm:p-5">
-          <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-            {locations.length > 0 && (
-              <Section title={t("prof.playsIn")}>
-                <div className="flex flex-wrap gap-1.5">
-                  {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
-                </div>
-              </Section>
-            )}
+      <div className="mt-3 sm:mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2">
+        <div className="space-y-3 sm:space-y-4">
+          {/* Details — dense grid, one card, inline labels */}
+          {hasDetails && (
+            <div className="programme-card p-4 sm:p-5">
+              <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+                {locations.length > 0 && (
+                  <Section title={t("prof.playsIn")}>
+                    <div className="flex flex-wrap gap-1.5">
+                      {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
+                    </div>
+                  </Section>
+                )}
 
-            {p.languages?.length > 0 && (
-              <Section title={t("prof.languages")}>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
-                </div>
-              </Section>
-            )}
+                {p.languages?.length > 0 && (
+                  <Section title={t("prof.languages")}>
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
+                    </div>
+                  </Section>
+                )}
 
-          </div>
-
-
-          {p.free_court_access && (
-            <div className="mt-4 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
-                  {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
-                </span>
-                {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
               </div>
-              
+
+
+              {p.free_court_access && (
+                <div className="mt-4 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                      {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
+                    </span>
+                    {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
+                  </div>
+
+                </div>
+              )}
             </div>
           )}
+
+          <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
+
+          <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
         </div>
-      )}
 
-      <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
-
-
-      <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full mt-3" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
-
-      <QASection />
-
-      <FeedbackBox />
+        <div className="space-y-3 sm:space-y-4">
+          <QASection />
+          <FeedbackBox />
+        </div>
+      </div>
 
       <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-500/80 hover:text-red-500">
         {t("prof.delete")}
       </button>
+
       <PhotoCropDialog
         file={pendingFile}
         onCancel={() => setPendingFile(null)}

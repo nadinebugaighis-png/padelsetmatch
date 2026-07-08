@@ -231,7 +231,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge }: { to: 
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[64px] flex-col items-center justify-center gap-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/55"}`}>
+    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[76px] flex-col items-center justify-center gap-2 px-1 text-[11px] font-bold uppercase tracking-[0.08em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/55"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (

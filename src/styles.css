@@ -163,6 +163,11 @@
   border-radius: 4px;
   box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 6%, transparent);
 }
+@utility programme-card-ink {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 4px;
+}
 @utility surface-card {
   background: oklch(0.28 0.035 180 / 0.7);
   backdrop-filter: blur(14px);
@@ -186,6 +191,20 @@
   border: 1px solid oklch(0.45 0.03 180 / 0.45);
   background: oklch(0.32 0.04 180 / 0.6);
 }
+@utility chip-ink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid color-mix(in oklab, var(--ink) 15%, transparent);
+  background: color-mix(in oklab, var(--ink) 6%, transparent);
+  color: var(--ink);
+}
 @utility chip-ball {
   background: var(--ball);
   color: var(--court-deep);
@@ -198,4 +217,12 @@
 }
 @utility ball-glow {
   box-shadow: 0 0 0 4px oklch(0.32 0.04 180), 0 0 40px -4px var(--ball);
+}
+@utility ink-ring {
+  box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
+}
+@utility programme-nav {
+  background: color-mix(in oklab, var(--paper) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
 }

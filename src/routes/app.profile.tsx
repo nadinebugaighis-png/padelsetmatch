@@ -131,13 +131,13 @@ function ProfilePage() {
     }
   };
 
-  if (q.isLoading) return <div className="px-4 py-10 text-center text-[var(--cream)]/60">{t("prof.loading")}</div>;
+  if (q.isLoading) return <div className="programme-page px-4 py-10 text-center text-[var(--ink)]/60 min-h-screen">{t("prof.loading")}</div>;
   const p = q.data;
   if (!p) {
     return (
-      <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center">
-        <p className="text-[var(--cream)]/70">{t("prof.noProfile")}</p>
-        <Link to="/app/onboarding" className="mt-4 inline-block underline">{t("prof.createLink")}</Link>
+      <main className="programme-page px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center min-h-screen">
+        <p className="text-[var(--ink)]/70">{t("prof.noProfile")}</p>
+        <Link to="/app/onboarding" className="mt-4 inline-block underline text-[var(--plum)]">{t("prof.createLink")}</Link>
       </main>
     );
   }
@@ -150,9 +150,9 @@ function ProfilePage() {
     (p.padel_style?.length ?? 0) > 0;
 
   return (
-    <main className="px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto">
+    <main className="programme-page px-4 py-4 max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto min-h-[calc(100vh-4rem)]">
       {/* Hero: compact photo + name side-by-side, even on mobile */}
-      <div className="surface-card p-4 sm:p-6">
+      <div className="programme-card p-4 sm:p-6">
         <div className="flex items-start gap-4 sm:gap-6">
           {/* Photo */}
           <div className="relative shrink-0">
@@ -160,10 +160,10 @@ function ProfilePage() {
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--cream)]/20 shadow-lg"
+                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow-lg"
               />
             ) : (
-              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--cream)]/30 border-2 border-[var(--cream)]/15">
+              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
                 <Camera className="w-8 h-8" />
               </div>
             )}
@@ -184,7 +184,7 @@ function ProfilePage() {
               htmlFor={photoInputId}
               aria-disabled={uploading}
               title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--ball)] text-[var(--court-deep)] shadow-md border-2 border-[var(--court-deep)]/10 cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+              className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
             >
               <Camera className="w-4 h-4" />
             </label>
@@ -194,17 +194,17 @@ function ProfilePage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h1 className="text-display text-2xl sm:text-4xl leading-tight truncate">{p.first_name}</h1>
-                <p className="mt-0.5 text-xs sm:text-sm text-[var(--cream)]/75">
+                <h1 className="text-serif text-2xl sm:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+                <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
                   {p.age} · {label(p.level)} · {p.nationality}
                 </p>
-                <p className="text-xs sm:text-sm text-[var(--cream)]/55">{genderLabel}</p>
+                <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
               </div>
               <Link
                 to="/app/onboarding"
                 aria-label={t("prof.retake")}
                 title={t("prof.retake")}
-                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-8 sm:h-9 rounded-full border border-[var(--cream)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--cream)]/80 hover:text-[var(--cream)] hover:border-[var(--cream)]/50 transition shrink-0"
+                className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-8 sm:h-9 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
               >
                 <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 {tr("Edit", "Editar", "Éditer")}
@@ -214,7 +214,7 @@ function ProfilePage() {
         </div>
 
         {p.bio && (
-          <p className="mt-3 text-sm leading-relaxed text-[var(--cream)]/85 italic border-l-2 border-[var(--cream)]/20 pl-3">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
             {p.bio}
           </p>
         )}
@@ -222,12 +222,12 @@ function ProfilePage() {
 
       {/* Details — dense grid, one card, inline labels */}
       {hasDetails && (
-        <div className="mt-3 surface-card p-4 sm:p-5">
+        <div className="mt-3 programme-card p-4 sm:p-5">
           <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
             {locations.length > 0 && (
               <Section title={t("prof.playsIn")}>
                 <div className="flex flex-wrap gap-1.5">
-                  {locations.map((l) => <span key={l} className="chip">{l}</span>)}
+                  {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
                 </div>
               </Section>
             )}
@@ -235,7 +235,7 @@ function ProfilePage() {
             {p.languages?.length > 0 && (
               <Section title={t("prof.languages")}>
                 <div className="flex flex-wrap gap-1.5">
-                  {p.languages.map((l) => <span key={l} className="chip">{label(l)}</span>)}
+                  {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
                 </div>
               </Section>
             )}
@@ -243,7 +243,7 @@ function ProfilePage() {
             {(p.personal_traits?.length ?? 0) > 0 && (
               <Section title={tr("Personal characteristics", "Características personales", "Traits personnels")}>
                 <div className="flex flex-wrap gap-1.5">
-                  {p.personal_traits!.map((trait) => <span key={trait} className="chip">{label(trait)}</span>)}
+                  {p.personal_traits!.map((trait) => <span key={trait} className="chip-ink">{label(trait)}</span>)}
                 </div>
               </Section>
             )}
@@ -251,21 +251,21 @@ function ProfilePage() {
             {(p.padel_style?.length ?? 0) > 0 && (
               <Section title={tr("Padel style", "Estilo de pádel", "Style de padel")}>
                 <div className="flex flex-wrap gap-1.5">
-                  {p.padel_style!.map((s) => <span key={s} className="chip">{label(s)}</span>)}
+                  {p.padel_style!.map((s) => <span key={s} className="chip-ink">{label(s)}</span>)}
                 </div>
               </Section>
             )}
           </div>
 
           {p.free_court_access && (
-            <div className="mt-4 rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/10 p-3">
+            <div className="mt-4 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
                   {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
                 </span>
-                {p.free_court_note && <span className="text-xs text-[var(--cream)]/85">{p.free_court_note}</span>}
+                {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
               </div>
-              <p className="text-[10px] text-[var(--cream)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1.5">{tr("Shown on your grid card. Share the address only in chat.", "Se muestra en tu tarjeta. Comparte la dirección solo en el chat.", "Affiché sur ta carte. Partage l'adresse seulement en chat.")}</p>
             </div>
           )}
         </div>
@@ -273,7 +273,7 @@ function ProfilePage() {
 
       <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-      <div className="mt-3 surface-card p-3 flex items-start gap-2 text-xs text-[var(--cream)]/70">
+      <div className="mt-3 programme-card p-3 flex items-start gap-2 text-xs text-[var(--ink)]/70">
         <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0" />
         <p>{t("prof.privacy")}</p>
       </div>
@@ -284,7 +284,7 @@ function ProfilePage() {
 
       <FeedbackBox />
 
-      <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-400/70 hover:text-red-400">
+      <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-500/80 hover:text-red-500">
         {t("prof.delete")}
       </button>
       <PhotoCropDialog
@@ -326,13 +326,13 @@ function FeedbackBox() {
   };
 
   return (
-    <div className="mt-6 surface-card p-5">
+    <div className="mt-6 programme-card p-5">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-[var(--cream)]" />
-        <h2 className="text-display text-lg tracking-wider">{t("fb.title")}</h2>
+        <Sparkles className="w-4 h-4 text-[var(--ink)]" />
+        <h2 className="text-serif text-lg tracking-wider text-[var(--ink)]">{t("fb.title")}</h2>
       </div>
-      <p className="text-xs text-[var(--cream)]/60 mt-1">{t("fb.sub")}</p>
-      <p className="text-[10px] text-[var(--cream)]/40 mt-1">{t("fb.anon")}</p>
+      <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.sub")}</p>
+      <p className="text-[10px] text-[var(--ink)]/40 mt-1">{t("fb.anon")}</p>
 
       <div className="flex items-center gap-1 mt-3">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -344,7 +344,7 @@ function FeedbackBox() {
             className="p-1"
           >
             <Star
-              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--cream)] text-[var(--cream)]" : "text-[var(--cream)]/40"}`}
+              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--ink)] text-[var(--ink)]" : "text-[var(--ink)]/40"}`}
             />
           </button>
         ))}
@@ -354,12 +354,12 @@ function FeedbackBox() {
         value={msg}
         onChange={(e) => setMsg(e.target.value.slice(0, 2000))}
         placeholder={t("fb.placeholder")}
-        className="mt-3 min-h-[110px]"
+        className="mt-3 min-h-[110px] border-[var(--ink)]/20 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
         maxLength={2000}
       />
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[10px] text-[var(--cream)]/50">{msg.length}/2000</span>
-        <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm">
+        <span className="text-[10px] text-[var(--ink)]/50">{msg.length}/2000</span>
+        <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm" variant="outline">
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>
       </div>
@@ -370,7 +370,7 @@ function FeedbackBox() {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 mb-2 font-medium">{title}</div>
+      <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2 font-medium">{title}</div>
       {children}
     </div>
   );
@@ -379,8 +379,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
-      <div className="text-sm sm:text-base font-medium text-[var(--cream)]">{v}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">{label}</div>
+      <div className="text-sm sm:text-base font-medium text-[var(--ink)]">{v}</div>
     </div>
   );
 }

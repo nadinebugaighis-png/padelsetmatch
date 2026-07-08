@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MessageCircle, Plus, Trash2, X } from "lucide-react";
+import { MapPin, MessageCircle, Pencil, Plus, Trash2, X } from "lucide-react";
 import {
   addConnectComment,
   createConnectPost,
@@ -11,6 +11,7 @@ import {
   deleteConnectPost,
   listConnectComments,
   listConnectPosts,
+  updateConnectPost,
   type ConnectCategory,
   type ConnectPost,
 } from "@/lib/connect.functions";
@@ -27,18 +28,41 @@ export const Route = createFileRoute("/app/connect")({
 
 const CATEGORIES: ConnectCategory[] = ["traveling", "looking_to_play", "selling", "question", "news", "other"];
 
+function catMeta(c: ConnectCategory): { emoji: string; tone: string } {
+  switch (c) {
+    case "traveling": return { emoji: "✈️", tone: "bg-sky-50 text-sky-900 border-sky-200" };
+    case "looking_to_play": return { emoji: "🎾", tone: "bg-emerald-50 text-emerald-900 border-emerald-200" };
+    case "selling": return { emoji: "🎟️", tone: "bg-amber-50 text-amber-900 border-amber-200" };
+    case "question": return { emoji: "❓", tone: "bg-violet-50 text-violet-900 border-violet-200" };
+    case "news": return { emoji: "📣", tone: "bg-rose-50 text-rose-900 border-rose-200" };
+    case "other": return { emoji: "💬", tone: "bg-neutral-100 text-neutral-800 border-neutral-200" };
+  }
+}
+
 function useCategoryLabel() {
   const tr = useTr();
   return (c: ConnectCategory) => {
     switch (c) {
-      case "traveling": return tr("✈️ Traveling", "✈️ De viaje", "✈️ En voyage");
-      case "looking_to_play": return tr("🎾 Looking to play", "🎾 Busco jugar", "🎾 Cherche à jouer");
-      case "selling": return tr("🎟️ Selling / offering", "🎟️ Vendo / ofrezco", "🎟️ Je vends / propose");
-      case "question": return tr("❓ Question", "❓ Pregunta", "❓ Question");
-      case "news": return tr("📣 News", "📣 Noticias", "📣 Actualités");
-      case "other": return tr("💬 Other", "💬 Otro", "💬 Autre");
+      case "traveling": return tr("Traveling", "De viaje", "En voyage");
+      case "looking_to_play": return tr("Looking to play", "Busco jugar", "Cherche à jouer");
+      case "selling": return tr("Selling / offering", "Vendo / ofrezco", "Je vends / propose");
+      case "question": return tr("Question", "Pregunta", "Question");
+      case "news": return tr("News", "Noticias", "Actualités");
+      case "other": return tr("Other", "Otro", "Autre");
     }
   };
+}
+
+function timeAgo(iso: string, tr: ReturnType<typeof useTr>) {
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return tr("just now", "ahora", "à l'instant");
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d`;
+  return new Date(iso).toLocaleDateString();
 }
 
 function ConnectPage() {
@@ -53,6 +77,7 @@ function ConnectPage() {
   const [cityInput, setCityInput] = useState("");
   const [cat, setCat] = useState<ConnectCategory | null>(null);
   const [composerOpen, setComposerOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<ConnectPost | null>(null);
   const [openPost, setOpenPost] = useState<ConnectPost | null>(null);
 
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
@@ -70,39 +95,41 @@ function ConnectPage() {
   });
 
   return (
-    <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 programme-page">
-      <div className="flex items-end justify-between gap-3 mb-4">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{tr("Community board", "Tablón comunitario", "Tableau communautaire")}</div>
-          <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)]">Connect</h1>
-          <p className="text-sm text-[var(--ink)]/70 mt-1">
-            {tr(
-              "Post travels, tickets, questions, or news for the community.",
-              "Publica viajes, entradas, preguntas o noticias para la comunidad.",
-              "Publiez voyages, billets, questions ou actualités.",
-            )}
-          </p>
+    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("Community board", "Tablón comunitario", "Tableau communautaire")}</div>
+        <div className="flex items-end justify-between gap-3 mt-1">
+          <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none">Connect</h1>
+          <Button onClick={() => { setEditingPost(null); setComposerOpen(true); }} className="shrink-0 bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-9 px-4">
+            <Plus className="w-4 h-4 mr-1" />
+            {tr("New post", "Publicar", "Publier")}
+          </Button>
         </div>
-        <Button onClick={() => setComposerOpen(true)} className="shrink-0 bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full">
-          <Plus className="w-4 h-4 mr-1" />
-          {tr("Post", "Publicar", "Publier")}
-        </Button>
+        <p className="text-sm text-[var(--ink)]/65 mt-2 max-w-lg">
+          {tr(
+            "Travel plans, tickets, questions, news — share anything with the community.",
+            "Viajes, entradas, preguntas, noticias — comparte con la comunidad.",
+            "Voyages, billets, questions, actualités — partagez avec la communauté.",
+          )}
+        </p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2 mb-5">
+      <div className="space-y-3 mb-6">
         <form
           onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }}
-          className="flex items-center gap-2"
+          className="relative"
         >
+          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/40" />
           <Input
             value={cityInput}
             onChange={(e) => setCityInput(e.target.value)}
             placeholder={tr("Filter by city…", "Filtrar por ciudad…", "Filtrer par ville…")}
-            className="h-9 w-40 sm:w-56 bg-white"
+            className="h-10 pl-9 pr-9 bg-white border-[var(--ink)]/15"
           />
-          {city && (
-            <button type="button" onClick={() => { setCity(""); setCityInput(""); }} className="text-xs text-[var(--ink)]/60 hover:text-[var(--ink)]">
+          {(cityInput || city) && (
+            <button type="button" onClick={() => { setCity(""); setCityInput(""); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 hover:text-[var(--ink)]">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -110,19 +137,24 @@ function ConnectPage() {
         <div className="flex flex-wrap gap-1.5">
           <button
             onClick={() => setCat(null)}
-            className={`px-3 h-8 rounded-full text-xs font-semibold border ${cat === null ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/80"}`}
+            className={`px-3 h-8 rounded-full text-xs font-semibold border transition ${cat === null ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
           >
             {tr("All", "Todas", "Toutes")}
           </button>
-          {CATEGORIES.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCat(c === cat ? null : c)}
-              className={`px-3 h-8 rounded-full text-xs font-semibold border ${cat === c ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/80"}`}
-            >
-              {catLabel(c)}
-            </button>
-          ))}
+          {CATEGORIES.map((c) => {
+            const m = catMeta(c);
+            const active = cat === c;
+            return (
+              <button
+                key={c}
+                onClick={() => setCat(active ? null : c)}
+                className={`px-3 h-8 rounded-full text-xs font-semibold border transition inline-flex items-center gap-1 ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
+              >
+                <span>{m.emoji}</span>
+                <span>{catLabel(c)}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -130,104 +162,139 @@ function ConnectPage() {
       {postsQ.isLoading ? (
         <div className="text-sm text-[var(--ink)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>
       ) : (postsQ.data ?? []).length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[var(--ink)]/25 p-8 text-center bg-white/60">
+        <div className="rounded-2xl border border-dashed border-[var(--ink)]/25 p-10 text-center bg-white/60">
+          <div className="text-3xl mb-2">💬</div>
           <p className="text-sm text-[var(--ink)]/70">
             {tr("No posts yet. Be the first to share!", "Aún no hay publicaciones. ¡Sé el primero!", "Aucune publication. Soyez le premier !")}
           </p>
         </div>
       ) : (
         <ul className="space-y-3">
-          {(postsQ.data ?? []).map((p) => (
-            <li key={p.id} className="rounded-2xl bg-white border border-[var(--ink)]/12 p-4 shadow-sm">
-              <div className="flex items-start gap-3">
-                {p.author?.photo_url ? (
-                  <img src={p.author.photo_url} alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-[var(--ink)]/10 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap text-[11px] text-[var(--ink)]/60">
-                    <span className="font-semibold text-[var(--ink)]">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                    <span>·</span>
-                    <span className="uppercase tracking-wider">{catLabel(p.category)}</span>
-                    {p.city && (<><span>·</span><span>📍 {p.city}</span></>)}
-                    <span>·</span>
-                    <span>{new Date(p.created_at).toLocaleDateString()}</span>
-                  </div>
-                  <h3 className="text-serif text-lg text-[var(--ink)] mt-1">{p.title}</h3>
-                  <p className="text-sm text-[var(--ink)]/85 mt-1 whitespace-pre-wrap break-words">{p.body}</p>
-                  <div className="mt-3 flex items-center gap-3">
-                    <button
-                      onClick={() => setOpenPost(p)}
-                      className="inline-flex items-center gap-1.5 text-xs text-[var(--ink)]/70 hover:text-[var(--plum)]"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      {p.comment_count} {tr("comments", "comentarios", "commentaires")}
-                    </button>
-                    {myProfileId === p.author_profile_id && (
+          {(postsQ.data ?? []).map((p) => {
+            const m = catMeta(p.category);
+            const mine = myProfileId === p.author_profile_id;
+            return (
+              <li key={p.id} className="rounded-2xl bg-white border border-[var(--ink)]/10 p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition">
+                <div className="flex items-start gap-3">
+                  {p.author?.photo_url ? (
+                    <img src={p.author.photo_url} alt="" className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[var(--ink)]/40 text-sm font-semibold">
+                      {(p.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 text-[12px] text-[var(--ink)]/60">
+                      <span className="font-semibold text-[var(--ink)]">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
+                      <span className="text-[var(--ink)]/30">·</span>
+                      <span>{timeAgo(p.created_at, tr)}</span>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                      <span className={`inline-flex items-center gap-1 px-2 h-6 rounded-full text-[11px] font-semibold border ${m.tone}`}>
+                        <span>{m.emoji}</span><span>{catLabel(p.category)}</span>
+                      </span>
+                      {p.city && (
+                        <span className="inline-flex items-center gap-1 px-2 h-6 rounded-full text-[11px] font-medium bg-[var(--ink)]/5 text-[var(--ink)]/75 border border-[var(--ink)]/10">
+                          <MapPin className="w-3 h-3" />{p.city}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-serif text-lg sm:text-xl text-[var(--ink)] mt-2 leading-snug">{p.title}</h3>
+                    <p className="text-sm text-[var(--ink)]/80 mt-1 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
+                    <div className="mt-3 pt-3 border-t border-[var(--ink)]/8 flex items-center gap-4">
                       <button
-                        onClick={() => { if (confirm(tr("Delete this post?", "¿Eliminar esta publicación?", "Supprimer cette publication ?"))) delMut.mutate(p.id); }}
-                        className="inline-flex items-center gap-1 text-xs text-red-500/80 hover:text-red-500"
+                        onClick={() => setOpenPost(p)}
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--ink)]/70 hover:text-[var(--plum)] transition"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        {tr("Delete", "Eliminar", "Supprimer")}
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        {p.comment_count} {tr("comments", "comentarios", "commentaires")}
                       </button>
-                    )}
+                      {mine && (
+                        <>
+                          <button
+                            onClick={() => { setEditingPost(p); setComposerOpen(true); }}
+                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] transition"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            {tr("Edit", "Editar", "Modifier")}
+                          </button>
+                          <button
+                            onClick={() => { if (confirm(tr("Delete this post?", "¿Eliminar esta publicación?", "Supprimer cette publication ?"))) delMut.mutate(p.id); }}
+                            className="inline-flex items-center gap-1 text-xs font-medium text-red-500/80 hover:text-red-600 transition ml-auto"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            {tr("Delete", "Eliminar", "Supprimer")}
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
 
-      {composerOpen && <Composer onClose={() => setComposerOpen(false)} />}
+      {composerOpen && <Composer post={editingPost} onClose={() => { setComposerOpen(false); setEditingPost(null); }} />}
       {openPost && <PostThread post={openPost} myProfileId={myProfileId} onClose={() => setOpenPost(null)} />}
     </div>
   );
 }
 
-function Composer({ onClose }: { onClose: () => void }) {
+function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => void }) {
   const tr = useTr();
   const catLabel = useCategoryLabel();
   const qc = useQueryClient();
   const create = useServerFn(createConnectPost);
-  const [category, setCategory] = useState<ConnectCategory>("looking_to_play");
-  const [city, setCity] = useState("");
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const update = useServerFn(updateConnectPost);
+  const isEdit = !!post;
+  const [category, setCategory] = useState<ConnectCategory>(post?.category ?? "looking_to_play");
+  const [city, setCity] = useState(post?.city ?? "");
+  const [title, setTitle] = useState(post?.title ?? "");
+  const [body, setBody] = useState(post?.body ?? "");
 
   const mut = useMutation({
-    mutationFn: () => create({ data: { category, city: city || null, title, body } }),
+    mutationFn: async () => {
+      if (isEdit) return await update({ data: { id: post!.id, category, city: city || null, title, body } });
+      return await create({ data: { category, city: city || null, title, body } });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
-      toast.success(tr("Posted", "Publicado", "Publié"));
+      toast.success(isEdit ? tr("Updated", "Actualizado", "Mis à jour") : tr("Posted", "Publicado", "Publié"));
       onClose();
     },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-2xl sm:rounded-2xl border border-[var(--ink)]/10 max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-[var(--paper)] border-b border-[var(--ink)]/10 px-5 py-3 flex items-center justify-between">
-          <h2 className="text-serif text-xl text-[var(--ink)]">{tr("New post", "Nueva publicación", "Nouvelle publication")}</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-[var(--ink)]/60" /></button>
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/10 max-h-[92vh] overflow-y-auto shadow-2xl">
+        <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
+        <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/10 px-5 py-3 flex items-center justify-between">
+          <h2 className="text-serif text-xl text-[var(--ink)]">
+            {isEdit ? tr("Edit post", "Editar publicación", "Modifier la publication") : tr("New post", "Nueva publicación", "Nouvelle publication")}
+          </h2>
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-[var(--ink)]/5"><X className="w-5 h-5 text-[var(--ink)]/60" /></button>
         </div>
         <div className="p-5 space-y-4">
           <div>
             <label className="text-[11px] uppercase tracking-wider font-bold text-[var(--ink)]/70">{tr("Category", "Categoría", "Catégorie")}</label>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setCategory(c)}
-                  className={`px-3 h-8 rounded-full text-xs font-semibold border ${category === c ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/80"}`}
-                >
-                  {catLabel(c)}
-                </button>
-              ))}
+              {CATEGORIES.map((c) => {
+                const m = catMeta(c);
+                const active = category === c;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCategory(c)}
+                    className={`px-3 h-8 rounded-full text-xs font-semibold border inline-flex items-center gap-1 transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/80 hover:border-[var(--ink)]/40"}`}
+                  >
+                    <span>{m.emoji}</span><span>{catLabel(c)}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
           <div>
@@ -246,9 +313,11 @@ function Composer({ onClose }: { onClose: () => void }) {
           <Button
             disabled={mut.isPending || title.trim().length < 3 || body.trim().length < 3}
             onClick={() => mut.mutate()}
-            className="w-full bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full"
+            className="w-full bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-11"
           >
-            {mut.isPending ? tr("Posting…", "Publicando…", "Publication…") : tr("Publish", "Publicar", "Publier")}
+            {mut.isPending
+              ? (isEdit ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Posting…", "Publicando…", "Publication…"))
+              : (isEdit ? tr("Save changes", "Guardar cambios", "Enregistrer") : tr("Publish", "Publicar", "Publier"))}
           </Button>
         </div>
       </div>
@@ -285,15 +354,16 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-2xl sm:rounded-2xl border border-[var(--ink)]/10 max-h-[90vh] flex flex-col">
-        <div className="sticky top-0 bg-[var(--paper)] border-b border-[var(--ink)]/10 px-5 py-3 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/10 max-h-[92vh] flex flex-col shadow-2xl">
+        <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
+        <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/10 px-5 py-3 flex items-center justify-between">
           <h2 className="text-serif text-lg text-[var(--ink)] truncate">{post.title}</h2>
-          <button onClick={onClose}><X className="w-5 h-5 text-[var(--ink)]/60" /></button>
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-[var(--ink)]/5"><X className="w-5 h-5 text-[var(--ink)]/60" /></button>
         </div>
-        <div className="flex-1 overflow-y-auto p-5 space-y-3">
-          <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap">{post.body}</p>
-          <div className="pt-2 border-t border-[var(--ink)]/10 space-y-3">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap leading-relaxed">{post.body}</p>
+          <div className="pt-3 border-t border-[var(--ink)]/10 space-y-3">
             {(q.data ?? []).length === 0 && !q.isLoading && (
               <p className="text-xs text-[var(--ink)]/50 italic">{tr("No comments yet.", "Aún no hay comentarios.", "Aucun commentaire.")}</p>
             )}
@@ -304,10 +374,11 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
                 )}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/8">
                   <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
                     <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                    <span>{new Date(c.created_at).toLocaleDateString()}</span>
+                    <span>·</span>
+                    <span>{timeAgo(c.created_at, tr)}</span>
                     {myProfileId === c.author_profile_id && (
                       <button onClick={() => delMut.mutate(c.id)} className="ml-auto text-red-500/70 hover:text-red-500">
                         <Trash2 className="w-3 h-3" />

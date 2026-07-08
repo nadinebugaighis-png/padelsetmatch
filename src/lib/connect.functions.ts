@@ -115,6 +115,31 @@ export const deleteConnectPost = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const updateConnectPost = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      category: z.enum(CATEGORIES),
+      city: z.string().max(80).optional().nullable(),
+      title: z.string().min(3).max(120),
+      body: z.string().min(3).max(2000),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("connect_posts" as never)
+      .update({
+        category: data.category,
+        city: data.city?.trim() || null,
+        title: data.title.trim(),
+        body: data.body.trim(),
+      } as never)
+      .eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
 export const listConnectComments = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ postId: z.string().uuid() }).parse(d))

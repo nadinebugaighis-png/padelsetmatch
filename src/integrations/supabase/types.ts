@@ -128,6 +128,89 @@ export type Database = {
           },
         ]
       }
+      connect_comments: {
+        Row: {
+          author_profile_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_profile_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_profile_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connect_comments_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connect_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "connect_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connect_posts: {
+        Row: {
+          author_profile_id: string
+          body: string
+          category: Database["public"]["Enums"]["connect_category"]
+          city: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_profile_id: string
+          body: string
+          category?: Database["public"]["Enums"]["connect_category"]
+          city?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_profile_id?: string
+          body?: string
+          category?: Database["public"]["Enums"]["connect_category"]
+          city?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connect_posts_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           created_at: string
@@ -1001,6 +1084,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      connect_category:
+        | "traveling"
+        | "selling"
+        | "looking_to_play"
+        | "question"
+        | "news"
+        | "other"
       friendship_status: "pending" | "accepted"
       match_event_status: "open" | "full" | "cancelled" | "played"
       match_gender_rule: "mixed" | "men_only" | "women_only"
@@ -1133,6 +1223,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      connect_category: [
+        "traveling",
+        "selling",
+        "looking_to_play",
+        "question",
+        "news",
+        "other",
+      ],
       friendship_status: ["pending", "accepted"],
       match_event_status: ["open", "full", "cancelled", "played"],
       match_gender_rule: ["mixed", "men_only", "women_only"],

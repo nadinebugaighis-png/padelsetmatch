@@ -2,11 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ShareQR } from "@/components/ShareQR";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteMyAccount, getMyProfile, setAwayStatus, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
+import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, Lock, Pencil, Sparkles, Star } from "lucide-react";
+import { Camera, Lock, MessageCircle, Pencil, Sparkles, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -260,6 +260,8 @@ function ProfilePage() {
 
           <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
+          <MessagesRow />
+
           <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
         </div>
 
@@ -413,4 +415,37 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
     </div>
   );
 }
+
+function MessagesRow() {
+  const tr = useTr();
+  const getMatches = useServerFn(getMyMatches);
+  const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
+  const unread = (q.data ?? []).reduce((n: number, m: any) => n + (m.unread ?? 0), 0);
+  const count = (q.data ?? []).length;
+  return (
+    <Link
+      to="/app/matches"
+      className="flex items-center justify-between gap-3 w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-3 hover:border-[var(--ink)]/30 transition-colors"
+    >
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <MessageCircle className="w-5 h-5 text-[var(--plum)]" />
+          {unread > 0 && (
+            <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center">{unread > 9 ? "9+" : unread}</span>
+          )}
+        </div>
+        <div>
+          <div className="text-sm font-semibold text-[var(--ink)]">{tr("Messages", "Mensajes", "Messages")}</div>
+          <div className="text-[11px] text-[var(--ink)]/60">
+            {count > 0
+              ? tr(`${count} conversation${count > 1 ? "s" : ""}`, `${count} conversación${count > 1 ? "es" : ""}`, `${count} conversation${count > 1 ? "s" : ""}`)
+              : tr("Chat with your matches", "Chatea con tus matches", "Discute avec tes matchs")}
+          </div>
+        </div>
+      </div>
+      <span className="text-[var(--ink)]/40">›</span>
+    </Link>
+  );
+}
+
 

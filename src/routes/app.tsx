@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites } from "@/lib/match-events.functions";
-import { LayoutGrid, MessageCircle, User, Mail, X } from "lucide-react";
+import { LayoutGrid, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
@@ -217,8 +217,8 @@ function AuthShell() {
             <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<LayoutGrid className="w-4 h-4" />} active={path.startsWith("/app/grid")} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-5 h-5" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/matches" label={t("shell.tab.matches")} icon={<MessageCircle className="w-4 h-4" />} active={path.startsWith("/app/matches")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
-            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" />} active={path.startsWith("/app/profile")} />
+            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" />} active={path.startsWith("/app/connect")} />
+            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>
       )}

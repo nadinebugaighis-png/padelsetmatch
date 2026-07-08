@@ -238,22 +238,8 @@ function ProfilePage() {
               </Section>
             )}
 
-            {(p.personal_traits?.length ?? 0) > 0 && (
-              <Section title={tr("Personal characteristics", "Características personales", "Traits personnels")}>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.personal_traits!.map((trait) => <span key={trait} className="chip-ink">{label(trait)}</span>)}
-                </div>
-              </Section>
-            )}
-
-            {(p.padel_style?.length ?? 0) > 0 && (
-              <Section title={tr("Padel style", "Estilo de pádel", "Style de padel")}>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.padel_style!.map((s) => <span key={s} className="chip-ink">{label(s)}</span>)}
-                </div>
-              </Section>
-            )}
           </div>
+
 
           {p.free_court_access && (
             <div className="mt-4 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">

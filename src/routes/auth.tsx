@@ -79,7 +79,22 @@ function AuthPage() {
         navigate(afterAuthTarget() as never);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("auth.fail"));
+      const raw = err instanceof Error ? err.message : "";
+      const status = (err as { status?: number } | null)?.status;
+      const isRateLimit =
+        status === 429 ||
+        /rate limit|too many|for security purposes/i.test(raw);
+      if (isRateLimit) {
+        toast.error(
+          tr(
+            "Too many attempts. Please wait a moment and try again.",
+            "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+            "Trop de tentatives. Patiente un instant puis réessaie.",
+          ),
+        );
+      } else {
+        toast.error(raw || t("auth.fail"));
+      }
     } finally {
       setLoading(false);
     }

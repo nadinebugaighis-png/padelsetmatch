@@ -418,11 +418,11 @@ function Discover() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                        className="w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
+                        className="w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
                         aria-label={`Hide ${c.first_name}`}
                         title="Not interested — hide from my Grid"
                       >
-                        <EyeOff className="w-3.5 h-3.5" strokeWidth={1.6} />
+                        <EyeOff className="w-3 h-3" strokeWidth={1.6} />
                       </button>
                       <button
                         type="button"
@@ -434,11 +434,11 @@ function Discover() {
                           }
                           navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                         }}
-                        className={`w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
+                        className={`w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
                         aria-label={`Request to play with ${c.first_name}`}
                         title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
                       >
-                        <Zap className="w-3.5 h-3.5" fill="currentColor" strokeWidth={1.5} />
+                        <Zap className="w-3 h-3" fill="currentColor" strokeWidth={1.5} />
 
                       </button>
                     </div>
@@ -450,12 +450,12 @@ function Discover() {
                         if (c.liked) unlikeM.mutate(c.id);
                         else likeM.mutate(c.id);
                       }}
-                      className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
+                      className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
                       aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
                       title={c.liked ? "Connected" : "Like to connect"}
                     >
                       <Heart
-                        className={`w-3.5 h-3.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
+                        className={`w-3 h-3 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
                         fill={c.liked ? "currentColor" : "none"}
                         strokeWidth={1.6}
                       />

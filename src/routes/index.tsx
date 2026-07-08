@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
+import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { Smartphone, ArrowRight, Globe2 } from "lucide-react";
 import { useT, LangSwitch } from "@/lib/i18n";
@@ -75,22 +76,13 @@ function Landing() {
 
       {/* Header */}
       <header className="relative z-10 px-5 sm:px-8 lg:px-16 pt-6 pb-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5">
-          <span className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]">
-            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-          </span>
-          <span className="text-serif text-[15px] sm:text-base font-semibold tracking-[0.18em] uppercase text-[var(--ink)]">
-            Padel Match
-          </span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <div className="rounded-full border border-[var(--ink)]/20 bg-[var(--paper)]/70 backdrop-blur px-1">
-            <LangSwitch />
-          </div>
+        <BrandMark />
+        <div className="flex items-center gap-2.5">
+          <LangSwitch />
           <Link
             to="/auth"
             search={{ redirect: undefined, join: undefined }}
-            className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2 hover:brightness-110 transition"
+            className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2.5 hover:brightness-110 transition"
           >
             {t("land.signin")}
           </Link>

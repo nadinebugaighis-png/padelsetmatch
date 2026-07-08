@@ -87,12 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Padel Match App — More Friends, Better Games" },
       { property: "og:description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://padelmatchapp.lovable.app/og-share.jpg?v=4" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:type", content: "image/jpeg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://padelmatchapp.lovable.app/og-share.jpg?v=4" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

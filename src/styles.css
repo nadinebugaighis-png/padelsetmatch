@@ -241,7 +241,6 @@
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
 }
 @utility programme-nav {
-  background: color-mix(in oklab, var(--paper) 92%, transparent);
-  backdrop-filter: blur(12px);
+  background: var(--grass);
   border-top: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
 }

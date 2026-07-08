@@ -8,6 +8,7 @@ import { listMyPendingInvites } from "@/lib/match-events.functions";
 import { LayoutGrid, MessageCircle, User, Mail, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
+import { BrandMark } from "@/components/BrandMark";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app")({

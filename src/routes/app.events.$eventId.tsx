@@ -340,77 +340,111 @@ function EventDetail() {
         </div>
       )}
 
-      <div className="rounded-xl border border-[var(--ink)]/10 bg-white p-4 space-y-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-lg font-medium text-[var(--ink)] truncate">{event.club_name}</h1>
-            {event.club_address && <div className="text-xs text-[var(--ink)]/60 truncate">{event.club_address}</div>}
-          </div>
-          <span
-            className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full whitespace-nowrap ${
-              event.status === "cancelled"
-                ? "bg-red-500/20 text-red-300"
-                : event.needs === 0
-                ? "bg-[var(--ink)]/5 text-[var(--ink)]/70"
-                : "bg-[var(--ink)]/10 text-[var(--ink)]"
-            }`}
-          >
-            {event.status === "cancelled" ? tr("Cancelled", "Cancelado", "Annulé") : event.needs === 0 ? tr("Full", "Completo", "Complet") : tr(`Needs ${event.needs}`, `Faltan ${event.needs}`)}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs text-[var(--ink)]/70 flex-wrap">
-          <span className="inline-flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5" /> {fmtWhen(event.starts_at)}
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Users className="w-3.5 h-3.5" /> {event.filled}/4
-          </span>
-          <span className="uppercase tracking-widest text-[10px]">{genderLabel}</span>
-          <span className="uppercase tracking-widest text-[10px]">
-            {tr("Level", "Nivel", "Niveau")} {event.level_min} – {event.level_max}
-          </span>
-        </div>
-
-        <a
-          href={mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--ink)] hover:underline"
-        >
-          <MapPin className="w-3.5 h-3.5" /> {tr("Open in Google Maps", "Abrir en Google Maps", "Ouvrir dans Google Maps")}
-        </a>
-
-        {event.note && <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap">{event.note}</p>}
-
-        <div className="text-xs text-[var(--ink)]/60">
-          {event.court_booked ? tr("✅ Court is booked", "✅ Pista reservada", "✅ Pista réservée") : tr("🔎 Court still needed", "🔎 Falta reservar la pista", "🔎 Pista encore à trouver")}
-          {event.playtomic_link && (() => {
-            const safe = normalizePlaytomicLink(event.playtomic_link).url;
-            if (!safe) return null;
-            return (
-              <a href={safe} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-1 text-[var(--ink)] hover:underline">
-                Playtomic <ExternalLink className="w-3 h-3" />
-              </a>
-            );
-          })()}
-        </div>
-
-        {event.lock_active && event.invite_lock_until && (
-          <div className="flex items-start gap-2 rounded-xl border border-[var(--ink)]/20 bg-[var(--paper-2)]/40 px-3 py-2 text-xs text-[var(--ink)]/80">
-            <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--ink)] shrink-0" />
-            <div>
-              <div className="text-[var(--ink)] uppercase tracking-widest text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
-              <div className="mt-0.5">
-                {tr(
-                  `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
-                  `Prioridad para invitados — se abre a todos el ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
-                )}
+      {(() => {
+        const d = new Date(event.starts_at);
+        const weekday = d.toLocaleDateString(undefined, { weekday: "long" });
+        const day = d.toLocaleDateString(undefined, { day: "numeric" });
+        const monthYear = d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+        const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+        const statusChip =
+          event.status === "cancelled"
+            ? { cls: "bg-red-500/10 text-red-700 border-red-500/20", label: tr("Cancelled", "Cancelado", "Annulé") }
+            : event.needs === 0
+            ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70 border-[var(--ink)]/15", label: tr("Full", "Completo", "Complet") }
+            : { cls: "bg-[var(--grass)]/30 text-[var(--ink)] border-[var(--ink)]/15", label: tr(`Needs ${event.needs}`, `Faltan ${event.needs}`) };
+        return (
+          <section className="rounded-2xl border border-[var(--ink)]/10 bg-white shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.25)] overflow-hidden">
+            {/* Date banner */}
+            <div className="flex items-stretch border-b border-[var(--ink)]/10 bg-[var(--paper-2)]/50">
+              <div className="flex flex-col items-center justify-center px-4 py-3 border-r border-[var(--ink)]/10 min-w-[92px]">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{weekday}</div>
+                <div className="text-serif text-4xl leading-none text-[var(--ink)] mt-0.5">{day}</div>
+                <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mt-1">{monthYear}</div>
+              </div>
+              <div className="flex-1 min-w-0 flex flex-col justify-between px-4 py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{tr("Match at", "Partido en", "Match à")}</div>
+                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border whitespace-nowrap ${statusChip.cls}`}>
+                    {statusChip.label}
+                  </span>
+                </div>
+                <h1 className="text-serif text-xl leading-tight text-[var(--ink)] truncate mt-1">{event.club_name}</h1>
+                <div className="text-[11px] text-[var(--ink)]/60 truncate">{event.club_address ?? event.city ?? ""}</div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+
+            {/* Meta strip */}
+            <div className="grid grid-cols-3 divide-x divide-[var(--ink)]/10 border-b border-[var(--ink)]/10 text-center">
+              <div className="px-2 py-3">
+                <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Time", "Hora", "Heure")}</div>
+                <div className="text-sm font-medium text-[var(--ink)] mt-0.5">{time}</div>
+              </div>
+              <div className="px-2 py-3">
+                <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Players", "Jugadores", "Joueurs")}</div>
+                <div className="text-sm font-medium text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/40">/4</span></div>
+              </div>
+              <div className="px-2 py-3">
+                <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Level", "Nivel", "Niveau")}</div>
+                <div className="text-sm font-medium text-[var(--ink)] mt-0.5">{event.level_min}<span className="text-[var(--ink)]/40 mx-0.5">–</span>{event.level_max}</div>
+              </div>
+            </div>
+
+            {/* Details */}
+            <div className="px-4 py-3 space-y-2.5">
+              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />
+                {genderLabel}
+                <span className="text-[var(--ink)]/20">·</span>
+                <span className={event.court_booked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}>
+                  {event.court_booked ? tr("Court booked", "Pista reservada", "Pista réservée") : tr("Court to book", "Falta pista", "Pista à réserver")}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[var(--ink)] hover:text-[var(--plum)] transition-colors"
+                >
+                  <MapPin className="w-3.5 h-3.5" /> {tr("Google Maps", "Google Maps", "Google Maps")}
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+                {event.playtomic_link && (() => {
+                  const safe = normalizePlaytomicLink(event.playtomic_link).url;
+                  if (!safe) return null;
+                  return (
+                    <a href={safe} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[var(--ink)] hover:text-[var(--plum)] transition-colors">
+                      Playtomic <ExternalLink className="w-3 h-3 opacity-60" />
+                    </a>
+                  );
+                })()}
+              </div>
+
+              {event.note && (
+                <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap pt-1 border-t border-[var(--ink)]/8">
+                  {event.note}
+                </p>
+              )}
+            </div>
+
+            {event.lock_active && event.invite_lock_until && (
+              <div className="flex items-start gap-2 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/60 px-4 py-3 text-xs text-[var(--ink)]/80">
+                <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--plum)] shrink-0" />
+                <div>
+                  <div className="text-[var(--ink)] uppercase tracking-[0.2em] text-[10px]">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
+                  <div className="mt-0.5">
+                    {tr(
+                      `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
+                      `Prioridad para invitados — se abre a todos el ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
 
       {/* Players */}

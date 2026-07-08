@@ -652,103 +652,131 @@ function Onboarding() {
           </>
         )}
         {step === 3 && (
-          <>
-            <h2 className="text-display text-3xl">{t("ob.h3")}</h2>
-            <p className="text-sm text-[var(--ink)]/70">{t("ob.h3sub")} <b>{t("ob.h3priv")}</b></p>
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.suggested")}</label>
-            <div className="flex flex-wrap gap-2">
-              {PRIORITY_TRAITS.map((tr) => {
-                const picked = priorities.includes(tr);
-                return (
-                  <button key={tr} onClick={() => togglePriority(tr)} className={`chip-paper ${picked ? "chip-paper-selected" : ""}`}>
-                    {picked ? "✓ " : "+ "}{label(tr)}
-                  </button>
-                );
-              })}
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-display text-3xl">{t("ob.h3")}</h2>
+              <p className="text-sm text-[var(--ink)]/70 mt-1">{tr("Two quick picks so we can match you well.", "Dos elecciones rápidas para emparejarte bien.", "Deux choix rapides pour bien te matcher.")} <span className="text-[var(--ink)]/50">{t("ob.h3priv")}</span></p>
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.addOwn")}</label>
-            <div className="flex gap-2">
-              <Input
-                value={customTrait}
-                onChange={(e) => setCustomTrait(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
-                placeholder={t("ob.addOwnPh")}
-                maxLength={30}
-              />
-              <Button type="button" variant="outline" onClick={addCustom}><Plus className="w-4 h-4" /></Button>
-            </div>
+            {/* SECTION 1 — Priorities */}
+            <section className="space-y-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-serif text-lg flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>
+                  {tr("What matters most in a match", "Qué es lo más importante", "Ce qui compte le plus")}
+                </h3>
+                <span className={`text-[11px] font-medium ${priorities.length >= 3 ? "text-[var(--grass)]" : "text-[var(--ink)]/55"}`}>
+                  {priorities.length}/3 {tr("min", "mín", "min")}
+                </span>
+              </div>
+              <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick at least 3. Order matters — top = most important.", "Elige al menos 3. El orden cuenta — arriba = más importante.", "Choisis-en au moins 3. L'ordre compte — haut = plus important.")}</p>
 
-            {priorities.length > 0 && (
-              <>
-                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ranking")}</label>
-                <ul className="space-y-2">
-                  {priorities.map((tr, i) => (
-                    <li key={tr} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
-                      <span className="text-[var(--ink)] font-bold w-6">{i + 1}.</span>
-                      <span className="flex-1 capitalize">{label(tr)}</span>
-                      <button onClick={() => movePriority(i, -1)} disabled={i === 0} className="p-1 disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
-                      <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} className="p-1 disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
-                      <button onClick={() => removePriority(tr)} className="p-1 text-[var(--ink)]/70 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-[var(--ink)]/55">{t("ob.pickThree")}</p>
-              </>
-            )}
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Personal characteristics (pick up to 10)", "Características personales (elige hasta 10)", "Traits personnels (jusqu'à 10)")}</label>
-            <p className="text-[11px] text-[var(--ink)]/55 -mt-1">{tr("Pick a mix — a few strengths and a couple of honest edges make your profile feel real.", "Elige una mezcla — algunas fortalezas y un par de aristas honestas hacen que tu perfil se sienta real.", "Choisis un mélange — quelques forces et deux petits défauts assumés rendent ton profil vrai.")}</p>
-
-            <div className="space-y-2">
-              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/70">{tr("Strengths", "Fortalezas", "Forces")}</p>
               <div className="flex flex-wrap gap-2">
-                {PERSONAL_STRENGTHS.map((pt) => {
-                  const on = personalTraits.includes(pt);
+                {PRIORITY_TRAITS.map((tr) => {
+                  const picked = priorities.includes(tr);
                   return (
-                    <button
-                      key={pt}
-                      type="button"
-                      onClick={() =>
-                        setPersonalTraits((cur) =>
-                          cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                        )
-                      }
-                      className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                    >
-                      {on ? "✓ " : "+ "}{label(pt)}
+                    <button key={tr} onClick={() => togglePriority(tr)} className={`chip-paper ${picked ? "chip-paper-selected" : ""}`}>
+                      {picked ? "✓ " : "+ "}{label(tr)}
                     </button>
                   );
                 })}
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/70">{tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
-              <div className="flex flex-wrap gap-2">
-                {HONEST_EDGES.map((pt) => {
-                  const on = personalTraits.includes(pt);
-                  return (
-                    <button
-                      key={pt}
-                      type="button"
-                      onClick={() =>
-                        setPersonalTraits((cur) =>
-                          cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                        )
-                      }
-                      className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                    >
-                      {on ? "✓ " : "+ "}{label(pt)}
-                    </button>
-                  );
-                })}
+              {priorities.length > 0 && (
+                <div className="mt-2 rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper-2)] p-3">
+                  <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/55 mb-2">{tr("Your order", "Tu orden", "Ton ordre")}</p>
+                  <ul className="space-y-1.5">
+                    {priorities.map((tr, i) => (
+                      <li key={tr} className="flex items-center gap-2 bg-[var(--paper)] rounded-lg px-3 py-2 border border-[var(--ink)]/10">
+                        <span className="text-[var(--ink)] font-bold w-5 text-sm">{i + 1}</span>
+                        <span className="flex-1 capitalize text-sm">{label(tr)}</span>
+                        <button onClick={() => movePriority(i, -1)} disabled={i === 0} aria-label="Move up" className="p-1 disabled:opacity-25"><ArrowUp className="w-4 h-4" /></button>
+                        <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} aria-label="Move down" className="p-1 disabled:opacity-25"><ArrowDown className="w-4 h-4" /></button>
+                        <button onClick={() => removePriority(tr)} aria-label="Remove" className="p-1 text-[var(--ink)]/50 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <details className="group">
+                <summary className="text-[12px] text-[var(--ink)]/60 cursor-pointer hover:text-[var(--ink)] select-none list-none flex items-center gap-1">
+                  <Plus className="w-3.5 h-3.5" />
+                  {t("ob.addOwn")}
+                </summary>
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    value={customTrait}
+                    onChange={(e) => setCustomTrait(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
+                    placeholder={t("ob.addOwnPh")}
+                    maxLength={30}
+                  />
+                  <Button type="button" variant="outline" onClick={addCustom}>{tr("Add", "Añadir", "Ajouter")}</Button>
+                </div>
+              </details>
+            </section>
+
+            {/* SECTION 2 — Personal traits */}
+            <section className="space-y-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-serif text-lg flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">2</span>
+                  {tr("How would you describe yourself", "Cómo te describirías", "Comment tu te décrirais")}
+                </h3>
+                <span className="text-[11px] font-medium text-[var(--ink)]/55">{personalTraits.length}/10</span>
               </div>
-            </div>
-            <p className="text-[11px] text-[var(--ink)]/55">{personalTraits.length}/10 {tr("selected", "seleccionados", "sélectionnés")}</p>
+              <p className="text-[12px] text-[var(--ink)]/60">{tr("Optional — pick a mix of strengths and a couple of honest edges.", "Opcional — elige una mezcla: fortalezas y un par de aristas honestas.", "Optionnel — mélange forces et petits défauts assumés.")}</p>
 
-          </>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">✨ {tr("Strengths", "Fortalezas", "Forces")}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {PERSONAL_STRENGTHS.map((pt) => {
+                      const on = personalTraits.includes(pt);
+                      return (
+                        <button
+                          key={pt}
+                          type="button"
+                          onClick={() =>
+                            setPersonalTraits((cur) =>
+                              cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                            )
+                          }
+                          className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
+                        >
+                          {on ? "✓ " : "+ "}{label(pt)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">🔥 {tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {HONEST_EDGES.map((pt) => {
+                      const on = personalTraits.includes(pt);
+                      return (
+                        <button
+                          key={pt}
+                          type="button"
+                          onClick={() =>
+                            setPersonalTraits((cur) =>
+                              cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                            )
+                          }
+                          className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
+                        >
+                          {on ? "✓ " : "+ "}{label(pt)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
         )}
         {step === 4 && (
           <>

@@ -51,6 +51,7 @@ function Landing() {
   return (
     <main className="min-h-screen flex flex-col">
       <header className="px-6 py-5 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
           <span className="inline-block w-3 h-3 rounded-full bg-[var(--cream)] ball-glow" />
           <span className="text-display text-2xl tracking-tight">PADEL·MATCH</span>
         </Link>

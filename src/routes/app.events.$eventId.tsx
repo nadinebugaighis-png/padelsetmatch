@@ -355,37 +355,37 @@ function EventDetail() {
         return (
           <section className="rounded-2xl border border-[var(--ink)]/10 bg-white shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.25)] overflow-hidden">
             {/* Date banner */}
-            <div className="flex items-stretch border-b border-[var(--ink)]/10 bg-[var(--paper-2)]/50">
-              <div className="flex flex-col items-center justify-center px-4 py-3 border-r border-[var(--ink)]/10 min-w-[92px]">
+            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch border-b border-[var(--ink)]/10 bg-[var(--paper-2)]/50">
+              <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-3 sm:py-4 border-r border-[var(--ink)]/10 min-w-[92px] sm:min-w-[120px] shrink-0">
                 <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{weekday}</div>
-                <div className="text-serif text-4xl leading-none text-[var(--ink)] mt-0.5">{day}</div>
+                <div className="text-serif text-4xl sm:text-5xl leading-none text-[var(--ink)] mt-0.5">{day}</div>
                 <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mt-1">{monthYear}</div>
               </div>
-              <div className="flex-1 min-w-0 flex flex-col justify-between px-4 py-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{tr("Match at", "Partido en", "Match à")}</div>
-                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border whitespace-nowrap ${statusChip.cls}`}>
+              <div className="min-w-0 flex flex-col justify-between px-4 sm:px-6 py-3 sm:py-4 gap-1">
+                <div className="flex items-start justify-between gap-2 min-w-0">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60 truncate">{tr("Match at", "Partido en", "Match à")}</div>
+                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${statusChip.cls}`}>
                     {statusChip.label}
                   </span>
                 </div>
-                <h1 className="text-serif text-xl leading-tight text-[var(--ink)] truncate mt-1">{event.club_name}</h1>
-                <div className="text-[11px] text-[var(--ink)]/60 truncate">{event.club_address ?? event.city ?? ""}</div>
+                <h1 className="text-serif text-xl sm:text-2xl leading-tight text-[var(--ink)] truncate mt-1">{event.club_name}</h1>
+                <div className="text-[11px] sm:text-xs text-[var(--ink)]/60 truncate">{event.club_address ?? event.city ?? ""}</div>
               </div>
             </div>
 
             {/* Meta strip */}
             <div className="grid grid-cols-3 divide-x divide-[var(--ink)]/10 border-b border-[var(--ink)]/10 text-center">
-              <div className="px-2 py-3">
-                <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Time", "Hora", "Heure")}</div>
-                <div className="text-sm font-medium text-[var(--ink)] mt-0.5">{time}</div>
+              <div className="px-2 py-3 sm:py-4 min-w-0">
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Time", "Hora", "Heure")}</div>
+                <div className="text-sm sm:text-base font-medium text-[var(--ink)] mt-0.5 truncate">{time}</div>
               </div>
-              <div className="px-2 py-3">
-                <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Players", "Jugadores", "Joueurs")}</div>
-                <div className="text-sm font-medium text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/40">/4</span></div>
+              <div className="px-2 py-3 sm:py-4 min-w-0">
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Players", "Jugadores", "Joueurs")}</div>
+                <div className="text-sm sm:text-base font-medium text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/40">/4</span></div>
               </div>
-              <div className="px-2 py-3">
-                <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Level", "Nivel", "Niveau")}</div>
-                <div className="text-sm font-medium text-[var(--ink)] mt-0.5">{event.level_min}<span className="text-[var(--ink)]/40 mx-0.5">–</span>{event.level_max}</div>
+              <div className="px-2 py-3 sm:py-4 min-w-0">
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{tr("Level", "Nivel", "Niveau")}</div>
+                <div className="text-sm sm:text-base font-medium text-[var(--ink)] mt-0.5">{event.level_min}<span className="text-[var(--ink)]/40 mx-0.5">–</span>{event.level_max}</div>
               </div>
             </div>
 

@@ -194,7 +194,7 @@ function EventsPage() {
         {/* Header */}
         <div className="flex items-start justify-between mb-1 gap-3">
           <div className="min-w-0">
-            <h1 className="text-serif text-3xl sm:text-4xl tracking-wider leading-none text-[var(--ink)]">
+            <h1 className="text-serif text-3xl sm:text-4xl tracking-tight leading-none text-[var(--ink)]">
               {tr("PLAN", "PLANEA", "PLANIFIER")}
               <br />
               {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
@@ -512,7 +512,7 @@ function QuickSheet({
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
             {tr("Match called", "Partido convocado", "Match lancé")}
           </div>
-          <div className="text-serif text-2xl tracking-wider text-[var(--ink)] mt-1">{when}</div>
+          <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-1">{when}</div>
           <p className="text-sm text-[var(--ink)]/70 mt-2">
             {tr(
               "You're in. Add a club or invite players — or leave it and let others join.",
@@ -662,7 +662,7 @@ function SlotSheet({
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
             {tr("Matches at", "Partidos a las", "Matchs à")}
           </div>
-          <div className="text-serif text-2xl tracking-wider text-[var(--ink)] mt-1">{when}</div>
+          <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-1">{when}</div>
           <p className="text-xs text-[var(--ink)]/60 mt-1">
             {events.length}{" "}
             {events.length === 1

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export const Route = createFileRoute("/app/admin")({
   beforeLoad: async () => {
@@ -22,6 +23,8 @@ export const Route = createFileRoute("/app/admin")({
   component: AdminPage,
 });
 
+type Tab = "overview" | "reports" | "members" | "feedback";
+
 function AdminPage() {
   const qc = useQueryClient();
   const fetchStats = useServerFn(getAdminStats);
@@ -29,6 +32,7 @@ function AdminPage() {
   const clearPhoto = useServerFn(adminClearProfilePhoto);
   const setSuspended = useServerFn(adminSetSuspended);
   const q = useQuery({ queryKey: ["admin-stats"], queryFn: () => fetchStats() });
+  const [tab, setTab] = useState<Tab>("overview");
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["admin-stats"] });
   const resolveM = useMutation({
@@ -58,160 +62,253 @@ function AdminPage() {
   const handledReports = recentReports.filter((r) => r.status !== "pending");
 
   return (
-    <div className="max-w-3xl mx-auto p-5 space-y-8">
-      <header>
-        <h1 className="text-display text-3xl tracking-wider">Admin</h1>
-        <p className="text-sm text-[var(--cream)]/60">Creator-only dashboard.</p>
+    <div className="max-w-3xl mx-auto p-5 space-y-6">
+      {/* Header */}
+      <header className="flex items-end justify-between gap-3">
+        <div>
+          <div className="text-[10px] uppercase tracking-widest text-[var(--grass)] font-semibold">Creator dashboard</div>
+          <h1 className="text-display text-3xl tracking-tight mt-0.5">Admin</h1>
+        </div>
+        {pendingReports.length > 0 && (
+          <button
+            onClick={() => setTab("reports")}
+            className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-200 border border-red-400/30"
+          >
+            {pendingReports.length} pending
+          </button>
+        )}
       </header>
 
-      <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Stat label="Signups" value={counts.signups} />
-        <Stat label="Profiles" value={counts.users} />
-        <Stat label="Incomplete" value={counts.incomplete} />
-        <Stat label="Matches" value={counts.matches} />
-        <Stat label="Pending reports" value={counts.reports} />
+      {/* Key stats — hero row */}
+      <section className="grid grid-cols-3 gap-2">
+        <BigStat label="Members" value={counts.users} accent />
+        <BigStat label="Matches" value={counts.matches} />
+        <BigStat label="Reports" value={counts.reports} danger={counts.reports > 0} />
+      </section>
+      <section className="grid grid-cols-2 gap-2">
+        <MiniStat label="Total signups" value={counts.signups} />
+        <MiniStat label="Incomplete profiles" value={counts.incomplete} warn={counts.incomplete > 0} />
       </section>
 
-      <section>
-        <h2 className="text-display text-xl tracking-wider mb-3">Pending reports ({pendingReports.length})</h2>
-        <div className="space-y-3">
-          {pendingReports.length === 0 && <p className="text-sm text-[var(--cream)]/60">No pending reports. 🎉</p>}
-          {pendingReports.map((r) => (
-            <div key={r.id} className="border border-[var(--cream)]/15 rounded-lg p-3 space-y-2">
-              <div className="flex items-start gap-3">
-                {r.reported_photo_url ? (
-                  <img src={r.reported_photo_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
-                ) : (
-                  <div className="w-14 h-14 rounded-lg bg-[var(--cream)]/10 shrink-0" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm">
-                    <span className="font-semibold">{r.reporter_name ?? "someone"}</span>
-                    <span className="text-[var(--cream)]/60"> reported </span>
-                    <span className="font-semibold">{r.reported_name ?? "user"}</span>
-                    {r.category === "photo" && (
-                      <span className="ml-2 text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300">photo</span>
-                    )}
-                    {r.reported_suspended && (
-                      <span className="ml-2 text-[10px] uppercase tracking-widest text-red-400">suspended</span>
-                    )}
-                  </div>
-                  <div className="text-xs text-[var(--cream)]/50">{new Date(r.created_at).toLocaleString()}</div>
-                  <p className="text-sm text-[var(--cream)]/80 mt-1 whitespace-pre-wrap">{r.reason}</p>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {r.reported_photo_url && (
-                  <button
-                    disabled={clearPhotoM.isPending}
-                    onClick={() => { if (confirm(`Remove ${r.reported_name ?? "user"}'s photo?`)) clearPhotoM.mutate(r.reported_profile_id); }}
-                    className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-200 hover:bg-red-500/30"
-                  >Remove photo</button>
-                )}
-                {!r.reported_suspended ? (
-                  <button
-                    disabled={suspendM.isPending}
-                    onClick={() => { if (confirm(`Suspend ${r.reported_name ?? "user"}?`)) suspendM.mutate({ profileId: r.reported_profile_id, suspend: true }); }}
-                    className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-200 hover:bg-amber-500/30"
-                  >Suspend user</button>
-                ) : (
-                  <button
-                    disabled={suspendM.isPending}
-                    onClick={() => suspendM.mutate({ profileId: r.reported_profile_id, suspend: false })}
-                    className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
-                  >Reinstate</button>
-                )}
-                <button
-                  disabled={resolveM.isPending}
-                  onClick={() => resolveM.mutate({ reportId: r.id, status: "resolved" })}
-                  className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
-                >Mark resolved</button>
-                <button
-                  disabled={resolveM.isPending}
-                  onClick={() => resolveM.mutate({ reportId: r.id, status: "dismissed" })}
-                  className="text-xs px-2.5 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/20"
-                >Dismiss</button>
-              </div>
-            </div>
-          ))}
+      {/* Tab switcher */}
+      <nav className="flex gap-1 p-1 rounded-full bg-[var(--cream)]/8 border border-[var(--cream)]/10">
+        {([
+          ["overview", "Overview"],
+          ["reports", `Reports${pendingReports.length ? ` · ${pendingReports.length}` : ""}`],
+          ["members", "Members"],
+          ["feedback", "Feedback"],
+        ] as [Tab, string][]).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={`flex-1 text-[11px] font-semibold py-1.5 rounded-full transition ${
+              tab === id ? "bg-[var(--grass)] text-[var(--ink)]" : "text-[var(--cream)]/70 hover:text-[var(--cream)]"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      {tab === "overview" && (
+        <div className="space-y-4">
+          <Card title="At a glance">
+            <ul className="text-sm text-[var(--cream)]/85 space-y-1.5">
+              <li>· <b>{completed.length}</b> completed profiles visible in the Grid</li>
+              <li>· <b>{incomplete.length}</b> users signed up but haven't finished onboarding</li>
+              <li>· <b>{counts.matches}</b> matches created to date</li>
+              <li>· <b>{pendingReports.length}</b> reports waiting on you</li>
+              <li>· <b>{recentFeedback.length}</b> recent feedback messages</li>
+            </ul>
+          </Card>
+          {pendingReports.length > 0 && (
+            <Card title="Needs attention" tone="danger">
+              <p className="text-sm text-[var(--cream)]/80 mb-2">You have {pendingReports.length} pending report{pendingReports.length === 1 ? "" : "s"} to review.</p>
+              <button onClick={() => setTab("reports")} className="text-xs px-3 py-1.5 rounded-full bg-[var(--grass)] text-[var(--ink)] font-semibold">
+                Review reports →
+              </button>
+            </Card>
+          )}
         </div>
-        {handledReports.length > 0 && (
-          <details className="mt-4">
-            <summary className="text-xs text-[var(--cream)]/60 cursor-pointer">Handled ({handledReports.length})</summary>
-            <div className="space-y-2 mt-2">
-              {handledReports.map((r) => (
-                <div key={r.id} className="text-xs text-[var(--cream)]/60 border border-[var(--cream)]/10 rounded px-2 py-1.5">
-                  [{r.status}] {r.reporter_name} → {r.reported_name}: {r.reason}
+      )}
+
+      {tab === "reports" && (
+        <div className="space-y-4">
+          <Card title={`Pending (${pendingReports.length})`} tone={pendingReports.length ? "danger" : "default"}>
+            <div className="space-y-3">
+              {pendingReports.length === 0 && <p className="text-sm text-[var(--cream)]/60">All clear. 🎉</p>}
+              {pendingReports.map((r) => (
+                <div key={r.id} className="rounded-xl bg-[var(--cream)]/5 border border-[var(--cream)]/10 p-3 space-y-2">
+                  <div className="flex items-start gap-3">
+                    {r.reported_photo_url ? (
+                      <img src={r.reported_photo_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-lg bg-[var(--cream)]/10 shrink-0" />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm leading-snug">
+                        <span className="font-semibold">{r.reporter_name ?? "someone"}</span>
+                        <span className="text-[var(--cream)]/60"> reported </span>
+                        <span className="font-semibold">{r.reported_name ?? "user"}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {r.category === "photo" && (
+                          <span className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300">photo</span>
+                        )}
+                        {r.reported_suspended && (
+                          <span className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300">suspended</span>
+                        )}
+                        <span className="text-[10px] text-[var(--cream)]/50">{new Date(r.created_at).toLocaleString()}</span>
+                      </div>
+                      <p className="text-sm text-[var(--cream)]/85 mt-2 whitespace-pre-wrap bg-[var(--ink)]/40 rounded-md px-2 py-1.5 border border-[var(--cream)]/5">{r.reason}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {r.reported_photo_url && (
+                      <button
+                        disabled={clearPhotoM.isPending}
+                        onClick={() => { if (confirm(`Remove ${r.reported_name ?? "user"}'s photo?`)) clearPhotoM.mutate(r.reported_profile_id); }}
+                        className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-200 hover:bg-red-500/30"
+                      >Remove photo</button>
+                    )}
+                    {!r.reported_suspended ? (
+                      <button
+                        disabled={suspendM.isPending}
+                        onClick={() => { if (confirm(`Suspend ${r.reported_name ?? "user"}?`)) suspendM.mutate({ profileId: r.reported_profile_id, suspend: true }); }}
+                        className="text-xs px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-200 hover:bg-amber-500/30"
+                      >Suspend</button>
+                    ) : (
+                      <button
+                        disabled={suspendM.isPending}
+                        onClick={() => suspendM.mutate({ profileId: r.reported_profile_id, suspend: false })}
+                        className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30"
+                      >Reinstate</button>
+                    )}
+                    <button
+                      disabled={resolveM.isPending}
+                      onClick={() => resolveM.mutate({ reportId: r.id, status: "resolved" })}
+                      className="text-xs px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] font-semibold hover:brightness-95"
+                    >Resolve</button>
+                    <button
+                      disabled={resolveM.isPending}
+                      onClick={() => resolveM.mutate({ reportId: r.id, status: "dismissed" })}
+                      className="text-xs px-2.5 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70 hover:bg-[var(--cream)]/20"
+                    >Dismiss</button>
+                  </div>
                 </div>
               ))}
             </div>
-          </details>
-        )}
-      </section>
+          </Card>
 
+          {handledReports.length > 0 && (
+            <Card title={`Handled (${handledReports.length})`}>
+              <div className="space-y-1.5">
+                {handledReports.map((r) => (
+                  <div key={r.id} className="text-xs text-[var(--cream)]/65 rounded-md px-2 py-1.5 bg-[var(--cream)]/5">
+                    <span className={`inline-block text-[9px] uppercase tracking-widest mr-1.5 px-1.5 py-0.5 rounded-full ${r.status === "resolved" ? "bg-emerald-500/20 text-emerald-300" : "bg-[var(--cream)]/10 text-[var(--cream)]/60"}`}>{r.status}</span>
+                    {r.reporter_name} → {r.reported_name}: {r.reason}
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
 
-      {incomplete.length > 0 && (
-        <section>
-          <h2 className="text-display text-xl tracking-wider mb-3">Signed up but no profile ({incomplete.length})</h2>
-          <p className="text-xs text-[var(--cream)]/50 mb-2">Registered an account but didn't finish onboarding — they won't appear in the Grid.</p>
-          <div className="space-y-2">
-            {incomplete.map((u) => (
-              <div key={u.user_id} className="flex items-center justify-between border border-amber-500/30 rounded-lg px-3 py-2">
-                <div className="min-w-0">
-                  <div className="truncate text-sm">{u.email ?? "(no email)"}</div>
-                  <div className="text-xs text-[var(--cream)]/50">
-                    signed up {new Date(u.signed_up_at).toLocaleString()}
-                    {!u.email_confirmed && <span className="ml-2 text-amber-400">email not confirmed</span>}
+      {tab === "members" && (
+        <div className="space-y-4">
+          {incomplete.length > 0 && (
+            <Card title={`Incomplete (${incomplete.length})`} tone="warn">
+              <p className="text-xs text-[var(--cream)]/60 mb-2">Signed up but never finished onboarding — not visible in the Grid.</p>
+              <div className="space-y-1.5">
+                {incomplete.map((u) => (
+                  <div key={u.user_id} className="rounded-lg bg-amber-500/5 border border-amber-500/25 px-3 py-2">
+                    <div className="truncate text-sm">{u.email ?? "(no email)"}</div>
+                    <div className="text-xs text-[var(--cream)]/55">
+                      {new Date(u.signed_up_at).toLocaleDateString()}
+                      {!u.email_confirmed && <span className="ml-2 text-amber-400">email unconfirmed</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          <Card title={`Active members (${completed.length})`}>
+            <div className="space-y-1.5">
+              {completed.length === 0 && <p className="text-sm text-[var(--cream)]/60">No members yet.</p>}
+              {completed.map((u) => (
+                <div key={u.user_id} className="rounded-lg bg-[var(--cream)]/5 border border-[var(--cream)]/10 px-3 py-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm">
+                        <span className="font-semibold">{u.first_name}</span>
+                        {u.age ? <span className="text-[var(--cream)]/60">, {u.age}</span> : null}
+                        <span className="text-[var(--cream)]/40"> · </span>
+                        <span className="text-[var(--cream)]/70">{u.zone ?? "—"}</span>
+                      </div>
+                      <div className="text-xs text-[var(--cream)]/50 truncate">{u.email}</div>
+                    </div>
+                    {u.suspended && (
+                      <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300 shrink-0">suspended</span>
+                    )}
                   </div>
                 </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {tab === "feedback" && (
+        <Card title={`Recent feedback (${recentFeedback.length})`}>
+          <div className="space-y-2">
+            {recentFeedback.length === 0 && <p className="text-sm text-[var(--cream)]/60">No feedback yet.</p>}
+            {recentFeedback.map((f) => (
+              <div key={f.id} className="rounded-lg bg-[var(--cream)]/5 border border-[var(--cream)]/10 p-3">
+                <div className="text-sm text-[var(--grass)]">
+                  {f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : <span className="text-[var(--cream)]/40">no rating</span>}
+                </div>
+                <div className="text-sm text-[var(--cream)]/85 whitespace-pre-wrap mt-1">{f.message}</div>
+                <div className="text-xs text-[var(--cream)]/50 mt-1.5">{new Date(f.created_at).toLocaleString()}</div>
               </div>
             ))}
           </div>
-        </section>
+        </Card>
       )}
-
-      <section>
-        <h2 className="text-display text-xl tracking-wider mb-3">All members ({completed.length})</h2>
-        <div className="space-y-2">
-          {completed.length === 0 && <p className="text-sm text-[var(--cream)]/60">No users yet.</p>}
-          {completed.map((u) => (
-            <div key={u.user_id} className="flex items-center justify-between border border-[var(--cream)]/10 rounded-lg px-3 py-2">
-              <div className="min-w-0">
-                <div className="truncate">
-                  {u.first_name}{u.age ? `, ${u.age}` : ""} · <span className="text-[var(--cream)]/60">{u.zone ?? "—"}</span>
-                  {u.suspended && <span className="ml-2 text-xs text-red-400">suspended</span>}
-                </div>
-                <div className="text-xs text-[var(--cream)]/50 truncate">
-                  {u.email} · joined {new Date(u.signed_up_at).toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-display text-xl tracking-wider mb-3">Recent feedback</h2>
-        <div className="space-y-2">
-          {recentFeedback.length === 0 && <p className="text-sm text-[var(--cream)]/60">No feedback yet.</p>}
-          {recentFeedback.map((f) => (
-            <div key={f.id} className="border border-[var(--cream)]/10 rounded-lg px-3 py-2">
-              <div className="text-sm">{f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : "no rating"}</div>
-              <div className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap">{f.message}</div>
-              <div className="text-xs text-[var(--cream)]/50 mt-1">{new Date(f.created_at).toLocaleString()}</div>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Card({ title, children, tone = "default" }: { title: string; children: React.ReactNode; tone?: "default" | "danger" | "warn" }) {
+  const border =
+    tone === "danger" ? "border-red-400/30" :
+    tone === "warn" ? "border-amber-400/30" :
+    "border-[var(--cream)]/10";
   return (
-    <div className="border border-[var(--cream)]/10 rounded-lg px-3 py-3">
-      <div className="text-2xl text-display">{value}</div>
-      <div className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60">{label}</div>
+    <div className={`rounded-2xl bg-[var(--cream)]/5 border ${border} p-4`}>
+      <h2 className="text-display text-base tracking-tight mb-3 text-[var(--cream)]">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+function BigStat({ label, value, accent, danger }: { label: string; value: number; accent?: boolean; danger?: boolean }) {
+  const bg = danger ? "bg-red-500/15 border-red-400/30" : accent ? "bg-[var(--grass)]/15 border-[var(--grass)]/40" : "bg-[var(--cream)]/5 border-[var(--cream)]/10";
+  const valColor = danger ? "text-red-200" : accent ? "text-[var(--grass)]" : "text-[var(--cream)]";
+  return (
+    <div className={`rounded-2xl border ${bg} p-3 text-center`}>
+      <div className={`text-display text-3xl tracking-tight ${valColor}`}>{value}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/60 mt-0.5">{label}</div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value, warn }: { label: string; value: number; warn?: boolean }) {
+  return (
+    <div className={`rounded-xl border ${warn ? "border-amber-400/25 bg-amber-500/5" : "border-[var(--cream)]/10 bg-[var(--cream)]/5"} px-3 py-2 flex items-center justify-between`}>
+      <span className="text-xs text-[var(--cream)]/70">{label}</span>
+      <span className={`text-lg text-display ${warn ? "text-amber-300" : "text-[var(--cream)]"}`}>{value}</span>
     </div>
   );
 }

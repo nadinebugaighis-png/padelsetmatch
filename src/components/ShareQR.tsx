@@ -59,7 +59,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
             >
               <X className="w-4 h-4" />
             </button>
-            <p className="text-serif text-lg tracking-wider text-[var(--ink)]">{tr("Share PadelMatch", "Compartir PadelMatch", "Partager PadelMatch")}</p>
+            <p className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Share PadelMatch", "Compartir PadelMatch", "Partager PadelMatch")}</p>
             <p className="text-xs text-[var(--ink)]/60 mt-1">{tr("Scan to open", "Escanea para abrir", "Scanne pour ouvrir")}</p>
 
 

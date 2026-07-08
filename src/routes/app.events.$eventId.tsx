@@ -813,162 +813,237 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[var(--ink)]/45 px-4 pb-4 pt-10"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/50 backdrop-blur-sm px-0 sm:px-4 pb-0 sm:pb-4 pt-10 animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper-2)] p-4 shadow-2xl"
+        className="w-full sm:max-w-lg max-h-[92vh] sm:max-h-[85vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="text-xs uppercase tracking-widest text-[var(--ink)]">{tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}</div>
-            <p className="mt-1 text-xs text-[var(--ink)]/70">
-              {tr(
-                "Invited players get first dibs. The match opens to everyone 10 hours after your first invite.",
-                "Los invitados tienen prioridad. El partido se abre a todos 10 horas después de la primera invitación.",
-              )}
-            </p>
+        {/* Header */}
+        <div className="relative px-5 pt-5 pb-4 border-b border-[var(--ink)]/8 bg-[var(--paper-2)]">
+          <div className="mx-auto sm:hidden mb-3 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/50">
+                {tr("Match", "Partido", "Match")}
+              </div>
+              <h2 className="mt-1 font-serif text-2xl leading-tight text-[var(--ink)]">
+                {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
+              </h2>
+              <p className="mt-1.5 text-xs text-[var(--ink)]/60 leading-relaxed max-w-sm">
+                {tr(
+                  "Invited players get first dibs. Opens to everyone 10 hours after your first invite.",
+                  "Los invitados tienen prioridad. Se abre a todos 10 horas después de la primera invitación.",
+                  "Les invités passent en priorité. Ouvert à tous 10 h après la première invitation.",
+                )}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              aria-label={tr("Close", "Cerrar", "Fermer")}
+              className="shrink-0 h-9 w-9 grid place-items-center rounded-full border border-[var(--ink)]/15 bg-[var(--paper)] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          <button onClick={onClose} className="rounded-full border border-[var(--ink)]/15 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/70">
-            {tr("Close", "Cerrar", "Fermer")}
-          </button>
         </div>
 
-        {/* From connections */}
-        <div className="mt-4">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">
-            {tr("From your matches & friends", "De tus matches y amigos", "Depuis tes matches et amis")}
-          </div>
-          {connsQ.isLoading && <div className="text-xs text-[var(--ink)]/50">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
-          {!connsQ.isLoading && people.length === 0 && (
-            <p className="text-xs text-[var(--ink)]/50">
-              {tr("No connections yet. Use the invite link below to share on WhatsApp.", "Aún no tienes conexiones. Usa el enlace de abajo para compartir por WhatsApp.", "Pas encore de connexions. Utilise le lien d'invitation ci-dessous pour partager sur WhatsApp.")}
-            </p>
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6">
+          {/* From connections */}
+          <section>
+            <div className="flex items-baseline justify-between mb-3">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60">
+                {tr("Your connections", "Tus conexiones", "Tes connexions")}
+              </h3>
+              {selected.size > 0 && (
+                <span className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
+                  {selected.size} {tr("selected", "seleccionados", "sélectionnés")}
+                </span>
+              )}
+            </div>
+
+            {connsQ.isLoading && (
+              <div className="text-xs text-[var(--ink)]/50">{tr("Loading…", "Cargando…", "Chargement…")}</div>
+            )}
+            {!connsQ.isLoading && people.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-[var(--ink)]/15 bg-[var(--paper-2)]/60 px-4 py-6 text-center">
+                <p className="text-xs text-[var(--ink)]/60 leading-relaxed">
+                  {tr(
+                    "No connections yet — share the invite link below on WhatsApp.",
+                    "Aún no tienes conexiones — comparte el enlace de abajo por WhatsApp.",
+                    "Pas encore de connexions — partage le lien ci-dessous sur WhatsApp.",
+                  )}
+                </p>
+              </div>
+            )}
+
+            {people.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+                {people.map((p) => {
+                  const sel = selected.has(p.id);
+                  const disabled = p.invited || p.joined;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => toggle(p.id)}
+                      className={`relative flex flex-col items-center gap-2 rounded-2xl border p-3 text-center transition ${
+                        disabled
+                          ? "border-[var(--ink)]/10 bg-[var(--paper-2)]/50 opacity-60 cursor-not-allowed"
+                          : sel
+                          ? "border-[var(--ink)] bg-[var(--ink)]/5 shadow-sm"
+                          : "border-[var(--ink)]/12 bg-white hover:border-[var(--ink)]/30 hover:-translate-y-0.5"
+                      }`}
+                    >
+                      {sel && !disabled && (
+                        <span className="absolute top-1.5 right-1.5 h-5 w-5 grid place-items-center rounded-full bg-[var(--ink)] text-[var(--paper)]">
+                          <Check className="w-3 h-3" />
+                        </span>
+                      )}
+                      <div className="h-14 w-14 overflow-hidden rounded-full bg-[var(--paper-2)] ring-1 ring-[var(--ink)]/8">
+                        {p.photo_url ? (
+                          <img src={p.photo_url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full grid place-items-center text-[var(--ink)]/30 text-sm font-serif">
+                            {(p.first_name ?? "?").charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-full truncate text-xs font-medium text-[var(--ink)]">
+                        {p.first_name ?? "—"}
+                      </div>
+                      <div className="text-[9px] uppercase tracking-widest text-[var(--ink)]/50 -mt-1">
+                        {p.joined
+                          ? tr("Joined", "Unido", "Inscrit")
+                          : p.invited
+                          ? tr("Invited", "Invitado", "Invité")
+                          : p.level ?? ""}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          {/* Invite link */}
+          <section className="border-t border-[var(--ink)]/8 pt-5">
+            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 mb-3">
+              {tr("Share an invite link", "Compartir enlace", "Partager un lien")}
+            </h3>
+            {!linkUrl ? (
+              <button
+                onClick={makeLink}
+                disabled={busy}
+                className="w-full rounded-full border border-[var(--ink)]/25 bg-white py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)] hover:bg-[var(--ink)]/5 transition disabled:opacity-50"
+              >
+                {tr("Create invite link", "Crear enlace", "Créer un lien")}
+              </button>
+            ) : (
+              <div className="space-y-2.5">
+                <input
+                  readOnly
+                  value={linkUrl}
+                  onFocus={(e) => e.currentTarget.select()}
+                  className="w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/80 outline-none focus:border-[var(--ink)]/40"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href={whatsappUrl!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full bg-[#25D366] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-white hover:brightness-95 transition"
+                  >
+                    {tr("WhatsApp", "WhatsApp", "WhatsApp")}
+                  </a>
+                  <button
+                    onClick={copyLink}
+                    className="rounded-full border border-[var(--ink)]/25 bg-white px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)] hover:bg-[var(--ink)]/5 transition"
+                  >
+                    {tr("Copy link", "Copiar", "Copier")}
+                  </button>
+                </div>
+                <p className="text-[10px] text-[var(--ink)]/50 leading-relaxed">
+                  {tr(
+                    "Anyone who opens this link and signs in gets priority to join.",
+                    "Cualquiera que abra este enlace e inicie sesión tendrá prioridad.",
+                    "Toute personne qui ouvre ce lien et se connecte est prioritaire.",
+                  )}
+                </p>
+              </div>
+            )}
+          </section>
+
+          {/* Existing invites */}
+          {directInvites.length > 0 && (
+            <section className="border-t border-[var(--ink)]/8 pt-5">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 mb-3">
+                {tr("Invites sent", "Invitaciones enviadas", "Invitations envoyées")}
+              </h3>
+              <ul className="space-y-1.5">
+                {directInvites.map((inv) => (
+                  <li
+                    key={inv.id}
+                    className="flex items-center justify-between rounded-xl border border-[var(--ink)]/8 bg-white px-3.5 py-2.5"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-sm text-[var(--ink)] truncate">
+                        {inv.invitee?.first_name ?? "—"}
+                      </span>
+                      <span
+                        className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded-full ${
+                          inv.status === "accepted"
+                            ? "bg-[var(--ink)]/10 text-[var(--ink)]"
+                            : inv.status === "declined"
+                            ? "bg-[var(--ink)]/5 text-[var(--ink)]/50"
+                            : "bg-[var(--paper-2)] text-[var(--ink)]/60"
+                        }`}
+                      >
+                        {inv.status === "accepted"
+                          ? tr("Accepted", "Aceptada", "Accepté")
+                          : inv.status === "declined"
+                          ? tr("Declined", "Rechazada", "Refusé")
+                          : tr("Pending", "Pendiente", "En attente")}
+                      </span>
+                    </div>
+                    {inv.status === "pending" && (
+                      <button
+                        onClick={async () => {
+                          await revokeInvite({ data: { inviteId: inv.id } });
+                          qc.invalidateQueries({ queryKey: ["event", eventId] });
+                          qc.invalidateQueries({ queryKey: ["invitable", eventId] });
+                        }}
+                        className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 hover:text-red-500 transition"
+                      >
+                        {tr("Cancel", "Cancelar", "Annuler")}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
           )}
-          <div className="grid grid-cols-3 gap-2">
-            {people.map((p) => {
-              const sel = selected.has(p.id);
-              const disabled = p.invited || p.joined;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  disabled={disabled}
-                  onClick={() => toggle(p.id)}
-                  className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-center transition ${
-                    disabled
-                      ? "border-[var(--ink)]/10 bg-[var(--paper-2)]/60 opacity-60"
-                      : sel
-                      ? "border-[var(--ink)]/40 bg-[var(--ink)]/8"
-                      : "border-[var(--ink)]/10 bg-white hover:border-[var(--ink)]/25"
-                  }`}
-                >
-                  <div className="h-12 w-12 overflow-hidden rounded-full bg-[var(--paper-2)]">
-                    {p.photo_url && <img src={p.photo_url} alt="" className="h-full w-full object-cover" />}
-                  </div>
-                  <div className="w-full truncate text-xs text-[var(--ink)]">{p.first_name ?? "—"}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
-                    {p.joined ? tr("Joined", "Unido", "Inscrit") : p.invited ? tr("Invited", "Invitado", "Invité") : p.level ?? ""}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-          {selected.size > 0 && (
+        </div>
+
+        {/* Sticky footer send button */}
+        {selected.size > 0 && (
+          <div className="border-t border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-3.5">
             <button
               onClick={sendInvites}
               disabled={busy}
-              className="mt-3 w-full rounded-full bg-[var(--ink)] py-3 text-xs font-semibold uppercase tracking-widest text-[var(--paper)] disabled:opacity-50"
+              className="w-full rounded-full bg-[var(--ink)] py-3.5 text-xs font-semibold uppercase tracking-widest text-[var(--paper)] hover:brightness-110 transition disabled:opacity-50"
             >
-              {tr(`Send ${selected.size} invite${selected.size === 1 ? "" : "s"}`, `Enviar ${selected.size} invitaciones`)}
+              {tr(
+                `Send ${selected.size} invite${selected.size === 1 ? "" : "s"}`,
+                `Enviar ${selected.size} invitación${selected.size === 1 ? "" : "es"}`,
+                `Envoyer ${selected.size} invitation${selected.size === 1 ? "" : "s"}`,
+              )}
             </button>
-          )}
-        </div>
-
-        {/* Invite link */}
-        <div className="mt-5 border-t border-[var(--ink)]/10 pt-4">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">
-            {tr("Share an invite link", "Compartir enlace de invitación", "Partager un lien d'invitation")}
-          </div>
-          {!linkUrl ? (
-            <button
-              onClick={makeLink}
-              disabled={busy}
-              className="w-full rounded-full border border-[var(--ink)]/30 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)] disabled:opacity-50"
-            >
-              {tr("Create WhatsApp invite link", "Crear enlace para WhatsApp", "Créer un lien d'invitation WhatsApp")}
-            </button>
-          ) : (
-            <>
-              <input
-                readOnly
-                value={linkUrl}
-                onFocus={(e) => e.currentTarget.select()}
-                className="w-full rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2 text-xs text-[var(--ink)] outline-none"
-              />
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <a
-                  href={whatsappUrl!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-[#25D366] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--paper)]"
-                >
-                  {tr("Send on WhatsApp", "Enviar por WhatsApp", "Envoyer sur WhatsApp")}
-                </a>
-                <button
-                  onClick={copyLink}
-                  className="rounded-full border border-[var(--ink)]/25 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]"
-                >
-                  {tr("Copy link", "Copiar enlace", "Copier le lien")}
-                </button>
-              </div>
-              <p className="mt-2 text-[10px] text-[var(--ink)]/50">
-                {tr(
-                  "Anyone who opens this link and signs in gets priority to join.",
-                  "Cualquiera que abra este enlace e inicie sesión tendrá prioridad para unirse.",
-                )}
-              </p>
-            </>
-          )}
-        </div>
-
-        {/* Existing invites */}
-        {directInvites.length > 0 && (
-          <div className="mt-5 border-t border-[var(--ink)]/10 pt-4">
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">
-              {tr("Invites sent", "Invitaciones enviadas", "Invitations envoyées")}
-            </div>
-            <ul className="space-y-1.5">
-              {directInvites.map((inv) => (
-                <li key={inv.id} className="flex items-center justify-between rounded-lg bg-white px-3 py-2">
-                  <div className="text-sm text-[var(--ink)]">
-                    {inv.invitee?.first_name ?? "—"}
-                    <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
-                      {inv.status === "accepted"
-                        ? tr("Accepted", "Aceptada", "Accepté")
-                        : inv.status === "declined"
-                        ? tr("Can't this time", "No puede", "Pas cette fois")
-                        : tr("Pending", "Pendiente", "En attente")}
-                    </span>
-                  </div>
-                  {inv.status === "pending" && (
-                    <button
-                      onClick={async () => {
-                        await revokeInvite({ data: { inviteId: inv.id } });
-                        qc.invalidateQueries({ queryKey: ["event", eventId] });
-                        qc.invalidateQueries({ queryKey: ["invitable", eventId] });
-                      }}
-                      className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 hover:text-red-300"
-                    >
-                      {tr("Cancel", "Cancelar", "Annuler")}
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
           </div>
         )}
       </div>

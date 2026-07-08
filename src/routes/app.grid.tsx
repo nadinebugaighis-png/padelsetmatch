@@ -289,7 +289,7 @@ function Discover() {
                   : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
                 }`}
             >
-              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
               {world ? t("disc.world.on") : t("disc.world.off")}
             </button>
           </div>

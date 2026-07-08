@@ -49,9 +49,10 @@ function NewEvent() {
     }
   };
 
-  const title = invite && name
-    ? tr(`INVITE ${name.toUpperCase()} TO PLAY`, `INVITAR A ${name.toUpperCase()} A JUGAR`, `INVITER ${name.toUpperCase()} À JOUER`)
-    : tr("CALL A MATCH", "CONVOCAR PARTIDO", "LANCER UN MATCH");
+  const trimmedName = name?.trim();
+  const title = invite && trimmedName
+    ? tr(`Invite ${trimmedName} to play`, `Invitar a ${trimmedName} a jugar`, `Inviter ${trimmedName} à jouer`)
+    : tr("Call a match", "Convocar partido", "Lancer un match");
 
   return <MatchForm title={title} submitLabel={tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} />;
 }

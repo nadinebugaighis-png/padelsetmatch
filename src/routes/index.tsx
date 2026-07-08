@@ -81,6 +81,10 @@ function Landing() {
               "linear-gradient(to right, var(--paper) 0%, color-mix(in oklab, var(--paper) 85%, transparent) 12%, transparent 40%)",
           }}
         />
+        {/* Right side fades to paper white so the green court area becomes clean white */}
+        <div
+          className="absolute inset-0 bg-[linear-gradient(to_right,transparent_80%,var(--paper)_95%)] sm:bg-[linear-gradient(to_right,transparent_60%,var(--paper)_75%)] lg:bg-[linear-gradient(to_right,transparent_38%,var(--paper)_50%)]"
+        />
       </div>
 
       {/* Header */}

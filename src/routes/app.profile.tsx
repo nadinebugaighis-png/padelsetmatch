@@ -403,6 +403,7 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
         >
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
+      </div>
     </div>
   );
 }

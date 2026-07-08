@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
 import { CookieBanner } from "@/components/CookieBanner";
+import { QRShareButton } from "@/components/QRShareButton";
 
 function readLang(): "en" | "es" {
   try {
@@ -159,6 +160,7 @@ function RootComponent() {
         <Outlet />
         <Toaster richColors position="top-center" />
         <CookieBanner />
+        <QRShareButton />
       </I18nProvider>
     </QueryClientProvider>
   );

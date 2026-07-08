@@ -3,6 +3,10 @@
 @import "@fontsource/barlow/500.css";
 @import "@fontsource/barlow/600.css";
 @import "@fontsource/barlow/700.css";
+@import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/600.css";
+@import "@fontsource/playfair-display/400-italic.css";
+@import "@fontsource/barlow/700.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";

@@ -333,7 +333,7 @@ function Onboarding() {
 
   if (profileQ.isLoading) {
     return (
-      <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center text-[var(--cream)]/70">
+      <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center text-[var(--ink)]/70">
         {tr("Loading your profile…", "Cargando tu perfil…", "Chargement de ton profil…")}
       </main>
     );
@@ -341,7 +341,7 @@ function Onboarding() {
   if (profileQ.isError) {
     return (
       <main className="px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center space-y-4">
-        <p className="text-[var(--cream)]/80">
+        <p className="text-[var(--ink)]/80">
           {tr("We couldn't load your profile. Please check your connection.", "No pudimos cargar tu perfil. Comprueba tu conexión.", "Impossible de charger ton profil. Vérifie ta connexion.")}
         </p>
         <Button onClick={() => profileQ.refetch()}>{tr("Try again", "Reintentar", "Réessayer")}</Button>
@@ -351,24 +351,24 @@ function Onboarding() {
 
   return (
     <main className="px-4 py-6 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-      <div className="flex items-center justify-between text-xs uppercase tracking-widest text-[var(--cream)]/60">
+      <div className="flex items-center justify-between text-xs uppercase tracking-widest text-[var(--ink)]/70">
         <span>{t("ob.step")} {step + 1} {t("ob.of")} {steps.length}</span>
         <span>{steps[step]}</span>
       </div>
-      <div className="h-1 mt-2 rounded-full bg-[var(--cream)]/10 overflow-hidden">
+      <div className="h-1 mt-2 rounded-full bg-[var(--ink)]/10 overflow-hidden">
         <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
       </div>
 
-      <div className="mt-6 surface-card p-5 space-y-4">
+      <div className="mt-6 rounded-3xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-sm p-5 sm:p-8 space-y-4">
         {step === 0 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h0")}</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.firstName")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
             <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.age")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.age")}</label>
             <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
-            <p className="text-[11px] text-[var(--cream)]/50">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.iAm")}</label>
+            <p className="text-[11px] text-[var(--ink)]/55">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
             <div className="flex flex-wrap gap-2">
               {GENDERS.map((g) => (
                 <button key={g} onClick={() => setGender(g)} className={`chip ${gender === g ? "chip-ball" : ""}`}>{label(g)}</button>
@@ -377,7 +377,7 @@ function Onboarding() {
             {gender === "self-describe" && (
               <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
             )}
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
             <div className="flex flex-wrap gap-2">
               {[
                 { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
@@ -395,7 +395,7 @@ function Onboarding() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-[var(--cream)]/50">{t("ob.privateNote")}</p>
+            <p className="text-xs text-[var(--ink)]/55">{t("ob.privateNote")}</p>
           </>
         )}
         {step === 1 && (
@@ -404,7 +404,7 @@ function Onboarding() {
 
             {hasPartnerGoal && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
                 <div className="flex flex-wrap gap-2">
                   {(["men", "women", "everyone"] as const).map((o) => (
                     <button key={o} onClick={() => setMeetPref(o)} className={`chip ${meetPref === o ? "chip-ball" : ""}`}>
@@ -418,19 +418,19 @@ function Onboarding() {
 
             {hasPartnerGoal && meetPref === "everyone" && (
               <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)", "Profil avancé (optionnel)")}</div>
-                <label className="text-[11px] text-[var(--cream)]/60">{tr("Sexual orientation", "Orientación sexual", "Orientation sexuelle")}</label>
+                <div className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)", "Profil avancé (optionnel)")}</div>
+                <label className="text-[11px] text-[var(--ink)]/70">{tr("Sexual orientation", "Orientación sexual", "Orientation sexuelle")}</label>
                 <Input
                   value={sexualOrientation}
                   onChange={(e) => setSexualOrientation(e.target.value)}
                   placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…", "p. ex. hétéro, gay, bisexuel·le, queer, pansexuel·le…")}
                   maxLength={60}
                 />
-                <p className="text-[10px] text-[var(--cream)]/50">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.", "Privé — utilisé seulement pour améliorer les matches. Pas affiché sur ton profil.")}</p>
+                <p className="text-[10px] text-[var(--ink)]/55">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.", "Privé — utilisé seulement pour améliorer les matches. Pas affiché sur ton profil.")}</p>
               </div>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ageRange")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">
               <AgeInput value={age_min} onCommit={setAgeMin} />
               <span>{t("ob.to")}</span>
@@ -443,8 +443,8 @@ function Onboarding() {
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
-              <p className="text-xs text-[var(--cream)]/50 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.", "Ajoute les endroits où tu joues — chez toi, au travail, ta maison d'été ou en voyage. Jusqu'à 3 zones par pays.")}</p>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
+              <p className="text-xs text-[var(--ink)]/55 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.", "Ajoute les endroits où tu joues — chez toi, au travail, ta maison d'été ou en voyage. Jusqu'à 3 zones par pays.")}</p>
             </div>
 
 
@@ -458,9 +458,9 @@ function Onboarding() {
                 return (
                   <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Location", "Ubicación", "Lieu")} {i + 1}</span>
+                      <span className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Location", "Ubicación", "Lieu")} {i + 1}</span>
                       {locBlocks.length > 1 && (
-                        <button type="button" onClick={() => removeBlock(i)} className="text-[var(--cream)]/60 hover:text-[var(--clay)]">
+                        <button type="button" onClick={() => removeBlock(i)} className="text-[var(--ink)]/70 hover:text-[var(--clay)]">
                           <X className="w-4 h-4" />
                         </button>
                       )}
@@ -473,7 +473,7 @@ function Onboarding() {
                         const firstCity = nextCountry && nextCountry !== CUSTOM ? (citiesFor(nextCountry)[0]?.name ?? "") : "";
                         updateBlock(i, { country: nextCountry, city: firstCity, areas: ["", "", ""] });
                       }}
-                      className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
+                      className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--ink)]"
                     >
                       <option value="" className="bg-[var(--court-deep)]">{tr("Country", "País", "Pays")}</option>
                       {COUNTRY_NAMES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
@@ -496,7 +496,7 @@ function Onboarding() {
                           updateBlock(i, { city: v === CUSTOM ? CUSTOM : v, areas: ["", "", ""] });
                         }}
                         disabled={!isReal(b.country) && countryInList}
-                        className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)] disabled:opacity-50"
+                        className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--ink)] disabled:opacity-50"
                       >
                         <option value="" className="bg-[var(--court-deep)]">{b.country ? tr("City", "Ciudad", "Ville") : tr("Pick country first", "Elige país primero", "Choisis d'abord le pays")}</option>
                         {cities.map((c) => <option key={c.name} value={c.name} className="bg-[var(--court-deep)]">{c.name}</option>)}
@@ -523,7 +523,7 @@ function Onboarding() {
                                 key={ai}
                                 value={a || "__none__"}
                                 onChange={(e) => updateArea(i, ai, e.target.value === "__none__" ? "" : e.target.value)}
-                                className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--cream)]"
+                                className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--ink)]"
                               >
                                 <option value="__none__" className="bg-[var(--court-deep)]">{tr("Area", "Zona", "Zone")} {ai + 1} ({tr("optional", "opcional", "optionnel")})</option>
                                 {areaOpts.filter((o) => !taken.has(o)).map((o) => <option key={o} value={o} className="bg-[var(--court-deep)]">{o}</option>)}
@@ -541,7 +541,7 @@ function Onboarding() {
                                 placeholder={`${tr("Area", "Zona", "Zone")} ${ai + 1} (${tr("optional", "opcional", "optionnel")})`}
                               />
                               {a && (
-                                <button type="button" onClick={() => updateArea(i, ai, "")} className="text-[var(--cream)]/60 hover:text-[var(--clay)] px-2">
+                                <button type="button" onClick={() => updateArea(i, ai, "")} className="text-[var(--ink)]/70 hover:text-[var(--clay)] px-2">
                                   <X className="w-4 h-4" />
                                 </button>
                               )}
@@ -551,7 +551,7 @@ function Onboarding() {
                       </div>
                     )}
                     {isReal(b.country) && !isReal(b.city) && (
-                      <p className="text-[11px] text-[var(--cream)]/80">
+                      <p className="text-[11px] text-[var(--ink)]/80">
                         {tr("Choose a city too so we can show nearby players.", "Elige también una ciudad para poder mostrar jugadores cerca.", "Choisis aussi une ville pour qu'on puisse montrer les joueurs à proximité.")}
                       </p>
                     )}
@@ -564,7 +564,7 @@ function Onboarding() {
             </div>
 
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.nat")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
             <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
               <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
               {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
@@ -572,14 +572,14 @@ function Onboarding() {
 
 
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.langs")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
             <div className="flex flex-wrap gap-2">
               {LANGUAGES.map((l) => (
                 <button key={l} onClick={() => toggleLanguage(l)} className={`chip ${languages.includes(l) ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_STYLES.map((s) => {
                 const on = padelStyle.includes(s);
@@ -601,20 +601,20 @@ function Onboarding() {
             </div>
 
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.padelLevel")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
             <div className="flex flex-wrap gap-2">
               {PADEL_LEVELS.map((l) => (
                 <button key={l} onClick={() => setLevel(l)} className={`chip ${level === l ? "chip-ball" : ""}`}>{label(l)}</button>
               ))}
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
             <div className="flex flex-wrap gap-2">
               {COURT_SIDES.map((s) => (
                 <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip ${courtSide === s ? "chip-ball" : ""}`}>{label(s)}</button>
               ))}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("When can you play?", "¿Cuándo puedes jugar?", "Quand peux-tu jouer ?")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("When can you play?", "¿Cuándo puedes jugar?", "Quand peux-tu jouer ?")}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABILITY_SLOTS.map((s) => (
                 <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip ${availability.includes(s) ? "chip-ball" : ""}`}>{label(s)}</button>
@@ -632,7 +632,7 @@ function Onboarding() {
                 <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--cream)] mt-0.5" />
                 <span>
                   <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis", "🎾 J'ai accès à une pista gratuitement")}</span>
-                  <span className="block text-xs text-[var(--cream)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.", "Club privé, pista résidentielle ou créneaux offerts à partager avec un match. Un badge apparaîtra sur ton profil.")}</span>
+                  <span className="block text-xs text-[var(--ink)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.", "Club privé, pista résidentielle ou créneaux offerts à partager avec un match. Un badge apparaîtra sur ton profil.")}</span>
                 </span>
               </label>
               {freeCourt && (
@@ -647,16 +647,16 @@ function Onboarding() {
             </div>
 
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.bio")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.bio")}</label>
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>
         )}
         {step === 3 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h3")}</h2>
-            <p className="text-sm text-[var(--cream)]/70">{t("ob.h3sub")} <b>{t("ob.h3priv")}</b></p>
+            <p className="text-sm text-[var(--ink)]/70">{t("ob.h3sub")} <b>{t("ob.h3priv")}</b></p>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.suggested")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.suggested")}</label>
             <div className="flex flex-wrap gap-2">
               {PRIORITY_TRAITS.map((tr) => {
                 const picked = priorities.includes(tr);
@@ -668,7 +668,7 @@ function Onboarding() {
               })}
             </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.addOwn")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.addOwn")}</label>
             <div className="flex gap-2">
               <Input
                 value={customTrait}
@@ -682,27 +682,27 @@ function Onboarding() {
 
             {priorities.length > 0 && (
               <>
-                <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{t("ob.ranking")}</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ranking")}</label>
                 <ul className="space-y-2">
                   {priorities.map((tr, i) => (
                     <li key={tr} className="flex items-center gap-2 bg-[var(--cream)]/5 rounded-md px-3 py-2">
-                      <span className="text-[var(--cream)] font-bold w-6">{i + 1}.</span>
+                      <span className="text-[var(--ink)] font-bold w-6">{i + 1}.</span>
                       <span className="flex-1 capitalize">{label(tr)}</span>
                       <button onClick={() => movePriority(i, -1)} disabled={i === 0} className="p-1 disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
                       <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} className="p-1 disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
-                      <button onClick={() => removePriority(tr)} className="p-1 text-[var(--cream)]/60 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
+                      <button onClick={() => removePriority(tr)} className="p-1 text-[var(--ink)]/70 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs text-[var(--cream)]/50">{t("ob.pickThree")}</p>
+                <p className="text-xs text-[var(--ink)]/55">{t("ob.pickThree")}</p>
               </>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Personal characteristics (pick up to 10)", "Características personales (elige hasta 10)", "Traits personnels (jusqu'à 10)")}</label>
-            <p className="text-[11px] text-[var(--cream)]/50 -mt-1">{tr("Pick a mix — a few strengths and a couple of honest edges make your profile feel real.", "Elige una mezcla — algunas fortalezas y un par de aristas honestas hacen que tu perfil se sienta real.", "Choisis un mélange — quelques forces et deux petits défauts assumés rendent ton profil vrai.")}</p>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Personal characteristics (pick up to 10)", "Características personales (elige hasta 10)", "Traits personnels (jusqu'à 10)")}</label>
+            <p className="text-[11px] text-[var(--ink)]/55 -mt-1">{tr("Pick a mix — a few strengths and a couple of honest edges make your profile feel real.", "Elige una mezcla — algunas fortalezas y un par de aristas honestas hacen que tu perfil se sienta real.", "Choisis un mélange — quelques forces et deux petits défauts assumés rendent ton profil vrai.")}</p>
 
             <div className="space-y-2">
-              <p className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70">{tr("Strengths", "Fortalezas", "Forces")}</p>
+              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/70">{tr("Strengths", "Fortalezas", "Forces")}</p>
               <div className="flex flex-wrap gap-2">
                 {PERSONAL_STRENGTHS.map((pt) => {
                   const on = personalTraits.includes(pt);
@@ -725,7 +725,7 @@ function Onboarding() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70">{tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
+              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/70">{tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
               <div className="flex flex-wrap gap-2">
                 {HONEST_EDGES.map((pt) => {
                   const on = personalTraits.includes(pt);
@@ -746,14 +746,14 @@ function Onboarding() {
                 })}
               </div>
             </div>
-            <p className="text-[11px] text-[var(--cream)]/50">{personalTraits.length}/10 {tr("selected", "seleccionados", "sélectionnés")}</p>
+            <p className="text-[11px] text-[var(--ink)]/55">{personalTraits.length}/10 {tr("selected", "seleccionados", "sélectionnés")}</p>
 
           </>
         )}
         {step === 4 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h4")}</h2>
-            <p className="text-sm text-[var(--cream)]/70">{t("ob.h4sub")}</p>
+            <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
             <label className="block aspect-[3/4] rounded-2xl border border-dashed border-[var(--cream)]/30 overflow-hidden relative cursor-pointer">
               {photoUrl ? (
                 <>
@@ -763,16 +763,16 @@ function Onboarding() {
                   </button>
                 </>
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--cream)]/60 gap-2">
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
                   <Camera className="w-8 h-8" />
                   <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                  <span className="text-[11px] text-[var(--cream)]/50 px-6 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
+                  <span className="text-[11px] text-[var(--ink)]/55 px-6 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
                 </div>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
             </label>
             {!photoUrl && (
-              <p className="text-[11px] text-[var(--cream)]/55 text-center">
+              <p className="text-[11px] text-[var(--ink)]/55 text-center">
                 {tr("No photo? No problem — you can add one anytime from your profile.", "¿Sin foto? Sin problema — puedes añadirla cuando quieras desde tu perfil.", "Pas de photo ? Pas de souci — tu peux en ajouter une plus tard depuis ton profil.")}
               </p>
             )}

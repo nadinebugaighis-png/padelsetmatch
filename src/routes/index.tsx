@@ -90,7 +90,7 @@ function Landing() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 px-5 sm:px-8 lg:px-16 pt-6 pb-4 flex items-center justify-between">
+      <header className="relative z-10 px-5 sm:px-8 lg:px-16 pt-3 lg:pt-4 pb-2 lg:pb-3 flex items-center justify-between">
         <BrandMark />
         <div className="flex items-center gap-2.5">
           <LangSwitch />

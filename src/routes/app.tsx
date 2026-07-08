@@ -145,7 +145,7 @@ function AuthShell() {
 
   return (
     <div className="min-h-screen pb-24 programme-page">
-      <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3">
+      <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3 max-w-7xl mx-auto w-full">
         <BrandMark size="sm" />
         <div className="flex items-center gap-2.5 shrink-0">
           {isAdmin && (

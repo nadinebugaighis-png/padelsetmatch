@@ -159,10 +159,10 @@ function ProfilePage() {
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow-lg"
+                className="w-24 h-24 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow-lg"
               />
             ) : (
-              <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+              <div className="w-24 h-24 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
                 <Camera className="w-8 h-8" />
               </div>
             )}
@@ -193,7 +193,7 @@ function ProfilePage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <h1 className="text-serif text-2xl sm:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+                <h1 className="text-serif text-2xl sm:text-4xl lg:text-5xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
                 <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
                   {p.age} · {label(p.level)} · {p.nationality}
                 </p>

@@ -545,11 +545,11 @@ function EventDetail() {
       )}
 
       {/* Actions */}
-      <div className="mt-5 space-y-2">
+      <div className="mt-6 space-y-2">
         {canJoin && (
           <button
             onClick={onJoin}
-            className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold"
+            className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.22em] font-semibold shadow-[0_10px_24px_-14px_rgba(15,62,46,0.6)] active:scale-[0.99] transition-transform"
           >
             {tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
@@ -557,7 +557,7 @@ function EventDetail() {
         {me?.iAmParticipant && !me?.iAmHost && (
           <button
             onClick={onLeave}
-            className="w-full py-2 rounded-full border border-[var(--ink)]/15 text-xs uppercase tracking-widest text-[var(--ink)]/70"
+            className="w-full py-2.5 rounded-full border border-[var(--ink)]/15 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors"
           >
             {tr("Leave match", "Salir del partido", "Quitter le match")}
           </button>
@@ -566,26 +566,32 @@ function EventDetail() {
           <>
             <button
               onClick={() => setInviteOpen(true)}
-              className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold inline-flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.22em] font-semibold shadow-[0_10px_24px_-14px_rgba(15,62,46,0.6)] active:scale-[0.99] transition-transform inline-flex items-center justify-center gap-2"
             >
               <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
             </button>
-            <button
-              onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-              className="w-full py-2 rounded-full border border-[var(--ink)]/30 text-xs uppercase tracking-widest text-[var(--ink)]"
-            >
-              {tr("Edit match", "Editar partido", "Modifier le match")}
-            </button>
-            <button
-              onClick={onToggleBooked}
-              className="w-full py-2 rounded-full border border-[var(--ink)]/15 text-xs uppercase tracking-widest text-[var(--ink)]/80"
-            >
-              {event.court_booked ? tr("Mark court not booked", "Marcar pista como no reservada", "Marquer pista non réservée") : tr("Mark court booked ✅", "Marcar pista reservada ✅", "Marquer pista réservée ✅")}
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
+                className="py-2.5 rounded-full border border-[var(--ink)]/25 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)] hover:bg-[var(--ink)]/5 transition-colors inline-flex items-center justify-center gap-1.5"
+              >
+                <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Modifier")}
+              </button>
+              <button
+                onClick={onToggleBooked}
+                className={`py-2.5 rounded-full text-[11px] uppercase tracking-[0.22em] transition-colors inline-flex items-center justify-center gap-1.5 ${
+                  event.court_booked
+                    ? "bg-[var(--grass)]/30 text-[var(--ink)] border border-[var(--ink)]/15 hover:bg-[var(--grass)]/40"
+                    : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                }`}
+              >
+                {event.court_booked ? <><Check className="w-3.5 h-3.5" /> {tr("Booked", "Reservada", "Réservée")}</> : tr("Mark booked", "Marcar reservada", "Marquer réservée")}
+              </button>
+            </div>
           </>
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
-          <p className="text-xs text-[var(--ink)]/50 text-center">
+          <p className="text-[11px] text-[var(--ink)]/50 text-center italic pt-1">
             {event.lock_active
               ? tr("This match is reserved for invited players right now.", "Este partido está reservado para invitados ahora mismo.", "Ce match est réservé aux joueurs invités pour l'instant.")
               : tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}

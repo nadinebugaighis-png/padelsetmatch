@@ -451,12 +451,12 @@ const es: Dict = {
   "prof.gender": "Género",
   "prof.playsIn": "Juega en",
   "prof.languages": "Idiomas",
-  "prof.privacy": "Tus preferencias (a quién buscas, rango de edad, valores que te importan) son privadas — solo las usa la IA para encontrar tus matches, nunca se muestran en tu perfil. Puedes rehacer el cuestionario cuando quieras.",
+  "prof.privacy": "Tus preferencias (a quién buscas, rango de edad, valores que te importan) son privadas — solo las usa la IA para encontrar tus matches y nunca se muestran en tu perfil. Puedes rehacer el cuestionario cuando quieras.",
   "prof.retake": "Editar perfil",
-  "prof.delete": "Borrar mi cuenta",
-  "prof.deleteConfirm": "¿Borrar tu cuenta para siempre? Esto elimina tu perfil, likes, matches y chats. No se puede deshacer.",
-  "prof.deleted": "Cuenta borrada",
-  "prof.deleteFail": "No se pudo borrar la cuenta",
+  "prof.delete": "Eliminar mi cuenta",
+  "prof.deleteConfirm": "¿Eliminar tu cuenta para siempre? Se borrarán tu perfil, likes, matches y chats. Esta acción no se puede deshacer.",
+  "prof.deleted": "Cuenta eliminada",
+  "prof.deleteFail": "No se pudo eliminar la cuenta",
 
   // Feedback
   "fb.title": "Haz esta app mejor",

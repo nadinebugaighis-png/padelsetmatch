@@ -11,6 +11,7 @@ import {
   deleteConnectPost,
   listConnectComments,
   listConnectPosts,
+  updateConnectComment,
   updateConnectPost,
   type ConnectCategory,
   type ConnectPost,

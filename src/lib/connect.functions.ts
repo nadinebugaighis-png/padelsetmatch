@@ -195,6 +195,15 @@ export const addConnectComment = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const updateConnectComment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), body: z.string().min(1).max(1000) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("connect_comments" as never).update({ body: data.body.trim() }).eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
 export const deleteConnectComment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))

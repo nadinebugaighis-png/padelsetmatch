@@ -63,6 +63,9 @@ function EventsPage() {
   const list = useServerFn(listOpenEvents);
   const quickCreate = useServerFn(quickCreateMatchEvent);
   const join = useServerFn(joinMatchEvent);
+  const leave = useServerFn(leaveMatchEvent);
+  const cancel = useServerFn(cancelMatchEvent);
+  const duplicate = useServerFn(duplicateMatchEvent);
   const getProfile = useServerFn(getMyProfile);
 
   const [worldwide, setWorldwide] = useState(false);

@@ -414,6 +414,8 @@ function RowCells({
   buckets,
   pending,
   onTap,
+  onMyDoubleTap,
+  onDropDuplicate,
   tr,
 }: {
   hour: number;
@@ -421,11 +423,42 @@ function RowCells({
   buckets: Map<string, EventLite[]>;
   pending: string | null;
   onTap: (d: Date, h: number) => void;
+  onMyDoubleTap: (e: EventLite) => void;
+  onDropDuplicate: (source: EventLite, target: { date: Date; hour: number }) => void;
   tr: ReturnType<typeof useTr>;
 }) {
   const nowH = new Date().getHours();
   const isCurrentHour = hour === nowH;
   const stripe = hour % 2 === 0 ? "bg-[var(--ink)]/[0.02]" : "";
+  const lastTapRef = useRef<{ id: string; ts: number } | null>(null);
+  const dragRef = useRef<{ event: EventLite; startX: number; startY: number; moved: boolean } | null>(null);
+
+  const onPointerDown = (ev: React.PointerEvent, primary: EventLite | undefined) => {
+    if (!primary) return;
+    const mine = primary.iAmHost || primary.iAmParticipant;
+    if (!mine) return;
+    dragRef.current = { event: primary, startX: ev.clientX, startY: ev.clientY, moved: false };
+  };
+  const onPointerMove = (ev: React.PointerEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    if (Math.abs(ev.clientX - d.startX) > 8 || Math.abs(ev.clientY - d.startY) > 8) d.moved = true;
+  };
+  const onPointerUp = (ev: React.PointerEvent) => {
+    const d = dragRef.current;
+    dragRef.current = null;
+    if (!d || !d.moved) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    const cell = el?.closest("[data-cell]") as HTMLElement | null;
+    if (!cell) return;
+    const dayIdx = Number(cell.getAttribute("data-day-idx"));
+    const targetHour = Number(cell.getAttribute("data-hour"));
+    if (Number.isNaN(dayIdx) || Number.isNaN(targetHour)) return;
+    onDropDuplicate(d.event, { date: days[dayIdx], hour: targetHour });
+  };
+
   return (
     <>
       <div className={`sticky left-0 z-10 bg-[var(--paper)] border-r border-b border-[var(--ink)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
@@ -437,22 +470,44 @@ function RowCells({
         const key = slotKey(d, hour);
         const events = buckets.get(key) ?? [];
         const primary = events[0];
-        const isPending = pending === key;
+        const isPending = pending === key || (primary && pending === primary.id);
         const startsAt = new Date(d);
         startsAt.setHours(hour, 0, 0, 0);
         const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
         const isNowCell = isCurrentHour && i === 0 && !past;
+        const mine = !!primary && (primary.iAmHost || primary.iAmParticipant);
         return (
           <button
             key={i}
             type="button"
+            data-cell
+            data-day-idx={i}
+            data-hour={hour}
             disabled={isPending || past}
-            onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative ${stripe} ${
+            onPointerDown={(e) => onPointerDown(e, primary)}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onClick={() => {
+              // Suppress click after a drag
+              if (dragRef.current?.moved) return;
+              // Double-tap on my match → leave/cancel
+              if (primary && mine) {
+                const now = Date.now();
+                const last = lastTapRef.current;
+                if (last && last.id === primary.id && now - last.ts < 350) {
+                  lastTapRef.current = null;
+                  onMyDoubleTap(primary);
+                  return;
+                }
+                lastTapRef.current = { id: primary.id, ts: now };
+              }
+              onTap(d, hour);
+            }}
+            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative touch-none ${stripe} ${
               past
                 ? "opacity-25 cursor-not-allowed"
                 : "hover:bg-[var(--ink)]/5 active:bg-[var(--ink)]/8 transition-colors"
-            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""}`}
+            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""} ${mine ? "cursor-grab" : ""}`}
             aria-label={tr(
               `${primary ? "Open" : "Add"} ${hour}:00 ${d.toDateString()}`,
               `${primary ? "Abrir" : "Añadir"} ${hour}:00`,
@@ -473,6 +528,8 @@ function RowCells({
     </>
   );
 }
+
+
 
 function slotColor(filled: number, mine: boolean) {
   if (filled >= 4) {

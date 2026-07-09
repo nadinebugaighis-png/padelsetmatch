@@ -128,8 +128,9 @@ export const getMyEndorsementFor = createServerFn({ method: "GET" })
 export const getCoachStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ coach_profile_id: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }) => {
-    const { data: stats, error } = await context.supabase.rpc("coach_stats" as never, {
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: stats, error } = await supabaseAdmin.rpc("coach_stats" as never, {
       _coach_profile_id: data.coach_profile_id,
     } as never);
     if (error) throw new Error(error.message);

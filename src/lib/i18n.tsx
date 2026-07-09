@@ -688,7 +688,7 @@ const fr: Dict = {
   "disc.loading": "Chargement des pistes…",
   "disc.blockTitle": "Bloquer — se cacher mutuellement",
   "disc.reportTitle": "Signaler — envoyé à l'équipe pour vérification",
-  "disc.scoreTooltip": "Score de match (0–100) : à quel point vos réponses correspondent",
+  "disc.scoreTooltip": "Score de match (0–100) : à quel point vos réponses s'alignent",
   "disc.reportPrompt": "Signaler {name} ?\n\nDécris ce qui s'est passé (harcèlement, fausse photo, abus, menaces…). Le compte est suspendu immédiatement et vérifié par notre équipe.",
   "disc.reportConfirm": "Envoyer le signalement ? Le compte de {name} sera suspendu en attendant vérification.",
   "disc.blockConfirm": "Bloquer {name} ? Vous ne vous verrez nulle part dans l'app.",

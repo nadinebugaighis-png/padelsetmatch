@@ -383,6 +383,34 @@ function EventsPage() {
           </button>
         </div>
 
+        <div className="mt-4 mb-3 inline-flex items-center rounded-full border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-1 text-[11px] uppercase tracking-widest">
+          <button
+            type="button"
+            onClick={() => setMode("find")}
+            className={`px-3.5 py-1.5 rounded-full transition-colors ${
+              mode === "find" ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/70"
+            }`}
+          >
+            {tr("Find a match", "Buscar partido", "Trouver un match")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("mine")}
+            className={`px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors ${
+              mode === "mine" ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/70"
+            }`}
+          >
+            {tr("My matches", "Mis partidos", "Mes matchs")}
+            {mineCount > 0 && (
+              <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${
+                mode === "mine" ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--plum)] text-[var(--paper)]"
+              }`}>
+                {mineCount}
+              </span>
+            )}
+          </button>
+        </div>
+
         <div className="relative mb-4">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 pointer-events-none">
             <Search className="w-4 h-4" />

@@ -79,6 +79,7 @@ function EventsPage() {
 
   const [worldwide, setWorldwide] = useState(false);
   const [search, setSearch] = useState("");
+  const [mode, setMode] = useState<"find" | "mine">("find");
   const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({
@@ -116,6 +117,18 @@ function EventsPage() {
   const visibleEvents = useMemo(
     () => ((eventsQ.data?.events ?? []) as EventLite[]).filter(eventMatchesName),
     [eventsQ.data, searchLower],
+  );
+
+  const myEvents = useMemo(
+    () => ((eventsQ.data?.events ?? []) as EventLite[])
+      .filter((e) => e.iAmHost || e.iAmParticipant)
+      .filter(eventMatchesName)
+      .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()),
+    [eventsQ.data, searchLower],
+  );
+  const mineCount = useMemo(
+    () => ((eventsQ.data?.events ?? []) as EventLite[]).filter((e) => e.iAmHost || e.iAmParticipant).length,
+    [eventsQ.data],
   );
 
   const buckets = useMemo(() => {
@@ -343,11 +356,17 @@ function EventsPage() {
               {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
             </h1>
             <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
-              {tr(
-                "Tap an empty hour to mark yourself free. Tap your match to manage it.",
-                "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
-                "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
-              )}
+              {mode === "find"
+                ? tr(
+                    "Tap an empty hour to mark yourself free. Tap your match to manage it.",
+                    "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
+                    "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
+                  )
+                : tr(
+                    "Your upcoming matches, in order.",
+                    "Tus próximos partidos, en orden.",
+                    "Tes prochains matchs, dans l'ordre.",
+                  )}
             </p>
           </div>
           <button
@@ -361,6 +380,34 @@ function EventsPage() {
           >
             <MapPin className="w-3 h-3" />
             {worldwide ? tr("World", "Mundo", "Monde") : tr("My areas", "Mis zonas", "Mes zones")}
+          </button>
+        </div>
+
+        <div className="mt-4 mb-3 inline-flex items-center rounded-full border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-1 text-[11px] uppercase tracking-widest">
+          <button
+            type="button"
+            onClick={() => setMode("find")}
+            className={`px-3.5 py-1.5 rounded-full transition-colors ${
+              mode === "find" ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/70"
+            }`}
+          >
+            {tr("Find a match", "Buscar partido", "Trouver un match")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("mine")}
+            className={`px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors ${
+              mode === "mine" ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/70"
+            }`}
+          >
+            {tr("My matches", "Mis partidos", "Mes matchs")}
+            {mineCount > 0 && (
+              <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${
+                mode === "mine" ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--plum)] text-[var(--paper)]"
+              }`}>
+                {mineCount}
+              </span>
+            )}
           </button>
         </div>
 
@@ -386,59 +433,74 @@ function EventsPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-          <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
-          <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
-          <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
-          <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
-        </div>
-
-        <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
-          <div
-            ref={scrollRef}
-            className="overflow-auto"
-            style={{ maxHeight: "calc(100vh - 260px)" }}
-          >
-            <div
-              className="grid"
-              style={{
-                gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
-                gridAutoRows: "56px",
-              }}
-            >
-              <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
-              {days.map((d, i) => {
-                const label = formatDay(d, lang, 0, i, tr);
-                const isToday = i === 0;
-                return (
-                  <div
-                    key={i}
-                    className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
-                      isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
-                    }`}
-                  >
-                    <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
-                      {label.top}
-                    </span>
-                    <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
-                  </div>
-                );
-              })}
-
-              {HOURS.map((h) => (
-                <RowCells
-                  key={h}
-                  hour={h}
-                  days={days}
-                  buckets={buckets}
-                  pending={pending}
-                  onTap={handleCellTap}
-                  tr={tr}
-                />
-              ))}
+        {mode === "find" ? (
+          <>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
+              <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
+              <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
+              <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
+              <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
             </div>
-          </div>
-        </div>
+
+            <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
+              <div
+                ref={scrollRef}
+                className="overflow-auto"
+                style={{ maxHeight: "calc(100vh - 260px)" }}
+              >
+                <div
+                  className="grid"
+                  style={{
+                    gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
+                    gridAutoRows: "56px",
+                  }}
+                >
+                  <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
+                  {days.map((d, i) => {
+                    const label = formatDay(d, lang, 0, i, tr);
+                    const isToday = i === 0;
+                    return (
+                      <div
+                        key={i}
+                        className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
+                          isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
+                        }`}
+                      >
+                        <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
+                          {label.top}
+                        </span>
+                        <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
+                      </div>
+                    );
+                  })}
+
+                  {HOURS.map((h) => (
+                    <RowCells
+                      key={h}
+                      hour={h}
+                      days={days}
+                      buckets={buckets}
+                      pending={pending}
+                      onTap={handleCellTap}
+                      tr={tr}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <MyMatchesList
+            events={myEvents}
+            lang={lang}
+            tr={tr}
+            pending={pending}
+            onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+            onManage={(e) => setMyMatchSheet(e)}
+            onLeave={(e) => instantLeave(e)}
+            onFind={() => setMode("find")}
+          />
+        )}
 
         {slotSheet && (
           <SlotSheet
@@ -933,6 +995,159 @@ function SlotSheet({
           + {tr("Start another match at this time", "Convocar otro partido a esta hora", "Lancer un autre match à cette heure")}
         </button>
       </div>
+    </div>
+  );
+}
+
+function MyMatchesList({
+  events,
+  lang,
+  tr,
+  pending,
+  onOpen,
+  onManage,
+  onLeave,
+  onFind,
+}: {
+  events: EventLite[];
+  lang: string;
+  tr: ReturnType<typeof useTr>;
+  pending: string | null;
+  onOpen: (id: string) => void;
+  onManage: (e: EventLite) => void;
+  onLeave: (e: EventLite) => void;
+  onFind: () => void;
+}) {
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
+
+  if (events.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-8 text-center">
+        <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
+          {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
+        </div>
+        <p className="text-sm text-[var(--ink)]/60 mb-4">
+          {tr(
+            "Mark yourself free or join a match to see it here.",
+            "Márcate disponible o únete a un partido para verlo aquí.",
+            "Marque-toi disponible ou rejoins un match pour le voir ici.",
+          )}
+        </p>
+        <button
+          type="button"
+          onClick={onFind}
+          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-5 py-2.5"
+        >
+          {tr("Find a match", "Buscar partido", "Trouver un match")}
+        </button>
+      </div>
+    );
+  }
+
+  const groups = new Map<string, EventLite[]>();
+  for (const e of events) {
+    const d = new Date(e.starts_at);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const arr = groups.get(key) ?? [];
+    arr.push(e);
+    groups.set(key, arr);
+  }
+
+  const todayKey = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  })();
+  const tomorrowKey = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  })();
+
+  return (
+    <div className="space-y-5">
+      {Array.from(groups.entries()).map(([key, list]) => {
+        const first = new Date(list[0].starts_at);
+        let label: string;
+        if (key === todayKey) label = tr("Today", "Hoy", "Aujourd'hui");
+        else if (key === tomorrowKey) label = tr("Tomorrow", "Mañana", "Demain");
+        else label = first.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
+        return (
+          <div key={key}>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 font-semibold mb-2 px-1">
+              {label}
+            </div>
+            <ul className="space-y-2">
+              {list.map((e) => {
+                const isPending = pending === e.id;
+                const filled = e.filled ?? 0;
+                const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+                return (
+                  <li
+                    key={e.id}
+                    className="rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3"
+                  >
+                    <div className="flex flex-col items-center justify-center w-14 shrink-0">
+                      <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
+                        <Clock className="w-3 h-3 inline mb-0.5" />
+                      </span>
+                      <span className="text-lg font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        {e.iAmHost ? (
+                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--plum)] text-[var(--paper)]">
+                            {tr("Host", "Anfitrión", "Hôte")}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]">
+                            {tr("Joined", "Unido", "Rejoint")}
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 text-[11px] text-[var(--ink)]/60">
+                          <Users className="w-3 h-3" />
+                          {filled}/4
+                        </span>
+                      </div>
+                      <div className="text-sm text-[var(--ink)] truncate">
+                        {e.club_name || tr("Match", "Partido", "Match")}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      {e.iAmHost ? (
+                        <button
+                          type="button"
+                          onClick={() => onManage(e)}
+                          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5"
+                        >
+                          {tr("Manage", "Gestionar", "Gérer")}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => onOpen(e.id)}
+                          className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5"
+                        >
+                          {tr("Open", "Abrir", "Ouvrir")}
+                        </button>
+                      )}
+                      {!e.iAmHost && (
+                        <button
+                          type="button"
+                          disabled={isPending}
+                          onClick={() => onLeave(e)}
+                          className="rounded-full border border-red-400/50 text-red-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 disabled:opacity-50"
+                        >
+                          {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
     </div>
   );
 }

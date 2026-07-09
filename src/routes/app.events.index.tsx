@@ -513,7 +513,8 @@ function RowCells({
         startsAt.setHours(hour, 0, 0, 0);
         const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
         const isNowCell = isCurrentHour && i === 0 && !past;
-        const mine = !!primary && (primary.iAmHost || primary.iAmParticipant);
+        const mine = events.some((ev) => ev.iAmHost || ev.iAmParticipant);
+        const iHost = events.some((ev) => ev.iAmHost);
         return (
           <button
             key={i}

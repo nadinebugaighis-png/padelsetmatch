@@ -827,6 +827,7 @@ function SlotSheet({
   onClose,
   onJoin,
   onLeave,
+  onManage,
   onOpen,
   onStartAnother,
 }: {
@@ -836,6 +837,7 @@ function SlotSheet({
   onClose: () => void;
   onJoin: (e: EventLite) => void;
   onLeave: (e: EventLite) => void;
+  onManage: (e: EventLite) => void;
   onOpen: (id: string) => void;
   onStartAnother: () => void;
 

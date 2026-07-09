@@ -129,9 +129,9 @@ function Discover() {
     mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast("Hidden from your Home grid — manage in Profile → Hidden & blocked", { duration: 2400 });
+      toast(tr("Hidden from your Home grid — manage in Profile → Hidden & blocked", "Oculto en tu Inicio — puedes gestionarlo en Perfil → Ocultos y bloqueados", "Masqué de ton accueil — gère-le dans Profil → Masqués et bloqués"), { duration: 2400 });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not hide"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not hide", "No se pudo ocultar", "Impossible de masquer")),
   });
   const reportM = useMutation({
     mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),

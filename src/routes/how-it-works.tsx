@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
-import { ArrowRight, UserRound, Search, CalendarCheck } from "lucide-react";
+import { ArrowRight, UserRound, Search, CalendarCheck, EyeOff, Heart, Send } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/how-it-works")({

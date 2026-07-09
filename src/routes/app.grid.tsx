@@ -636,7 +636,7 @@ function Discover() {
                       <button
                         type="button"
                         onClick={() => {
-                          if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                          if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
                           if (!preview.liked) likeM.mutate(preview.id);
                         }}
                         disabled={likeM.isPending && !match}

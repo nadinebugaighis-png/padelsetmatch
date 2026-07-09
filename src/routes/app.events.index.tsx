@@ -745,11 +745,11 @@ function MyMatchSheet({
         </div>
 
         <button
-          onClick={onEdit}
+          onClick={onOpen}
           disabled={busy}
-          className="w-full rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+          className="w-full rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold py-3 inline-flex items-center justify-center gap-1.5"
         >
-          <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Éditer")}
+          <Users className="w-3.5 h-3.5" /> {tr("Open match & chat", "Abrir partido y chat", "Ouvrir match & chat")}
         </button>
 
         {event.iAmHost && (

@@ -459,15 +459,15 @@ const es: Dict = {
   "prof.deleteFail": "No se pudo eliminar la cuenta",
 
   // Feedback
-  "fb.title": "Haz esta app mejor",
-  "fb.sub": "Sugerencias, errores, lo que te encantaría — llega directo al equipo.",
-  "fb.anon": "Tu feedback es completamente anónimo.",
-  "fb.placeholder": "¿Qué haría PadelMatch mejor para ti?",
+  "fb.title": "Ayúdanos a mejorar esta app",
+  "fb.sub": "Sugerencias, errores o lo que te encantaría — llega directo al equipo.",
+  "fb.anon": "Tu feedback es totalmente anónimo.",
+  "fb.placeholder": "¿Qué haría que PadelMatch fuera mejor para ti?",
   "fb.send": "Enviar",
   "fb.sending": "Enviando…",
-  "fb.thanks": "Gracias — tu feedback se envió.",
+  "fb.thanks": "Gracias — hemos recibido tu feedback.",
   "fb.fail": "No se pudo enviar. Inténtalo de nuevo.",
-  "fb.tooShort": "Escribe un poco más primero.",
+  "fb.tooShort": "Escribe un poco más, por favor.",
 
 
   // Onboarding

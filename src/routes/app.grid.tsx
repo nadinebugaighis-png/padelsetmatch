@@ -422,8 +422,8 @@ function Discover() {
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
                           className="w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
-                          aria-label={`Hide ${c.first_name}`}
-                          title="Not interested — hide from my Home grid"
+                          aria-label={tr(`Hide ${c.first_name}`, `Ocultar a ${c.first_name}`, `Masquer ${c.first_name}`)}
+                          title={tr("Not interested — hide from my Home grid", "No me interesa — ocultar de mi Inicio", "Pas intéressé·e — masquer de mon accueil")}
                         >
                           <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
                         </button>
@@ -432,14 +432,14 @@ function Discover() {
                           onClick={(e) => {
                             e.stopPropagation();
                             if (!c.liked) {
-                              toast.info(`Connect with ${c.first_name} first to request a match`);
+                              toast.info(tr(`Connect with ${c.first_name} first to request a match`, `Conecta primero con ${c.first_name} para proponer un partido`, `Connecte-toi d'abord avec ${c.first_name} pour proposer un match`));
                               return;
                             }
                             navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                           }}
                           className={`w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
-                          aria-label={`Request to play with ${c.first_name}`}
-                          title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
+                          aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
+                          title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
                         >
                           <Zap className="w-2.5 h-2.5" fill="currentColor" strokeWidth={1.5} />
 
@@ -454,8 +454,8 @@ function Discover() {
                           else likeM.mutate(c.id);
                         }}
                         className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
-                        aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
-                        title={c.liked ? "Connected" : "Like to connect"}
+                        aria-label={c.liked ? tr(`Unlike ${c.first_name}`, `Quitar «me interesa» a ${c.first_name}`, `Retirer le like à ${c.first_name}`) : tr(`Like ${c.first_name}`, `Marcar «me interesa» a ${c.first_name}`, `Aimer ${c.first_name}`)}
+                        title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                       >
                         <Heart
                           className={`w-2.5 h-2.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}

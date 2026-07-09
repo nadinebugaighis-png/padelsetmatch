@@ -729,6 +729,7 @@ export type Database = {
           created_at: string
           id: string
           last_message_at: string
+          origin: string
           profile_a: string
           profile_b: string
         }
@@ -736,6 +737,7 @@ export type Database = {
           created_at?: string
           id?: string
           last_message_at?: string
+          origin?: string
           profile_a: string
           profile_b: string
         }
@@ -743,6 +745,7 @@ export type Database = {
           created_at?: string
           id?: string
           last_message_at?: string
+          origin?: string
           profile_a?: string
           profile_b?: string
         }
@@ -1138,6 +1141,7 @@ export type Database = {
         Returns: boolean
       }
       my_profile_id: { Args: never; Returns: string }
+      open_coach_chat: { Args: { _coach_profile_id: string }; Returns: string }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
     }
     Enums: {

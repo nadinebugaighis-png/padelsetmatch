@@ -8,6 +8,8 @@ import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, 
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
+import { getSharedVenues } from "@/lib/venues.functions";
+import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
 
@@ -21,6 +23,38 @@ export const Route = createFileRoute("/app/grid")({
   }),
   component: Discover,
 });
+
+function SharedVenuesBadge({ otherProfileId }: { otherProfileId: string }) {
+  const tr = useTr();
+  const fn = useServerFn(getSharedVenues);
+  const q = useQuery({
+    queryKey: ["shared-venues", otherProfileId],
+    queryFn: () => fn({ data: { other_profile_id: otherProfileId } }),
+    staleTime: 60_000,
+  });
+  const d = q.data;
+  if (!d || d.count === 0) return null;
+  const hasNames = d.names && d.names.length > 0;
+  return (
+    <div className="rounded-2xl border border-[var(--grass)]/40 bg-[var(--grass)]/15 p-3 flex items-start gap-2">
+      <MapPin className="w-4 h-4 mt-0.5 text-[var(--ink)]" />
+      <div className="text-sm text-[var(--ink)]">
+        <div className="font-semibold">
+          {hasNames
+            ? tr(`You both play at ${d.names.join(", ")}`, `Ambos jugáis en ${d.names.join(", ")}`, `Vous jouez tous les deux à ${d.names.join(", ")}`)
+            : d.count === 1
+              ? tr("You share 1 venue", "Compartís 1 lugar", "Vous partagez 1 lieu")
+              : tr(`You share ${d.count} venues`, `Compartís ${d.count} lugares`, `Vous partagez ${d.count} lieux`)}
+        </div>
+        {!hasNames && (
+          <div className="text-xs text-[var(--ink)]/65 mt-0.5">
+            {tr("Kept private by one of you.", "Uno de vosotros lo mantiene privado.", "L'un de vous le garde privé.")}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function Discover() {
   const navigate = useNavigate({ from: "/app/grid" });
@@ -630,6 +664,8 @@ function Discover() {
                             
                         </div>
                       )}
+
+                      <SharedVenuesBadge otherProfileId={preview.id} />
 
                       {/* Primary actions — coach card + message/like button placed above the fold */}
                       {preview.is_coach && (

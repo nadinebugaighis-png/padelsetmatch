@@ -972,6 +972,42 @@ export type Database = {
           },
         ]
       }
+      profile_venues: {
+        Row: {
+          created_at: string
+          is_public: boolean
+          profile_id: string
+          venue_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_public?: boolean
+          profile_id: string
+          venue_id: string
+        }
+        Update: {
+          created_at?: string
+          is_public?: boolean
+          profile_id?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_venues_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_venues_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age: number | null
@@ -1284,6 +1320,50 @@ export type Database = {
         }
         Relationships: []
       }
+      venues: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          normalized_name: string
+          updated_at: string
+          venue_type: Database["public"]["Enums"]["venue_type"]
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          normalized_name: string
+          updated_at?: string
+          venue_type?: Database["public"]["Enums"]["venue_type"]
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          normalized_name?: string
+          updated_at?: string
+          venue_type?: Database["public"]["Enums"]["venue_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venues_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1314,6 +1394,8 @@ export type Database = {
         Returns: string
       }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
+      shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
+      venue_overlap_for_me: { Args: { _profile_ids: string[] }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
@@ -1329,6 +1411,7 @@ export type Database = {
       match_event_status: "open" | "full" | "cancelled" | "played"
       match_gender_rule: "mixed" | "men_only" | "women_only"
       match_invite_status: "pending" | "accepted" | "declined" | "revoked"
+      venue_type: "club" | "compound" | "public_court" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1470,6 +1553,7 @@ export const Constants = {
       match_event_status: ["open", "full", "cancelled", "played"],
       match_gender_rule: ["mixed", "men_only", "women_only"],
       match_invite_status: ["pending", "accepted", "declined", "revoked"],
+      venue_type: ["club", "compound", "public_court", "other"],
     },
   },
 } as const

@@ -135,6 +135,7 @@ export type Database = {
           created_at: string
           id: string
           post_id: string
+          updated_at: string
         }
         Insert: {
           author_profile_id: string
@@ -142,6 +143,7 @@ export type Database = {
           created_at?: string
           id?: string
           post_id: string
+          updated_at?: string
         }
         Update: {
           author_profile_id?: string
@@ -149,6 +151,7 @@ export type Database = {
           created_at?: string
           id?: string
           post_id?: string
+          updated_at?: string
         }
         Relationships: [
           {

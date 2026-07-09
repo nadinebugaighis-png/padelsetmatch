@@ -998,3 +998,156 @@ function SlotSheet({
     </div>
   );
 }
+
+function MyMatchesList({
+  events,
+  lang,
+  tr,
+  pending,
+  onOpen,
+  onManage,
+  onLeave,
+  onFind,
+}: {
+  events: EventLite[];
+  lang: string;
+  tr: ReturnType<typeof useTr>;
+  pending: string | null;
+  onOpen: (id: string) => void;
+  onManage: (e: EventLite) => void;
+  onLeave: (e: EventLite) => void;
+  onFind: () => void;
+}) {
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
+
+  if (events.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-8 text-center">
+        <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
+          {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
+        </div>
+        <p className="text-sm text-[var(--ink)]/60 mb-4">
+          {tr(
+            "Mark yourself free or join a match to see it here.",
+            "Márcate disponible o únete a un partido para verlo aquí.",
+            "Marque-toi disponible ou rejoins un match pour le voir ici.",
+          )}
+        </p>
+        <button
+          type="button"
+          onClick={onFind}
+          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-5 py-2.5"
+        >
+          {tr("Find a match", "Buscar partido", "Trouver un match")}
+        </button>
+      </div>
+    );
+  }
+
+  const groups = new Map<string, EventLite[]>();
+  for (const e of events) {
+    const d = new Date(e.starts_at);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const arr = groups.get(key) ?? [];
+    arr.push(e);
+    groups.set(key, arr);
+  }
+
+  const todayKey = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  })();
+  const tomorrowKey = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  })();
+
+  return (
+    <div className="space-y-5">
+      {Array.from(groups.entries()).map(([key, list]) => {
+        const first = new Date(list[0].starts_at);
+        let label: string;
+        if (key === todayKey) label = tr("Today", "Hoy", "Aujourd'hui");
+        else if (key === tomorrowKey) label = tr("Tomorrow", "Mañana", "Demain");
+        else label = first.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
+        return (
+          <div key={key}>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 font-semibold mb-2 px-1">
+              {label}
+            </div>
+            <ul className="space-y-2">
+              {list.map((e) => {
+                const isPending = pending === e.id;
+                const filled = e.filled ?? 0;
+                const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+                return (
+                  <li
+                    key={e.id}
+                    className="rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3"
+                  >
+                    <div className="flex flex-col items-center justify-center w-14 shrink-0">
+                      <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
+                        <Clock className="w-3 h-3 inline mb-0.5" />
+                      </span>
+                      <span className="text-lg font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        {e.iAmHost ? (
+                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--plum)] text-[var(--paper)]">
+                            {tr("Host", "Anfitrión", "Hôte")}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]">
+                            {tr("Joined", "Unido", "Rejoint")}
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 text-[11px] text-[var(--ink)]/60">
+                          <Users className="w-3 h-3" />
+                          {filled}/4
+                        </span>
+                      </div>
+                      <div className="text-sm text-[var(--ink)] truncate">
+                        {e.club_name || tr("Match", "Partido", "Match")}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      {e.iAmHost ? (
+                        <button
+                          type="button"
+                          onClick={() => onManage(e)}
+                          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5"
+                        >
+                          {tr("Manage", "Gestionar", "Gérer")}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => onOpen(e.id)}
+                          className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5"
+                        >
+                          {tr("Open", "Abrir", "Ouvrir")}
+                        </button>
+                      )}
+                      {!e.iAmHost && (
+                        <button
+                          type="button"
+                          disabled={isPending}
+                          onClick={() => onLeave(e)}
+                          className="rounded-full border border-red-400/50 text-red-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 disabled:opacity-50"
+                        >
+                          {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

@@ -131,7 +131,7 @@ const en: Dict = {
   "disc.loading": "Loading the courts…",
   "disc.blockTitle": "Block — hide from each other",
   "disc.reportTitle": "Report — sent to staff for review",
-  "disc.scoreTooltip": "Match score (0–100): how well your answers line up",
+  "disc.scoreTooltip": "Match score (0–100): how well you click",
   "disc.reportPrompt": "Report {name}?\n\nDescribe what happened (harassment, fake photo, abuse, threats…). The account is suspended immediately and reviewed by our team.",
   "disc.reportConfirm": "Send report? {name}'s account will be suspended pending staff review.",
   "disc.blockConfirm": "Block {name}? You won't see each other anywhere in the app.",

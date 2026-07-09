@@ -502,28 +502,66 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
             {(q.data ?? []).length === 0 && !q.isLoading && (
               <p className="text-xs text-[var(--ink)]/50 italic">{tr("No comments yet.", "Aún no hay comentarios.", "Aucun commentaire.")}</p>
             )}
-            {(q.data ?? []).map((c) => (
-              <div key={c.id} className="flex items-start gap-2.5">
-                {c.author?.photo_url ? (
-                  <img src={c.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/8">
-                  <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
-                    <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                    <span>·</span>
-                    <span>{timeAgo(c.created_at, tr)}</span>
-                    {myProfileId === c.author_profile_id && (
-                      <button onClick={() => delMut.mutate(c.id)} className="ml-auto text-red-500/70 hover:text-red-500">
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+            {(q.data ?? []).map((c) => {
+              const mine = myProfileId === c.author_profile_id;
+              const isEditing = editingComment?.id === c.id;
+              return (
+                <div key={c.id} className="flex items-start gap-2.5">
+                  {c.author?.photo_url ? (
+                    <img src={c.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/8">
+                    <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
+                      <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
+                      <span>·</span>
+                      <span>{timeAgo(c.created_at, tr)}</span>
+                      {mine && !isEditing && (
+                        <div className="ml-auto flex items-center gap-1">
+                          <button
+                            onClick={() => setEditingComment({ id: c.id, body: c.body })}
+                            className="text-[var(--ink)]/50 hover:text-[var(--plum)] transition p-1"
+                            aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
+                          <button onClick={() => delMut.mutate(c.id)} className="text-red-500/70 hover:text-red-500 p-1">
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {isEditing ? (
+                      <div className="mt-1.5 space-y-2">
+                        <Textarea
+                          value={editingComment?.body ?? ""}
+                          onChange={(e) => setEditingComment((prev) => prev ? { ...prev, body: e.target.value } : null)}
+                          className="bg-white text-sm min-h-[60px]"
+                        />
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => setEditingComment(null)}
+                            className="text-xs font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] px-2 py-1"
+                          >
+                            {tr("Cancel", "Cancelar", "Annuler")}
+                          </button>
+                          <Button
+                            disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
+                            onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
+                            className="bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-7 px-3 text-xs"
+                          >
+                            {tr("Save", "Guardar", "Enregistrer")}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-[var(--ink)]/85 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
                     )}
                   </div>
-                  <p className="text-sm text-[var(--ink)]/85 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         <div className="border-t border-[var(--ink)]/10 p-3 flex items-center gap-2 bg-[var(--paper)]">

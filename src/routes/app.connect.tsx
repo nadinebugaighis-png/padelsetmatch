@@ -453,7 +453,9 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
   const listC = useServerFn(listConnectComments);
   const addC = useServerFn(addConnectComment);
   const delC = useServerFn(deleteConnectComment);
+  const updC = useServerFn(updateConnectComment);
   const [body, setBody] = useState("");
+  const [editingComment, setEditingComment] = useState<{ id: string; body: string } | null>(null);
 
   const q = useQuery({ queryKey: ["connect-comments", post.id], queryFn: () => listC({ data: { postId: post.id } }) });
 
@@ -473,6 +475,17 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
       qc.invalidateQueries({ queryKey: ["connect-comments", post.id] });
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
     },
+  });
+
+  const updateMut = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: string }) => updC({ data: { id, body } }),
+    onSuccess: () => {
+      setEditingComment(null);
+      qc.invalidateQueries({ queryKey: ["connect-comments", post.id] });
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      toast.success(tr("Comment updated", "Comentario actualizado", "Commentaire mis à jour"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
 
   return (

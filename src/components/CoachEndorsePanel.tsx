@@ -87,17 +87,15 @@ export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileI
         )}
       </div>
 
-      <Button
+      <button
         type="button"
-        size="sm"
-        variant="outline"
-        className="mt-3 w-full gap-2"
         disabled={message.isPending}
         onClick={() => message.mutate()}
+        className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-semibold bg-[var(--plum)]/12 hover:bg-[var(--plum)]/20 text-[var(--plum)] border border-[var(--plum)]/25 transition disabled:opacity-60"
       >
         <MessageCircle className="w-4 h-4" />
         {message.isPending ? "…" : tr(`Message ${coachName}`, `Enviar mensaje a ${coachName}`, `Envoyer un message à ${coachName}`)}
-      </Button>
+      </button>
 
 
 

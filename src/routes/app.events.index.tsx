@@ -265,10 +265,15 @@ function EventsPage() {
     setPending(e.id);
     try {
       const { id } = await duplicate({ data: { id: e.id, starts_at: target.toISOString() } });
-      toast.success(tr("Copied to +" + hoursAhead + "h", "Copiado a +" + hoursAhead + "h", "Copié à +" + hoursAhead + "h"));
       await refetch();
       setMyMatchSheet(null);
-      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+      toast.success(tr(`Copied to +${hoursAhead}h`, `Copiado a +${hoursAhead}h`, `Copié à +${hoursAhead}h`), {
+        duration: 10000,
+        action: {
+          label: tr("Open", "Abrir", "Ouvrir"),
+          onClick: () => navigate({ to: "/app/events/$eventId", params: { eventId: id } }),
+        },
+      });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Could not copy", "No se pudo copiar", "Impossible de copier"));
     } finally {

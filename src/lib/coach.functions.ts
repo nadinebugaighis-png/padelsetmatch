@@ -139,3 +139,14 @@ export const getCoachStats = createServerFn({ method: "GET" })
       comments: Array<{ stars: number; comment: string; approved_at: string }>;
     };
   });
+
+export const openCoachChat = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ coach_profile_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: matchId, error } = await context.supabase.rpc("open_coach_chat" as never, {
+      _coach_profile_id: data.coach_profile_id,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { match_id: matchId as unknown as string };
+  });

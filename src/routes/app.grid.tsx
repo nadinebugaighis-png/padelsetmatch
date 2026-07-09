@@ -315,7 +315,7 @@ function Discover() {
             }`}
             aria-expanded={showFilters}
           >
-            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+            {tr("Filters", "Filtros", "Filtres")}{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
           </button>
         </div>
@@ -324,40 +324,40 @@ function Discover() {
         {showFilters && (
           <div className="mt-3 p-3 rounded-xl border border-[var(--ink)]/15 bg-white space-y-3">
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">Padel level</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
               <select
                 value={levelFilter}
                 onChange={(e) => setLevelFilter(e.target.value)}
                 className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               >
-                <option value="all">Any level</option>
+                <option value="all">{tr("Any level", "Cualquier nivel", "Tous niveaux")}</option>
                 {PADEL_LEVELS.map((lv) => (
                   <option key={lv} value={lv}>{label(lv)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">Barrio / zone</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">{tr("Barrio / zone", "Barrio / zona", "Quartier / zone")}</label>
               <select
                 value={zoneFilter}
                 onChange={(e) => setZoneFilter(e.target.value)}
                 className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               >
-                <option value="all">Any zone</option>
+                <option value="all">{tr("Any zone", "Cualquier zona", "Toutes les zones")}</option>
                 {zonesInFeed.length > 0 && (
-                <optgroup label="From players in your Home grid">
+                <optgroup label={tr("From players in your Home grid", "De jugadores en tu Inicio", "Depuis les joueurs de ton accueil")}>
                     {zonesInFeed.map((z) => (
                       <option key={`feed-${z}`} value={z}>{z}</option>
                     ))}
                   </optgroup>
                 )}
-                <optgroup label="All Madrid zones">
+                <optgroup label={tr("All Madrid zones", "Todas las zonas de Madrid", "Toutes les zones de Madrid")}>
                   {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
                     <option key={`all-${z}`} value={z}>{z}</option>
                   ))}
                 </optgroup>
               </select>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">Matches on players' city, barrio or listed areas.</p>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">{tr("Matches on players' city, barrio or listed areas.", "Coincide con la ciudad, el barrio o las zonas indicadas por los jugadores.", "Correspond à la ville, au quartier ou aux zones indiquées par les joueurs.")}</p>
             </div>
             {activeFilterCount > 0 && (
               <button

@@ -12,10 +12,10 @@ export async function sendWebPush(
   sub: { endpoint: string; p256dh: string; auth: string },
   message: { title: string; body?: string; url?: string; type?: string },
 ): Promise<{ ok: boolean; status: number; expired: boolean }> {
-  const subscription: WPSubscription = { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } };
+  const subscription: WPSubscription = { endpoint: sub.endpoint, expirationTime: null, keys: { p256dh: sub.p256dh, auth: sub.auth } };
   const payload: PushMessage = { data: JSON.stringify(message), options: { ttl: 60 * 60 * 24 } };
   const req = await buildPushPayload(payload, subscription, getVapid());
-  const res = await fetch(subscription.endpoint, req);
+  const res = await fetch(subscription.endpoint, req as unknown as RequestInit);
   const expired = res.status === 404 || res.status === 410;
   return { ok: res.ok, status: res.status, expired };
 }

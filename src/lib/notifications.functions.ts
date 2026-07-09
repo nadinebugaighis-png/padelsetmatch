@@ -2,6 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+export const getVapidPublicKey = createServerFn({ method: "GET" }).handler(async () => {
+  return { key: process.env.VAPID_PUBLIC_KEY ?? "" };
+});
+
 const subscribeSchema = z.object({
   endpoint: z.string().url(),
   p256dh: z.string().min(1),

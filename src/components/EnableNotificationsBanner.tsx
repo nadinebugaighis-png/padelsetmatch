@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bell, X } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { saveMyPushSubscription } from "@/lib/notifications.functions";
+import { saveMyPushSubscription, getVapidPublicKey } from "@/lib/notifications.functions";
 import { pushSupported, subscribeToPush } from "@/lib/push-client";
 import { useTr } from "@/lib/i18n";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export function EnableNotificationsBanner() {
   const enable = async () => {
     setBusy(true);
     try {
-      const key = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+      const { key } = await getVapidPublicKey();
       if (!key) { toast.error("Push not configured"); return; }
       const sub = await subscribeToPush(key);
       if (!sub) {

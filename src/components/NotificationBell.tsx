@@ -82,7 +82,7 @@ export function NotificationBell() {
         )}
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-[320px] max-w-[calc(100vw-32px)] bg-[var(--paper)] border border-[var(--ink)]/15 rounded-xl shadow-xl z-50 overflow-hidden">
+        <div className="fixed left-3 right-3 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[340px] bg-[var(--paper)] border border-[var(--ink)]/15 rounded-xl shadow-xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--ink)]/10">
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold">
               {tr("Notifications", "Notificaciones", "Notifications")}

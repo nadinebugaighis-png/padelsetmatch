@@ -270,6 +270,8 @@ function ProfilePage() {
 
           <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
 
+          <VenuesSection />
+
           <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
         </div>

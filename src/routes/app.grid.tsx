@@ -707,7 +707,7 @@ function Discover() {
                             <div>
                               <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
                               <div className="flex flex-wrap gap-2">
-                                {locs.map((l) => <span key={l} className="chip">{l}</span>)}
+                                {locs.map((l) => <span key={l} className="chip-paper">{l}</span>)}
                               </div>
                             </div>
                           );
@@ -717,7 +717,7 @@ function Discover() {
                           <div>
                             <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
                             <div className="flex flex-wrap gap-2">
-                              {preview.languages!.map((l) => <span key={l} className="chip">{label(l)}</span>)}
+                              {preview.languages!.map((l) => <span key={l} className="chip-paper">{label(l)}</span>)}
                             </div>
                           </div>
                         )}

@@ -480,28 +480,25 @@ function Discover() {
                     <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
                       {c.zone} · {label(c.level)}
                     </p>
-                    {(c as any).is_coach && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
-                        <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
-                      </div>
-                    )}
                     {away && (
                       <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
                         ✈ On holidays
                       </div>
                     )}
 
-                    <div className="mt-2 flex items-center justify-between">
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
                       {c.free_court_access ? (
                         <span className="px-2 py-0.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)] text-[8px] font-bold uppercase tracking-tight flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
                           Free Court
                         </span>
-                      ) : <span />}
-                      <div
-                        className="w-6 h-6 rounded-full border border-[var(--ink)] text-[var(--ink)] text-[10px] flex items-center justify-center font-bold"
-                        title={t("disc.scoreTooltip")}
-                      >
+                      ) : null}
+                      {(c as any).is_coach && (
+                        <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
+                          <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
+                        </div>
+                      )}
+                      <div className="ml-auto w-6 h-6 rounded-full border border-[var(--ink)] text-[var(--ink)] text-[10px] flex items-center justify-center font-bold" title={t("disc.scoreTooltip")}>
                         {c.score}
                       </div>
                     </div>

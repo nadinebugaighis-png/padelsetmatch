@@ -216,7 +216,9 @@ export type Profile = {
   personal_traits?: string[];
   padel_style?: string[];
   world_mode?: boolean;
+  is_coach?: boolean;
 };
+
 
 export type RankedCandidate = Profile & {
   score: number;

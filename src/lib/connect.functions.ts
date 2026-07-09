@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-const CATEGORIES = ["traveling", "selling", "looking_to_play", "question", "news", "other"] as const;
+const CATEGORIES = ["traveling", "selling", "looking_to_play", "looking_for_coach", "question", "news", "other"] as const;
 
 export type ConnectCategory = (typeof CATEGORIES)[number];
 

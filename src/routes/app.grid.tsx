@@ -754,7 +754,7 @@ function Discover() {
                     className="h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
+                    {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                   </button>
                 </div>
               </>
@@ -774,7 +774,7 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
   if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
     <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-3">{tr("Your Match Score", "Tu puntuación de compatibilidad", "Ton score de match")}</div>
 
       <div className="flex items-center gap-4">
         <div className="text-display text-5xl text-[var(--ink)] leading-none">{total}%</div>

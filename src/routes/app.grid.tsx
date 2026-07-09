@@ -23,7 +23,7 @@ export const Route = createFileRoute("/app/grid")({
 });
 
 function Discover() {
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/app/grid" });
   const qc = useQueryClient();
   const { t, label, lang } = useI18n();
   const tr = useTr();

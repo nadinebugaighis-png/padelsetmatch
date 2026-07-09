@@ -104,7 +104,7 @@ function HowItWorksPage() {
           />
           <Step
             n="3"
-            title={tr("Match, chat, play", "Empareja, chatea, juega")+ ""} 
+            title={tr("Match, chat, play", "Empareja, chatea, juega", "Match, chat, joue")} 
             body={tr(
               "See compatible players nearby. Pulse the ones you like — they only find out if they pulse you back. Then chat and book a court.",
               "Ves jugadores compatibles cerca. Pulsa a los que te interesen — solo se enterarán si te devuelven el gesto. Después, chat y a reservar pista.",

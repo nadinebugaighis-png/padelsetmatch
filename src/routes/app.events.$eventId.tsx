@@ -720,9 +720,6 @@ function EventDetail() {
               <Send className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-[10px] text-[var(--ink)]/50 mt-2">
-            {tr("🎾 For safety, arrange the actual court on Playtomic when possible.", "🎾 Por seguridad, reservad la pista en Playtomic siempre que podáis.", "🎾 Pour la sécurité, organise la pista sur Playtomic quand c'est possible.")}
-          </p>
         </div>
       )}
     </div>

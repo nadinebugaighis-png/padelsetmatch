@@ -180,7 +180,7 @@ function HowItWorksPage() {
             </p>
           </div>
           <div className="rounded-2xl bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] p-6 sm:p-7 border border-[color-mix(in_oklab,var(--plum)_25%,transparent)]">
-            <h3 className="text-serif uppercase text-xl leading-tight text-[var(--ink)]">
+            <h3 className="mt-11 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
               {tr("Silent likes", "Me gusta en silencio", "Likes silencieux")}
             </h3>
             <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">

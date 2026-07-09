@@ -156,17 +156,18 @@ function EventsPage() {
       const { id } = await quickCreate({ data: { starts_at: startsAt.toISOString() } });
       await refetch();
       toast.success(tr("You're marked as free", "Marcado como disponible", "Marqué comme disponible"), {
-        duration: 6000,
+        duration: 12000,
+        description: tr("Changed your mind? Tap Remove.", "¿Cambiaste de idea? Toca Quitar.", "Changé d'avis ? Touche Retirer."),
         action: {
-          label: tr("Undo", "Deshacer", "Annuler"),
+          label: tr("Remove", "Quitar", "Retirer"),
           onClick: async () => {
             try {
               await deleteFn({ data: { id } });
               refetch();
+              toast(tr("Removed", "Quitado", "Retiré"));
             } catch {/* ignore */}
           },
         },
-        description: tr("Tap 'Add details' to set club and level.", "Toca 'Detalles' para añadir club y nivel.", "Touche 'Détails' pour ajouter club et niveau."),
         cancel: {
           label: tr("Details", "Detalles", "Détails"),
           onClick: () => navigate({ to: "/app/events/$eventId/edit", params: { eventId: id } }),
@@ -189,13 +190,15 @@ function EventsPage() {
       await join({ data: { id: e.id } });
       await refetch();
       toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"), {
-        duration: 6000,
+        duration: 12000,
+        description: tr("Joined by mistake? Tap Leave.", "¿Te uniste por error? Toca Salir.", "Rejoint par erreur ? Touche Quitter."),
         action: {
-          label: tr("Undo", "Deshacer", "Annuler"),
+          label: tr("Leave", "Salir", "Quitter"),
           onClick: async () => {
             try {
               await leave({ data: { id: e.id } });
               refetch();
+              toast(tr("You left", "Has salido", "Vous avez quitté"));
             } catch {/* ignore */}
           },
         },
@@ -210,6 +213,7 @@ function EventsPage() {
       setPending(null);
     }
   }
+
 
   async function instantLeave(e: EventLite) {
     setPending(e.id);

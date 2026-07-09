@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bell, X } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { saveMyPushSubscription } from "@/lib/notifications.functions";
+import { saveMyPushSubscription, getVapidPublicKey } from "@/lib/notifications.functions";
 import { pushSupported, subscribeToPush } from "@/lib/push-client";
 import { useTr } from "@/lib/i18n";
 import { toast } from "sonner";

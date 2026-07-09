@@ -698,13 +698,6 @@ function Discover() {
                         )}
                       </div>
 
-
-
-
-                      {preview.is_coach && (
-                        <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
-                      )}
-
                       {/* Me-style profile card (age intentionally omitted for privacy) */}
 
                       <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">

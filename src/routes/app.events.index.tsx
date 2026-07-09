@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent } from "@/lib/match-events.functions";
+import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent, leaveMatchEvent, cancelMatchEvent, duplicateMatchEvent } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { MapPin, Settings2, Search, X } from "lucide-react";
 import { RacketIcon } from "@/components/RacketIcon";
@@ -63,6 +63,9 @@ function EventsPage() {
   const list = useServerFn(listOpenEvents);
   const quickCreate = useServerFn(quickCreateMatchEvent);
   const join = useServerFn(joinMatchEvent);
+  const leave = useServerFn(leaveMatchEvent);
+  const cancel = useServerFn(cancelMatchEvent);
+  const duplicate = useServerFn(duplicateMatchEvent);
   const getProfile = useServerFn(getMyProfile);
 
   const [worldwide, setWorldwide] = useState(false);
@@ -188,6 +191,61 @@ function EventsPage() {
     setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
   }
 
+  // Double-tap on my match → leave (participant) or cancel (host & alone)
+  async function handleMyDoubleTap(e: EventLite) {
+    if (pending) return;
+    if (e.iAmHost) {
+      if ((e.filled ?? 0) > 0) {
+        toast.info(tr("You're the host — open the match to manage it.", "Eres el anfitrión — abre el partido para gestionarlo.", "Tu es l'hôte — ouvre le match pour le gérer."));
+        return;
+      }
+      if (!confirm(tr("Cancel this match?", "¿Cancelar este partido?", "Annuler ce match ?"))) return;
+      setPending(e.id);
+      try {
+        await cancel({ data: { id: e.id } });
+        toast.success(tr("Match cancelled", "Partido cancelado", "Match annulé"));
+        await qc.invalidateQueries({ queryKey: ["open-events"] });
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
+      } finally { setPending(null); }
+      return;
+    }
+    if (e.iAmParticipant) {
+      if (!confirm(tr("Leave this match?", "¿Salir de este partido?", "Quitter ce match ?"))) return;
+      setPending(e.id);
+      try {
+        await leave({ data: { id: e.id } });
+        toast.success(tr("You left the match", "Has salido del partido", "Tu as quitté le match"));
+        await qc.invalidateQueries({ queryKey: ["open-events"] });
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : tr("Could not leave", "No se pudo salir", "Impossible de quitter"));
+      } finally { setPending(null); }
+    }
+  }
+
+  // Drag-to-duplicate: on release, find the target cell under pointer
+  async function handleDropDuplicate(sourceEvent: EventLite, target: { date: Date; hour: number }) {
+    if (!sourceEvent.iAmHost) {
+      toast.info(tr("Only the host can duplicate this match.", "Solo el anfitrión puede duplicar este partido.", "Seul l'hôte peut dupliquer ce match."));
+      return;
+    }
+    const startsAt = new Date(target.date);
+    startsAt.setHours(target.hour, 0, 0, 0);
+    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
+      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
+      return;
+    }
+    setPending(sourceEvent.id);
+    try {
+      const { id } = await duplicate({ data: { id: sourceEvent.id, starts_at: startsAt.toISOString() } });
+      toast.success(tr("Match duplicated", "Partido duplicado", "Match dupliqué"));
+      await qc.invalidateQueries({ queryKey: ["open-events"] });
+      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Could not duplicate", "No se pudo duplicar", "Impossible de dupliquer"));
+    } finally { setPending(null); }
+  }
+
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-28">
@@ -304,6 +362,8 @@ function EventsPage() {
                 buckets={buckets}
                 pending={pending}
                 onTap={handleCellTap}
+                onMyDoubleTap={handleMyDoubleTap}
+                onDropDuplicate={handleDropDuplicate}
                 tr={tr}
               />
             ))}
@@ -354,6 +414,8 @@ function RowCells({
   buckets,
   pending,
   onTap,
+  onMyDoubleTap,
+  onDropDuplicate,
   tr,
 }: {
   hour: number;
@@ -361,11 +423,42 @@ function RowCells({
   buckets: Map<string, EventLite[]>;
   pending: string | null;
   onTap: (d: Date, h: number) => void;
+  onMyDoubleTap: (e: EventLite) => void;
+  onDropDuplicate: (source: EventLite, target: { date: Date; hour: number }) => void;
   tr: ReturnType<typeof useTr>;
 }) {
   const nowH = new Date().getHours();
   const isCurrentHour = hour === nowH;
   const stripe = hour % 2 === 0 ? "bg-[var(--ink)]/[0.02]" : "";
+  const lastTapRef = useRef<{ id: string; ts: number } | null>(null);
+  const dragRef = useRef<{ event: EventLite; startX: number; startY: number; moved: boolean } | null>(null);
+
+  const onPointerDown = (ev: ReactPointerEvent, primary: EventLite | undefined) => {
+    if (!primary) return;
+    const mine = primary.iAmHost || primary.iAmParticipant;
+    if (!mine) return;
+    dragRef.current = { event: primary, startX: ev.clientX, startY: ev.clientY, moved: false };
+  };
+  const onPointerMove = (ev: ReactPointerEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    if (Math.abs(ev.clientX - d.startX) > 8 || Math.abs(ev.clientY - d.startY) > 8) d.moved = true;
+  };
+  const onPointerUp = (ev: ReactPointerEvent) => {
+    const d = dragRef.current;
+    dragRef.current = null;
+    if (!d || !d.moved) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    const el = document.elementFromPoint(ev.clientX, ev.clientY);
+    const cell = el?.closest("[data-cell]") as HTMLElement | null;
+    if (!cell) return;
+    const dayIdx = Number(cell.getAttribute("data-day-idx"));
+    const targetHour = Number(cell.getAttribute("data-hour"));
+    if (Number.isNaN(dayIdx) || Number.isNaN(targetHour)) return;
+    onDropDuplicate(d.event, { date: days[dayIdx], hour: targetHour });
+  };
+
   return (
     <>
       <div className={`sticky left-0 z-10 bg-[var(--paper)] border-r border-b border-[var(--ink)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
@@ -377,22 +470,44 @@ function RowCells({
         const key = slotKey(d, hour);
         const events = buckets.get(key) ?? [];
         const primary = events[0];
-        const isPending = pending === key;
+        const isPending = pending === key || (primary && pending === primary.id);
         const startsAt = new Date(d);
         startsAt.setHours(hour, 0, 0, 0);
         const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
         const isNowCell = isCurrentHour && i === 0 && !past;
+        const mine = !!primary && (primary.iAmHost || primary.iAmParticipant);
         return (
           <button
             key={i}
             type="button"
+            data-cell
+            data-day-idx={i}
+            data-hour={hour}
             disabled={isPending || past}
-            onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative ${stripe} ${
+            onPointerDown={(e) => onPointerDown(e, primary)}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onClick={() => {
+              // Suppress click after a drag
+              if (dragRef.current?.moved) return;
+              // Double-tap on my match → leave/cancel
+              if (primary && mine) {
+                const now = Date.now();
+                const last = lastTapRef.current;
+                if (last && last.id === primary.id && now - last.ts < 350) {
+                  lastTapRef.current = null;
+                  onMyDoubleTap(primary);
+                  return;
+                }
+                lastTapRef.current = { id: primary.id, ts: now };
+              }
+              onTap(d, hour);
+            }}
+            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative touch-none ${stripe} ${
               past
                 ? "opacity-25 cursor-not-allowed"
                 : "hover:bg-[var(--ink)]/5 active:bg-[var(--ink)]/8 transition-colors"
-            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""}`}
+            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""} ${mine ? "cursor-grab" : ""}`}
             aria-label={tr(
               `${primary ? "Open" : "Add"} ${hour}:00 ${d.toDateString()}`,
               `${primary ? "Abrir" : "Añadir"} ${hour}:00`,
@@ -413,6 +528,8 @@ function RowCells({
     </>
   );
 }
+
+
 
 function slotColor(filled: number, mine: boolean) {
   if (filled >= 4) {

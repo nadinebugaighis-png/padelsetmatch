@@ -402,6 +402,58 @@ export const deleteMatchEvent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ---------- Duplicate (host) — copy match to another slot, keep participants ----------
+export const duplicateMatchEvent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string; starts_at: string }) =>
+    z.object({ id: z.string().uuid(), starts_at: z.string().min(1) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    const { data: src } = await supabase
+      .from("match_events")
+      .select("*")
+      .eq("id", data.id)
+      .eq("host_profile_id", profile.id)
+      .maybeSingle();
+    if (!src) throw new Error("Only the host can duplicate this match");
+    const { data: created, error } = await supabase
+      .from("match_events")
+      .insert({
+        starts_at: data.starts_at,
+        club_name: src.club_name,
+        club_address: src.club_address,
+        club_place_id: src.club_place_id,
+        club_lat: src.club_lat,
+        club_lng: src.club_lng,
+        city: src.city,
+        country: src.country,
+        level_min: src.level_min,
+        level_max: src.level_max,
+        gender_rule: src.gender_rule,
+        extra_confirmed: src.extra_confirmed ?? 0,
+        note: src.note,
+        playtomic_link: src.playtomic_link,
+        court_booked: false,
+        host_profile_id: profile.id,
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    // Copy participants
+    const { data: parts } = await supabase
+      .from("match_event_participants")
+      .select("profile_id")
+      .eq("match_event_id", data.id);
+    const rows = (parts ?? []).map((p: any) => ({ match_event_id: created.id, profile_id: p.profile_id }));
+    if (rows.length > 0) {
+      await supabase.from("match_event_participants").insert(rows);
+    }
+    return { id: created.id };
+  });
+
 // ---------- Update (host) ----------
 const UpdateInput = z.object({
   id: z.string().uuid(),

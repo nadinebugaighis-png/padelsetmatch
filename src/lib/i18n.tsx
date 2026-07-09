@@ -537,7 +537,7 @@ const es: Dict = {
 
   // Reset password
   "rp.title": "Cambia tu contraseña",
-  "rp.openFromEmail": "Abre esta página desde el enlace del correo de recuperación. Si llegaste por error, vuelve a",
+  "rp.openFromEmail": "Abre esta página desde el enlace del correo de recuperación. Si has llegado por error, vuelve a",
   "rp.signin": "iniciar sesión",
   "rp.newPw": "nueva contraseña (mín. 8)",
   "rp.update": "Actualizar contraseña",
@@ -547,15 +547,15 @@ const es: Dict = {
   // Errors / 404
   "err.404": "Página no encontrada",
   "err.goHome": "Volver al inicio",
-  "err.title": "Esta página no cargó",
+  "err.title": "No se pudo cargar esta página",
   "err.sub": "Algo ha ido mal por nuestra parte.",
   "err.retry": "Reintentar",
 
   // Welcome
   "welcome.hello": "Hola",
   "welcome.helloSub": "Continue in English",
-  "welcome.holaSub": "Continúa en Español",
-  "welcome.bonjourSub": "Continuer en Français",
+  "welcome.holaSub": "Continúa en español",
+  "welcome.bonjourSub": "Continuer en français",
 
   // Events
   "events.myAreas": "Solo mis zonas",

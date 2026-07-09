@@ -60,44 +60,44 @@ export const createVenue = createServerFn({ method: "POST" })
     const city = data.city?.trim() || null;
     const country = data.country?.trim() || null;
 
-    // Try find existing (unique on normalized_name+city+country)
-    const { data: existing } = await context.supabase
+    // Look up existing match on (normalized_name, city, country).
+    let lookup = context.supabase
       .from("venues" as never)
       .select("id, name, city, country, venue_type")
-      .eq("normalized_name", normalized_name)
-      .is("city", city === null ? null : (undefined as any))
-      .maybeSingle();
+      .eq("normalized_name", normalized_name);
+    lookup = city === null ? lookup.is("city", null) : lookup.eq("city", city);
+    lookup = country === null ? lookup.is("country", null) : lookup.eq("country", country);
+    const { data: existing } = await lookup.maybeSingle();
 
-    let venue: Venue | null = (existing as Venue | null) ?? null;
+    if (existing) return existing as Venue;
 
-    if (!venue) {
-      const { data: inserted, error } = await context.supabase
+    const { data: inserted, error } = await context.supabase
+      .from("venues" as never)
+      .insert({
+        name: data.name.trim(),
+        normalized_name,
+        city,
+        country,
+        venue_type: data.venue_type,
+        created_by: meId,
+      } as never)
+      .select("id, name, city, country, venue_type")
+      .single();
+
+    if (error) {
+      // Race on the unique index — refetch and return the existing row.
+      let refetch = context.supabase
         .from("venues" as never)
-        .insert({
-          name: data.name.trim(),
-          normalized_name,
-          city,
-          country,
-          venue_type: data.venue_type,
-          created_by: meId,
-        } as never)
         .select("id, name, city, country, venue_type")
-        .single();
-      if (error) {
-        // Race on unique index — refetch
-        const { data: again, error: e2 } = await context.supabase
-          .from("venues" as never)
-          .select("id, name, city, country, venue_type")
-          .eq("normalized_name", normalized_name)
-          .maybeSingle();
-        if (e2 || !again) throw new Error(error.message);
-        venue = again as Venue;
-      } else {
-        venue = inserted as Venue;
-      }
+        .eq("normalized_name", normalized_name);
+      refetch = city === null ? refetch.is("city", null) : refetch.eq("city", city);
+      refetch = country === null ? refetch.is("country", null) : refetch.eq("country", country);
+      const { data: again } = await refetch.maybeSingle();
+      if (!again) throw new Error(error.message);
+      return again as Venue;
     }
 
-    return venue;
+    return inserted as Venue;
   });
 
 export const listMyVenues = createServerFn({ method: "GET" })

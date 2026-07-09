@@ -12,7 +12,7 @@ import {
   duplicateMatchEvent,
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { MapPin, Search, X, Pencil, Trash2, UserPlus, Clock, Users } from "lucide-react";
+import { MapPin, Search, X, Pencil, Trash2, Clock, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 
@@ -464,7 +464,6 @@ function EventsPage() {
             pending={pending}
             onClose={() => setMyMatchSheet(null)}
             onEdit={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId: myMatchSheet.id } })}
-            onInvite={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
             onOpen={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
             onCancel={() => hostCancel(myMatchSheet)}
             onExtend={(h) => hostExtend(myMatchSheet, h)}
@@ -640,7 +639,6 @@ function MyMatchSheet({
   pending,
   onClose,
   onEdit,
-  onInvite,
   onOpen,
   onCancel,
   onExtend,
@@ -649,7 +647,6 @@ function MyMatchSheet({
   pending: string | null;
   onClose: () => void;
   onEdit: () => void;
-  onInvite: () => void;
   onOpen: () => void;
   onCancel: () => void;
   onExtend: (h: number) => void;
@@ -685,22 +682,13 @@ function MyMatchSheet({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={onInvite}
-            disabled={busy}
-            className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
-          >
-            <UserPlus className="w-3.5 h-3.5" /> {tr("Invite", "Invitar", "Inviter")}
-          </button>
-          <button
-            onClick={onEdit}
-            disabled={busy}
-            className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
-          >
-            <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Éditer")}
-          </button>
-        </div>
+        <button
+          onClick={onEdit}
+          disabled={busy}
+          className="w-full rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+        >
+          <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Éditer")}
+        </button>
 
         {event.iAmHost && (
           <div>

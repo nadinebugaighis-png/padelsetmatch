@@ -74,6 +74,7 @@ function ConnectPage() {
   const getProfile = useServerFn(getMyProfile);
   const del = useServerFn(deleteConnectPost);
   const addC = useServerFn(addConnectComment);
+  const updC = useServerFn(updateConnectComment);
 
   const [city, setCity] = useState("");
   const [cityInput, setCityInput] = useState("");

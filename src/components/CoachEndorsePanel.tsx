@@ -1,19 +1,30 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GraduationCap, Star } from "lucide-react";
+import { GraduationCap, MessageCircle, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { endorseCoach, getCoachStats, getMyEndorsementFor } from "@/lib/coach.functions";
+import { endorseCoach, getCoachStats, getMyEndorsementFor, openCoachChat } from "@/lib/coach.functions";
 import { useTr } from "@/lib/i18n";
 
 export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileId: string; coachName: string }) {
   const tr = useTr();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const getStats = useServerFn(getCoachStats);
   const getMine = useServerFn(getMyEndorsementFor);
   const endorse = useServerFn(endorseCoach);
+  const openChat = useServerFn(openCoachChat);
+
+  const message = useMutation({
+    mutationFn: async () => openChat({ data: { coach_profile_id: coachProfileId } }),
+    onSuccess: (res) => {
+      navigate({ to: "/app/matches/$matchId", params: { matchId: res.match_id } });
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : tr("Could not open chat", "No se pudo abrir el chat", "Impossible d'ouvrir le chat")),
+  });
 
   const statsQ = useQuery({
     queryKey: ["coach-stats", coachProfileId],

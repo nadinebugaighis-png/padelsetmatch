@@ -267,7 +267,10 @@ function ProfilePage() {
 
           <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
+          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
+
           <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+
         </div>
 
         <div className="space-y-3 sm:space-y-4">

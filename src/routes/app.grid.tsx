@@ -285,7 +285,7 @@ function Discover() {
         <p className="text-serif italic text-[var(--ink)]/70 mt-2 leading-[1.15] text-[20px] sm:text-[22px] lg:text-[24px] xl:text-[26px]">{t("disc.sub")}</p>
 
         <div className="mt-5 lg:mt-6 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 lg:p-4 flex items-start gap-3">
-          <div className="shrink-0 w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center text-[13px] font-bold">87</div>
+          <div className="shrink-0 w-7 h-7 rounded-full bg-white text-[var(--ink)] flex items-center justify-center text-[13px] font-bold border border-[var(--ink)]/20">87</div>
           <p className="text-[13px] lg:text-[14px] leading-snug text-[var(--ink)]/75">
             {t("disc.scoreA")} <b className="text-[var(--ink)]">{t("disc.scoreBold")}</b> {t("disc.scoreB")} {t("disc.scoreC")}
           </p>
@@ -526,7 +526,7 @@ function Discover() {
                         </span>
                       ) : <span />}
                       <div
-                        className="w-6 h-6 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
+                        className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
                         title={t("disc.scoreTooltip")}
                       >
                         {c.score}

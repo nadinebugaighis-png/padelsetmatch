@@ -572,7 +572,7 @@ function Discover() {
                       {/* Top controls — mobile only */}
                       <button
                         type="button"
-                        onClick={() => setPreview(null)}
+                        onClick={closePreview}
                         className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
                         aria-label="Back"
                       >

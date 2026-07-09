@@ -412,7 +412,7 @@ const es: Dict = {
   "disc.loading": "Cargando las pistas…",
   "disc.blockTitle": "Bloquear — os ocultáis mutuamente",
   "disc.reportTitle": "Reportar — se envía al equipo para su revisión",
-  "disc.scoreTooltip": "Puntuación de compatibilidad (0–100): cuánto encajan vuestras respuestas",
+  "disc.scoreTooltip": "Puntuación de compatibilidad (0–100): cuánto encajan",
   "disc.reportPrompt": "¿Reportar a {name}?\n\nCuéntanos qué ha pasado (acoso, foto falsa, abuso, amenazas…). La cuenta se suspende al instante y nuestro equipo la revisa.",
   "disc.reportConfirm": "¿Enviar el reporte? La cuenta de {name} quedará suspendida a la espera de revisión.",
   "disc.blockConfirm": "¿Bloquear a {name}? No os veréis en ninguna parte de la app.",

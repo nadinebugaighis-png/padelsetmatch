@@ -79,6 +79,7 @@ function EventsPage() {
 
   const [worldwide, setWorldwide] = useState(false);
   const [search, setSearch] = useState("");
+  const [mode, setMode] = useState<"find" | "mine">("find");
   const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({

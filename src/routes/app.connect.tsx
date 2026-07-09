@@ -111,6 +111,17 @@ function ConnectPage() {
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
 
+  const updateMut = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: string }) => updC({ data: { id, body } }),
+    onSuccess: () => {
+      setEditingComment(null);
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      qc.invalidateQueries({ queryKey: ["connect-comments"] });
+      toast.success(tr("Comment updated", "Comentario actualizado", "Commentaire mis à jour"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
   return (
     <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">
       {/* Header */}

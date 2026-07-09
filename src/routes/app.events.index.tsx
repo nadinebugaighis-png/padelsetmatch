@@ -682,22 +682,13 @@ function MyMatchSheet({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={onInvite}
-            disabled={busy}
-            className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
-          >
-            <UserPlus className="w-3.5 h-3.5" /> {tr("Invite", "Invitar", "Inviter")}
-          </button>
-          <button
-            onClick={onEdit}
-            disabled={busy}
-            className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
-          >
-            <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Éditer")}
-          </button>
-        </div>
+        <button
+          onClick={onEdit}
+          disabled={busy}
+          className="w-full rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
+        >
+          <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Éditer")}
+        </button>
 
         {event.iAmHost && (
           <div>

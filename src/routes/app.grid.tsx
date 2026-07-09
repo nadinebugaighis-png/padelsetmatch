@@ -526,7 +526,7 @@ function Discover() {
                         </span>
                       ) : <span />}
                       <div
-                        className="w-6 h-6 rounded-full border border-[var(--ink)] text-[var(--ink)] text-[10px] flex items-center justify-center font-bold"
+                        className="w-6 h-6 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
                         title={t("disc.scoreTooltip")}
                       >
                         {c.score}

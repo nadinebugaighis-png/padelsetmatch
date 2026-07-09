@@ -265,10 +265,15 @@ function EventsPage() {
     setPending(e.id);
     try {
       const { id } = await duplicate({ data: { id: e.id, starts_at: target.toISOString() } });
-      toast.success(tr("Copied to +" + hoursAhead + "h", "Copiado a +" + hoursAhead + "h", "Copié à +" + hoursAhead + "h"));
       await refetch();
       setMyMatchSheet(null);
-      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+      toast.success(tr(`Copied to +${hoursAhead}h`, `Copiado a +${hoursAhead}h`, `Copié à +${hoursAhead}h`), {
+        duration: 10000,
+        action: {
+          label: tr("Open", "Abrir", "Ouvrir"),
+          onClick: () => navigate({ to: "/app/events/$eventId", params: { eventId: id } }),
+        },
+      });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Could not copy", "No se pudo copiar", "Impossible de copier"));
     } finally {
@@ -339,9 +344,9 @@ function EventsPage() {
             </h1>
             <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
               {tr(
-                "Tap an hour to show you're free. Tap again to remove.",
-                "Toca una hora para marcarte libre. Toca otra vez para quitarte.",
-                "Touche une heure pour être libre. Retouche pour retirer.",
+                "Tap an empty hour to mark yourself free. Tap your match to manage it.",
+                "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
+                "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
               )}
             </p>
           </div>
@@ -443,7 +448,7 @@ function EventsPage() {
             onClose={() => setSlotSheet(null)}
             onJoin={async (e) => { setSlotSheet(null); await instantJoin(e); }}
             onLeave={async (e) => { setSlotSheet(null); await instantLeave(e); }}
-
+            onManage={(e) => { setSlotSheet(null); setMyMatchSheet(e); }}
             onOpen={(id) => { setSlotSheet(null); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
             onStartAnother={() => {
               const d = new Date(slotSheet.startsAt);
@@ -513,7 +518,8 @@ function RowCells({
         startsAt.setHours(hour, 0, 0, 0);
         const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
         const isNowCell = isCurrentHour && i === 0 && !past;
-        const mine = !!primary && (primary.iAmHost || primary.iAmParticipant);
+        const mine = events.some((ev) => ev.iAmHost || ev.iAmParticipant);
+        const iHost = events.some((ev) => ev.iAmHost);
         return (
           <button
             key={i}
@@ -529,7 +535,7 @@ function RowCells({
               <span className="w-1 h-1 rounded-full bg-[var(--ink)]/20" />
             )}
             {mine && !isPending && (
-              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />
+              <span className={`absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full ${iHost ? "bg-[var(--plum)]" : "bg-[var(--ink)]"}`} />
             )}
             {isPending && (
               <span className="absolute inset-0 flex items-center justify-center bg-[var(--ink)]/10">
@@ -821,6 +827,7 @@ function SlotSheet({
   onClose,
   onJoin,
   onLeave,
+  onManage,
   onOpen,
   onStartAnother,
 }: {
@@ -830,6 +837,7 @@ function SlotSheet({
   onClose: () => void;
   onJoin: (e: EventLite) => void;
   onLeave: (e: EventLite) => void;
+  onManage: (e: EventLite) => void;
   onOpen: (id: string) => void;
   onStartAnother: () => void;
 
@@ -869,7 +877,24 @@ function SlotSheet({
                   </div>
                 </button>
                 <Lineup e={e} tr={tr} />
-                {canJoin ? (
+                {e.iAmHost ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpen(e.id)}
+                      className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+                    >
+                      {tr("Open", "Abrir", "Ouvrir")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onManage(e)}
+                      className="rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold py-2.5"
+                    >
+                      {tr("Manage", "Gestionar", "Gérer")}
+                    </button>
+                  </div>
+                ) : canJoin ? (
                   <button
                     type="button"
                     disabled={isPending}
@@ -878,7 +903,7 @@ function SlotSheet({
                   >
                     {isPending ? tr("Joining…", "Uniéndose…", "…") : tr("Join this match", "Unirme a este partido", "Rejoindre")}
                   </button>
-                ) : mine && !e.iAmHost ? (
+                ) : mine ? (
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"

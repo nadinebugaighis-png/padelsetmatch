@@ -775,13 +775,6 @@ function MyMatchSheet({
           </div>
         )}
 
-        <button
-          onClick={onOpen}
-          className="w-full rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold py-3 inline-flex items-center justify-center gap-1.5"
-        >
-          <Users className="w-3.5 h-3.5" /> {tr("Open match page", "Ir al partido", "Voir le match")}
-        </button>
-
         {event.iAmHost && (
           <button
             onClick={onCancel}
@@ -789,9 +782,7 @@ function MyMatchSheet({
             className="w-full rounded-full border border-red-400/50 text-red-500 text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5 disabled:opacity-50"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            {(event.filled ?? 0) <= 1
-              ? tr("Delete match", "Eliminar partido", "Supprimer")
-              : tr("Cancel match", "Cancelar partido", "Annuler le match")}
+            {tr("Delete match", "Eliminar partido", "Supprimer")}
           </button>
         )}
       </div>

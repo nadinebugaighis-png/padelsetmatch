@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Heart, Zap, Globe } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -454,10 +454,10 @@ function Discover() {
                           else likeM.mutate(c.id);
                         }}
                         className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
-                        aria-label={c.liked ? tr(`Unlike ${c.first_name}`, `Quitar «me interesa» a ${c.first_name}`, `Retirer le like à ${c.first_name}`) : tr(`Like ${c.first_name}`, `Marcar «me interesa» a ${c.first_name}`, `Aimer ${c.first_name}`)}
-                        title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                        aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Thumbs up ${c.first_name}`, `Pulsa para conectar con ${c.first_name}`, `Pouce pour connecter avec ${c.first_name}`)}
+                        title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Thumbs up to connect", "Pulsa para conectar", "Pouce pour connecter")}
                       >
-                        <Heart
+                        <ThumbsUp
                           className={`w-2.5 h-2.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
                           fill={c.liked ? "currentColor" : "none"}
                           strokeWidth={1.6}

@@ -24,7 +24,7 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, Lock } from "lucide-react";
-import { useTr } from "@/lib/i18n";
+import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -65,6 +65,7 @@ function EventDetail() {
   const { i: inviteToken } = Route.useSearch();
   const navigate = useNavigate();
   const tr = useTr();
+  const { label } = useI18n();
   const qc = useQueryClient();
   const get = useServerFn(getMatchEvent);
   const join = useServerFn(joinMatchEvent);
@@ -383,9 +384,11 @@ function EventDetail() {
                 <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Players", "Jugadores", "Joueurs")}</div>
                 <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/50">/4</span></div>
               </div>
-              <div className="px-2 py-3 sm:py-4 min-w-0">
+              <div className="px-2 py-3 sm:py-4 min-w-0 flex flex-col justify-center">
                 <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")}</div>
-                <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5">{event.level_min}<span className="text-[var(--ink)]/50 mx-0.5">–</span>{event.level_max}</div>
+                <div className="text-xs sm:text-sm font-semibold text-[var(--ink)] mt-0.5 leading-tight whitespace-normal break-words">
+                  {label(event.level_min)}<span className="text-[var(--ink)]/50 mx-0.5">–</span>{label(event.level_max)}
+                </div>
               </div>
             </div>
 

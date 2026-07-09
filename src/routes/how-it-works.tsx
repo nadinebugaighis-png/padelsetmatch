@@ -113,7 +113,7 @@ function HowItWorksPage() {
         <p className="mt-6 max-w-2xl text-[15px] sm:text-lg text-[var(--ink)]/75 leading-relaxed">
           {tr(
             "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time — in your city or wherever you travel.",
-            "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a los jugadores antes — en tu ciudad o donde viajes.",
+            "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a los jugadores antes de jugar — en tu ciudad o adonde viajes.",
             "Un annuaire des joueurs de padel près de toi. Vois qui veut jouer, qui a une piste dispo, et rencontre les joueurs à l'avance — dans ta ville ou en voyage."
           )}
         </p>
@@ -129,7 +129,7 @@ function HowItWorksPage() {
             title={tr("Private profile", "Perfil privado", "Profil privé")}
             body={tr(
               "Share as much as you want. The more the AI knows, the better your matches. Nothing is shown to anyone.",
-              "Comparte lo que quieras. Cuanto más sepa la IA, mejores serán tus matches. Nada es visible para otros.",
+              "Comparte lo que quieras. Cuanto más sepa la IA, mejores serán tus conexiones. Nada es visible para otros.",
               "Partage ce que tu veux. Plus l'IA en sait, meilleurs sont tes matches. Rien n'est visible pour les autres."
             )}
           />
@@ -151,7 +151,7 @@ function HowItWorksPage() {
             title={tr("Set your time", "Marca tu hora", "Choisis ton créneau")}
             body={tr(
               "Open a slot with one click. Others join. Or join theirs. No more waiting on WhatsApp groups.",
-              "Abre un hueco con un clic. Otros se apuntan. O apúntate a los suyos. Sin esperar en grupos de WhatsApp.",
+              "Crea un hueco con un clic. Otros se apuntan. O apúntate a los suyos. Sin quedarte esperando en grupos de WhatsApp.",
               "Ouvre un créneau en un clic. D'autres rejoignent. Ou rejoins les leurs. Fini l'attente sur WhatsApp."
             )}
           />
@@ -174,7 +174,7 @@ function HowItWorksPage() {
             <p className="mt-3 text-[14px] text-[var(--paper)]/75 leading-relaxed">
               {tr(
                 "Hide someone from your Dating group and you disappear from theirs too — but you both stay in Friends or Padel. Awkwardness solved.",
-                "Oculta a alguien del grupo de Relación y desapareces del suyo también — pero seguís en Amistad o Pádel. Sin momentos incómodos.",
+                "Oculta a alguien del grupo Relación y tú también desaparecerás del suyo — pero seguís en Amistad o Pádel. Sin momentos incómodos.",
                 "Cache quelqu'un du groupe Relation et tu disparais du sien aussi — mais vous restez dans Amis ou Padel. Fini les moments gênants."
               )}
             </p>
@@ -187,7 +187,7 @@ function HowItWorksPage() {
             <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
               {tr(
                 "Tap someone and they'll never know — unless they tap you back. No notifications, no pressure, no ego bruises.",
-                "Pulsa a alguien y no lo sabrá — a menos que te pulse también. Sin notificaciones, sin presión, sin egos heridos.",
+                "Dale 'me gusta' a alguien y no lo sabrá — a menos que te lo devuelva. Sin notificaciones, sin presión, sin herir egos.",
                 "Tape quelqu'un et il ne le saura jamais — sauf s'il te tape aussi. Aucune notification, aucune pression."
               )}
             </p>
@@ -241,8 +241,8 @@ function HowItWorksPage() {
         <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
           <span className="text-sm tracking-wide text-[var(--paper)]/90">{t("land.foot")}</span>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70">
-            <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>
-            <Link to="/privacy" className="hover:text-[var(--paper)]">Privacy</Link>
+            <Link to="/terms" className="hover:text-[var(--paper)]">{tr("Terms", "Términos", "Conditions")}</Link>
+            <Link to="/privacy" className="hover:text-[var(--paper)]">{tr("Privacy", "Privacidad", "Confidentialité")}</Link>
           </div>
         </div>
       </footer>

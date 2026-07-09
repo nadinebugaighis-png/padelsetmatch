@@ -233,25 +233,64 @@ function ConnectPage() {
                     {/* Inline comments preview */}
                     {p.latest_comments.length > 0 && (
                       <div className="mt-3 space-y-2">
-                        {p.latest_comments.map((c) => (
-                          <div key={c.id} className="flex items-start gap-2 bg-white/70 rounded-xl px-3 py-2 border border-[var(--ink)]/8">
-                            {c.author?.photo_url ? (
-                              <img src={c.author.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
-                            ) : (
-                              <div className="w-6 h-6 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[10px] font-semibold text-[var(--ink)]/50">
-                                {(c.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                        {p.latest_comments.map((c) => {
+                          const mine = myProfileId === c.author_profile_id;
+                          const isEditing = editingComment?.id === c.id;
+                          return (
+                            <div key={c.id} className="flex items-start gap-2 bg-white/70 rounded-xl px-3 py-2 border border-[var(--ink)]/8">
+                              {c.author?.photo_url ? (
+                                <img src={c.author.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[10px] font-semibold text-[var(--ink)]/50">
+                                  {(c.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/60">
+                                  <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
+                                  <span>·</span>
+                                  <span>{timeAgo(c.created_at, tr)}</span>
+                                  {mine && !isEditing && (
+                                    <button
+                                      onClick={() => setEditingComment({ id: c.id, body: c.body })}
+                                      className="ml-auto inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
+                                      aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
+                                    >
+                                      <Pencil className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                                {isEditing ? (
+                                  <div className="mt-1 space-y-1.5">
+                                    <Input
+                                      value={editingComment?.body ?? ""}
+                                      onChange={(e) => setEditingComment((prev) => prev ? { ...prev, body: e.target.value } : null)}
+                                      className="bg-white text-sm"
+                                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && (editingComment?.body ?? "").trim()) { e.preventDefault(); updateMut.mutate({ id: c.id, body: editingComment!.body }); } }}
+                                    />
+                                    <div className="flex items-center justify-end gap-2">
+                                      <button
+                                        onClick={() => setEditingComment(null)}
+                                        className="text-[11px] font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] px-2 py-1"
+                                      >
+                                        {tr("Cancel", "Cancelar", "Annuler")}
+                                      </button>
+                                      <button
+                                        disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
+                                        onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
+                                        className="text-[11px] font-semibold text-[var(--plum)] hover:text-[var(--plum)]/80 disabled:opacity-50 px-2 py-1"
+                                      >
+                                        {tr("Save", "Guardar", "Enregistrer")}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap break-words leading-snug">{c.body}</p>
+                                )}
                               </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/60">
-                                <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                                <span>·</span>
-                                <span>{timeAgo(c.created_at, tr)}</span>
-                              </div>
-                              <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap break-words leading-snug">{c.body}</p>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                         {p.comment_count > p.latest_comments.length && (
                           <button
                             onClick={() => setOpenPost(p)}

@@ -362,6 +362,8 @@ function EventsPage() {
                 buckets={buckets}
                 pending={pending}
                 onTap={handleCellTap}
+                onMyDoubleTap={handleMyDoubleTap}
+                onDropDuplicate={handleDropDuplicate}
                 tr={tr}
               />
             ))}

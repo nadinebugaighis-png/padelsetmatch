@@ -639,7 +639,6 @@ function MyMatchSheet({
   pending,
   onClose,
   onEdit,
-  onInvite,
   onOpen,
   onCancel,
   onExtend,
@@ -648,7 +647,6 @@ function MyMatchSheet({
   pending: string | null;
   onClose: () => void;
   onEdit: () => void;
-  onInvite: () => void;
   onOpen: () => void;
   onCancel: () => void;
   onExtend: (h: number) => void;

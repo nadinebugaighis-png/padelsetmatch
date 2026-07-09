@@ -373,13 +373,13 @@ const es: Dict = {
   "qa.skip": "Saltar",
   "qa.save": "Guardar",
   "qa.saved": "Guardado",
-  "qa.empty": "Aún no hay preguntas — toca Generar para empezar.",
+  "qa.empty": "Aún no hay preguntas — pulsa Generar para empezar.",
   "qa.answeredCount": "{n} respondidas",
   "qa.yourAnswers": "Tus respuestas",
   "qa.seeMatches": "Ver quién encaja →",
   "qa.delete": "Quitar",
-  "qa.placeholder": "Escribe una respuesta corta…",
-  "qa.howItWorks": "La IA genera preguntas nuevas según tu perfil. Tus respuestas nunca son públicas — solo las respuestas compartidas suben tu puntuación de match.",
+  "qa.placeholder": "Escribe una respuesta breve…",
+  "qa.howItWorks": "La IA genera preguntas nuevas según tu perfil. Tus respuestas nunca son públicas — solo las respuestas que coinciden con otras personas suben tu puntuación de compatibilidad.",
 
   // Discover
   "disc.h1": "Toca con quién jugarías.",

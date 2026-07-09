@@ -11,6 +11,7 @@ import {
   deleteConnectPost,
   listConnectComments,
   listConnectPosts,
+  updateConnectComment,
   updateConnectPost,
   type ConnectCategory,
   type ConnectPost,
@@ -73,6 +74,7 @@ function ConnectPage() {
   const getProfile = useServerFn(getMyProfile);
   const del = useServerFn(deleteConnectPost);
   const addC = useServerFn(addConnectComment);
+  const updC = useServerFn(updateConnectComment);
 
   const [city, setCity] = useState("");
   const [cityInput, setCityInput] = useState("");
@@ -82,6 +84,7 @@ function ConnectPage() {
   const [openPost, setOpenPost] = useState<ConnectPost | null>(null);
   const [replyPostId, setReplyPostId] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState("");
+  const [editingComment, setEditingComment] = useState<{ id: string; body: string } | null>(null);
 
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
   const myProfileId = (meQ.data as any)?.id as string | undefined;
@@ -104,6 +107,17 @@ function ConnectPage() {
       setReplyPostId(null);
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
       qc.invalidateQueries({ queryKey: ["connect-comments"] });
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: string }) => updC({ data: { id, body } }),
+    onSuccess: () => {
+      setEditingComment(null);
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      qc.invalidateQueries({ queryKey: ["connect-comments"] });
+      toast.success(tr("Comment updated", "Comentario actualizado", "Commentaire mis à jour"));
     },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
@@ -219,25 +233,64 @@ function ConnectPage() {
                     {/* Inline comments preview */}
                     {p.latest_comments.length > 0 && (
                       <div className="mt-3 space-y-2">
-                        {p.latest_comments.map((c) => (
-                          <div key={c.id} className="flex items-start gap-2 bg-white/70 rounded-xl px-3 py-2 border border-[var(--ink)]/8">
-                            {c.author?.photo_url ? (
-                              <img src={c.author.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
-                            ) : (
-                              <div className="w-6 h-6 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[10px] font-semibold text-[var(--ink)]/50">
-                                {(c.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                        {p.latest_comments.map((c) => {
+                          const mine = myProfileId === c.author_profile_id;
+                          const isEditing = editingComment?.id === c.id;
+                          return (
+                            <div key={c.id} className="flex items-start gap-2 bg-white/70 rounded-xl px-3 py-2 border border-[var(--ink)]/8">
+                              {c.author?.photo_url ? (
+                                <img src={c.author.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[10px] font-semibold text-[var(--ink)]/50">
+                                  {(c.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/60">
+                                  <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
+                                  <span>·</span>
+                                  <span>{timeAgo(c.created_at, tr)}</span>
+                                  {mine && !isEditing && (
+                                    <button
+                                      onClick={() => setEditingComment({ id: c.id, body: c.body })}
+                                      className="ml-auto inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
+                                      aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
+                                    >
+                                      <Pencil className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                                {isEditing ? (
+                                  <div className="mt-1 space-y-1.5">
+                                    <Input
+                                      value={editingComment?.body ?? ""}
+                                      onChange={(e) => setEditingComment((prev) => prev ? { ...prev, body: e.target.value } : null)}
+                                      className="bg-white text-sm"
+                                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && (editingComment?.body ?? "").trim()) { e.preventDefault(); updateMut.mutate({ id: c.id, body: editingComment!.body }); } }}
+                                    />
+                                    <div className="flex items-center justify-end gap-2">
+                                      <button
+                                        onClick={() => setEditingComment(null)}
+                                        className="text-[11px] font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] px-2 py-1"
+                                      >
+                                        {tr("Cancel", "Cancelar", "Annuler")}
+                                      </button>
+                                      <button
+                                        disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
+                                        onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
+                                        className="text-[11px] font-semibold text-[var(--plum)] hover:text-[var(--plum)]/80 disabled:opacity-50 px-2 py-1"
+                                      >
+                                        {tr("Save", "Guardar", "Enregistrer")}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap break-words leading-snug">{c.body}</p>
+                                )}
                               </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/60">
-                                <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                                <span>·</span>
-                                <span>{timeAgo(c.created_at, tr)}</span>
-                              </div>
-                              <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap break-words leading-snug">{c.body}</p>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                         {p.comment_count > p.latest_comments.length && (
                           <button
                             onClick={() => setOpenPost(p)}
@@ -400,7 +453,9 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
   const listC = useServerFn(listConnectComments);
   const addC = useServerFn(addConnectComment);
   const delC = useServerFn(deleteConnectComment);
+  const updC = useServerFn(updateConnectComment);
   const [body, setBody] = useState("");
+  const [editingComment, setEditingComment] = useState<{ id: string; body: string } | null>(null);
 
   const q = useQuery({ queryKey: ["connect-comments", post.id], queryFn: () => listC({ data: { postId: post.id } }) });
 
@@ -422,6 +477,17 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
     },
   });
 
+  const updateMut = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: string }) => updC({ data: { id, body } }),
+    onSuccess: () => {
+      setEditingComment(null);
+      qc.invalidateQueries({ queryKey: ["connect-comments", post.id] });
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      toast.success(tr("Comment updated", "Comentario actualizado", "Commentaire mis à jour"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
   return (
     <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/10 max-h-[92vh] flex flex-col shadow-2xl">
@@ -436,28 +502,66 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
             {(q.data ?? []).length === 0 && !q.isLoading && (
               <p className="text-xs text-[var(--ink)]/50 italic">{tr("No comments yet.", "Aún no hay comentarios.", "Aucun commentaire.")}</p>
             )}
-            {(q.data ?? []).map((c) => (
-              <div key={c.id} className="flex items-start gap-2.5">
-                {c.author?.photo_url ? (
-                  <img src={c.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/8">
-                  <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
-                    <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                    <span>·</span>
-                    <span>{timeAgo(c.created_at, tr)}</span>
-                    {myProfileId === c.author_profile_id && (
-                      <button onClick={() => delMut.mutate(c.id)} className="ml-auto text-red-500/70 hover:text-red-500">
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+            {(q.data ?? []).map((c) => {
+              const mine = myProfileId === c.author_profile_id;
+              const isEditing = editingComment?.id === c.id;
+              return (
+                <div key={c.id} className="flex items-start gap-2.5">
+                  {c.author?.photo_url ? (
+                    <img src={c.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/8">
+                    <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
+                      <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
+                      <span>·</span>
+                      <span>{timeAgo(c.created_at, tr)}</span>
+                      {mine && !isEditing && (
+                        <div className="ml-auto flex items-center gap-1">
+                          <button
+                            onClick={() => setEditingComment({ id: c.id, body: c.body })}
+                            className="text-[var(--ink)]/50 hover:text-[var(--plum)] transition p-1"
+                            aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
+                          <button onClick={() => delMut.mutate(c.id)} className="text-red-500/70 hover:text-red-500 p-1">
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    {isEditing ? (
+                      <div className="mt-1.5 space-y-2">
+                        <Textarea
+                          value={editingComment?.body ?? ""}
+                          onChange={(e) => setEditingComment((prev) => prev ? { ...prev, body: e.target.value } : null)}
+                          className="bg-white text-sm min-h-[60px]"
+                        />
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => setEditingComment(null)}
+                            className="text-xs font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] px-2 py-1"
+                          >
+                            {tr("Cancel", "Cancelar", "Annuler")}
+                          </button>
+                          <Button
+                            disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
+                            onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
+                            className="bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-7 px-3 text-xs"
+                          >
+                            {tr("Save", "Guardar", "Enregistrer")}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-[var(--ink)]/85 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
                     )}
                   </div>
-                  <p className="text-sm text-[var(--ink)]/85 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         <div className="border-t border-[var(--ink)]/10 p-3 flex items-center gap-2 bg-[var(--paper)]">

@@ -167,12 +167,12 @@ function HowItWorksPage() {
             <FeatureRow
               icon={Shield}
               title={tr("Your answers are private", "Tus respuestas son privadas", "Tes réponses sont privées")}
-              body={tr("Your matchmaking answers are never shown publicly. Only when two people share an answer does it contribute to their match score. Nobody sees what you answered alone.", "Tus respuestas de afinidad nunca se muestran públicamente. Solo cuando dos personas comparten una respuesta contribuye a su puntuación de match. Nadie ve lo que respondiste tú solo.", "Tes réponses de matchmaking ne sont jamais affichées publiquement. Ce n'est que lorsque deux personnes partagent une réponse qu'elle compte pour leur score de match. Personne ne voit ce que tu as répondu tout seul.")}
+              body={tr("Your matchmaking answers are never shown publicly. Only when two people share an answer does it contribute to their match score. Nobody sees what you answered alone.", "Tus respuestas de afinidad nunca se muestran públicamente. Solo cuando dos personas coinciden en una respuesta, esta contribuye a su puntuación de compatibilidad. Nadie ve lo que has respondido por tu cuenta.", "Tes réponses de matchmaking ne sont jamais affichées publiquement. Ce n'est que lorsque deux personnes partagent une réponse qu'elle compte pour leur score de match. Personne ne voit ce que tu as répondu tout seul.")}
             />
             <FeatureRow
               icon={MessageSquareHeart}
-              title={tr("Anonymous-first likes", "Likes anónimos primero", "Likes anonymes d'abord")}
-              body={tr("Tap someone you like? They'll never know unless they tap you back. This removes all pressure and awkwardness — you're free to explore without fear of rejection or unwanted attention.", "¿Le das a conectar a alguien? No lo sabrá a menos que te lo devuelva. Esto elimina toda presión y awkwardness — eres libre de explorar sin miedo al rechazo ni atención no deseada.", "Tu tapes quelqu'un qui te plaît ? Il·elle ne le saura jamais tant qu'il·elle ne te tape pas en retour. Cela élimine toute pression et gêne — tu es libre d'explorer sans peur du rejet ni d'attention non souhaitée.")}
+              title={tr("Anonymous-first likes", "«Me interesa» anónimo", "Likes anonymes d'abord")}
+              body={tr("Tap someone you like? They'll never know unless they tap you back. This removes all pressure and awkwardness — you're free to explore without fear of rejection or unwanted attention.", "¿Le das a conectar a alguien? No lo sabrá a menos que te devuelva el gesto. Así se elimina toda la presión y los momentos incómodos — puedes explorar libremente, sin miedo al rechazo ni a atenciones no deseadas.", "Tu tapes quelqu'un qui te plaît ? Il·elle ne le saura jamais tant qu'il·elle ne te tape pas en retour. Cela élimine toute pression et gêne — tu es libre d'explorer sans peur du rejet ni d'attention non souhaitée.")}
             />
             <FeatureRow
               icon={Shield}

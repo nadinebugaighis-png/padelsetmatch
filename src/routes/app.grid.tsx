@@ -683,7 +683,12 @@ function Discover() {
 
 
 
+                      {preview.is_coach && (
+                        <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
+                      )}
+
                       {/* Me-style profile card (age intentionally omitted for privacy) */}
+
                       <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">
                         <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
                           <Info label={tr("LEVEL", "NIVEL", "NIVEAU")} v={label(preview.level)} />

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/app/grid")({
 });
 
 function Discover() {
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/app/grid" });
   const qc = useQueryClient();
   const { t, label, lang } = useI18n();
   const tr = useTr();
@@ -42,12 +42,36 @@ function Discover() {
   const [searchQuery, setSearchQuery] = useState("");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean }>(null);
+  const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
+
+
+
 
   const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });
   const getAnswers = useServerFn(getMyQaAnswers);
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
+
+  useEffect(() => {
+    const candidates = feedQ.data?.candidates;
+    if (!search.previewId || !candidates) return;
+    if (preview && preview.id === search.previewId) return;
+    const c = candidates.find((x) => x.id === search.previewId);
+    if (c) {
+      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
+    }
+  }, [search.previewId, feedQ.data?.candidates, preview?.id]);
+
+  const openPreview = (c: NonNullable<typeof feedQ.data>["candidates"][number]) => {
+    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
+    navigate({ search: { previewId: c.id }, replace: true });
+  };
+  const closePreview = () => {
+    setPreview(null);
+    if (search.previewId) navigate({ search: {}, replace: true });
+  };
+
 
   const compatFn = useServerFn(getAiCompatibility);
   const compatQ = useQuery({
@@ -468,7 +492,7 @@ function Discover() {
 
                       <button
                         type="button"
-                        onClick={() => setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach })}
+                        onClick={() => openPreview(c)}
                         className="absolute inset-0 w-full h-full text-left"
                         aria-label={`View ${c.first_name}'s profile`}
                       />
@@ -518,7 +542,7 @@ function Discover() {
       </div>
 
 
-      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+      <Dialog open={!!preview} onOpenChange={(o) => !o && closePreview()}>
         <DialogContent className="max-w-sm sm:max-w-md lg:max-w-3xl xl:max-w-4xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/10 text-[var(--ink)] max-h-[92vh] flex flex-col rounded-3xl">
           {preview && (() => {
             const mine = feedQ.data?.me;
@@ -548,7 +572,7 @@ function Discover() {
                       {/* Top controls — mobile only */}
                       <button
                         type="button"
-                        onClick={() => setPreview(null)}
+                        onClick={closePreview}
                         className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
                         aria-label="Back"
                       >
@@ -612,7 +636,7 @@ function Discover() {
                       <button
                         type="button"
                         onClick={() => {
-                          if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                          if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
                           if (!preview.liked) likeM.mutate(preview.id);
                         }}
                         disabled={likeM.isPending && !match}

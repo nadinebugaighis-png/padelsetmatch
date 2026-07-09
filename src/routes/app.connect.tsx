@@ -72,6 +72,7 @@ function ConnectPage() {
   const list = useServerFn(listConnectPosts);
   const getProfile = useServerFn(getMyProfile);
   const del = useServerFn(deleteConnectPost);
+  const addC = useServerFn(addConnectComment);
 
   const [city, setCity] = useState("");
   const [cityInput, setCityInput] = useState("");
@@ -79,6 +80,8 @@ function ConnectPage() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<ConnectPost | null>(null);
   const [openPost, setOpenPost] = useState<ConnectPost | null>(null);
+  const [replyPostId, setReplyPostId] = useState<string | null>(null);
+  const [replyBody, setReplyBody] = useState("");
 
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
   const myProfileId = (meQ.data as any)?.id as string | undefined;
@@ -91,6 +94,17 @@ function ConnectPage() {
   const delMut = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["connect-posts"] }); toast.success(tr("Post deleted", "Publicación eliminada", "Publication supprimée")); },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
+  const addMut = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: string }) => addC({ data: { postId: id, body } }),
+    onSuccess: () => {
+      setReplyBody("");
+      setReplyPostId(null);
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      qc.invalidateQueries({ queryKey: ["connect-comments"] });
+    },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
 

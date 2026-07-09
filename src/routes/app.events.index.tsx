@@ -12,7 +12,7 @@ import {
   duplicateMatchEvent,
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { MapPin, Search, X, Pencil, Trash2, UserPlus, Clock, Users } from "lucide-react";
+import { MapPin, Search, X, Pencil, Trash2, Clock, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 

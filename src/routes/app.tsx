@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
+import { NotificationBell } from "@/components/NotificationBell";
+import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -176,6 +178,7 @@ function AuthShell() {
               {t("shell.admin")}
             </Link>
           )}
+          {hasProfile && <NotificationBell />}
           <LangSwitch />
           <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/55 hover:text-[var(--ink)]">
             {t("shell.signout")}
@@ -183,6 +186,8 @@ function AuthShell() {
         </div>
 
       </header>
+
+      {hasProfile && !onOnboarding && <EnableNotificationsBanner />}
 
       {hasProfile && !onOnboarding && visibleInvites.length > 0 && (
         <div className="border-b border-[var(--ink)]/10 bg-[var(--paper-2)]">

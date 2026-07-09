@@ -147,6 +147,17 @@ function RootComponent() {
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
+    // Register the service worker for push notifications (production only)
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      const isPreview = /^(?:id-preview|preview)--/.test(location.hostname)
+        || location.hostname.endsWith(".lovableproject.com")
+        || location.hostname.endsWith(".lovableproject-dev.com");
+      if (!isPreview) {
+        navigator.serviceWorker.getRegistration("/sw.js").then((existing) => {
+          if (!existing) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+        });
+      }
+    }
     return () => { sub.subscription.unsubscribe(); };
   }, [router, queryClient]);
   return (

@@ -857,6 +857,85 @@ export type Database = {
           },
         ]
       }
+      notification_prefs: {
+        Row: {
+          coach_requests: boolean
+          connect_activity: boolean
+          match_participants: boolean
+          matches: boolean
+          messages: boolean
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          coach_requests?: boolean
+          connect_activity?: boolean
+          match_participants?: boolean
+          matches?: boolean
+          messages?: boolean
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          coach_requests?: boolean
+          connect_activity?: boolean
+          match_participants?: boolean
+          matches?: boolean
+          messages?: boolean
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_prefs_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          profile_id: string
+          read_at: string | null
+          title: string
+          type: string
+          url: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          profile_id: string
+          read_at?: string | null
+          title: string
+          type: string
+          url?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          profile_id?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       played_confirmations: {
         Row: {
           created_at: string
@@ -1025,6 +1104,88 @@ export type Database = {
         }
         Relationships: []
       }
+      push_outbox: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: number
+          profile_id: string
+          sent_at: string | null
+          title: string
+          type: string
+          url: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: number
+          profile_id: string
+          sent_at?: string | null
+          title: string
+          type: string
+          url?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: number
+          profile_id?: string
+          sent_at?: string | null
+          title?: string
+          type?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_outbox_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string
+          p256dh: string
+          profile_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string
+          p256dh: string
+          profile_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string
+          p256dh?: string
+          profile_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       qa_answers: {
         Row: {
           answer: string
@@ -1129,6 +1290,17 @@ export type Database = {
     }
     Functions: {
       coach_stats: { Args: { _coach_profile_id: string }; Returns: Json }
+      enqueue_notification: {
+        Args: {
+          _body: string
+          _pref_column: string
+          _profile_id: string
+          _title: string
+          _type: string
+          _url: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

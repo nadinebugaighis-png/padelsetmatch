@@ -174,7 +174,7 @@ function HowItWorksPage() {
             <p className="mt-3 text-[14px] text-[var(--paper)]/75 leading-relaxed">
               {tr(
                 "Hide someone from your Dating group and you disappear from theirs too — but you both stay in Friends or Padel. Awkwardness solved.",
-                "Oculta a alguien del grupo de Relación y desapareces del suyo también — pero seguís en Amistad o Pádel. Sin momentos incómodos.",
+                "Oculta a alguien del grupo Relación y tú también desaparecerás del suyo — pero seguís en Amistad o Pádel. Sin momentos incómodos.",
                 "Cache quelqu'un du groupe Relation et tu disparais du sien aussi — mais vous restez dans Amis ou Padel. Fini les moments gênants."
               )}
             </p>

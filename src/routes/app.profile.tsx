@@ -13,6 +13,8 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { useId, useRef, useState, type ReactNode } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
+import { CoachSelfSection } from "@/components/CoachSelfSection";
+
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 

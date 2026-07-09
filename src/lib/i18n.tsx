@@ -302,14 +302,14 @@ const es: Dict = {
 
   "land.what": "¿Qué es Playtomic?",
   "land.statUsers": "jugadores unidos",
-  "land.tap": "Tap. Tap de vuelta. A jugar.",
-  "land.foot": "Juega donde quieras. En el peor caso: un nuevo amigo de pádel.",
+  "land.tap": "Tócale. Que te toque. A jugar.",
+  "land.foot": "Juega donde quieras. En el peor de los casos: un nuevo amigo de pádel.",
   "land.preview.chip": "Adelanto",
-  "land.preview.title": "Echa un vistazo al Home",
-  "land.preview.sub": "Encuentra tu alma gemela de pista. Inicia sesión para ver fotos, puntuaciones y chat.",
+  "land.preview.title": "Echa un vistazo al Inicio",
+  "land.preview.sub": "Encuentra a tu alma gemela de pista. Inicia sesión para ver fotos, puntuaciones y chat.",
   "land.preview.cta": "Únete gratis",
-  "land.preview.unlock": "Inicia sesión para ver",
-  "land.preview.foot": "Solo vista previa. Los perfiles reales aparecen al completar el cuestionario.",
+  "land.preview.unlock": "Inicia sesión para desbloquear",
+  "land.preview.foot": "Solo es una vista previa. Los perfiles reales aparecen al completar el cuestionario.",
 
 
   // Auth

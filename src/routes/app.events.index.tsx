@@ -156,17 +156,18 @@ function EventsPage() {
       const { id } = await quickCreate({ data: { starts_at: startsAt.toISOString() } });
       await refetch();
       toast.success(tr("You're marked as free", "Marcado como disponible", "Marqué comme disponible"), {
-        duration: 6000,
+        duration: 12000,
+        description: tr("Changed your mind? Tap Remove.", "¿Cambiaste de idea? Toca Quitar.", "Changé d'avis ? Touche Retirer."),
         action: {
-          label: tr("Undo", "Deshacer", "Annuler"),
+          label: tr("Remove", "Quitar", "Retirer"),
           onClick: async () => {
             try {
               await deleteFn({ data: { id } });
               refetch();
+              toast(tr("Removed", "Quitado", "Retiré"));
             } catch {/* ignore */}
           },
         },
-        description: tr("Tap 'Add details' to set club and level.", "Toca 'Detalles' para añadir club y nivel.", "Touche 'Détails' pour ajouter club et niveau."),
         cancel: {
           label: tr("Details", "Detalles", "Détails"),
           onClick: () => navigate({ to: "/app/events/$eventId/edit", params: { eventId: id } }),
@@ -189,13 +190,15 @@ function EventsPage() {
       await join({ data: { id: e.id } });
       await refetch();
       toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"), {
-        duration: 6000,
+        duration: 12000,
+        description: tr("Joined by mistake? Tap Leave.", "¿Te uniste por error? Toca Salir.", "Rejoint par erreur ? Touche Quitter."),
         action: {
-          label: tr("Undo", "Deshacer", "Annuler"),
+          label: tr("Leave", "Salir", "Quitter"),
           onClick: async () => {
             try {
               await leave({ data: { id: e.id } });
               refetch();
+              toast(tr("You left", "Has salido", "Vous avez quitté"));
             } catch {/* ignore */}
           },
         },
@@ -211,15 +214,17 @@ function EventsPage() {
     }
   }
 
+
   async function instantLeave(e: EventLite) {
     setPending(e.id);
     try {
       await leave({ data: { id: e.id } });
       await refetch();
       toast(tr("You left the match", "Has salido del partido", "Tu as quitté le match"), {
-        duration: 6000,
+        duration: 10000,
         action: {
-          label: tr("Undo", "Deshacer", "Annuler"),
+          label: tr("Undo — rejoin", "Deshacer — volver", "Annuler — rejoindre"),
+
           onClick: async () => {
             try {
               await join({ data: { id: e.id } });
@@ -437,6 +442,8 @@ function EventsPage() {
             pending={pending}
             onClose={() => setSlotSheet(null)}
             onJoin={async (e) => { setSlotSheet(null); await instantJoin(e); }}
+            onLeave={async (e) => { setSlotSheet(null); await instantLeave(e); }}
+
             onOpen={(id) => { setSlotSheet(null); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
             onStartAnother={() => {
               const d = new Date(slotSheet.startsAt);
@@ -813,6 +820,7 @@ function SlotSheet({
   pending,
   onClose,
   onJoin,
+  onLeave,
   onOpen,
   onStartAnother,
 }: {
@@ -821,8 +829,10 @@ function SlotSheet({
   pending: string | null;
   onClose: () => void;
   onJoin: (e: EventLite) => void;
+  onLeave: (e: EventLite) => void;
   onOpen: (id: string) => void;
   onStartAnother: () => void;
+
 }) {
   const tr = useTr();
   return (
@@ -868,6 +878,24 @@ function SlotSheet({
                   >
                     {isPending ? tr("Joining…", "Uniéndose…", "…") : tr("Join this match", "Unirme a este partido", "Rejoindre")}
                   </button>
+                ) : mine && !e.iAmHost ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpen(e.id)}
+                      className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+                    >
+                      {tr("Open", "Abrir", "Ouvrir")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => onLeave(e)}
+                      className="rounded-full border border-red-400/50 text-red-500 text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+                    >
+                      {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
+                    </button>
+                  </div>
                 ) : (
                   <button
                     type="button"
@@ -877,6 +905,7 @@ function SlotSheet({
                     {tr("Open", "Abrir", "Ouvrir")}
                   </button>
                 )}
+
               </li>
             );
           })}

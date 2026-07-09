@@ -530,7 +530,7 @@ function RowCells({
               <span className="w-1 h-1 rounded-full bg-[var(--ink)]/20" />
             )}
             {mine && !isPending && (
-              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />
+              <span className={`absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full ${iHost ? "bg-[var(--plum)]" : "bg-[var(--ink)]"}`} />
             )}
             {isPending && (
               <span className="absolute inset-0 flex items-center justify-center bg-[var(--ink)]/10">

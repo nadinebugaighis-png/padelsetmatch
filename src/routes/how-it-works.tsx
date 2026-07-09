@@ -113,7 +113,7 @@ function HowItWorksPage() {
         <p className="mt-6 max-w-2xl text-[15px] sm:text-lg text-[var(--ink)]/75 leading-relaxed">
           {tr(
             "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time — in your city or wherever you travel.",
-            "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a los jugadores antes — en tu ciudad o donde viajes.",
+            "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a los jugadores antes de jugar — en tu ciudad o adonde viajes.",
             "Un annuaire des joueurs de padel près de toi. Vois qui veut jouer, qui a une piste dispo, et rencontre les joueurs à l'avance — dans ta ville ou en voyage."
           )}
         </p>

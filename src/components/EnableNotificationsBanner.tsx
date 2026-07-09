@@ -24,7 +24,7 @@ export function EnableNotificationsBanner() {
   const enable = async () => {
     setBusy(true);
     try {
-      const key = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+      const { key } = await getVapidPublicKey();
       if (!key) { toast.error("Push not configured"); return; }
       const sub = await subscribeToPush(key);
       if (!sub) {

@@ -559,8 +559,8 @@ const es: Dict = {
 
   // Events
   "events.myAreas": "Solo mis zonas",
-  "events.noAreasTitle": "Ninguna zona seleccionada",
-  "events.noAreasBody": "Añade las ciudades donde juegas en tu perfil para ver partidos cerca de ti.",
+  "events.noAreasTitle": "No has seleccionado ninguna zona",
+  "events.noAreasBody": "Añade en tu perfil las ciudades donde juegas para ver partidos cerca de ti.",
   "events.noAreasCta": "Ir al perfil →",
   "events.noMatchesMyAreas": "No hay partidos próximos en tus zonas.",
 };

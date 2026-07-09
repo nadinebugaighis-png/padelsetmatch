@@ -241,8 +241,8 @@ function HowItWorksPage() {
         <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
           <span className="text-sm tracking-wide text-[var(--paper)]/90">{t("land.foot")}</span>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70">
-            <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>
-            <Link to="/privacy" className="hover:text-[var(--paper)]">Privacy</Link>
+            <Link to="/terms" className="hover:text-[var(--paper)]">{tr("Terms", "Términos", "Conditions")}</Link>
+            <Link to="/privacy" className="hover:text-[var(--paper)]">{tr("Privacy", "Privacidad", "Confidentialité")}</Link>
           </div>
         </div>
       </footer>

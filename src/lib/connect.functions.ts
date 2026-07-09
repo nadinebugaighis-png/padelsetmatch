@@ -217,21 +217,25 @@ export const getConnectLatest = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const nowIso = new Date().toISOString();
+    let myPid: string | null = null;
+    try { myPid = await myProfileId(context.supabase, context.userId); } catch { myPid = null; }
     const [{ data: posts }, { data: comments }] = await Promise.all([
       context.supabase
         .from("connect_posts" as never)
-        .select("created_at")
+        .select("created_at,author_profile_id")
         .gt("expires_at", nowIso)
         .order("created_at", { ascending: false })
-        .limit(1),
+        .limit(5),
       context.supabase
         .from("connect_comments" as never)
-        .select("created_at")
+        .select("created_at,author_profile_id")
         .order("created_at", { ascending: false })
-        .limit(1),
+        .limit(5),
     ]);
-    const latestPost = ((posts ?? []) as Array<{ created_at: string }>)[0]?.created_at ?? null;
-    const latestComment = ((comments ?? []) as Array<{ created_at: string }>)[0]?.created_at ?? null;
+    const notMine = <T extends { author_profile_id: string | null }>(rows: T[]) =>
+      rows.filter((r) => !myPid || r.author_profile_id !== myPid);
+    const latestPost = notMine(((posts ?? []) as Array<{ created_at: string; author_profile_id: string }>))[0]?.created_at ?? null;
+    const latestComment = notMine(((comments ?? []) as Array<{ created_at: string; author_profile_id: string }>))[0]?.created_at ?? null;
     const latest = [latestPost, latestComment].filter(Boolean).sort().slice(-1)[0] ?? null;
     return { latest: latest as string | null };
   });

@@ -836,8 +836,8 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
     }
   };
 
-  const messages = (msgsQ.data as any)?.messages ?? (msgsQ.data as any) ?? [];
-  const myId = (msgsQ.data as any)?.my_profile_id;
+  const messages = (msgsQ.data as any)?.messages ?? [];
+  const myId = (meQ.data as any)?.id;
 
   return (
     <div className="rounded-xl border border-[var(--ink)]/10 bg-white overflow-hidden">

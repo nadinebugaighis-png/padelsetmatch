@@ -1136,12 +1136,11 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_event_participant: {
-        Args: { _event_id: string; _profile_id: string }
-        Returns: boolean
-      }
       my_profile_id: { Args: never; Returns: string }
-      open_coach_chat: { Args: { _coach_profile_id: string }; Returns: string }
+      open_coach_chat: {
+        Args: { _acting_user_id: string; _coach_profile_id: string }
+        Returns: string
+      }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
     }
     Enums: {

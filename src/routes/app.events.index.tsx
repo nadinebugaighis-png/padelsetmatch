@@ -878,6 +878,24 @@ function SlotSheet({
                   >
                     {isPending ? tr("Joining…", "Uniéndose…", "…") : tr("Join this match", "Unirme a este partido", "Rejoindre")}
                   </button>
+                ) : mine && !e.iAmHost ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpen(e.id)}
+                      className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+                    >
+                      {tr("Open", "Abrir", "Ouvrir")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => onLeave(e)}
+                      className="rounded-full border border-red-400/50 text-red-500 text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+                    >
+                      {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
+                    </button>
+                  </div>
                 ) : (
                   <button
                     type="button"
@@ -887,6 +905,7 @@ function SlotSheet({
                     {tr("Open", "Abrir", "Ouvrir")}
                   </button>
                 )}
+
               </li>
             );
           })}

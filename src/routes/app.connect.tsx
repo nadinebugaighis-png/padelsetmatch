@@ -27,12 +27,13 @@ export const Route = createFileRoute("/app/connect")({
   component: ConnectPage,
 });
 
-const CATEGORIES: ConnectCategory[] = ["traveling", "looking_to_play", "selling", "question", "news", "other"];
+const CATEGORIES: ConnectCategory[] = ["traveling", "looking_to_play", "looking_for_coach", "selling", "question", "news", "other"];
 
 function catMeta(c: ConnectCategory): { emoji: string; tone: string } {
   switch (c) {
     case "traveling": return { emoji: "✈️", tone: "bg-sky-50 text-sky-900 border-sky-200" };
     case "looking_to_play": return { emoji: "🎾", tone: "bg-emerald-50 text-emerald-900 border-emerald-200" };
+    case "looking_for_coach": return { emoji: "🎓", tone: "bg-[var(--plum)]/10 text-[var(--plum)] border-[var(--plum)]/25" };
     case "selling": return { emoji: "🎟️", tone: "bg-amber-50 text-amber-900 border-amber-200" };
     case "question": return { emoji: "❓", tone: "bg-violet-50 text-violet-900 border-violet-200" };
     case "news": return { emoji: "📣", tone: "bg-rose-50 text-rose-900 border-rose-200" };
@@ -46,6 +47,7 @@ function useCategoryLabel() {
     switch (c) {
       case "traveling": return tr("Traveling", "De viaje", "En voyage");
       case "looking_to_play": return tr("Looking to play", "Busco jugar", "Cherche à jouer");
+      case "looking_for_coach": return tr("Looking for a coach", "Busco entrenador", "Cherche un coach");
       case "selling": return tr("Selling / offering", "Vendo / ofrezco", "Je vends / propose");
       case "question": return tr("Question", "Pregunta", "Question");
       case "news": return tr("News", "Noticias", "Actualités");

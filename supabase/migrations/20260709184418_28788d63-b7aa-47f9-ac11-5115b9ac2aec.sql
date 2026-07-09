@@ -1,0 +1,1 @@
+ALTER TYPE public.connect_category ADD VALUE 'looking_for_coach';

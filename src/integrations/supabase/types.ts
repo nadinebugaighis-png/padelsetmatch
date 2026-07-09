@@ -1153,6 +1153,7 @@ export type Database = {
         | "question"
         | "news"
         | "other"
+        | "looking_for_coach"
       friendship_status: "pending" | "accepted"
       match_event_status: "open" | "full" | "cancelled" | "played"
       match_gender_rule: "mixed" | "men_only" | "women_only"
@@ -1292,6 +1293,7 @@ export const Constants = {
         "question",
         "news",
         "other",
+        "looking_for_coach",
       ],
       friendship_status: ["pending", "accepted"],
       match_event_status: ["open", "full", "cancelled", "played"],

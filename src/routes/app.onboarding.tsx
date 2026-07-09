@@ -100,6 +100,7 @@ function Onboarding() {
   const [sexualOrientation, setSexualOrientation] = useState("");
   const [personalTraits, setPersonalTraits] = useState<string[]>([]);
   const [padelStyle, setPadelStyle] = useState<string[]>([]);
+  const [showStepHelp, setShowStepHelp] = useState(false);
 
   useEffect(() => {
     const p = profileQ.data;
@@ -321,13 +322,42 @@ function Onboarding() {
 
   const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
 
-  const canStep = [
-    !!first_name && age !== null && age >= 18 && !!gender && goals.length > 0,
-    audOk && age_min !== null && age_max !== null && age_min <= age_max,
-    validBlocks.length > 0 && !!nationality && languages.length > 0 && !!level && !!courtSide,
-    priorities.length >= 3,
-    true,
-  ];
+  useEffect(() => setShowStepHelp(false), [step]);
+
+  const missingByStep = [
+    [
+      !first_name.trim() ? tr("first name", "nombre", "prénom") : null,
+      age === null || age < 18 ? tr("age", "edad", "âge") : null,
+      !gender ? tr("gender", "género", "genre") : null,
+      goals.length === 0 ? tr("what you are looking for", "qué estás buscando", "ce que tu cherches") : null,
+    ],
+    [
+      hasPartnerGoal && !meetPref ? tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") : null,
+      age_min === null || age_max === null ? tr("age range", "rango de edad", "tranche d'âge") : null,
+      age_min !== null && age_max !== null && age_min > age_max ? tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") : null,
+    ],
+    [
+      validBlocks.length === 0 ? tr("where you play", "dónde juegas", "où tu joues") : null,
+      !nationality ? tr("nationality", "nacionalidad", "nationalité") : null,
+      languages.length === 0 ? tr("languages", "idiomas", "langues") : null,
+      !level ? tr("padel level", "nivel de pádel", "niveau de padel") : null,
+      !courtSide ? tr("preferred court side", "lado de pista preferido", "côté de piste préféré") : null,
+    ],
+    [priorities.length < 3 ? tr("at least 3 values", "al menos 3 valores", "au moins 3 valeurs") : null],
+    [],
+  ].map((items) => items.filter(Boolean) as string[]);
+
+  const canStep = missingByStep.map((items) => items.length === 0);
+
+  const goNext = () => {
+    const missing = missingByStep[step] ?? [];
+    if (missing.length > 0) {
+      setShowStepHelp(true);
+      toast.error(`${tr("Please complete", "Falta por completar", "À compléter")} ${missing.join(", ")}.`);
+      return;
+    }
+    setStep(step + 1);
+  };
 
   const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];
 

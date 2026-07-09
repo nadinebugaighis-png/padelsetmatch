@@ -665,6 +665,8 @@ function Discover() {
                         </div>
                       )}
 
+                      <SharedVenuesBadge otherProfileId={preview.id} />
+
                       {/* Primary actions — coach card + message/like button placed above the fold */}
                       {preview.is_coach && (
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />

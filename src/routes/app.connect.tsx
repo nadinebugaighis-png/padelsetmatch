@@ -215,13 +215,49 @@ function ConnectPage() {
                     </div>
                     <h3 className="text-serif text-lg sm:text-xl text-[var(--ink)] mt-2 leading-snug">{p.title}</h3>
                     <p className="text-sm text-[var(--ink)]/80 mt-1 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
+
+                    {/* Inline comments preview */}
+                    {p.latest_comments.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {p.latest_comments.map((c) => (
+                          <div key={c.id} className="flex items-start gap-2 bg-white/70 rounded-xl px-3 py-2 border border-[var(--ink)]/8">
+                            {c.author?.photo_url ? (
+                              <img src={c.author.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                            ) : (
+                              <div className="w-6 h-6 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[10px] font-semibold text-[var(--ink)]/50">
+                                {(c.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/60">
+                                <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
+                                <span>·</span>
+                                <span>{timeAgo(c.created_at, tr)}</span>
+                              </div>
+                              <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap break-words leading-snug">{c.body}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {p.comment_count > p.latest_comments.length && (
+                          <button
+                            onClick={() => setOpenPost(p)}
+                            className="text-xs font-medium text-[var(--plum)] hover:text-[var(--plum)]/80"
+                          >
+                            {tr("View all", "Ver todos", "Voir tout")} {p.comment_count} {tr("comments", "comentarios", "commentaires")}
+                          </button>
+                        )}
+                      </div>
+                    )}
+
                     <div className="mt-3 pt-3 border-t border-[var(--ink)]/8 flex items-center justify-between">
                       <button
-                        onClick={() => setOpenPost(p)}
+                        onClick={() => setReplyPostId(replyPostId === p.id ? null : p.id)}
                         className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--ink)]/70 hover:text-[var(--plum)] transition"
                       >
                         <MessageCircle className="w-3.5 h-3.5" />
-                        {p.comment_count} {tr("comments", "comentarios", "commentaires")}
+                        {p.comment_count === 0
+                          ? tr("Comment", "Comentar", "Commenter")
+                          : `${p.comment_count} ${tr("comments", "comentarios", "commentaires")}`}
                       </button>
                       {mine && (
                         <div className="flex items-center gap-1">
@@ -242,6 +278,25 @@ function ConnectPage() {
                         </div>
                       )}
                     </div>
+
+                    {replyPostId === p.id && (
+                      <div className="mt-3 flex items-center gap-2">
+                        <Input
+                          value={replyBody}
+                          onChange={(e) => setReplyBody(e.target.value)}
+                          placeholder={tr("Write a comment…", "Escribe un comentario…", "Écrire un commentaire…")}
+                          className="bg-white"
+                          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && replyBody.trim()) { e.preventDefault(); addMut.mutate({ id: p.id, body: replyBody }); } }}
+                        />
+                        <Button
+                          disabled={!replyBody.trim() || addMut.isPending}
+                          onClick={() => addMut.mutate({ id: p.id, body: replyBody })}
+                          className="bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full shrink-0"
+                        >
+                          {tr("Send", "Enviar", "Envoyer")}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>

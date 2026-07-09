@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { listOpenEvents, quickCreateMatchEvent, joinMatchEvent, leaveMatchEvent, cancelMatchEvent, duplicateMatchEvent } from "@/lib/match-events.functions";
+import {
+  listOpenEvents,
+  quickCreateMatchEvent,
+  joinMatchEvent,
+  leaveMatchEvent,
+  cancelMatchEvent,
+  deleteMatchEvent,
+  duplicateMatchEvent,
+} from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { MapPin, Settings2, Search, X } from "lucide-react";
-import { RacketIcon } from "@/components/RacketIcon";
-
-
+import { MapPin, Search, X, Pencil, Trash2, UserPlus, Clock, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 
@@ -50,6 +55,9 @@ type EventLite = {
   status: string;
   club_name: string;
   gender_rule: "mixed" | "men_only" | "women_only";
+  level_min?: string;
+  level_max?: string;
+  note?: string | null;
   host?: { first_name?: string } | null;
   participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
 };
@@ -65,6 +73,7 @@ function EventsPage() {
   const join = useServerFn(joinMatchEvent);
   const leave = useServerFn(leaveMatchEvent);
   const cancel = useServerFn(cancelMatchEvent);
+  const deleteFn = useServerFn(deleteMatchEvent);
   const duplicate = useServerFn(duplicateMatchEvent);
   const getProfile = useServerFn(getMyProfile);
 
@@ -77,6 +86,7 @@ function EventsPage() {
     queryFn: () => getProfile(),
     retry: false,
   });
+  void profileQ;
 
   const eventsQ = useQuery({
     queryKey: ["open-events", myAreasOnly],
@@ -108,7 +118,6 @@ function EventsPage() {
     [eventsQ.data, searchLower],
   );
 
-  // Bucket events by (day-hour). When searching, only show matching events.
   const buckets = useMemo(() => {
     const map = new Map<string, EventLite[]>();
     for (const e of visibleEvents) {
@@ -122,11 +131,10 @@ function EventsPage() {
   }, [visibleEvents]);
 
   const [pending, setPending] = useState<string | null>(null);
-  const [sheet, setSheet] = useState<{ eventId: string; startsAt: string } | null>(null);
   const [slotSheet, setSlotSheet] = useState<{ startsAt: string; events: EventLite[] } | null>(null);
+  const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to a reasonable morning hour on first load
   useEffect(() => {
     if (!scrollRef.current) return;
     const nowH = new Date().getHours();
@@ -135,14 +143,35 @@ function EventsPage() {
     if (rowIdx > 0) scrollRef.current.scrollTop = rowIdx * 56 - 40;
   }, []);
 
-  async function quickCreateAt(startsAt: Date) {
+  function refetch() {
+    qc.invalidateQueries({ queryKey: ["open-events"] });
+  }
+
+  // ----- Actions with undo -----
+
+  async function instantCreate(startsAt: Date) {
     const key = slotKey(startOfDay(startsAt), startsAt.getHours());
     setPending(key);
     try {
       const { id } = await quickCreate({ data: { starts_at: startsAt.toISOString() } });
-      await qc.invalidateQueries({ queryKey: ["open-events"] });
-      setSlotSheet(null);
-      setSheet({ eventId: id, startsAt: startsAt.toISOString() });
+      await refetch();
+      toast.success(tr("You're marked as free", "Marcado como disponible", "Marqué comme disponible"), {
+        duration: 6000,
+        action: {
+          label: tr("Undo", "Deshacer", "Annuler"),
+          onClick: async () => {
+            try {
+              await deleteFn({ data: { id } });
+              refetch();
+            } catch {/* ignore */}
+          },
+        },
+        description: tr("Tap 'Add details' to set club and level.", "Toca 'Detalles' para añadir club y nivel.", "Touche 'Détails' pour ajouter club et niveau."),
+        cancel: {
+          label: tr("Details", "Detalles", "Détails"),
+          onClick: () => navigate({ to: "/app/events/$eventId/edit", params: { eventId: id } }),
+        },
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido", "Impossible de créer le match");
       toast.error(msg);
@@ -154,20 +183,95 @@ function EventsPage() {
     }
   }
 
-  async function joinEvent(id: string) {
-    setPending(id);
+  async function instantJoin(e: EventLite) {
+    setPending(e.id);
     try {
-      await join({ data: { id } });
-      toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"));
-      await qc.invalidateQueries({ queryKey: ["open-events"] });
-      setSlotSheet(null);
-      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not join", "No se pudo unir", "Impossible de rejoindre"));
+      await join({ data: { id: e.id } });
+      await refetch();
+      toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"), {
+        duration: 6000,
+        action: {
+          label: tr("Undo", "Deshacer", "Annuler"),
+          onClick: async () => {
+            try {
+              await leave({ data: { id: e.id } });
+              refetch();
+            } catch {/* ignore */}
+          },
+        },
+        cancel: {
+          label: tr("Open", "Abrir", "Ouvrir"),
+          onClick: () => navigate({ to: "/app/events/$eventId", params: { eventId: e.id } }),
+        },
+      });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Could not join", "No se pudo unir", "Impossible de rejoindre"));
     } finally {
       setPending(null);
     }
   }
+
+  async function instantLeave(e: EventLite) {
+    setPending(e.id);
+    try {
+      await leave({ data: { id: e.id } });
+      await refetch();
+      toast(tr("You left the match", "Has salido del partido", "Tu as quitté le match"), {
+        duration: 6000,
+        action: {
+          label: tr("Undo", "Deshacer", "Annuler"),
+          onClick: async () => {
+            try {
+              await join({ data: { id: e.id } });
+              refetch();
+            } catch {/* ignore */}
+          },
+        },
+      });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Could not leave", "No se pudo salir", "Impossible de quitter"));
+    } finally {
+      setPending(null);
+    }
+  }
+
+  async function hostCancel(e: EventLite) {
+    setPending(e.id);
+    try {
+      if ((e.filled ?? 0) <= 1) {
+        await deleteFn({ data: { id: e.id } });
+        toast.success(tr("Match removed", "Partido eliminado", "Match supprimé"));
+      } else {
+        await cancel({ data: { id: e.id } });
+        toast.success(tr("Match cancelled", "Partido cancelado", "Match annulé"));
+      }
+      await refetch();
+      setMyMatchSheet(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
+    } finally {
+      setPending(null);
+    }
+  }
+
+  async function hostExtend(e: EventLite, hoursAhead: number) {
+    const target = new Date(e.starts_at);
+    target.setHours(target.getHours() + hoursAhead, 0, 0, 0);
+    setPending(e.id);
+    try {
+      const { id } = await duplicate({ data: { id: e.id, starts_at: target.toISOString() } });
+      toast.success(tr("Copied to +" + hoursAhead + "h", "Copiado a +" + hoursAhead + "h", "Copié à +" + hoursAhead + "h"));
+      await refetch();
+      setMyMatchSheet(null);
+      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Could not copy", "No se pudo copiar", "Impossible de copier"));
+    } finally {
+      setPending(null);
+    }
+  }
+
+  // ----- Cell tap router -----
 
   async function handleCellTap(date: Date, hour: number) {
     if (pending) return;
@@ -179,77 +283,48 @@ function EventsPage() {
     }
     const key = slotKey(date, hour);
     const existing = buckets.get(key) ?? [];
+
+    // Empty → instant create
     if (existing.length === 0) {
       if (searchLower) {
         toast.info(tr("Clear search to create a match here.", "Borra la búsqueda para crear aquí.", "Effacez la recherche pour créer ici."));
         return;
       }
-      await quickCreateAt(startsAt);
+      await instantCreate(startsAt);
       return;
     }
-    // Show picker of all matches at this hour + option to start another.
-    setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
-  }
 
-  // Double-tap on my match → leave (participant) or cancel (host & alone)
-  async function handleMyDoubleTap(e: EventLite) {
-    if (pending) return;
+    // Multiple matches → picker
+    if (existing.length > 1) {
+      setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
+      return;
+    }
+
+    const e = existing[0];
+    const mine = e.iAmHost || e.iAmParticipant;
+
+    // My host cell → management sheet
     if (e.iAmHost) {
-      if ((e.filled ?? 0) > 0) {
-        toast.info(tr("You're the host — open the match to manage it.", "Eres el anfitrión — abre el partido para gestionarlo.", "Tu es l'hôte — ouvre le match pour le gérer."));
-        return;
-      }
-      if (!confirm(tr("Cancel this match?", "¿Cancelar este partido?", "Annuler ce match ?"))) return;
-      setPending(e.id);
-      try {
-        await cancel({ data: { id: e.id } });
-        toast.success(tr("Match cancelled", "Partido cancelado", "Match annulé"));
-        await qc.invalidateQueries({ queryKey: ["open-events"] });
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
-      } finally { setPending(null); }
+      setMyMatchSheet(e);
       return;
     }
-    if (e.iAmParticipant) {
-      if (!confirm(tr("Leave this match?", "¿Salir de este partido?", "Quitter ce match ?"))) return;
-      setPending(e.id);
-      try {
-        await leave({ data: { id: e.id } });
-        toast.success(tr("You left the match", "Has salido del partido", "Tu as quitté le match"));
-        await qc.invalidateQueries({ queryKey: ["open-events"] });
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : tr("Could not leave", "No se pudo salir", "Impossible de quitter"));
-      } finally { setPending(null); }
-    }
-  }
-
-  // Drag-to-duplicate: on release, find the target cell under pointer
-  async function handleDropDuplicate(sourceEvent: EventLite, target: { date: Date; hour: number }) {
-    if (!sourceEvent.iAmHost) {
-      toast.info(tr("Only the host can duplicate this match.", "Solo el anfitrión puede duplicar este partido.", "Seul l'hôte peut dupliquer ce match."));
+    // My participant cell → instant leave with undo
+    if (mine) {
+      await instantLeave(e);
       return;
     }
-    const startsAt = new Date(target.date);
-    startsAt.setHours(target.hour, 0, 0, 0);
-    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
-      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
+    // Full → show lineup + option to create another
+    if ((e.filled ?? 0) >= 4) {
+      setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
       return;
     }
-    setPending(sourceEvent.id);
-    try {
-      const { id } = await duplicate({ data: { id: sourceEvent.id, starts_at: startsAt.toISOString() } });
-      toast.success(tr("Match duplicated", "Partido duplicado", "Match dupliqué"));
-      await qc.invalidateQueries({ queryKey: ["open-events"] });
-      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : tr("Could not duplicate", "No se pudo duplicar", "Impossible de dupliquer"));
-    } finally { setPending(null); }
+    // Open slot, not mine → instant join with undo
+    await instantJoin(e);
   }
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-28">
-        {/* Header */}
         <div className="flex items-start justify-between mb-1 gap-3">
           <div className="min-w-0">
             <h1 className="text-serif text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[var(--ink)]">
@@ -259,9 +334,9 @@ function EventsPage() {
             </h1>
             <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
               {tr(
-                "Tap an hour you're free. Others join. Done.",
-                "Toca una hora libre. Otros se unen. Listo.",
-                "Touche une heure libre. Les autres rejoignent.",
+                "Tap an hour to show you're free. Tap again to remove.",
+                "Toca una hora para marcarte libre. Toca otra vez para quitarte.",
+                "Touche une heure pour être libre. Retouche pour retirer.",
               )}
             </p>
           </div>
@@ -273,14 +348,12 @@ function EventsPage() {
                 ? "border-[var(--plum)] text-[var(--plum)]"
                 : "border-[var(--ink)]/25 text-[var(--ink)]/80"
             }`}
-            title={tr("Toggle world / my areas", "Alternar mundo / mis zonas", "Basculer monde / mes zones")}
           >
             <MapPin className="w-3 h-3" />
             {worldwide ? tr("World", "Mundo", "Monde") : tr("My areas", "Mis zonas", "Mes zones")}
           </button>
         </div>
 
-        {/* Search by name */}
         <div className="relative mb-4">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 pointer-events-none">
             <Search className="w-4 h-4" />
@@ -297,112 +370,102 @@ function EventsPage() {
               type="button"
               onClick={() => setSearch("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 hover:text-[var(--ink)]"
-              aria-label={tr("Clear search", "Limpiar búsqueda", "Effacer la recherche")}
             >
               <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        {/* Legend */}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-        <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
-        <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
-        <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
-        <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
-        <Link
-          to="/app/events/new"
-          className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/70 hover:text-[var(--ink)]"
-        >
-          <Settings2 className="w-3 h-3" /> {tr("Advanced", "Avanzado", "Avancé")}
-        </Link>
-      </div>
+          <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
+          <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
+          <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
+          <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
+        </div>
 
-      {/* Grid */}
-      <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
-        <div
-          ref={scrollRef}
-          className="overflow-auto"
-          style={{ maxHeight: "calc(100vh - 260px)" }}
-        >
+        <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
           <div
-            className="grid"
-            style={{
-              gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
-              gridAutoRows: "56px",
-            }}
+            ref={scrollRef}
+            className="overflow-auto"
+            style={{ maxHeight: "calc(100vh - 260px)" }}
           >
-            {/* Corner */}
-            <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
-            {/* Day headers */}
-            {days.map((d, i) => {
-              const label = formatDay(d, lang, 0, i, tr);
-              const isToday = i === 0;
-              return (
-                <div
-                  key={i}
-                  className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
-                    isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
-                  }`}
-                >
-                  <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
-                    {label.top}
-                  </span>
-                  <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
-                </div>
-              );
-            })}
+            <div
+              className="grid"
+              style={{
+                gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
+                gridAutoRows: "56px",
+              }}
+            >
+              <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
+              {days.map((d, i) => {
+                const label = formatDay(d, lang, 0, i, tr);
+                const isToday = i === 0;
+                return (
+                  <div
+                    key={i}
+                    className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
+                      isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
+                    }`}
+                  >
+                    <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
+                      {label.top}
+                    </span>
+                    <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
+                  </div>
+                );
+              })}
 
-            {/* Rows */}
-            {HOURS.map((h) => (
-              <RowCells
-                key={h}
-                hour={h}
-                days={days}
-                buckets={buckets}
-                pending={pending}
-                onTap={handleCellTap}
-                onMyDoubleTap={handleMyDoubleTap}
-                onDropDuplicate={handleDropDuplicate}
-                tr={tr}
-              />
-            ))}
+              {HOURS.map((h) => (
+                <RowCells
+                  key={h}
+                  hour={h}
+                  days={days}
+                  buckets={buckets}
+                  pending={pending}
+                  onTap={handleCellTap}
+                  tr={tr}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Slot picker (multiple matches at the same hour) */}
-      {slotSheet && (
-        <SlotSheet
-          startsAt={slotSheet.startsAt}
-          events={slotSheet.events}
-          pending={pending}
-          onClose={() => setSlotSheet(null)}
-          onJoin={joinEvent}
-          onOpen={(id) => {
-            setSlotSheet(null);
-            navigate({ to: "/app/events/$eventId", params: { eventId: id } });
-          }}
-          onStartAnother={() => quickCreateAt(new Date(slotSheet.startsAt))}
-        />
-      )}
+        {slotSheet && (
+          <SlotSheet
+            startsAt={slotSheet.startsAt}
+            events={slotSheet.events}
+            pending={pending}
+            onClose={() => setSlotSheet(null)}
+            onJoin={async (e) => { setSlotSheet(null); await instantJoin(e); }}
+            onOpen={(id) => { setSlotSheet(null); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
+            onStartAnother={() => {
+              const d = new Date(slotSheet.startsAt);
+              setSlotSheet(null);
+              instantCreate(d);
+            }}
+          />
+        )}
 
-      {/* Quick-create follow-up sheet */}
-      {sheet && (
-        <QuickSheet
-          eventId={sheet.eventId}
-          startsAt={sheet.startsAt}
-          onClose={() => setSheet(null)}
-        />
-      )}
-      {/* Search results list */}
-      {searchLower && (
-        <SearchResults
-          events={visibleEvents}
-          search={search}
-          onOpen={(id: string) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
-        />
-      )}
+        {myMatchSheet && (
+          <MyMatchSheet
+            event={myMatchSheet}
+            pending={pending}
+            onClose={() => setMyMatchSheet(null)}
+            onEdit={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId: myMatchSheet.id } })}
+            onInvite={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
+            onOpen={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
+            onCancel={() => hostCancel(myMatchSheet)}
+            onExtend={(h) => hostExtend(myMatchSheet, h)}
+          />
+        )}
+
+        {searchLower && (
+          <SearchResults
+            events={visibleEvents}
+            search={search}
+            onOpen={(id: string) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+          />
+        )}
       </div>
     </div>
   );
@@ -414,8 +477,6 @@ function RowCells({
   buckets,
   pending,
   onTap,
-  onMyDoubleTap,
-  onDropDuplicate,
   tr,
 }: {
   hour: number;
@@ -423,41 +484,11 @@ function RowCells({
   buckets: Map<string, EventLite[]>;
   pending: string | null;
   onTap: (d: Date, h: number) => void;
-  onMyDoubleTap: (e: EventLite) => void;
-  onDropDuplicate: (source: EventLite, target: { date: Date; hour: number }) => void;
   tr: ReturnType<typeof useTr>;
 }) {
   const nowH = new Date().getHours();
   const isCurrentHour = hour === nowH;
   const stripe = hour % 2 === 0 ? "bg-[var(--ink)]/[0.02]" : "";
-  const lastTapRef = useRef<{ id: string; ts: number } | null>(null);
-  const dragRef = useRef<{ event: EventLite; startX: number; startY: number; moved: boolean } | null>(null);
-
-  const onPointerDown = (ev: ReactPointerEvent, primary: EventLite | undefined) => {
-    if (!primary) return;
-    const mine = primary.iAmHost || primary.iAmParticipant;
-    if (!mine) return;
-    dragRef.current = { event: primary, startX: ev.clientX, startY: ev.clientY, moved: false };
-  };
-  const onPointerMove = (ev: ReactPointerEvent) => {
-    const d = dragRef.current;
-    if (!d) return;
-    if (Math.abs(ev.clientX - d.startX) > 8 || Math.abs(ev.clientY - d.startY) > 8) d.moved = true;
-  };
-  const onPointerUp = (ev: ReactPointerEvent) => {
-    const d = dragRef.current;
-    dragRef.current = null;
-    if (!d || !d.moved) return;
-    ev.preventDefault();
-    ev.stopPropagation();
-    const el = document.elementFromPoint(ev.clientX, ev.clientY);
-    const cell = el?.closest("[data-cell]") as HTMLElement | null;
-    if (!cell) return;
-    const dayIdx = Number(cell.getAttribute("data-day-idx"));
-    const targetHour = Number(cell.getAttribute("data-hour"));
-    if (Number.isNaN(dayIdx) || Number.isNaN(targetHour)) return;
-    onDropDuplicate(d.event, { date: days[dayIdx], hour: targetHour });
-  };
 
   return (
     <>
@@ -480,42 +511,18 @@ function RowCells({
           <button
             key={i}
             type="button"
-            data-cell
-            data-day-idx={i}
-            data-hour={hour}
-            disabled={isPending || past}
-            onPointerDown={(e) => onPointerDown(e, primary)}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onClick={() => {
-              // Suppress click after a drag
-              if (dragRef.current?.moved) return;
-              // Double-tap on my match → leave/cancel
-              if (primary && mine) {
-                const now = Date.now();
-                const last = lastTapRef.current;
-                if (last && last.id === primary.id && now - last.ts < 350) {
-                  lastTapRef.current = null;
-                  onMyDoubleTap(primary);
-                  return;
-                }
-                lastTapRef.current = { id: primary.id, ts: now };
-              }
-              onTap(d, hour);
-            }}
-            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative touch-none ${stripe} ${
-              past
-                ? "opacity-25 cursor-not-allowed"
-                : "hover:bg-[var(--ink)]/5 active:bg-[var(--ink)]/8 transition-colors"
-            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""} ${mine ? "cursor-grab" : ""}`}
-            aria-label={tr(
-              `${primary ? "Open" : "Add"} ${hour}:00 ${d.toDateString()}`,
-              `${primary ? "Abrir" : "Añadir"} ${hour}:00`,
-              `${primary ? "Ouvrir" : "Ajouter"} ${hour}:00`,
-            )}
+            disabled={!!isPending || past}
+            onClick={() => onTap(d, hour)}
+            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative ${stripe} ${
+              past ? "opacity-25 cursor-not-allowed" : "hover:bg-[var(--ink)]/5 active:bg-[var(--ink)]/8 transition-colors"
+            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""}`}
+            aria-label={`${primary ? "Open" : "Add"} ${hour}:00`}
           >
             {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
               <span className="w-1 h-1 rounded-full bg-[var(--ink)]/20" />
+            )}
+            {mine && !isPending && (
+              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />
             )}
             {isPending && (
               <span className="absolute inset-0 flex items-center justify-center bg-[var(--ink)]/10">
@@ -529,18 +536,11 @@ function RowCells({
   );
 }
 
-
-
 function slotColor(filled: number, mine: boolean) {
   if (filled >= 4) {
-    return {
-      wrap: "bg-[var(--ink)] text-[var(--paper)]",
-      pip: "bg-[var(--paper)]",
-      empty: "bg-[var(--paper)]/30",
-    };
+    return { wrap: "bg-[var(--ink)] text-[var(--paper)]", pip: "bg-[var(--paper)]", empty: "bg-[var(--paper)]/30" };
   }
   if (filled === 3) {
-    // Almost full — plum accent so it pops
     return {
       wrap: `bg-[color-mix(in_oklab,var(--plum)_22%,transparent)] text-[var(--plum)] ring-1 ${mine ? "ring-[var(--ink)]" : "ring-[var(--plum)]/60"}`,
       pip: "bg-[var(--plum)]",
@@ -554,21 +554,14 @@ function slotColor(filled: number, mine: boolean) {
       empty: "bg-[var(--ink)]/25",
     };
   }
-  return {
-    wrap: "bg-transparent text-[var(--ink)]/70",
-    pip: "bg-[var(--ink)]/70",
-    empty: "bg-[var(--ink)]/20",
-  };
+  return { wrap: "bg-transparent text-[var(--ink)]/70", pip: "bg-[var(--ink)]/70", empty: "bg-[var(--ink)]/20" };
 }
 
 function SlotPips({ filled, pip, empty }: { filled: number; pip: string; empty: string }) {
   return (
     <div className="flex items-center gap-[2px]">
       {[0, 1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className={`w-[5px] h-[5px] rounded-full ${i < filled ? pip : empty}`}
-        />
+        <span key={i} className={`w-[5px] h-[5px] rounded-full ${i < filled ? pip : empty}`} />
       ))}
     </div>
   );
@@ -589,9 +582,7 @@ function CellPill({ e, extra }: { e: EventLite; extra: number }) {
   const mine = e.iAmHost || e.iAmParticipant;
   const c = slotColor(filled, mine);
   return (
-    <div
-      className={`flex flex-col items-center justify-center gap-[3px] px-1.5 py-1 rounded-lg leading-none ${c.wrap}`}
-    >
+    <div className={`flex flex-col items-center justify-center gap-[3px] px-1.5 py-1 rounded-lg leading-none ${c.wrap}`}>
       <SlotPips filled={filled} pip={c.pip} empty={c.empty} />
       <span className="text-[9px] font-bold tracking-wider">
         {filled >= 4 ? "4/4" : `${filled}/4`}
@@ -601,69 +592,145 @@ function CellPill({ e, extra }: { e: EventLite; extra: number }) {
   );
 }
 
+function whenLabel(iso: string) {
+  return new Date(iso).toLocaleString(undefined, {
+    weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+  });
+}
 
-function QuickSheet({
-  eventId,
-  startsAt,
+function Lineup({ e, tr }: { e: EventLite; tr: ReturnType<typeof useTr> }) {
+  const filled = e.filled ?? 0;
+  const slots = Array.from({ length: 4 }, (_, i) => e.participants?.[i] ?? null);
+  return (
+    <div className="flex items-center gap-2">
+      {slots.map((p, i) => {
+        const name = p?.profiles?.first_name;
+        const photo = p?.profiles?.photo_url;
+        const empty = i >= filled;
+        return (
+          <div key={i} className="flex flex-col items-center gap-1 flex-1 min-w-0">
+            <div className={`w-10 h-10 rounded-full overflow-hidden border ${empty ? "border-dashed border-[var(--ink)]/25 bg-[var(--ink)]/[0.04]" : "border-[var(--ink)]/15 bg-[var(--ink)]/10"}`}>
+              {photo ? <img src={photo} alt="" className="w-full h-full object-cover" /> : null}
+            </div>
+            <span className="text-[10px] text-[var(--ink)]/70 truncate max-w-full">
+              {empty ? tr("Open", "Libre", "Libre") : name ?? "—"}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function MyMatchSheet({
+  event,
+  pending,
   onClose,
+  onEdit,
+  onInvite,
+  onOpen,
+  onCancel,
+  onExtend,
 }: {
-  eventId: string;
-  startsAt: string;
+  event: EventLite;
+  pending: string | null;
   onClose: () => void;
+  onEdit: () => void;
+  onInvite: () => void;
+  onOpen: () => void;
+  onCancel: () => void;
+  onExtend: (h: number) => void;
 }) {
   const tr = useTr();
-  const navigate = useNavigate();
-  const when = new Date(startsAt).toLocaleString(undefined, {
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  const busy = pending === event.id;
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-sm bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/15 p-5 space-y-4"
+        className="w-full sm:max-w-md bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/15 p-5 space-y-4 max-h-[90vh] overflow-y-auto"
       >
-        <div>
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-            {tr("Match called", "Partido convocado", "Match lancé")}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-widest text-[var(--plum)]">
+              {event.iAmHost ? tr("Your match", "Tu partido", "Ton match") : tr("You're in", "Estás dentro", "Vous êtes dedans")}
+            </div>
+            <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-0.5">{whenLabel(event.starts_at)}</div>
+            <div className="text-xs text-[var(--ink)]/70 mt-1 truncate">
+              {event.club_name || tr("No club yet", "Sin club aún", "Pas de club")}
+            </div>
           </div>
-          <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-1">{when}</div>
-          <p className="text-sm text-[var(--ink)]/70 mt-2">
-            {tr(
-              "You're in. Add a club or invite players — or leave it and let others join.",
-              "Estás dentro. Añade club o invita jugadores, o déjalo y que otros se unan.",
-              "C'est bon. Ajoute un club ou invite des joueurs — ou laisse d'autres rejoindre.",
-            )}
-          </p>
+          <button type="button" onClick={onClose} className="text-[var(--ink)]/60 hover:text-[var(--ink)] shrink-0 p-1">
+            <X className="w-5 h-5" />
+          </button>
         </div>
+
+        <div className="rounded-xl border border-[var(--ink)]/10 bg-white p-3">
+          <Lineup e={event} tr={tr} />
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-2 text-center">
+            {event.filled}/4 · {event.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : event.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
+            {event.level_min ? ` · ${event.level_min}${event.level_min !== event.level_max ? `–${event.level_max}` : ""}` : ""}
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
+            onClick={onInvite}
+            disabled={busy}
             className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
           >
-            <MapPin className="w-3.5 h-3.5" /> {tr("Add club", "Añadir club", "Ajouter club")}
+            <UserPlus className="w-3.5 h-3.5" /> {tr("Invite", "Invitar", "Inviter")}
           </button>
           <button
-            onClick={() => navigate({ to: "/app/events/$eventId", params: { eventId } })}
+            onClick={onEdit}
+            disabled={busy}
             className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5"
           >
-            <RacketIcon className="w-3.5 h-3.5" /> {tr("Invite", "Invitar", "Inviter")}
+            <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Éditer")}
           </button>
         </div>
+
+        {event.iAmHost && (
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mb-1.5 flex items-center gap-1.5">
+              <Clock className="w-3 h-3" /> {tr("Extend / copy", "Extender / copiar", "Prolonger / copier")}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 3].map((h) => (
+                <button
+                  key={h}
+                  onClick={() => onExtend(h)}
+                  disabled={busy}
+                  className="rounded-full border border-[var(--plum)]/50 text-[var(--plum)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+                >
+                  +{h}h
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-[var(--ink)]/50 mt-1.5 leading-relaxed">
+              {tr("Creates a copy at the next hour with same players and details.", "Crea una copia en la hora siguiente con los mismos jugadores y detalles.", "Crée une copie à l'heure suivante avec mêmes joueurs.")}
+            </p>
+          </div>
+        )}
+
         <button
-          onClick={onClose}
-          className="w-full rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+          onClick={onOpen}
+          className="w-full rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold py-3 inline-flex items-center justify-center gap-1.5"
         >
-          {tr("Done", "Listo", "Terminé")}
+          <Users className="w-3.5 h-3.5" /> {tr("Open match page", "Ir al partido", "Voir le match")}
         </button>
-        <button
-          onClick={() => navigate({ to: "/app/events/$eventId", params: { eventId } })}
-          className="w-full text-[10px] uppercase tracking-widest text-[var(--ink)]/60"
-        >
-          {tr("Open match", "Ir al partido", "Voir le match")} →
-        </button>
+
+        {event.iAmHost && (
+          <button
+            onClick={onCancel}
+            disabled={busy}
+            className="w-full rounded-full border border-red-400/50 text-red-500 text-[11px] uppercase tracking-widest font-bold py-2.5 inline-flex items-center justify-center gap-1.5 disabled:opacity-50"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {(event.filled ?? 0) <= 1
+              ? tr("Delete match", "Eliminar partido", "Supprimer")
+              : tr("Cancel match", "Cancelar partido", "Annuler le match")}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -696,9 +763,7 @@ function SearchResults({
     <div className="mt-6 space-y-4">
       <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60">
         {events.length}{" "}
-        {events.length === 1
-          ? tr("match", "partido", "match")
-          : tr("matches", "partidos", "matchs")}{" "}
+        {events.length === 1 ? tr("match", "partido", "match") : tr("matches", "partidos", "matchs")}{" "}
         {tr("for", "para", "pour")} “{searchedName}”
       </div>
       {grouped.map(([dayIso, list]) => {
@@ -711,7 +776,6 @@ function SearchResults({
               {list.map((e) => {
                 const start = new Date(e.starts_at);
                 const time = start.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false });
-                const isHost = e.host?.first_name?.toLowerCase().includes(searchedName.toLowerCase());
                 return (
                   <li key={e.id}>
                     <button
@@ -727,9 +791,7 @@ function SearchResults({
                         <div className="text-sm text-[var(--ink)] font-semibold truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</div>
                         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-0.5">
                           {e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : e.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
-                          {" · "}
-                          {isHost ? tr("Host", "Anfitrión", "Hôte") : tr("Player", "Jugador", "Joueur")}
-                          {e.iAmHost && ` · ${tr("You", "Tú", "Toi")}`}
+                          {e.iAmHost && ` · ${tr("You host", "Tu partido", "Toi")}`}
                         </div>
                       </div>
                       <span className="text-[var(--ink)]/50 text-lg">→</span>
@@ -758,80 +820,59 @@ function SlotSheet({
   events: EventLite[];
   pending: string | null;
   onClose: () => void;
-  onJoin: (id: string) => void;
+  onJoin: (e: EventLite) => void;
   onOpen: (id: string) => void;
   onStartAnother: () => void;
 }) {
   const tr = useTr();
-  const when = new Date(startsAt).toLocaleString(undefined, {
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
         className="w-full sm:max-w-md bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
       >
-        <div>
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-            {tr("Matches at", "Partidos a las", "Matchs à")}
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
+              {tr("Matches at", "Partidos a las", "Matchs à")}
+            </div>
+            <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-1">{whenLabel(startsAt)}</div>
           </div>
-          <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-1">{when}</div>
-          <p className="text-xs text-[var(--ink)]/60 mt-1">
-            {events.length}{" "}
-            {events.length === 1
-              ? tr("match", "partido", "match")
-              : tr("matches", "partidos", "matchs")}
-          </p>
+          <button onClick={onClose} className="text-[var(--ink)]/60 hover:text-[var(--ink)] p-1"><X className="w-5 h-5" /></button>
         </div>
 
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {events.map((e) => {
             const mine = e.iAmHost || e.iAmParticipant;
             const full = e.filled >= 4;
             const canJoin = !mine && !full && e.status === "open";
             const isPending = pending === e.id;
             return (
-              <li
-                key={e.id}
-                className="rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => onOpen(e.id)}
-                  className="flex-1 min-w-0 text-left"
-                >
+              <li key={e.id} className="rounded-xl border border-[var(--ink)]/10 bg-white p-3 space-y-2">
+                <button type="button" onClick={() => onOpen(e.id)} className="w-full text-left">
                   <div className="text-sm text-[var(--ink)] font-semibold truncate">
                     {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
                   </div>
                   <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-0.5">
-                    {e.filled}/4 · {e.gender_rule === "mixed"
-                      ? tr("Mixed", "Mixto", "Mixte")
-                      : e.gender_rule === "men_only"
-                        ? tr("Men", "Hombres", "Hommes")
-                        : tr("Women", "Mujeres", "Femmes")}
+                    {e.filled}/4 · {e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : e.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
                     {mine && ` · ${tr("You're in", "Estás dentro", "Vous êtes dedans")}`}
                   </div>
                 </button>
+                <Lineup e={e} tr={tr} />
                 {canJoin ? (
                   <button
                     type="button"
                     disabled={isPending}
-                    onClick={() => onJoin(e.id)}
-                    className="shrink-0 rounded-full bg-[var(--plum)] text-white text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50"
+                    onClick={() => onJoin(e)}
+                    className="w-full rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
                   >
-                    {isPending
-                      ? tr("Joining…", "Uniéndose…", "…")
-                      : tr("Join", "Unirme", "Rejoindre")}
+                    {isPending ? tr("Joining…", "Uniéndose…", "…") : tr("Join this match", "Unirme a este partido", "Rejoindre")}
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={() => onOpen(e.id)}
-                    className="shrink-0 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-2"
+                    className="w-full rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
                   >
                     {tr("Open", "Abrir", "Ouvrir")}
                   </button>
@@ -848,13 +889,6 @@ function SlotSheet({
           className="w-full rounded-full border border-dashed border-[var(--plum)]/60 text-[var(--plum)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
         >
           + {tr("Start another match at this time", "Convocar otro partido a esta hora", "Lancer un autre match à cette heure")}
-        </button>
-
-        <button
-          onClick={onClose}
-          className="w-full text-[10px] uppercase tracking-widest text-[var(--ink)]/60"
-        >
-          {tr("Close", "Cerrar", "Fermer")}
         </button>
       </div>
     </div>

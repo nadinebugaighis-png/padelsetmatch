@@ -129,7 +129,7 @@ function HowItWorksPage() {
             title={tr("Private profile", "Perfil privado", "Profil privé")}
             body={tr(
               "Share as much as you want. The more the AI knows, the better your matches. Nothing is shown to anyone.",
-              "Comparte lo que quieras. Cuanto más sepa la IA, mejores serán tus matches. Nada es visible para otros.",
+              "Comparte lo que quieras. Cuanto más sepa la IA, mejores serán tus conexiones. Nada es visible para otros.",
               "Partage ce que tu veux. Plus l'IA en sait, meilleurs sont tes matches. Rien n'est visible pour les autres."
             )}
           />

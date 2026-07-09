@@ -356,11 +356,17 @@ function EventsPage() {
               {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
             </h1>
             <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
-              {tr(
-                "Tap an empty hour to mark yourself free. Tap your match to manage it.",
-                "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
-                "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
-              )}
+              {mode === "find"
+                ? tr(
+                    "Tap an empty hour to mark yourself free. Tap your match to manage it.",
+                    "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
+                    "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
+                  )
+                : tr(
+                    "Your upcoming matches, in order.",
+                    "Tus próximos partidos, en orden.",
+                    "Tes prochains matchs, dans l'ordre.",
+                  )}
             </p>
           </div>
           <button

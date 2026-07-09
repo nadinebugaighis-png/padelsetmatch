@@ -339,9 +339,9 @@ function EventsPage() {
             </h1>
             <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
               {tr(
-                "Tap an hour to show you're free. Tap again to remove.",
-                "Toca una hora para marcarte libre. Toca otra vez para quitarte.",
-                "Touche une heure pour être libre. Retouche pour retirer.",
+                "Tap an empty hour to mark yourself free. Tap your match to manage it.",
+                "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
+                "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
               )}
             </p>
           </div>

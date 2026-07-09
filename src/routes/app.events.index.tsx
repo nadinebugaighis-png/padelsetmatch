@@ -221,9 +221,10 @@ function EventsPage() {
       await leave({ data: { id: e.id } });
       await refetch();
       toast(tr("You left the match", "Has salido del partido", "Tu as quitté le match"), {
-        duration: 6000,
+        duration: 10000,
         action: {
-          label: tr("Undo", "Deshacer", "Annuler"),
+          label: tr("Undo — rejoin", "Deshacer — volver", "Annuler — rejoindre"),
+
           onClick: async () => {
             try {
               await join({ data: { id: e.id } });

@@ -191,6 +191,61 @@ function EventsPage() {
     setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
   }
 
+  // Double-tap on my match → leave (participant) or cancel (host & alone)
+  async function handleMyDoubleTap(e: EventLite) {
+    if (pending) return;
+    if (e.iAmHost) {
+      if ((e.filled ?? 0) > 0) {
+        toast.info(tr("You're the host — open the match to manage it.", "Eres el anfitrión — abre el partido para gestionarlo.", "Tu es l'hôte — ouvre le match pour le gérer."));
+        return;
+      }
+      if (!confirm(tr("Cancel this match?", "¿Cancelar este partido?", "Annuler ce match ?"))) return;
+      setPending(e.id);
+      try {
+        await cancel({ data: { id: e.id } });
+        toast.success(tr("Match cancelled", "Partido cancelado", "Match annulé"));
+        await qc.invalidateQueries({ queryKey: ["open-events"] });
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
+      } finally { setPending(null); }
+      return;
+    }
+    if (e.iAmParticipant) {
+      if (!confirm(tr("Leave this match?", "¿Salir de este partido?", "Quitter ce match ?"))) return;
+      setPending(e.id);
+      try {
+        await leave({ data: { id: e.id } });
+        toast.success(tr("You left the match", "Has salido del partido", "Tu as quitté le match"));
+        await qc.invalidateQueries({ queryKey: ["open-events"] });
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : tr("Could not leave", "No se pudo salir", "Impossible de quitter"));
+      } finally { setPending(null); }
+    }
+  }
+
+  // Drag-to-duplicate: on release, find the target cell under pointer
+  async function handleDropDuplicate(sourceEvent: EventLite, target: { date: Date; hour: number }) {
+    if (!sourceEvent.iAmHost) {
+      toast.info(tr("Only the host can duplicate this match.", "Solo el anfitrión puede duplicar este partido.", "Seul l'hôte peut dupliquer ce match."));
+      return;
+    }
+    const startsAt = new Date(target.date);
+    startsAt.setHours(target.hour, 0, 0, 0);
+    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
+      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
+      return;
+    }
+    setPending(sourceEvent.id);
+    try {
+      const { id } = await duplicate({ data: { id: sourceEvent.id, starts_at: startsAt.toISOString() } });
+      toast.success(tr("Match duplicated", "Partido duplicado", "Match dupliqué"));
+      await qc.invalidateQueries({ queryKey: ["open-events"] });
+      navigate({ to: "/app/events/$eventId", params: { eventId: id } });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Could not duplicate", "No se pudo duplicar", "Impossible de dupliquer"));
+    } finally { setPending(null); }
+  }
+
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-28">

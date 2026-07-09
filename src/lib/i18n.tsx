@@ -384,10 +384,10 @@ const es: Dict = {
   // Discover
   "disc.h1": "Pulsa sobre quien te gustaría jugar.",
   "disc.sub": "Si os pulsáis mutuamente, se abre el chat.",
-  "disc.scoreA": "El",
-  "disc.scoreB": "es la",
+  "disc.scoreA": "La",
+  "disc.scoreB": "mide cuánto encajan —",
   "disc.scoreBold": "puntuación de compatibilidad",
-  "disc.scoreC": "— cuánto encajan vuestras respuestas (edad, nivel, zona, cultura, valores). A mayor puntuación, mejor encaje.",
+  "disc.scoreC": "edad, nivel, zona, valores. A mayor puntuación, mejor encaje.",
   "disc.filter.all": "Todos",
   "disc.filter.partner": "Pareja",
   "disc.filter.friend": "Amistad",

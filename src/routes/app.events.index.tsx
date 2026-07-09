@@ -10,9 +10,12 @@ import {
   cancelMatchEvent,
   deleteMatchEvent,
   duplicateMatchEvent,
+  listEventMessages,
+  sendEventMessage,
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
-import { MapPin, Search, X, Pencil, Trash2, Clock, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { MapPin, Search, X, Pencil, Trash2, Clock, Users, Send } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 
@@ -785,7 +788,102 @@ function MyMatchSheet({
             {tr("Delete match", "Eliminar partido", "Supprimer")}
           </button>
         )}
+
+        {(event.iAmHost || event.iAmParticipant) && <InlineMatchChat eventId={event.id} />}
       </div>
+    </div>
+  );
+}
+
+function InlineMatchChat({ eventId }: { eventId: string }) {
+  const tr = useTr();
+  const qc = useQueryClient();
+  const listMsgs = useServerFn(listEventMessages);
+  const sendMsg = useServerFn(sendEventMessage);
+  const meFn = useServerFn(getMyProfile);
+  const [text, setText] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const meQ = useQuery({ queryKey: ["me"], queryFn: () => meFn() });
+  const msgsQ = useQuery({
+    queryKey: ["event-msgs", eventId],
+    queryFn: () => listMsgs({ data: { id: eventId } }),
+  });
+
+  useEffect(() => {
+    const ch = supabase
+      .channel(`ev-msgs-sheet-${eventId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_messages", filter: `match_event_id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["event-msgs", eventId] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [eventId, qc]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
+  }, [msgsQ.data]);
+
+  const onSend = async () => {
+    const body = text.trim();
+    if (!body) return;
+    setText("");
+    try {
+      await sendMsg({ data: { id: eventId, body } });
+      qc.invalidateQueries({ queryKey: ["event-msgs", eventId] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Send failed", "No se pudo enviar", "Échec de l'envoi"));
+    }
+  };
+
+  const messages = (msgsQ.data as any)?.messages ?? [];
+  const myId = (meQ.data as any)?.id;
+
+  return (
+    <div className="rounded-xl border border-[var(--ink)]/10 bg-white overflow-hidden">
+      <div className="px-3 py-2 border-b border-[var(--ink)]/10 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
+        {tr("Match chat", "Chat del partido", "Chat du match")}
+      </div>
+      <div ref={scrollRef} className="max-h-60 overflow-y-auto px-3 py-2 space-y-2">
+        {messages.length === 0 && (
+          <div className="text-center text-xs text-[var(--ink)]/50 py-4">
+            {tr("No messages yet. Say hi 👋", "Aún no hay mensajes. Saluda 👋", "Pas encore de messages. Dis bonjour 👋")}
+          </div>
+        )}
+        {messages.map((m: any) => {
+          const mine = myId ? m.sender_profile_id === myId : false;
+          const name = m.sender?.first_name ?? "";
+          const time = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          return (
+            <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[80%] rounded-2xl px-3 py-1.5 text-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm" : "bg-[var(--paper-2)]/70 text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/10"}`}>
+                {!mine && name && <div className="text-[10px] uppercase tracking-widest opacity-60 mb-0.5">{name}</div>}
+                <p className="whitespace-pre-wrap break-words leading-snug">{m.body}</p>
+                <div className={`text-[9px] mt-0.5 ${mine ? "text-[var(--paper)]/60" : "text-[var(--ink)]/50"}`}>{time}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <form
+        onSubmit={(e) => { e.preventDefault(); onSend(); }}
+        className="flex gap-2 p-2 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/40"
+      >
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={tr("Message the group…", "Escribe al grupo…", "Message au groupe…")}
+          className="flex-1 rounded-full border border-[var(--ink)]/15 bg-white px-3 py-1.5 text-sm outline-none focus:border-[var(--ink)]/30"
+        />
+        <button
+          type="submit"
+          disabled={!text.trim()}
+          className="rounded-full bg-[var(--ink)] text-[var(--paper)] px-3 py-1.5 disabled:opacity-40"
+          aria-label={tr("Send", "Enviar", "Envoyer")}
+        >
+          <Send className="w-3.5 h-3.5" />
+        </button>
+      </form>
     </div>
   );
 }

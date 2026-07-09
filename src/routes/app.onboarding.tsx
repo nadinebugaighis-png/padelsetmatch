@@ -390,6 +390,12 @@ function Onboarding() {
       </div>
 
       <div className="mt-6 rounded-3xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-sm p-5 sm:p-8 space-y-4">
+        {showStepHelp && missingByStep[step]?.length > 0 && (
+          <div className="rounded-2xl border border-[var(--clay)]/25 bg-[var(--clay)]/10 px-4 py-3 text-sm text-[var(--ink)]/85">
+            <span className="font-semibold">{tr("To continue, complete:", "Para continuar, completa:", "Pour continuer, complète :")}</span>{" "}
+            {missingByStep[step].join(", ")}.
+          </div>
+        )}
         {step === 0 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h0")}</h2>
@@ -843,7 +849,7 @@ function Onboarding() {
           <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
         {step < steps.length - 1 ? (
-          <Button onClick={() => setStep(step + 1)} disabled={!canStep[step]}>{t("ob.next")}</Button>
+          <Button onClick={goNext}>{t("ob.next")}</Button>
         ) : (
           <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
             {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}

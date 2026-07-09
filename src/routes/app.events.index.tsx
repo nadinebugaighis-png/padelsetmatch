@@ -448,7 +448,7 @@ function EventsPage() {
             onClose={() => setSlotSheet(null)}
             onJoin={async (e) => { setSlotSheet(null); await instantJoin(e); }}
             onLeave={async (e) => { setSlotSheet(null); await instantLeave(e); }}
-
+            onManage={(e) => { setSlotSheet(null); setMyMatchSheet(e); }}
             onOpen={(id) => { setSlotSheet(null); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
             onStartAnother={() => {
               const d = new Date(slotSheet.startsAt);

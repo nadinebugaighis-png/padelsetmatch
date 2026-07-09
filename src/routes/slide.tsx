@@ -15,8 +15,10 @@ export const Route = createFileRoute("/slide")({
 
 function SlidePage() {
   return (
-    <main className="programme-page min-h-screen w-full overflow-hidden flex items-center justify-center">
-      <ScaledSlide />
+    <main className="programme-page min-h-screen w-full overflow-hidden flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-6 py-10">
+        <ScaledSlide />
+      </div>
     </main>
   );
 }
@@ -43,8 +45,8 @@ function ScaledSlide() {
 
   return (
     <div
+      className="relative max-h-[calc(100dvh-120px)] max-w-full flex items-center justify-center"
       ref={ref}
-      className="relative"
       style={{
         width: W,
         height: H,

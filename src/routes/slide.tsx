@@ -45,7 +45,7 @@ function ScaledSlide() {
 
   return (
     <div
-      className="relative max-h-[calc(100dvh-120px)] max-w-full flex items-center justify-center"
+      className="relative w-full max-w-full flex items-center justify-center"
       ref={ref}
       style={{
         width: W,

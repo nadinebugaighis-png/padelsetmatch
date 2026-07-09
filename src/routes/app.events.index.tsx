@@ -119,6 +119,18 @@ function EventsPage() {
     [eventsQ.data, searchLower],
   );
 
+  const myEvents = useMemo(
+    () => ((eventsQ.data?.events ?? []) as EventLite[])
+      .filter((e) => e.iAmHost || e.iAmParticipant)
+      .filter(eventMatchesName)
+      .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()),
+    [eventsQ.data, searchLower],
+  );
+  const mineCount = useMemo(
+    () => ((eventsQ.data?.events ?? []) as EventLite[]).filter((e) => e.iAmHost || e.iAmParticipant).length,
+    [eventsQ.data],
+  );
+
   const buckets = useMemo(() => {
     const map = new Map<string, EventLite[]>();
     for (const e of visibleEvents) {

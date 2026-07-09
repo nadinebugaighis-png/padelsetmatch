@@ -17,6 +17,7 @@ export type ConnectPost = {
   expires_at: string;
   author: { first_name: string | null; photo_url: string | null } | null;
   comment_count: number;
+  latest_comments: ConnectComment[];
 };
 
 export type ConnectComment = {
@@ -51,7 +52,7 @@ export const listConnectPosts = createServerFn({ method: "GET" })
     if (data.category) q = q.eq("category", data.category);
     const { data: rows, error } = await q;
     if (error) throw error;
-    const posts = (rows ?? []) as unknown as Array<Omit<ConnectPost, "author" | "comment_count">>;
+    const posts = (rows ?? []) as unknown as Array<Omit<ConnectPost, "author" | "comment_count" | "latest_comments">>;
     const authorIds = Array.from(new Set(posts.map((p) => p.author_profile_id)));
     const postIds = posts.map((p) => p.id);
 
@@ -60,15 +61,28 @@ export const listConnectPosts = createServerFn({ method: "GET" })
         ? context.supabase.from("profiles" as never).select("id, first_name, photo_url").in("id", authorIds)
         : Promise.resolve({ data: [] as any[] }),
       postIds.length
-        ? context.supabase.from("connect_comments" as never).select("post_id").in("post_id", postIds)
+        ? context.supabase
+            .from("connect_comments" as never)
+            .select("*")
+            .in("post_id", postIds)
+            .order("created_at", { ascending: false })
+            .limit(300)
         : Promise.resolve({ data: [] as any[] }),
     ]);
     const authorMap = new Map(
       ((authors ?? []) as Array<{ id: string; first_name: string | null; photo_url: string | null }>).map((a) => [a.id, a]),
     );
     const countMap = new Map<string, number>();
-    ((comments ?? []) as Array<{ post_id: string }>).forEach((c) => {
+    const latestMap = new Map<string, ConnectComment[]>();
+    ((comments ?? []) as Array<Omit<ConnectComment, "author">>).forEach((c) => {
       countMap.set(c.post_id, (countMap.get(c.post_id) ?? 0) + 1);
+      const list = latestMap.get(c.post_id) ?? [];
+      if (list.length < 2) {
+        latestMap.set(c.post_id, [
+          ...list,
+          { ...c, author: authorMap.get(c.author_profile_id) ?? null } as ConnectComment,
+        ]);
+      }
     });
     return posts.map<ConnectPost>((p) => ({
       ...p,
@@ -76,6 +90,7 @@ export const listConnectPosts = createServerFn({ method: "GET" })
         ? { first_name: authorMap.get(p.author_profile_id)!.first_name, photo_url: authorMap.get(p.author_profile_id)!.photo_url }
         : null,
       comment_count: countMap.get(p.id) ?? 0,
+      latest_comments: (latestMap.get(p.id) ?? []).reverse(),
     }));
   });
 

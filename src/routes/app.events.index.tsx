@@ -464,7 +464,6 @@ function EventsPage() {
             pending={pending}
             onClose={() => setMyMatchSheet(null)}
             onEdit={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId: myMatchSheet.id } })}
-            onInvite={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
             onOpen={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
             onCancel={() => hostCancel(myMatchSheet)}
             onExtend={(h) => hostExtend(myMatchSheet, h)}

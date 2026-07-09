@@ -600,9 +600,27 @@ function Discover() {
                         <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
                           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                           {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
-                          
+                            
                         </div>
                       )}
+
+                      {/* Primary actions — coach card + message/like button placed above the fold */}
+                      {preview.is_coach && (
+                        <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (match) { setPreview(null); navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                          if (!preview.liked) likeM.mutate(preview.id);
+                        }}
+                        disabled={likeM.isPending && !match}
+                        className="w-full h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                      </button>
 
                       {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">

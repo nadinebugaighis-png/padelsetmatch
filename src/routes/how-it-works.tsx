@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
-import { ArrowRight, UserRound, Search, CalendarCheck, EyeOff, Heart, Send } from "lucide-react";
+import { ArrowRight, UserRound, Search, CalendarCheck, EyeOff, Send } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -180,8 +180,7 @@ function HowItWorksPage() {
             </p>
           </div>
           <div className="rounded-2xl bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] p-6 sm:p-7 border border-[color-mix(in_oklab,var(--plum)_25%,transparent)]">
-            <Heart className="w-5 h-5 text-[var(--plum)]" strokeWidth={2} />
-            <h3 className="mt-6 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
+            <h3 className="mt-11 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
               {tr("Silent likes", "Me gusta en silencio", "Likes silencieux")}
             </h3>
             <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
@@ -199,9 +198,9 @@ function HowItWorksPage() {
             </h3>
             <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
               {tr(
-                "See a player you like? Send them a match invite for a specific day, time and club. Skip the small talk.",
-                "¿Ves a alguien que te encaja? Envíale una invitación para un día, hora y club concretos. Sin rodeos.",
-                "Un joueur te plaît ? Envoie-lui une invitation pour un jour, une heure et un club précis. Sans détour."
+                "Found a player you might get along with or might like? Send them a match invite for a specific day, time and club. Skip the small talk.",
+                "¿Has encontrado a un jugador con el que conectas o que te gusta? Envíale una invitación para un día, hora y club concretos. Sin rodeos.",
+                "Tu as trouvé un joueur avec qui tu pourrais t'entendre ou qui te plaît ? Envoie-lui une invitation pour un jour, une heure et un club précis. Sans détour."
               )}
             </p>
           </div>

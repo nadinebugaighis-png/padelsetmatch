@@ -433,18 +433,18 @@ function RowCells({
   const lastTapRef = useRef<{ id: string; ts: number } | null>(null);
   const dragRef = useRef<{ event: EventLite; startX: number; startY: number; moved: boolean } | null>(null);
 
-  const onPointerDown = (ev: React.PointerEvent, primary: EventLite | undefined) => {
+  const onPointerDown = (ev: ReactPointerEvent, primary: EventLite | undefined) => {
     if (!primary) return;
     const mine = primary.iAmHost || primary.iAmParticipant;
     if (!mine) return;
     dragRef.current = { event: primary, startX: ev.clientX, startY: ev.clientY, moved: false };
   };
-  const onPointerMove = (ev: React.PointerEvent) => {
+  const onPointerMove = (ev: ReactPointerEvent) => {
     const d = dragRef.current;
     if (!d) return;
     if (Math.abs(ev.clientX - d.startX) > 8 || Math.abs(ev.clientY - d.startY) > 8) d.moved = true;
   };
-  const onPointerUp = (ev: React.PointerEvent) => {
+  const onPointerUp = (ev: ReactPointerEvent) => {
     const d = dragRef.current;
     dragRef.current = null;
     if (!d || !d.moved) return;

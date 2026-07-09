@@ -1,15 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
-import { ArrowRight, Shield, Heart, Users } from "lucide-react";
+import { ArrowRight, MapPin, Sparkles, EyeOff, Lock } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
       { title: "How it works — PadelMatch" },
-      { name: "description", content: "PadelMatch in 3 steps: create a profile, get matched with compatible players, chat and play. Privacy-first, no pressure." },
+      { name: "description", content: "Social padel, not just court booking. Meet compatible players in your zone, in your age range, matched by what you're here for." },
       { property: "og:title", content: "How PadelMatch works" },
-      { property: "og:description", content: "Find padel partners who click with you. In 3 steps. Privacy-first." },
+      { property: "og:description", content: "Social padel in your zone. Matched by level, age range and what you're here for." },
     ],
   }),
   component: HowItWorksPage,
@@ -64,16 +64,19 @@ function HowItWorksPage() {
         </div>
       </header>
 
-      {/* Hero — one promise, one line */}
+      {/* Hero */}
       <section className="px-5 sm:px-8 lg:px-16 pt-8 pb-10 max-w-3xl mx-auto w-full">
+        <span className="inline-block text-[11px] uppercase tracking-[0.22em] text-[var(--plum)] font-semibold mb-4">
+          {tr("Social padel", "Pádel social", "Padel social")}
+        </span>
         <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.5rem] sm:text-6xl">
           {tr("How PadelMatch works", "Cómo funciona PadelMatch", "Comment PadelMatch fonctionne")}
         </h1>
         <p className="mt-5 text-[15px] sm:text-lg text-[var(--ink)]/75 leading-relaxed">
           {tr(
-            "Find padel players who match your level, your zone and your vibe. In 3 steps.",
-            "Encuentra jugadores de pádel que encajan con tu nivel, tu zona y tu rollo. En 3 pasos.",
-            "Trouve des joueurs de padel qui matchent ton niveau, ta zone et ton feeling. En 3 étapes."
+            "Not a court booking app. PadelMatch is social padel: meet players in your zone, in your age range, matched by level and by what you're actually here for.",
+            "No es una app para reservar pista. PadelMatch es pádel social: conoce a gente de tu zona, en el rango de edad que elijas, emparejada por nivel y por lo que buscas de verdad.",
+            "Ce n'est pas une app de réservation. PadelMatch, c'est du padel social : rencontre des joueurs de ta zone, dans ta tranche d'âge, matchés par niveau et par ce que tu cherches vraiment."
           )}
         </p>
       </section>
@@ -83,66 +86,75 @@ function HowItWorksPage() {
         <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
           <Step
             n="1"
-            title={tr("Set up your profile", "Configura tu perfil", "Crée ton profil")}
+            title={tr("Tell us what you're here for", "Dinos qué buscas", "Dis-nous ce que tu cherches")}
             body={tr(
-              "Level, zone, and what you're here for. Takes 2 minutes.",
-              "Nivel, zona y para qué estás aquí. En 2 minutos.",
-              "Niveau, zone et ce que tu cherches. 2 minutes."
+              "Just padel, friendship, or something more. Your choice shapes everything — who you see and what the AI asks you.",
+              "Solo pádel, amistad o algo más. Tu elección lo cambia todo — a quién ves y qué te pregunta la IA.",
+              "Juste padel, amitié, ou plus. Ton choix change tout — qui tu vois et ce que l'IA te demande."
             )}
           />
           <Step
             n="2"
-            title={tr("Get matched", "Recibe tus matches", "Reçois tes matches")}
+            title={tr("Answer a few private questions", "Responde unas preguntas privadas", "Réponds à quelques questions privées")}
             body={tr(
-              "Our AI shows you compatible players nearby. Tap the ones you'd play with — they only find out if they tap you back.",
-              "Nuestra IA te muestra jugadores compatibles cerca de ti. Pulsa a los que te interesen — solo lo sabrán si te devuelven el gesto.",
-              "Notre IA te montre les joueurs compatibles près de toi. Tape ceux qui t'intéressent — ils ne le sauront que s'ils te tapent en retour."
+              "The AI asks about your level and vibe on court. Chose friendship too? It also asks how you like to spend your time. Your answers are never shared.",
+              "La IA te pregunta por tu nivel y tu rollo en la pista. ¿También marcaste amistad? Te preguntará cómo te gusta pasar el tiempo. Tus respuestas no se comparten nunca.",
+              "L'IA te pose des questions sur ton niveau et ton attitude sur le terrain. Tu as coché amitié aussi ? Elle te demande comment tu aimes passer ton temps. Tes réponses ne sont jamais partagées."
             )}
           />
           <Step
             n="3"
-            title={tr("Chat and play", "Chatea y juega", "Chatte et joue")}
+            title={tr("Match, chat, play", "Empareja, chatea, juega", "Match, chat, joue")} 
             body={tr(
-              "When you both tap, a chat opens. Book a court and play.",
-              "Cuando os pulsáis los dos, se abre el chat. Reservad pista y a jugar.",
-              "Quand vous vous tapez tous les deux, un chat s'ouvre. Réservez et jouez."
+              "See compatible players nearby. Pulse the ones you like — they only find out if they pulse you back. Then chat and book a court.",
+              "Ves jugadores compatibles cerca. Pulsa a los que te interesen — solo se enterarán si te devuelven el gesto. Después, chat y a reservar pista.",
+              "Vois les joueurs compatibles près de toi. Tape ceux qui t'intéressent — ils ne le sauront que s'ils te tapent en retour. Ensuite, chat et réservation."
             )}
           />
         </div>
       </section>
 
-      {/* What makes it different — 3 short pillars */}
+      {/* Why it's different */}
       <section className="px-5 sm:px-8 lg:px-16 py-14 mt-8 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/60">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-serif text-2xl sm:text-3xl uppercase tracking-[-0.01em] text-[var(--ink)]">
-            {tr("Why it works", "Por qué funciona", "Pourquoi ça marche")}
+            {tr("What makes it different", "Qué lo hace diferente", "Ce qui change")}
           </h2>
           <div className="mt-8 grid sm:grid-cols-1 gap-6">
             <Pillar
-              icon={Shield}
-              title={tr("Private by default", "Privado por defecto", "Privé par défaut")}
+              icon={MapPin}
+              title={tr("Local and your age", "De tu zona y tu edad", "Local et ton âge")}
               body={tr(
-                "Your answers stay private. Nobody sees who you tap unless they tap you back.",
-                "Tus respuestas son privadas. Nadie ve a quién pulsas a menos que te devuelvan el gesto.",
-                "Tes réponses restent privées. Personne ne voit qui tu tapes tant qu'il ne te tape pas en retour."
+                "You only see people in the zones where you live or usually play, and only in the age range you choose.",
+                "Solo ves a gente de las zonas donde vives o sueles jugar, y solo en el rango de edad que elijas.",
+                "Tu ne vois que des personnes dans les zones où tu vis ou joues, et uniquement dans la tranche d'âge que tu choisis."
               )}
             />
             <Pillar
-              icon={Heart}
-              title={tr("No pressure, no awkwardness", "Sin presión, sin momentos incómodos", "Sans pression, sans gêne")}
+              icon={Sparkles}
+              title={tr("Compatibility, not just level", "Compatibilidad, no solo nivel", "Compatibilité, pas juste niveau")}
               body={tr(
-                "Anonymous likes mean you can explore freely. Hide anyone at any time — they disappear from your feed and you from theirs.",
-                "Los «me interesa» anónimos te dejan explorar con libertad. Oculta a cualquiera cuando quieras — desaparece de tu feed y tú del suyo.",
-                "Les likes anonymes te laissent explorer librement. Masque n'importe qui à tout moment — il disparaît de ton feed et toi du sien."
+                "Your compatibility score depends on what you're here for. Just padel? Level and court personality. Friendship too? Personality and shared interests.",
+                "Tu puntuación de compatibilidad depende de qué buscas. ¿Solo pádel? Nivel y personalidad en pista. ¿También amistad? Personalidad y aficiones en común.",
+                "Ton score de compatibilité dépend de ce que tu cherches. Juste padel ? Niveau et attitude sur le terrain. Amitié aussi ? Personnalité et centres d'intérêt."
               )}
             />
             <Pillar
-              icon={Users}
-              title={tr("Real matches, real games", "Matches reales, partidos reales", "Vrais matches, vraies parties")}
+              icon={Lock}
+              title={tr("Your answers stay yours", "Tus respuestas son tuyas", "Tes réponses restent à toi")}
               body={tr(
-                "Matched on level, zone and personality — so you actually enjoy the game, not just fill a fourth spot.",
-                "Emparejamiento por nivel, zona y personalidad — así disfrutas del partido de verdad, no solo cubres un cuarto puesto.",
-                "Match sur niveau, zone et personnalité — tu profites vraiment de la partie, tu ne fais pas juste le quatrième."
+                "The AI uses your answers to match you — but nobody ever sees them. Not other players, not your matches.",
+                "La IA usa tus respuestas para emparejarte — pero nadie las ve. Ni otros jugadores, ni tus matches.",
+                "L'IA utilise tes réponses pour te matcher — mais personne ne les voit. Ni les autres joueurs, ni tes matches."
+              )}
+            />
+            <Pillar
+              icon={EyeOff}
+              title={tr("Hide by group, not just by person", "Oculta por grupo, no solo por persona", "Masque par groupe, pas juste par personne")}
+              body={tr(
+                "Not interested in someone as a friend but happy to play padel with them? Hide them from the friendship group only. They still see you for padel.",
+                "¿Alguien no te interesa como amistad pero no te importa jugar al pádel con esa persona? Ocúltala solo del grupo de amistad. Te seguirá viendo para pádel.",
+                "Quelqu'un ne t'intéresse pas comme ami mais tu joues volontiers au padel avec ? Masque-le uniquement du groupe amitié. Il te voit toujours pour le padel."
               )}
             />
           </div>

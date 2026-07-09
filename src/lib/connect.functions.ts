@@ -17,6 +17,7 @@ export type ConnectPost = {
   expires_at: string;
   author: { first_name: string | null; photo_url: string | null } | null;
   comment_count: number;
+  latest_comments: ConnectComment[];
 };
 
 export type ConnectComment = {

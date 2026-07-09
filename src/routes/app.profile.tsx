@@ -13,6 +13,8 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { useId, useRef, useState, type ReactNode } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
+import { CoachSelfSection } from "@/components/CoachSelfSection";
+
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 
@@ -265,7 +267,10 @@ function ProfilePage() {
 
           <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
+          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
+
           <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+
         </div>
 
         <div className="space-y-3 sm:space-y-4">

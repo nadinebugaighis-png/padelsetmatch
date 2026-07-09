@@ -35,6 +35,57 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_endorsements: {
+        Row: {
+          approved_at: string | null
+          coach_profile_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          stars: number | null
+          status: string
+          student_profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          coach_profile_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          stars?: number | null
+          status?: string
+          student_profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          coach_profile_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          stars?: number | null
+          status?: string
+          student_profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_endorsements_coach_profile_id_fkey"
+            columns: ["coach_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coach_endorsements_student_profile_id_fkey"
+            columns: ["student_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compatibility_feedback: {
         Row: {
           created_at: string
@@ -858,6 +909,7 @@ export type Database = {
           id: string
           intents: string[]
           interested_in: string[]
+          is_coach: boolean
           is_seed: boolean
           languages: string[]
           level: string
@@ -900,6 +952,7 @@ export type Database = {
           id?: string
           intents?: string[]
           interested_in?: string[]
+          is_coach?: boolean
           is_seed?: boolean
           languages?: string[]
           level: string
@@ -942,6 +995,7 @@ export type Database = {
           id?: string
           intents?: string[]
           interested_in?: string[]
+          is_coach?: boolean
           is_seed?: boolean
           languages?: string[]
           level?: string
@@ -1071,6 +1125,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      coach_stats: { Args: { _coach_profile_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

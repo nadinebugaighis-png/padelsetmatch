@@ -421,23 +421,23 @@ const es: Dict = {
   "disc.qaBannerCta": "Empezar afinidad →",
 
   // Matches list
-  "ml.h1": "Tus pistas",
-  "ml.sub": "Todos aquí te tocaron de vuelta.",
+  "ml.h1": "Tus matches",
+  "ml.sub": "Aquí están las personas que te han correspondido.",
   "ml.loading": "Cargando…",
-  "ml.empty": "Aún no hay matches.",
+  "ml.empty": "Aún no tienes matches.",
   "ml.discoverLink": "Descubrir jugadores →",
 
   // Chat
   "chat.opening": "Abriendo el chat…",
-  "chat.safetyTitle": "Seguridad primero:",
-  "chat.safety": "reservad el partido en Playtomic — pista pública, reserva verificada, sin compartir direcciones.",
+  "chat.safetyTitle": "La seguridad primero:",
+  "chat.safety": "reservad el partido en Playtomic — pista pública, reserva verificada y sin compartir direcciones.",
   "chat.open": "Abrir",
-  "chat.empty": "Os habéis tocado mutuamente. ¡Saluda 👋!",
+  "chat.empty": "Os habéis dado a conectar mutuamente. ¡Saluda 👋!",
   "chat.placeholder": "¡Hola! 👋",
   "chat.block": "Bloquear",
   "chat.report": "Reportar",
   "chat.blockedDone": "Bloqueado.",
-  "chat.reportDone": "Reporte enviado. Cuenta suspendida para revisión.",
+  "chat.reportDone": "Reporte enviado. Cuenta suspendida a la espera de revisión.",
   "chat.sendFail": "No se pudo enviar",
 
   // Profile

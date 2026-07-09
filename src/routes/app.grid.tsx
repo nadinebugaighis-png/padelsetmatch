@@ -302,7 +302,7 @@ function Discover() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name..."
+              placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
               className="w-full h-10 pl-10 pr-3 rounded-full border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
             />
           </div>

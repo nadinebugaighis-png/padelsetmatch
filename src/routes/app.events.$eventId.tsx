@@ -464,7 +464,7 @@ function EventDetail() {
                 type="button"
                 onClick={() => { if (isMe && !isHost) onLeave(); }}
                 disabled={!isMe || isHost}
-                title={isMe && !isHost ? tr("Tap to leave the match", "Toca para salir del partido", "Appuie pour quitter le match") : ""}
+                title={isMe && !isHost ? tr("Tap to leave the match", "Pulsa para salir del partido", "Appuie pour quitter le match") : ""}
                 className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
                   isMe && !isHost
                     ? "bg-[var(--ink)]/5 border-[var(--ink)]/25 hover:bg-[var(--ink)]/10 cursor-pointer"
@@ -493,7 +493,7 @@ function EventDetail() {
               type="button"
               onClick={() => { if (canJoin) onJoin(); }}
               disabled={!canJoin}
-              title={canJoin ? tr("Tap to join this spot", "Toca para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
+              title={canJoin ? tr("Tap to join this spot", "Pulsa para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
               className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
                 canJoin
                   ? "border-[var(--ink)]/30 hover:bg-[var(--ink)]/5 cursor-pointer"

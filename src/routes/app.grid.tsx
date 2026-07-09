@@ -129,9 +129,9 @@ function Discover() {
     mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast("Hidden from your Home grid — manage in Profile → Hidden & blocked", { duration: 2400 });
+      toast(tr("Hidden from your Home grid — manage in Profile → Hidden & blocked", "Oculto en tu Inicio — puedes gestionarlo en Perfil → Ocultos y bloqueados", "Masqué de ton accueil — gère-le dans Profil → Masqués et bloqués"), { duration: 2400 });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not hide"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not hide", "No se pudo ocultar", "Impossible de masquer")),
   });
   const reportM = useMutation({
     mutationFn: (vars: { id: string; reason: string }) => report({ data: { reportedProfileId: vars.id, reason: vars.reason } }),
@@ -302,7 +302,7 @@ function Discover() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name..."
+              placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
               className="w-full h-10 pl-10 pr-3 rounded-full border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
             />
           </div>
@@ -315,7 +315,7 @@ function Discover() {
             }`}
             aria-expanded={showFilters}
           >
-            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+            {tr("Filters", "Filtros", "Filtres")}{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12M10 20h4" strokeLinecap="round" /></svg>
           </button>
         </div>
@@ -324,40 +324,40 @@ function Discover() {
         {showFilters && (
           <div className="mt-3 p-3 rounded-xl border border-[var(--ink)]/15 bg-white space-y-3">
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">Padel level</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
               <select
                 value={levelFilter}
                 onChange={(e) => setLevelFilter(e.target.value)}
                 className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               >
-                <option value="all">Any level</option>
+                <option value="all">{tr("Any level", "Cualquier nivel", "Tous niveaux")}</option>
                 {PADEL_LEVELS.map((lv) => (
                   <option key={lv} value={lv}>{label(lv)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">Barrio / zone</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">{tr("Barrio / zone", "Barrio / zona", "Quartier / zone")}</label>
               <select
                 value={zoneFilter}
                 onChange={(e) => setZoneFilter(e.target.value)}
                 className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               >
-                <option value="all">Any zone</option>
+                <option value="all">{tr("Any zone", "Cualquier zona", "Toutes les zones")}</option>
                 {zonesInFeed.length > 0 && (
-                <optgroup label="From players in your Home grid">
+                <optgroup label={tr("From players in your Home grid", "De jugadores en tu Inicio", "Depuis les joueurs de ton accueil")}>
                     {zonesInFeed.map((z) => (
                       <option key={`feed-${z}`} value={z}>{z}</option>
                     ))}
                   </optgroup>
                 )}
-                <optgroup label="All Madrid zones">
+                <optgroup label={tr("All Madrid zones", "Todas las zonas de Madrid", "Toutes les zones de Madrid")}>
                   {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
                     <option key={`all-${z}`} value={z}>{z}</option>
                   ))}
                 </optgroup>
               </select>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">Matches on players' city, barrio or listed areas.</p>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">{tr("Matches on players' city, barrio or listed areas.", "Coincide con la ciudad, el barrio o las zonas indicadas por los jugadores.", "Correspond à la ville, au quartier ou aux zones indiquées par les joueurs.")}</p>
             </div>
             {activeFilterCount > 0 && (
               <button
@@ -422,8 +422,8 @@ function Discover() {
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
                           className="w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
-                          aria-label={`Hide ${c.first_name}`}
-                          title="Not interested — hide from my Home grid"
+                          aria-label={tr(`Hide ${c.first_name}`, `Ocultar a ${c.first_name}`, `Masquer ${c.first_name}`)}
+                          title={tr("Not interested — hide from my Home grid", "No me interesa — ocultar de mi Inicio", "Pas intéressé·e — masquer de mon accueil")}
                         >
                           <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
                         </button>
@@ -432,14 +432,14 @@ function Discover() {
                           onClick={(e) => {
                             e.stopPropagation();
                             if (!c.liked) {
-                              toast.info(`Connect with ${c.first_name} first to request a match`);
+                              toast.info(tr(`Connect with ${c.first_name} first to request a match`, `Conecta primero con ${c.first_name} para proponer un partido`, `Connecte-toi d'abord avec ${c.first_name} pour proposer un match`));
                               return;
                             }
                             navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                           }}
                           className={`w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
-                          aria-label={`Request to play with ${c.first_name}`}
-                          title={c.liked ? `Request to play with ${c.first_name}` : `No connection yet with ${c.first_name}`}
+                          aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
+                          title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
                         >
                           <Zap className="w-2.5 h-2.5" fill="currentColor" strokeWidth={1.5} />
 
@@ -454,8 +454,8 @@ function Discover() {
                           else likeM.mutate(c.id);
                         }}
                         className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
-                        aria-label={c.liked ? `Unlike ${c.first_name}` : `Like ${c.first_name}`}
-                        title={c.liked ? "Connected" : "Like to connect"}
+                        aria-label={c.liked ? tr(`Unlike ${c.first_name}`, `Quitar «me interesa» a ${c.first_name}`, `Retirer le like à ${c.first_name}`) : tr(`Like ${c.first_name}`, `Marcar «me interesa» a ${c.first_name}`, `Aimer ${c.first_name}`)}
+                        title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                       >
                         <Heart
                           className={`w-2.5 h-2.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
@@ -754,7 +754,7 @@ function Discover() {
                     className="h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Da like para conectar", "Like pour connecter")}
+                    {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                   </button>
                 </div>
               </>
@@ -774,7 +774,7 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
   if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
     <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-3">{tr("Your Match Score", "Tu puntuación de match", "Ton score de match")}</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-3">{tr("Your Match Score", "Tu puntuación de compatibilidad", "Ton score de match")}</div>
 
       <div className="flex items-center gap-4">
         <div className="text-display text-5xl text-[var(--ink)] leading-none">{total}%</div>

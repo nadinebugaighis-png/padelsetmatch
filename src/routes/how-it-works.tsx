@@ -151,7 +151,7 @@ function HowItWorksPage() {
             title={tr("Set your time", "Marca tu hora", "Choisis ton créneau")}
             body={tr(
               "Open a slot with one click. Others join. Or join theirs. No more waiting on WhatsApp groups.",
-              "Abre un hueco con un clic. Otros se apuntan. O apúntate a los suyos. Sin esperar en grupos de WhatsApp.",
+              "Crea un hueco con un clic. Otros se apuntan. O apúntate a los suyos. Sin quedarte esperando en grupos de WhatsApp.",
               "Ouvre un créneau en un clic. D'autres rejoignent. Ou rejoins les leurs. Fini l'attente sur WhatsApp."
             )}
           />

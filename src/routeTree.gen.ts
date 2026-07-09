@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SlideRouteImport } from './routes/slide'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -38,11 +37,6 @@ import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$e
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SlideRoute = SlideRouteImport.update({
-  id: '/slide',
-  path: '/slide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -169,7 +163,6 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/slide': typeof SlideRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
@@ -195,7 +188,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/slide': typeof SlideRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
@@ -223,7 +215,6 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/slide': typeof SlideRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
@@ -252,7 +243,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/slide'
     | '/terms'
     | '/app/admin'
     | '/app/connect'
@@ -278,7 +268,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/slide'
     | '/terms'
     | '/app/admin'
     | '/app/connect'
@@ -305,7 +294,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/slide'
     | '/terms'
     | '/app/admin'
     | '/app/connect'
@@ -333,7 +321,6 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  SlideRoute: typeof SlideRoute
   TermsRoute: typeof TermsRoute
   MEventIdRoute: typeof MEventIdRoute
 }
@@ -345,13 +332,6 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/slide': {
-      id: '/slide'
-      path: '/slide'
-      fullPath: '/slide'
-      preLoaderRoute: typeof SlideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -583,20 +563,9 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  SlideRoute: SlideRoute,
   TermsRoute: TermsRoute,
   MEventIdRoute: MEventIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

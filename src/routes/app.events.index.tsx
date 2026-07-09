@@ -800,9 +800,11 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
   const qc = useQueryClient();
   const listMsgs = useServerFn(listEventMessages);
   const sendMsg = useServerFn(sendEventMessage);
+  const meFn = useServerFn(getMyProfile);
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const meQ = useQuery({ queryKey: ["me"], queryFn: () => meFn() });
   const msgsQ = useQuery({
     queryKey: ["event-msgs", eventId],
     queryFn: () => listMsgs({ data: { id: eventId } }),

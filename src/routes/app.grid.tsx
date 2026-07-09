@@ -44,24 +44,7 @@ function Discover() {
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean }>(null);
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
 
-  useEffect(() => {
-    const candidates = feedQ.data?.candidates;
-    if (!search.previewId || !candidates) return;
-    if (preview && preview.id === search.previewId) return;
-    const c = candidates.find((x) => x.id === search.previewId);
-    if (c) {
-      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
-    }
-  }, [search.previewId, feedQ.data?.candidates, preview?.id]);
 
-  const openPreview = (c: typeof feedQ.data.candidates[number]) => {
-    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
-    navigate({ search: { previewId: c.id }, replace: true });
-  };
-  const closePreview = () => {
-    setPreview(null);
-    if (search.previewId) navigate({ search: {}, replace: true });
-  };
 
 
   const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });

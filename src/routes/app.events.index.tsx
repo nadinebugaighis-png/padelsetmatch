@@ -818,6 +818,7 @@ function SlotSheet({
   pending,
   onClose,
   onJoin,
+  onLeave,
   onOpen,
   onStartAnother,
 }: {
@@ -826,8 +827,10 @@ function SlotSheet({
   pending: string | null;
   onClose: () => void;
   onJoin: (e: EventLite) => void;
+  onLeave: (e: EventLite) => void;
   onOpen: (id: string) => void;
   onStartAnother: () => void;
+
 }) {
   const tr = useTr();
   return (

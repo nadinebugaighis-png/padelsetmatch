@@ -187,7 +187,7 @@ function HowItWorksPage() {
             <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
               {tr(
                 "Tap someone and they'll never know — unless they tap you back. No notifications, no pressure, no ego bruises.",
-                "Pulsa a alguien y no lo sabrá — a menos que te pulse también. Sin notificaciones, sin presión, sin egos heridos.",
+                "Dale 'me gusta' a alguien y no lo sabrá — a menos que te lo devuelva. Sin notificaciones, sin presión, sin herir egos.",
                 "Tape quelqu'un et il ne le saura jamais — sauf s'il te tape aussi. Aucune notification, aucune pression."
               )}
             </p>

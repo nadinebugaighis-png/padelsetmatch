@@ -433,59 +433,74 @@ function EventsPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-          <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
-          <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
-          <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
-          <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
-        </div>
-
-        <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
-          <div
-            ref={scrollRef}
-            className="overflow-auto"
-            style={{ maxHeight: "calc(100vh - 260px)" }}
-          >
-            <div
-              className="grid"
-              style={{
-                gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
-                gridAutoRows: "56px",
-              }}
-            >
-              <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
-              {days.map((d, i) => {
-                const label = formatDay(d, lang, 0, i, tr);
-                const isToday = i === 0;
-                return (
-                  <div
-                    key={i}
-                    className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
-                      isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
-                    }`}
-                  >
-                    <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
-                      {label.top}
-                    </span>
-                    <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
-                  </div>
-                );
-              })}
-
-              {HOURS.map((h) => (
-                <RowCells
-                  key={h}
-                  hour={h}
-                  days={days}
-                  buckets={buckets}
-                  pending={pending}
-                  onTap={handleCellTap}
-                  tr={tr}
-                />
-              ))}
+        {mode === "find" ? (
+          <>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
+              <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
+              <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
+              <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
+              <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
             </div>
-          </div>
-        </div>
+
+            <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
+              <div
+                ref={scrollRef}
+                className="overflow-auto"
+                style={{ maxHeight: "calc(100vh - 260px)" }}
+              >
+                <div
+                  className="grid"
+                  style={{
+                    gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
+                    gridAutoRows: "56px",
+                  }}
+                >
+                  <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
+                  {days.map((d, i) => {
+                    const label = formatDay(d, lang, 0, i, tr);
+                    const isToday = i === 0;
+                    return (
+                      <div
+                        key={i}
+                        className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
+                          isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
+                        }`}
+                      >
+                        <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
+                          {label.top}
+                        </span>
+                        <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
+                      </div>
+                    );
+                  })}
+
+                  {HOURS.map((h) => (
+                    <RowCells
+                      key={h}
+                      hour={h}
+                      days={days}
+                      buckets={buckets}
+                      pending={pending}
+                      onTap={handleCellTap}
+                      tr={tr}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <MyMatchesList
+            events={myEvents}
+            lang={lang}
+            tr={tr}
+            pending={pending}
+            onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+            onManage={(e) => setMyMatchSheet(e)}
+            onLeave={(e) => instantLeave(e)}
+            onFind={() => setMode("find")}
+          />
+        )}
 
         {slotSheet && (
           <SlotSheet

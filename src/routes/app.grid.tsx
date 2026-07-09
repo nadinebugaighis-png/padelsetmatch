@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-r
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
 
@@ -53,21 +53,24 @@ function Discover() {
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
 
+  const closedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const candidates = feedQ.data?.candidates;
     if (!search.previewId || !candidates) return;
-    if (preview && preview.id === search.previewId) return;
+    if (closedIdRef.current === search.previewId) return;
     const c = candidates.find((x) => x.id === search.previewId);
     if (c) {
       setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
     }
-  }, [search.previewId, feedQ.data?.candidates, preview?.id]);
+  }, [search.previewId, feedQ.data?.candidates]);
 
   const openPreview = (c: NonNullable<typeof feedQ.data>["candidates"][number]) => {
+    closedIdRef.current = null;
     setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
     navigate({ search: { previewId: c.id }, replace: true, resetScroll: false });
   };
   const closePreview = () => {
+    closedIdRef.current = search.previewId ?? preview?.id ?? null;
     setPreview(null);
     if (search.previewId) navigate({ search: {}, replace: true, resetScroll: false });
   };

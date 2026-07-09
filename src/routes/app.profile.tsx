@@ -14,6 +14,7 @@ import { useId, useRef, useState, type ReactNode } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
+import { VenuesSection } from "@/components/VenuesSection";
 
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;

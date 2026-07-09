@@ -15,8 +15,8 @@ export const Route = createFileRoute("/slide")({
 
 function SlidePage() {
   return (
-    <main className="programme-page min-h-screen w-full overflow-hidden flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-6 py-10">
+    <main className="programme-page min-h-screen w-full overflow-hidden flex flex-col pb-32">
+      <div className="flex-1 flex items-center justify-center px-6 max-h-[calc(100dvh-180px)] w-full max-w-full">
         <ScaledSlide />
       </div>
     </main>

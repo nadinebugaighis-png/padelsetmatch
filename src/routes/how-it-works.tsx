@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
-import { ArrowRight, UserRound, Search, CalendarCheck } from "lucide-react";
+import { ArrowRight, UserRound, Search, CalendarCheck, EyeOff, Heart, Send } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -158,8 +158,59 @@ function HowItWorksPage() {
         </div>
       </section>
 
+      {/* The juicy parts */}
+      <section className="relative px-5 sm:px-8 lg:px-16 pb-16 max-w-6xl mx-auto w-full">
+        <div className="flex items-baseline justify-between gap-4 mb-6">
+          <span className="inline-flex items-center rounded-full border border-[color-mix(in_oklab,var(--plum)_35%,transparent)] text-[var(--plum)] text-[11px] font-semibold uppercase tracking-[0.22em] px-4 py-1.5">
+            {tr("The juicy parts", "Lo interesante", "Le meilleur")}
+          </span>
+        </div>
+        <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
+          <div className="rounded-2xl bg-[var(--ink)] text-[var(--paper)] p-6 sm:p-7">
+            <EyeOff className="w-5 h-5 text-[var(--paper)]/70" strokeWidth={2} />
+            <h3 className="mt-6 text-serif uppercase text-xl leading-tight">
+              {tr("Hide by group", "Ocultar por grupo", "Cacher par groupe")}
+            </h3>
+            <p className="mt-3 text-[14px] text-[var(--paper)]/75 leading-relaxed">
+              {tr(
+                "Hide someone from your Dating group and you disappear from theirs too — but you both stay in Friends or Padel. Awkwardness solved.",
+                "Oculta a alguien del grupo de Relación y desapareces del suyo también — pero seguís en Amistad o Pádel. Sin momentos incómodos.",
+                "Cache quelqu'un du groupe Relation et tu disparais du sien aussi — mais vous restez dans Amis ou Padel. Fini les moments gênants."
+              )}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] p-6 sm:p-7 border border-[color-mix(in_oklab,var(--plum)_25%,transparent)]">
+            <Heart className="w-5 h-5 text-[var(--plum)]" strokeWidth={2} />
+            <h3 className="mt-6 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
+              {tr("Silent likes", "Me gusta en silencio", "Likes silencieux")}
+            </h3>
+            <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
+              {tr(
+                "Tap someone and they'll never know — unless they tap you back. No notifications, no pressure, no ego bruises.",
+                "Pulsa a alguien y no lo sabrá — a menos que te pulse también. Sin notificaciones, sin presión, sin egos heridos.",
+                "Tape quelqu'un et il ne le saura jamais — sauf s'il te tape aussi. Aucune notification, aucune pression."
+              )}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[color-mix(in_oklab,#a3e635_22%,var(--paper))] p-6 sm:p-7 border border-[color-mix(in_oklab,#a3e635_35%,transparent)]">
+            <Send className="w-5 h-5 text-[color-mix(in_oklab,#4d7c0f_90%,var(--ink))]" strokeWidth={2} />
+            <h3 className="mt-6 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
+              {tr("Direct invites", "Invitaciones directas", "Invitations directes")}
+            </h3>
+            <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
+              {tr(
+                "See a player you like? Send them a match invite for a specific day, time and club. Skip the small talk.",
+                "¿Ves a alguien que te encaja? Envíale una invitación para un día, hora y club concretos. Sin rodeos.",
+                "Un joueur te plaît ? Envoie-lui une invitation pour un jour, une heure et un club précis. Sans détour."
+              )}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/10">
+
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase tracking-[-0.01em] text-[var(--ink)]">
             {tr("Ready to play?", "¿Listo para jugar?", "Prêt·e à jouer ?")}

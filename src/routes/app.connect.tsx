@@ -84,6 +84,7 @@ function ConnectPage() {
   const [openPost, setOpenPost] = useState<ConnectPost | null>(null);
   const [replyPostId, setReplyPostId] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState("");
+  const [editingComment, setEditingComment] = useState<{ id: string; body: string } | null>(null);
 
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
   const myProfileId = (meQ.data as any)?.id as string | undefined;

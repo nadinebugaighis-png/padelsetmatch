@@ -412,39 +412,47 @@ function Onboarding() {
         {step === 0 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h0")}</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
-            <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.age")}</label>
-            <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
-            <p className="text-[11px] text-[var(--ink)]/55">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
-            <div className="flex flex-wrap gap-2">
-              {GENDERS.map((g) => (
-                <button key={g} onClick={() => setGender(g)} className={`chip-paper ${gender === g ? "chip-paper-selected" : ""}`}>{label(g)}</button>
-              ))}
+            <div data-field="first_name" className={fieldCls("first_name")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
+              <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             </div>
-            {gender === "self-describe" && (
-              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
-            )}
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
-                { id: "friends", label: tr("Friends", "Amistad", "Amis") },
-                { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
-                { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
-              ].map((g) => (
-                <button
-                  key={g.id}
-                  onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
-                  className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
-                >
-                  {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+            <div data-field="age" className={fieldCls("age")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.age")}</label>
+              <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
+              <p className="text-[11px] text-[var(--ink)]/55">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
+            </div>
+            <div data-field="gender" className={fieldCls("gender")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {GENDERS.map((g) => (
+                  <button key={g} onClick={() => setGender(g)} className={`chip-paper ${gender === g ? "chip-paper-selected" : ""}`}>{label(g)}</button>
+                ))}
+              </div>
+              {gender === "self-describe" && (
+                <Input className="mt-2" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
+              )}
+            </div>
+            <div data-field="goals" className={fieldCls("goals")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {[
+                  { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
+                  { id: "friends", label: tr("Friends", "Amistad", "Amis") },
+                  { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
+                  { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
+                ].map((g) => (
+                  <button
+                    key={g.id}
+                    onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
+                    className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
+                  >
+                    {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-[var(--ink)]/55 mt-1">{t("ob.privateNote")}</p>
+            </div>
 
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-[var(--ink)]/55">{t("ob.privateNote")}</p>
           </>
         )}
         {step === 1 && (

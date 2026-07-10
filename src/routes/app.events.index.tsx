@@ -190,6 +190,26 @@ function EventsPage() {
 
   const [pending, setPending] = useState<string | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  function toggleCompare(id: string) {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= 2) return [prev[1], id];
+      return [...prev, id];
+    });
+  }
+  function exitCompare() {
+    setCompareMode(false);
+    setCompareIds([]);
+    setCompareOpen(false);
+  }
+  const compareEvents = useMemo(
+    () => compareIds.map((id) => all.find((e) => e.id === id)).filter(Boolean) as EventLite[],
+    [compareIds, all],
+  );
 
   function refetch() {
     qc.invalidateQueries({ queryKey: ["open-events"] });

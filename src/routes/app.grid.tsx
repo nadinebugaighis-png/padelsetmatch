@@ -148,6 +148,26 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
   });
 
+  const listFavs = useServerFn(listMyFavorites);
+  const favsQ = useQuery({ queryKey: ["favorites"], queryFn: () => listFavs(), enabled: !!feedQ.data?.me, staleTime: 60_000 });
+  const favSet = new Set(favsQ.data?.ids ?? []);
+  const toggleFav = useServerFn(toggleFavorite);
+  const toggleFavM = useMutation({
+    mutationFn: (id: string) => toggleFav({ data: { favoriteProfileId: id } }),
+    onMutate: async (id) => {
+      await qc.cancelQueries({ queryKey: ["favorites"] });
+      const prev = qc.getQueryData<{ ids: string[] }>(["favorites"]);
+      const ids = new Set(prev?.ids ?? []);
+      const wasFav = ids.has(id);
+      if (wasFav) ids.delete(id); else ids.add(id);
+      qc.setQueryData(["favorites"], { ids: Array.from(ids) });
+      return { prev, wasFav };
+    },
+    onError: (_e, _id, ctx) => { if (ctx?.prev) qc.setQueryData(["favorites"], ctx.prev); toast.error("Couldn't update favorite"); },
+    onSuccess: (r) => { toast.success(r.favorited ? tr("Added to favorites — you'll be notified when they play", "Añadido a favoritos — te avisaremos cuando jueguen", "Ajouté aux favoris — on te préviendra") : tr("Removed from favorites", "Quitado de favoritos", "Retiré des favoris")); },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["favorites"] }),
+  });
+
 
 
   useEffect(() => {

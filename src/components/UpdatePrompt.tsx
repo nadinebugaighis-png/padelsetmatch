@@ -2,6 +2,12 @@ import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 
+const COPY = {
+  en: { title: "New version available", desc: "Reload to get the latest updates.", reload: "Reload" },
+  es: { title: "Nueva versión disponible", desc: "Recarga para obtener las últimas novedades.", reload: "Recargar" },
+  fr: { title: "Nouvelle version disponible", desc: "Recharge pour obtenir les dernières mises à jour.", reload: "Recharger" },
+} as const;
+
 /**
  * Polls the app shell (`/`) periodically and compares a fingerprint of the
  * returned HTML (hashed asset URLs change on every deploy). When a new build
@@ -24,7 +30,8 @@ async function fetchBuildId(): Promise<string | null> {
 }
 
 export function UpdatePrompt() {
-  const { t } = useI18n();
+  const { lang } = useI18n();
+  const copy = COPY[lang as keyof typeof COPY] ?? COPY.en;
   const baselineRef = useRef<string | null>(null);
   const notifiedRef = useRef(false);
 
@@ -51,13 +58,12 @@ export function UpdatePrompt() {
       }
       if (id !== baselineRef.current) {
         notifiedRef.current = true;
-        toast.message(t("update.available.title", "New version available"), {
-          description: t("update.available.desc", "Reload to get the latest updates."),
+        toast.message(copy.title, {
+          description: copy.desc,
           duration: Infinity,
           action: {
-            label: t("update.available.reload", "Reload"),
+            label: copy.reload,
             onClick: () => {
-              // Bust caches then hard reload.
               if ("caches" in window) {
                 caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).finally(() => location.reload());
               } else {
@@ -83,7 +89,7 @@ export function UpdatePrompt() {
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("focus", onVis);
     };
-  }, [t]);
+  }, [copy]);
 
   return null;
 }

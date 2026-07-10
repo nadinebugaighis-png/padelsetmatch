@@ -357,19 +357,18 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .from("hides" as never)
       .select("hidden_profile_id, category")
       .eq("hider_profile_id", me.id);
-    // Reciprocal: if they hid me under category X, treat that as if I hid them under X too — no awkwardness.
-    // Uses admin because RLS on `hides` only exposes rows to the hider (privacy).
-    const { supabaseAdmin: _adminForHides } = await import("@/integrations/supabase/client.server");
-    const { data: hidesOfMe } = await _adminForHides
-      .from("hides" as never)
-      .select("hider_profile_id, category")
-      .eq("hidden_profile_id", me.id);
-    // Reciprocal blocks: a one-way block would let the blocker keep seeing/liking the victim.
-    // RLS on `blocks` only exposes rows to the blocker, so read via admin.
-    const { data: blocksOfMe } = await _adminForHides
-      .from("blocks" as never)
-      .select("blocker_profile_id")
-      .eq("blocked_profile_id", me.id);
+    // Read reciprocal rows through the signed-in client. If privacy RLS hides those
+    // rows, this safely returns an empty list instead of requiring a service key.
+    const [{ data: hidesOfMe }, { data: blocksOfMe }] = await Promise.all([
+      context.supabase
+        .from("hides" as never)
+        .select("hider_profile_id, category")
+        .eq("hidden_profile_id", me.id),
+      context.supabase
+        .from("blocks" as never)
+        .select("blocker_profile_id")
+        .eq("blocked_profile_id", me.id),
+    ]);
     const blockedSet = new Set<string>([
       ...((myBlocks as Array<{ blocked_profile_id: string }> | null) ?? []).map((b) => b.blocked_profile_id),
       ...((blocksOfMe as Array<{ blocker_profile_id: string }> | null) ?? []).map((b) => b.blocker_profile_id),
@@ -413,12 +412,11 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       return false;
     }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
-    // QA affinity: pull my answers + all candidate answers via admin (RLS would otherwise block reading others).
+    // QA affinity: use the signed-in client only; RLS decides which answers are readable.
     // Include the embedding so we can score by MEANING (semantic), not just exact-string equality.
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { parsePgVector, cosineSim } = await import("./embeddings.server");
     const ids = [me.id, ...candidates.map((c) => c.id)];
-    const { data: qaRows } = await supabaseAdmin
+    const { data: qaRows } = await context.supabase
       .from("qa_answers" as never)
       .select("profile_id, question, answer_norm, answer_embedding")
       .in("profile_id", ids);
@@ -437,12 +435,12 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     // For each signal, extract the other profile's priorities/personal_traits/padel_style
     // and increment/decrement a per-tag weight for THIS user.
     const [fbRes, ratingRes] = await Promise.all([
-      supabaseAdmin
+      context.supabase
         .from("compatibility_feedback" as never)
         .select("subject_profile_id, thumbs")
         .eq("rater_profile_id", me.id)
         .limit(500),
-      supabaseAdmin
+      context.supabase
         .from("match_ratings" as never)
         .select("rated_profile_id, stars")
         .eq("rater_profile_id", me.id)
@@ -460,13 +458,9 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     const tagWeights = new Map<string, number>(); // key: "kind:value"
     let learnedCount = 0;
     if (signals.length > 0) {
-      const sigIds = Array.from(new Set(signals.map((s) => s.profileId)));
-      const { data: sigProfiles } = await supabaseAdmin
-        .from("profiles" as never)
-        .select("id, priorities, personal_traits, padel_style")
-        .in("id", sigIds);
+      const sigIds = new Set(signals.map((s) => s.profileId));
       const byId = new Map<string, { priorities: string[]; personal_traits: string[]; padel_style: string[] }>();
-      ((sigProfiles as Array<{ id: string; priorities: string[] | null; personal_traits: string[] | null; padel_style: string[] | null }> | null) ?? []).forEach((p) => {
+      ((candRows as Profile[] | null) ?? []).filter((p) => sigIds.has(p.id)).forEach((p) => {
         byId.set(p.id, {
           priorities: p.priorities ?? [],
           personal_traits: p.personal_traits ?? [],
@@ -564,7 +558,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     // so the badge on the profile grid matches the AI % shown on the profile card.
     const candIds = scored.map((c) => c.id);
     if (candIds.length > 0) {
-      const { data: aiRows } = await supabaseAdmin
+      const { data: aiRows } = await context.supabase
         .from("compatibility_scores" as never)
         .select("profile_a, profile_b, score")
         .or(candIds.map((id) => {

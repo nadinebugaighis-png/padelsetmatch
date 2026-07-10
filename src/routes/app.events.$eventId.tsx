@@ -176,11 +176,34 @@ function EventDetail() {
 
   const nativeShare = async () => {
     try {
-      await navigator.share({ title: "PadelMatch", text: shareText, url: shareUrl });
+      await navigator.share({ title: "PadelMatch", text: shareText, url: shortShareUrl || shareUrl });
     } catch (err: any) {
       if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
     }
   };
+
+  // Create a short link for the share sheet so the WhatsApp preview and link stay compact
+  useEffect(() => {
+    if (!shareOpen) {
+      setShortShareUrl(null);
+      return;
+    }
+    let cancelled = false;
+    setShortShareBusy(true);
+    shorten({ data: { targetUrl: shareUrl } })
+      .then((r) => {
+        if (!cancelled) setShortShareUrl(`${shareOrigin()}${r.shortUrl}`);
+      })
+      .catch(() => {
+        if (!cancelled) setShortShareUrl(shareUrl);
+      })
+      .finally(() => {
+        if (!cancelled) setShortShareBusy(false);
+      });
+    return () => { cancelled = true; };
+  }, [shareOpen, shareUrl, shorten]);
+
+  const displayShareUrl = shortShareUrl || shareUrl;
 
   const genderLabel = event.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : event.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement") : tr("Women only", "Solo mujeres", "Femmes uniquement");
   const canJoin =

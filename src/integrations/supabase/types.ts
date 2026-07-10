@@ -1369,7 +1369,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
+      cleanup_relationship_with: {
+        Args: { _other: string }
+        Returns: undefined
+      }
+      clear_my_compat_scores: { Args: never; Returns: undefined }
       coach_stats: { Args: { _coach_profile_id: string }; Returns: Json }
+      delete_expired_push_subs: {
+        Args: { _endpoints: string[] }
+        Returns: undefined
+      }
+      delete_my_account_data: { Args: never; Returns: undefined }
       enqueue_notification: {
         Args: {
           _body: string
@@ -1381,6 +1392,12 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_pair_qa: { Args: { _other: string }; Returns: Json }
+      get_profiles_minimal: { Args: { _ids: string[] }; Returns: Json }
+      handle_report: {
+        Args: { _category?: string; _reason: string; _reported: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1388,6 +1405,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_current_user_admin: { Args: never; Returns: boolean }
       my_profile_id: { Args: never; Returns: string }
       open_coach_chat: {
         Args: { _acting_user_id: string; _coach_profile_id: string }
@@ -1395,6 +1413,18 @@ export type Database = {
       }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
+      upsert_compat_score: {
+        Args: {
+          _blurb: string
+          _friction: string
+          _other: string
+          _reasons: Json
+          _score: number
+          _sub: Json
+          _version: string
+        }
+        Returns: undefined
+      }
       venue_overlap_for_me: { Args: { _profile_ids: string[] }; Returns: Json }
     }
     Enums: {

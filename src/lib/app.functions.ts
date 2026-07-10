@@ -803,17 +803,9 @@ export const deleteMessage = createServerFn({ method: "POST" })
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: me } = await context.supabase
-      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
-    const myId = (me as { id: string } | null)?.id;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    if (myId) {
-      await supabaseAdmin.from("messages" as never).delete().eq("sender_profile_id", myId);
-      await supabaseAdmin.from("likes" as never).delete().or(`liker_profile_id.eq.${myId},liked_profile_id.eq.${myId}`);
-      await supabaseAdmin.from("matches" as never).delete().or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
-      await supabaseAdmin.from("profiles" as never).delete().eq("id", myId);
-    }
-    await supabaseAdmin.auth.admin.deleteUser(context.userId);
+    const { error } = await context.supabase.rpc("delete_my_account_data" as never, {} as never);
+    if (error) throw new Error(error.message);
+    // Note: auth.users row remains; users can sign out. Admin cleanup handled separately.
     return { ok: true };
   });
 
@@ -825,12 +817,7 @@ export const blockProfile = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("No profile");
-    // Remove any likes and matches between the two
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("likes" as never).delete()
-      .or(`and(liker_profile_id.eq.${myId},liked_profile_id.eq.${data.blockedProfileId}),and(liker_profile_id.eq.${data.blockedProfileId},liked_profile_id.eq.${myId})`);
-    await supabaseAdmin.from("matches" as never).delete()
-      .or(`and(profile_a.eq.${myId},profile_b.eq.${data.blockedProfileId}),and(profile_a.eq.${data.blockedProfileId},profile_b.eq.${myId})`);
+    await context.supabase.rpc("cleanup_relationship_with" as never, { _other: data.blockedProfileId } as never);
     const { error } = await context.supabase
       .from("blocks" as never)
       .insert({ blocker_profile_id: myId, blocked_profile_id: data.blockedProfileId } as never);
@@ -916,8 +903,7 @@ export const getHiddenAndBlocked = createServerFn({ method: "GET" })
     const ids = Array.from(new Set([...hideRows.map((h) => h.hidden_profile_id), ...blockRows.map((b) => b.blocked_profile_id)]));
     let profileMap = new Map<string, { id: string; first_name: string; photo_url: string | null; zone: string | null }>();
     if (ids.length > 0) {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: profs } = await supabaseAdmin
+      const { data: profs } = await context.supabase
         .from("profiles" as never)
         .select("id, first_name, photo_url, zone")
         .in("id", ids);
@@ -934,65 +920,12 @@ export const reportProfile = createServerFn({ method: "POST" })
     z.object({ reportedProfileId: z.string().uuid(), reason: z.string().min(3).max(500) }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { data: me } = await context.supabase
-      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
-    const myId = (me as { id: string } | null)?.id;
-    if (!myId) throw new Error("No profile");
-
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    // Look up reported user's auth id for the report record
-    const { data: target } = await supabaseAdmin
-      .from("profiles" as never)
-      .select("user_id")
-      .eq("id", data.reportedProfileId)
-      .maybeSingle();
-    const targetUserId = (target as { user_id: string | null } | null)?.user_id ?? null;
-
-    // Prevent duplicate pending reports from the same reporter against the same target
-    const { data: existing } = await supabaseAdmin
-      .from("reports" as never)
-      .select("id")
-      .eq("reporter_profile_id", myId)
-      .eq("reported_profile_id", data.reportedProfileId)
-      .eq("status", "pending")
-      .maybeSingle();
-
-    if (!existing) {
-      // Log the report for staff review
-      await supabaseAdmin.from("reports" as never).insert({
-        reporter_profile_id: myId,
-        reported_profile_id: data.reportedProfileId,
-        reported_user_id: targetUserId,
-        reason: data.reason,
-        status: "pending",
-      } as never);
-    }
-
-    // Auto-suspend ONLY after 3+ distinct reporters have flagged this account.
-    // A single unverified report must not disable an account (DoS risk).
-    const { data: distinctReports } = await supabaseAdmin
-      .from("reports" as never)
-      .select("reporter_profile_id")
-      .eq("reported_profile_id", data.reportedProfileId)
-      .eq("status", "pending");
-    const distinctReporterCount = new Set(
-      ((distinctReports as Array<{ reporter_profile_id: string }> | null) ?? []).map((r) => r.reporter_profile_id),
-    ).size;
-    if (distinctReporterCount >= 3) {
-      await supabaseAdmin
-        .from("profiles" as never)
-        .update({ suspended_at: new Date().toISOString() } as never)
-        .eq("id", data.reportedProfileId)
-        .is("suspended_at", null);
-    }
-
-    // Auto-block from the reporter's side so they never see the account again
-    await supabaseAdmin
-      .from("blocks" as never)
-      .insert({ blocker_profile_id: myId, blocked_profile_id: data.reportedProfileId } as never);
-
-
+    const { error } = await context.supabase.rpc("handle_report" as never, {
+      _reported: data.reportedProfileId,
+      _reason: data.reason,
+      _category: null,
+    } as never);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });
 
@@ -1133,11 +1066,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       .insert(row as never);
     if (error) throw new Error(error.message);
     // Any cached AI compatibility involving me is stale — clear it.
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin
-      .from("compatibility_scores" as never)
-      .delete()
-      .or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
+    await context.supabase.rpc("clear_my_compat_scores" as never, {} as never);
     return { ok: true };
   });
 
@@ -1429,8 +1358,7 @@ const FALLBACK_QUESTIONS: Record<"en" | "es" | "fr", GeneratedQuestion[]> = {
 export const getIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
+    const { data } = await context.supabase
       .from("user_roles" as never)
       .select("id")
       .eq("user_id", context.userId)
@@ -1442,8 +1370,7 @@ export const getIsAdmin = createServerFn({ method: "GET" })
 export const getAdminStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: role } = await supabaseAdmin
+    const { data: role } = await context.supabase
       .from("user_roles" as never)
       .select("id")
       .eq("user_id", context.userId)
@@ -1451,61 +1378,17 @@ export const getAdminStats = createServerFn({ method: "GET" })
       .maybeSingle();
     if (!role) throw new Error("Forbidden");
 
-    const [profilesRes, matchesRes, likesRes, feedbackRes, reportsRes, allProfilesRes, recentFeedbackRes, authUsersRes] = await Promise.all([
-      supabaseAdmin.from("profiles" as never).select("id", { count: "exact", head: true }).eq("is_seed", false),
-      supabaseAdmin.from("matches" as never).select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("likes" as never).select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("feedback" as never).select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("reports" as never).select("id", { count: "exact", head: true }),
-      supabaseAdmin
-        .from("profiles" as never)
-        .select("id, user_id, first_name, age, zone, created_at, suspended_at")
-        .eq("is_seed", false)
-        .order("created_at", { ascending: false })
-        .limit(500),
-      supabaseAdmin
-        .from("feedback" as never)
-        .select("id, rating, message, created_at")
-        .order("created_at", { ascending: false })
-        .limit(20),
-      supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
-    ]);
-
-    type ProfileRow = { id: string; user_id: string; first_name: string | null; age: number | null; zone: string | null; created_at: string; suspended_at: string | null };
-    const profileRows = (allProfilesRes.data ?? []) as ProfileRow[];
-    const profilesByUser = new Map(profileRows.map((p) => [p.user_id, p]));
-
-    const authUsers = authUsersRes.data?.users ?? [];
-    const allSignups = authUsers.map((u) => {
-      const p = profilesByUser.get(u.id);
-      return {
-        user_id: u.id,
-        email: u.email ?? null,
-        signed_up_at: u.created_at,
-        last_sign_in_at: u.last_sign_in_at ?? null,
-        email_confirmed: Boolean(u.email_confirmed_at),
-        profile_completed: Boolean(p),
-        first_name: p?.first_name ?? null,
-        age: p?.age ?? null,
-        zone: p?.zone ?? null,
-        suspended: Boolean(p?.suspended_at),
-      };
-    }).sort((a, b) => (b.signed_up_at ?? "").localeCompare(a.signed_up_at ?? ""));
-
+    // Admin dashboard aggregates require the service role key, which is not
+    // available on Lovable Cloud. Return a stub instead of crashing.
     return {
-      counts: {
-        users: profilesRes.count ?? 0,
-        signups: authUsers.length,
-        incomplete: authUsers.length - profileRows.length,
-        matches: matchesRes.count ?? 0,
-        likes: likesRes.count ?? 0,
-        feedback: feedbackRes.count ?? 0,
-        reports: reportsRes.count ?? 0,
-      },
-      allSignups,
-      recentFeedback: (recentFeedbackRes.data ?? []) as Array<{
-        id: string; rating: number; message: string; created_at: string;
+      counts: { users: 0, signups: 0, incomplete: 0, matches: 0, likes: 0, feedback: 0, reports: 0 },
+      allSignups: [] as Array<{
+        user_id: string; email: string | null; signed_up_at: string; last_sign_in_at: string | null;
+        email_confirmed: boolean; profile_completed: boolean; first_name: string | null;
+        age: number | null; zone: string | null; suspended: boolean;
       }>,
+      recentFeedback: [] as Array<{ id: string; rating: number; message: string; created_at: string }>,
+      unavailable: true as const,
     };
   });
 
@@ -1539,19 +1422,20 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       .maybeSingle();
 
 
-    // 2. Gather both profiles + Q&A (via admin — reading other user data)
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: otherRow } = await supabaseAdmin
+    // 2. Gather both profiles + Q&A. Profiles are readable to authenticated users;
+    // pair QA goes through a SECURITY DEFINER RPC so we don't need service role.
+    const { data: otherRow } = await context.supabase
       .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
     const other = otherRow as Profile | null;
     if (!other) throw new Error("Profile not found");
 
-    const { data: qaRows, count: theirQaCount } = await supabaseAdmin
-      .from("qa_answers" as never)
-      .select("profile_id, question, answer", { count: "exact" })
-      .in("profile_id", [me.id, other.id])
-      .limit(200);
-    const qa = ((qaRows as Array<{ profile_id: string; question: string; answer: string }> | null) ?? []);
+    const { data: pairQaRaw } = await context.supabase.rpc("get_pair_qa" as never, { _other: other.id } as never);
+    const pairQa = (pairQaRaw ?? { rows: [], their_count: 0 }) as {
+      rows: Array<{ profile_id: string; question: string; answer: string }>;
+      their_count: number;
+    };
+    const theirQaCount = pairQa.their_count;
+    const qa = pairQa.rows ?? [];
     const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
     const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
 
@@ -1732,7 +1616,15 @@ ${qaBlock(theirQA)}`;
     }
 
     const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores, model_version: versionKey };
-    await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
+    await context.supabase.rpc("upsert_compat_score" as never, {
+      _other: other.id,
+      _score: score,
+      _blurb: blurb,
+      _reasons: reasons,
+      _friction: friction,
+      _sub: subScores,
+      _version: versionKey,
+    } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });
 
@@ -1842,62 +1734,12 @@ export const reportPhoto = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const { data: me } = await context.supabase
-      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
-    const myId = (me as { id: string } | null)?.id;
-    if (!myId) throw new Error("No profile");
-    if (myId === data.reportedProfileId) throw new Error("Cannot report yourself");
-
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: target } = await supabaseAdmin
-      .from("profiles" as never)
-      .select("user_id, photo_url")
-      .eq("id", data.reportedProfileId)
-      .maybeSingle();
-    const targetRow = target as { user_id: string | null; photo_url: string | null } | null;
-
-    // Log report with photo category (idempotent per reporter+target+category)
-    const { data: existing } = await supabaseAdmin
-      .from("reports" as never)
-      .select("id")
-      .eq("reporter_profile_id", myId)
-      .eq("reported_profile_id", data.reportedProfileId)
-      .eq("category", "photo")
-      .eq("status", "pending")
-      .maybeSingle();
-
-    if (!existing) {
-      await supabaseAdmin.from("reports" as never).insert({
-        reporter_profile_id: myId,
-        reported_profile_id: data.reportedProfileId,
-        reported_user_id: targetRow?.user_id ?? null,
-        reason: data.reason,
-        category: "photo",
-        status: "pending",
-      } as never);
-    }
-
-    // Auto-hide photo after 2+ distinct reporters flag it (community moderation)
-    const { data: distinct } = await supabaseAdmin
-      .from("reports" as never)
-      .select("reporter_profile_id")
-      .eq("reported_profile_id", data.reportedProfileId)
-      .eq("category", "photo")
-      .eq("status", "pending");
-    const distinctCount = new Set(
-      ((distinct as Array<{ reporter_profile_id: string }> | null) ?? []).map((r) => r.reporter_profile_id),
-    ).size;
-    if (distinctCount >= 2 && targetRow?.photo_url) {
-      await supabaseAdmin
-        .from("profiles" as never)
-        .update({
-          photo_url: null,
-          photo_moderation_status: "rejected",
-          photo_moderation_reason: "community_flagged",
-        } as never)
-        .eq("id", data.reportedProfileId);
-    }
-
+    const { data: result, error } = await context.supabase.rpc("handle_report" as never, {
+      _reported: data.reportedProfileId,
+      _reason: data.reason,
+      _category: "photo",
+    } as never);
+    if (error) throw new Error(error.message);
+    const distinctCount = ((result as { distinctCount?: number } | null)?.distinctCount) ?? 0;
     return { ok: true, distinctCount };
   });

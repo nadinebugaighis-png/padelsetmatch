@@ -404,7 +404,7 @@ function Discover() {
 
         <div className="mt-5 lg:mt-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            {(["all", "padel", "friend", "relationship"] as const).map((f) => (
+            {(["all", "padel", "friend"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
@@ -414,7 +414,7 @@ function Discover() {
                     : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
                 }`}
               >
-                {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+                {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : t("disc.filter.friend")}
               </button>
             ))}
             <button

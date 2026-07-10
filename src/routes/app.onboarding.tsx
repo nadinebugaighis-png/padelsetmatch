@@ -324,36 +324,49 @@ function Onboarding() {
 
   useEffect(() => setShowStepHelp(false), [step]);
 
-  const missingByStep = [
-    [
-      !first_name.trim() ? tr("first name", "nombre", "prénom") : null,
-      age === null || age < 18 ? tr("age", "edad", "âge") : null,
-      !gender ? tr("gender", "género", "genre") : null,
-      goals.length === 0 ? tr("what you are looking for", "qué estás buscando", "ce que tu cherches") : null,
-    ],
-    [
-      hasPartnerGoal && !meetPref ? tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") : null,
-      age_min === null || age_max === null ? tr("age range", "rango de edad", "tranche d'âge") : null,
-      age_min !== null && age_max !== null && age_min > age_max ? tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") : null,
-    ],
-    [
-      validBlocks.length === 0 ? tr("where you play", "dónde juegas", "où tu joues") : null,
-      !nationality ? tr("nationality", "nacionalidad", "nationalité") : null,
-      languages.length === 0 ? tr("languages", "idiomas", "langues") : null,
-      !level ? tr("padel level", "nivel de pádel", "niveau de padel") : null,
-      !courtSide ? tr("preferred court side", "lado de pista preferido", "côté de piste préféré") : null,
-    ],
-    [priorities.length < 3 ? tr("at least 3 values", "al menos 3 valores", "au moins 3 valeurs") : null],
+  const missingByStepDetailed: Array<Array<{ key: string; label: string }>> = [
+    ([
+      !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
+      age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
+      !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
+      goals.length === 0 ? { key: "goals", label: tr("what you are looking for", "qué estás buscando", "ce que tu cherches") } : null,
+    ].filter(Boolean) as Array<{ key: string; label: string }>),
+    ([
+      hasPartnerGoal && !meetPref ? { key: "meetPref", label: tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") } : null,
+      age_min === null || age_max === null ? { key: "age_range", label: tr("age range", "rango de edad", "tranche d'âge") } : null,
+      age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
+    ].filter(Boolean) as Array<{ key: string; label: string }>),
+    ([
+      validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
+      !nationality ? { key: "nationality", label: tr("nationality", "nacionalidad", "nationalité") } : null,
+      languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
+      !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
+      !courtSide ? { key: "court_side", label: tr("preferred court side", "lado de pista preferido", "côté de piste préféré") } : null,
+    ].filter(Boolean) as Array<{ key: string; label: string }>),
+    (priorities.length < 3 ? [{ key: "priorities", label: tr("at least 3 values", "al menos 3 valores", "au moins 3 valeurs") }] : []),
     [],
-  ].map((items) => items.filter(Boolean) as string[]);
+  ];
 
+  const missingByStep = missingByStepDetailed.map((arr) => arr.map((x) => x.label));
   const canStep = missingByStep.map((items) => items.length === 0);
 
+  const missingKeysThisStep = new Set(
+    showStepHelp ? (missingByStepDetailed[step] ?? []).map((x) => x.key) : []
+  );
+  const fieldCls = (key: string) =>
+    missingKeysThisStep.has(key)
+      ? "scroll-mt-24 rounded-2xl -mx-2 px-2 py-2 ring-2 ring-[var(--clay)] bg-[var(--clay)]/5 transition-colors"
+      : "";
+
   const goNext = () => {
-    const missing = missingByStep[step] ?? [];
+    const missing = missingByStepDetailed[step] ?? [];
     if (missing.length > 0) {
       setShowStepHelp(true);
-      toast.error(`${tr("Please complete", "Falta por completar", "À compléter")} ${missing.join(", ")}.`);
+      toast.error(`${tr("Please complete", "Falta por completar", "À compléter")} ${missing.map((x) => x.label).join(", ")}.`);
+      setTimeout(() => {
+        const el = document.querySelector<HTMLElement>(`[data-field="${missing[0].key}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
       return;
     }
     setStep(step + 1);
@@ -399,39 +412,47 @@ function Onboarding() {
         {step === 0 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h0")}</h2>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
-            <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.age")}</label>
-            <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
-            <p className="text-[11px] text-[var(--ink)]/55">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
-            <div className="flex flex-wrap gap-2">
-              {GENDERS.map((g) => (
-                <button key={g} onClick={() => setGender(g)} className={`chip-paper ${gender === g ? "chip-paper-selected" : ""}`}>{label(g)}</button>
-              ))}
+            <div data-field="first_name" className={fieldCls("first_name")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
+              <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             </div>
-            {gender === "self-describe" && (
-              <Input value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
-            )}
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
-                { id: "friends", label: tr("Friends", "Amistad", "Amis") },
-                { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
-                { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
-              ].map((g) => (
-                <button
-                  key={g.id}
-                  onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
-                  className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
-                >
-                  {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+            <div data-field="age" className={fieldCls("age")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.age")}</label>
+              <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
+              <p className="text-[11px] text-[var(--ink)]/55">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
+            </div>
+            <div data-field="gender" className={fieldCls("gender")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {GENDERS.map((g) => (
+                  <button key={g} onClick={() => setGender(g)} className={`chip-paper ${gender === g ? "chip-paper-selected" : ""}`}>{label(g)}</button>
+                ))}
+              </div>
+              {gender === "self-describe" && (
+                <Input className="mt-2" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
+              )}
+            </div>
+            <div data-field="goals" className={fieldCls("goals")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {[
+                  { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
+                  { id: "friends", label: tr("Friends", "Amistad", "Amis") },
+                  { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
+                  { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
+                ].map((g) => (
+                  <button
+                    key={g.id}
+                    onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
+                    className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
+                  >
+                    {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-[var(--ink)]/55 mt-1">{t("ob.privateNote")}</p>
+            </div>
 
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-[var(--ink)]/55">{t("ob.privateNote")}</p>
           </>
         )}
         {step === 1 && (
@@ -439,17 +460,16 @@ function Onboarding() {
             <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
 
             {hasPartnerGoal && (
-              <>
+              <div data-field="meetPref" className={fieldCls("meetPref")}>
                 <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-1">
                   {(["men", "women", "everyone"] as const).map((o) => (
                     <button key={o} onClick={() => setMeetPref(o)} className={`chip-paper ${meetPref === o ? "chip-paper-selected" : ""}`}>
                       {o === "men" ? tr("Men", "Hombres", "Hommes") : o === "women" ? tr("Women", "Mujeres", "Femmes") : tr("Everyone", "Todos", "Tout le monde")}
                     </button>
                   ))}
                 </div>
-
-              </>
+              </div>
             )}
 
             {hasPartnerGoal && meetPref === "everyone" && (
@@ -466,11 +486,13 @@ function Onboarding() {
               </div>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
-            <div className="flex items-center gap-3">
-              <AgeInput value={age_min} onCommit={setAgeMin} />
-              <span>{t("ob.to")}</span>
-              <AgeInput value={age_max} onCommit={setAgeMax} />
+            <div data-field="age_range" className={fieldCls("age_range")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
+              <div className="flex items-center gap-3 mt-1">
+                <AgeInput value={age_min} onCommit={setAgeMin} />
+                <span>{t("ob.to")}</span>
+                <AgeInput value={age_max} onCommit={setAgeMax} />
+              </div>
             </div>
           </>
         )}
@@ -478,7 +500,7 @@ function Onboarding() {
           <>
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
 
-            <div>
+            <div data-field="locations" className={fieldCls("locations")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
               <p className="text-xs text-[var(--ink)]/55 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.", "Ajoute les endroits où tu joues — chez toi, au travail, ta maison d'été ou en voyage. Jusqu'à 3 zones par pays.")}</p>
             </div>
@@ -600,19 +622,21 @@ function Onboarding() {
             </div>
 
 
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
-            <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
-              <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
-              {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-            </select>
+            <div data-field="nationality" className={fieldCls("nationality")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
+              <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality} onChange={(e) => setNationality(e.target.value)}>
+                <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
+                {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
+              </select>
+            </div>
 
-
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
-            <div className="flex flex-wrap gap-2">
-              {LANGUAGES.map((l) => (
-                <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-              ))}
+            <div data-field="languages" className={fieldCls("languages")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {LANGUAGES.map((l) => (
+                  <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
+                ))}
+              </div>
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
@@ -636,18 +660,21 @@ function Onboarding() {
               })}
             </div>
 
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
-            <div className="flex flex-wrap gap-2">
-              {PADEL_LEVELS.map((l) => (
-                <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-              ))}
+            <div data-field="level" className={fieldCls("level")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {PADEL_LEVELS.map((l) => (
+                  <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
+                ))}
+              </div>
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
-            <div className="flex flex-wrap gap-2">
-              {COURT_SIDES.map((s) => (
-                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip-paper ${courtSide === s ? "chip-paper-selected" : ""}`}>{label(s)}</button>
-              ))}
+            <div data-field="court_side" className={fieldCls("court_side")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {COURT_SIDES.map((s) => (
+                  <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip-paper ${courtSide === s ? "chip-paper-selected" : ""}`}>{label(s)}</button>
+                ))}
+              </div>
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("When can you play?", "¿Cuándo puedes jugar?", "Quand peux-tu jouer ?")}</label>
@@ -695,7 +722,7 @@ function Onboarding() {
             </div>
 
             {/* SECTION 1 — Priorities */}
-            <section className="space-y-3">
+            <section data-field="priorities" className={`space-y-3 ${fieldCls("priorities")}`}>
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-serif text-lg flex items-center gap-2">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>

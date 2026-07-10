@@ -244,11 +244,10 @@ function Discover() {
     reportM.mutate({ id, reason: reason.trim() });
   }
   function handleHide(id: string, name: string) {
-    const scope: "padel" | "friend" | "relationship" | "all" = filter === "all" ? "all" : filter;
+    const scope: "padel" | "friend" | "all" = filter === "all" ? "all" : filter;
     const scopeLabel =
       scope === "all" ? "everywhere" :
-      scope === "padel" ? "from Padel partners" :
-      scope === "friend" ? "from Friends" : "from Relationships";
+      scope === "padel" ? "from Padel partners" : "from Friends";
     if (!window.confirm(`Hide ${name} ${scopeLabel}? You can unhide them anytime from Profile → Hidden & blocked.`)) return;
     hideM.mutate({ id, category: scope });
   }

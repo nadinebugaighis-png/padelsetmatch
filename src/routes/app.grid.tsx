@@ -262,10 +262,11 @@ function Discover() {
   const all = feedQ.data.candidates;
   const activeCat = filter === "all" ? null : filter;
   const deriveIntents = (c: { intents?: string[] | null; looking_for?: string | null }): string[] => {
-    if (c.intents && c.intents.length > 0) return c.intents;
-    if (c.looking_for === "partner") return ["relationship", "padel"];
-    if (c.looking_for === "friend") return ["friend", "padel"];
-    if (c.looking_for === "both") return ["relationship", "friend", "padel"];
+    if (c.intents && c.intents.length > 0) {
+      const cleaned = c.intents.filter((i) => i !== "relationship");
+      if (cleaned.length > 0) return cleaned;
+    }
+    if (c.looking_for === "friend" || c.looking_for === "both") return ["friend", "padel"];
     return ["padel"];
   };
 

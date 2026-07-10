@@ -6,7 +6,7 @@ import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, submitFeedb
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, Lock, MessageCircle, Pencil, Sparkles, Star } from "lucide-react";
+import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Sparkles, Star, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";

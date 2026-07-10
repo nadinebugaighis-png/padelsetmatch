@@ -986,9 +986,10 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
               <div className="space-y-2.5">
                 <input
                   readOnly
-                  value={linkUrl}
+                  value={displayLink}
+                  disabled={busy && !shortLinkUrl}
                   onFocus={(e) => e.currentTarget.select()}
-                  className="w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/80 outline-none focus:border-[var(--ink)]/40"
+                  className="w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/80 outline-none focus:border-[var(--ink)]/40 disabled:opacity-60"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <a

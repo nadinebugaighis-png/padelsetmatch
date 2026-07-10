@@ -4,18 +4,17 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   listOpenEvents,
-  quickCreateMatchEvent,
   joinMatchEvent,
   leaveMatchEvent,
-  cancelMatchEvent,
   deleteMatchEvent,
   duplicateMatchEvent,
+  cancelMatchEvent,
   listEventMessages,
   sendEventMessage,
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Search, X, Pencil, Trash2, Clock, Users, Send } from "lucide-react";
+import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 
@@ -27,25 +26,23 @@ export const Route = createFileRoute("/app/events/")({
   notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">—</div>,
 });
 
-const HOURS = Array.from({ length: 17 }, (_, i) => 7 + i); // 07..23
-const DAY_COUNT = 14;
+const LEVEL_INDEX: Record<string, number> = {
+  "just starting": 0,
+  casual: 1,
+  intermediate: 2,
+  advanced: 3,
+  competitive: 4,
+};
+
+const DAY_COUNT = 10;
 
 function startOfDay(d: Date) {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
   return x;
 }
-
-function slotKey(date: Date, hour: number) {
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${hour}`;
-}
-
-function formatDay(d: Date, lang: string, todayIdx: number, i: number, tr: ReturnType<typeof useTr>) {
-  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
-  const weekday = d.toLocaleDateString(locale, { weekday: "short" }).toUpperCase();
-  const day = d.getDate();
-  const label = i === todayIdx ? tr("TODAY", "HOY", "AUJOURD'HUI") : weekday;
-  return { top: label, bottom: String(day) };
+function dayKey(d: Date) {
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
 
 type EventLite = {
@@ -57,22 +54,26 @@ type EventLite = {
   iAmParticipant: boolean;
   status: string;
   club_name: string;
+  city?: string | null;
+  club_address?: string | null;
   gender_rule: "mixed" | "men_only" | "women_only";
   level_min?: string;
   level_max?: string;
   note?: string | null;
+  court_booked?: boolean;
   host?: { first_name?: string } | null;
   participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
 };
 
+type TimeOfDay = "all" | "morning" | "afternoon" | "evening";
+
 function EventsPage() {
   const navigate = useNavigate();
   const tr = useTr();
-  const { lang } = useI18n();
+  const { lang, label } = useI18n();
   const qc = useQueryClient();
 
   const list = useServerFn(listOpenEvents);
-  const quickCreate = useServerFn(quickCreateMatchEvent);
   const join = useServerFn(joinMatchEvent);
   const leave = useServerFn(leaveMatchEvent);
   const cancel = useServerFn(cancelMatchEvent);
@@ -90,7 +91,7 @@ function EventsPage() {
     queryFn: () => getProfile(),
     retry: false,
   });
-  void profileQ;
+  const myLevel: string | undefined = (profileQ.data as any)?.level;
 
   const eventsQ = useQuery({
     queryKey: ["open-events", myAreasOnly],
@@ -108,96 +109,88 @@ function EventsPage() {
     [today.getTime()],
   );
 
-  const searchLower = search.trim().toLowerCase();
+  // Filters
+  const [selectedDays, setSelectedDays] = useState<Set<string>>(() => {
+    const s = new Set<string>();
+    for (let i = 0; i < 3; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      s.add(dayKey(d));
+    }
+    return s;
+  });
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("all");
+  const [levelOnly, setLevelOnly] = useState(false);
 
+  function toggleDay(k: string) {
+    setSelectedDays((prev) => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      if (next.size === 0) next.add(k); // never leave empty
+      return next;
+    });
+  }
+
+  const searchLower = search.trim().toLowerCase();
   function eventMatchesName(e: EventLite) {
     if (!searchLower) return true;
     const hostName = e.host?.first_name ?? "";
     if (hostName.toLowerCase().includes(searchLower)) return true;
+    if (e.club_name?.toLowerCase().includes(searchLower)) return true;
+    if (e.city?.toLowerCase().includes(searchLower)) return true;
     return e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower)) ?? false;
   }
+  function eventMatchesTime(iso: string) {
+    if (timeOfDay === "all") return true;
+    const h = new Date(iso).getHours();
+    if (timeOfDay === "morning") return h < 12;
+    if (timeOfDay === "afternoon") return h >= 12 && h < 17;
+    return h >= 17;
+  }
+  function eventMatchesLevel(e: EventLite) {
+    if (!myLevel) return true;
+    const my = LEVEL_INDEX[myLevel];
+    const lo = LEVEL_INDEX[e.level_min ?? "casual"] ?? 0;
+    const hi = LEVEL_INDEX[e.level_max ?? "advanced"] ?? 4;
+    return my >= lo && my <= hi;
+  }
 
-  const visibleEvents = useMemo(
-    () => ((eventsQ.data?.events ?? []) as EventLite[]).filter(eventMatchesName),
-    [eventsQ.data, searchLower],
+  const all = (eventsQ.data?.events ?? []) as EventLite[];
+
+  const filtered = useMemo(
+    () => all
+      .filter(eventMatchesName)
+      .filter((e) => selectedDays.has(dayKey(new Date(e.starts_at))))
+      .filter((e) => eventMatchesTime(e.starts_at))
+      .filter((e) => !levelOnly || eventMatchesLevel(e))
+      .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
+    [all, searchLower, selectedDays, timeOfDay, levelOnly, myLevel],
+  );
+
+  const forYourLevel = useMemo(
+    () => (myLevel ? filtered.filter(eventMatchesLevel) : []),
+    [filtered, myLevel],
+  );
+  const others = useMemo(
+    () => (myLevel ? filtered.filter((e) => !eventMatchesLevel(e)) : filtered),
+    [filtered, myLevel],
   );
 
   const myEvents = useMemo(
-    () => ((eventsQ.data?.events ?? []) as EventLite[])
+    () => all
       .filter((e) => e.iAmHost || e.iAmParticipant)
       .filter(eventMatchesName)
-      .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime()),
-    [eventsQ.data, searchLower],
+      .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
+    [all, searchLower],
   );
-  const mineCount = useMemo(
-    () => ((eventsQ.data?.events ?? []) as EventLite[]).filter((e) => e.iAmHost || e.iAmParticipant).length,
-    [eventsQ.data],
-  );
-
-  const buckets = useMemo(() => {
-    const map = new Map<string, EventLite[]>();
-    for (const e of visibleEvents) {
-      const d = new Date(e.starts_at);
-      const key = slotKey(startOfDay(d), d.getHours());
-      const arr = map.get(key) ?? [];
-      arr.push(e);
-      map.set(key, arr);
-    }
-    return map;
-  }, [visibleEvents]);
+  const mineCount = useMemo(() => all.filter((e) => e.iAmHost || e.iAmParticipant).length, [all]);
 
   const [pending, setPending] = useState<string | null>(null);
-  const [slotSheet, setSlotSheet] = useState<{ startsAt: string; events: EventLite[] } | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    const nowH = new Date().getHours();
-    const targetH = Math.max(7, Math.min(21, nowH));
-    const rowIdx = HOURS.indexOf(targetH);
-    if (rowIdx > 0) scrollRef.current.scrollTop = rowIdx * 56 - 40;
-  }, []);
 
   function refetch() {
     qc.invalidateQueries({ queryKey: ["open-events"] });
-  }
-
-  // ----- Actions with undo -----
-
-  async function instantCreate(startsAt: Date) {
-    const key = slotKey(startOfDay(startsAt), startsAt.getHours());
-    setPending(key);
-    try {
-      const { id } = await quickCreate({ data: { starts_at: startsAt.toISOString() } });
-      await refetch();
-      toast.success(tr("You're marked as free", "Marcado como disponible", "Marqué comme disponible"), {
-        duration: 12000,
-        description: tr("Changed your mind? Tap Remove.", "¿Cambiaste de idea? Toca Quitar.", "Changé d'avis ? Touche Retirer."),
-        action: {
-          label: tr("Remove", "Quitar", "Retirer"),
-          onClick: async () => {
-            try {
-              await deleteFn({ data: { id } });
-              refetch();
-              toast(tr("Removed", "Quitado", "Retiré"));
-            } catch {/* ignore */}
-          },
-        },
-        cancel: {
-          label: tr("Details", "Detalles", "Détails"),
-          onClick: () => navigate({ to: "/app/events/$eventId/edit", params: { eventId: id } }),
-        },
-      });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido", "Impossible de créer le match");
-      toast.error(msg);
-      if (msg.toLowerCase().includes("level") || msg.toLowerCase().includes("name")) {
-        navigate({ to: "/app/onboarding" });
-      }
-    } finally {
-      setPending(null);
-    }
   }
 
   async function instantJoin(e: EventLite) {
@@ -206,16 +199,12 @@ function EventsPage() {
       await join({ data: { id: e.id } });
       await refetch();
       toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"), {
-        duration: 12000,
+        duration: 10000,
         description: tr("Joined by mistake? Tap Leave.", "¿Te uniste por error? Toca Salir.", "Rejoint par erreur ? Touche Quitter."),
         action: {
           label: tr("Leave", "Salir", "Quitter"),
           onClick: async () => {
-            try {
-              await leave({ data: { id: e.id } });
-              refetch();
-              toast(tr("You left", "Has salido", "Vous avez quitté"));
-            } catch {/* ignore */}
+            try { await leave({ data: { id: e.id } }); refetch(); } catch { /* ignore */ }
           },
         },
         cancel: {
@@ -230,30 +219,21 @@ function EventsPage() {
     }
   }
 
-
   async function instantLeave(e: EventLite) {
     setPending(e.id);
     try {
       await leave({ data: { id: e.id } });
       await refetch();
       toast(tr("You left the match", "Has salido del partido", "Tu as quitté le match"), {
-        duration: 10000,
+        duration: 8000,
         action: {
           label: tr("Undo — rejoin", "Deshacer — volver", "Annuler — rejoindre"),
-
-          onClick: async () => {
-            try {
-              await join({ data: { id: e.id } });
-              refetch();
-            } catch {/* ignore */}
-          },
+          onClick: async () => { try { await join({ data: { id: e.id } }); refetch(); } catch {/* ignore */} },
         },
       });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Could not leave", "No se pudo salir", "Impossible de quitter"));
-    } finally {
-      setPending(null);
-    }
+    } finally { setPending(null); }
   }
 
   async function hostCancel(e: EventLite) {
@@ -270,9 +250,7 @@ function EventsPage() {
       setMyMatchSheet(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
-    } finally {
-      setPending(null);
-    }
+    } finally { setPending(null); }
   }
 
   async function hostExtend(e: EventLite, hoursAhead: number) {
@@ -292,84 +270,26 @@ function EventsPage() {
       });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Could not copy", "No se pudo copiar", "Impossible de copier"));
-    } finally {
-      setPending(null);
-    }
+    } finally { setPending(null); }
   }
 
-  // ----- Cell tap router -----
-
-  async function handleCellTap(date: Date, hour: number) {
-    if (pending) return;
-    const startsAt = new Date(date);
-    startsAt.setHours(hour, 0, 0, 0);
-    if (startsAt.getTime() < Date.now() - 30 * 60 * 1000) {
-      toast.info(tr("That slot has passed.", "Ese hueco ya ha pasado.", "Ce créneau est passé."));
-      return;
-    }
-    const key = slotKey(date, hour);
-    const existing = buckets.get(key) ?? [];
-
-    // Empty → instant create
-    if (existing.length === 0) {
-      if (searchLower) {
-        toast.info(tr("Clear search to create a match here.", "Borra la búsqueda para crear aquí.", "Effacez la recherche pour créer ici."));
-        return;
-      }
-      await instantCreate(startsAt);
-      return;
-    }
-
-    // Multiple matches → picker
-    if (existing.length > 1) {
-      setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
-      return;
-    }
-
-    const e = existing[0];
-    const mine = e.iAmHost || e.iAmParticipant;
-
-    // My host cell → management sheet
-    if (e.iAmHost) {
-      setMyMatchSheet(e);
-      return;
-    }
-    // My participant cell → instant leave with undo
-    if (mine) {
-      await instantLeave(e);
-      return;
-    }
-    // Full → show lineup + option to create another
-    if ((e.filled ?? 0) >= 4) {
-      setSlotSheet({ startsAt: startsAt.toISOString(), events: existing });
-      return;
-    }
-    // Open slot, not mine → instant join with undo
-    await instantJoin(e);
-  }
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-28">
-        <div className="flex items-start justify-between mb-1 gap-3">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-32">
+        {/* Title row */}
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-serif text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[var(--ink)]">
-              {tr("PLAN", "PLANEA", "PLANIFIER")}
-              <br />
-              {tr("A MATCH", "UN PARTIDO", "UN MATCH")}
+              {tr("MATCHES", "PARTIDOS", "MATCHES")}
             </h1>
-            <p className="text-sm sm:text-base text-[var(--ink)]/60 mt-2 sm:mt-3">
-              {mode === "find"
-                ? tr(
-                    "Tap an empty hour to mark yourself free. Tap your match to manage it.",
-                    "Toca una hora libre para marcarte disponible. Toca tu partido para gestionarlo.",
-                    "Touche une heure libre pour être disponible. Touche ton match pour le gérer.",
-                  )
-                : tr(
-                    "Your upcoming matches, in order.",
-                    "Tus próximos partidos, en orden.",
-                    "Tes prochains matchs, dans l'ordre.",
-                  )}
+            <p className="text-sm text-[var(--ink)]/60 mt-2">
+              {tr(
+                "Casual matches around you. Tap to join.",
+                "Partidos casuales cerca de ti. Toca para unirte.",
+                "Matches décontractés autour de toi. Touche pour rejoindre.",
+              )}
             </p>
           </div>
           <button
@@ -382,10 +302,11 @@ function EventsPage() {
             }`}
           >
             <MapPin className="w-3 h-3" />
-            {worldwide ? tr("World", "Mundo", "Monde") : tr("My areas", "Mis zonas", "Mes zones")}
+            {worldwide ? tr("World", "Mundo", "Monde") : tr("Around me", "Cerca de mí", "Autour de moi")}
           </button>
         </div>
 
+        {/* Mode switch */}
         <div className="mt-4 mb-3 inline-flex items-center rounded-full border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-1 text-[11px] uppercase tracking-widest">
           <button
             type="button"
@@ -407,14 +328,13 @@ function EventsPage() {
             {mineCount > 0 && (
               <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${
                 mode === "mine" ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--plum)] text-[var(--paper)]"
-              }`}>
-                {mineCount}
-              </span>
+              }`}>{mineCount}</span>
             )}
           </button>
         </div>
 
-        <div className="relative mb-4">
+        {/* Search */}
+        <div className="relative mb-3">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 pointer-events-none">
             <Search className="w-4 h-4" />
           </div>
@@ -422,8 +342,8 @@ function EventsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
-            className="w-full rounded-full bg-[var(--ink)]/[0.04] border border-[var(--ink)]/15 pl-9 pr-9 py-2 text-sm text-[var(--ink)] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 focus:ring-1 focus:ring-[var(--ink)]/10"
+            placeholder={tr("Search club, city, name…", "Buscar club, ciudad, nombre…", "Rechercher club, ville, nom…")}
+            className="w-full rounded-full bg-[var(--ink)]/[0.04] border border-[var(--ink)]/15 pl-9 pr-9 py-2.5 text-sm text-[var(--ink)] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 focus:ring-1 focus:ring-[var(--ink)]/10"
           />
           {search && (
             <button
@@ -438,59 +358,128 @@ function EventsPage() {
 
         {mode === "find" ? (
           <>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-4 mb-3 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-              <LegendDots filled={0} label={tr("Free", "Libre", "Libre")} />
-              <LegendDots filled={2} label={tr("Needs 2", "Faltan 2", "Manque 2")} />
-              <LegendDots filled={3} label={tr("Needs 1", "Falta 1", "Manque 1")} accent />
-              <LegendDots filled={4} label={tr("Full", "Completo", "Complet")} />
-            </div>
-
-            <div className="rounded-2xl border border-[var(--ink)]/10 overflow-hidden bg-white">
-              <div
-                ref={scrollRef}
-                className="overflow-auto"
-                style={{ maxHeight: "calc(100vh - 260px)" }}
+            {/* Filter chip row */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 pb-1">
+              <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--ink)]/15 text-[var(--ink)]/70">
+                <SlidersHorizontal className="w-4 h-4" />
+              </span>
+              <button
+                type="button"
+                onClick={() => setLevelOnly((v) => !v)}
+                disabled={!myLevel}
+                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-widest font-semibold whitespace-nowrap transition ${
+                  levelOnly
+                    ? "bg-[var(--ink)] text-[var(--paper)]"
+                    : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
+                } disabled:opacity-40`}
               >
-                <div
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: `44px repeat(${DAY_COUNT}, 68px)`,
-                    gridAutoRows: "56px",
-                  }}
+                {tr("For my level", "Para mi nivel", "Pour mon niveau")}
+                {myLevel && <span className="opacity-70 normal-case tracking-normal">· {label(myLevel as any)}</span>}
+              </button>
+              {(["all", "morning", "afternoon", "evening"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setTimeOfDay(v)}
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-widest font-semibold whitespace-nowrap transition ${
+                    timeOfDay === v
+                      ? "bg-[var(--ink)] text-[var(--paper)]"
+                      : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
+                  }`}
                 >
-                  <div className="sticky top-0 left-0 z-30 bg-[var(--paper)] border-b border-r border-[var(--ink)]/10 h-12" />
-                  {days.map((d, i) => {
-                    const label = formatDay(d, lang, 0, i, tr);
-                    const isToday = i === 0;
-                    return (
-                      <div
-                        key={i}
-                        className={`sticky top-0 z-20 h-12 border-b border-[var(--ink)]/10 flex flex-col items-center justify-center bg-[var(--paper)] ${
-                          isToday ? "text-[var(--plum)]" : "text-[var(--ink)]/80"
-                        }`}
-                      >
-                        <span className="text-[9px] uppercase tracking-widest font-semibold leading-none">
-                          {label.top}
-                        </span>
-                        <span className="text-[13px] font-bold leading-none mt-1">{label.bottom}</span>
-                      </div>
-                    );
-                  })}
-
-                  {HOURS.map((h) => (
-                    <RowCells
-                      key={h}
-                      hour={h}
-                      days={days}
-                      buckets={buckets}
-                      pending={pending}
-                      onTap={handleCellTap}
-                      tr={tr}
-                    />
-                  ))}
-                </div>
-              </div>
+                  {v === "all" && tr("All day", "Todo el día", "Toute la journée")}
+                  {v === "morning" && tr("Morning", "Mañana", "Matin")}
+                  {v === "afternoon" && tr("Afternoon", "Tarde", "Après-midi")}
+                  {v === "evening" && tr("Evening", "Noche", "Soir")}
+                </button>
+              ))}
             </div>
+
+            {/* Day chip row */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 mt-2 pb-2">
+              {days.map((d, i) => {
+                const k = dayKey(d);
+                const active = selectedDays.has(k);
+                const weekday = d.toLocaleDateString(locale, { weekday: "short" });
+                const dayNum = d.getDate();
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => toggleDay(k)}
+                    className={`shrink-0 rounded-2xl px-3 py-2 min-w-[54px] text-center transition ${
+                      active
+                        ? "bg-[var(--plum)] text-white shadow-sm"
+                        : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
+                    }`}
+                  >
+                    <div className={`text-[9px] uppercase tracking-widest font-bold leading-none ${active ? "text-white/80" : "text-[var(--ink)]/55"}`}>
+                      {i === 0 ? tr("Today", "Hoy", "Auj.") : weekday}
+                    </div>
+                    <div className="text-serif text-lg leading-none mt-1">{dayNum}</div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {eventsQ.isLoading ? (
+              <div className="mt-8 text-center text-[var(--ink)]/50 text-sm">
+                {tr("Loading matches…", "Cargando partidos…", "Chargement…")}
+              </div>
+            ) : filtered.length === 0 ? (
+              <EmptyFeed
+                worldwide={worldwide}
+                onExpandArea={() => setWorldwide(true)}
+                onResetDays={() =>
+                  setSelectedDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
+                }
+                onCreate={() => navigate({ to: "/app/events/new" })}
+              />
+            ) : (
+              <div className="mt-5 space-y-6">
+                {myLevel && forYourLevel.length > 0 && (
+                  <FeedSection
+                    title={tr("For your level", "Para tu nivel", "Pour ton niveau")}
+                    subtitle={tr(
+                      "These matches fit your search and your level perfectly.",
+                      "Estos partidos encajan con tu búsqueda y tu nivel.",
+                      "Ces matches correspondent à ta recherche et ton niveau.",
+                    )}
+                    events={forYourLevel}
+                    locale={locale}
+                    pending={pending}
+                    onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+                    onJoin={instantJoin}
+                    onManage={setMyMatchSheet}
+                    tr={tr}
+                    highlight
+                  />
+                )}
+                {others.length > 0 && (
+                  <FeedSection
+                    title={myLevel && forYourLevel.length > 0
+                      ? tr("Around me", "Cerca de mí", "Autour de moi")
+                      : tr("Available matches", "Partidos disponibles", "Matches disponibles")}
+                    subtitle={
+                      myLevel && forYourLevel.length > 0
+                        ? tr(
+                            "Different level range — still open to join.",
+                            "Rango de nivel diferente — todavía abiertos.",
+                            "Autre niveau — mais toujours ouverts.",
+                          )
+                        : undefined
+                    }
+                    events={others}
+                    locale={locale}
+                    pending={pending}
+                    onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
+                    onJoin={instantJoin}
+                    onManage={setMyMatchSheet}
+                    tr={tr}
+                  />
+                )}
+              </div>
+            )}
           </>
         ) : (
           <MyMatchesList
@@ -499,27 +488,9 @@ function EventsPage() {
             tr={tr}
             pending={pending}
             onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
-            onManage={(e) => setMyMatchSheet(e)}
-            onLeave={(e) => instantLeave(e)}
+            onManage={setMyMatchSheet}
+            onLeave={instantLeave}
             onFind={() => setMode("find")}
-          />
-        )}
-
-        {slotSheet && (
-          <SlotSheet
-            startsAt={slotSheet.startsAt}
-            events={slotSheet.events}
-            pending={pending}
-            onClose={() => setSlotSheet(null)}
-            onJoin={async (e) => { setSlotSheet(null); await instantJoin(e); }}
-            onLeave={async (e) => { setSlotSheet(null); await instantLeave(e); }}
-            onManage={(e) => { setSlotSheet(null); setMyMatchSheet(e); }}
-            onOpen={(id) => { setSlotSheet(null); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
-            onStartAnother={() => {
-              const d = new Date(slotSheet.startsAt);
-              setSlotSheet(null);
-              instantCreate(d);
-            }}
           />
         )}
 
@@ -528,170 +499,438 @@ function EventsPage() {
             event={myMatchSheet}
             pending={pending}
             onClose={() => setMyMatchSheet(null)}
-            onEdit={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId: myMatchSheet.id } })}
             onOpen={() => navigate({ to: "/app/events/$eventId", params: { eventId: myMatchSheet.id } })}
             onCancel={() => hostCancel(myMatchSheet)}
             onExtend={(h) => hostExtend(myMatchSheet, h)}
           />
         )}
 
-        {searchLower && (
-          <SearchResults
-            events={visibleEvents}
-            search={search}
-            onOpen={(id: string) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
-          />
+        {/* Sticky Start-a-match pill */}
+        <div className="fixed left-0 right-0 bottom-20 px-5 z-30 pointer-events-none">
+          <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pointer-events-auto flex justify-center">
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/app/events/new" })}
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--plum)] text-white text-xs uppercase tracking-widest font-bold px-5 py-3 shadow-lg hover:brightness-110 transition"
+            >
+              <Plus className="w-4 h-4" />
+              {tr("Start a match", "Convocar partido", "Lancer un match")}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Feed section ----------
+
+function FeedSection({
+  title,
+  subtitle,
+  events,
+  locale,
+  pending,
+  onOpen,
+  onJoin,
+  onManage,
+  tr,
+  highlight,
+}: {
+  title: string;
+  subtitle?: string;
+  events: EventLite[];
+  locale: string | undefined;
+  pending: string | null;
+  onOpen: (id: string) => void;
+  onJoin: (e: EventLite) => void;
+  onManage: (e: EventLite) => void;
+  tr: ReturnType<typeof useTr>;
+  highlight?: boolean;
+}) {
+  return (
+    <section>
+      <h2 className="text-serif text-2xl leading-tight text-[var(--ink)]">{title}</h2>
+      {subtitle && <p className="text-xs text-[var(--ink)]/55 mt-1">{subtitle}</p>}
+      <ul className="mt-3 space-y-3">
+        {events.map((e) => (
+          <li key={e.id}>
+            <MatchCard
+              e={e}
+              locale={locale}
+              pending={pending}
+              onOpen={onOpen}
+              onJoin={onJoin}
+              onManage={onManage}
+              tr={tr}
+              highlight={highlight}
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+// ---------- Match card (Playtomic-style, brand-styled) ----------
+
+function MatchCard({
+  e,
+  locale,
+  pending,
+  onOpen,
+  onJoin,
+  onManage,
+  tr,
+  highlight,
+}: {
+  e: EventLite;
+  locale: string | undefined;
+  pending: string | null;
+  onOpen: (id: string) => void;
+  onJoin: (e: EventLite) => void;
+  onManage: (e: EventLite) => void;
+  tr: ReturnType<typeof useTr>;
+  highlight?: boolean;
+}) {
+  const isPending = pending === e.id;
+  const start = new Date(e.starts_at);
+  const dayLabel = start.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
+  const time = start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+  const genderLabel =
+    e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte")
+    : e.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement")
+    : tr("Women only", "Solo mujeres", "Femmes uniquement");
+  const levelLabel = e.level_min
+    ? e.level_min === e.level_max ? e.level_min : `${e.level_min}–${e.level_max}`
+    : "";
+  const mine = e.iAmHost || e.iAmParticipant;
+  const full = e.filled >= 4;
+
+  const slots = Array.from({ length: 4 }, (_, i) => e.participants?.[i] ?? null);
+
+  return (
+    <div
+      className={`rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
+        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
+      }`}
+    >
+      {/* Header */}
+      <button
+        type="button"
+        onClick={() => onOpen(e.id)}
+        className="w-full text-left px-4 pt-4 pb-3"
+      >
+        <div className="flex items-baseline justify-between gap-3">
+          <div className="text-serif text-lg leading-tight text-[var(--ink)] truncate">
+            <span className="capitalize">{dayLabel}</span>
+            <span className="text-[var(--ink)]/40 mx-1.5">|</span>
+            <span className="tabular-nums">{time}</span>
+          </div>
+          {mine && (
+            <span className={`shrink-0 text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full ${
+              e.iAmHost ? "bg-[var(--plum)] text-white" : "bg-[var(--ink)]/10 text-[var(--ink)]"
+            }`}>
+              {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
+            </span>
+          )}
+        </div>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
+          {levelLabel && <span>{levelLabel}</span>}
+          {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
+          <span>{genderLabel}</span>
+          {e.court_booked && (
+            <>
+              <span className="text-[var(--ink)]/25">·</span>
+              <span className="text-[var(--plum)]">{tr("Court booked", "Pista reservada", "Court réservé")}</span>
+            </>
+          )}
+        </div>
+      </button>
+
+      {/* 4-slot A|B lineup */}
+      <div className="px-4 pb-4">
+        <div className="grid grid-cols-[1fr_auto_1fr_1fr_1fr] items-center gap-2">
+          <SlotAvatar slot={slots[0]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
+          <div className="h-14 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
+          <SlotAvatar slot={slots[1]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
+          <SlotAvatar slot={slots[2]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
+          <SlotAvatar slot={slots[3]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
+        </div>
+        <div className="mt-1.5 grid grid-cols-[1fr_auto_1fr_1fr_1fr] gap-2 items-center text-[9px] uppercase tracking-widest font-bold text-[var(--ink)]/40">
+          <span className="text-center">A</span>
+          <span className="w-px" />
+          <span className="text-center" />
+          <span className="text-center" />
+          <span className="text-center text-right pr-1">B</span>
+        </div>
+      </div>
+
+      {/* Footer bar */}
+      <button
+        type="button"
+        onClick={(ev) => {
+          ev.stopPropagation();
+          if (e.iAmHost) onManage(e);
+          else onOpen(e.id);
+        }}
+        className="w-full flex items-center gap-3 px-4 py-3 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/45 hover:bg-[var(--paper-2)]/70 transition text-left"
+      >
+        <div className="w-9 h-9 rounded-full grid place-items-center bg-white border border-[var(--ink)]/10 shrink-0">
+          <MapPin className="w-4 h-4 text-[var(--ink)]/60" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold text-[var(--ink)] truncate">
+            {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+          </div>
+          <div className="text-[11px] text-[var(--ink)]/55 truncate">
+            {e.city || e.club_address || ""}
+          </div>
+        </div>
+        <div className="text-right shrink-0">
+          {full ? (
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--ink)]/50">
+              {tr("Full", "Completo", "Complet")}
+            </span>
+          ) : (
+            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--plum)]">
+              {tr(`${e.needs} left`, `Faltan ${e.needs}`, `${e.needs} à combler`)}
+            </span>
+          )}
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/45 mt-0.5">
+            {tr("90 min", "90 min", "90 min")}
+          </div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
+function SlotAvatar({
+  slot,
+  tr,
+  onJoin,
+  canJoin,
+  isPending,
+}: {
+  slot: EventLite["participants"] extends Array<infer T> | undefined ? (T | null) : never;
+  tr: ReturnType<typeof useTr>;
+  onJoin: () => void;
+  canJoin: boolean;
+  isPending: boolean;
+}) {
+  const name = slot?.profiles?.first_name;
+  const photo = slot?.profiles?.photo_url;
+
+  if (!slot) {
+    return (
+      <button
+        type="button"
+        disabled={!canJoin || isPending}
+        onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
+        className="flex flex-col items-center gap-1 group"
+      >
+        <div className={`w-11 h-11 rounded-full grid place-items-center border-2 border-dashed transition ${
+          canJoin
+            ? "border-[var(--plum)]/50 text-[var(--plum)] group-hover:bg-[var(--plum)]/8 group-hover:border-[var(--plum)]"
+            : "border-[var(--ink)]/20 text-[var(--ink)]/30"
+        } ${isPending ? "opacity-50" : ""}`}>
+          <Plus className="w-4 h-4" />
+        </div>
+        <span className={`text-[10px] uppercase tracking-widest font-semibold ${canJoin ? "text-[var(--plum)]" : "text-[var(--ink)]/40"}`}>
+          {canJoin ? tr("Join", "Unirme", "Rejoindre") : tr("Open", "Libre", "Libre")}
+        </span>
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="w-11 h-11 rounded-full overflow-hidden border border-[var(--ink)]/15 bg-[var(--ink)]/10 grid place-items-center">
+        {photo ? (
+          <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-[13px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
         )}
       </div>
-    </div>
-  );
-}
-
-function RowCells({
-  hour,
-  days,
-  buckets,
-  pending,
-  onTap,
-  tr,
-}: {
-  hour: number;
-  days: Date[];
-  buckets: Map<string, EventLite[]>;
-  pending: string | null;
-  onTap: (d: Date, h: number) => void;
-  tr: ReturnType<typeof useTr>;
-}) {
-  const nowH = new Date().getHours();
-  const isCurrentHour = hour === nowH;
-  const stripe = hour % 2 === 0 ? "bg-[var(--ink)]/[0.02]" : "";
-
-  return (
-    <>
-      <div className={`sticky left-0 z-10 bg-[var(--paper)] border-r border-b border-[var(--ink)]/10 flex items-center justify-center text-[10px] uppercase tracking-widest font-semibold ${
-        isCurrentHour ? "text-[var(--plum)]" : "text-[var(--ink)]/55"
-      }`}>
-        {String(hour).padStart(2, "0")}
-      </div>
-      {days.map((d, i) => {
-        const key = slotKey(d, hour);
-        const events = buckets.get(key) ?? [];
-        const primary = events[0];
-        const isPending = pending === key || (primary && pending === primary.id);
-        const startsAt = new Date(d);
-        startsAt.setHours(hour, 0, 0, 0);
-        const past = startsAt.getTime() < Date.now() - 30 * 60 * 1000;
-        const isNowCell = isCurrentHour && i === 0 && !past;
-        const mine = events.some((ev) => ev.iAmHost || ev.iAmParticipant);
-        const iHost = events.some((ev) => ev.iAmHost);
-        return (
-          <button
-            key={i}
-            type="button"
-            disabled={!!isPending || past}
-            onClick={() => onTap(d, hour)}
-            className={`border-b border-r border-[var(--ink)]/5 flex items-center justify-center relative ${stripe} ${
-              past ? "opacity-25 cursor-not-allowed" : "hover:bg-[var(--ink)]/5 active:bg-[var(--ink)]/8 transition-colors"
-            } ${isNowCell ? "ring-1 ring-inset ring-[var(--plum)]/40" : ""}`}
-            aria-label={`${primary ? "Open" : "Add"} ${hour}:00`}
-          >
-            {primary ? <CellPill e={primary} extra={events.length - 1} /> : (
-              <span className="w-1 h-1 rounded-full bg-[var(--ink)]/20" />
-            )}
-            {mine && !isPending && (
-              <span className={`absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full ${iHost ? "bg-[var(--plum)]" : "bg-[var(--ink)]"}`} />
-            )}
-            {isPending && (
-              <span className="absolute inset-0 flex items-center justify-center bg-[var(--ink)]/10">
-                <span className="w-4 h-4 rounded-full border-2 border-[var(--plum)] border-t-transparent animate-spin" />
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </>
-  );
-}
-
-function slotColor(filled: number, mine: boolean) {
-  if (filled >= 4) {
-    return { wrap: "bg-[var(--ink)] text-[var(--paper)]", pip: "bg-[var(--paper)]", empty: "bg-[var(--paper)]/30" };
-  }
-  if (filled === 3) {
-    return {
-      wrap: `bg-[color-mix(in_oklab,var(--plum)_22%,transparent)] text-[var(--plum)] ring-1 ${mine ? "ring-[var(--ink)]" : "ring-[var(--plum)]/60"}`,
-      pip: "bg-[var(--plum)]",
-      empty: "bg-[var(--plum)]/25",
-    };
-  }
-  if (filled >= 1) {
-    return {
-      wrap: `bg-[var(--ink)]/12 text-[var(--ink)] ${mine ? "ring-1 ring-[var(--plum)]" : ""}`,
-      pip: "bg-[var(--ink)]",
-      empty: "bg-[var(--ink)]/25",
-    };
-  }
-  return { wrap: "bg-transparent text-[var(--ink)]/70", pip: "bg-[var(--ink)]/70", empty: "bg-[var(--ink)]/20" };
-}
-
-function SlotPips({ filled, pip, empty }: { filled: number; pip: string; empty: string }) {
-  return (
-    <div className="flex items-center gap-[2px]">
-      {[0, 1, 2, 3].map((i) => (
-        <span key={i} className={`w-[5px] h-[5px] rounded-full ${i < filled ? pip : empty}`} />
-      ))}
-    </div>
-  );
-}
-
-function LegendDots({ filled, label, accent }: { filled: number; label: string; accent?: boolean }) {
-  const colors = slotColor(filled, false);
-  return (
-    <span className={`inline-flex items-center gap-1.5 ${accent ? "text-[var(--plum)]" : ""}`}>
-      <SlotPips filled={filled} pip={colors.pip} empty={colors.empty} />
-      {label}
-    </span>
-  );
-}
-
-function CellPill({ e, extra }: { e: EventLite; extra: number }) {
-  const filled = e.filled ?? 0;
-  const mine = e.iAmHost || e.iAmParticipant;
-  const c = slotColor(filled, mine);
-  return (
-    <div className={`flex flex-col items-center justify-center gap-[3px] px-1.5 py-1 rounded-lg leading-none ${c.wrap}`}>
-      <SlotPips filled={filled} pip={c.pip} empty={c.empty} />
-      <span className="text-[9px] font-bold tracking-wider">
-        {filled >= 4 ? "4/4" : `${filled}/4`}
-        {extra > 0 && <span className="opacity-70 ml-0.5">+{extra}</span>}
+      <span className="text-[10px] text-[var(--ink)]/70 truncate max-w-[60px]">
+        {name ?? "—"}
       </span>
     </div>
   );
 }
 
-function whenLabel(iso: string) {
-  return new Date(iso).toLocaleString(undefined, {
-    weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false,
-  });
+// ---------- Empty state ----------
+
+function EmptyFeed({
+  worldwide,
+  onExpandArea,
+  onResetDays,
+  onCreate,
+}: {
+  worldwide: boolean;
+  onExpandArea: () => void;
+  onResetDays: () => void;
+  onCreate: () => void;
+}) {
+  const tr = useTr();
+  return (
+    <div className="mt-8 rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-6 text-center">
+      <div className="text-serif text-xl text-[var(--ink)]">
+        {tr("No matches match your filters", "No hay partidos con estos filtros", "Aucun match avec ces filtres")}
+      </div>
+      <p className="text-sm text-[var(--ink)]/60 mt-1">
+        {tr(
+          "Try widening the days or the area — or start your own.",
+          "Prueba con más días o amplía la zona — o convoca el tuyo.",
+          "Élargis les jours ou la zone — ou lance le tien.",
+        )}
+      </p>
+      <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <button
+          type="button"
+          onClick={onResetDays}
+          className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+        >
+          {tr("Show whole week", "Ver toda la semana", "Voir toute la semaine")}
+        </button>
+        {!worldwide && (
+          <button
+            type="button"
+            onClick={onExpandArea}
+            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            {tr("Search worldwide", "Buscar en el mundo", "Chercher partout")}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onCreate}
+          className="rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+        >
+          {tr("Start a match", "Convocar partido", "Lancer un match")}
+        </button>
+      </div>
+    </div>
+  );
 }
 
-function Lineup({ e, tr }: { e: EventLite; tr: ReturnType<typeof useTr> }) {
-  const filled = e.filled ?? 0;
-  const slots = Array.from({ length: 4 }, (_, i) => e.participants?.[i] ?? null);
+// ---------- My matches list (unchanged behaviour, restyled slightly) ----------
+
+function MyMatchesList({
+  events,
+  lang,
+  tr,
+  pending,
+  onOpen,
+  onManage,
+  onLeave,
+  onFind,
+}: {
+  events: EventLite[];
+  lang: string;
+  tr: ReturnType<typeof useTr>;
+  pending: string | null;
+  onOpen: (id: string) => void;
+  onManage: (e: EventLite) => void;
+  onLeave: (e: EventLite) => void;
+  onFind: () => void;
+}) {
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
+
+  if (events.length === 0) {
+    return (
+      <div className="mt-6 rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-8 text-center">
+        <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
+          {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
+        </div>
+        <p className="text-sm text-[var(--ink)]/60 mb-4">
+          {tr("Join a match or convene your own to see it here.", "Únete a un partido o convoca el tuyo para verlo aquí.", "Rejoins un match ou lance le tien pour le voir ici.")}
+        </p>
+        <button
+          type="button"
+          onClick={onFind}
+          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-5 py-2.5"
+        >
+          {tr("Find a match", "Buscar partido", "Trouver un match")}
+        </button>
+      </div>
+    );
+  }
+
+  const groups = new Map<string, EventLite[]>();
+  for (const e of events) {
+    const d = new Date(e.starts_at);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const arr = groups.get(key) ?? [];
+    arr.push(e);
+    groups.set(key, arr);
+  }
+  const todayKey = (() => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; })();
+  const tomorrowKey = (() => { const d = new Date(); d.setDate(d.getDate() + 1); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; })();
+
   return (
-    <div className="flex items-center gap-2">
-      {slots.map((p, i) => {
-        const name = p?.profiles?.first_name;
-        const photo = p?.profiles?.photo_url;
-        const empty = i >= filled;
+    <div className="mt-5 space-y-5">
+      {Array.from(groups.entries()).map(([key, list]) => {
+        const first = new Date(list[0].starts_at);
+        const label = key === todayKey ? tr("Today", "Hoy", "Aujourd'hui")
+          : key === tomorrowKey ? tr("Tomorrow", "Mañana", "Demain")
+          : first.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
         return (
-          <div key={i} className="flex flex-col items-center gap-1 flex-1 min-w-0">
-            <div className={`w-10 h-10 rounded-full overflow-hidden border ${empty ? "border-dashed border-[var(--ink)]/25 bg-[var(--ink)]/[0.04]" : "border-[var(--ink)]/15 bg-[var(--ink)]/10"}`}>
-              {photo ? <img src={photo} alt="" className="w-full h-full object-cover" /> : null}
-            </div>
-            <span className="text-[10px] text-[var(--ink)]/70 truncate max-w-full">
-              {empty ? tr("Open", "Libre", "Libre") : name ?? "—"}
-            </span>
+          <div key={key}>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 font-semibold mb-2 px-1">{label}</div>
+            <ul className="space-y-2">
+              {list.map((e) => {
+                const isPending = pending === e.id;
+                const filled = e.filled ?? 0;
+                const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+                return (
+                  <li key={e.id} className="rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3">
+                    <div className="flex flex-col items-center justify-center w-14 shrink-0">
+                      <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
+                        <Clock className="w-3 h-3 inline mb-0.5" />
+                      </span>
+                      <span className="text-lg font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        {e.iAmHost ? (
+                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--plum)] text-[var(--paper)]">
+                            {tr("Host", "Anfitrión", "Hôte")}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]">
+                            {tr("Joined", "Unido", "Rejoint")}
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 text-[11px] text-[var(--ink)]/60">
+                          <Users className="w-3 h-3" />{filled}/4
+                        </span>
+                      </div>
+                      <div className="text-sm text-[var(--ink)] truncate">
+                        {e.club_name || tr("Match", "Partido", "Match")}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      {e.iAmHost ? (
+                        <button type="button" onClick={() => onManage(e)} className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5">
+                          {tr("Manage", "Gestionar", "Gérer")}
+                        </button>
+                      ) : (
+                        <button type="button" onClick={() => onOpen(e.id)} className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5">
+                          {tr("Open", "Abrir", "Ouvrir")}
+                        </button>
+                      )}
+                      {!e.iAmHost && (
+                        <button type="button" disabled={isPending} onClick={() => onLeave(e)} className="rounded-full border border-red-400/50 text-red-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 disabled:opacity-50">
+                          {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         );
       })}
@@ -699,11 +938,12 @@ function Lineup({ e, tr }: { e: EventLite; tr: ReturnType<typeof useTr> }) {
   );
 }
 
+// ---------- Host management sheet ----------
+
 function MyMatchSheet({
   event,
   pending,
   onClose,
-  onEdit,
   onOpen,
   onCancel,
   onExtend,
@@ -711,13 +951,15 @@ function MyMatchSheet({
   event: EventLite;
   pending: string | null;
   onClose: () => void;
-  onEdit: () => void;
   onOpen: () => void;
   onCancel: () => void;
   onExtend: (h: number) => void;
 }) {
   const tr = useTr();
   const busy = pending === event.id;
+  const when = new Date(event.starts_at).toLocaleString(undefined, {
+    weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+  });
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
       <div
@@ -729,7 +971,7 @@ function MyMatchSheet({
             <div className="text-[10px] uppercase tracking-widest text-[var(--plum)]">
               {event.iAmHost ? tr("Your match", "Tu partido", "Ton match") : tr("You're in", "Estás dentro", "Vous êtes dedans")}
             </div>
-            <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-0.5">{whenLabel(event.starts_at)}</div>
+            <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-0.5">{when}</div>
             <div className="text-xs text-[var(--ink)]/70 mt-1 truncate">
               {event.club_name || tr("No club yet", "Sin club aún", "Pas de club")}
             </div>
@@ -737,14 +979,6 @@ function MyMatchSheet({
           <button type="button" onClick={onClose} className="text-[var(--ink)]/60 hover:text-[var(--ink)] shrink-0 p-1">
             <X className="w-5 h-5" />
           </button>
-        </div>
-
-        <div className="rounded-xl border border-[var(--ink)]/10 bg-white p-3">
-          <Lineup e={event} tr={tr} />
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-2 text-center">
-            {event.filled}/4 · {event.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : event.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
-            {event.level_min ? ` · ${event.level_min}${event.level_min !== event.level_max ? `–${event.level_max}` : ""}` : ""}
-          </div>
         </div>
 
         <button
@@ -884,359 +1118,6 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
           <Send className="w-3.5 h-3.5" />
         </button>
       </form>
-    </div>
-  );
-}
-
-function SearchResults({
-  events,
-  search,
-  onOpen,
-}: {
-  events: EventLite[];
-  search: string;
-  onOpen: (id: string) => void;
-}) {
-  const tr = useTr();
-  const grouped = useMemo(() => {
-    const map = new Map<string, EventLite[]>();
-    for (const e of events) {
-      const day = startOfDay(new Date(e.starts_at)).toISOString();
-      const arr = map.get(day) ?? [];
-      arr.push(e);
-      map.set(day, arr);
-    }
-    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
-  }, [events]);
-
-  const searchedName = search.trim();
-
-  return (
-    <div className="mt-6 space-y-4">
-      <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60">
-        {events.length}{" "}
-        {events.length === 1 ? tr("match", "partido", "match") : tr("matches", "partidos", "matchs")}{" "}
-        {tr("for", "para", "pour")} “{searchedName}”
-      </div>
-      {grouped.map(([dayIso, list]) => {
-        const day = new Date(dayIso);
-        const dayLabel = day.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
-        return (
-          <div key={dayIso}>
-            <div className="text-[11px] uppercase tracking-widest text-[var(--plum)] mb-2">{dayLabel}</div>
-            <ul className="space-y-2">
-              {list.map((e) => {
-                const start = new Date(e.starts_at);
-                const time = start.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false });
-                return (
-                  <li key={e.id}>
-                    <button
-                      type="button"
-                      onClick={() => onOpen(e.id)}
-                      className="w-full text-left rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3 hover:bg-[var(--ink)]/[0.05]"
-                    >
-                      <div className="flex flex-col items-center justify-center w-12 shrink-0">
-                        <span className="text-serif text-lg leading-none text-[var(--ink)]">{time}</span>
-                        <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/50">{e.filled}/4</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm text-[var(--ink)] font-semibold truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</div>
-                        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-0.5">
-                          {e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : e.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
-                          {e.iAmHost && ` · ${tr("You host", "Tu partido", "Toi")}`}
-                        </div>
-                      </div>
-                      <span className="text-[var(--ink)]/50 text-lg">→</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function SlotSheet({
-  startsAt,
-  events,
-  pending,
-  onClose,
-  onJoin,
-  onLeave,
-  onManage,
-  onOpen,
-  onStartAnother,
-}: {
-  startsAt: string;
-  events: EventLite[];
-  pending: string | null;
-  onClose: () => void;
-  onJoin: (e: EventLite) => void;
-  onLeave: (e: EventLite) => void;
-  onManage: (e: EventLite) => void;
-  onOpen: (id: string) => void;
-  onStartAnother: () => void;
-
-}) {
-  const tr = useTr();
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
-      <div
-        onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-md bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/15 p-5 space-y-4 max-h-[85vh] overflow-y-auto"
-      >
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-              {tr("Matches at", "Partidos a las", "Matchs à")}
-            </div>
-            <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-1">{whenLabel(startsAt)}</div>
-          </div>
-          <button onClick={onClose} className="text-[var(--ink)]/60 hover:text-[var(--ink)] p-1"><X className="w-5 h-5" /></button>
-        </div>
-
-        <ul className="space-y-3">
-          {events.map((e) => {
-            const mine = e.iAmHost || e.iAmParticipant;
-            const full = e.filled >= 4;
-            const canJoin = !mine && !full && e.status === "open";
-            const isPending = pending === e.id;
-            return (
-              <li key={e.id} className="rounded-xl border border-[var(--ink)]/10 bg-white p-3 space-y-2">
-                <button type="button" onClick={() => onOpen(e.id)} className="w-full text-left">
-                  <div className="text-sm text-[var(--ink)] font-semibold truncate">
-                    {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
-                  </div>
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mt-0.5">
-                    {e.filled}/4 · {e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : e.gender_rule === "men_only" ? tr("Men", "Hombres", "Hommes") : tr("Women", "Mujeres", "Femmes")}
-                    {mine && ` · ${tr("You're in", "Estás dentro", "Vous êtes dedans")}`}
-                  </div>
-                </button>
-                <Lineup e={e} tr={tr} />
-                {e.iAmHost ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onOpen(e.id)}
-                      className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
-                    >
-                      {tr("Open", "Abrir", "Ouvrir")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onManage(e)}
-                      className="rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold py-2.5"
-                    >
-                      {tr("Manage", "Gestionar", "Gérer")}
-                    </button>
-                  </div>
-                ) : canJoin ? (
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    onClick={() => onJoin(e)}
-                    className="w-full rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
-                  >
-                    {isPending ? tr("Joining…", "Uniéndose…", "…") : tr("Join this match", "Unirme a este partido", "Rejoindre")}
-                  </button>
-                ) : mine ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onOpen(e.id)}
-                      className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
-                    >
-                      {tr("Open", "Abrir", "Ouvrir")}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isPending}
-                      onClick={() => onLeave(e)}
-                      className="rounded-full border border-red-400/50 text-red-500 text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
-                    >
-                      {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => onOpen(e.id)}
-                    className="w-full rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
-                  >
-                    {tr("Open", "Abrir", "Ouvrir")}
-                  </button>
-                )}
-
-              </li>
-            );
-          })}
-        </ul>
-
-        <button
-          type="button"
-          onClick={onStartAnother}
-          disabled={!!pending}
-          className="w-full rounded-full border border-dashed border-[var(--plum)]/60 text-[var(--plum)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
-        >
-          + {tr("Start another match at this time", "Convocar otro partido a esta hora", "Lancer un autre match à cette heure")}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function MyMatchesList({
-  events,
-  lang,
-  tr,
-  pending,
-  onOpen,
-  onManage,
-  onLeave,
-  onFind,
-}: {
-  events: EventLite[];
-  lang: string;
-  tr: ReturnType<typeof useTr>;
-  pending: string | null;
-  onOpen: (id: string) => void;
-  onManage: (e: EventLite) => void;
-  onLeave: (e: EventLite) => void;
-  onFind: () => void;
-}) {
-  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
-
-  if (events.length === 0) {
-    return (
-      <div className="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-8 text-center">
-        <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
-          {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
-        </div>
-        <p className="text-sm text-[var(--ink)]/60 mb-4">
-          {tr(
-            "Mark yourself free or join a match to see it here.",
-            "Márcate disponible o únete a un partido para verlo aquí.",
-            "Marque-toi disponible ou rejoins un match pour le voir ici.",
-          )}
-        </p>
-        <button
-          type="button"
-          onClick={onFind}
-          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-5 py-2.5"
-        >
-          {tr("Find a match", "Buscar partido", "Trouver un match")}
-        </button>
-      </div>
-    );
-  }
-
-  const groups = new Map<string, EventLite[]>();
-  for (const e of events) {
-    const d = new Date(e.starts_at);
-    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-    const arr = groups.get(key) ?? [];
-    arr.push(e);
-    groups.set(key, arr);
-  }
-
-  const todayKey = (() => {
-    const d = new Date();
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  })();
-  const tomorrowKey = (() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  })();
-
-  return (
-    <div className="space-y-5">
-      {Array.from(groups.entries()).map(([key, list]) => {
-        const first = new Date(list[0].starts_at);
-        let label: string;
-        if (key === todayKey) label = tr("Today", "Hoy", "Aujourd'hui");
-        else if (key === tomorrowKey) label = tr("Tomorrow", "Mañana", "Demain");
-        else label = first.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
-        return (
-          <div key={key}>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 font-semibold mb-2 px-1">
-              {label}
-            </div>
-            <ul className="space-y-2">
-              {list.map((e) => {
-                const isPending = pending === e.id;
-                const filled = e.filled ?? 0;
-                const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
-                return (
-                  <li
-                    key={e.id}
-                    className="rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3"
-                  >
-                    <div className="flex flex-col items-center justify-center w-14 shrink-0">
-                      <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
-                        <Clock className="w-3 h-3 inline mb-0.5" />
-                      </span>
-                      <span className="text-lg font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        {e.iAmHost ? (
-                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--plum)] text-[var(--paper)]">
-                            {tr("Host", "Anfitrión", "Hôte")}
-                          </span>
-                        ) : (
-                          <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]">
-                            {tr("Joined", "Unido", "Rejoint")}
-                          </span>
-                        )}
-                        <span className="inline-flex items-center gap-1 text-[11px] text-[var(--ink)]/60">
-                          <Users className="w-3 h-3" />
-                          {filled}/4
-                        </span>
-                      </div>
-                      <div className="text-sm text-[var(--ink)] truncate">
-                        {e.club_name || tr("Match", "Partido", "Match")}
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1.5 shrink-0">
-                      {e.iAmHost ? (
-                        <button
-                          type="button"
-                          onClick={() => onManage(e)}
-                          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5"
-                        >
-                          {tr("Manage", "Gestionar", "Gérer")}
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => onOpen(e.id)}
-                          className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5"
-                        >
-                          {tr("Open", "Abrir", "Ouvrir")}
-                        </button>
-                      )}
-                      {!e.iAmHost && (
-                        <button
-                          type="button"
-                          disabled={isPending}
-                          onClick={() => onLeave(e)}
-                          className="rounded-full border border-red-400/50 text-red-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 disabled:opacity-50"
-                        >
-                          {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
     </div>
   );
 }

@@ -911,34 +911,74 @@ function Discover() {
                         {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                       </button>
 
-                      {/* AI compatibility — cached per pair, with reasons + thumbs feedback */}
+                      {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
-                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2">
+                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2.5">
                           <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
                         </div>
                         {compatQ.isLoading ? (
                           <p className="text-sm text-[var(--ink)]/55 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
                         ) : compatQ.data ? (
                           <>
-                            <p className="text-sm text-[var(--ink)]/85 leading-relaxed">{compatQ.data.blurb}</p>
+                            {/* Headline — one grounded sentence */}
+                            <p className="text-[15px] font-medium text-[var(--ink)] leading-snug">
+                              {compatQ.data.sub_scores?.headline || compatQ.data.blurb}
+                            </p>
 
-                            {/* Padel compatibility — text only, no rating */}
-                            {compatQ.data.sub_scores?.padel_analysis && (
-                              <div className="mt-3 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
-                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">🎾 {tr("Padel compatibility", "Compatibilidad de pádel", "Compatibilité padel")}</div>
-                                <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.padel_analysis}</p>
+                            {/* Specific bullets — each references a real detail */}
+                            {(() => {
+                              const bullets = compatQ.data.sub_scores?.highlights?.length
+                                ? compatQ.data.sub_scores.highlights
+                                : compatQ.data.reasons;
+                              if (!bullets || bullets.length === 0) return null;
+                              return (
+                                <ul className="mt-3 space-y-1.5">
+                                  {bullets.slice(0, 3).map((b, i) => (
+                                    <li key={i} className="text-[13px] text-[var(--ink)]/80 leading-snug flex gap-2">
+                                      <span className="text-[var(--ink)]/40 shrink-0">•</span>
+                                      <span>{b}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              );
+                            })()}
+
+                            {/* Tiny sub-score bars — replaces the two long paragraphs */}
+                            {(compatQ.data.sub_scores?.padel != null || compatQ.data.sub_scores?.personality != null) && (
+                              <div className="mt-3.5 pt-3 border-t border-[var(--ink)]/8 grid grid-cols-2 gap-3">
+                                {compatQ.data.sub_scores?.padel != null && (
+                                  <div>
+                                    <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--ink)]/55 mb-1">
+                                      <span>🎾 {tr("On-court", "En pista", "Sur le court")}</span>
+                                      <span className="tabular-nums text-[var(--ink)]/70">{compatQ.data.sub_scores.padel}</span>
+                                    </div>
+                                    <div className="h-1 rounded-full bg-[var(--ink)]/8 overflow-hidden">
+                                      <div className="h-full bg-[var(--ink)]" style={{ width: `${compatQ.data.sub_scores.padel}%` }} />
+                                    </div>
+                                  </div>
+                                )}
+                                {compatQ.data.sub_scores?.personality != null && (
+                                  <div>
+                                    <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--ink)]/55 mb-1">
+                                      <span>✨ {tr("Off-court", "Fuera de pista", "Hors court")}</span>
+                                      <span className="tabular-nums text-[var(--ink)]/70">{compatQ.data.sub_scores.personality}</span>
+                                    </div>
+                                    <div className="h-1 rounded-full bg-[var(--ink)]/8 overflow-hidden">
+                                      <div className="h-full bg-[var(--ink)]" style={{ width: `${compatQ.data.sub_scores.personality}%` }} />
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             )}
 
-                            {/* Personality compatibility — text only, no rating */}
-                            {compatQ.data.sub_scores?.personality_analysis && (
-                              <div className="mt-2 rounded-xl border border-[var(--ink)]/10 bg-[var(--paper-2)]/50 p-3">
-                                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-1.5">✨ {tr("Personality compatibility", "Compatibilidad de personalidad", "Compatibilité personnalité")}</div>
-                                <p className="text-[13px] text-[var(--ink)]/80 leading-snug">{compatQ.data.sub_scores.personality_analysis}</p>
+                            {/* Watch-out — only when the AI flagged something concrete */}
+                            {compatQ.data.friction && (
+                              <div className="mt-3 rounded-lg bg-[var(--ink)]/[0.04] px-3 py-2 text-[12px] text-[var(--ink)]/75 leading-snug">
+                                <span className="font-medium">{tr("Worth knowing:", "A tener en cuenta:", "À savoir :")}</span> {compatQ.data.friction}
                               </div>
                             )}
 
-                            <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--ink)]/10">
+                            <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--ink)]/8">
                               <span className="text-[11px] text-[var(--ink)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
                               <button
                                 type="button"
@@ -986,6 +1026,7 @@ function Discover() {
                           <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
                         )}
                       </div>
+
 
                       {/* Me-style profile card (age intentionally omitted for privacy) */}
 

@@ -1566,10 +1566,10 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v10-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionKey = `v11-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
-      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
+      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
     }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
@@ -1588,7 +1588,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as null | { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string }, model_version: "fallback", created_at: new Date().toISOString() };
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as null | { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string }, model_version: "fallback", created_at: new Date().toISOString() };
       return fallback;
     }
 
@@ -1658,11 +1658,19 @@ Return ONLY valid JSON with this exact shape:
     "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
     "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
-  "padel_analysis": "<2-4 complete sentences (max 600 chars, always end with a full stop) explaining the padel/on-court compatibility SPECIFICALLY. Reference their actual levels, styles, availability, on-court preferences. The tone MUST match the padel sub-score above.>",
-  "personality_analysis": "<2-4 complete sentences (max 600 chars, always end with a full stop) explaining the personality/off-court compatibility SPECIFICALLY. Reference their actual values, traits, Q&A answers, communication style. The tone MUST match the personality sub-score above.>",
-  "blurb": "<one to two grounded, respectful sentences addressed to the reader ('you two...'). Max 220 chars. Summarizes the overall picture — must be consistent with both analyses. IMPORTANT: do NOT repeat facts, traits or phrases that also appear in padel_analysis or personality_analysis. The blurb is the headline; the analyses do the detail.>",
-  "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — this is usually null.>"
+  "headline": "<ONE short, specific sentence addressed to 'you two'. Max 90 chars. Names the core reason this pairing works (or is mixed). No filler, no empty praise.>",
+  "highlights": [
+    "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). Start with an emoji that fits: 🎾 for on-court, ✨ for personality/values, 🕒 for schedule, 📍 for place, 💬 for communication, 🎯 for goals.>",
+    "<second bullet, different angle, same rules>",
+    "<third bullet, different angle, same rules>"
+  ],
+  "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — usually null.>"
 }
+
+Rules for the fields:
+- headline + 3 highlights REPLACE long paragraphs. Be specific, never generic. If you cannot ground a bullet in real data, drop it (return 2 bullets instead of 3) — never pad with filler.
+- Every bullet must reference something a reader can point to in the profile. Bad: "you both love padel". Good: "🎾 Both intermediate, both play the backhand side".
+- Do NOT restate the same idea across headline and bullets — each says something new.
 
 ${summarizeProfile(me, "PERSON A (the viewer)")}
 Q&A:
@@ -1676,17 +1684,28 @@ ${qaBlock(theirQA)}`;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
-    type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string };
+    type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string };
     let subScores: SubScoresShape | null = null;
     const allowedSubKeys = new Set(["padel", "personality", ...extraSubs]);
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
-      if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
-      if (Array.isArray(parsed.reasons)) {
-        reasons = parsed.reasons.filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; headline?: unknown; highlights?: unknown; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
+      const headline = typeof parsed.headline === "string" ? parsed.headline.trim().slice(0, 140) : "";
+      if (headline) blurb = headline;
+      else if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
+      const highlights: string[] = Array.isArray(parsed.highlights)
+        ? (parsed.highlights as unknown[])
+            .filter((r): r is string => typeof r === "string")
+            .map((r) => r.trim().slice(0, 100))
+            .filter((r) => r.length > 0)
+            .slice(0, 3)
+        : [];
+      // Keep legacy `reasons` in sync so anything reading it still has content.
+      if (highlights.length > 0) reasons = highlights;
+      else if (Array.isArray(parsed.reasons)) {
+        reasons = (parsed.reasons as unknown[]).filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
       }
       const watchRaw = typeof parsed.watch_out === "string" ? parsed.watch_out : typeof parsed.friction === "string" ? parsed.friction : "";
       if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
@@ -1700,10 +1719,8 @@ ${qaBlock(theirQA)}`;
           }
         }
       }
-      const padelAnalysis = typeof parsed.padel_analysis === "string" ? parsed.padel_analysis.trim().slice(0, 700) : "";
-      const personalityAnalysis = typeof parsed.personality_analysis === "string" ? parsed.personality_analysis.trim().slice(0, 700) : "";
-      if (Object.keys(cleanSub).length > 0 || padelAnalysis || personalityAnalysis) {
-        subScores = { ...cleanSub, padel_analysis: padelAnalysis, personality_analysis: personalityAnalysis };
+      if (Object.keys(cleanSub).length > 0 || headline || highlights.length > 0) {
+        subScores = { ...cleanSub, headline, highlights };
       }
       // Derive overall score from sub-scores so header % matches the analyses.
       const parts: number[] = [];

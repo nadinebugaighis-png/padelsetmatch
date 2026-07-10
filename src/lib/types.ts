@@ -129,10 +129,11 @@ export type Audience = (typeof AUDIENCE_OPTIONS)[number];
 export const LOOKING_FOR = ["partner", "friend", "both"] as const;
 export type LookingFor = (typeof LOOKING_FOR)[number];
 
-// Multi-select intent model. A user can want any combination of:
-// - "padel"  : just a padel partner, no social pressure
-// - "friend" : open to friendship beyond the court
-export const INTENTS = ["padel", "friend"] as const;
+// New multi-select intent model. A user can want any combination of:
+// - "padel"        : just a padel partner, no social pressure
+// - "friend"       : open to friendship beyond the court
+// - "relationship" : open to dating
+export const INTENTS = ["padel", "friend", "relationship"] as const;
 export type Intent = (typeof INTENTS)[number];
 
 // Comprehensive list of world nationalities (UN member states + widely recognized).

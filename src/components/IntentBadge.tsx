@@ -4,15 +4,14 @@ export function deriveIntentsFromProfile(p: {
   intents?: string[] | null;
   looking_for?: string | null;
 }): string[] {
-  // Drop legacy "relationship" values — the app no longer exposes that intent.
-  if (p.intents && p.intents.length > 0) {
-    const cleaned = p.intents.filter((i) => i !== "relationship");
-    if (cleaned.length > 0) return cleaned;
-  }
+  if (p.intents && p.intents.length > 0) return p.intents;
   switch (p.looking_for) {
+    case "partner":
+      return ["relationship", "padel"];
     case "friend":
-    case "both":
       return ["friend", "padel"];
+    case "both":
+      return ["relationship", "friend", "padel"];
     default:
       return ["padel"];
   }
@@ -39,7 +38,9 @@ export function IntentBadges({
             ? t("disc.filter.padel")
             : intent === "friend"
               ? t("disc.filter.friend")
-              : intent;
+              : intent === "relationship"
+                ? t("disc.filter.relationship")
+                : intent;
         return (
           <span
             key={intent}

@@ -25,7 +25,7 @@ function HiddenBlockedPage() {
   const unblock = useServerFn(unblockProfile);
   const q = useQuery({ queryKey: ["hidden-blocked"], queryFn: () => load() });
 
-  type HideCat = "padel" | "friend" | "all";
+  type HideCat = "padel" | "friend" | "relationship" | "partner" | "all";
   const unhideM = useMutation({
     mutationFn: (vars: { id: string; category?: HideCat }) =>
       unhide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
@@ -52,7 +52,10 @@ function HiddenBlockedPage() {
   const groups: Array<{ label: string; scope: HideCat; rows: Row[] }> = [
     { label: "Padel partners only", scope: "padel", rows: hidden.filter((h) => h.category === "padel") },
     { label: "Friends only", scope: "friend", rows: hidden.filter((h) => h.category === "friend") },
-    { label: "Everywhere", scope: "all", rows: hidden.filter((h) => h.category === "all" || h.category === "relationship" || h.category === "partner") },
+    { label: "Relationships only", scope: "relationship", rows: hidden.filter((h) => h.category === "relationship") },
+    // Legacy "partner" category — kept so pre-existing rows still show up
+    { label: "Partners only", scope: "partner", rows: hidden.filter((h) => h.category === "partner") },
+    { label: "Everywhere", scope: "all", rows: hidden.filter((h) => h.category === "all") },
   ];
 
   return (

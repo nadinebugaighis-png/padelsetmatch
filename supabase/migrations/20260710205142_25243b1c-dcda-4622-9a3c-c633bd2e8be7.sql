@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.public_match_view(uuid) TO anon, authenticated;

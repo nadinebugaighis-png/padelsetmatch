@@ -139,6 +139,7 @@ function EventsPage() {
     if (hostName.toLowerCase().includes(searchLower)) return true;
     if (e.club_name?.toLowerCase().includes(searchLower)) return true;
     if (e.city?.toLowerCase().includes(searchLower)) return true;
+    if (e.club_address?.toLowerCase().includes(searchLower)) return true;
     return e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower)) ?? false;
   }
   function eventMatchesTime(iso: string) {

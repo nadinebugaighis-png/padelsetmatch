@@ -1422,19 +1422,20 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
       .maybeSingle();
 
 
-    // 2. Gather both profiles + Q&A (via admin — reading other user data)
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: otherRow } = await supabaseAdmin
+    // 2. Gather both profiles + Q&A. Profiles are readable to authenticated users;
+    // pair QA goes through a SECURITY DEFINER RPC so we don't need service role.
+    const { data: otherRow } = await context.supabase
       .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
     const other = otherRow as Profile | null;
     if (!other) throw new Error("Profile not found");
 
-    const { data: qaRows, count: theirQaCount } = await supabaseAdmin
-      .from("qa_answers" as never)
-      .select("profile_id, question, answer", { count: "exact" })
-      .in("profile_id", [me.id, other.id])
-      .limit(200);
-    const qa = ((qaRows as Array<{ profile_id: string; question: string; answer: string }> | null) ?? []);
+    const { data: pairQaRaw } = await context.supabase.rpc("get_pair_qa" as never, { _other: other.id } as never);
+    const pairQa = (pairQaRaw ?? { rows: [], their_count: 0 }) as {
+      rows: Array<{ profile_id: string; question: string; answer: string }>;
+      their_count: number;
+    };
+    const theirQaCount = pairQa.their_count;
+    const qa = pairQa.rows ?? [];
     const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
     const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
 

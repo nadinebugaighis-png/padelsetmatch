@@ -334,13 +334,14 @@ function EventDetail() {
             </div>
             <input
               readOnly
-              value={shareUrl}
+              value={displayShareUrl}
               onFocus={(e) => e.currentTarget.select()}
-              className="mt-4 w-full rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2 text-sm text-[var(--ink)] outline-none"
+              disabled={shortShareBusy}
+              className="mt-4 w-full rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2 text-sm text-[var(--ink)] outline-none disabled:opacity-60"
             />
             <div className="mt-3 grid grid-cols-2 gap-2">
               <a
-                href={shareUrl}
+                href={displayShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-[var(--ink)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--paper)]"

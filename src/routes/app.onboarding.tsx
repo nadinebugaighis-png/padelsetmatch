@@ -622,19 +622,21 @@ function Onboarding() {
             </div>
 
 
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
-            <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2" value={nationality} onChange={(e) => setNationality(e.target.value)}>
-              <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
-              {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-            </select>
+            <div data-field="nationality" className={fieldCls("nationality")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
+              <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality} onChange={(e) => setNationality(e.target.value)}>
+                <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
+                {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
+              </select>
+            </div>
 
-
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
-            <div className="flex flex-wrap gap-2">
-              {LANGUAGES.map((l) => (
-                <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-              ))}
+            <div data-field="languages" className={fieldCls("languages")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {LANGUAGES.map((l) => (
+                  <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
+                ))}
+              </div>
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
@@ -658,18 +660,21 @@ function Onboarding() {
               })}
             </div>
 
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
-            <div className="flex flex-wrap gap-2">
-              {PADEL_LEVELS.map((l) => (
-                <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-              ))}
+            <div data-field="level" className={fieldCls("level")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {PADEL_LEVELS.map((l) => (
+                  <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
+                ))}
+              </div>
             </div>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
-            <div className="flex flex-wrap gap-2">
-              {COURT_SIDES.map((s) => (
-                <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip-paper ${courtSide === s ? "chip-paper-selected" : ""}`}>{label(s)}</button>
-              ))}
+            <div data-field="court_side" className={fieldCls("court_side")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {COURT_SIDES.map((s) => (
+                  <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip-paper ${courtSide === s ? "chip-paper-selected" : ""}`}>{label(s)}</button>
+                ))}
+              </div>
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("When can you play?", "¿Cuándo puedes jugar?", "Quand peux-tu jouer ?")}</label>

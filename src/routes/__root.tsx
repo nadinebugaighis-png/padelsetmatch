@@ -16,6 +16,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
 import { CookieBanner } from "@/components/CookieBanner";
 import { QRShareButton } from "@/components/QRShareButton";
+import { UpdatePrompt } from "@/components/UpdatePrompt";
 
 function readLang(): "en" | "es" {
   try {
@@ -167,6 +168,7 @@ function RootComponent() {
         <Toaster richColors position="top-center" />
         <CookieBanner />
         <QRShareButton />
+        <UpdatePrompt />
       </I18nProvider>
     </QueryClientProvider>
   );

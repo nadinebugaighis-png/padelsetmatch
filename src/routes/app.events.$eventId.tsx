@@ -831,14 +831,15 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
     }
   };
 
-  const whatsappUrl = linkUrl
-    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match — tap to join: ${linkUrl}`, `Estás invitado a mi partido de pádel — toca para unirte: ${linkUrl}`))}`
+  const displayLink = shortLinkUrl || linkUrl;
+  const whatsappUrl = displayLink
+    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match — tap to join: ${displayLink}`, `Estás invitado a mi partido de pádel — toca para unirte: ${displayLink}`))}`
     : null;
 
   const copyLink = async () => {
-    if (!linkUrl) return;
+    if (!displayLink) return;
     try {
-      await navigator.clipboard.writeText(linkUrl);
+      await navigator.clipboard.writeText(displayLink);
       toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
     } catch {
       toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));

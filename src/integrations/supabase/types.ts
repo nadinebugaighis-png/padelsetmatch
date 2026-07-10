@@ -381,6 +381,54 @@ export type Database = {
           },
         ]
       }
+      guest_participants: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          invited_by_profile_id: string | null
+          level: string
+          match_event_id: string
+          phone: string
+          session_token: string
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          id?: string
+          invited_by_profile_id?: string | null
+          level: string
+          match_event_id: string
+          phone: string
+          session_token?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          invited_by_profile_id?: string | null
+          level?: string
+          match_event_id?: string
+          phone?: string
+          session_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_participants_invited_by_profile_id_fkey"
+            columns: ["invited_by_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_participants_match_event_id_fkey"
+            columns: ["match_event_id"]
+            isOneToOne: false
+            referencedRelation: "match_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hides: {
         Row: {
           category: string
@@ -519,27 +567,37 @@ export type Database = {
           body: string
           created_at: string
           edited_at: string | null
+          guest_id: string | null
           id: string
           match_event_id: string
-          sender_profile_id: string
+          sender_profile_id: string | null
         }
         Insert: {
           body: string
           created_at?: string
           edited_at?: string | null
+          guest_id?: string | null
           id?: string
           match_event_id: string
-          sender_profile_id: string
+          sender_profile_id?: string | null
         }
         Update: {
           body?: string
           created_at?: string
           edited_at?: string | null
+          guest_id?: string | null
           id?: string
           match_event_id?: string
-          sender_profile_id?: string
+          sender_profile_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "match_event_messages_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guest_participants"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "match_event_messages_match_event_id_fkey"
             columns: ["match_event_id"]
@@ -1058,6 +1116,7 @@ export type Database = {
           court_side: string | null
           created_at: string
           first_name: string
+          founding_number: number | null
           free_court_access: boolean
           free_court_note: string | null
           friend_interested_in: string[]
@@ -1101,6 +1160,7 @@ export type Database = {
           court_side?: string | null
           created_at?: string
           first_name: string
+          founding_number?: number | null
           free_court_access?: boolean
           free_court_note?: string | null
           friend_interested_in?: string[]
@@ -1144,6 +1204,7 @@ export type Database = {
           court_side?: string | null
           created_at?: string
           first_name?: string
+          founding_number?: number | null
           free_court_access?: boolean
           free_court_note?: string | null
           friend_interested_in?: string[]
@@ -1434,6 +1495,27 @@ export type Database = {
       get_pair_qa: { Args: { _other: string }; Returns: Json }
       get_player_count: { Args: never; Returns: number }
       get_profiles_minimal: { Args: { _ids: string[] }; Returns: Json }
+      guest_get_room: {
+        Args: { _event_id: string; _token: string }
+        Returns: Json
+      }
+      guest_join_match: {
+        Args: {
+          _display_name: string
+          _event_id: string
+          _level: string
+          _phone: string
+        }
+        Returns: Json
+      }
+      guest_leave_match: {
+        Args: { _event_id: string; _token: string }
+        Returns: undefined
+      }
+      guest_send_message: {
+        Args: { _body: string; _event_id: string; _token: string }
+        Returns: string
+      }
       handle_report: {
         Args: { _category?: string; _reason: string; _reported: string }
         Returns: Json
@@ -1447,6 +1529,7 @@ export type Database = {
       }
       is_current_user_admin: { Args: never; Returns: boolean }
       list_my_favorite_ids: { Args: never; Returns: string[] }
+      list_public_upcoming_matches: { Args: { _limit?: number }; Returns: Json }
       my_profile_id: { Args: never; Returns: string }
       open_coach_chat: {
         Args: { _acting_user_id: string; _coach_profile_id: string }

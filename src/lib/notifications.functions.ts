@@ -102,46 +102,31 @@ export const markNotificationsRead = createServerFn({ method: "POST" })
   });
 
 // Drain pending pushes. Idempotent, safe to call opportunistically.
+// Uses a SECURITY DEFINER RPC to atomically claim rows (no service key needed).
 export const drainPushOutbox = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async ({ context }) => {
     const { sendWebPush } = await import("./push.server");
-    const { data: pending } = await supabaseAdmin
-      .from("push_outbox")
-      .select("id, profile_id, title, body, url, type")
-      .is("sent_at", null)
-      .order("created_at", { ascending: true })
-      .limit(50);
-    if (!pending || pending.length === 0) return { sent: 0 };
-    const byProfile = new Map<string, typeof pending>();
-    for (const p of pending) {
-      const arr = byProfile.get(p.profile_id) ?? [];
-      arr.push(p);
-      byProfile.set(p.profile_id, arr);
-    }
+    const { data: claimed, error } = await context.supabase.rpc("claim_push_outbox" as never, { _limit: 50 } as never);
+    if (error) throw new Error(error.message);
+    type Item = { id: string; profile_id: string; title: string; body: string | null; url: string | null; type: string; subs: Array<{ endpoint: string; p256dh: string; auth: string }> };
+    const items = ((claimed as { items?: Item[] } | null)?.items ?? []) as Item[];
+    if (items.length === 0) return { sent: 0 };
     let sent = 0;
     const expiredEndpoints: string[] = [];
-    for (const [profileId, items] of byProfile) {
-      const { data: subs } = await supabaseAdmin
-        .from("push_subscriptions")
-        .select("endpoint, p256dh, auth")
-        .eq("profile_id", profileId);
-      if (!subs || subs.length === 0) continue;
-      for (const item of items) {
-        for (const sub of subs) {
-          try {
-            const r = await sendWebPush(sub, { title: item.title, body: item.body ?? undefined, url: item.url ?? undefined, type: item.type });
-            if (r.expired) expiredEndpoints.push(sub.endpoint);
-            if (r.ok) sent += 1;
-          } catch (e) {
-            console.warn("push send failed", e);
-          }
+    for (const item of items) {
+      for (const sub of item.subs) {
+        try {
+          const r = await sendWebPush(sub, { title: item.title, body: item.body ?? undefined, url: item.url ?? undefined, type: item.type });
+          if (r.expired) expiredEndpoints.push(sub.endpoint);
+          if (r.ok) sent += 1;
+        } catch (e) {
+          console.warn("push send failed", e);
         }
       }
     }
-    const doneIds = pending.map((p) => p.id);
-    if (doneIds.length > 0) await supabaseAdmin.from("push_outbox").update({ sent_at: new Date().toISOString() }).in("id", doneIds);
-    if (expiredEndpoints.length > 0) await supabaseAdmin.from("push_subscriptions").delete().in("endpoint", expiredEndpoints);
+    if (expiredEndpoints.length > 0) {
+      await context.supabase.rpc("delete_expired_push_subs" as never, { _endpoints: expiredEndpoints } as never);
+    }
     return { sent };
   });

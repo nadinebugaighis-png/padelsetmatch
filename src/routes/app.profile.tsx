@@ -238,6 +238,7 @@ function ProfilePage() {
               locations[0],
               (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
             ].filter(Boolean).join(" · ") || undefined}
+            contentCard
           >
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               {locations.length > 0 && (
@@ -273,7 +274,7 @@ function ProfilePage() {
           title={tr("Where you play", "Dónde juegas", "Où tu joues")}
           subtitle={tr("Clubs & compounds for smarter matches", "Clubes y urbanizaciones para mejor match", "Clubs et résidences pour de meilleurs matchs")}
         >
-          <VenuesSection bare />
+          <VenuesSection />
         </CollapsibleRow>
 
         <CollapsibleRow
@@ -281,7 +282,7 @@ function ProfilePage() {
           title={tr("Coaching", "Entrenamiento", "Coaching")}
           subtitle={(p as any).is_coach ? tr("You're listed as a coach", "Apareces como coach", "Tu es listé comme coach") : tr("Turn on coach mode", "Activa el modo coach", "Activer le mode coach")}
         >
-          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} bare />
+          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
         </CollapsibleRow>
 
         <CollapsibleRow
@@ -289,7 +290,7 @@ function ProfilePage() {
           title={tr("Questions & answers", "Preguntas y respuestas", "Questions et réponses")}
           subtitle={tr("Shape your compatibility", "Afina tu compatibilidad", "Affine ta compatibilité")}
         >
-          <QASection bare />
+          <QASection />
         </CollapsibleRow>
 
         <CollapsibleRow
@@ -297,8 +298,9 @@ function ProfilePage() {
           title={tr("Send feedback", "Enviar comentarios", "Envoyer un avis")}
           subtitle={tr("Anonymous — help us improve", "Anónimo — ayúdanos a mejorar", "Anonyme — aide-nous à améliorer")}
         >
-          <FeedbackBox bare />
+          <FeedbackBox />
         </CollapsibleRow>
+
 
         <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
       </div>

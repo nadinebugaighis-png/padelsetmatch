@@ -81,13 +81,13 @@ function Discover() {
 
 
 
-  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });
+  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }), staleTime: 60_000 });
   const getAnswers = useServerFn(getMyQaAnswers);
-  const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
+  const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me, staleTime: 5 * 60_000 });
   const getMatches = useServerFn(getMyMatches);
-  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
+  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me, staleTime: 60_000 });
   const listMyVenuesFn = useServerFn(listMyVenues);
-  const myVenuesQ = useQuery({ queryKey: ["my-venues"], queryFn: () => listMyVenuesFn(), enabled: !!feedQ.data?.me });
+  const myVenuesQ = useQuery({ queryKey: ["my-venues"], queryFn: () => listMyVenuesFn(), enabled: !!feedQ.data?.me, staleTime: 5 * 60_000 });
 
   const sharedVenuesBatchFn = useServerFn(getSharedVenuesBatch);
   const candidateIds = (feedQ.data?.candidates ?? []).map((c) => c.id);
@@ -679,7 +679,7 @@ function Discover() {
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
-                        <img src={c.photo_url} alt={c.first_name} loading="lazy" className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${!c.liked ? "grayscale-[35%]" : ""}`} />
+                        <img src={c.photo_url} alt={c.first_name} loading="lazy" decoding="async" className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${!c.liked ? "grayscale-[35%]" : ""}`} />
                       )}
                       {!c.photo_url && (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
@@ -826,7 +826,7 @@ function Discover() {
                     <div className="relative bg-white p-3 sm:p-3.5 lg:p-3.5 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md">
 
                       {preview.photo_url ? (
-                        <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
+                        <img src={preview.photo_url} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
                       ) : (
                         <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] bg-[var(--paper-2)]" />
                       )}

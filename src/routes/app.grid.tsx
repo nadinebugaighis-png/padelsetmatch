@@ -70,7 +70,15 @@ function Discover() {
   const report = useServerFn(reportProfile);
   const reportPhotoFn = useServerFn(reportPhoto);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
-  const [world, setWorld] = useState(false);
+  const [world, setWorld] = useState<boolean>(false);
+  // Hydrate world preference from localStorage AFTER mount to avoid SSR mismatch,
+  // then keep it in sync with the server value once the feed loads. This removes
+  // the initial "empty state → cards" flicker for users who have world mode on.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const cached = window.localStorage.getItem("world-mode");
+    if (cached === "true") setWorld(true);
+  }, []);
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);

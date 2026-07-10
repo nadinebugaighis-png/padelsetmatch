@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 
 
-const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/3405870a-80f1-4e7d-a4f1-4277f9982a23/padel-mixed-share.jpg";
+const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/4dd82dea-ae85-4279-b837-9f883f39208b/padel-share-v2.jpg";
 
 export const Route = createFileRoute("/m/$eventId")({
   validateSearch: (s: Record<string, unknown>) => ({

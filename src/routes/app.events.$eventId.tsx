@@ -8,6 +8,7 @@ import {
   cancelMatchEvent,
   claimMatchInviteByToken,
   createMatchInviteLink,
+  createShortLink,
   deleteEventMessage,
   deleteMatchEvent,
   editEventMessage,
@@ -79,6 +80,7 @@ function EventDetail() {
   const deleteMsg = useServerFn(deleteEventMessage);
   const invitePeople = useServerFn(inviteToMatchEvent);
   const createInviteLink = useServerFn(createMatchInviteLink);
+  const shorten = useServerFn(createShortLink);
   const listConns = useServerFn(listInvitableConnections);
   const respondInvite = useServerFn(respondToMatchInvite);
   const revokeInvite = useServerFn(revokeMatchInvite);
@@ -141,6 +143,8 @@ function EventDetail() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
+  const [shortShareUrl, setShortShareUrl] = useState<string | null>(null);
+  const [shortShareBusy, setShortShareBusy] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -163,7 +167,7 @@ function EventDetail() {
 
   const copyShareLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(displayShareUrl);
       toast.success(tr("Share link copied", "Enlace copiado", "Lien copié"));
     } catch {
       toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));
@@ -172,11 +176,34 @@ function EventDetail() {
 
   const nativeShare = async () => {
     try {
-      await navigator.share({ title: "PadelMatch", text: shareText, url: shareUrl });
+      await navigator.share({ title: "PadelMatch", text: shareText, url: shortShareUrl || shareUrl });
     } catch (err: any) {
       if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
     }
   };
+
+  // Create a short link for the share sheet so the WhatsApp preview and link stay compact
+  useEffect(() => {
+    if (!shareOpen) {
+      setShortShareUrl(null);
+      return;
+    }
+    let cancelled = false;
+    setShortShareBusy(true);
+    shorten({ data: { targetUrl: shareUrl } })
+      .then((r) => {
+        if (!cancelled) setShortShareUrl(`${shareOrigin()}${r.shortUrl}`);
+      })
+      .catch(() => {
+        if (!cancelled) setShortShareUrl(shareUrl);
+      })
+      .finally(() => {
+        if (!cancelled) setShortShareBusy(false);
+      });
+    return () => { cancelled = true; };
+  }, [shareOpen, shareUrl, shorten]);
+
+  const displayShareUrl = shortShareUrl || shareUrl;
 
   const genderLabel = event.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : event.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement") : tr("Women only", "Solo mujeres", "Femmes uniquement");
   const canJoin =
@@ -307,13 +334,14 @@ function EventDetail() {
             </div>
             <input
               readOnly
-              value={shareUrl}
+              value={displayShareUrl}
               onFocus={(e) => e.currentTarget.select()}
-              className="mt-4 w-full rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2 text-sm text-[var(--ink)] outline-none"
+              disabled={shortShareBusy}
+              className="mt-4 w-full rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2 text-sm text-[var(--ink)] outline-none disabled:opacity-60"
             />
             <div className="mt-3 grid grid-cols-2 gap-2">
               <a
-                href={shareUrl}
+                href={displayShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-[var(--ink)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--paper)]"
@@ -610,6 +638,7 @@ function EventDetail() {
           listConns={listConns}
           invitePeople={invitePeople}
           createLink={createInviteLink}
+          shorten={shorten}
           revokeInvite={revokeInvite}
           invites={event.invites ?? []}
           tr={tr}
@@ -744,16 +773,18 @@ type InvitePanelProps = {
   listConns: (a: { data: { eventId: string } }) => Promise<{ people: Array<{ id: string; first_name: string | null; photo_url: string | null; level: string | null; gender: string | null; invited: boolean; joined: boolean }> }>;
   invitePeople: (a: { data: { eventId: string; profileIds: string[] } }) => Promise<{ invited: number }>;
   createLink: (a: { data: { eventId: string } }) => Promise<{ token: string; id: string }>;
+  shorten: (a: { data: { targetUrl: string } }) => Promise<{ code: string; shortUrl: string }>;
   revokeInvite: (a: { data: { inviteId: string } }) => Promise<{ ok: boolean }>;
   invites: Array<{ id: string; invitee_profile_id: string | null; token: string | null; status: string; invitee?: { first_name?: string | null } | null }>;
   tr: (en: string, es: string, fr?: string) => string;
 };
 
-function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, revokeInvite, invites, tr }: InvitePanelProps) {
+function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, shorten, revokeInvite, invites, tr }: InvitePanelProps) {
   const qc = useQueryClient();
   const connsQ = useQuery({ queryKey: ["invitable", eventId], queryFn: () => listConns({ data: { eventId } }) });
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [linkUrl, setLinkUrl] = useState<string | null>(null);
+  const [shortLinkUrl, setShortLinkUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const toggle = (id: string) => {
@@ -784,8 +815,14 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
     setBusy(true);
     try {
       const r = await createLink({ data: { eventId } });
-      const url = `${shareOriginInvite()}/m/${eventId}?i=${r.token}`;
-      setLinkUrl(url);
+      const longUrl = `${shareOriginInvite()}/m/${eventId}?i=${r.token}`;
+      setLinkUrl(longUrl);
+      try {
+        const s = await shorten({ data: { targetUrl: longUrl } });
+        setShortLinkUrl(`${shareOriginInvite()}${s.shortUrl}`);
+      } catch {
+        setShortLinkUrl(longUrl);
+      }
       qc.invalidateQueries({ queryKey: ["event", eventId] });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");
@@ -794,14 +831,15 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
     }
   };
 
-  const whatsappUrl = linkUrl
-    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match — tap to join: ${linkUrl}`, `Estás invitado a mi partido de pádel — toca para unirte: ${linkUrl}`))}`
+  const displayLink = shortLinkUrl || linkUrl;
+  const whatsappUrl = displayLink
+    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match — tap to join: ${displayLink}`, `Estás invitado a mi partido de pádel — toca para unirte: ${displayLink}`))}`
     : null;
 
   const copyLink = async () => {
-    if (!linkUrl) return;
+    if (!displayLink) return;
     try {
-      await navigator.clipboard.writeText(linkUrl);
+      await navigator.clipboard.writeText(displayLink);
       toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
     } catch {
       toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));
@@ -948,9 +986,10 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, re
               <div className="space-y-2.5">
                 <input
                   readOnly
-                  value={linkUrl}
+                  value={displayLink || ""}
+                  disabled={busy && !shortLinkUrl}
                   onFocus={(e) => e.currentTarget.select()}
-                  className="w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/80 outline-none focus:border-[var(--ink)]/40"
+                  className="w-full rounded-xl border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/80 outline-none focus:border-[var(--ink)]/40 disabled:opacity-60"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <a

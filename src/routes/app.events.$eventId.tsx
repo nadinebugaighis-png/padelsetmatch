@@ -151,38 +151,10 @@ function EventDetail() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [msgsQ.data]);
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--ink)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
-  const event: any = eventQ.data?.event;
-  const me = eventQ.data?.me;
-  if (!event) return <div className="p-6 text-center text-[var(--ink)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
-
-  const mapsUrl = event.club_place_id
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name + " " + (event.city ?? ""))}`;
   const shareUrl = `${shareOrigin()}/m/${eventId}`;
-  const shareText = tr(
-    `Join my padel match on PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
-    `Únete a mi partido de pádel en PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
-  );
 
-  const copyShareLink = async () => {
-    try {
-      await navigator.clipboard.writeText(displayShareUrl);
-      toast.success(tr("Share link copied", "Enlace copiado", "Lien copié"));
-    } catch {
-      toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));
-    }
-  };
-
-  const nativeShare = async () => {
-    try {
-      await navigator.share({ title: "PadelMatch", text: shareText, url: shortShareUrl || shareUrl });
-    } catch (err: any) {
-      if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
-    }
-  };
-
-  // Create a short link for the share sheet so the WhatsApp preview and link stay compact
+  // Create a short link for the share sheet so the WhatsApp preview and link stay compact.
+  // MUST be declared before any early return so React sees the same hook order every render.
   useEffect(() => {
     if (!shareOpen) {
       setShortShareUrl(null);
@@ -203,7 +175,37 @@ function EventDetail() {
     return () => { cancelled = true; };
   }, [shareOpen, shareUrl, shorten]);
 
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--ink)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
+  const event: any = eventQ.data?.event;
+  const me = eventQ.data?.me;
+  if (!event) return <div className="p-6 text-center text-[var(--ink)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
+
+  const mapsUrl = event.club_place_id
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name + " " + (event.city ?? ""))}`;
+  const shareText = tr(
+    `Join my padel match on PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
+    `Únete a mi partido de pádel en PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
+  );
+
   const displayShareUrl = shortShareUrl || shareUrl;
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(displayShareUrl);
+      toast.success(tr("Share link copied", "Enlace copiado", "Lien copié"));
+    } catch {
+      toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));
+    }
+  };
+
+  const nativeShare = async () => {
+    try {
+      await navigator.share({ title: "PadelMatch", text: shareText, url: shortShareUrl || shareUrl });
+    } catch (err: any) {
+      if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
+    }
+  };
 
   const genderLabel = event.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : event.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement") : tr("Women only", "Solo mujeres", "Femmes uniquement");
   const canJoin =

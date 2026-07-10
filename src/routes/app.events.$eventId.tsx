@@ -167,7 +167,7 @@ function EventDetail() {
 
   const copyShareLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(displayShareUrl);
       toast.success(tr("Share link copied", "Enlace copiado", "Lien copié"));
     } catch {
       toast.error(tr("Could not copy the link", "No se pudo copiar el enlace", "Impossible de copier le lien"));

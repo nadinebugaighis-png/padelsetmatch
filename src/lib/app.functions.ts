@@ -1569,7 +1569,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const versionKey = `v11-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
-      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
+      return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
     }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}

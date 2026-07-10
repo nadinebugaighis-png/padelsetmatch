@@ -503,7 +503,7 @@ function Discover() {
               );
               actions.push({
                 label: tr("Edit your profile", "Editar tu perfil", "Modifier ton profil"),
-                onClick: () => nav({ to: "/app/profile" }),
+                onClick: () => navigate({ to: "/app/profile" }),
                 primary: true,
               });
               actions.push({
@@ -525,7 +525,7 @@ function Discover() {
               if (!world) {
                 actions.push({
                   label: tr("Turn on World mode", "Activar modo Mundo", "Activer le mode Monde"),
-                  onClick: () => { setWorld(true); worldMutation.mutate(true); },
+                  onClick: () => { setWorld(true); setWorldM.mutate(true); },
                 });
               }
             } else if (hasSideFilters) {
@@ -549,7 +549,7 @@ function Discover() {
               );
               actions.push({
                 label: tr("Turn on World mode", "Activar modo Mundo", "Activer le mode Monde"),
-                onClick: () => { setWorld(true); worldMutation.mutate(true); },
+                onClick: () => { setWorld(true); setWorldM.mutate(true); },
                 primary: true,
               });
             } else {

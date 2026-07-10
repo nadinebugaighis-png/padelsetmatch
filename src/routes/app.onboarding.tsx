@@ -328,7 +328,6 @@ function Onboarding() {
       goals.length === 0 ? tr("what you are looking for", "qué estás buscando", "ce que tu cherches") : null,
     ],
     [
-      hasPartnerGoal && !meetPref ? tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") : null,
       age_min === null || age_max === null ? tr("age range", "rango de edad", "tranche d'âge") : null,
       age_min !== null && age_max !== null && age_min > age_max ? tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") : null,
     ],

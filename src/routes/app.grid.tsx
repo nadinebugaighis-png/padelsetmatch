@@ -561,6 +561,25 @@ function Discover() {
                         ✈ On holidays
                       </div>
                     )}
+                    {(() => {
+                      const s = sharedVenuesQ.data?.[c.id];
+                      if (!s || s.count === 0) return null;
+                      const first = s.names?.[0];
+                      const label = first
+                        ? first
+                        : s.count === 1
+                          ? tr("Shared venue", "Lugar en común", "Lieu en commun")
+                          : tr(`${s.count} shared`, `${s.count} en común`, `${s.count} en commun`);
+                      return (
+                        <div
+                          className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full"
+                          title={s.names?.length ? s.names.join(" · ") : tr("You share a venue", "Compartís un lugar", "Vous partagez un lieu")}
+                        >
+                          <MapPin className="w-2.5 h-2.5 shrink-0" />
+                          <span className="truncate">{label}</span>
+                        </div>
+                      );
+                    })()}
 
                     <div className="mt-2 flex items-center justify-between">
                       {c.free_court_access ? (

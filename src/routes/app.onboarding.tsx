@@ -271,21 +271,20 @@ function Onboarding() {
     }
   };
 
-  const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
+  const hasPartnerGoal = false;
   const hasFriendGoal = goals.includes("friends") || goals.includes("all");
-  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("relationship") || goals.includes("all");
+  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("all");
   const derivedIntents = Array.from(new Set<string>([
     ...(hasPadelGoal ? ["padel"] : []),
     ...(hasFriendGoal ? ["friend"] : []),
-    ...(hasPartnerGoal ? ["relationship"] : []),
   ]));
 
   const save = useMutation({
     mutationFn: () => {
-      const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
-      const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
+      const derivedLookingFor: LookingFor = hasFriendGoal ? "friend" : "friend";
+      const partnerAud: string[] = [];
       const friendAud = hasFriendGoal ? ["everyone"] : [];
-      const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
+      const derived = Array.from(new Set([...audToGenders(friendAud)]));
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
       if (age === null || age_min === null || age_max === null || !gender || !level) {
@@ -317,7 +316,7 @@ function Onboarding() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
 
-  const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
+  const audOk = goals.length > 0;
 
   useEffect(() => setShowStepHelp(false), [step]);
 

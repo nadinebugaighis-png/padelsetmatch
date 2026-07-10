@@ -638,6 +638,7 @@ function EventDetail() {
           listConns={listConns}
           invitePeople={invitePeople}
           createLink={createInviteLink}
+          shorten={shorten}
           revokeInvite={revokeInvite}
           invites={event.invites ?? []}
           tr={tr}

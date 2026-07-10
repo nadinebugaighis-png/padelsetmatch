@@ -945,12 +945,12 @@ export const createShortLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { targetUrl: string }) => z.object({ targetUrl: z.string().url() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     let code = makeShortCode();
     for (let attempt = 0; attempt < 5; attempt++) {
       const { data: row, error } = await supabase
         .from("short_links")
-        .insert({ code, target_url: data.targetUrl })
+        .insert({ code, target_url: data.targetUrl, created_by: userId })
         .select("code")
         .single();
       if (row) return { code: row.code, shortUrl: `/s/${row.code}` };

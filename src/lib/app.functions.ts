@@ -1066,11 +1066,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       .insert(row as never);
     if (error) throw new Error(error.message);
     // Any cached AI compatibility involving me is stale — clear it.
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin
-      .from("compatibility_scores" as never)
-      .delete()
-      .or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
+    await context.supabase.rpc("clear_my_compat_scores" as never, {} as never);
     return { ok: true };
   });
 

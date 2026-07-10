@@ -815,8 +815,14 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
     setBusy(true);
     try {
       const r = await createLink({ data: { eventId } });
-      const url = `${shareOriginInvite()}/m/${eventId}?i=${r.token}`;
-      setLinkUrl(url);
+      const longUrl = `${shareOriginInvite()}/m/${eventId}?i=${r.token}`;
+      setLinkUrl(longUrl);
+      try {
+        const s = await shorten({ data: { targetUrl: longUrl } });
+        setShortLinkUrl(`${shareOriginInvite()}${s.shortUrl}`);
+      } catch {
+        setShortLinkUrl(longUrl);
+      }
       qc.invalidateQueries({ queryKey: ["event", eventId] });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Error");

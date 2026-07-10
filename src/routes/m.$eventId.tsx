@@ -188,6 +188,15 @@ function PublicMatchPage() {
               >
                 {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
+              {!hasSession && openSpots > 0 && (
+                <Link
+                  to="/g/$eventId"
+                  params={{ eventId }}
+                  className="block w-full py-3 rounded-full border border-[var(--ball)]/60 text-[var(--ball)] text-sm uppercase tracking-widest font-semibold text-center"
+                >
+                  {tr("Join as guest — no account", "Unirme como invitado — sin cuenta", "Rejoindre en invité — sans compte")}
+                </Link>
+              )}
               <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--cream)]/50 text-[var(--cream)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>

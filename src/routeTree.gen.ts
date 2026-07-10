@@ -13,12 +13,14 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PlayRouteImport } from './routes/play'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
+import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
@@ -54,6 +56,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayRoute = PlayRouteImport.update({
+  id: '/play',
+  path: '/play',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
@@ -82,6 +89,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const MEventIdRoute = MEventIdRouteImport.update({
   id: '/m/$eventId',
   path: '/m/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GEventIdRoute = GEventIdRouteImport.update({
+  id: '/g/$eventId',
+  path: '/g/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppQuestionsRoute = AppQuestionsRouteImport.update({
@@ -160,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -173,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -185,6 +199,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -198,6 +213,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -212,6 +228,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -225,6 +242,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -240,6 +258,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/how-it-works'
+    | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -253,6 +272,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/g/$eventId'
     | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
@@ -265,6 +285,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/how-it-works'
+    | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -278,6 +299,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/g/$eventId'
     | '/m/$eventId'
     | '/app'
     | '/app/events/$eventId'
@@ -291,6 +313,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/how-it-works'
+    | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -304,6 +327,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/g/$eventId'
     | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
@@ -318,10 +342,12 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  PlayRoute: typeof PlayRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
 }
 
@@ -353,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play': {
+      id: '/play'
+      path: '/play'
+      fullPath: '/play'
+      preLoaderRoute: typeof PlayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -395,6 +428,13 @@ declare module '@tanstack/react-router' {
       path: '/m/$eventId'
       fullPath: '/m/$eventId'
       preLoaderRoute: typeof MEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/g/$eventId': {
+      id: '/g/$eventId'
+      path: '/g/$eventId'
+      fullPath: '/g/$eventId'
+      preLoaderRoute: typeof GEventIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/questions': {
@@ -560,10 +600,12 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   HowItWorksRoute: HowItWorksRoute,
+  PlayRoute: PlayRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
 }
 export const routeTree = rootRouteImport

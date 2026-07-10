@@ -398,6 +398,53 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
+function CollapsibleRow({
+  icon,
+  title,
+  subtitle,
+  defaultOpen = false,
+  contentCard = false,
+  children,
+}: {
+  icon?: ReactNode;
+  title: string;
+  subtitle?: string;
+  defaultOpen?: boolean;
+  contentCard?: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-3 rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper)] px-4 py-3.5 text-left hover:bg-[var(--paper-2)] transition-colors"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          {icon && (
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--ink)]/[0.06] text-[var(--ink)] shrink-0">
+              {icon}
+            </span>
+          )}
+          <div className="min-w-0">
+            <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight truncate">{title}</div>
+            {subtitle && <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">{subtitle}</div>}
+          </div>
+        </div>
+        <ChevronDown className={`w-5 h-5 text-[var(--ink)]/50 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className={contentCard ? "mt-2 programme-card p-4 sm:p-5" : "mt-2"}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>

@@ -722,7 +722,7 @@ function Onboarding() {
             </div>
 
             {/* SECTION 1 — Priorities */}
-            <section className="space-y-3">
+            <section data-field="priorities" className={`space-y-3 ${fieldCls("priorities")}`}>
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-serif text-lg flex items-center gap-2">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>

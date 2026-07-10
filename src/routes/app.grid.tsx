@@ -185,6 +185,9 @@ function Discover() {
   useEffect(() => {
     if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {
       setWorld(feedQ.data.me.world_mode);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("world-mode", feedQ.data.me.world_mode ? "true" : "false");
+      }
     }
   }, [feedQ.data?.me?.world_mode]);
 

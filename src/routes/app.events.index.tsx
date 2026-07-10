@@ -14,7 +14,7 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, Check, GitCompare } from "lucide-react";
+import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
@@ -190,26 +190,6 @@ function EventsPage() {
 
   const [pending, setPending] = useState<string | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
-  const [compareMode, setCompareMode] = useState(false);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
-  const [compareOpen, setCompareOpen] = useState(false);
-
-  function toggleCompare(id: string) {
-    setCompareIds((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 2) return [prev[1], id];
-      return [...prev, id];
-    });
-  }
-  function exitCompare() {
-    setCompareMode(false);
-    setCompareIds([]);
-    setCompareOpen(false);
-  }
-  const compareEvents = useMemo(
-    () => compareIds.map((id) => all.find((e) => e.id === id)).filter(Boolean) as EventLite[],
-    [compareIds, all],
-  );
 
   function refetch() {
     qc.invalidateQueries({ queryKey: ["open-events"] });
@@ -416,23 +396,6 @@ function EventsPage() {
                   {v === "evening" && tr("Evening", "Noche", "Soir")}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => {
-                  setCompareMode((v) => {
-                    if (v) setCompareIds([]);
-                    return !v;
-                  });
-                }}
-                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-widest font-semibold whitespace-nowrap transition ${
-                  compareMode
-                    ? "bg-[var(--plum)] text-white"
-                    : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
-                }`}
-              >
-                <GitCompare className="w-3.5 h-3.5" />
-                {tr("Compare", "Comparar", "Comparer")}
-              </button>
             </div>
 
             {/* Day chip row */}
@@ -493,9 +456,6 @@ function EventsPage() {
                     onManage={setMyMatchSheet}
                     tr={tr}
                     highlight
-                    compareMode={compareMode}
-                    compareIds={compareIds}
-                    onToggleCompare={toggleCompare}
                   />
                 )}
                 {others.length > 0 && (
@@ -519,9 +479,6 @@ function EventsPage() {
                     onJoin={instantJoin}
                     onManage={setMyMatchSheet}
                     tr={tr}
-                    compareMode={compareMode}
-                    compareIds={compareIds}
-                    onToggleCompare={toggleCompare}
                   />
                 )}
               </div>
@@ -551,55 +508,19 @@ function EventsPage() {
           />
         )}
 
-        {/* Sticky bottom action */}
+        {/* Sticky Start-a-match pill */}
         <div className="fixed left-0 right-0 bottom-20 px-5 z-30 pointer-events-none">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pointer-events-auto flex justify-center">
-            {compareMode ? (
-              <div className="inline-flex items-center gap-2 rounded-full bg-[var(--ink)] text-[var(--paper)] pl-4 pr-2 py-2 shadow-lg">
-                <GitCompare className="w-4 h-4" />
-                <span className="text-[11px] uppercase tracking-widest font-bold">
-                  {compareIds.length}/2 {tr("selected", "seleccionados", "sélectionnés")}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setCompareOpen(true)}
-                  disabled={compareIds.length < 2}
-                  className="rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold px-4 py-2 disabled:opacity-40"
-                >
-                  {tr("Compare", "Comparar", "Comparer")}
-                </button>
-                <button
-                  type="button"
-                  onClick={exitCompare}
-                  className="rounded-full w-9 h-9 grid place-items-center bg-white/10 text-[var(--paper)] hover:bg-white/20"
-                  aria-label={tr("Exit compare", "Salir de comparar", "Quitter la comparaison")}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/app/events/new" })}
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--plum)] text-white text-xs uppercase tracking-widest font-bold px-5 py-3 shadow-lg hover:brightness-110 transition"
-              >
-                <Plus className="w-4 h-4" />
-                {tr("Start a match", "Convocar partido", "Lancer un match")}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/app/events/new" })}
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--plum)] text-white text-xs uppercase tracking-widest font-bold px-5 py-3 shadow-lg hover:brightness-110 transition"
+            >
+              <Plus className="w-4 h-4" />
+              {tr("Start a match", "Convocar partido", "Lancer un match")}
+            </button>
           </div>
         </div>
-
-        {compareOpen && compareEvents.length === 2 && (
-          <CompareSheet
-            a={compareEvents[0]}
-            b={compareEvents[1]}
-            locale={locale}
-            tr={tr}
-            onClose={() => setCompareOpen(false)}
-            onOpen={(id) => { setCompareOpen(false); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
-          />
-        )}
       </div>
     </div>
   );
@@ -618,9 +539,6 @@ function FeedSection({
   onManage,
   tr,
   highlight,
-  compareMode,
-  compareIds,
-  onToggleCompare,
 }: {
   title: string;
   subtitle?: string;
@@ -632,9 +550,6 @@ function FeedSection({
   onManage: (e: EventLite) => void;
   tr: ReturnType<typeof useTr>;
   highlight?: boolean;
-  compareMode?: boolean;
-  compareIds?: string[];
-  onToggleCompare?: (id: string) => void;
 }) {
   return (
     <section>
@@ -652,9 +567,6 @@ function FeedSection({
               onManage={onManage}
               tr={tr}
               highlight={highlight}
-              compareMode={compareMode}
-              compareSelected={!!compareIds?.includes(e.id)}
-              onToggleCompare={onToggleCompare}
             />
           </li>
         ))}
@@ -674,9 +586,6 @@ function MatchCard({
   onManage,
   tr,
   highlight,
-  compareMode,
-  compareSelected,
-  onToggleCompare,
 }: {
   e: EventLite;
   locale: string | undefined;
@@ -686,9 +595,6 @@ function MatchCard({
   onManage: (e: EventLite) => void;
   tr: ReturnType<typeof useTr>;
   highlight?: boolean;
-  compareMode?: boolean;
-  compareSelected?: boolean;
-  onToggleCompare?: (id: string) => void;
 }) {
   const isPending = pending === e.id;
   const start = new Date(e.starts_at);
@@ -720,29 +626,11 @@ function MatchCard({
 
   return (
     <div
-      className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] transition ${
-        compareSelected
-          ? "ring-2 ring-[var(--plum)]"
-          : highlight
-            ? "ring-1 ring-[var(--plum)]/45"
-            : "border border-[var(--ink)]/10"
+      className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
+        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
       }`}
     >
       <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent.bar}`} aria-hidden />
-      {compareMode && onToggleCompare && (
-        <button
-          type="button"
-          onClick={(ev) => { ev.stopPropagation(); onToggleCompare(e.id); }}
-          aria-label={tr("Select to compare", "Selecciona para comparar", "Sélectionner pour comparer")}
-          className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full grid place-items-center border-2 transition ${
-            compareSelected
-              ? "bg-[var(--plum)] border-[var(--plum)] text-white"
-              : "bg-white/90 border-[var(--ink)]/25 text-transparent hover:border-[var(--plum)]"
-          }`}
-        >
-          <Check className="w-3.5 h-3.5" strokeWidth={3} />
-        </button>
-      )}
 
       <button
         type="button"
@@ -1252,134 +1140,6 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
           <Send className="w-3.5 h-3.5" />
         </button>
       </form>
-    </div>
-  );
-}
-
-// ---------- Compare sheet ----------
-
-function CompareSheet({
-  a,
-  b,
-  locale,
-  tr,
-  onClose,
-  onOpen,
-}: {
-  a: EventLite;
-  b: EventLite;
-  locale: string | undefined;
-  tr: ReturnType<typeof useTr>;
-  onClose: () => void;
-  onOpen: (id: string) => void;
-}) {
-  const fmtDay = (iso: string) =>
-    new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
-  const fmtTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
-  const gender = (g: EventLite["gender_rule"]) =>
-    g === "mixed" ? tr("Mixed", "Mixto", "Mixte")
-      : g === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement")
-      : tr("Women only", "Solo mujeres", "Femmes uniquement");
-  const level = (e: EventLite) =>
-    e.level_min ? (e.level_min === e.level_max ? e.level_min! : `${e.level_min}–${e.level_max}`) : "—";
-
-  const rows: Array<{ label: string; a: string; b: string }> = [
-    { label: tr("Day", "Día", "Jour"), a: fmtDay(a.starts_at), b: fmtDay(b.starts_at) },
-    { label: tr("Time", "Hora", "Heure"), a: fmtTime(a.starts_at), b: fmtTime(b.starts_at) },
-    { label: tr("Club", "Club", "Club"), a: a.club_name || "—", b: b.club_name || "—" },
-    { label: tr("City", "Ciudad", "Ville"), a: a.city || a.club_address || "—", b: b.city || b.club_address || "—" },
-    { label: tr("Level", "Nivel", "Niveau"), a: level(a), b: level(b) },
-    { label: tr("Gender", "Género", "Genre"), a: gender(a.gender_rule), b: gender(b.gender_rule) },
-    { label: tr("Court", "Pista", "Court"), a: a.court_booked ? tr("Booked", "Reservada", "Réservé") : tr("Not booked", "Sin reservar", "Non réservé"), b: b.court_booked ? tr("Booked", "Reservada", "Réservé") : tr("Not booked", "Sin reservar", "Non réservé") },
-    { label: tr("Players", "Jugadores", "Joueurs"), a: `${a.filled}/4`, b: `${b.filled}/4` },
-    { label: tr("Spots left", "Faltan", "Places"), a: `${a.needs}`, b: `${b.needs}` },
-    { label: tr("Host", "Anfitrión", "Hôte"), a: a.host?.first_name || "—", b: b.host?.first_name || "—" },
-  ];
-
-  const diffCount = rows.filter((r) => r.a !== r.b).length;
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div
-        className="w-full sm:max-w-2xl bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--ink)]/10">
-          <div>
-            <div className="text-serif text-2xl text-[var(--ink)] leading-tight">{tr("Compare matches", "Comparar partidos", "Comparer les matchs")}</div>
-            <div className="text-[11px] uppercase tracking-widest text-[var(--plum)] mt-0.5">
-              {diffCount} {tr("differences", "diferencias", "différences")}
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-9 h-9 rounded-full grid place-items-center border border-[var(--ink)]/15 text-[var(--ink)]/70 hover:bg-[var(--ink)]/5"
-            aria-label={tr("Close", "Cerrar", "Fermer")}
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto">
-          <div className="grid grid-cols-[minmax(90px,auto)_1fr_1fr] text-sm">
-            <div className="bg-[var(--paper-2)]/60 px-3 py-3" />
-            <button
-              type="button"
-              onClick={() => onOpen(a.id)}
-              className="px-3 py-3 text-left border-l border-[var(--ink)]/10 hover:bg-[var(--ink)]/[0.03]"
-            >
-              <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--plum)]">A</div>
-              <div className="text-serif text-lg text-[var(--ink)] leading-tight truncate">{a.club_name || tr("Match", "Partido", "Match")}</div>
-              <div className="text-[11px] text-[var(--ink)]/60 mt-0.5">{fmtDay(a.starts_at)} · {fmtTime(a.starts_at)}</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => onOpen(b.id)}
-              className="px-3 py-3 text-left border-l border-[var(--ink)]/10 hover:bg-[var(--ink)]/[0.03]"
-            >
-              <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--plum)]">B</div>
-              <div className="text-serif text-lg text-[var(--ink)] leading-tight truncate">{b.club_name || tr("Match", "Partido", "Match")}</div>
-              <div className="text-[11px] text-[var(--ink)]/60 mt-0.5">{fmtDay(b.starts_at)} · {fmtTime(b.starts_at)}</div>
-            </button>
-
-            {rows.map((r) => {
-              const diff = r.a !== r.b;
-              return (
-                <div key={r.label} className="contents">
-                  <div className={`px-3 py-2.5 border-t border-[var(--ink)]/10 text-[10px] uppercase tracking-widest font-bold ${diff ? "text-[var(--plum)]" : "text-[var(--ink)]/50"} bg-[var(--paper-2)]/60`}>
-                    {r.label}
-                  </div>
-                  <div className={`px-3 py-2.5 border-t border-l border-[var(--ink)]/10 ${diff ? "bg-[var(--plum)]/8 text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>
-                    {r.a}
-                  </div>
-                  <div className={`px-3 py-2.5 border-t border-l border-[var(--ink)]/10 ${diff ? "bg-[var(--plum)]/8 text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>
-                    {r.b}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 p-4 border-t border-[var(--ink)]/10">
-          <button
-            type="button"
-            onClick={() => onOpen(a.id)}
-            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
-          >
-            {tr("Open A", "Abrir A", "Ouvrir A")}
-          </button>
-          <button
-            type="button"
-            onClick={() => onOpen(b.id)}
-            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
-          >
-            {tr("Open B", "Abrir B", "Ouvrir B")}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

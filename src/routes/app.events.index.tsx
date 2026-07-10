@@ -598,8 +598,20 @@ function MatchCard({
 }) {
   const isPending = pending === e.id;
   const start = new Date(e.starts_at);
-  const dayLabel = start.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
+  const weekday = start.toLocaleDateString(locale, { weekday: "short" });
+  const dayNum = start.toLocaleDateString(locale, { day: "numeric" });
+  const monthShort = start.toLocaleDateString(locale, { month: "short" });
   const time = start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+  const hour = start.getHours();
+  const timeOfDay: "morning" | "afternoon" | "evening" =
+    hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
+  const accent =
+    timeOfDay === "morning"
+      ? { bar: "bg-[var(--ball)]", chip: "bg-[var(--ball)]/25 text-[var(--ink)]", label: tr("Morning", "Mañana", "Matin") }
+      : timeOfDay === "afternoon"
+        ? { bar: "bg-[var(--clay)]", chip: "bg-[var(--clay)]/25 text-[var(--ink)]", label: tr("Afternoon", "Tarde", "Après-midi") }
+        : { bar: "bg-[var(--plum)]", chip: "bg-[var(--plum)]/15 text-[var(--plum)]", label: tr("Evening", "Noche", "Soir") };
+
   const genderLabel =
     e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte")
     : e.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement")
@@ -614,45 +626,53 @@ function MatchCard({
 
   return (
     <div
-      className={`rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
+      className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
         highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
       }`}
     >
-      {/* Header */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent.bar}`} aria-hidden />
+
       <button
         type="button"
         onClick={() => onOpen(e.id)}
-        className="w-full text-left px-4 pt-4 pb-3"
+        className="w-full text-left pl-5 pr-4 pt-4 pb-3"
       >
-        <div className="flex items-baseline justify-between gap-3">
-          <div className="text-serif text-lg leading-tight text-[var(--ink)] truncate">
-            <span className="capitalize">{dayLabel}</span>
-            <span className="text-[var(--ink)]/40 mx-1.5">|</span>
-            <span className="tabular-nums">{time}</span>
+        <div className="flex items-start gap-4">
+          <div className="shrink-0 text-center">
+            <div className="text-serif text-3xl leading-none tabular-nums text-[var(--ink)]">{time}</div>
+            <div className="mt-1 text-[10px] uppercase tracking-widest font-bold text-[var(--ink)]/55">
+              <span className="capitalize">{weekday}</span> {dayNum} <span className="capitalize">{monthShort}</span>
+            </div>
           </div>
-          {mine && (
-            <span className={`shrink-0 text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full ${
-              e.iAmHost ? "bg-[var(--plum)] text-white" : "bg-[var(--ink)]/10 text-[var(--ink)]"
-            }`}>
-              {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
-            </span>
-          )}
-        </div>
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
-          {levelLabel && <span>{levelLabel}</span>}
-          {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
-          <span>{genderLabel}</span>
-          {e.court_booked && (
-            <>
-              <span className="text-[var(--ink)]/25">·</span>
-              <span className="text-[var(--plum)]">{tr("Court booked", "Pista reservada", "Court réservé")}</span>
-            </>
-          )}
+          <div className="w-px self-stretch bg-[var(--ink)]/10" aria-hidden />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className={`text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded ${accent.chip}`}>
+                {accent.label}
+              </span>
+              {mine && (
+                <span className={`text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded ${
+                  e.iAmHost ? "bg-[var(--plum)] text-white" : "bg-[var(--ink)]/10 text-[var(--ink)]"
+                }`}>
+                  {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
+                </span>
+              )}
+              {e.court_booked && (
+                <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded bg-[var(--court-deep)]/10 text-[var(--court-deep)]">
+                  {tr("Court booked", "Pista reservada", "Court réservé")}
+                </span>
+              )}
+            </div>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
+              {levelLabel && <span className="font-semibold text-[var(--ink)]/75">{levelLabel}</span>}
+              {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
+              <span>{genderLabel}</span>
+            </div>
+          </div>
         </div>
       </button>
 
-      {/* 4-slot A|B lineup */}
-      <div className="px-4 pb-4">
+      <div className="pl-5 pr-4 pb-4">
         <div className="grid grid-cols-[1fr_auto_1fr_1fr_1fr] items-center gap-2">
           <SlotAvatar slot={slots[0]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
           <div className="h-14 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
@@ -669,7 +689,6 @@ function MatchCard({
         </div>
       </div>
 
-      {/* Footer bar */}
       <button
         type="button"
         onClick={(ev) => {
@@ -677,7 +696,7 @@ function MatchCard({
           if (e.iAmHost) onManage(e);
           else onOpen(e.id);
         }}
-        className="w-full flex items-center gap-3 px-4 py-3 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/45 hover:bg-[var(--paper-2)]/70 transition text-left"
+        className="w-full flex items-center gap-3 pl-5 pr-4 py-3 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/45 hover:bg-[var(--paper-2)]/70 transition text-left"
       >
         <div className="w-9 h-9 rounded-full grid place-items-center bg-white border border-[var(--ink)]/10 shrink-0">
           <MapPin className="w-4 h-4 text-[var(--ink)]/60" />

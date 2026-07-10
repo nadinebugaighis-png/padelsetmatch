@@ -1485,6 +1485,30 @@ export type Database = {
         }
         Relationships: []
       }
+      short_links: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          target_url: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          target_url: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          target_url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

@@ -87,6 +87,16 @@ function Discover() {
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
 
+  const sharedVenuesBatchFn = useServerFn(getSharedVenuesBatch);
+  const candidateIds = (feedQ.data?.candidates ?? []).map((c) => c.id);
+  const candidateIdsKey = candidateIds.join(",");
+  const sharedVenuesQ = useQuery({
+    queryKey: ["shared-venues-batch", candidateIdsKey],
+    queryFn: () => sharedVenuesBatchFn({ data: { profile_ids: candidateIds } }),
+    enabled: candidateIds.length > 0,
+    staleTime: 60_000,
+  });
+
   const closedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const candidates = feedQ.data?.candidates;

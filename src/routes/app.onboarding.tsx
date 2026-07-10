@@ -413,7 +413,6 @@ function Onboarding() {
               {[
                 { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
                 { id: "friends", label: tr("Friends", "Amistad", "Amis") },
-                { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
                 { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
               ].map((g) => (
                 <button

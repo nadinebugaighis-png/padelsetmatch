@@ -81,13 +81,13 @@ function Discover() {
 
 
 
-  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }) });
+  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }), staleTime: 60_000 });
   const getAnswers = useServerFn(getMyQaAnswers);
-  const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
+  const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me, staleTime: 5 * 60_000 });
   const getMatches = useServerFn(getMyMatches);
-  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
+  const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me, staleTime: 60_000 });
   const listMyVenuesFn = useServerFn(listMyVenues);
-  const myVenuesQ = useQuery({ queryKey: ["my-venues"], queryFn: () => listMyVenuesFn(), enabled: !!feedQ.data?.me });
+  const myVenuesQ = useQuery({ queryKey: ["my-venues"], queryFn: () => listMyVenuesFn(), enabled: !!feedQ.data?.me, staleTime: 5 * 60_000 });
 
   const sharedVenuesBatchFn = useServerFn(getSharedVenuesBatch);
   const candidateIds = (feedQ.data?.candidates ?? []).map((c) => c.id);

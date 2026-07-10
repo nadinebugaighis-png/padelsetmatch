@@ -19,6 +19,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
+import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
@@ -82,6 +83,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const MEventIdRoute = MEventIdRouteImport.update({
   id: '/m/$eventId',
   path: '/m/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GEventIdRoute = GEventIdRouteImport.update({
+  id: '/g/$eventId',
+  path: '/g/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppQuestionsRoute = AppQuestionsRouteImport.update({
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/g/$eventId'
     | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/g/$eventId'
     | '/m/$eventId'
     | '/app'
     | '/app/events/$eventId'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/g/$eventId'
     | '/m/$eventId'
     | '/app/'
     | '/app/events/$eventId'
@@ -322,6 +334,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
 }
 
@@ -395,6 +408,13 @@ declare module '@tanstack/react-router' {
       path: '/m/$eventId'
       fullPath: '/m/$eventId'
       preLoaderRoute: typeof MEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/g/$eventId': {
+      id: '/g/$eventId'
+      path: '/g/$eventId'
+      fullPath: '/g/$eventId'
+      preLoaderRoute: typeof GEventIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/questions': {
@@ -564,6 +584,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
 }
 export const routeTree = rootRouteImport

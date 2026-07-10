@@ -8,6 +8,7 @@ import {
   cancelMatchEvent,
   claimMatchInviteByToken,
   createMatchInviteLink,
+  createShortLink,
   deleteEventMessage,
   deleteMatchEvent,
   editEventMessage,

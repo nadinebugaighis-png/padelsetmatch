@@ -2,9 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-async function myProfileId(context: { supabase: { from: (t: string) => { select: (c: string) => { eq: (k: string, v: string) => { maybeSingle: () => Promise<{ data: { id: string } | null }> } } } }; userId: string }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function myProfileId(context: any): Promise<string | null> {
   const { data } = await context.supabase.from("profiles").select("id").eq("user_id", context.userId).maybeSingle();
-  return data?.id ?? null;
+  return (data?.id as string | undefined) ?? null;
 }
 
 export const listMyFavorites = createServerFn({ method: "GET" })

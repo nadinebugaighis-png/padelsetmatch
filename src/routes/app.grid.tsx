@@ -86,6 +86,8 @@ function Discover() {
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
+  const listMyVenuesFn = useServerFn(listMyVenues);
+  const myVenuesQ = useQuery({ queryKey: ["my-venues"], queryFn: () => listMyVenuesFn(), enabled: !!feedQ.data?.me });
 
   const sharedVenuesBatchFn = useServerFn(getSharedVenuesBatch);
   const candidateIds = (feedQ.data?.candidates ?? []).map((c) => c.id);

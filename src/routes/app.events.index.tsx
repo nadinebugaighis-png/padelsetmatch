@@ -684,11 +684,29 @@ function MatchCard({
 
   return (
     <div
-      className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
-        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
+      className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] transition ${
+        compareSelected
+          ? "ring-2 ring-[var(--plum)]"
+          : highlight
+            ? "ring-1 ring-[var(--plum)]/45"
+            : "border border-[var(--ink)]/10"
       }`}
     >
       <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent.bar}`} aria-hidden />
+      {compareMode && onToggleCompare && (
+        <button
+          type="button"
+          onClick={(ev) => { ev.stopPropagation(); onToggleCompare(e.id); }}
+          aria-label={tr("Select to compare", "Selecciona para comparar", "Sélectionner pour comparer")}
+          className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full grid place-items-center border-2 transition ${
+            compareSelected
+              ? "bg-[var(--plum)] border-[var(--plum)] text-white"
+              : "bg-white/90 border-[var(--ink)]/25 text-transparent hover:border-[var(--plum)]"
+          }`}
+        >
+          <Check className="w-3.5 h-3.5" strokeWidth={3} />
+        </button>
+      )}
 
       <button
         type="button"

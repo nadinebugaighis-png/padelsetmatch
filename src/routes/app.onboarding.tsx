@@ -124,14 +124,11 @@ function Onboarding() {
       if (storedIntents.length > 0) {
         if (storedIntents.includes("padel")) g.push("padel");
         if (storedIntents.includes("friend")) g.push("friends");
-        if (storedIntents.includes("relationship")) g.push("relationship");
       } else {
-        if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
         if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+        else g.push("padel");
       }
       if (g.length) setGoals(g);
-      const pa = p.partner_interested_in?.[0];
-      if (pa === "men" || pa === "women" || pa === "everyone") setMeetPref(pa);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) {

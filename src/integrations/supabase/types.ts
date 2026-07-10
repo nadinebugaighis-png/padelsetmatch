@@ -1393,6 +1393,7 @@ export type Database = {
         Returns: undefined
       }
       get_pair_qa: { Args: { _other: string }; Returns: Json }
+      get_player_count: { Args: never; Returns: number }
       get_profiles_minimal: { Args: { _ids: string[] }; Returns: Json }
       handle_report: {
         Args: { _category?: string; _reason: string; _reported: string }

@@ -460,17 +460,16 @@ function Onboarding() {
             <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
 
             {hasPartnerGoal && (
-              <>
+              <div data-field="meetPref" className={fieldCls("meetPref")}>
                 <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-1">
                   {(["men", "women", "everyone"] as const).map((o) => (
                     <button key={o} onClick={() => setMeetPref(o)} className={`chip-paper ${meetPref === o ? "chip-paper-selected" : ""}`}>
                       {o === "men" ? tr("Men", "Hombres", "Hommes") : o === "women" ? tr("Women", "Mujeres", "Femmes") : tr("Everyone", "Todos", "Tout le monde")}
                     </button>
                   ))}
                 </div>
-
-              </>
+              </div>
             )}
 
             {hasPartnerGoal && meetPref === "everyone" && (
@@ -487,11 +486,13 @@ function Onboarding() {
               </div>
             )}
 
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
-            <div className="flex items-center gap-3">
-              <AgeInput value={age_min} onCommit={setAgeMin} />
-              <span>{t("ob.to")}</span>
-              <AgeInput value={age_max} onCommit={setAgeMax} />
+            <div data-field="age_range" className={fieldCls("age_range")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
+              <div className="flex items-center gap-3 mt-1">
+                <AgeInput value={age_min} onCommit={setAgeMin} />
+                <span>{t("ob.to")}</span>
+                <AgeInput value={age_max} onCommit={setAgeMax} />
+              </div>
             </div>
           </>
         )}

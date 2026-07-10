@@ -932,10 +932,13 @@ export const listMyPendingInvites = createServerFn({ method: "POST" })
 const SHORT_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 function makeShortCode(length = 8): string {
-  return Array.from(crypto.randomBytes(length))
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes)
     .map((b) => SHORT_ALPHABET[b % SHORT_ALPHABET.length])
     .join("");
 }
+
 
 // Create a short redirect link for any URL (used for match invites / shares)
 export const createShortLink = createServerFn({ method: "POST" })

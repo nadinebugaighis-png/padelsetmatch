@@ -826,7 +826,7 @@ function Discover() {
                     <div className="relative bg-white p-3 sm:p-3.5 lg:p-3.5 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md">
 
                       {preview.photo_url ? (
-                        <img src={preview.photo_url} alt={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
+                        <img src={preview.photo_url} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
                       ) : (
                         <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] bg-[var(--paper-2)]" />
                       )}

@@ -1684,17 +1684,28 @@ ${qaBlock(theirQA)}`;
     let blurb = "Not enough signal yet — answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
-    type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; padel_analysis?: string; personality_analysis?: string };
+    type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string };
     let subScores: SubScoresShape | null = null;
     const allowedSubKeys = new Set(["padel", "personality", ...extraSubs]);
     try {
       const res = await generateText({ model, prompt, temperature: 0.6 });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
-      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
-      if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
-      if (Array.isArray(parsed.reasons)) {
-        reasons = parsed.reasons.filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
+      const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; headline?: unknown; highlights?: unknown; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
+      const headline = typeof parsed.headline === "string" ? parsed.headline.trim().slice(0, 140) : "";
+      if (headline) blurb = headline;
+      else if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
+      const highlights: string[] = Array.isArray(parsed.highlights)
+        ? (parsed.highlights as unknown[])
+            .filter((r): r is string => typeof r === "string")
+            .map((r) => r.trim().slice(0, 100))
+            .filter((r) => r.length > 0)
+            .slice(0, 3)
+        : [];
+      // Keep legacy `reasons` in sync so anything reading it still has content.
+      if (highlights.length > 0) reasons = highlights;
+      else if (Array.isArray(parsed.reasons)) {
+        reasons = (parsed.reasons as unknown[]).filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
       }
       const watchRaw = typeof parsed.watch_out === "string" ? parsed.watch_out : typeof parsed.friction === "string" ? parsed.friction : "";
       if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
@@ -1708,10 +1719,8 @@ ${qaBlock(theirQA)}`;
           }
         }
       }
-      const padelAnalysis = typeof parsed.padel_analysis === "string" ? parsed.padel_analysis.trim().slice(0, 700) : "";
-      const personalityAnalysis = typeof parsed.personality_analysis === "string" ? parsed.personality_analysis.trim().slice(0, 700) : "";
-      if (Object.keys(cleanSub).length > 0 || padelAnalysis || personalityAnalysis) {
-        subScores = { ...cleanSub, padel_analysis: padelAnalysis, personality_analysis: personalityAnalysis };
+      if (Object.keys(cleanSub).length > 0 || headline || highlights.length > 0) {
+        subScores = { ...cleanSub, headline, highlights };
       }
       // Derive overall score from sub-scores so header % matches the analyses.
       const parts: number[] = [];

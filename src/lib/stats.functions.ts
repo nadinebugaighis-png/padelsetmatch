@@ -8,9 +8,7 @@ export const getPlayerCount = createServerFn({ method: "GET" })
       process.env.SUPABASE_PUBLISHABLE_KEY!,
       { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
     );
-    const { count, error } = await supabase
-      .from("profiles" as never)
-      .select("*", { count: "exact", head: true });
+    const { data, error } = await supabase.rpc("get_player_count" as never);
     if (error) throw new Error(error.message);
-    return { count: count ?? 0 };
+    return { count: (data as unknown as number) ?? 0 };
   });

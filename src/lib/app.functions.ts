@@ -903,8 +903,7 @@ export const getHiddenAndBlocked = createServerFn({ method: "GET" })
     const ids = Array.from(new Set([...hideRows.map((h) => h.hidden_profile_id), ...blockRows.map((b) => b.blocked_profile_id)]));
     let profileMap = new Map<string, { id: string; first_name: string; photo_url: string | null; zone: string | null }>();
     if (ids.length > 0) {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { data: profs } = await supabaseAdmin
+      const { data: profs } = await context.supabase
         .from("profiles" as never)
         .select("id, first_name, photo_url, zone")
         .in("id", ids);

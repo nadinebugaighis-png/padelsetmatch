@@ -784,6 +784,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
   const connsQ = useQuery({ queryKey: ["invitable", eventId], queryFn: () => listConns({ data: { eventId } }) });
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [linkUrl, setLinkUrl] = useState<string | null>(null);
+  const [shortLinkUrl, setShortLinkUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const toggle = (id: string) => {

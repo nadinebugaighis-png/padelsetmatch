@@ -493,6 +493,9 @@ function EventsPage() {
                     onManage={setMyMatchSheet}
                     tr={tr}
                     highlight
+                    compareMode={compareMode}
+                    compareIds={compareIds}
+                    onToggleCompare={toggleCompare}
                   />
                 )}
                 {others.length > 0 && (

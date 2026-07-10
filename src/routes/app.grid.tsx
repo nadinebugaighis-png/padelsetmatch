@@ -336,10 +336,16 @@ function Discover() {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
-      if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
+      if (zoneFilter !== "all" && zoneFilter.trim() && !zoneMatches(c, zoneFilter.trim())) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
-        if (!c.first_name.toLowerCase().includes(q)) return false;
+        const hay = [
+          c.first_name,
+          c.zone ?? "",
+          (c as any).nationality ?? "",
+          ...((c.locations ?? []) as string[]),
+        ].join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
       }
       return true;
     });
@@ -498,28 +504,26 @@ function Discover() {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">{tr("Barrio / zone", "Barrio / zona", "Quartier / zone")}</label>
-              <select
-                value={zoneFilter}
-                onChange={(e) => setZoneFilter(e.target.value)}
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-1.5 font-semibold">{tr("City / barrio / zone", "Ciudad / barrio / zona", "Ville / quartier / zone")}</label>
+              <input
+                type="text"
+                list="zone-suggestions"
+                value={zoneFilter === "all" ? "" : zoneFilter}
+                onChange={(e) => setZoneFilter(e.target.value.trim() ? e.target.value : "all")}
+                placeholder={tr("Any city or zone (e.g. Dubai, Madrid, Chamberí)", "Cualquier ciudad o zona (p. ej. Dubái, Madrid, Chamberí)", "N'importe quelle ville ou zone (ex. Dubaï, Madrid, Chamberí)")}
                 className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
-              >
-                <option value="all">{tr("Any zone", "Cualquier zona", "Toutes les zones")}</option>
-                {zonesInFeed.length > 0 && (
-                <optgroup label={tr("From players in your Home grid", "De jugadores en tu Inicio", "Depuis les joueurs de ton accueil")}>
-                    {zonesInFeed.map((z) => (
-                      <option key={`feed-${z}`} value={z}>{z}</option>
-                    ))}
-                  </optgroup>
-                )}
-                <optgroup label={tr("All Madrid zones", "Todas las zonas de Madrid", "Toutes les zones de Madrid")}>
-                  {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
-                    <option key={`all-${z}`} value={z}>{z}</option>
-                  ))}
-                </optgroup>
-              </select>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">{tr("Matches on players' city, barrio or listed areas.", "Coincide con la ciudad, el barrio o las zonas indicadas por los jugadores.", "Correspond à la ville, au quartier ou aux zones indiquées par les joueurs.")}</p>
+              />
+              <datalist id="zone-suggestions">
+                {zonesInFeed.map((z) => (
+                  <option key={`feed-${z}`} value={z} />
+                ))}
+                {MADRID_ZONES.filter((z) => !zonesInFeed.includes(z)).map((z) => (
+                  <option key={`all-${z}`} value={z} />
+                ))}
+              </datalist>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">{tr("Type any city, barrio or area. Matches players' city, barrio or listed areas.", "Escribe cualquier ciudad, barrio o zona. Coincide con la ciudad, el barrio o las zonas indicadas.", "Tape n'importe quelle ville, quartier ou zone. Correspond à la ville, au quartier ou aux zones indiquées.")}</p>
             </div>
+
             {activeFilterCount > 0 && (
               <button
                 type="button"

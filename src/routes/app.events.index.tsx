@@ -14,7 +14,7 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
+import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, Check, GitCompare } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";

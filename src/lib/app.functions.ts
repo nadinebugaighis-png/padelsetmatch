@@ -1616,7 +1616,15 @@ ${qaBlock(theirQA)}`;
     }
 
     const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores, model_version: versionKey };
-    await supabaseAdmin.from("compatibility_scores" as never).upsert(insertRow as never, { onConflict: "profile_a,profile_b" } as never);
+    await context.supabase.rpc("upsert_compat_score" as never, {
+      _other: other.id,
+      _score: score,
+      _blurb: blurb,
+      _reasons: reasons,
+      _friction: friction,
+      _sub: subScores,
+      _version: versionKey,
+    } as never);
     return { ...insertRow, created_at: new Date().toISOString() };
   });
 

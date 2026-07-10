@@ -803,17 +803,9 @@ export const deleteMessage = createServerFn({ method: "POST" })
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: me } = await context.supabase
-      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
-    const myId = (me as { id: string } | null)?.id;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    if (myId) {
-      await supabaseAdmin.from("messages" as never).delete().eq("sender_profile_id", myId);
-      await supabaseAdmin.from("likes" as never).delete().or(`liker_profile_id.eq.${myId},liked_profile_id.eq.${myId}`);
-      await supabaseAdmin.from("matches" as never).delete().or(`profile_a.eq.${myId},profile_b.eq.${myId}`);
-      await supabaseAdmin.from("profiles" as never).delete().eq("id", myId);
-    }
-    await supabaseAdmin.auth.admin.deleteUser(context.userId);
+    const { error } = await context.supabase.rpc("delete_my_account_data" as never, {} as never);
+    if (error) throw new Error(error.message);
+    // Note: auth.users row remains; users can sign out. Admin cleanup handled separately.
     return { ok: true };
   });
 
@@ -825,12 +817,7 @@ export const blockProfile = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("No profile");
-    // Remove any likes and matches between the two
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("likes" as never).delete()
-      .or(`and(liker_profile_id.eq.${myId},liked_profile_id.eq.${data.blockedProfileId}),and(liker_profile_id.eq.${data.blockedProfileId},liked_profile_id.eq.${myId})`);
-    await supabaseAdmin.from("matches" as never).delete()
-      .or(`and(profile_a.eq.${myId},profile_b.eq.${data.blockedProfileId}),and(profile_a.eq.${data.blockedProfileId},profile_b.eq.${myId})`);
+    await context.supabase.rpc("cleanup_relationship_with" as never, { _other: data.blockedProfileId } as never);
     const { error } = await context.supabase
       .from("blocks" as never)
       .insert({ blocker_profile_id: myId, blocked_profile_id: data.blockedProfileId } as never);

@@ -151,27 +151,6 @@ function EventDetail() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [msgsQ.data]);
 
-  // Create a short link for the share sheet so the WhatsApp preview and link stay compact
-  useEffect(() => {
-    if (!shareOpen) {
-      setShortShareUrl(null);
-      return;
-    }
-    let cancelled = false;
-    setShortShareBusy(true);
-    shorten({ data: { targetUrl: shareUrl } })
-      .then((r) => {
-        if (!cancelled) setShortShareUrl(`${shareOrigin()}${r.shortUrl}`);
-      })
-      .catch(() => {
-        if (!cancelled) setShortShareUrl(shareUrl);
-      })
-      .finally(() => {
-        if (!cancelled) setShortShareBusy(false);
-      });
-    return () => { cancelled = true; };
-  }, [shareOpen, shareUrl, shorten]);
-
   if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--ink)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;

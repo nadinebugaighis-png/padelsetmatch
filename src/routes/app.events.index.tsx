@@ -582,6 +582,9 @@ function FeedSection({
   onManage,
   tr,
   highlight,
+  compareMode,
+  compareIds,
+  onToggleCompare,
 }: {
   title: string;
   subtitle?: string;
@@ -593,6 +596,9 @@ function FeedSection({
   onManage: (e: EventLite) => void;
   tr: ReturnType<typeof useTr>;
   highlight?: boolean;
+  compareMode?: boolean;
+  compareIds?: string[];
+  onToggleCompare?: (id: string) => void;
 }) {
   return (
     <section>
@@ -610,6 +616,9 @@ function FeedSection({
               onManage={onManage}
               tr={tr}
               highlight={highlight}
+              compareMode={compareMode}
+              compareSelected={!!compareIds?.includes(e.id)}
+              onToggleCompare={onToggleCompare}
             />
           </li>
         ))}

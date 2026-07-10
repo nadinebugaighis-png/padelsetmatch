@@ -51,11 +51,14 @@ function audienceAcceptsGender(audience: string[], gender: string): boolean {
 // Returns the list of shared intents between two profiles.
 // Falls back to legacy looking_for so users who haven't re-saved still match.
 function deriveIntents(p: { intents?: string[] | null; looking_for?: string | null }): string[] {
-  if (p.intents && p.intents.length > 0) return p.intents;
+  if (p.intents && p.intents.length > 0) {
+    const cleaned = p.intents.filter((i) => i !== "relationship");
+    if (cleaned.length > 0) return cleaned;
+  }
   switch (p.looking_for) {
-    case "partner": return ["relationship", "padel"];
-    case "friend": return ["friend", "padel"];
-    case "both": return ["relationship", "friend", "padel"];
+    case "friend":
+    case "both":
+      return ["friend", "padel"];
     default: return ["padel"];
   }
 }

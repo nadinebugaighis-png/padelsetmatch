@@ -928,3 +928,35 @@ export const listMyPendingInvites = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false });
     return { invites: data ?? [] };
   });
+
+const SHORT_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+function makeShortCode(length = 8): string {
+  return Array.from(crypto.randomBytes(length))
+    .map((b) => SHORT_ALPHABET[b % SHORT_ALPHABET.length])
+    .join("");
+}
+
+// Create a short redirect link for any URL (used for match invites / shares)
+export const createShortLink = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { targetUrl: string }) => z.object({ targetUrl: z.string().url() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    let code = makeShortCode();
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const { data: row, error } = await supabase
+        .from("short_links")
+        .insert({ code, target_url: data.targetUrl })
+        .select("code")
+        .single();
+      if (row) return { code: row.code, shortUrl: `/s/${row.code}` };
+      if (error?.code === "23505") {
+        code = makeShortCode();
+        continue;
+      }
+      if (error) throw new Error(error.message);
+    }
+    throw new Error("Could not create short link");
+  });
+

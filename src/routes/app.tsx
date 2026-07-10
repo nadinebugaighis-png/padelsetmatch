@@ -231,6 +231,8 @@ function AuthShell() {
 
       <Outlet />
 
+      {hasProfile && !onOnboarding && <SmartInstallPrompt />}
+
       {hasProfile && !onOnboarding && (
         <nav
           className="fixed left-0 right-0 programme-nav z-40"

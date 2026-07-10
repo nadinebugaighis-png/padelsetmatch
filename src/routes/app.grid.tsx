@@ -465,7 +465,137 @@ function Discover() {
         )}
 
         {list.length === 0 ? (
-          <p className="mt-10 text-center text-[var(--ink)]/60 text-sm italic">{t("disc.empty")}</p>
+          (() => {
+            // Smart empty state — infer WHY the grid is empty and offer a fix.
+            const totalInFeed = all.length;
+            const hasSearch = !!searchQuery.trim();
+            const hasSideFilters = activeFilterCount > 0;
+            const intentBlocked = filter !== "all" && !viewerHasIntent;
+            const intentEmpty =
+              filter !== "all" &&
+              viewerHasIntent &&
+              all.filter((c) =>
+                deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter),
+              ).length === 0;
+
+            let title = tr("No one matches yet", "Aún no hay coincidencias", "Personne ne correspond pour l'instant");
+            let hint = tr(
+              "Try widening your filters or invite a friend to join.",
+              "Prueba ampliando los filtros o invita a un amigo a unirse.",
+              "Élargis tes filtres ou invite un ami à rejoindre.",
+            );
+            const actions: Array<{ label: string; onClick: () => void; primary?: boolean }> = [];
+
+            if (hasSearch) {
+              title = tr("No player by that name", "Ningún jugador con ese nombre", "Aucun joueur à ce nom");
+              hint = tr("Clear the search to see everyone again.", "Borra la búsqueda para ver a todos de nuevo.", "Efface la recherche pour revoir tout le monde.");
+              actions.push({
+                label: tr("Clear search", "Borrar búsqueda", "Effacer la recherche"),
+                onClick: () => setSearchQuery(""),
+                primary: true,
+              });
+            } else if (intentBlocked) {
+              title = tr("Opt in to see this circle", "Activa este círculo para verlo", "Active ce cercle pour le voir");
+              hint = tr(
+                "This tab only shows people once you also opt into it in your profile — it's how we keep things intentional and private.",
+                "Esta pestaña sólo muestra personas si tú también lo activas en tu perfil — así mantenemos todo intencional y privado.",
+                "Cet onglet n'affiche des personnes que si tu l'actives aussi dans ton profil — c'est notre façon de garder tout intentionnel et privé.",
+              );
+              actions.push({
+                label: tr("Edit your profile", "Editar tu perfil", "Modifier ton profil"),
+                onClick: () => navigate({ to: "/app/profile" }),
+                primary: true,
+              });
+              actions.push({
+                label: tr("Show everyone", "Ver a todos", "Voir tout le monde"),
+                onClick: () => setFilter("all"),
+              });
+            } else if (intentEmpty) {
+              title = tr("No one in this circle yet", "Aún no hay nadie en este círculo", "Personne dans ce cercle pour l'instant");
+              hint = tr(
+                "Nobody nearby has opted into this yet. Widen your reach or check back soon.",
+                "Nadie cerca lo ha activado todavía. Amplía tu alcance o vuelve pronto.",
+                "Personne près de toi ne l'a activé pour l'instant. Élargis ta portée ou reviens bientôt.",
+              );
+              actions.push({
+                label: tr("Show everyone", "Ver a todos", "Voir tout le monde"),
+                onClick: () => setFilter("all"),
+                primary: true,
+              });
+              if (!world) {
+                actions.push({
+                  label: tr("Turn on World mode", "Activar modo Mundo", "Activer le mode Monde"),
+                  onClick: () => { setWorld(true); setWorldM.mutate(true); },
+                });
+              }
+            } else if (hasSideFilters) {
+              title = tr("No matches with these filters", "Sin resultados con estos filtros", "Aucun résultat avec ces filtres");
+              hint = tr(
+                "Loosen level or zone to see more players.",
+                "Relaja el nivel o la zona para ver más jugadores.",
+                "Assouplis le niveau ou la zone pour voir plus de joueurs.",
+              );
+              actions.push({
+                label: tr("Clear filters", "Borrar filtros", "Effacer les filtres"),
+                onClick: () => { setLevelFilter("all"); setZoneFilter("all"); },
+                primary: true,
+              });
+            } else if (totalInFeed === 0 && !world) {
+              title = tr("Nobody in your zone yet", "Aún nadie en tu zona", "Personne dans ta zone pour l'instant");
+              hint = tr(
+                "Turn on World mode to see players everywhere, or invite friends from your club.",
+                "Activa el modo Mundo para ver jugadores en todas partes, o invita a amigos de tu club.",
+                "Active le mode Monde pour voir des joueurs partout, ou invite des amis de ton club.",
+              );
+              actions.push({
+                label: tr("Turn on World mode", "Activar modo Mundo", "Activer le mode Monde"),
+                onClick: () => { setWorld(true); setWorldM.mutate(true); },
+                primary: true,
+              });
+            } else {
+              // World is on OR feed has people but everything filtered — offer invite.
+              actions.push({
+                label: tr("Invite a friend", "Invitar a un amigo", "Inviter un ami"),
+                onClick: () => {
+                  const url = typeof window !== "undefined" ? window.location.origin : "";
+                  const text = tr(
+                    `Join me on PadelMatch — social padel by zone. ${url}`,
+                    `Únete a mí en PadelMatch — pádel social por zona. ${url}`,
+                    `Rejoins-moi sur PadelMatch — padel social par zone. ${url}`,
+                  );
+                  const nav2 = (navigator as unknown as { share?: (d: { text: string }) => Promise<void> });
+                  if (nav2.share) nav2.share({ text }).catch(() => {});
+                  else navigator.clipboard?.writeText(text).then(() => toast.success(tr("Invite copied", "Invitación copiada", "Invitation copiée")));
+                },
+                primary: true,
+              });
+            }
+
+            return (
+              <div className="mt-10 mx-auto max-w-sm text-center programme-card p-6">
+                <div className="text-serif text-lg text-[var(--ink)]">{title}</div>
+                <p className="text-sm text-[var(--ink)]/70 mt-2 leading-snug">{hint}</p>
+                {actions.length > 0 && (
+                  <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+                    {actions.map((a, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={a.onClick}
+                        className={`rounded-full px-4 py-2 text-[12px] font-semibold uppercase tracking-widest transition ${
+                          a.primary
+                            ? "bg-[var(--ink)] text-[var(--paper)] hover:opacity-90"
+                            : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                        }`}
+                      >
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
             {list.map((c) => {

@@ -779,7 +779,7 @@ type InvitePanelProps = {
   tr: (en: string, es: string, fr?: string) => string;
 };
 
-function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, revokeInvite, invites, tr }: InvitePanelProps) {
+function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, shorten, revokeInvite, invites, tr }: InvitePanelProps) {
   const qc = useQueryClient();
   const connsQ = useQuery({ queryKey: ["invitable", eventId], queryFn: () => listConns({ data: { eventId } }) });
   const [selected, setSelected] = useState<Set<string>>(new Set());

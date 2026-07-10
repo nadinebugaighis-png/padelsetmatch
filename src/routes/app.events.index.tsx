@@ -139,6 +139,7 @@ function EventsPage() {
     if (hostName.toLowerCase().includes(searchLower)) return true;
     if (e.club_name?.toLowerCase().includes(searchLower)) return true;
     if (e.city?.toLowerCase().includes(searchLower)) return true;
+    if (e.club_address?.toLowerCase().includes(searchLower)) return true;
     return e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower)) ?? false;
   }
   function eventMatchesTime(iso: string) {
@@ -342,7 +343,7 @@ function EventsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={tr("Search club, city, name…", "Buscar club, ciudad, nombre…", "Rechercher club, ville, nom…")}
+            placeholder={tr("Search club, address, city, name…", "Buscar club, dirección, ciudad, nombre…", "Rechercher club, adresse, ville, nom…")}
             className="w-full rounded-full bg-[var(--ink)]/[0.04] border border-[var(--ink)]/15 pl-9 pr-9 py-2.5 text-sm text-[var(--ink)] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 focus:ring-1 focus:ring-[var(--ink)]/10"
           />
           {search && (

@@ -19,8 +19,7 @@ export const saveMyPushSubscription = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: profile } = await context.supabase.from("profiles").select("id").eq("user_id", context.userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin
+    await context.supabase
       .from("push_subscriptions")
       .upsert(
         {
@@ -40,8 +39,7 @@ export const removeMyPushSubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({ endpoint: z.string().url() }).parse(data))
   .handler(async ({ data, context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("push_subscriptions").delete().eq("endpoint", data.endpoint);
+    await context.supabase.from("push_subscriptions").delete().eq("endpoint", data.endpoint);
     return { ok: true };
   });
 

@@ -565,7 +565,7 @@ function Discover() {
                       const s = sharedVenuesQ.data?.[c.id];
                       if (!s || s.count === 0) return null;
                       const first = s.names?.[0];
-                      const label = first
+                      const chip = first
                         ? first
                         : s.count === 1
                           ? tr("Shared venue", "Lugar en común", "Lieu en commun")
@@ -576,7 +576,7 @@ function Discover() {
                           title={s.names?.length ? s.names.join(" · ") : tr("You share a venue", "Compartís un lugar", "Vous partagez un lieu")}
                         >
                           <MapPin className="w-2.5 h-2.5 shrink-0" />
-                          <span className="truncate">{label}</span>
+                          <span className="truncate">{chip}</span>
                         </div>
                       );
                     })()}

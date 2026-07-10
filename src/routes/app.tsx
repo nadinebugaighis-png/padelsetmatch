@@ -13,6 +13,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
 import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
+import { SmartInstallPrompt } from "@/components/SmartInstallPrompt";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -229,6 +230,8 @@ function AuthShell() {
       )}
 
       <Outlet />
+
+      {hasProfile && !onOnboarding && <SmartInstallPrompt />}
 
       {hasProfile && !onOnboarding && (
         <nav

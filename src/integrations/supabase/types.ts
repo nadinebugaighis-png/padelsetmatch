@@ -265,6 +265,42 @@ export type Database = {
           },
         ]
       }
+      favorites: {
+        Row: {
+          created_at: string
+          favorite_profile_id: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          favorite_profile_id: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string
+          favorite_profile_id?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_favorite_profile_id_fkey"
+            columns: ["favorite_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback: {
         Row: {
           created_at: string
@@ -861,6 +897,7 @@ export type Database = {
         Row: {
           coach_requests: boolean
           connect_activity: boolean
+          favorite_activity: boolean
           match_participants: boolean
           matches: boolean
           messages: boolean
@@ -870,6 +907,7 @@ export type Database = {
         Insert: {
           coach_requests?: boolean
           connect_activity?: boolean
+          favorite_activity?: boolean
           match_participants?: boolean
           matches?: boolean
           messages?: boolean
@@ -879,6 +917,7 @@ export type Database = {
         Update: {
           coach_requests?: boolean
           connect_activity?: boolean
+          favorite_activity?: boolean
           match_participants?: boolean
           matches?: boolean
           messages?: boolean
@@ -1407,6 +1446,7 @@ export type Database = {
         Returns: boolean
       }
       is_current_user_admin: { Args: never; Returns: boolean }
+      list_my_favorite_ids: { Args: never; Returns: string[] }
       my_profile_id: { Args: never; Returns: string }
       open_coach_chat: {
         Args: { _acting_user_id: string; _coach_profile_id: string }

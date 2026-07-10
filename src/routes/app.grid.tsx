@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-r
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
+import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
@@ -145,6 +146,26 @@ function Discover() {
       else toast.success("Thanks — we'll adjust");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
+  });
+
+  const listFavs = useServerFn(listMyFavorites);
+  const favsQ = useQuery({ queryKey: ["favorites"], queryFn: () => listFavs(), enabled: !!feedQ.data?.me, staleTime: 60_000 });
+  const favSet = new Set(favsQ.data?.ids ?? []);
+  const toggleFav = useServerFn(toggleFavorite);
+  const toggleFavM = useMutation({
+    mutationFn: (id: string) => toggleFav({ data: { favoriteProfileId: id } }),
+    onMutate: async (id) => {
+      await qc.cancelQueries({ queryKey: ["favorites"] });
+      const prev = qc.getQueryData<{ ids: string[] }>(["favorites"]);
+      const ids = new Set(prev?.ids ?? []);
+      const wasFav = ids.has(id);
+      if (wasFav) ids.delete(id); else ids.add(id);
+      qc.setQueryData(["favorites"], { ids: Array.from(ids) });
+      return { prev, wasFav };
+    },
+    onError: (_e, _id, ctx) => { if (ctx?.prev) qc.setQueryData(["favorites"], ctx.prev); toast.error("Couldn't update favorite"); },
+    onSuccess: (r) => { toast.success(r.favorited ? tr("Added to favorites — you'll be notified when they play", "Añadido a favoritos — te avisaremos cuando jueguen", "Ajouté aux favoris — on te préviendra") : tr("Removed from favorites", "Quitado de favoritos", "Retiré des favoris")); },
+    onSettled: () => qc.invalidateQueries({ queryKey: ["favorites"] }),
   });
 
 
@@ -898,18 +919,31 @@ function Discover() {
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
                       )}
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                          if (!preview.liked) likeM.mutate(preview.id);
-                        }}
-                        disabled={likeM.isPending && !match}
-                        className="w-full h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                        {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
-                      </button>
+                      <div className="flex items-stretch gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                            if (!preview.liked) likeM.mutate(preview.id);
+                          }}
+                          disabled={likeM.isPending && !match}
+                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleFavM.mutate(preview.id)}
+                          disabled={toggleFavM.isPending}
+                          aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
+                          title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
+                          className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--lime,#d7ff3a)] border-[var(--ink)] text-[var(--ink)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--ink)]/60"}`}
+                        >
+                          <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
+                        </button>
+                      </div>
+
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">

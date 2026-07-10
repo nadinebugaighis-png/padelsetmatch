@@ -638,6 +638,9 @@ function MatchCard({
   onManage,
   tr,
   highlight,
+  compareMode,
+  compareSelected,
+  onToggleCompare,
 }: {
   e: EventLite;
   locale: string | undefined;
@@ -647,6 +650,9 @@ function MatchCard({
   onManage: (e: EventLite) => void;
   tr: ReturnType<typeof useTr>;
   highlight?: boolean;
+  compareMode?: boolean;
+  compareSelected?: boolean;
+  onToggleCompare?: (id: string) => void;
 }) {
   const isPending = pending === e.id;
   const start = new Date(e.starts_at);

@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
+import { AlertsButton } from "@/components/AlertsSheet";
 
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
@@ -70,7 +70,15 @@ function Discover() {
   const report = useServerFn(reportProfile);
   const reportPhotoFn = useServerFn(reportPhoto);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
-  const [world, setWorld] = useState(false);
+  const [world, setWorld] = useState<boolean>(false);
+  // Hydrate world preference from localStorage AFTER mount to avoid SSR mismatch,
+  // then keep it in sync with the server value once the feed loads. This removes
+  // the initial "empty state → cards" flicker for users who have world mode on.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const cached = window.localStorage.getItem("world-mode");
+    if (cached === "true") setWorld(true);
+  }, []);
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
@@ -82,7 +90,7 @@ function Discover() {
 
 
 
-  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }), staleTime: 60_000 });
+  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }), staleTime: 60_000, placeholderData: keepPreviousData });
   const getAnswers = useServerFn(getMyQaAnswers);
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me, staleTime: 5 * 60_000 });
   const getMatches = useServerFn(getMyMatches);
@@ -177,6 +185,9 @@ function Discover() {
   useEffect(() => {
     if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {
       setWorld(feedQ.data.me.world_mode);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("world-mode", feedQ.data.me.world_mode ? "true" : "false");
+      }
     }
   }, [feedQ.data?.me?.world_mode]);
 

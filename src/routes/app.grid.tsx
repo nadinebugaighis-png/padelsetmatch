@@ -201,7 +201,7 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
   const hideM = useMutation({
-    mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
+    mutationFn: (vars: { id: string; category: "padel" | "friend" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       toast(tr("Hidden from your Home grid — manage in Profile → Hidden & blocked", "Oculto en tu Inicio — puedes gestionarlo en Perfil → Ocultos y bloqueados", "Masqué de ton accueil — gère-le dans Profil → Masqués et bloqués"), { duration: 2400 });

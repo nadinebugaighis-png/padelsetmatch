@@ -772,6 +772,7 @@ type InvitePanelProps = {
   listConns: (a: { data: { eventId: string } }) => Promise<{ people: Array<{ id: string; first_name: string | null; photo_url: string | null; level: string | null; gender: string | null; invited: boolean; joined: boolean }> }>;
   invitePeople: (a: { data: { eventId: string; profileIds: string[] } }) => Promise<{ invited: number }>;
   createLink: (a: { data: { eventId: string } }) => Promise<{ token: string; id: string }>;
+  shorten: (a: { data: { targetUrl: string } }) => Promise<{ code: string; shortUrl: string }>;
   revokeInvite: (a: { data: { inviteId: string } }) => Promise<{ ok: boolean }>;
   invites: Array<{ id: string; invitee_profile_id: string | null; token: string | null; status: string; invitee?: { first_name?: string | null } | null }>;
   tr: (en: string, es: string, fr?: string) => string;

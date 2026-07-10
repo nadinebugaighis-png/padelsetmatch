@@ -330,6 +330,71 @@ function Discover() {
         <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[32px] sm:text-[38px] lg:text-[44px] xl:text-[52px]">{t("disc.h1")}</h1>
         <p className="text-serif italic text-[var(--ink)]/70 mt-2 leading-[1.15] text-[20px] sm:text-[22px] lg:text-[24px] xl:text-[26px]">{t("disc.sub")}</p>
 
+        {(() => {
+          const me = feedQ.data.me as unknown as {
+            photo_url?: string | null;
+            availability?: string[] | null;
+            intents?: string[] | null;
+            looking_for?: string | null;
+          } | null;
+          if (!me) return null;
+          const hasPhoto = !!me.photo_url;
+          const hasVenues = (myVenuesQ.data?.length ?? 0) > 0;
+          const hasAvailability = (me.availability?.length ?? 0) > 0;
+          const hasQA = (qaQ.data?.length ?? 0) >= 3;
+          const hasIntent = ((me.intents ?? []) as string[]).length > 0 || !!me.looking_for;
+          const steps = [
+            { done: hasPhoto, key: "photo", label: tr("Add a clear photo", "Añade una foto clara", "Ajoute une photo nette") },
+            { done: hasIntent, key: "intent", label: tr("Pick what you're here for", "Elige qué buscas aquí", "Choisis ce que tu cherches") },
+            { done: hasAvailability, key: "availability", label: tr("Set your availability", "Indica tu disponibilidad", "Indique ta disponibilité") },
+            { done: hasVenues, key: "venues", label: tr("Add a club or compound", "Añade un club o urbanización", "Ajoute un club ou une résidence") },
+            { done: hasQA, key: "qa", label: tr("Answer 3+ questions", "Responde 3+ preguntas", "Réponds à 3+ questions") },
+          ];
+          const done = steps.filter((s) => s.done).length;
+          const total = steps.length;
+          if (done === total) return null;
+          const next = steps.find((s) => !s.done)!;
+          const pct = (done / total) * 100;
+          const r = 14;
+          const c = 2 * Math.PI * r;
+          const dash = (pct / 100) * c;
+          return (
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/app/profile" })}
+              className="mt-4 w-full rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] hover:bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3 text-left transition"
+              aria-label={tr("Complete your profile", "Completa tu perfil", "Complète ton profil")}
+            >
+              <div className="relative shrink-0 w-9 h-9">
+                <svg width="36" height="36" viewBox="0 0 36 36" className="-rotate-90">
+                  <circle cx="18" cy="18" r={r} fill="none" stroke="currentColor" className="text-[var(--ink)]/10" strokeWidth="3" />
+                  <circle
+                    cx="18" cy="18" r={r} fill="none"
+                    stroke="currentColor"
+                    className="text-[var(--plum)]"
+                    strokeWidth="3"
+                    strokeDasharray={`${dash} ${c}`}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-[var(--ink)]">
+                  {done}/{total}
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[12px] font-semibold uppercase tracking-widest text-[var(--ink)]/60">
+                  {tr("Profile", "Perfil", "Profil")}
+                </div>
+                <div className="text-[13px] text-[var(--ink)] truncate">
+                  {tr("Next:", "Siguiente:", "Ensuite :")} {next.label}
+                </div>
+              </div>
+              <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[var(--plum)]">→</span>
+            </button>
+          );
+        })()}
+
+
         <div className="mt-5 lg:mt-6 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 lg:p-4 flex items-start gap-3">
           <div className="shrink-0 w-7 h-7 rounded-full bg-white text-[var(--ink)] flex items-center justify-center text-[13px] font-bold border border-[var(--ink)]/20">87</div>
           <p className="text-[13px] lg:text-[14px] leading-snug text-[var(--ink)]/75">

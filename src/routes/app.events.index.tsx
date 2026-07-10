@@ -519,6 +519,9 @@ function EventsPage() {
                     onJoin={instantJoin}
                     onManage={setMyMatchSheet}
                     tr={tr}
+                    compareMode={compareMode}
+                    compareIds={compareIds}
+                    onToggleCompare={toggleCompare}
                   />
                 )}
               </div>

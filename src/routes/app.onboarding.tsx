@@ -324,36 +324,49 @@ function Onboarding() {
 
   useEffect(() => setShowStepHelp(false), [step]);
 
-  const missingByStep = [
-    [
-      !first_name.trim() ? tr("first name", "nombre", "prénom") : null,
-      age === null || age < 18 ? tr("age", "edad", "âge") : null,
-      !gender ? tr("gender", "género", "genre") : null,
-      goals.length === 0 ? tr("what you are looking for", "qué estás buscando", "ce que tu cherches") : null,
-    ],
-    [
-      hasPartnerGoal && !meetPref ? tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") : null,
-      age_min === null || age_max === null ? tr("age range", "rango de edad", "tranche d'âge") : null,
-      age_min !== null && age_max !== null && age_min > age_max ? tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") : null,
-    ],
-    [
-      validBlocks.length === 0 ? tr("where you play", "dónde juegas", "où tu joues") : null,
-      !nationality ? tr("nationality", "nacionalidad", "nationalité") : null,
-      languages.length === 0 ? tr("languages", "idiomas", "langues") : null,
-      !level ? tr("padel level", "nivel de pádel", "niveau de padel") : null,
-      !courtSide ? tr("preferred court side", "lado de pista preferido", "côté de piste préféré") : null,
-    ],
-    [priorities.length < 3 ? tr("at least 3 values", "al menos 3 valores", "au moins 3 valeurs") : null],
+  const missingByStepDetailed: Array<Array<{ key: string; label: string }>> = [
+    ([
+      !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
+      age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
+      !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
+      goals.length === 0 ? { key: "goals", label: tr("what you are looking for", "qué estás buscando", "ce que tu cherches") } : null,
+    ].filter(Boolean) as Array<{ key: string; label: string }>),
+    ([
+      hasPartnerGoal && !meetPref ? { key: "meetPref", label: tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") } : null,
+      age_min === null || age_max === null ? { key: "age_range", label: tr("age range", "rango de edad", "tranche d'âge") } : null,
+      age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
+    ].filter(Boolean) as Array<{ key: string; label: string }>),
+    ([
+      validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
+      !nationality ? { key: "nationality", label: tr("nationality", "nacionalidad", "nationalité") } : null,
+      languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
+      !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
+      !courtSide ? { key: "court_side", label: tr("preferred court side", "lado de pista preferido", "côté de piste préféré") } : null,
+    ].filter(Boolean) as Array<{ key: string; label: string }>),
+    (priorities.length < 3 ? [{ key: "priorities", label: tr("at least 3 values", "al menos 3 valores", "au moins 3 valeurs") }] : []),
     [],
-  ].map((items) => items.filter(Boolean) as string[]);
+  ];
 
+  const missingByStep = missingByStepDetailed.map((arr) => arr.map((x) => x.label));
   const canStep = missingByStep.map((items) => items.length === 0);
 
+  const missingKeysThisStep = new Set(
+    showStepHelp ? (missingByStepDetailed[step] ?? []).map((x) => x.key) : []
+  );
+  const fieldCls = (key: string) =>
+    missingKeysThisStep.has(key)
+      ? "scroll-mt-24 rounded-2xl -mx-2 px-2 py-2 ring-2 ring-[var(--clay)] bg-[var(--clay)]/5 transition-colors"
+      : "";
+
   const goNext = () => {
-    const missing = missingByStep[step] ?? [];
+    const missing = missingByStepDetailed[step] ?? [];
     if (missing.length > 0) {
       setShowStepHelp(true);
-      toast.error(`${tr("Please complete", "Falta por completar", "À compléter")} ${missing.join(", ")}.`);
+      toast.error(`${tr("Please complete", "Falta por completar", "À compléter")} ${missing.map((x) => x.label).join(", ")}.`);
+      setTimeout(() => {
+        const el = document.querySelector<HTMLElement>(`[data-field="${missing[0].key}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
       return;
     }
     setStep(step + 1);

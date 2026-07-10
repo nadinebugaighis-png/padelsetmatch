@@ -551,19 +551,55 @@ function EventsPage() {
           />
         )}
 
-        {/* Sticky Start-a-match pill */}
+        {/* Sticky bottom action */}
         <div className="fixed left-0 right-0 bottom-20 px-5 z-30 pointer-events-none">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pointer-events-auto flex justify-center">
-            <button
-              type="button"
-              onClick={() => navigate({ to: "/app/events/new" })}
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--plum)] text-white text-xs uppercase tracking-widest font-bold px-5 py-3 shadow-lg hover:brightness-110 transition"
-            >
-              <Plus className="w-4 h-4" />
-              {tr("Start a match", "Convocar partido", "Lancer un match")}
-            </button>
+            {compareMode ? (
+              <div className="inline-flex items-center gap-2 rounded-full bg-[var(--ink)] text-[var(--paper)] pl-4 pr-2 py-2 shadow-lg">
+                <GitCompare className="w-4 h-4" />
+                <span className="text-[11px] uppercase tracking-widest font-bold">
+                  {compareIds.length}/2 {tr("selected", "seleccionados", "sélectionnés")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCompareOpen(true)}
+                  disabled={compareIds.length < 2}
+                  className="rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold px-4 py-2 disabled:opacity-40"
+                >
+                  {tr("Compare", "Comparar", "Comparer")}
+                </button>
+                <button
+                  type="button"
+                  onClick={exitCompare}
+                  className="rounded-full w-9 h-9 grid place-items-center bg-white/10 text-[var(--paper)] hover:bg-white/20"
+                  aria-label={tr("Exit compare", "Salir de comparar", "Quitter la comparaison")}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/app/events/new" })}
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--plum)] text-white text-xs uppercase tracking-widest font-bold px-5 py-3 shadow-lg hover:brightness-110 transition"
+              >
+                <Plus className="w-4 h-4" />
+                {tr("Start a match", "Convocar partido", "Lancer un match")}
+              </button>
+            )}
           </div>
         </div>
+
+        {compareOpen && compareEvents.length === 2 && (
+          <CompareSheet
+            a={compareEvents[0]}
+            b={compareEvents[1]}
+            locale={locale}
+            tr={tr}
+            onClose={() => setCompareOpen(false)}
+            onOpen={(id) => { setCompareOpen(false); navigate({ to: "/app/events/$eventId", params: { eventId: id } }); }}
+          />
+        )}
       </div>
     </div>
   );

@@ -227,60 +227,82 @@ function ProfilePage() {
         <MessagesRow />
       </div>
 
-      <div className="mt-3 sm:mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2">
-        <div className="space-y-3 sm:space-y-4">
-          {/* Details — dense grid, one card, inline labels */}
-          {hasDetails && (
-            <div className="programme-card p-4 sm:p-5">
-              <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-                {locations.length > 0 && (
-                  <Section title={t("prof.playsIn")}>
-                    <div className="flex flex-wrap gap-1.5">
-                      {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
-                    </div>
-                  </Section>
-                )}
+      <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+        <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-                {p.languages?.length > 0 && (
-                  <Section title={t("prof.languages")}>
-                    <div className="flex flex-wrap gap-1.5">
-                      {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
-                    </div>
-                  </Section>
-                )}
-
-              </div>
-
-
-              {p.free_court_access && (
-                <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
-                      {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
-                    </span>
-                    {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
+        {hasDetails && (
+          <CollapsibleRow
+            icon={<MapPin className="w-4 h-4" />}
+            title={tr("Where & languages", "Dónde y idiomas", "Où et langues")}
+            subtitle={[
+              locations[0],
+              (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
+            ].filter(Boolean).join(" · ") || undefined}
+          >
+            <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+              {locations.length > 0 && (
+                <Section title={t("prof.playsIn")}>
+                  <div className="flex flex-wrap gap-1.5">
+                    {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
                   </div>
-
-                </div>
+                </Section>
+              )}
+              {p.languages?.length > 0 && (
+                <Section title={t("prof.languages")}>
+                  <div className="flex flex-wrap gap-1.5">
+                    {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
+                  </div>
+                </Section>
               )}
             </div>
-          )}
+            {p.free_court_access && (
+              <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                    {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
+                  </span>
+                  {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
+                </div>
+              </div>
+            )}
+          </CollapsibleRow>
+        )}
 
-          <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
+        <CollapsibleRow
+          icon={<MapPin className="w-4 h-4" />}
+          title={tr("Where you play", "Dónde juegas", "Où tu joues")}
+          subtitle={tr("Clubs & compounds for smarter matches", "Clubes y urbanizaciones para mejor match", "Clubs et résidences pour de meilleurs matchs")}
+        >
+          <VenuesSection bare />
+        </CollapsibleRow>
 
-          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
+        <CollapsibleRow
+          icon={<GraduationCap className="w-4 h-4" />}
+          title={tr("Coaching", "Entrenamiento", "Coaching")}
+          subtitle={(p as any).is_coach ? tr("You're listed as a coach", "Apareces como coach", "Tu es listé comme coach") : tr("Turn on coach mode", "Activa el modo coach", "Activer le mode coach")}
+        >
+          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} bare />
+        </CollapsibleRow>
 
-          <VenuesSection />
+        <CollapsibleRow
+          icon={<HelpCircle className="w-4 h-4" />}
+          title={tr("Questions & answers", "Preguntas y respuestas", "Questions et réponses")}
+          subtitle={tr("Shape your compatibility", "Afina tu compatibilidad", "Affine ta compatibilité")}
+        >
+          <QASection bare />
+        </CollapsibleRow>
 
-          <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+        <CollapsibleRow
+          icon={<MessageSquare className="w-4 h-4" />}
+          title={tr("Send feedback", "Enviar comentarios", "Envoyer un avis")}
+          subtitle={tr("Anonymous — help us improve", "Anónimo — ayúdanos a mejorar", "Anonyme — aide-nous à améliorer")}
+        >
+          <FeedbackBox bare />
+        </CollapsibleRow>
 
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          <QASection />
-          <FeedbackBox />
-        </div>
+        <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
       </div>
+
 
       <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-500/80 hover:text-red-500">
         {t("prof.delete")}

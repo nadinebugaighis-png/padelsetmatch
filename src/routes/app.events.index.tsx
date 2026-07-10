@@ -416,6 +416,23 @@ function EventsPage() {
                   {v === "evening" && tr("Evening", "Noche", "Soir")}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setCompareMode((v) => {
+                    if (v) setCompareIds([]);
+                    return !v;
+                  });
+                }}
+                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-widest font-semibold whitespace-nowrap transition ${
+                  compareMode
+                    ? "bg-[var(--plum)] text-white"
+                    : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
+                }`}
+              >
+                <GitCompare className="w-3.5 h-3.5" />
+                {tr("Compare", "Comparar", "Comparer")}
+              </button>
             </div>
 
             {/* Day chip row */}

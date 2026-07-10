@@ -500,7 +500,7 @@ function Onboarding() {
           <>
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
 
-            <div>
+            <div data-field="locations" className={fieldCls("locations")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
               <p className="text-xs text-[var(--ink)]/55 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.", "Ajoute les endroits où tu joues — chez toi, au travail, ta maison d'été ou en voyage. Jusqu'à 3 zones par pays.")}</p>
             </div>

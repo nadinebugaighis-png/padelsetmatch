@@ -164,8 +164,7 @@ export const getSharedVenues = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ other_profile_id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const meId = await myProfileId(context.supabase, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: result, error } = await supabaseAdmin.rpc("shared_venues" as never, {
+    const { data: result, error } = await context.supabase.rpc("shared_venues" as never, {
       _a: meId,
       _b: data.other_profile_id,
     } as never);

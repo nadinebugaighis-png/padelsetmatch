@@ -336,10 +336,16 @@ function Discover() {
       const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
       if (activeCat && hc.includes(activeCat)) return false;
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
-      if (zoneFilter !== "all" && !zoneMatches(c, zoneFilter)) return false;
+      if (zoneFilter !== "all" && zoneFilter.trim() && !zoneMatches(c, zoneFilter.trim())) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
-        if (!c.first_name.toLowerCase().includes(q)) return false;
+        const hay = [
+          c.first_name,
+          c.zone ?? "",
+          (c as any).nationality ?? "",
+          ...((c.locations ?? []) as string[]),
+        ].join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
       }
       return true;
     });

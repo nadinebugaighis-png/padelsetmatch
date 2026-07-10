@@ -68,7 +68,7 @@ function Discover() {
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const reportPhotoFn = useServerFn(reportPhoto);
-  const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
+  const [filter, setFilter] = useState<"all" | "padel" | "friend">("all");
   const [world, setWorld] = useState(false);
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
@@ -201,7 +201,7 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.blockFail")),
   });
   const hideM = useMutation({
-    mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
+    mutationFn: (vars: { id: string; category: "padel" | "friend" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       toast(tr("Hidden from your Home grid — manage in Profile → Hidden & blocked", "Oculto en tu Inicio — puedes gestionarlo en Perfil → Ocultos y bloqueados", "Masqué de ton accueil — gère-le dans Profil → Masqués et bloqués"), { duration: 2400 });
@@ -244,11 +244,10 @@ function Discover() {
     reportM.mutate({ id, reason: reason.trim() });
   }
   function handleHide(id: string, name: string) {
-    const scope: "padel" | "friend" | "relationship" | "all" = filter === "all" ? "all" : filter;
+    const scope: "padel" | "friend" | "all" = filter === "all" ? "all" : filter;
     const scopeLabel =
       scope === "all" ? "everywhere" :
-      scope === "padel" ? "from Padel partners" :
-      scope === "friend" ? "from Friends" : "from Relationships";
+      scope === "padel" ? "from Padel partners" : "from Friends";
     if (!window.confirm(`Hide ${name} ${scopeLabel}? You can unhide them anytime from Profile → Hidden & blocked.`)) return;
     hideM.mutate({ id, category: scope });
   }
@@ -263,10 +262,11 @@ function Discover() {
   const all = feedQ.data.candidates;
   const activeCat = filter === "all" ? null : filter;
   const deriveIntents = (c: { intents?: string[] | null; looking_for?: string | null }): string[] => {
-    if (c.intents && c.intents.length > 0) return c.intents;
-    if (c.looking_for === "partner") return ["relationship", "padel"];
-    if (c.looking_for === "friend") return ["friend", "padel"];
-    if (c.looking_for === "both") return ["relationship", "friend", "padel"];
+    if (c.intents && c.intents.length > 0) {
+      const cleaned = c.intents.filter((i) => i !== "relationship");
+      if (cleaned.length > 0) return cleaned;
+    }
+    if (c.looking_for === "friend" || c.looking_for === "both") return ["friend", "padel"];
     return ["padel"];
   };
 
@@ -404,7 +404,7 @@ function Discover() {
 
         <div className="mt-5 lg:mt-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            {(["all", "padel", "friend", "relationship"] as const).map((f) => (
+            {(["all", "padel", "friend"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
@@ -414,7 +414,7 @@ function Discover() {
                     : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
                 }`}
               >
-                {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
+                {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : t("disc.filter.friend")}
               </button>
             ))}
             <button

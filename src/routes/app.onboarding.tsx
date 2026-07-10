@@ -124,14 +124,11 @@ function Onboarding() {
       if (storedIntents.length > 0) {
         if (storedIntents.includes("padel")) g.push("padel");
         if (storedIntents.includes("friend")) g.push("friends");
-        if (storedIntents.includes("relationship")) g.push("relationship");
       } else {
-        if (p.looking_for === "partner" || p.looking_for === "both") g.push("relationship");
         if (p.looking_for === "friend" || p.looking_for === "both") { g.push("padel"); g.push("friends"); }
+        else g.push("padel");
       }
       if (g.length) setGoals(g);
-      const pa = p.partner_interested_in?.[0];
-      if (pa === "men" || pa === "women" || pa === "everyone") setMeetPref(pa);
       setBio(p.bio ?? ""); setPhotoUrl(p.photo_url ?? null);
       if (p.languages?.length) setLanguages(p.languages);
       if (p.locations?.length) {
@@ -274,21 +271,20 @@ function Onboarding() {
     }
   };
 
-  const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
+  const hasPartnerGoal = false;
   const hasFriendGoal = goals.includes("friends") || goals.includes("all");
-  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("relationship") || goals.includes("all");
+  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("all");
   const derivedIntents = Array.from(new Set<string>([
     ...(hasPadelGoal ? ["padel"] : []),
     ...(hasFriendGoal ? ["friend"] : []),
-    ...(hasPartnerGoal ? ["relationship"] : []),
   ]));
 
   const save = useMutation({
     mutationFn: () => {
-      const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
-      const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
+      const derivedLookingFor: LookingFor = hasFriendGoal ? "friend" : "friend";
+      const partnerAud: string[] = [];
       const friendAud = hasFriendGoal ? ["everyone"] : [];
-      const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
+      const derived = Array.from(new Set([...audToGenders(friendAud)]));
       const legacy = derived.length ? derived : interested_in;
       const first = validBlocks[0];
       if (age === null || age_min === null || age_max === null || !gender || !level) {
@@ -320,7 +316,7 @@ function Onboarding() {
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
 
-  const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
+  const audOk = goals.length > 0;
 
   useEffect(() => setShowStepHelp(false), [step]);
 
@@ -332,7 +328,6 @@ function Onboarding() {
       goals.length === 0 ? tr("what you are looking for", "qué estás buscando", "ce que tu cherches") : null,
     ],
     [
-      hasPartnerGoal && !meetPref ? tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") : null,
       age_min === null || age_max === null ? tr("age range", "rango de edad", "tranche d'âge") : null,
       age_min !== null && age_max !== null && age_min > age_max ? tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") : null,
     ],
@@ -418,7 +413,6 @@ function Onboarding() {
               {[
                 { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
                 { id: "friends", label: tr("Friends", "Amistad", "Amis") },
-                { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
                 { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
               ].map((g) => (
                 <button
@@ -438,33 +432,6 @@ function Onboarding() {
           <>
             <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
 
-            {hasPartnerGoal && (
-              <>
-                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
-                <div className="flex flex-wrap gap-2">
-                  {(["men", "women", "everyone"] as const).map((o) => (
-                    <button key={o} onClick={() => setMeetPref(o)} className={`chip-paper ${meetPref === o ? "chip-paper-selected" : ""}`}>
-                      {o === "men" ? tr("Men", "Hombres", "Hommes") : o === "women" ? tr("Women", "Mujeres", "Femmes") : tr("Everyone", "Todos", "Tout le monde")}
-                    </button>
-                  ))}
-                </div>
-
-              </>
-            )}
-
-            {hasPartnerGoal && meetPref === "everyone" && (
-              <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)", "Profil avancé (optionnel)")}</div>
-                <label className="text-[11px] text-[var(--ink)]/70">{tr("Sexual orientation", "Orientación sexual", "Orientation sexuelle")}</label>
-                <Input
-                  value={sexualOrientation}
-                  onChange={(e) => setSexualOrientation(e.target.value)}
-                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…", "p. ex. hétéro, gay, bisexuel·le, queer, pansexuel·le…")}
-                  maxLength={60}
-                />
-                <p className="text-[10px] text-[var(--ink)]/55">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.", "Privé — utilisé seulement pour améliorer les matches. Pas affiché sur ton profil.")}</p>
-              </div>
-            )}
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
             <div className="flex items-center gap-3">

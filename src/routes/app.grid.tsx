@@ -8,7 +8,7 @@ import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, 
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
-import { getSharedVenues } from "@/lib/venues.functions";
+import { getSharedVenues, getSharedVenuesBatch } from "@/lib/venues.functions";
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
@@ -86,6 +86,16 @@ function Discover() {
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me });
   const getMatches = useServerFn(getMyMatches);
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), enabled: !!feedQ.data?.me });
+
+  const sharedVenuesBatchFn = useServerFn(getSharedVenuesBatch);
+  const candidateIds = (feedQ.data?.candidates ?? []).map((c) => c.id);
+  const candidateIdsKey = candidateIds.join(",");
+  const sharedVenuesQ = useQuery({
+    queryKey: ["shared-venues-batch", candidateIdsKey],
+    queryFn: () => sharedVenuesBatchFn({ data: { profile_ids: candidateIds } }),
+    enabled: candidateIds.length > 0,
+    staleTime: 60_000,
+  });
 
   const closedIdRef = useRef<string | null>(null);
   useEffect(() => {
@@ -551,6 +561,25 @@ function Discover() {
                         ✈ On holidays
                       </div>
                     )}
+                    {(() => {
+                      const s = sharedVenuesQ.data?.[c.id];
+                      if (!s || s.count === 0) return null;
+                      const first = s.names?.[0];
+                      const chip = first
+                        ? first
+                        : s.count === 1
+                          ? tr("Shared venue", "Lugar en común", "Lieu en commun")
+                          : tr(`${s.count} shared`, `${s.count} en común`, `${s.count} en commun`);
+                      return (
+                        <div
+                          className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full"
+                          title={s.names?.length ? s.names.join(" · ") : tr("You share a venue", "Compartís un lugar", "Vous partagez un lieu")}
+                        >
+                          <MapPin className="w-2.5 h-2.5 shrink-0" />
+                          <span className="truncate">{chip}</span>
+                        </div>
+                      );
+                    })()}
 
                     <div className="mt-2 flex items-center justify-between">
                       {c.free_court_access ? (

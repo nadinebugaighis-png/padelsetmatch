@@ -172,3 +172,31 @@ export const getSharedVenues = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return (result ?? { count: 0, names: [] }) as { count: number; names: string[] };
   });
+
+export type SharedVenueSummary = { count: number; names: string[] };
+
+export const getSharedVenuesBatch = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ profile_ids: z.array(z.string().uuid()).max(200) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const meId = await myProfileId(context.supabase, context.userId);
+    const ids = Array.from(new Set(data.profile_ids)).filter((id) => id !== meId);
+    if (ids.length === 0) return {} as Record<string, SharedVenueSummary>;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const results = await Promise.all(
+      ids.map(async (id) => {
+        const { data: r } = await supabaseAdmin.rpc("shared_venues" as never, {
+          _a: meId,
+          _b: id,
+        } as never);
+        return [id, (r ?? { count: 0, names: [] }) as SharedVenueSummary] as const;
+      }),
+    );
+    const out: Record<string, SharedVenueSummary> = {};
+    for (const [id, summary] of results) {
+      if (summary.count > 0) out[id] = summary;
+    }
+    return out;
+  });

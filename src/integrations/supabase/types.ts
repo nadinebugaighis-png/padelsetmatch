@@ -504,6 +504,92 @@ export type Database = {
           },
         ]
       }
+      match_alert_hits: {
+        Row: {
+          alert_id: string
+          created_at: string
+          match_event_id: string
+          reason: string
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          match_event_id: string
+          reason: string
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          match_event_id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_alert_hits_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "match_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_alert_hits_match_event_id_fkey"
+            columns: ["match_event_id"]
+            isOneToOne: false
+            referencedRelation: "match_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_alerts: {
+        Row: {
+          active: boolean
+          city: string | null
+          created_at: string
+          days_of_week: number[]
+          hour_end: number
+          hour_start: number
+          id: string
+          label: string | null
+          level_only: boolean
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          days_of_week?: number[]
+          hour_end?: number
+          hour_start?: number
+          id?: string
+          label?: string | null
+          level_only?: boolean
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          days_of_week?: number[]
+          hour_end?: number
+          hour_start?: number
+          id?: string
+          label?: string | null
+          level_only?: boolean
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_alerts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_event_invites: {
         Row: {
           created_at: string
@@ -1492,6 +1578,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      fanout_match_alerts: {
+        Args: { _match_id: string; _reason: string }
+        Returns: undefined
+      }
       get_pair_qa: { Args: { _other: string }; Returns: Json }
       get_player_count: { Args: never; Returns: number }
       get_profiles_minimal: { Args: { _ids: string[] }; Returns: Json }
@@ -1535,6 +1625,7 @@ export type Database = {
         Args: { _acting_user_id: string; _coach_profile_id: string }
         Returns: string
       }
+      padel_level_rank: { Args: { lvl: string }; Returns: number }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
       upsert_compat_score: {

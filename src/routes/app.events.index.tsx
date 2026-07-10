@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
+import { AlertsButton } from "@/components/AlertsSheet";
 
 export const Route = createFileRoute("/app/events/")({
   component: EventsPage,
@@ -361,6 +362,7 @@ function EventsPage() {
           <>
             {/* Filter chip row */}
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 pb-1">
+              <AlertsButton />
               <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--ink)]/15 text-[var(--ink)]/70">
                 <SlidersHorizontal className="w-4 h-4" />
               </span>

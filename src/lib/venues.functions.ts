@@ -183,10 +183,9 @@ export const getSharedVenuesBatch = createServerFn({ method: "POST" })
     const meId = await myProfileId(context.supabase, context.userId);
     const ids = Array.from(new Set(data.profile_ids)).filter((id) => id !== meId);
     if (ids.length === 0) return {} as Record<string, SharedVenueSummary>;
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const results = await Promise.all(
       ids.map(async (id) => {
-        const { data: r } = await supabaseAdmin.rpc("shared_venues" as never, {
+        const { data: r } = await context.supabase.rpc("shared_venues" as never, {
           _a: meId,
           _b: id,
         } as never);

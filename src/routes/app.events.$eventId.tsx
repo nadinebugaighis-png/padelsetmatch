@@ -143,6 +143,8 @@ function EventDetail() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
   const [shareOpen, setShareOpen] = useState(false);
+  const [shortShareUrl, setShortShareUrl] = useState<string | null>(null);
+  const [shortShareBusy, setShortShareBusy] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

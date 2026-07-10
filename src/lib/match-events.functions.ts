@@ -582,36 +582,21 @@ export const deleteEventMessage = createServerFn({ method: "POST" })
 export const getPublicMatch = createServerFn({ method: "GET" })
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: event, error } = await supabaseAdmin
-      .from("match_events")
-      .select("id, starts_at, club_name, club_address, city, country, gender_rule, level_min, level_max, note, court_booked, status, extra_confirmed, host:profiles!match_events_host_profile_id_fkey(first_name)")
-      .eq("id", data.id)
-      .in("status", ["open", "full"])
-      .gt("starts_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
-      .maybeSingle();
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabasePublic = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_PUBLISHABLE_KEY!,
+      { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+    );
+    const { data: view, error } = await supabasePublic.rpc("public_match_view" as never, { _event_id: data.id } as never);
     if (error) throw new Error(error.message);
-    if (!event) return { match: null };
-
-    const { data: participants, error: participantsError } = await supabaseAdmin
-      .from("match_event_participants")
-      .select("joined_at, profiles(first_name)")
-      .eq("match_event_id", data.id)
-      .order("joined_at", { ascending: true });
-    if (participantsError) throw new Error(participantsError.message);
-
-    const participantNames = (participants ?? [])
-      .map((participant: any) => participant.profiles?.first_name)
-      .filter((name: unknown): name is string => typeof name === "string" && name.length > 0);
-    const extraConfirmed = event.extra_confirmed ?? 0;
-    const filled = participantNames.length + extraConfirmed;
-
+    if (!view) return { match: null };
+    const v = view as Record<string, unknown>;
     return {
       match: {
-        ...event,
-        extra_confirmed: extraConfirmed,
-        filled,
-        participant_names: participantNames,
+        ...v,
+        extra_confirmed: (v.extra_confirmed as number) ?? 0,
+        participant_names: (v.participant_names as string[]) ?? [],
       } as PublicMatchView,
     };
   });

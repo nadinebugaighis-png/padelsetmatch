@@ -1255,3 +1255,131 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
     </div>
   );
 }
+
+// ---------- Compare sheet ----------
+
+function CompareSheet({
+  a,
+  b,
+  locale,
+  tr,
+  onClose,
+  onOpen,
+}: {
+  a: EventLite;
+  b: EventLite;
+  locale: string | undefined;
+  tr: ReturnType<typeof useTr>;
+  onClose: () => void;
+  onOpen: (id: string) => void;
+}) {
+  const fmtDay = (iso: string) =>
+    new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
+  const fmtTime = (iso: string) =>
+    new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+  const gender = (g: EventLite["gender_rule"]) =>
+    g === "mixed" ? tr("Mixed", "Mixto", "Mixte")
+      : g === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement")
+      : tr("Women only", "Solo mujeres", "Femmes uniquement");
+  const level = (e: EventLite) =>
+    e.level_min ? (e.level_min === e.level_max ? e.level_min! : `${e.level_min}–${e.level_max}`) : "—";
+
+  const rows: Array<{ label: string; a: string; b: string }> = [
+    { label: tr("Day", "Día", "Jour"), a: fmtDay(a.starts_at), b: fmtDay(b.starts_at) },
+    { label: tr("Time", "Hora", "Heure"), a: fmtTime(a.starts_at), b: fmtTime(b.starts_at) },
+    { label: tr("Club", "Club", "Club"), a: a.club_name || "—", b: b.club_name || "—" },
+    { label: tr("City", "Ciudad", "Ville"), a: a.city || a.club_address || "—", b: b.city || b.club_address || "—" },
+    { label: tr("Level", "Nivel", "Niveau"), a: level(a), b: level(b) },
+    { label: tr("Gender", "Género", "Genre"), a: gender(a.gender_rule), b: gender(b.gender_rule) },
+    { label: tr("Court", "Pista", "Court"), a: a.court_booked ? tr("Booked", "Reservada", "Réservé") : tr("Not booked", "Sin reservar", "Non réservé"), b: b.court_booked ? tr("Booked", "Reservada", "Réservé") : tr("Not booked", "Sin reservar", "Non réservé") },
+    { label: tr("Players", "Jugadores", "Joueurs"), a: `${a.filled}/4`, b: `${b.filled}/4` },
+    { label: tr("Spots left", "Faltan", "Places"), a: `${a.needs}`, b: `${b.needs}` },
+    { label: tr("Host", "Anfitrión", "Hôte"), a: a.host?.first_name || "—", b: b.host?.first_name || "—" },
+  ];
+
+  const diffCount = rows.filter((r) => r.a !== r.b).length;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
+      <div
+        className="w-full sm:max-w-2xl bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--ink)]/10">
+          <div>
+            <div className="text-serif text-2xl text-[var(--ink)] leading-tight">{tr("Compare matches", "Comparar partidos", "Comparer les matchs")}</div>
+            <div className="text-[11px] uppercase tracking-widest text-[var(--plum)] mt-0.5">
+              {diffCount} {tr("differences", "diferencias", "différences")}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-9 h-9 rounded-full grid place-items-center border border-[var(--ink)]/15 text-[var(--ink)]/70 hover:bg-[var(--ink)]/5"
+            aria-label={tr("Close", "Cerrar", "Fermer")}
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto">
+          <div className="grid grid-cols-[minmax(90px,auto)_1fr_1fr] text-sm">
+            <div className="bg-[var(--paper-2)]/60 px-3 py-3" />
+            <button
+              type="button"
+              onClick={() => onOpen(a.id)}
+              className="px-3 py-3 text-left border-l border-[var(--ink)]/10 hover:bg-[var(--ink)]/[0.03]"
+            >
+              <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--plum)]">A</div>
+              <div className="text-serif text-lg text-[var(--ink)] leading-tight truncate">{a.club_name || tr("Match", "Partido", "Match")}</div>
+              <div className="text-[11px] text-[var(--ink)]/60 mt-0.5">{fmtDay(a.starts_at)} · {fmtTime(a.starts_at)}</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => onOpen(b.id)}
+              className="px-3 py-3 text-left border-l border-[var(--ink)]/10 hover:bg-[var(--ink)]/[0.03]"
+            >
+              <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--plum)]">B</div>
+              <div className="text-serif text-lg text-[var(--ink)] leading-tight truncate">{b.club_name || tr("Match", "Partido", "Match")}</div>
+              <div className="text-[11px] text-[var(--ink)]/60 mt-0.5">{fmtDay(b.starts_at)} · {fmtTime(b.starts_at)}</div>
+            </button>
+
+            {rows.map((r) => {
+              const diff = r.a !== r.b;
+              return (
+                <div key={r.label} className="contents">
+                  <div className={`px-3 py-2.5 border-t border-[var(--ink)]/10 text-[10px] uppercase tracking-widest font-bold ${diff ? "text-[var(--plum)]" : "text-[var(--ink)]/50"} bg-[var(--paper-2)]/60`}>
+                    {r.label}
+                  </div>
+                  <div className={`px-3 py-2.5 border-t border-l border-[var(--ink)]/10 ${diff ? "bg-[var(--plum)]/8 text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>
+                    {r.a}
+                  </div>
+                  <div className={`px-3 py-2.5 border-t border-l border-[var(--ink)]/10 ${diff ? "bg-[var(--plum)]/8 text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>
+                    {r.b}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 p-4 border-t border-[var(--ink)]/10">
+          <button
+            type="button"
+            onClick={() => onOpen(a.id)}
+            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+          >
+            {tr("Open A", "Abrir A", "Ouvrir A")}
+          </button>
+          <button
+            type="button"
+            onClick={() => onOpen(b.id)}
+            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5"
+          >
+            {tr("Open B", "Abrir B", "Ouvrir B")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

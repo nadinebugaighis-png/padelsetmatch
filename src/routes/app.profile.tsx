@@ -224,16 +224,16 @@ function ProfilePage() {
       <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-        {hasDetails && (
-          <CollapsibleRow
-            icon={<MapPin className="w-4 h-4" />}
-            title={tr("Where & languages", "Dónde y idiomas", "Où et langues")}
-            subtitle={[
-              locations[0],
-              (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
-            ].filter(Boolean).join(" · ") || undefined}
-            contentCard
-          >
+        <CollapsibleRow
+          icon={<MapPin className="w-4 h-4" />}
+          title={tr("Places & languages", "Lugares e idiomas", "Lieux et langues")}
+          subtitle={[
+            locations[0],
+            (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
+          ].filter(Boolean).join(" · ") || tr("Zones, clubs, languages", "Zonas, clubes, idiomas", "Zones, clubs, langues")}
+          contentCard
+        >
+          {(locations.length > 0 || (p.languages?.length ?? 0) > 0) && (
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               {locations.length > 0 && (
                 <Section title={t("prof.playsIn")}>
@@ -250,26 +250,25 @@ function ProfilePage() {
                 </Section>
               )}
             </div>
-            {p.free_court_access && (
-              <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
-                    {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
-                  </span>
-                  {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
-                </div>
+          )}
+          {p.free_court_access && (
+            <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                  {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
+                </span>
+                {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
               </div>
-            )}
-          </CollapsibleRow>
-        )}
-
-        <CollapsibleRow
-          icon={<MapPin className="w-4 h-4" />}
-          title={tr("Where you play", "Dónde juegas", "Où tu joues")}
-          subtitle={tr("Clubs & compounds for smarter matches", "Clubes y urbanizaciones para mejor match", "Clubs et résidences pour de meilleurs matchs")}
-        >
-          <VenuesSection />
+            </div>
+          )}
+          <div className="mt-4 pt-4 border-t border-[var(--ink)]/10">
+            <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2 font-medium">
+              {tr("Clubs & compounds", "Clubes y urbanizaciones", "Clubs et résidences")}
+            </div>
+            <VenuesSection />
+          </div>
         </CollapsibleRow>
+
 
         <CollapsibleRow
           icon={<GraduationCap className="w-4 h-4" />}

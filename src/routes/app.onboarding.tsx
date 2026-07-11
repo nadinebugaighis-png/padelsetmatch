@@ -717,7 +717,7 @@ function Onboarding() {
                 {tr("Unlock compatibility ✨", "Desbloquea compatibilidad ✨", "Débloque la compatibilité ✨")}
               </h2>
               <p className="text-sm text-[var(--ink)]/75 mt-1">
-                {tr("Fill this whenever you feel like it — it powers your AI compatibility with other players. Skip for now and jump into the app.", "Rellénalo cuando quieras — alimenta tu compatibilidad IA con otros jugadores. Sáltatelo y entra ya en la app.", "Remplis quand tu veux — ça alimente ta compatibilité IA avec les autres joueurs. Passe et entre dans l'app tout de suite.")}
+                {tr("Powers your AI matches. Do it anytime.", "Impulsa tus matches IA. Hazlo cuando quieras.", "Booste tes matchs IA. Quand tu veux.")}
               </p>
             </div>
 

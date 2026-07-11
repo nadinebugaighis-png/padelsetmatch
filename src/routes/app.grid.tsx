@@ -540,11 +540,6 @@ function Discover() {
             )}
           </div>
         )}
-        {world && (
-          <p className="text-[11px] text-[var(--ink)]/60 italic mt-3">
-            {t("disc.world.note")}
-          </p>
-        )}
 
         <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
 

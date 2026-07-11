@@ -318,43 +318,48 @@ function ProfilePage() {
 
 function EditSectionsMenu() {
   const tr = useTr();
-  const sections: Array<{ step: number; label: string; hint: string }> = [
-    { step: 0, label: tr("Basics", "Datos básicos", "Bases"), hint: tr("Name, age, gender", "Nombre, edad, género", "Nom, âge, genre") },
-    { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer"), hint: tr("Preferences & age range", "Preferencias y edad", "Préférences et âge") },
-    { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux"), hint: tr("Level, city, languages", "Nivel, ciudad, idiomas", "Niveau, ville, langues") },
-    { step: 3, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨"), hint: tr("Optional — values & traits", "Opcional — valores y rasgos", "Optionnel — valeurs et traits") },
-    { step: 4, label: tr("Photo & bio", "Foto y bio", "Photo et bio"), hint: tr("How others see you", "Cómo te ven los demás", "Comment on te voit") },
-  ];
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-7 sm:h-8 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
-        aria-label={tr("Edit", "Editar", "Éditer")}
-      >
-        <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-        {tr("Edit", "Editar", "Éditer")}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        <DropdownMenuLabel className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
-          {tr("Jump to section", "Ir a la sección", "Aller à la section")}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {sections.map((s) => (
-          <DropdownMenuItem key={s.step} asChild>
-            <Link
-              to="/app/onboarding"
-              search={{ step: s.step }}
-              className="flex flex-col items-start gap-0.5 cursor-pointer"
-            >
-              <span className="text-sm text-[var(--ink)]">{s.label}</span>
-              <span className="text-[11px] text-[var(--ink)]/55">{s.hint}</span>
-            </Link>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Link
+      to="/app/onboarding"
+      className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-7 sm:h-8 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
+    >
+      <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+      {tr("Edit", "Editar", "Éditer")}
+    </Link>
   );
 }
+
+function EditSectionsStrip() {
+  const tr = useTr();
+  const sections: Array<{ step: number; label: string }> = [
+    { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
+    { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
+    { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
+    { step: 3, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨") },
+    { step: 4, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
+  ];
+  return (
+    <div className="mt-3">
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mb-2 px-1">
+        {tr("Edit a section", "Editar una sección", "Modifier une section")}
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
+        {sections.map((s) => (
+          <Link
+            key={s.step}
+            to="/app/onboarding"
+            search={{ step: s.step }}
+            className="shrink-0 inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/20 text-xs text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--ink)]/40 transition whitespace-nowrap"
+          >
+            <Pencil className="w-3 h-3" />
+            {s.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 function FeedbackBox() {
   const { t } = useI18n();

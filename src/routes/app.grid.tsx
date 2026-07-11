@@ -224,6 +224,21 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
+  const introFn = useServerFn(sendIntroMessage);
+  const [introOpenFor, setIntroOpenFor] = useState<string | null>(null);
+  const [introText, setIntroText] = useState("");
+  const introM = useMutation({
+    mutationFn: (v: { otherProfileId: string; body: string }) => introFn({ data: v }),
+    onSuccess: (res) => {
+      setIntroOpenFor(null);
+      setIntroText("");
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      if (res?.matchId) {
+        navigate({ to: "/app/matches/$matchId", params: { matchId: res.matchId } });
+      }
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't send"),
+  });
   const unlikeM = useMutation({
     mutationFn: (id: string) => unlike({ data: { likedProfileId: id } }),
     onSuccess: () => {

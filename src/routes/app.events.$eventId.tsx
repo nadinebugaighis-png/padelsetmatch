@@ -873,11 +873,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                 {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
               </h2>
               <p className="mt-1.5 text-xs text-[var(--ink)]/60 leading-relaxed max-w-sm">
-                {tr(
-                  "Invited players get first dibs. Opens to everyone 10 hours after your first invite.",
-                  "Los invitados tienen prioridad. Se abre a todos 10 horas después de la primera invitación.",
-                  "Les invités passent en priorité. Ouvert à tous 10 h après la première invitation.",
-                )}
+                {tr("Invitees get first dibs for 10h.", "Los invitados tienen prioridad 10 h.", "Invités prioritaires pendant 10 h.")}
               </p>
             </div>
             <button

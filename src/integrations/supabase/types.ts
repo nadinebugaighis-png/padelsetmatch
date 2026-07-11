@@ -1214,6 +1214,7 @@ export type Database = {
           bio: string | null
           court_side: string | null
           created_at: string
+          favorite_clubs: string[]
           first_name: string
           founding_number: number | null
           free_court_access: boolean
@@ -1228,12 +1229,16 @@ export type Database = {
           is_seed: boolean
           languages: string[]
           level: string
+          level_detail: string | null
           locations: string[]
           looking_for: string
+          looking_for_tags: string[]
+          main_goal: string | null
           mixed_doubles: boolean | null
           nationality: string | null
           no_show_count: number
           onboarding_stage: string
+          other_sports: string[]
           padel_style: string[]
           partner_interested_in: string[]
           personal_traits: string[]
@@ -1262,6 +1267,7 @@ export type Database = {
           bio?: string | null
           court_side?: string | null
           created_at?: string
+          favorite_clubs?: string[]
           first_name: string
           founding_number?: number | null
           free_court_access?: boolean
@@ -1276,12 +1282,16 @@ export type Database = {
           is_seed?: boolean
           languages?: string[]
           level: string
+          level_detail?: string | null
           locations?: string[]
           looking_for?: string
+          looking_for_tags?: string[]
+          main_goal?: string | null
           mixed_doubles?: boolean | null
           nationality?: string | null
           no_show_count?: number
           onboarding_stage?: string
+          other_sports?: string[]
           padel_style?: string[]
           partner_interested_in?: string[]
           personal_traits?: string[]
@@ -1310,6 +1320,7 @@ export type Database = {
           bio?: string | null
           court_side?: string | null
           created_at?: string
+          favorite_clubs?: string[]
           first_name?: string
           founding_number?: number | null
           free_court_access?: boolean
@@ -1324,12 +1335,16 @@ export type Database = {
           is_seed?: boolean
           languages?: string[]
           level?: string
+          level_detail?: string | null
           locations?: string[]
           looking_for?: string
+          looking_for_tags?: string[]
+          main_goal?: string | null
           mixed_doubles?: boolean | null
           nationality?: string | null
           no_show_count?: number
           onboarding_stage?: string
+          other_sports?: string[]
           padel_style?: string[]
           partner_interested_in?: string[]
           personal_traits?: string[]

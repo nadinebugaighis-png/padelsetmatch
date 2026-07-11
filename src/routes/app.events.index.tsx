@@ -891,7 +891,7 @@ function MyMatchesList({
                 const filled = e.filled ?? 0;
                 const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
-                  <li key={e.id} className="rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3">
+                  <li key={e.id} onClick={() => onOpen(e.id)} className="rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3 cursor-pointer hover:bg-[var(--paper-2)]/40 transition">
                     <div className="flex flex-col items-center justify-center w-14 shrink-0">
                       <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
                         <Clock className="w-3 h-3 inline mb-0.5" />

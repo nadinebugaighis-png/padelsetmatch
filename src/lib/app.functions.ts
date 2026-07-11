@@ -1077,15 +1077,19 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("Create your profile first");
-    // Best-effort semantic embedding — never blocks the save.
+    // Best-effort semantic embedding — run in parallel with the delete,
+    // with a short timeout so onboarding never stalls on a slow provider.
     const { embedText, toPgVector } = await import("./embeddings.server");
-    const embedding = await embedText(`${data.question}\n${data.answer}`);
-    // Upsert-like behaviour: delete existing same-question, then insert
-    await context.supabase
+    const embeddingPromise = Promise.race<number[] | null>([
+      embedText(`${data.question}\n${data.answer}`).catch(() => null),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500)),
+    ]);
+    const deletePromise = context.supabase
       .from("qa_answers" as never)
       .delete()
       .eq("profile_id", myId)
       .eq("question", data.question);
+    const [embedding] = await Promise.all([embeddingPromise, deletePromise]);
     const row: Record<string, unknown> = {
       profile_id: myId,
       question: data.question,
@@ -1102,6 +1106,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
     await context.supabase.rpc("clear_my_compat_scores" as never, {} as never);
     return { ok: true };
   });
+
 
 export const deleteQaAnswer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

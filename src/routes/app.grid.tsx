@@ -215,12 +215,20 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
+  // Silent variant used by the tiny thumbs-up on the card — no toast, no navigation.
+  const likeSilentM = useMutation({
+    mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
+  });
   const unlikeM = useMutation({
     mutationFn: (id: string) => unlike({ data: { likedProfileId: id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
-      toast(t("disc.likeRemoved"), { duration: 1800 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.undoFail")),
   });

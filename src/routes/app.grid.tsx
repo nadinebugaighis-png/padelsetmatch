@@ -760,15 +760,6 @@ function Discover() {
                         />
                       </button>
 
-                      {c.free_court_access && (
-                        <div
-                          className="absolute bottom-2 left-2 z-10 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
-                          title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
-                          aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
-                        >
-                          <CourtIcon className="w-4 h-2.5 text-[var(--ink)]" strokeWidth={2.2} />
-                        </div>
-                      )}
 
                       <button
                         type="button"

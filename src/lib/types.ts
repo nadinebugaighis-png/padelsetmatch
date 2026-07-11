@@ -223,6 +223,7 @@ export type Profile = {
   story_hook_en?: string | null;
   story_hook_es?: string | null;
   story_hook_fr?: string | null;
+  play_frequency?: string | null;
 };
 
 

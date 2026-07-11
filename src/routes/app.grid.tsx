@@ -971,74 +971,53 @@ function Discover() {
                           type="button"
                           onClick={() => {
                             if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                            if (!preview.liked) likeM.mutate(preview.id);
+                            setIntroOpenFor(preview.id);
                           }}
-                          disabled={likeM.isPending && !match}
-                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                          aria-label={match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : tr("Send a message", "Enviar mensaje", "Envoyer un message")}
                         >
                           <MessageCircle className="w-4 h-4" />
-                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                         </button>
                         <button
                           type="button"
                           onClick={() => toggleFavM.mutate(preview.id)}
                           disabled={toggleFavM.isPending}
                           aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
-                          title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
                           className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
                         >
                           <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
                         </button>
                       </div>
 
-                      {!match && (
-                        <div className="mt-1">
-                          {introOpenFor === preview.id ? (
-                            <div className="rounded-2xl border border-[var(--ink)]/15 bg-white p-3 space-y-2">
-                              <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60">
-                                {tr("One intro message", "Un mensaje de presentación", "Un message d'intro")}
-                              </div>
-                              <textarea
-                                value={introText}
-                                onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
-                                rows={2}
-                                autoFocus
-                                placeholder={tr(`Hi ${preview.first_name} 👋`, `Hola ${preview.first_name} 👋`, `Salut ${preview.first_name} 👋`)}
-                                className="w-full resize-none rounded-xl border border-[var(--ink)]/15 bg-white p-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
-                              />
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="text-[11px] text-[var(--ink)]/50">
-                                  {tr("One message until you both connect.", "Un mensaje hasta que ambos conectéis.", "Un message jusqu'à ce que vous vous connectiez.")}
-                                </span>
-                                <div className="flex gap-2">
-                                  <button
-                                    type="button"
-                                    onClick={() => { setIntroOpenFor(null); setIntroText(""); }}
-                                    className="h-8 px-3 rounded-full text-[12px] text-[var(--ink)]/60 hover:text-[var(--ink)]"
-                                  >
-                                    {tr("Cancel", "Cancelar", "Annuler")}
-                                  </button>
-                                  <button
-                                    type="button"
-                                    disabled={introM.isPending || introText.trim().length === 0}
-                                    onClick={() => introM.mutate({ otherProfileId: preview.id, body: introText.trim() })}
-                                    className="h-8 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-50"
-                                  >
-                                    {introM.isPending ? tr("Sending…", "Enviando…", "Envoi…") : tr("Send", "Enviar", "Envoyer")}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
+                      {!match && introOpenFor === preview.id && (
+                        <div className="rounded-2xl border border-[var(--ink)]/15 bg-white p-3 space-y-2">
+                          <textarea
+                            value={introText}
+                            onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
+                            rows={2}
+                            autoFocus
+                            placeholder={tr(`Hi ${preview.first_name} 👋`, `Hola ${preview.first_name} 👋`, `Salut ${preview.first_name} 👋`)}
+                            className="w-full resize-none rounded-xl border border-[var(--ink)]/15 bg-white p-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
+                          />
+                          <div className="flex items-center justify-end gap-2">
                             <button
                               type="button"
-                              onClick={() => setIntroOpenFor(preview.id)}
-                              className="w-full h-10 rounded-full border border-[var(--ink)]/20 bg-white text-[var(--ink)] text-[12px] font-medium flex items-center justify-center gap-2 hover:border-[var(--ink)]/40 transition"
+                              onClick={() => { setIntroOpenFor(null); setIntroText(""); }}
+                              aria-label={tr("Cancel", "Cancelar", "Annuler")}
+                              className="h-9 w-9 rounded-full text-[var(--ink)]/60 hover:text-[var(--ink)] flex items-center justify-center"
                             >
-                              <MessageCircle className="w-3.5 h-3.5" />
-                              {tr("Send a message instead", "Enviar un mensaje", "Envoyer un message")}
+                              ✕
                             </button>
-                          )}
+                            <button
+                              type="button"
+                              disabled={introM.isPending || introText.trim().length === 0}
+                              onClick={() => introM.mutate({ otherProfileId: preview.id, body: introText.trim() })}
+                              aria-label={tr("Send", "Enviar", "Envoyer")}
+                              className="h-9 w-9 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center disabled:opacity-50"
+                            >
+                              <Send className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       )}
 

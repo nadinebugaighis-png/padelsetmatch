@@ -1,11 +1,11 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode } from "@/lib/app.functions";
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe, GraduationCap, Star, Send } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
@@ -223,21 +223,6 @@ function Discover() {
       qc.invalidateQueries({ queryKey: ["my-matches"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
-  });
-  const introFn = useServerFn(sendIntroMessage);
-  const [introOpenFor, setIntroOpenFor] = useState<string | null>(null);
-  const [introText, setIntroText] = useState("");
-  const introM = useMutation({
-    mutationFn: (v: { otherProfileId: string; body: string }) => introFn({ data: v }),
-    onSuccess: (res) => {
-      setIntroOpenFor(null);
-      setIntroText("");
-      qc.invalidateQueries({ queryKey: ["my-matches"] });
-      if (res?.matchId) {
-        navigate({ to: "/app/matches/$matchId", params: { matchId: res.matchId } });
-      }
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't send"),
   });
   const unlikeM = useMutation({
     mutationFn: (id: string) => unlike({ data: { likedProfileId: id } }),
@@ -971,55 +956,25 @@ function Discover() {
                           type="button"
                           onClick={() => {
                             if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                            setIntroOpenFor(preview.id);
+                            if (!preview.liked) likeM.mutate(preview.id);
                           }}
-                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
-                          aria-label={match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : tr("Send a message", "Enviar mensaje", "Envoyer un message")}
+                          disabled={likeM.isPending && !match}
+                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                         >
                           <MessageCircle className="w-4 h-4" />
+                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
                         </button>
                         <button
                           type="button"
                           onClick={() => toggleFavM.mutate(preview.id)}
                           disabled={toggleFavM.isPending}
                           aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
+                          title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
                           className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
                         >
                           <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
                         </button>
                       </div>
-
-                      {!match && introOpenFor === preview.id && (
-                        <div className="rounded-2xl border border-[var(--ink)]/15 bg-white p-3 space-y-2">
-                          <textarea
-                            value={introText}
-                            onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
-                            rows={2}
-                            autoFocus
-                            placeholder={tr(`Hi ${preview.first_name} 👋`, `Hola ${preview.first_name} 👋`, `Salut ${preview.first_name} 👋`)}
-                            className="w-full resize-none rounded-xl border border-[var(--ink)]/15 bg-white p-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
-                          />
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => { setIntroOpenFor(null); setIntroText(""); }}
-                              aria-label={tr("Cancel", "Cancelar", "Annuler")}
-                              className="h-9 w-9 rounded-full text-[var(--ink)]/60 hover:text-[var(--ink)] flex items-center justify-center"
-                            >
-                              ✕
-                            </button>
-                            <button
-                              type="button"
-                              disabled={introM.isPending || introText.trim().length === 0}
-                              onClick={() => introM.mutate({ otherProfileId: preview.id, body: introText.trim() })}
-                              aria-label={tr("Send", "Enviar", "Envoyer")}
-                              className="h-9 w-9 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center disabled:opacity-50"
-                            >
-                              <Send className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
 
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}

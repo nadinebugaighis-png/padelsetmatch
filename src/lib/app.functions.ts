@@ -735,12 +735,7 @@ export const sendMessage = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("messages" as never)
       .insert({ match_id: data.matchId, sender_profile_id: myId, body: data.body } as never);
-    if (error) {
-      if (/INTRO_LIMIT/i.test(error.message)) {
-        return { ok: false as const, reason: "intro_limit" as const };
-      }
-      throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
 
     // Auto-reply from seed players to keep the demo chat alive
     const { data: match } = await context.supabase
@@ -766,20 +761,6 @@ export const sendMessage = createServerFn({ method: "POST" })
       }
     }
     return { ok: true };
-  });
-
-export const sendIntroMessage = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) =>
-    z.object({ otherProfileId: z.string().uuid(), body: z.string().min(1).max(2000) }).parse(d),
-  )
-  .handler(async ({ data, context }) => {
-    const { data: matchId, error } = await context.supabase.rpc("send_intro_message" as never, {
-      other_profile_id: data.otherProfileId,
-      message_body: data.body,
-    } as never);
-    if (error) throw new Error(error.message);
-    return { matchId: matchId as unknown as string };
   });
 
 export const editMessage = createServerFn({ method: "POST" })

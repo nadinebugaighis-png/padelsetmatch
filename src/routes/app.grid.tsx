@@ -9,6 +9,7 @@ import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, 
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
+import { CourtIcon } from "@/components/CourtIcon";
 import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venues.functions";
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -759,6 +760,19 @@ function Discover() {
                         />
                       </button>
 
+                      {c.free_court_access && (
+                        <div
+                          className="absolute bottom-2 left-2 z-10 inline-flex items-center gap-1 px-1.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+                          title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                          aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                        >
+                          <CourtIcon className="w-3.5 h-2 shrink-0" strokeWidth={2.2} />
+                          <span className="text-[8px] font-extrabold uppercase tracking-wider leading-none">
+                            {tr("Free", "Gratis", "Gratuit")}
+                          </span>
+                        </div>
+                      )}
+
                       <button
                         type="button"
                         onClick={() => openPreview(c)}
@@ -810,9 +824,9 @@ function Discover() {
 
                     <div className="mt-2 flex items-center justify-between">
                       {c.free_court_access ? (
-                        <span className="px-2 py-0.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)] text-[8px] font-bold uppercase tracking-tight flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
-                          Free Court
+                        <span className="px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[8px] font-extrabold uppercase tracking-tight inline-flex items-center gap-1">
+                          <CourtIcon className="w-3 h-1.5" strokeWidth={2.4} />
+                          {tr("Free court", "Pista gratis", "Terrain gratuit")}
                         </span>
                       ) : <span />}
                       <div
@@ -920,7 +934,7 @@ function Discover() {
 
                       {preview.free_court_access && (
                         <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
-                          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold uppercase tracking-wider"><CourtIcon className="w-4 h-2.5" strokeWidth={2.4} /> {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                           {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
                             
                         </div>

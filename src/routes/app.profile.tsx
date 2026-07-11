@@ -326,36 +326,105 @@ function EditSectionsMenu() {
   );
 }
 
-function EditSectionsStrip() {
+function EditSectionsStrip({ hasPhoto, hasBio }: { hasPhoto: boolean; hasBio: boolean }) {
   const tr = useTr();
-  const sections: Array<{ step: number; label: string }> = [
-    { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
-    { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
-    { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
-    { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
-    { step: 4, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨") },
+
+  const groups: Array<{
+    key: string;
+    tone: "required" | "important" | "optional";
+    title: string;
+    subtitle: string;
+    badge: string;
+    items: Array<{ step: number; label: string; alert?: boolean }>;
+  }> = [
+    {
+      key: "signup",
+      tone: "required",
+      title: tr("Sign-up", "Registro", "Inscription"),
+      subtitle: tr("Required to use the app", "Obligatorio para usar la app", "Requis pour utiliser l'app"),
+      badge: tr("Required", "Obligatorio", "Requis"),
+      items: [
+        { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
+        { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
+        { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
+      ],
+    },
+    {
+      key: "card",
+      tone: "important",
+      title: tr("Player card", "Tarjeta de jugador", "Carte de joueur"),
+      subtitle: tr("What others see. Fill whenever — we'll remind you.", "Lo que ven los demás. Rellena cuando puedas — te lo recordamos.", "Ce que voient les autres. Remplis quand tu veux — on te rappellera."),
+      badge: tr("Important", "Importante", "Important"),
+      items: [
+        { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio"), alert: !hasPhoto || !hasBio },
+      ],
+    },
+    {
+      key: "compat",
+      tone: "optional",
+      title: tr("Compatibility", "Compatibilidad", "Compatibilité"),
+      subtitle: tr("Good to find your best matches", "Bien para encontrar tus mejores matches", "Bien pour trouver tes meilleurs matchs"),
+      badge: tr("Optional", "Opcional", "Optionnel"),
+      items: [
+        { step: 4, label: tr("Values & style", "Valores y estilo", "Valeurs et style") },
+      ],
+    },
   ];
+
+  const toneClass = (tone: "required" | "important" | "optional") =>
+    tone === "required"
+      ? "border-[var(--ink)]/30 bg-[var(--ink)]/[0.04]"
+      : tone === "important"
+      ? "border-[var(--plum)]/35 bg-[var(--plum)]/[0.05]"
+      : "border-[var(--ink)]/15 bg-[var(--paper)]";
+
+  const badgeClass = (tone: "required" | "important" | "optional") =>
+    tone === "required"
+      ? "bg-[var(--ink)] text-[var(--paper)]"
+      : tone === "important"
+      ? "bg-[var(--plum)] text-white"
+      : "bg-[var(--paper-2)] text-[var(--ink)]/70 border border-[var(--ink)]/20";
+
   return (
-    <div className="mt-3">
-      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mb-2 px-1">
-        {tr("Edit a section", "Editar una sección", "Modifier une section")}
+    <div className="mt-4 space-y-2.5">
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 px-1">
+        {tr("Edit your profile", "Edita tu perfil", "Modifie ton profil")}
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
-        {sections.map((s) => (
-          <Link
-            key={s.step}
-            to="/app/onboarding"
-            search={{ step: s.step }}
-            className="shrink-0 inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/20 text-xs text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--ink)]/40 transition whitespace-nowrap"
-          >
-            <Pencil className="w-3 h-3" />
-            {s.label}
-          </Link>
-        ))}
-      </div>
+      {groups.map((g) => (
+        <div key={g.key} className={`rounded-2xl border ${toneClass(g.tone)} p-3.5`}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${badgeClass(g.tone)}`}>
+                  {g.badge}
+                </span>
+                <h3 className="text-[15px] font-semibold text-[var(--ink)] leading-tight truncate">{g.title}</h3>
+              </div>
+              <p className="mt-1 text-xs text-[var(--ink)]/65 leading-snug">{g.subtitle}</p>
+            </div>
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {g.items.map((it) => (
+              <Link
+                key={it.step}
+                to="/app/onboarding"
+                search={{ step: it.step }}
+                className="relative inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-white border border-[var(--ink)]/20 text-xs text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--ink)]/40 transition whitespace-nowrap"
+              >
+                <Pencil className="w-3 h-3" />
+                {it.label}
+                {it.alert && (
+                  <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-red-500" aria-label="needs attention" />
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
+
 
 
 function FeedbackBox() {

@@ -931,6 +931,7 @@ function Discover() {
             ];
             const sharedChips = Array.from(new Set(allTheirs.filter((w) => mineTraits.has(w))));
             const match = matchesQ.data?.find((m) => m.other?.id === preview.id);
+            const isSelf = !!mine && preview.id === mine.id;
             return (
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>

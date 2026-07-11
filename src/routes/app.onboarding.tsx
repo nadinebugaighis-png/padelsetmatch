@@ -378,7 +378,7 @@ function Onboarding() {
     setStep(step + 1);
   };
 
-  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];
+  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s4"), t("ob.s3")];
 
   if (profileQ.isLoading) {
     return (
@@ -707,7 +707,7 @@ function Onboarding() {
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>
         )}
-        {step === 3 && (
+        {step === 4 && (
           <div className="space-y-8">
             <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
               <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
@@ -841,7 +841,7 @@ function Onboarding() {
             </section>
           </div>
         )}
-        {step === 4 && (
+        {step === 3 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
@@ -876,16 +876,16 @@ function Onboarding() {
           <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
         <div className="flex items-center gap-2">
-          {step === 3 && (
-            <Button variant="ghost" onClick={() => save.mutate()} disabled={save.isPending} className="text-[var(--ink)]/70">
-              {tr("Skip — jump in", "Saltar — entrar ya", "Passer — entrer")}
+          {step === 3 && !photoUrl && (
+            <Button variant="ghost" onClick={() => setStep(4)} className="text-[var(--ink)]/70">
+              {tr("Skip photo", "Saltar foto", "Passer la photo")}
             </Button>
           )}
           {step < steps.length - 1 ? (
             <Button onClick={goNext}>{t("ob.next")}</Button>
           ) : (
             <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-              {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}
+              {save.isPending ? t("ob.saving") : (priorities.length > 0 || personalTraits.length > 0) ? t("ob.start") : tr("Skip & start", "Saltar y empezar", "Passer et commencer")}
             </Button>
           )}
         </div>

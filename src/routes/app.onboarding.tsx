@@ -322,7 +322,7 @@ function Onboarding() {
     onSuccess: () => {
       qc.invalidateQueries();
       toast.success(t("ob.saved"));
-      navigate({ to: "/app/questions" });
+      navigate({ to: "/app/grid" });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });

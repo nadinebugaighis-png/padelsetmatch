@@ -116,6 +116,16 @@ function Discover() {
     const v = c?.[key];
     return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
   };
+  const freqLabel = (f: string): string => {
+    switch (f) {
+      case "<1/week": return tr("<1×/week", "<1×/sem", "<1×/sem.");
+      case "1-2/week": return tr("1-2×/week", "1-2×/sem", "1-2×/sem.");
+      case "3-4/week": return tr("3-4×/week", "3-4×/sem", "3-4×/sem.");
+      case "5+/week": return tr("5+/week", "5+/sem", "5+/sem.");
+      case "daily": return tr("Daily", "A diario", "Tous les jours");
+      default: return f;
+    }
+  };
   const closedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const candidates = feedQ.data?.candidates;

@@ -15,14 +15,11 @@ async function assertAdmin(context: { userId: string; supabase: { from: (t: stri
 export const getIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
-      .from("user_roles" as never)
-      .select("id")
-      .eq("user_id", context.userId)
-      .eq("role", "admin")
-      .maybeSingle();
-
+    const { data, error } = await (context.supabase as any).rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (error) return false;
     return Boolean(data);
   });
 

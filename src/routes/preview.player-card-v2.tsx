@@ -69,22 +69,21 @@ const sample = {
   },
 };
 
-function RacketMini({ crossed = false }: { crossed?: boolean }) {
+function RacketMini() {
+  // Padel racket: teardrop head with dotted holes + short handle
   return (
-    <svg viewBox="0 0 40 40" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <ellipse cx="20" cy="15" rx="10" ry="12" />
-      <line x1="20" y1="27" x2="20" y2="38" />
-      {crossed ? (
-        <>
-          <line x1="12" y1="8" x2="28" y2="22" opacity="0.5" />
-          <line x1="28" y1="8" x2="12" y2="22" opacity="0.5" />
-        </>
-      ) : (
-        <>
-          <line x1="20" y1="4" x2="20" y2="26" opacity="0.35" />
-          <line x1="10" y1="15" x2="30" y2="15" opacity="0.35" />
-        </>
-      )}
+    <svg viewBox="0 0 40 40" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 4c6 0 10 4.5 10 10.5S26 26 20 26s-10-4.5-10-11.5S14 4 20 4z" />
+      <line x1="20" y1="26" x2="20" y2="34" />
+      <rect x="17.5" y="34" width="5" height="3" rx="1" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="12" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="20" cy="11" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="24" cy="12" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="17" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="20" cy="16" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="24" cy="17" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="21" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="22" cy="21" r="0.9" fill="currentColor" stroke="none" />
     </svg>
   );
 }

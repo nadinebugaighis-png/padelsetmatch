@@ -69,21 +69,26 @@ const sample = {
   },
 };
 
-function RacketMini() {
-  // Padel racket: teardrop head with dotted holes + short handle
+function CourtSideIcon({ side }: { side: "Left" | "Right" | "Both" | "Unsure" }) {
+  // Top-down padel court; highlight the preferred half
+  const fill = "color-mix(in oklab, var(--ink) 22%, transparent)";
+  const leftFill = side === "Left" || side === "Both" ? fill : "transparent";
+  const rightFill = side === "Right" || side === "Both" ? fill : "transparent";
   return (
-    <svg viewBox="0 0 40 40" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 4c6 0 10 4.5 10 10.5S26 26 20 26s-10-4.5-10-11.5S14 4 20 4z" />
-      <line x1="20" y1="26" x2="20" y2="34" />
-      <rect x="17.5" y="34" width="5" height="3" rx="1" fill="currentColor" stroke="none" />
-      <circle cx="16" cy="12" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="20" cy="11" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="24" cy="12" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="16" cy="17" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="20" cy="16" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="24" cy="17" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="18" cy="21" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="22" cy="21" r="0.9" fill="currentColor" stroke="none" />
+    <svg viewBox="0 0 40 28" className="w-7 h-6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      {/* outer court */}
+      <rect x="3" y="3" width="34" height="22" rx="1" />
+      {/* service line */}
+      <line x1="3" y1="9" x2="37" y2="9" />
+      <line x1="3" y1="19" x2="37" y2="19" />
+      {/* net */}
+      <line x1="20" y1="3" x2="20" y2="25" strokeDasharray="1.5 1.5" />
+      {/* halves */}
+      <rect x="3.6" y="3.6" width="15.8" height="20.8" fill={leftFill} stroke="none" />
+      <rect x="20.6" y="3.6" width="15.8" height="20.8" fill={rightFill} stroke="none" />
+      {side === "Unsure" && (
+        <text x="20" y="18" textAnchor="middle" fontSize="10" fill="currentColor" stroke="none" fontStyle="italic" fontFamily="var(--font-serif)">?</text>
+      )}
     </svg>
   );
 }
@@ -216,7 +221,7 @@ function PlayerCardPreview() {
         {/* Icon stat row */}
         <div className="mt-6 border-t border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pt-4 grid grid-cols-3 gap-2">
           <StatCell icon={<LevelBars />} label="Level" value={sample.level} />
-          <StatCell icon={<RacketMini />} label="Side" value={sample.side} />
+          <StatCell icon={<CourtSideIcon side={sample.side as "Left" | "Right" | "Both" | "Unsure"} />} label="Side" value={sample.side === "Unsure" ? "Not sure yet" : sample.side} />
           <StatCell icon={<Sparkles className="w-6 h-6" strokeWidth={1.4} />} label="Style" value={sample.style} />
         </div>
 

@@ -99,7 +99,7 @@ function ChatRoom() {
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success(tr("No-show reported. Thanks — we'll look into it.", "No-show reportado. Gracias — lo revisaremos.", "Absence signalée. Merci — nous allons vérifier.")),
+    onSuccess: () => toast.success(tr("Reported — thanks 🙏", "Reportado — gracias 🙏", "Signalé — merci 🙏")),
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar", "Impossible de signaler")),
   });
   const editM = useMutation({

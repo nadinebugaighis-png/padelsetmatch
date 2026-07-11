@@ -32,17 +32,20 @@ export function QASection() {
     mutationFn: () => genFn({ data: { count: 5, lang } }),
     onSuccess: (res) => {
       const fresh = (res?.questions ?? []) as Q[];
-      if (fresh.length === 0) {
+      const answeredSet = new Set((answersQ.data ?? []).map((a) => a.question));
+      const filtered = fresh.filter((q) => !answeredSet.has(q.question));
+      if (filtered.length === 0) {
         toast.message(t("qa.empty"));
         return;
       }
       setQueue((prev) => {
-        const seen = new Set(prev.map((q) => q.question));
-        return [...prev, ...fresh.filter((q) => !seen.has(q.question))];
+        const seen = new Set([...prev.map((q) => q.question), ...answeredSet]);
+        return [...prev, ...filtered.filter((q) => !seen.has(q.question))];
       });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "AI failed"),
   });
+
 
   const submit = useMutation({
     mutationFn: (v: { question: string; category: string; answer: string }) =>
@@ -98,7 +101,7 @@ export function QASection() {
       </div>
 
       <div className="mt-4 space-y-3">
-        {queue.map((q) => {
+        {queue.filter((q) => !answered.some((a) => a.question === q.question)).map((q) => {
           const value = draft[q.question] ?? "";
           return (
             <div key={q.question} className="rounded-xl border border-[var(--ink)]/10 p-4">

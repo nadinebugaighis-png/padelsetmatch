@@ -852,9 +852,7 @@ function MyMatchesList({
         <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
           {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
         </div>
-        <p className="text-sm text-[var(--ink)]/60 mb-4">
-          {tr("Join a match or convene your own to see it here.", "Únete a un partido o convoca el tuyo para verlo aquí.", "Rejoins un match ou lance le tien pour le voir ici.")}
-        </p>
+        <div className="mb-4" />
         <button
           type="button"
           onClick={onFind}

@@ -780,6 +780,15 @@ function Discover() {
                     <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
                       {c.zone} · {label(c.level)}
                     </p>
+                    {(() => {
+                      const hook = pickHook(c);
+                      if (!hook) return null;
+                      return (
+                        <p className="mt-1.5 text-[11px] text-[var(--ink)]/75 leading-snug line-clamp-2 italic">
+                          {hook}
+                        </p>
+                      );
+                    })()}
                     {(c as any).is_coach && (
                       <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}

@@ -790,17 +790,7 @@ function Discover() {
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
                       </div>
                     )}
-                    {typeof (c as any).founding_number === "number" && (c as any).founding_number <= 100 && (
-                      <div className="mt-2 ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)]/90 border border-[var(--ball)] text-[var(--court-deep)] text-[8px] font-extrabold uppercase tracking-wider" title={tr("One of our first 100 players", "Uno de nuestros 100 primeros jugadores", "L'un de nos 100 premiers joueurs")}>
-                        ★ Founding #{(c as any).founding_number}
-                      </div>
-                    )}
-                    {away && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
-                        ✈ On holidays
-                      </div>
-                    )}
-                    {(() => {
+                    {!((c as any).is_coach) && (() => {
                       const s = sharedVenuesQ.data?.[c.id];
                       if (!s || s.count === 0) return null;
                       const first = s.names?.[0];
@@ -819,6 +809,11 @@ function Discover() {
                         </div>
                       );
                     })()}
+                    {!((c as any).is_coach) && !sharedVenuesQ.data?.[c.id]?.count && away && (
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
+                        ✈ On holidays
+                      </div>
+                    )}
 
                     <div className="mt-2 flex items-center justify-between">
                       {c.free_court_access ? (

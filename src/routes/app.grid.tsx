@@ -883,7 +883,7 @@ function Discover() {
                       <div className="hidden lg:flex lg:items-start lg:justify-between lg:gap-4">
                         <div>
                           <div className="text-display text-3xl xl:text-4xl leading-[0.95] text-[var(--ink)] uppercase tracking-tight">{preview.first_name}</div>
-                          <div className="text-sm text-[var(--ink)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                          <div className="text-sm text-[var(--ink)]/70 mt-1">{preview.zone} · {label(preview.level)}{preview.play_frequency ? ` · 🎾 ${freqLabel(preview.play_frequency)}` : ""}</div>
                           {typeof (preview as any).founding_number === "number" && (preview as any).founding_number <= 100 && (
                             <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-extrabold uppercase tracking-wider">
                               ★ {tr("Founding", "Fundador", "Fondateur")} #{(preview as any).founding_number}

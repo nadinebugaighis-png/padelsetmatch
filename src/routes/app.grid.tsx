@@ -365,8 +365,7 @@ function Discover() {
   return (
     <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-        <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[32px] sm:text-[38px] lg:text-[44px] xl:text-[52px]">{t("disc.h1")}</h1>
-        <p className="text-serif italic text-[var(--ink)]/70 mt-2 leading-[1.15] text-[20px] sm:text-[22px] lg:text-[24px] xl:text-[26px]">{t("disc.sub")}</p>
+        <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
 
         {(() => {
           const me = feedQ.data.me as unknown as {

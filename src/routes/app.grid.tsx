@@ -704,7 +704,70 @@ function Discover() {
           })()
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
-            {list.map((c) => {
+            {(() => {
+              const me = feedQ.data.me as any;
+              if (!me) return null;
+              const openSelf = () => {
+                closedIdRef.current = null;
+                setPreview({
+                  id: me.id,
+                  first_name: me.first_name,
+                  photo_url: me.photo_url,
+                  bio: me.bio,
+                  zone: me.zone,
+                  level: me.level,
+                  reasons: [],
+                  liked: false,
+                  free_court_access: me.free_court_access,
+                  free_court_note: me.free_court_note,
+                  score: 100,
+                  personal_traits: me.personal_traits,
+                  padel_style: me.padel_style,
+                  priorities: me.priorities,
+                  nationality: me.nationality,
+                  gender: me.gender,
+                  gender_custom: me.gender_custom,
+                  languages: me.languages,
+                  locations: me.locations,
+                  is_coach: me.is_coach,
+                });
+                navigate({ search: { previewId: me.id }, replace: true, resetScroll: false });
+              };
+              return (
+                <div className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md">
+                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                      {me.photo_url ? (
+                        <img src={me.photo_url} alt={me.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
+                          {(me.first_name ?? "?").charAt(0)}
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={openSelf}
+                        className="absolute inset-0 w-full h-full text-left"
+                        aria-label={tr("View your player card", "Ver tu tarjeta de jugador", "Voir ta carte de joueur")}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-3 bg-white">
+                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
+                      {me.zone} · {label(me.level)}
+                    </p>
+                    {me.free_court_access && (
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="inline-flex items-center justify-center" title={tr("Free court access", "Pista gratis", "Terrain gratuit")}>
+                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
               const away = (() => {
                 const au = (c as unknown as { away_until?: string | null }).away_until;
                 return !!(au && au >= new Date().toISOString().slice(0, 10));

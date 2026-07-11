@@ -811,7 +811,15 @@ function Discover() {
                     })()}
 
                     <div className="mt-2 flex items-center justify-between">
-                      <span />
+                      {c.free_court_access ? (
+                        <span
+                          className="inline-flex items-center justify-center"
+                          title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                          aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                        >
+                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                        </span>
+                      ) : <span />}
 
                       <div
                         className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"

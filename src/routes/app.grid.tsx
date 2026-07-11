@@ -215,12 +215,20 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
+  // Silent variant used by the tiny thumbs-up on the card — no toast, no navigation.
+  const likeSilentM = useMutation({
+    mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
+  });
   const unlikeM = useMutation({
     mutationFn: (id: string) => unlike({ data: { likedProfileId: id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
-      toast(t("disc.likeRemoved"), { duration: 1800 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.undoFail")),
   });
@@ -748,7 +756,7 @@ function Discover() {
                           e.stopPropagation();
                           e.preventDefault();
                           if (c.liked) unlikeM.mutate(c.id);
-                          else likeM.mutate(c.id);
+                          else likeSilentM.mutate(c.id);
                         }}
                         className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
                         aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Thumbs up ${c.first_name}`, `Pulsa para conectar con ${c.first_name}`, `Pouce pour connecter avec ${c.first_name}`)}

@@ -934,7 +934,7 @@ function Discover() {
 
                       {preview.free_court_access && (
                         <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
-                          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-bold uppercase tracking-wider">🎾 {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold uppercase tracking-wider"><CourtIcon className="w-4 h-2.5" strokeWidth={2.4} /> {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
                           {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
                             
                         </div>

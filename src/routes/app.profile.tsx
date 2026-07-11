@@ -278,6 +278,16 @@ function ProfilePage() {
         </CollapsibleRow>
 
         <CollapsibleRow
+          icon={<Pencil className="w-4 h-4" />}
+          title={tr("Player card details", "Detalles de tu tarjeta", "Détails de ta carte")}
+          subtitle={tr("Level, style, clubs, goals — what others see on your card", "Nivel, estilo, clubes, objetivos — lo que verán en tu tarjeta", "Niveau, style, clubs, objectifs — ce que les autres voient sur ta carte")}
+          contentCard
+          defaultOpen={false}
+        >
+          <PlayerCardDetailsForm profile={p} />
+        </CollapsibleRow>
+
+        <CollapsibleRow
           icon={<HelpCircle className="w-4 h-4" />}
           title={tr("Questions & answers", "Preguntas y respuestas", "Questions et réponses")}
           subtitle={tr("Shape your compatibility", "Afina tu compatibilidad", "Affine ta compatibilité")}

@@ -330,7 +330,7 @@ function PlayerCardPreview() {
           </button>
           <button className="rounded-[10px] py-3.5 bg-white border border-[color-mix(in_oklab,var(--ink)_20%,transparent)] text-[var(--ink)] flex items-center justify-center gap-2 text-[13px] font-semibold uppercase tracking-[0.18em]">
             <Bookmark className="w-4 h-4" strokeWidth={1.8} />
-            Save
+            Save profile
           </button>
         </div>
 

@@ -607,16 +607,22 @@ export const likeProfile = createServerFn({ method: "POST" })
       .eq("profile_b", b)
       .maybeSingle();
     const matchId = (m as { id: string } | null)?.id ?? null;
-    // Anonymous nudge: only for a freshly inserted like that isn't already a mutual match.
+    // Reveal the liker's name so the recipient can decide to like back.
     if (inserted && !matchId) {
       try {
+        const { data: liker } = await context.supabase
+          .from("profiles" as never)
+          .select("first_name")
+          .eq("id", myId)
+          .maybeSingle();
+        const name = (liker as { first_name: string | null } | null)?.first_name?.trim() || "Someone";
         await context.supabase.rpc("enqueue_notification" as never, {
           _profile_id: data.likedProfileId,
           _type: "like_received",
           _pref_column: "matches",
-          _title: "👀 Someone likes you",
+          _title: `👍 ${name} likes you`,
           _body: "Tap 👍 back to unlock chat.",
-          _url: "/app/grid",
+          _url: `/app/grid?previewId=${myId}`,
         } as never);
       } catch (e) {
         console.warn("like nudge failed", e);

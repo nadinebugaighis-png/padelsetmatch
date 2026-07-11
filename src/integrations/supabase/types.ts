@@ -1240,7 +1240,6 @@ export type Database = {
           photo_moderation_reason: string | null
           photo_moderation_status: string
           photo_url: string | null
-          play_frequency: string | null
           played_count: number
           priorities: string[]
           sexual_orientation: string | null
@@ -1288,7 +1287,6 @@ export type Database = {
           photo_moderation_reason?: string | null
           photo_moderation_status?: string
           photo_url?: string | null
-          play_frequency?: string | null
           played_count?: number
           priorities?: string[]
           sexual_orientation?: string | null
@@ -1336,7 +1334,6 @@ export type Database = {
           photo_moderation_reason?: string | null
           photo_moderation_status?: string
           photo_url?: string | null
-          play_frequency?: string | null
           played_count?: number
           priorities?: string[]
           sexual_orientation?: string | null

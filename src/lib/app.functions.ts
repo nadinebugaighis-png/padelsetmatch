@@ -35,7 +35,6 @@ const ProfileInput = z.object({
   sexual_orientation: z.string().max(60).nullable().optional(),
   personal_traits: z.array(z.string().min(1).max(40)).max(10).default([]),
   padel_style: z.array(z.string().min(1).max(40)).max(3).default([]),
-  play_frequency: z.string().max(20).nullable().optional(),
   world_mode: z.boolean().default(false).optional(),
 });
 

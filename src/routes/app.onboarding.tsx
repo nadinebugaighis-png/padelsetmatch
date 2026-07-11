@@ -876,6 +876,13 @@ function Onboarding() {
           <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => navigate({ to: "/app" })}
+            className="text-[var(--ink)]/60"
+          >
+            {tr("Exit", "Salir", "Quitter")}
+          </Button>
           {step === 3 && !photoUrl && (
             <Button variant="ghost" onClick={() => setStep(4)} className="text-[var(--ink)]/70">
               {tr("Skip photo", "Saltar foto", "Passer la photo")}
@@ -890,6 +897,7 @@ function Onboarding() {
           )}
         </div>
       </div>
+
     </main>
   );
 }

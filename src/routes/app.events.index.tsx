@@ -470,7 +470,7 @@ function EventsPage() {
                     pending={pending}
                     onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
                     onJoin={instantJoin}
-                    onManage={setMyMatchSheet}
+                    onManage={(e) => navigate({ to: "/app/events/$eventId", params: { eventId: e.id } })}
                     tr={tr}
                   />
                 )}

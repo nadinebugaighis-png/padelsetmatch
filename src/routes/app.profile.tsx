@@ -289,18 +289,6 @@ function ProfilePage() {
   );
 }
 
-function EditSectionsMenu() {
-  const tr = useTr();
-  return (
-    <Link
-      to="/app/onboarding"
-      className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-7 sm:h-8 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
-    >
-      <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-      {tr("Edit", "Editar", "Éditer")}
-    </Link>
-  );
-}
 
 function EditSectionsStrip() {
   const tr = useTr();

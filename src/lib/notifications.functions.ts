@@ -82,11 +82,11 @@ export const listMyNotifications = createServerFn({ method: "GET" })
       .from("notifications")
       .select("id, type, title, body, url, read_at, created_at")
       .eq("profile_id", profile.id)
+      .is("read_at", null)
       .order("created_at", { ascending: false })
       .limit(50);
     const items = data ?? [];
-    const unread = items.filter((i) => !i.read_at).length;
-    return { items, unread };
+    return { items, unread: items.length };
   });
 
 export const markNotificationsRead = createServerFn({ method: "POST" })

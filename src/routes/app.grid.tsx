@@ -136,7 +136,7 @@ function Discover() {
   const compatQ = useQuery({
     queryKey: ["ai-compat", preview?.id, lang],
     queryFn: () => compatFn({ data: { otherProfileId: preview!.id, lang } }),
-    enabled: !!preview?.id,
+    enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id,
     staleTime: 1000 * 60 * 60,
     retry: false,
   });

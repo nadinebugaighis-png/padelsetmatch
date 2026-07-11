@@ -792,15 +792,8 @@ function EmptyFeed({
   return (
     <div className="mt-8 rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-6 text-center">
       <div className="text-serif text-xl text-[var(--ink)]">
-        {tr("No matches match your filters", "No hay partidos con estos filtros", "Aucun match avec ces filtres")}
+        {tr("No matches found", "Sin partidos", "Aucun match")}
       </div>
-      <p className="text-sm text-[var(--ink)]/60 mt-1">
-        {tr(
-          "Try widening the days or the area — or start your own.",
-          "Prueba con más días o amplía la zona — o convoca el tuyo.",
-          "Élargis les jours ou la zone — ou lance le tien.",
-        )}
-      </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <button
           type="button"

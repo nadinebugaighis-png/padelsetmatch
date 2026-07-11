@@ -667,22 +667,8 @@ function Onboarding() {
                 ))}
               </div>
             </div>
-            <div data-field="court_side" className={fieldCls("court_side")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {COURT_SIDES.map((s) => (
-                  <button key={s} type="button" onClick={() => setCourtSide(s)} className={`chip-paper ${courtSide === s ? "chip-paper-selected" : ""}`}>{label(s)}</button>
-                ))}
-              </div>
-            </div>
 
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("When can you play?", "¿Cuándo puedes jugar?", "Quand peux-tu jouer ?")}</label>
-            <div className="flex flex-wrap gap-2">
-              {AVAILABILITY_SLOTS.map((s) => (
-                <button key={s} type="button" onClick={() => toggleAvail(s)} className={`chip-paper ${availability.includes(s) ? "chip-paper-selected" : ""}`}>{label(s)}</button>
-              ))}
 
-            </div>
 
             <label className="flex items-center gap-2 text-sm pt-1">
               <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--cream)]" />

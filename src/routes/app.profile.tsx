@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ShareQR } from "@/components/ShareQR";
+
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
 import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Sparkles, Star, User } from "lucide-react";
@@ -146,28 +146,23 @@ function ProfilePage() {
     );
   }
   const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
-  const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
-  const hasDetails =
-    locations.length > 0 ||
-    (p.languages?.length ?? 0) > 0;
 
   return (
-    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto min-h-[calc(100vh-4rem)]">
 
-      {/* Hero: compact photo + name side-by-side, even on mobile */}
+      {/* Your player card — hero */}
       <div className="programme-card p-4 sm:p-5">
-        <div className="flex items-start gap-3 sm:gap-5">
-          {/* Photo */}
+        <div className="flex items-center gap-3 sm:gap-4">
           <div className="relative shrink-0">
             {p.photo_url ? (
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
               />
             ) : (
-              <div className="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
-                <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+                <Camera className="w-5 h-5" />
               </div>
             )}
             <input
@@ -187,84 +182,47 @@ function ProfilePage() {
               htmlFor={photoInputId}
               aria-disabled={uploading}
               title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
             >
               <Camera className="w-3.5 h-3.5" />
             </label>
           </div>
 
-          {/* Name + meta */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
-                <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
-                  {p.age} · {label(p.level)} · {p.nationality}
-                </p>
-                <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
-              </div>
-              <EditSectionsMenu />
-
-            </div>
+            <h1 className="text-serif text-xl sm:text-2xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+            <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/70 truncate">
+              {p.age} · {label(p.level)}{locations[0] ? ` · ${locations[0]}` : ""}
+            </p>
           </div>
         </div>
 
-        {p.bio && (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
-            {p.bio}
-          </p>
-        )}
+        <Link
+          to="/app"
+          search={{ previewId: p.id } as any}
+          className="mt-4 w-full h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+        >
+          <User className="w-4 h-4" />
+          {tr("View my player card", "Ver mi tarjeta", "Voir ma carte")}
+        </Link>
+
+        <EditSectionsStrip />
       </div>
 
-      <EditSectionsStrip />
-
-      {/* Messages — placed right under name & photo for quick access */}
+      {/* Messages */}
       <div className="mt-3 sm:mt-4">
         <MessagesRow />
       </div>
 
-
-      <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
+      {/* Availability */}
+      <div className="mt-3 sm:mt-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
+      </div>
 
-        {hasDetails && (
-          <CollapsibleRow
-            icon={<MapPin className="w-4 h-4" />}
-            title={tr("Where & languages", "Dónde y idiomas", "Où et langues")}
-            subtitle={[
-              locations[0],
-              (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
-            ].filter(Boolean).join(" · ") || undefined}
-            contentCard
-          >
-            <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-              {locations.length > 0 && (
-                <Section title={t("prof.playsIn")}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
-                  </div>
-                </Section>
-              )}
-              {p.languages?.length > 0 && (
-                <Section title={t("prof.languages")}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
-                  </div>
-                </Section>
-              )}
-            </div>
-            {p.free_court_access && (
-              <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
-                    {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
-                  </span>
-                  {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
-                </div>
-              </div>
-            )}
-          </CollapsibleRow>
-        )}
+      {/* Settings — grouped */}
+      <div className="mt-5 space-y-2">
+        <div className="px-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/55">
+          {tr("Settings", "Ajustes", "Réglages")}
+        </div>
 
         <CollapsibleRow
           icon={<MapPin className="w-4 h-4" />}
@@ -284,11 +242,25 @@ function ProfilePage() {
 
         <CollapsibleRow
           icon={<HelpCircle className="w-4 h-4" />}
-          title={tr("Questions & answers", "Preguntas y respuestas", "Questions et réponses")}
-          subtitle={tr("Shape your compatibility", "Afina tu compatibilidad", "Affine ta compatibilité")}
+          title={tr("Compatibility Q&A", "Preguntas de compatibilidad", "Q&R de compatibilité")}
+          subtitle={tr("Optional — sharpens your matches", "Opcional — afina tus matches", "Optionnel — affine tes matchs")}
         >
           <QASection />
         </CollapsibleRow>
+
+        <Link
+          to="/app/hidden"
+          className="w-full flex items-center gap-3 rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper)] px-4 py-3.5 hover:bg-[var(--paper-2)] transition-colors"
+        >
+          <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--ink)]/[0.06] text-[var(--ink)] shrink-0">
+            <Lock className="w-4 h-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight">{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</div>
+            <div className="text-xs text-[var(--ink)]/60 mt-0.5">{tr("Manage who can't see you", "Gestiona quién no te ve", "Gère qui ne te voit pas")}</div>
+          </div>
+          <span className="text-[var(--ink)]/40 text-lg">›</span>
+        </Link>
 
         <CollapsibleRow
           icon={<MessageSquare className="w-4 h-4" />}
@@ -297,10 +269,8 @@ function ProfilePage() {
         >
           <FeedbackBox />
         </CollapsibleRow>
-
-
-        <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
       </div>
+
 
 
       <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-500/80 hover:text-red-500">
@@ -319,18 +289,6 @@ function ProfilePage() {
   );
 }
 
-function EditSectionsMenu() {
-  const tr = useTr();
-  return (
-    <Link
-      to="/app/onboarding"
-      className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-7 sm:h-8 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
-    >
-      <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-      {tr("Edit", "Editar", "Éditer")}
-    </Link>
-  );
-}
 
 function EditSectionsStrip() {
   const tr = useTr();

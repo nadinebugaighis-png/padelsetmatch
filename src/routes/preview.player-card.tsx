@@ -34,7 +34,7 @@ const sample = {
   compat: { onCourt: 82, offCourt: 74, blurb: "Both competitive but calm under pressure." },
 };
 
-function Chip({ children, tone = "cream" as "cream" | "ball" | "clay" }) {
+function Chip({ children, tone = "cream" }: { children: React.ReactNode; tone?: "cream" | "ball" | "clay" }) {
   const cls =
     tone === "ball"
       ? "bg-[var(--ball)] text-[var(--court-deep)] border-transparent"

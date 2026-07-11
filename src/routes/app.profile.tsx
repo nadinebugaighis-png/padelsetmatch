@@ -466,7 +466,7 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
     try {
       const payload = isAway ? null : "2999-12-31";
       await setAway({ data: { away_until: payload } });
-      toast.success(payload ? tr("Marked as on holidays", "Marcado como de vacaciones", "Marqué comme en vacances") : tr("You're available again", "Ya estás disponible de nuevo", "Tu es à nouveau disponible"));
+      toast.success(payload ? tr("On holidays 🌴", "De vacaciones 🌴", "En vacances 🌴") : tr("Back on 🎾", "De vuelta 🎾", "De retour 🎾"));
       onSaved();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not update", "No se pudo actualizar", "Impossible de mettre à jour"));

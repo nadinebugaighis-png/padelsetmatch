@@ -1221,6 +1221,7 @@ function Discover() {
                       </div>
 
 
+                      {!isSelf && (
                       <div className="flex items-center justify-center gap-4 pt-2 pb-6">
                         <button
                           type="button"
@@ -1239,6 +1240,7 @@ function Discover() {
                           <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
                         </button>
                       </div>
+                      )}
                     </div>
                   </div>
                 </div>

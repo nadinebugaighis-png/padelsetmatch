@@ -742,23 +742,6 @@ function Discover() {
                         >
                           <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
                         </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!c.liked) {
-                              toast.info(tr(`Connect with ${c.first_name} first to request a match`, `Conecta primero con ${c.first_name} para proponer un partido`, `Connecte-toi d'abord avec ${c.first_name} pour proposer un match`));
-                              return;
-                            }
-                            navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
-                          }}
-                          className={`w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
-                          aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
-                          title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
-                        >
-                          <Zap className="w-2.5 h-2.5" fill="currentColor" strokeWidth={1.5} />
-
-                        </button>
                       </div>
 
                       <button
@@ -807,17 +790,7 @@ function Discover() {
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
                       </div>
                     )}
-                    {typeof (c as any).founding_number === "number" && (c as any).founding_number <= 100 && (
-                      <div className="mt-2 ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ball)]/90 border border-[var(--ball)] text-[var(--court-deep)] text-[8px] font-extrabold uppercase tracking-wider" title={tr("One of our first 100 players", "Uno de nuestros 100 primeros jugadores", "L'un de nos 100 premiers joueurs")}>
-                        ★ Founding #{(c as any).founding_number}
-                      </div>
-                    )}
-                    {away && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
-                        ✈ On holidays
-                      </div>
-                    )}
-                    {(() => {
+                    {!((c as any).is_coach) && (() => {
                       const s = sharedVenuesQ.data?.[c.id];
                       if (!s || s.count === 0) return null;
                       const first = s.names?.[0];
@@ -836,21 +809,12 @@ function Discover() {
                         </div>
                       );
                     })()}
-
-                    <div className="mt-2 flex items-center justify-between">
-                      {c.free_court_access ? (
-                        <span className="px-2 py-0.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)] text-[8px] font-bold uppercase tracking-tight flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
-                          Free Court
-                        </span>
-                      ) : <span />}
-                      <div
-                        className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
-                        title={t("disc.scoreTooltip")}
-                      >
-                        {c.score}
+                    {!((c as any).is_coach) && !sharedVenuesQ.data?.[c.id]?.count && away && (
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
+                        ✈ On holidays
                       </div>
-                    </div>
+                    )}
+
                   </div>
                 </div>
               );

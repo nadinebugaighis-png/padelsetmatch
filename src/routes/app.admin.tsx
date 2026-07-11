@@ -221,15 +221,30 @@ function AdminPage() {
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
               <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>
               <div className="space-y-1.5">
-                {incomplete.map((u) => (
+                {incomplete.map((u) => {
+                  const stalled = u.onboarding_stage === "lite";
+                  const daysAgo = Math.floor((Date.now() - new Date(u.signed_up_at).getTime()) / 86400000);
+                  return (
                   <div key={u.user_id} className="rounded-lg bg-amber-500/5 border border-amber-500/25 px-3 py-2">
-                    <div className="truncate text-sm">{u.email ?? "(no email)"}</div>
-                    <div className="text-xs text-[var(--ink)]/55">
-                      {new Date(u.signed_up_at).toLocaleDateString()}
-                      {!u.email_confirmed && <span className="ml-2 text-amber-400">email unconfirmed</span>}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm">
+                          {u.first_name ? <span className="font-semibold">{u.first_name}</span> : <span className="text-[var(--ink)]/50 italic">no name</span>}
+                          <span className="text-[var(--ink)]/40"> · </span>
+                          <span className="text-[var(--ink)]/70 truncate">{u.email ?? "(no email)"}</span>
+                        </div>
+                        <div className="text-xs text-[var(--ink)]/55">
+                          {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
+                          {!u.email_confirmed && <span className="ml-2 text-amber-400">email unconfirmed</span>}
+                        </div>
+                      </div>
+                      <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-200 shrink-0">
+                        {stalled ? "stalled" : "no profile"}
+                      </span>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           )}

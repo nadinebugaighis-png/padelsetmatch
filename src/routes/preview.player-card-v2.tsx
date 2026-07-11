@@ -9,13 +9,11 @@ import {
   Send,
   Bookmark,
   ArrowRight,
-  Languages,
   Dumbbell,
   Trophy,
   MessageCircle,
   Zap,
   Smile,
-  Heart,
 } from "lucide-react";
 
 export const Route = createFileRoute("/preview/player-card-v2")({

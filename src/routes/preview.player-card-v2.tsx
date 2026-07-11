@@ -14,7 +14,9 @@ import {
   MessageCircle,
   Zap,
   Smile,
+  Pencil,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/preview/player-card-v2")({
   component: PlayerCardPreview,

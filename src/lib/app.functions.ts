@@ -766,10 +766,27 @@ export const sendMessage = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("No profile");
+    // Intro guard: initiator can't spam a second message before the recipient replies.
+    const { data: matchRow } = await context.supabase
+      .from("matches" as never)
+      .select("origin, accepted_at, initiator_profile_id")
+      .eq("id", data.matchId)
+      .maybeSingle();
+    const mrow = matchRow as { origin: string; accepted_at: string | null; initiator_profile_id: string | null } | null;
+    if (mrow && mrow.origin === "intro" && !mrow.accepted_at && mrow.initiator_profile_id === myId) {
+      throw new Error("Wait for a reply before sending another intro message.");
+    }
     const { error } = await context.supabase
       .from("messages" as never)
       .insert({ match_id: data.matchId, sender_profile_id: myId, body: data.body } as never);
     if (error) throw new Error(error.message);
+    // If this is the recipient's first reply to an intro, mark it accepted.
+    if (mrow && mrow.origin === "intro" && !mrow.accepted_at && mrow.initiator_profile_id !== myId) {
+      await context.supabase.rpc("accept_intro" as never, {
+        _match_id: data.matchId,
+        _acting_user_id: context.userId,
+      } as never);
+    }
 
     // Auto-reply from seed players to keep the demo chat alive
     const { data: match } = await context.supabase

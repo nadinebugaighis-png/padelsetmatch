@@ -136,7 +136,7 @@ function Discover() {
   const compatQ = useQuery({
     queryKey: ["ai-compat", preview?.id, lang],
     queryFn: () => compatFn({ data: { otherProfileId: preview!.id, lang } }),
-    enabled: !!preview?.id,
+    enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id,
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
@@ -704,6 +704,70 @@ function Discover() {
           })()
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
+            {(() => {
+              const me = feedQ.data.me as any;
+              if (!me) return null;
+              const openSelf = () => {
+                closedIdRef.current = null;
+                setPreview({
+                  id: me.id,
+                  first_name: me.first_name,
+                  photo_url: me.photo_url,
+                  bio: me.bio,
+                  zone: me.zone,
+                  level: me.level,
+                  reasons: [],
+                  liked: false,
+                  free_court_access: me.free_court_access,
+                  free_court_note: me.free_court_note,
+                  score: 100,
+                  personal_traits: me.personal_traits,
+                  padel_style: me.padel_style,
+                  priorities: me.priorities,
+                  nationality: me.nationality,
+                  gender: me.gender,
+                  gender_custom: me.gender_custom,
+                  languages: me.languages,
+                  locations: me.locations,
+                  is_coach: me.is_coach,
+                });
+                navigate({ search: { previewId: me.id }, replace: true, resetScroll: false });
+              };
+              return (
+                <div className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md">
+                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                      {me.photo_url ? (
+                        <img src={me.photo_url} alt={me.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
+                          {(me.first_name ?? "?").charAt(0)}
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={openSelf}
+                        className="absolute inset-0 w-full h-full text-left"
+                        aria-label={tr("View your player card", "Ver tu tarjeta de jugador", "Voir ta carte de joueur")}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-3 bg-white">
+                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
+                      {me.zone} · {label(me.level)}
+                    </p>
+                    {me.free_court_access && (
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="inline-flex items-center justify-center" title={tr("Free court access", "Pista gratis", "Terrain gratuit")}>
+                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
             {list.map((c) => {
               const away = (() => {
                 const au = (c as unknown as { away_until?: string | null }).away_until;
@@ -867,6 +931,7 @@ function Discover() {
             ];
             const sharedChips = Array.from(new Set(allTheirs.filter((w) => mineTraits.has(w))));
             const match = matchesQ.data?.find((m) => m.other?.id === preview.id);
+            const isSelf = !!mine && preview.id === mine.id;
             return (
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
@@ -956,33 +1021,44 @@ function Discover() {
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
                       )}
 
-                      <div className="flex items-stretch gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                            if (!preview.liked) likeM.mutate(preview.id);
-                          }}
-                          disabled={likeM.isPending && !match}
-                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                      {isSelf ? (
+                        <Link
+                          to="/app/profile"
+                          onClick={closePreview}
+                          className="w-full h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                         >
-                          <MessageCircle className="w-4 h-4" />
-                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => toggleFavM.mutate(preview.id)}
-                          disabled={toggleFavM.isPending}
-                          aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
-                          title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
-                          className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
-                        >
-                          <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
-                        </button>
-                      </div>
+                          {tr("Edit profile", "Editar perfil", "Modifier le profil")}
+                        </Link>
+                      ) : (
+                        <div className="flex items-stretch gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                              if (!preview.liked) likeM.mutate(preview.id);
+                            }}
+                            disabled={likeM.isPending && !match}
+                            className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => toggleFavM.mutate(preview.id)}
+                            disabled={toggleFavM.isPending}
+                            aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
+                            title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
+                            className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
+                          >
+                            <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
+                          </button>
+                        </div>
+                      )}
 
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
+                      {!isSelf && (
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
                         <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2.5">
                           <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
@@ -1097,6 +1173,7 @@ function Discover() {
                           <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
                         )}
                       </div>
+                      )}
 
 
                       {/* Me-style profile card (age intentionally omitted for privacy) */}
@@ -1144,6 +1221,7 @@ function Discover() {
                       </div>
 
 
+                      {!isSelf && (
                       <div className="flex items-center justify-center gap-4 pt-2 pb-6">
                         <button
                           type="button"
@@ -1162,6 +1240,7 @@ function Discover() {
                           <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
                         </button>
                       </div>
+                      )}
                     </div>
                   </div>
                 </div>

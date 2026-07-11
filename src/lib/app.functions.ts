@@ -340,26 +340,33 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     const me = meRow as Profile | null;
     if (!me) return { me: null, candidates: [] as Array<Profile & { score: number; reasons: string[]; liked: boolean }> };
 
-    const { data: candRows } = await context.supabase
-      .from("profiles" as never)
-      .select("*")
-      .is("suspended_at", null)
-      .neq("id", me.id);
-    const { data: myLikes } = await context.supabase
-      .from("likes" as never)
-      .select("liked_profile_id")
-      .eq("liker_profile_id", me.id);
-    const { data: myBlocks } = await context.supabase
-      .from("blocks" as never)
-      .select("blocked_profile_id")
-      .eq("blocker_profile_id", me.id);
-    const { data: myHides } = await context.supabase
-      .from("hides" as never)
-      .select("hidden_profile_id, category")
-      .eq("hider_profile_id", me.id);
-    // Read reciprocal rows through the signed-in client. If privacy RLS hides those
-    // rows, this safely returns an empty list instead of requiring a service key.
-    const [{ data: hidesOfMe }, { data: blocksOfMe }] = await Promise.all([
+    // Run all six independent lookups in parallel — previously sequential, which
+    // stacked 5+ round-trips on top of each other on every grid load.
+    const [
+      { data: candRows },
+      { data: myLikes },
+      { data: myBlocks },
+      { data: myHides },
+      { data: hidesOfMe },
+      { data: blocksOfMe },
+    ] = await Promise.all([
+      context.supabase
+        .from("profiles" as never)
+        .select("*")
+        .is("suspended_at", null)
+        .neq("id", me.id),
+      context.supabase
+        .from("likes" as never)
+        .select("liked_profile_id")
+        .eq("liker_profile_id", me.id),
+      context.supabase
+        .from("blocks" as never)
+        .select("blocked_profile_id")
+        .eq("blocker_profile_id", me.id),
+      context.supabase
+        .from("hides" as never)
+        .select("hidden_profile_id, category")
+        .eq("hider_profile_id", me.id),
       context.supabase
         .from("hides" as never)
         .select("hider_profile_id, category")
@@ -414,12 +421,15 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
     // QA affinity: use the signed-in client only; RLS decides which answers are readable.
     // Include the embedding so we can score by MEANING (semantic), not just exact-string equality.
+    // Fetch AFTER the city filter — embeddings are ~6KB each, so this used to pull
+    // megabytes for candidates we then discarded.
     const { parsePgVector, cosineSim } = await import("./embeddings.server");
     const ids = [me.id, ...candidates.map((c) => c.id)];
     const { data: qaRows } = await context.supabase
       .from("qa_answers" as never)
       .select("profile_id, question, answer_norm, answer_embedding")
       .in("profile_id", ids);
+
     type QAEntry = { norm: string; vec: number[] | null };
     const byProfile = new Map<string, Map<string, QAEntry>>();
     ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string; answer_embedding: unknown }> | null) ?? []).forEach((r) => {

@@ -147,9 +147,7 @@ function ProfilePage() {
   }
   const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
-  const hasDetails =
-    locations.length > 0 ||
-    (p.languages?.length ?? 0) > 0;
+
 
   return (
     <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">

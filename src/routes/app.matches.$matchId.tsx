@@ -134,11 +134,17 @@ function ChatRoom() {
   return (
     <main className="programme-page max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col h-[calc(100dvh-150px)] text-[var(--ink)]">
       <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--ink)]/10">
-        {(other as { is_coach?: boolean }).is_coach ? (
-          <Link to="/app/grid" search={{ previewId: other.id }} className="p-1"><ArrowLeft className="w-5 h-5" /></Link>
-        ) : (
-          <Link to="/app/matches" className="p-1"><ArrowLeft className="w-5 h-5" /></Link>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
+            else navigate({ to: "/app/matches" });
+          }}
+          className="p-1"
+          aria-label="Back"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
         <div className="w-10 h-10 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0">
           {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
         </div>

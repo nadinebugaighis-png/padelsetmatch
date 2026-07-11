@@ -69,22 +69,21 @@ const sample = {
   },
 };
 
-function RacketMini({ crossed = false }: { crossed?: boolean }) {
+function RacketMini() {
+  // Padel racket: teardrop head with dotted holes + short handle
   return (
-    <svg viewBox="0 0 40 40" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <ellipse cx="20" cy="15" rx="10" ry="12" />
-      <line x1="20" y1="27" x2="20" y2="38" />
-      {crossed ? (
-        <>
-          <line x1="12" y1="8" x2="28" y2="22" opacity="0.5" />
-          <line x1="28" y1="8" x2="12" y2="22" opacity="0.5" />
-        </>
-      ) : (
-        <>
-          <line x1="20" y1="4" x2="20" y2="26" opacity="0.35" />
-          <line x1="10" y1="15" x2="30" y2="15" opacity="0.35" />
-        </>
-      )}
+    <svg viewBox="0 0 40 40" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 4c6 0 10 4.5 10 10.5S26 26 20 26s-10-4.5-10-11.5S14 4 20 4z" />
+      <line x1="20" y1="26" x2="20" y2="34" />
+      <rect x="17.5" y="34" width="5" height="3" rx="1" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="12" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="20" cy="11" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="24" cy="12" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="17" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="20" cy="16" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="24" cy="17" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="21" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="22" cy="21" r="0.9" fill="currentColor" stroke="none" />
     </svg>
   );
 }
@@ -215,11 +214,10 @@ function PlayerCardPreview() {
         </div>
 
         {/* Icon stat row */}
-        <div className="mt-6 border-t border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pt-4 grid grid-cols-4 gap-2">
+        <div className="mt-6 border-t border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pt-4 grid grid-cols-3 gap-2">
           <StatCell icon={<LevelBars />} label="Level" value={sample.level} />
           <StatCell icon={<RacketMini />} label="Side" value={sample.side} />
           <StatCell icon={<Sparkles className="w-6 h-6" strokeWidth={1.4} />} label="Style" value={sample.style} />
-          <StatCell icon={<RacketMini crossed />} label="Rackets" value={`×${sample.rackets}`} />
         </div>
 
         {/* Plays / time-of-day */}
@@ -242,11 +240,10 @@ function PlayerCardPreview() {
         <div className="mt-6 grid grid-cols-4 gap-3 text-[var(--ink)]">
           <div className="space-y-3">
             <ColumnHeader>Languages</ColumnHeader>
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {sample.languages.map((l) => (
-                <div key={l.label} className="flex flex-col items-center gap-1">
-                  <span className="text-[18px] leading-none">{l.flag}</span>
-                  <span className="text-[11px]">{l.label}</span>
+                <div key={l.label} className="text-center text-[12px] text-[var(--ink)]">
+                  {l.label}
                 </div>
               ))}
             </div>
@@ -333,7 +330,7 @@ function PlayerCardPreview() {
           </button>
           <button className="rounded-[10px] py-3.5 bg-white border border-[color-mix(in_oklab,var(--ink)_20%,transparent)] text-[var(--ink)] flex items-center justify-center gap-2 text-[13px] font-semibold uppercase tracking-[0.18em]">
             <Bookmark className="w-4 h-4" strokeWidth={1.8} />
-            Save
+            Save profile
           </button>
         </div>
 

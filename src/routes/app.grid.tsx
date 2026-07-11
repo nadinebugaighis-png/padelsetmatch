@@ -1021,30 +1021,40 @@ function Discover() {
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
                       )}
 
-                      <div className="flex items-stretch gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                            if (!preview.liked) likeM.mutate(preview.id);
-                          }}
-                          disabled={likeM.isPending && !match}
-                          className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                      {isSelf ? (
+                        <Link
+                          to="/app/profile"
+                          onClick={closePreview}
+                          className="w-full h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                         >
-                          <MessageCircle className="w-4 h-4" />
-                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => toggleFavM.mutate(preview.id)}
-                          disabled={toggleFavM.isPending}
-                          aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
-                          title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
-                          className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
-                        >
-                          <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
-                        </button>
-                      </div>
+                          {tr("Edit profile", "Editar perfil", "Modifier le profil")}
+                        </Link>
+                      ) : (
+                        <div className="flex items-stretch gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                              if (!preview.liked) likeM.mutate(preview.id);
+                            }}
+                            disabled={likeM.isPending && !match}
+                            className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => toggleFavM.mutate(preview.id)}
+                            disabled={toggleFavM.isPending}
+                            aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
+                            title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
+                            className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
+                          >
+                            <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
+                          </button>
+                        </div>
+                      )}
 
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}

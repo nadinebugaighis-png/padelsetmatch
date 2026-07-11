@@ -100,6 +100,7 @@ function Onboarding() {
   const [sexualOrientation, setSexualOrientation] = useState("");
   const [personalTraits, setPersonalTraits] = useState<string[]>([]);
   const [padelStyle, setPadelStyle] = useState<string[]>([]);
+  const [playFrequency, setPlayFrequency] = useState<string>("");
   const [showStepHelp, setShowStepHelp] = useState(false);
 
   useEffect(() => {

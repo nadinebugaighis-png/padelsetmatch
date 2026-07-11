@@ -85,7 +85,7 @@ function Discover() {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; story_hook?: string | null }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; story_hook?: string | null; play_frequency?: string | null }>(null);
   const [introOpen, setIntroOpen] = useState(false);
   const [introBody, setIntroBody] = useState("");
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
@@ -116,6 +116,16 @@ function Discover() {
     const v = c?.[key];
     return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
   };
+  const freqLabel = (f: string): string => {
+    switch (f) {
+      case "<1/week": return tr("<1×/week", "<1×/sem", "<1×/sem.");
+      case "1-2/week": return tr("1-2×/week", "1-2×/sem", "1-2×/sem.");
+      case "3-4/week": return tr("3-4×/week", "3-4×/sem", "3-4×/sem.");
+      case "5+/week": return tr("5+/week", "5+/sem", "5+/sem.");
+      case "daily": return tr("Daily", "A diario", "Tous les jours");
+      default: return f;
+    }
+  };
   const closedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const candidates = feedQ.data?.candidates;
@@ -123,13 +133,13 @@ function Discover() {
     if (closedIdRef.current === search.previewId) return;
     const c = candidates.find((x) => x.id === search.previewId);
     if (c) {
-      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, story_hook: pickHook(c) });
+    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, story_hook: pickHook(c), play_frequency: (c as any).play_frequency });
     }
   }, [search.previewId, feedQ.data?.candidates, lang]);
 
   const openPreview = (c: NonNullable<typeof feedQ.data>["candidates"][number]) => {
     closedIdRef.current = null;
-    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, story_hook: pickHook(c) });
+    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, story_hook: pickHook(c), play_frequency: (c as any).play_frequency });
     navigate({ search: { previewId: c.id }, replace: true, resetScroll: false });
   };
   const closePreview = () => {
@@ -871,7 +881,7 @@ function Discover() {
                           {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                         </div>
                         <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight mt-1.5">{preview.first_name},</div>
-                        <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}</div>
+                        <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}{preview.play_frequency ? ` · 🎾 ${freqLabel(preview.play_frequency)}` : ""}</div>
                       </div>
                     </div>
                   </div>
@@ -883,7 +893,7 @@ function Discover() {
                       <div className="hidden lg:flex lg:items-start lg:justify-between lg:gap-4">
                         <div>
                           <div className="text-display text-3xl xl:text-4xl leading-[0.95] text-[var(--ink)] uppercase tracking-tight">{preview.first_name}</div>
-                          <div className="text-sm text-[var(--ink)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                          <div className="text-sm text-[var(--ink)]/70 mt-1">{preview.zone} · {label(preview.level)}{preview.play_frequency ? ` · 🎾 ${freqLabel(preview.play_frequency)}` : ""}</div>
                           {typeof (preview as any).founding_number === "number" && (preview as any).founding_number <= 100 && (
                             <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[10px] font-extrabold uppercase tracking-wider">
                               ★ {tr("Founding", "Fundador", "Fondateur")} #{(preview as any).founding_number}

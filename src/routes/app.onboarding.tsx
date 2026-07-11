@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
-  PADEL_STYLES, PERSONAL_STRENGTHS,
+  PADEL_STYLES, PERSONAL_STRENGTHS, PLAY_FREQUENCIES,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
   type CourtSide, type Gender, type LookingFor, type PadelLevel,
@@ -100,6 +100,7 @@ function Onboarding() {
   const [sexualOrientation, setSexualOrientation] = useState("");
   const [personalTraits, setPersonalTraits] = useState<string[]>([]);
   const [padelStyle, setPadelStyle] = useState<string[]>([]);
+  const [playFrequency, setPlayFrequency] = useState<string>("");
   const [showStepHelp, setShowStepHelp] = useState(false);
 
   useEffect(() => {
@@ -161,6 +162,7 @@ function Onboarding() {
       if (p.sexual_orientation) setSexualOrientation(p.sexual_orientation);
       if (p.personal_traits?.length) setPersonalTraits(p.personal_traits);
       if (p.padel_style?.length) setPadelStyle(p.padel_style);
+      if ((p as any).play_frequency) setPlayFrequency((p as any).play_frequency);
     } else if (profileQ.data === null) {
       // New user — hydrate from the pre-signup guest draft if present
       const draft = loadGuestDraft();
@@ -309,6 +311,7 @@ function Onboarding() {
           sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
           personal_traits: personalTraits,
           padel_style: padelStyle,
+          play_frequency: playFrequency || null,
         },
       });
     },
@@ -666,6 +669,21 @@ function Onboarding() {
                 {PADEL_LEVELS.map((l) => (
                   <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
                 ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("How often do you play?", "¿Con qué frecuencia juegas?", "À quelle fréquence joues-tu ?")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {PLAY_FREQUENCIES.map((f) => {
+                  const lbl = f === "<1/week" ? tr("<1×/week", "<1×/sem", "<1×/sem.")
+                    : f === "1-2/week" ? tr("1-2×/week", "1-2×/sem", "1-2×/sem.")
+                    : f === "3-4/week" ? tr("3-4×/week", "3-4×/sem", "3-4×/sem.")
+                    : f === "5+/week" ? tr("5+/week", "5+/sem", "5+/sem.")
+                    : tr("Daily", "A diario", "Tous les jours");
+                  return (
+                    <button key={f} type="button" onClick={() => setPlayFrequency(playFrequency === f ? "" : f)} className={`chip-paper ${playFrequency === f ? "chip-paper-selected" : ""}`}>{lbl}</button>
+                  );
+                })}
               </div>
             </div>
             <div data-field="court_side" className={fieldCls("court_side")}>

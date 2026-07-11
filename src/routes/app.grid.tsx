@@ -243,6 +243,7 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
+  const blockM = useMutation({
     mutationFn: (id: string) => block({ data: { blockedProfileId: id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });

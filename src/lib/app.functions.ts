@@ -655,7 +655,16 @@ export const getMyMatches = createServerFn({ method: "GET" })
       .from("matches" as never)
       .select("*")
       .order("last_message_at", { ascending: false });
-    const m = (matches as Array<{ id: string; profile_a: string; profile_b: string; created_at: string; last_message_at: string }> | null) ?? [];
+    const m = (matches as Array<{
+      id: string;
+      profile_a: string;
+      profile_b: string;
+      created_at: string;
+      last_message_at: string;
+      origin: string;
+      accepted_at: string | null;
+      initiator_profile_id: string | null;
+    }> | null) ?? [];
     const otherIds = m.map((x) => (x.profile_a === myId ? x.profile_b : x.profile_a));
     if (otherIds.length === 0) return [];
     const matchIds = m.map((x) => x.id);
@@ -673,10 +682,16 @@ export const getMyMatches = createServerFn({ method: "GET" })
       const last = matchMsgs[0];
       const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
       const other = map.get(row.profile_a === myId ? row.profile_b : row.profile_a);
+      const isIntro = row.origin === "intro" && !row.accepted_at;
+      const iInitiated = row.initiator_profile_id === myId;
       return {
         match_id: row.id,
         created_at: row.created_at,
         last_message_at: row.last_message_at,
+        origin: row.origin,
+        accepted_at: row.accepted_at,
+        is_intro_pending: isIntro,
+        i_initiated: iInitiated,
         last_message: last ? { body: last.body, created_at: last.created_at, from_me: last.sender_profile_id === myId } : null,
         unread,
         other,

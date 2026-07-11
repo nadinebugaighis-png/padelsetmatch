@@ -871,7 +871,7 @@ function Discover() {
                           {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                         </div>
                         <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight mt-1.5">{preview.first_name},</div>
-                        <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}</div>
+                        <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}{preview.play_frequency ? ` · 🎾 ${freqLabel(preview.play_frequency)}` : ""}</div>
                       </div>
                     </div>
                   </div>

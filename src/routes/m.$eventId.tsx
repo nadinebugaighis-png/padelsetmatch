@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 
 
-const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/4dd82dea-ae85-4279-b837-9f883f39208b/padel-share-v2.jpg";
+const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/79b3885f-8b57-485f-8f05-1b3733c497cf/padel-share-banner-v3.jpg";
 
 export const Route = createFileRoute("/m/$eventId")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -26,8 +26,8 @@ export const Route = createFileRoute("/m/$eventId")({
         { property: "og:description", content: description },
         { property: "og:type", content: "website" },
         { property: "og:image", content: OG_IMAGE },
-        { property: "og:image:width", content: "1200" },
-        { property: "og:image:height", content: "640" },
+        { property: "og:image:width", content: "1687" },
+        { property: "og:image:height", content: "434" },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },

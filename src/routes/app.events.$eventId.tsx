@@ -416,7 +416,7 @@ function EventDetail() {
               <div className="px-2 py-3 sm:py-4 min-w-0 flex flex-col justify-center">
                 <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")}</div>
                 <div className="text-xs sm:text-sm font-semibold text-[var(--ink)] mt-0.5 leading-tight whitespace-normal break-words">
-                  {label(event.level_min)}<span className="text-[var(--ink)]/50 mx-0.5">–</span>{label(event.level_max)}
+                  {label(event.level_min)}
                 </div>
               </div>
             </div>

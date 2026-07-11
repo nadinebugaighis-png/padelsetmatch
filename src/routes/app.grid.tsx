@@ -10,6 +10,7 @@ import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
 import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venues.functions";
+import { openIntroChat } from "@/lib/intro.functions";
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
@@ -84,7 +85,9 @@ function Discover() {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; story_hook?: string | null }>(null);
+  const [introOpen, setIntroOpen] = useState(false);
+  const [introBody, setIntroBody] = useState("");
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
 
 
@@ -108,6 +111,11 @@ function Discover() {
     staleTime: 60_000,
   });
 
+  const pickHook = (c: any): string | null => {
+    const key = lang === "es" ? "story_hook_es" : lang === "fr" ? "story_hook_fr" : "story_hook_en";
+    const v = c?.[key];
+    return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
+  };
   const closedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const candidates = feedQ.data?.candidates;
@@ -115,13 +123,13 @@ function Discover() {
     if (closedIdRef.current === search.previewId) return;
     const c = candidates.find((x) => x.id === search.previewId);
     if (c) {
-      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
+      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, story_hook: pickHook(c) });
     }
-  }, [search.previewId, feedQ.data?.candidates]);
+  }, [search.previewId, feedQ.data?.candidates, lang]);
 
   const openPreview = (c: NonNullable<typeof feedQ.data>["candidates"][number]) => {
     closedIdRef.current = null;
-    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach });
+    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, story_hook: pickHook(c) });
     navigate({ search: { previewId: c.id }, replace: true, resetScroll: false });
   };
   const closePreview = () => {
@@ -222,6 +230,18 @@ function Discover() {
       toast(t("disc.likeRemoved"), { duration: 1800 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.undoFail")),
+  });
+  const introFn = useServerFn(openIntroChat);
+  const introM = useMutation({
+    mutationFn: (vars: { targetProfileId: string; body: string }) => introFn({ data: vars }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      setIntroOpen(false);
+      setIntroBody("");
+      toast.success(tr("Intro sent 👋", "Presentación enviada 👋", "Intro envoyée 👋"), { duration: 1800 });
+      setTimeout(() => navigate({ to: "/app/matches/$matchId", params: { matchId: res.match_id } }), 400);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
   const blockM = useMutation({
     mutationFn: (id: string) => block({ data: { blockedProfileId: id } }),
@@ -773,6 +793,15 @@ function Discover() {
                     <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
                       {c.zone} · {label(c.level)}
                     </p>
+                    {(() => {
+                      const hook = pickHook(c);
+                      if (!hook) return null;
+                      return (
+                        <p className="mt-1.5 text-[11px] text-[var(--ink)]/75 leading-snug line-clamp-2 italic">
+                          {hook}
+                        </p>
+                      );
+                    })()}
                     {(c as any).is_coach && (
                       <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
@@ -928,6 +957,12 @@ function Discover() {
 
                       <SharedVenuesBadge otherProfileId={preview.id} />
 
+                      {preview.story_hook && (
+                        <p className="text-[14px] text-[var(--ink)]/85 leading-snug italic">
+                          "{preview.story_hook}"
+                        </p>
+                      )}
+
                       {/* Primary actions — coach card + message/like button placed above the fold */}
                       {preview.is_coach && (
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
@@ -943,9 +978,20 @@ function Discover() {
                           disabled={likeM.isPending && !match}
                           className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                         >
-                          <MessageCircle className="w-4 h-4" />
-                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                          <ThumbsUp className="w-4 h-4" />
+                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Thumbs up to connect", "Pulsa para conectar", "Pouce pour connecter")}
                         </button>
+                        {!match && (
+                          <button
+                            type="button"
+                            onClick={() => { setIntroBody(""); setIntroOpen(true); }}
+                            aria-label={tr("Say hi", "Saludar", "Dire salut")}
+                            title={tr("Send one intro message", "Envía un mensaje de presentación", "Envoie un mot d'intro")}
+                            className="h-11 w-11 shrink-0 rounded-full border flex items-center justify-center bg-white border-[var(--ink)]/25 text-[var(--ink)]/75 hover:border-[var(--ink)]/60 hover:text-[var(--ink)] transition active:scale-[0.94]"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => toggleFavM.mutate(preview.id)}
@@ -1145,6 +1191,60 @@ function Discover() {
               </>
             );
           })()}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={introOpen} onOpenChange={(o) => { if (!o) { setIntroOpen(false); setIntroBody(""); } }}>
+        <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
+          <div className="p-5">
+            <DialogTitle className="text-serif text-2xl text-[var(--ink)] uppercase">
+              {tr("Say hi", "Saluda", "Dis salut")}{preview ? ` — ${preview.first_name}` : ""}
+            </DialogTitle>
+            <p className="text-[13px] text-[var(--ink)]/65 mt-1.5">
+              {tr(
+                "One intro message. If they reply, you'll be connected.",
+                "Un mensaje de presentación. Si te responde, quedaréis conectados.",
+                "Un mot d'intro. S'il/elle répond, vous êtes connectés.",
+              )}
+            </p>
+            <textarea
+              value={introBody}
+              onChange={(e) => setIntroBody(e.target.value.slice(0, 140))}
+              rows={4}
+              placeholder={tr(
+                "e.g. Saw you play at La Moraleja — free Thursday evening?",
+                "p. ej. Te vi jugar en La Moraleja, ¿libre el jueves por la tarde?",
+                "ex. Vu que tu joues à La Moraleja, libre jeudi soir ?",
+              )}
+              className="mt-3 w-full rounded-xl border border-[var(--ink)]/20 bg-white p-3 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/35 focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/25 resize-none"
+              autoFocus
+              maxLength={140}
+            />
+            <div className="mt-1.5 flex items-center justify-between text-[11px] text-[var(--ink)]/50">
+              <span>{introBody.length}/140</span>
+              <span>{tr("Limit: 5 intros / 24h", "Máx. 5 presentaciones / 24 h", "Max 5 intros / 24h")}</span>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => { setIntroOpen(false); setIntroBody(""); }}
+                className="flex-1 h-11 rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[12px] font-semibold uppercase tracking-widest hover:bg-[var(--ink)]/5"
+              >
+                {tr("Cancel", "Cancelar", "Annuler")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!preview || introBody.trim().length === 0 || introM.isPending) return;
+                  introM.mutate({ targetProfileId: preview.id, body: introBody.trim() });
+                }}
+                disabled={!preview || introBody.trim().length === 0 || introM.isPending}
+                className="flex-1 h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-bold uppercase tracking-widest disabled:opacity-50 hover:brightness-110"
+              >
+                {introM.isPending ? tr("Sending…", "Enviando…", "Envoi…") : tr("Send intro", "Enviar", "Envoyer")}
+              </button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </main>

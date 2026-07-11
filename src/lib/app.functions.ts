@@ -96,6 +96,7 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
       .select("id")
       .eq("user_id", context.userId)
       .maybeSingle();
+    let saved: Profile;
     if (existing) {
       const { data: updated, error } = await context.supabase
         .from("profiles" as never)
@@ -104,15 +105,33 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
-      return updated as Profile;
+      saved = updated as Profile;
+    } else {
+      const { data: inserted, error } = await context.supabase
+        .from("profiles" as never)
+        .insert(row as never)
+        .select("*")
+        .single();
+      if (error) throw new Error(error.message);
+      saved = inserted as Profile;
     }
-    const { data: inserted, error } = await context.supabase
-      .from("profiles" as never)
-      .insert(row as never)
-      .select("*")
-      .single();
-    if (error) throw new Error(error.message);
-    return inserted as Profile;
+    // Fire-and-forget: refresh the AI story hook. Never blocks the save.
+    void (async () => {
+      try {
+        const { generateStoryHooks } = await import("./story-hook.server");
+        const hooks = await generateStoryHooks(saved);
+        if (!hooks) return;
+        await context.supabase
+          .from("profiles" as never)
+          .update({
+            story_hook_en: hooks.en,
+            story_hook_es: hooks.es,
+            story_hook_fr: hooks.fr,
+          } as never)
+          .eq("user_id", context.userId);
+      } catch { /* ignore hook errors */ }
+    })();
+    return saved;
   });
 
 export const setAwayStatus = createServerFn({ method: "POST" })
@@ -636,7 +655,16 @@ export const getMyMatches = createServerFn({ method: "GET" })
       .from("matches" as never)
       .select("*")
       .order("last_message_at", { ascending: false });
-    const m = (matches as Array<{ id: string; profile_a: string; profile_b: string; created_at: string; last_message_at: string }> | null) ?? [];
+    const m = (matches as Array<{
+      id: string;
+      profile_a: string;
+      profile_b: string;
+      created_at: string;
+      last_message_at: string;
+      origin: string;
+      accepted_at: string | null;
+      initiator_profile_id: string | null;
+    }> | null) ?? [];
     const otherIds = m.map((x) => (x.profile_a === myId ? x.profile_b : x.profile_a));
     if (otherIds.length === 0) return [];
     const matchIds = m.map((x) => x.id);
@@ -654,10 +682,16 @@ export const getMyMatches = createServerFn({ method: "GET" })
       const last = matchMsgs[0];
       const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
       const other = map.get(row.profile_a === myId ? row.profile_b : row.profile_a);
+      const isIntro = row.origin === "intro" && !row.accepted_at;
+      const iInitiated = row.initiator_profile_id === myId;
       return {
         match_id: row.id,
         created_at: row.created_at,
         last_message_at: row.last_message_at,
+        origin: row.origin,
+        accepted_at: row.accepted_at,
+        is_intro_pending: isIntro,
+        i_initiated: iInitiated,
         last_message: last ? { body: last.body, created_at: last.created_at, from_me: last.sender_profile_id === myId } : null,
         unread,
         other,
@@ -732,10 +766,27 @@ export const sendMessage = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("No profile");
+    // Intro guard: initiator can't spam a second message before the recipient replies.
+    const { data: matchRow } = await context.supabase
+      .from("matches" as never)
+      .select("origin, accepted_at, initiator_profile_id")
+      .eq("id", data.matchId)
+      .maybeSingle();
+    const mrow = matchRow as { origin: string; accepted_at: string | null; initiator_profile_id: string | null } | null;
+    if (mrow && mrow.origin === "intro" && !mrow.accepted_at && mrow.initiator_profile_id === myId) {
+      throw new Error("Wait for a reply before sending another intro message.");
+    }
     const { error } = await context.supabase
       .from("messages" as never)
       .insert({ match_id: data.matchId, sender_profile_id: myId, body: data.body } as never);
     if (error) throw new Error(error.message);
+    // If this is the recipient's first reply to an intro, mark it accepted.
+    if (mrow && mrow.origin === "intro" && !mrow.accepted_at && mrow.initiator_profile_id !== myId) {
+      await context.supabase.rpc("accept_intro" as never, {
+        _match_id: data.matchId,
+        _acting_user_id: context.userId,
+      } as never);
+    }
 
     // Auto-reply from seed players to keep the demo chat alive
     const { data: match } = await context.supabase

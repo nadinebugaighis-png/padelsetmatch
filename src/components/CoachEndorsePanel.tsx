@@ -42,7 +42,7 @@ export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileI
   const submit = useMutation({
     mutationFn: async () => endorse({ data: { coach_profile_id: coachProfileId, stars, comment: comment || null } }),
     onSuccess: () => {
-      toast.success(tr("Endorsement sent — waiting for the coach to confirm.", "Valoración enviada — a la espera de que el entrenador la confirme.", "Avis envoyé — en attente de la confirmation du coach."));
+      toast.success(tr("Sent — awaiting confirmation", "Enviado — pendiente de confirmar", "Envoyé — en attente"));
       setOpen(false);
       setStars(0);
       setComment("");

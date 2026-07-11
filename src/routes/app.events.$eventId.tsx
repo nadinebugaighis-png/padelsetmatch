@@ -324,7 +324,6 @@ function EventDetail() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-xs uppercase tracking-widest text-[var(--ink)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
-                <p className="mt-1 text-sm text-[var(--ink)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que los jugadores ocupen un hueco.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
               </div>
               <button
                 type="button"
@@ -874,11 +873,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                 {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
               </h2>
               <p className="mt-1.5 text-xs text-[var(--ink)]/60 leading-relaxed max-w-sm">
-                {tr(
-                  "Invited players get first dibs. Opens to everyone 10 hours after your first invite.",
-                  "Los invitados tienen prioridad. Se abre a todos 10 horas después de la primera invitación.",
-                  "Les invités passent en priorité. Ouvert à tous 10 h après la première invitation.",
-                )}
+                {tr("Invitees get first dibs for 10h.", "Los invitados tienen prioridad 10 h.", "Invités prioritaires pendant 10 h.")}
               </p>
             </div>
             <button

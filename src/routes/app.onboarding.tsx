@@ -867,13 +867,20 @@ function Onboarding() {
         {step > 0 ? (
           <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
-        {step < steps.length - 1 ? (
-          <Button onClick={goNext}>{t("ob.next")}</Button>
-        ) : (
-          <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-            {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {step === 3 && (
+            <Button variant="ghost" onClick={() => save.mutate()} disabled={save.isPending} className="text-[var(--ink)]/70">
+              {tr("Skip — jump in", "Saltar — entrar ya", "Passer — entrer")}
+            </Button>
+          )}
+          {step < steps.length - 1 ? (
+            <Button onClick={goNext}>{t("ob.next")}</Button>
+          ) : (
+            <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
+              {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}
+            </Button>
+          )}
+        </div>
       </div>
     </main>
   );

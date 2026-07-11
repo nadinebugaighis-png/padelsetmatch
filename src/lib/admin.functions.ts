@@ -45,7 +45,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
       supabaseAdmin.from("reports" as never).select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabaseAdmin
         .from("profiles" as never)
-        .select("id, user_id, first_name, age, zone, created_at, suspended_at")
+        .select("id, user_id, first_name, age, zone, created_at, suspended_at, onboarding_stage")
         .eq("is_seed", false)
         .order("created_at", { ascending: false })
         .limit(500),
@@ -70,6 +70,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
       zone: string | null;
       created_at: string;
       suspended_at: string | null;
+      onboarding_stage: string | null;
     };
 
     const profileRows = (allProfilesRes.data ?? []) as ProfileRow[];
@@ -79,13 +80,16 @@ export const getAdminStats = createServerFn({ method: "GET" })
     const allSignups = authUsers
       .map((u) => {
         const p = profilesByUser.get(u.id);
+        const stage = p?.onboarding_stage ?? null;
+        const finished = Boolean(p) && stage !== "lite";
         return {
           user_id: u.id,
           email: u.email ?? null,
           signed_up_at: u.created_at,
           last_sign_in_at: u.last_sign_in_at ?? null,
           email_confirmed: Boolean(u.email_confirmed_at),
-          profile_completed: Boolean(p),
+          profile_completed: finished,
+          onboarding_stage: stage,
           first_name: p?.first_name ?? null,
           age: p?.age ?? null,
           zone: p?.zone ?? null,

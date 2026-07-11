@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
 
-import shareBanner from "@/assets/padel-share-banner-v3.jpg.asset.json";
+import shareBanner from "@/assets/padel-share-logo.jpg.asset.json";
 import court from "@/assets/landing-court.jpg.asset.json";
 import landing1 from "@/assets/landing1.jpg.asset.json";
 import landing2 from "@/assets/landing2.jpg.asset.json";
@@ -31,8 +31,8 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: SHARE_IMAGE },
       { property: "og:image:secure_url", content: SHARE_IMAGE },
       { property: "og:image:type", content: "image/jpeg" },
-      { property: "og:image:width", content: "1687" },
-      { property: "og:image:height", content: "434" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Padel Match App — More Friends, Better Games" },
       { name: "twitter:description", content: SHARE_DESC },

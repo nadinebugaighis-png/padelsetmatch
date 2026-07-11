@@ -96,6 +96,7 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
       .select("id")
       .eq("user_id", context.userId)
       .maybeSingle();
+    let saved: Profile;
     if (existing) {
       const { data: updated, error } = await context.supabase
         .from("profiles" as never)
@@ -104,15 +105,33 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
-      return updated as Profile;
+      saved = updated as Profile;
+    } else {
+      const { data: inserted, error } = await context.supabase
+        .from("profiles" as never)
+        .insert(row as never)
+        .select("*")
+        .single();
+      if (error) throw new Error(error.message);
+      saved = inserted as Profile;
     }
-    const { data: inserted, error } = await context.supabase
-      .from("profiles" as never)
-      .insert(row as never)
-      .select("*")
-      .single();
-    if (error) throw new Error(error.message);
-    return inserted as Profile;
+    // Fire-and-forget: refresh the AI story hook. Never blocks the save.
+    void (async () => {
+      try {
+        const { generateStoryHooks } = await import("./story-hook.server");
+        const hooks = await generateStoryHooks(saved);
+        if (!hooks) return;
+        await context.supabase
+          .from("profiles" as never)
+          .update({
+            story_hook_en: hooks.en,
+            story_hook_es: hooks.es,
+            story_hook_fr: hooks.fr,
+          } as never)
+          .eq("user_id", context.userId);
+      } catch { /* ignore hook errors */ }
+    })();
+    return saved;
   });
 
 export const setAwayStatus = createServerFn({ method: "POST" })

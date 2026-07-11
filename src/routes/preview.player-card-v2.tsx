@@ -221,7 +221,7 @@ function PlayerCardPreview() {
         {/* Icon stat row */}
         <div className="mt-6 border-t border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pt-4 grid grid-cols-3 gap-2">
           <StatCell icon={<LevelBars />} label="Level" value={sample.level} />
-          <StatCell icon={<RacketMini />} label="Side" value={sample.side} />
+          <StatCell icon={<CourtSideIcon side={sample.side as "Left" | "Right" | "Both" | "Unsure"} />} label="Side" value={sample.side === "Unsure" ? "Not sure yet" : sample.side} />
           <StatCell icon={<Sparkles className="w-6 h-6" strokeWidth={1.4} />} label="Style" value={sample.style} />
         </div>
 

@@ -720,11 +720,11 @@ function Onboarding() {
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>
                   {tr("Your top values", "Tus valores principales", "Tes valeurs principales")}
                 </h3>
-                <span className={`text-[11px] font-medium ${priorities.length >= 3 ? "text-[var(--grass)]" : "text-[var(--ink)]/55"}`}>
-                  {priorities.length}/3 {tr("min", "mín", "min")}
+                <span className="text-[11px] font-medium text-[var(--ink)]/55">
+                  {priorities.length} {tr("picked", "elegidos", "choisis")}
                 </span>
               </div>
-              <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick at least 3. Order matters — top = most important.", "Elige al menos 3. El orden cuenta — arriba = más importante.", "Choisis-en au moins 3. L'ordre compte — haut = plus important.")}</p>
+              <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick as many as you like. Order matters — top = most important.", "Elige los que quieras. El orden cuenta — arriba = más importante.", "Choisis-en autant que tu veux. L'ordre compte — haut = plus important.")}</p>
 
               <div className="flex flex-wrap gap-2">
                 {PRIORITY_TRAITS.map((tr) => {

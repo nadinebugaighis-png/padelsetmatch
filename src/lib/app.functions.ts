@@ -141,6 +141,37 @@ export const setWorldMode = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const PlayerCardDetailsInput = z.object({
+  level_detail: z.string().max(40).nullable().optional(),
+  play_frequency: z.string().max(40).nullable().optional(),
+  padel_style: z.array(z.string().min(1).max(40)).max(5).optional(),
+  favorite_clubs: z.array(z.string().min(1).max(120)).max(10).optional(),
+  other_sports: z.array(z.string().min(1).max(60)).max(10).optional(),
+  looking_for_tags: z.array(z.string().min(1).max(60)).max(15).optional(),
+  main_goal: z.string().max(80).nullable().optional(),
+  bio: z.string().max(280).nullable().optional(),
+  languages: z.array(z.string().min(1).max(30)).max(10).optional(),
+});
+
+export const updatePlayerCardDetails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => PlayerCardDetailsInput.parse(d))
+  .handler(async ({ data, context }) => {
+    const patch: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(data)) {
+      if (v !== undefined) patch[k] = v;
+    }
+    if (Object.keys(patch).length === 0) return { ok: true };
+    const { error } = await context.supabase
+      .from("profiles" as never)
+      .update(patch as never)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
+
 async function moderatePhotoWithAi(photoUrl: string): Promise<{ verdict: "approved" | "rejected"; reason: string }> {
   const apiKey = process.env.LOVABLE_API_KEY;
   if (!apiKey) {

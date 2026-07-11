@@ -15,6 +15,7 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
+import { PlayerCardDetailsForm } from "@/components/PlayerCardDetailsForm";
 
 
 
@@ -274,6 +275,16 @@ function ProfilePage() {
           subtitle={(p as any).is_coach ? tr("You're listed as a coach", "Apareces como coach", "Tu es listé comme coach") : tr("Turn on coach mode", "Activa el modo coach", "Activer le mode coach")}
         >
           <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
+        </CollapsibleRow>
+
+        <CollapsibleRow
+          icon={<Pencil className="w-4 h-4" />}
+          title={tr("Player card details", "Detalles de tu tarjeta", "Détails de ta carte")}
+          subtitle={tr("Level, style, clubs, goals — what others see on your card", "Nivel, estilo, clubes, objetivos — lo que verán en tu tarjeta", "Niveau, style, clubs, objectifs — ce que les autres voient sur ta carte")}
+          contentCard
+          defaultOpen={false}
+        >
+          <PlayerCardDetailsForm profile={p} />
         </CollapsibleRow>
 
         <CollapsibleRow

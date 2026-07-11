@@ -917,7 +917,7 @@ function MyMatchesList({
                         {e.club_name || tr("Match", "Partido", "Match")}
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1.5 shrink-0">
+                    <div className="flex flex-col gap-1.5 shrink-0" onClick={(ev) => ev.stopPropagation()}>
                       {e.iAmHost ? (
                         <button type="button" onClick={() => onManage(e)} className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5">
                           {tr("Manage", "Gestionar", "Gérer")}

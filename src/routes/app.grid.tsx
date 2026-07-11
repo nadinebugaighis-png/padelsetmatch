@@ -526,7 +526,7 @@ function Discover() {
                   <option key={`all-${z}`} value={z} />
                 ))}
               </datalist>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">{tr("Type any city, barrio or area. Matches players' city, barrio or listed areas.", "Escribe cualquier ciudad, barrio o zona. Coincide con la ciudad, el barrio o las zonas indicadas.", "Tape n'importe quelle ville, quartier ou zone. Correspond à la ville, au quartier ou aux zones indiquées.")}</p>
+              
             </div>
 
             {activeFilterCount > 0 && (

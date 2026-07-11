@@ -247,6 +247,13 @@ export type Profile = {
   padel_style?: string[];
   world_mode?: boolean;
   is_coach?: boolean;
+  // Added Phase 1 — new player-card fields
+  play_frequency?: string | null;
+  favorite_clubs?: string[];
+  other_sports?: string[];
+  main_goal?: string | null;
+  looking_for_tags?: string[];
+  level_detail?: string | null;
 };
 
 

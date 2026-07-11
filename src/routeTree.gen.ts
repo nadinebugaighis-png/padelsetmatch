@@ -20,6 +20,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as SCodeRouteImport } from './routes/s.$code'
+import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
@@ -90,6 +91,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const SCodeRoute = SCodeRouteImport.update({
   id: '/s/$code',
   path: '/s/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewPlayerCardRoute = PreviewPlayerCardRouteImport.update({
+  id: '/preview/player-card',
+  path: '/preview/player-card',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MEventIdRoute = MEventIdRouteImport.update({
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/app/questions': typeof AppQuestionsRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/preview/player-card': typeof PreviewPlayerCardRoute
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/app/questions': typeof AppQuestionsRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/preview/player-card': typeof PreviewPlayerCardRoute
   '/s/$code': typeof SCodeRoute
   '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/app/questions': typeof AppQuestionsRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/preview/player-card': typeof PreviewPlayerCardRoute
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/app/questions'
     | '/g/$eventId'
     | '/m/$eventId'
+    | '/preview/player-card'
     | '/s/$code'
     | '/app/'
     | '/app/events/$eventId'
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/app/questions'
     | '/g/$eventId'
     | '/m/$eventId'
+    | '/preview/player-card'
     | '/s/$code'
     | '/app'
     | '/app/events/$eventId'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/app/questions'
     | '/g/$eventId'
     | '/m/$eventId'
+    | '/preview/player-card'
     | '/s/$code'
     | '/app/'
     | '/app/events/$eventId'
@@ -361,6 +373,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
+  PreviewPlayerCardRoute: typeof PreviewPlayerCardRoute
   SCodeRoute: typeof SCodeRoute
 }
 
@@ -441,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/s/$code'
       fullPath: '/s/$code'
       preLoaderRoute: typeof SCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview/player-card': {
+      id: '/preview/player-card'
+      path: '/preview/player-card'
+      fullPath: '/preview/player-card'
+      preLoaderRoute: typeof PreviewPlayerCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/m/$eventId': {
@@ -627,18 +647,9 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
+  PreviewPlayerCardRoute: PreviewPlayerCardRoute,
   SCodeRoute: SCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

@@ -820,12 +820,8 @@ function Discover() {
                     })()}
 
                     <div className="mt-2 flex items-center justify-between">
-                      {c.free_court_access ? (
-                        <span className="px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[8px] font-extrabold uppercase tracking-tight inline-flex items-center gap-1">
-                          <CourtIcon className="w-3 h-1.5" strokeWidth={2.4} />
-                          {tr("Free court", "Pista gratis", "Terrain gratuit")}
-                        </span>
-                      ) : <span />}
+                      <span />
+
                       <div
                         className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
                         title={t("disc.scoreTooltip")}

@@ -338,8 +338,8 @@ function EditSectionsStrip() {
     { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
     { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
     { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
-    { step: 3, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨") },
-    { step: 4, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
+    { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
+    { step: 4, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨") },
   ];
   return (
     <div className="mt-3">

@@ -957,6 +957,12 @@ function Discover() {
 
                       <SharedVenuesBadge otherProfileId={preview.id} />
 
+                      {preview.story_hook && (
+                        <p className="text-[14px] text-[var(--ink)]/85 leading-snug italic">
+                          "{preview.story_hook}"
+                        </p>
+                      )}
+
                       {/* Primary actions — coach card + message/like button placed above the fold */}
                       {preview.is_coach && (
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
@@ -972,9 +978,20 @@ function Discover() {
                           disabled={likeM.isPending && !match}
                           className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                         >
-                          <MessageCircle className="w-4 h-4" />
-                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                          <ThumbsUp className="w-4 h-4" />
+                          {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Thumbs up to connect", "Pulsa para conectar", "Pouce pour connecter")}
                         </button>
+                        {!match && (
+                          <button
+                            type="button"
+                            onClick={() => { setIntroBody(""); setIntroOpen(true); }}
+                            aria-label={tr("Say hi", "Saludar", "Dire salut")}
+                            title={tr("Send one intro message", "Envía un mensaje de presentación", "Envoie un mot d'intro")}
+                            className="h-11 w-11 shrink-0 rounded-full border flex items-center justify-center bg-white border-[var(--ink)]/25 text-[var(--ink)]/75 hover:border-[var(--ink)]/60 hover:text-[var(--ink)] transition active:scale-[0.94]"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => toggleFavM.mutate(preview.id)}

@@ -906,43 +906,30 @@ export type Database = {
       }
       matches: {
         Row: {
-          accepted_at: string | null
           created_at: string
           id: string
-          initiator_profile_id: string | null
           last_message_at: string
           origin: string
           profile_a: string
           profile_b: string
         }
         Insert: {
-          accepted_at?: string | null
           created_at?: string
           id?: string
-          initiator_profile_id?: string | null
           last_message_at?: string
           origin?: string
           profile_a: string
           profile_b: string
         }
         Update: {
-          accepted_at?: string | null
           created_at?: string
           id?: string
-          initiator_profile_id?: string | null
           last_message_at?: string
           origin?: string
           profile_a?: string
           profile_b?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "matches_initiator_profile_id_fkey"
-            columns: ["initiator_profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "matches_profile_a_fkey"
             columns: ["profile_a"]
@@ -1243,9 +1230,6 @@ export type Database = {
           played_count: number
           priorities: string[]
           sexual_orientation: string | null
-          story_hook_en: string | null
-          story_hook_es: string | null
-          story_hook_fr: string | null
           suspended_at: string | null
           updated_at: string
           user_id: string | null
@@ -1290,9 +1274,6 @@ export type Database = {
           played_count?: number
           priorities?: string[]
           sexual_orientation?: string | null
-          story_hook_en?: string | null
-          story_hook_es?: string | null
-          story_hook_fr?: string | null
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
@@ -1337,9 +1318,6 @@ export type Database = {
           played_count?: number
           priorities?: string[]
           sexual_orientation?: string | null
-          story_hook_en?: string | null
-          story_hook_es?: string | null
-          story_hook_fr?: string | null
           suspended_at?: string | null
           updated_at?: string
           user_id?: string | null
@@ -1604,10 +1582,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      accept_intro: {
-        Args: { _acting_user_id: string; _match_id: string }
-        Returns: undefined
-      }
       claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
       cleanup_relationship_with: {
         Args: { _other: string }
@@ -1670,24 +1644,12 @@ export type Database = {
         }
         Returns: boolean
       }
-      ignore_intro: {
-        Args: { _acting_user_id: string; _match_id: string }
-        Returns: undefined
-      }
       is_current_user_admin: { Args: never; Returns: boolean }
       list_my_favorite_ids: { Args: never; Returns: string[] }
       list_public_upcoming_matches: { Args: { _limit?: number }; Returns: Json }
       my_profile_id: { Args: never; Returns: string }
       open_coach_chat: {
         Args: { _acting_user_id: string; _coach_profile_id: string }
-        Returns: string
-      }
-      open_intro_chat: {
-        Args: {
-          _acting_user_id: string
-          _body: string
-          _target_profile_id: string
-        }
         Returns: string
       }
       padel_level_rank: { Args: { lvl: string }; Returns: number }

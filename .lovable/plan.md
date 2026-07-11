@@ -1,80 +1,37 @@
-# Player cards: story-hook design + one free intro DM
+## Goal
 
-Based on your picks: story-cards with a hook line, whole card taps to open profile with a big 👍 button always visible, and anyone can send **one** intro message before mutual match.
+Get the app to a clean, publish-ready state by removing every runtime dependency on `SUPABASE_SERVICE_ROLE_KEY` (which Lovable Cloud does not expose). Today the app throws "Missing Supabase environment variable(s): SUPABASE_SERVICE_ROLE_KEY" on several actions (push drain, some grid/feed lookups, coach, venues, match events, admin).
 
----
+## Approach
 
-## 1. Card redesign — "story with a hook"
+For each `supabaseAdmin` call site, pick the smallest safe replacement:
 
-**Layout** (`src/routes/app.grid.tsx`)
-- Larger photo (roughly 1.15× current) with a soft bottom gradient so text sits on the image.
-- Name · Age on the gradient.
-- **One AI-generated hook line** underneath — a short, warm one-liner like _"Loves 8 pm games in La Moraleja — always up for a 3rd set."_ (EN/ES/FR).
-- Small row of 2–3 mini-chips (level, distance/venue in common, availability window) — icons only where possible, per your "less writing" rule.
-- **Big 👍 pill button** pinned bottom-right, thumb-reachable, with haptic-style micro-animation on tap.
-- Whole card = open profile (except the 👍 button itself, which fires the like inline).
-- Subtle "you've tapped 👍" state: button flips to filled + says _"Waiting"_ until they tap back.
-- "Intro" pill appears on cards where sender can still use their free DM.
+1. **Reads the caller already owns** (their own hides/blocks/qa) → use `context.supabase` from `requireSupabaseAuth`. RLS already allows the owner to see these rows.
+2. **Reads that need to bypass RLS for a legitimate reason** (reciprocal hides/blocks, push outbox, aggregate counts) → add a `SECURITY DEFINER` SQL function with `REVOKE ALL ... FROM PUBLIC` + `GRANT EXECUTE TO authenticated` (or `service_role`-only for outbox drain). Call it via `context.supabase.rpc(...)`.
+3. **True admin ops** (bans, role grants, etc. in `admin.functions.ts`) → keep the admin import, but gate the whole function so it only runs for `has_role(..., 'admin')`. If Cloud truly can't run these, disable the UI paths behind a role check so end users never hit them.
 
-**Micro-interactions**
-- Card lift on hover / press.
-- 👍 button bursts with a small ring pulse on tap.
-- If they've tapped you first (secret like), a soft plum glow border hints _"they liked you"_ — without revealing who tapped first (already the current rule).
+## Files to touch
 
-## 2. Story-hook generation
+- `src/lib/app.functions.ts` — reciprocal hides/blocks/qa lookups in `getDiscoverFeed` → new `SECURITY DEFINER` RPC `discover_exclusions(_me uuid)` returning the excluded profile ids.
+- `src/lib/notifications.functions.ts` — `drainPushOutbox` → SECURITY DEFINER RPC `claim_push_outbox(limit int)` that atomically marks rows sent and returns them; keep VAPID signing in Node (that part is fine).
+- `src/lib/coach.functions.ts` — replace remaining admin reads with authed RLS or the existing `coach_stats` / `open_coach_chat` RPCs.
+- `src/lib/venues.functions.ts` — replace admin reads with `shared_venues` / `venue_overlap_for_me` RPCs already in the DB.
+- `src/lib/match-events.functions.ts` — swap admin reads for authed `context.supabase` (participants + events already have RLS for members).
+- `src/lib/admin.functions.ts` — wrap every handler with a `has_role(userId, 'admin')` check before touching `supabaseAdmin`; if a specific op truly needs service role and Cloud blocks it, hide the UI action.
 
-New profile column `story_hook_en` / `_es` / `_fr` (nullable text).
+## Migration
 
-- Generated **server-side** via Lovable AI Gateway (`google/gemini-2.5-flash`) using existing profile fields: level, city, availability, favorite venues, preferred game style, coach flag.
-- Trigger: on profile save (onboarding finish + edits) via a `regenerateStoryHook` server fn — fire-and-forget.
-- Backfill: one-time server fn that generates hooks for all existing profiles without one.
-- Fallback if AI fails: deterministic template ("Level 3.5 · Nights in Madrid").
-- Cached in DB, no per-view AI cost.
+One new migration adding:
+- `discover_exclusions(_me uuid)` SECURITY DEFINER, returns `setof uuid`.
+- `claim_push_outbox(_limit int)` SECURITY DEFINER, `UPDATE ... SET sent_at = now() WHERE id IN (SELECT ... FOR UPDATE SKIP LOCKED) RETURNING ...`.
+- `REVOKE ALL ... FROM PUBLIC, anon` and `GRANT EXECUTE ... TO authenticated` on both.
 
-## 3. One free intro DM
+## Verification
 
-**Rule**: Anyone can send **exactly one** message to a player they haven't mutually matched with. Once sent, sender is blocked from sending more **until** the recipient replies. Recipient's reply auto-creates the match.
+- Reload `/app/grid`, `/app/connect`, `/app/matches`, `/app/events`, `/app/profile`, coach profile with endorsements, notification bell — confirm no "SERVICE_ROLE_KEY" errors in console.
+- Trigger a push (send a message) and confirm the outbox drains.
+- Run the security scan; publish.
 
-**DB migration**
-- Add `is_intro boolean` to `messages`.
-- Update RLS INSERT policy on `messages`:
-  - Allow if mutual match exists (current behavior), OR
-  - Allow if `is_intro = true` AND sender has zero prior messages to this recipient AND no active block.
-- Trigger `on_intro_reply`: when recipient sends any message back to an intro sender, auto-insert into `matches` so full chat opens both ways.
-- `open_intro_thread(target_profile_id)` RPC — creates/returns the thread id, prevents second intro.
+## Estimate
 
-**UI**
-- 👍 button on the card gets a small "💬" satellite when sender still has their intro available.
-- Tapping 💬 opens a lightweight intro composer sheet: 140-char limit, placeholder _"Say hi — this is your one intro."_
-- After sending: satellite disappears; a "Intro sent · awaiting reply" badge shows on that card until they reply.
-- Recipient side (Messages tab): intro threads appear with an "Intro" chip; a big **Reply** / **Ignore** pair. Reply = full chat unlocks. Ignore = thread archives silently, sender never notified.
-- Report/block one-tap in the intro sheet, in case of abuse.
-
-**Anti-spam guardrails**
-- Rate limit: max 5 intro DMs per sender per 24h (enforced in the RPC).
-- Blocked users can never intro.
-- Hidden profiles can't be introed.
-- Toast on hitting the limit: _"Take a breath — 5 intros a day 👋"_.
-
-## 4. Translations
-
-All new strings in `src/lib/i18n.tsx` for EN / ES (castellano) / FR.
-
-## 5. Order I'll build in
-
-1. DB migration (messages RLS + is_intro + auto-match trigger + rate limit + story_hook columns).
-2. Server fns: `sendIntroMessage`, `regenerateStoryHook`, `backfillStoryHooks`.
-3. Card redesign in `app.grid.tsx` with hook, big 👍, 💬 intro satellite, states.
-4. Intro composer sheet + messages-tab "Intro" chip + Reply/Ignore.
-5. Wire hook regeneration into onboarding save + profile edit.
-6. Run backfill once.
-
-## Technical details
-
-- New Lovable AI call is cheap (short prompt, ~50 tokens out) and cached in DB per profile, per language.
-- RLS INSERT policy will use a helper SQL fn `can_send_intro(sender, recipient)` (SECURITY DEFINER) to avoid recursive policy checks on `messages`.
-- Auto-match trigger runs on `messages` INSERT; only fires when the reply is to an existing intro and no match row exists yet.
-- No changes to the existing mutual-match flow — coexists.
-- All frontend work stays in `src/routes/app.grid.tsx`, `src/routes/app.matches.tsx`, a new `IntroSheet.tsx`, and i18n.
-
-Approve and I'll build it.
+Single pass, ~1 turn of edits + 1 migration. After this the app should be publish-ready with no service-role dependency at runtime.

@@ -15,6 +15,7 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;

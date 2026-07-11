@@ -87,7 +87,7 @@ function GuestMatchRoom() {
       const res = await join({ data: { eventId, displayName: firstName.trim(), level, phone: phone.trim() } });
       saveToken(eventId, res.token);
       setToken(res.token);
-      toast.success(tr("You're in! Say hi in the match chat.", "¡Estás dentro! Saluda en el chat del partido.", "Tu es inscrit·e ! Dis bonjour dans le chat."));
+      toast.success(tr("You're in ✅", "¡Estás dentro ✅", "Tu es inscrit·e ✅"));
     } catch (err) {
       const m = err instanceof Error ? err.message : "";
       if (m.startsWith("INVITE_LOCK:")) {

@@ -105,8 +105,15 @@ export const POPULAR_COUNTRIES = ["Spain"] as const;
 
 export const LANGUAGES = [
   "English", "Spanish", "Portuguese", "French", "Italian", "German",
-  "Dutch", "Catalan", "Arabic", "Russian", "Mandarin", "Japanese",
-  "Swedish", "Greek", "Turkish", "Hindi",
+  "Dutch", "Catalan", "Basque", "Galician", "Arabic", "Hebrew", "Farsi", "Urdu",
+  "Russian", "Ukrainian", "Polish", "Czech", "Slovak", "Hungarian", "Romanian",
+  "Bulgarian", "Serbian", "Croatian", "Slovenian", "Albanian",
+  "Mandarin", "Cantonese", "Japanese", "Korean", "Vietnamese", "Thai",
+  "Indonesian", "Malay", "Tagalog", "Hindi", "Bengali", "Punjabi", "Tamil",
+  "Swedish", "Norwegian", "Danish", "Finnish", "Icelandic",
+  "Greek", "Turkish", "Armenian", "Georgian",
+  "Swahili", "Amharic", "Yoruba", "Zulu", "Afrikaans",
+  "Other",
 ] as const;
 export type Language = (typeof LANGUAGES)[number];
 

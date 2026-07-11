@@ -378,7 +378,7 @@ function Onboarding() {
     setStep(step + 1);
   };
 
-  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s3"), t("ob.s4")];
+  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s4"), t("ob.s3")];
 
   if (profileQ.isLoading) {
     return (

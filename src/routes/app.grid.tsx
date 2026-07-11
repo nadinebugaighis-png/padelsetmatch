@@ -991,6 +991,57 @@ function Discover() {
                         </button>
                       </div>
 
+                      {!match && (
+                        <div className="mt-1">
+                          {introOpenFor === preview.id ? (
+                            <div className="rounded-2xl border border-[var(--ink)]/15 bg-white p-3 space-y-2">
+                              <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60">
+                                {tr("One intro message", "Un mensaje de presentación", "Un message d'intro")}
+                              </div>
+                              <textarea
+                                value={introText}
+                                onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
+                                rows={2}
+                                autoFocus
+                                placeholder={tr(`Hi ${preview.first_name} 👋`, `Hola ${preview.first_name} 👋`, `Salut ${preview.first_name} 👋`)}
+                                className="w-full resize-none rounded-xl border border-[var(--ink)]/15 bg-white p-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40"
+                              />
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-[11px] text-[var(--ink)]/50">
+                                  {tr("One message until you both connect.", "Un mensaje hasta que ambos conectéis.", "Un message jusqu'à ce que vous vous connectiez.")}
+                                </span>
+                                <div className="flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => { setIntroOpenFor(null); setIntroText(""); }}
+                                    className="h-8 px-3 rounded-full text-[12px] text-[var(--ink)]/60 hover:text-[var(--ink)]"
+                                  >
+                                    {tr("Cancel", "Cancelar", "Annuler")}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={introM.isPending || introText.trim().length === 0}
+                                    onClick={() => introM.mutate({ otherProfileId: preview.id, body: introText.trim() })}
+                                    className="h-8 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-50"
+                                  >
+                                    {introM.isPending ? tr("Sending…", "Enviando…", "Envoi…") : tr("Send", "Enviar", "Envoyer")}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setIntroOpenFor(preview.id)}
+                              className="w-full h-10 rounded-full border border-[var(--ink)]/20 bg-white text-[var(--ink)] text-[12px] font-medium flex items-center justify-center gap-2 hover:border-[var(--ink)]/40 transition"
+                            >
+                              <MessageCircle className="w-3.5 h-3.5" />
+                              {tr("Send a message instead", "Enviar un mensaje", "Envoyer un message")}
+                            </button>
+                          )}
+                        </div>
+                      )}
+
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">

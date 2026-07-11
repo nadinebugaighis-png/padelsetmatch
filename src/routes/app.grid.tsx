@@ -925,13 +925,6 @@ function Discover() {
 
                       {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}
 
-                      {preview.free_court_access && (
-                        <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold uppercase tracking-wider"><CourtIcon className="w-4 h-2.5" strokeWidth={2.4} /> {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
-                          {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
-                            
-                        </div>
-                      )}
 
                       <SharedVenuesBadge otherProfileId={preview.id} />
 

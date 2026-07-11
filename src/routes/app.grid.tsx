@@ -996,18 +996,8 @@ function Discover() {
                         </div>
                       </div>
 
-                      {sharedChips.length > 0 && (
-                        <div className="flex flex-wrap gap-2.5">
-                          {sharedChips.map((w) => (
-                            <span
-                              key={w}
-                              className="px-4 py-2 rounded-full text-[13px] font-medium bg-[var(--ink)]/[0.04] text-[var(--ink)] border border-[var(--ink)]/10"
-                            >
-                              {w}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+
+
 
 
                       {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}

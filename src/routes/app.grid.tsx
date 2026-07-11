@@ -172,7 +172,7 @@ function Discover() {
       return { prev, wasFav };
     },
     onError: (_e, _id, ctx) => { if (ctx?.prev) qc.setQueryData(["favorites"], ctx.prev); toast.error("Couldn't update favorite"); },
-    onSuccess: (r) => { toast.success(r.favorited ? tr("Added to favorites — you'll be notified when they play", "Añadido a favoritos — te avisaremos cuando jueguen", "Ajouté aux favoris — on te préviendra") : tr("Removed from favorites", "Quitado de favoritos", "Retiré des favoris")); },
+    onSuccess: (r) => { toast.success(r.favorited ? tr("Saved to favorites ⭐", "Guardado en favoritos ⭐", "Ajouté aux favoris ⭐") : tr("Removed from favorites", "Quitado de favoritos", "Retiré des favoris")); },
     onSettled: () => qc.invalidateQueries({ queryKey: ["favorites"] }),
   });
 

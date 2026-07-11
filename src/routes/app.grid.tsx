@@ -231,7 +231,18 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.undoFail")),
   });
-  const blockM = useMutation({
+  const introFn = useServerFn(openIntroChat);
+  const introM = useMutation({
+    mutationFn: (vars: { targetProfileId: string; body: string }) => introFn({ data: vars }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      setIntroOpen(false);
+      setIntroBody("");
+      toast.success(tr("Intro sent 👋", "Presentación enviada 👋", "Intro envoyée 👋"), { duration: 1800 });
+      setTimeout(() => navigate({ to: "/app/matches/$matchId", params: { matchId: res.match_id } }), 400);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
     mutationFn: (id: string) => block({ data: { blockedProfileId: id } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });

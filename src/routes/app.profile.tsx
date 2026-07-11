@@ -15,7 +15,6 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
-import { PlayerCardDetailsForm } from "@/components/PlayerCardDetailsForm";
 
 
 
@@ -148,7 +147,9 @@ function ProfilePage() {
   }
   const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
-
+  const hasDetails =
+    locations.length > 0 ||
+    (p.languages?.length ?? 0) > 0;
 
   return (
     <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
@@ -194,12 +195,16 @@ function ProfilePage() {
 
           {/* Name + meta */}
           <div className="flex-1 min-w-0">
-            <div className="min-w-0">
-              <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
-              <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
-                {p.age} · {label(p.level)} · {p.nationality}
-              </p>
-              <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+                <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
+                  {p.age} · {label(p.level)} · {p.nationality}
+                </p>
+                <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
+              </div>
+              <EditSectionsMenu />
+
             </div>
           </div>
         </div>
@@ -211,8 +216,7 @@ function ProfilePage() {
         )}
       </div>
 
-      <EditSectionsStrip hasPhoto={!!p.photo_url} hasBio={!!(p.bio && p.bio.trim().length > 0)} />
-
+      <EditSectionsStrip />
 
       {/* Messages — placed right under name & photo for quick access */}
       <div className="mt-3 sm:mt-4">
@@ -223,16 +227,16 @@ function ProfilePage() {
       <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-        <CollapsibleRow
-          icon={<MapPin className="w-4 h-4" />}
-          title={tr("Places & languages", "Lugares e idiomas", "Lieux et langues")}
-          subtitle={[
-            locations[0],
-            (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
-          ].filter(Boolean).join(" · ") || tr("Zones, clubs, languages", "Zonas, clubes, idiomas", "Zones, clubs, langues")}
-          contentCard
-        >
-          {(locations.length > 0 || (p.languages?.length ?? 0) > 0) && (
+        {hasDetails && (
+          <CollapsibleRow
+            icon={<MapPin className="w-4 h-4" />}
+            title={tr("Where & languages", "Dónde y idiomas", "Où et langues")}
+            subtitle={[
+              locations[0],
+              (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
+            ].filter(Boolean).join(" · ") || undefined}
+            contentCard
+          >
             <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
               {locations.length > 0 && (
                 <Section title={t("prof.playsIn")}>
@@ -249,25 +253,26 @@ function ProfilePage() {
                 </Section>
               )}
             </div>
-          )}
-          {p.free_court_access && (
-            <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
-                  {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
-                </span>
-                {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
+            {p.free_court_access && (
+              <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
+                    {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
+                  </span>
+                  {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
+                </div>
               </div>
-            </div>
-          )}
-          <div className="mt-4 pt-4 border-t border-[var(--ink)]/10">
-            <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2 font-medium">
-              {tr("Clubs & compounds", "Clubes y urbanizaciones", "Clubs et résidences")}
-            </div>
-            <VenuesSection />
-          </div>
-        </CollapsibleRow>
+            )}
+          </CollapsibleRow>
+        )}
 
+        <CollapsibleRow
+          icon={<MapPin className="w-4 h-4" />}
+          title={tr("Where you play", "Dónde juegas", "Où tu joues")}
+          subtitle={tr("Clubs & compounds for smarter matches", "Clubes y urbanizaciones para mejor match", "Clubs et résidences pour de meilleurs matchs")}
+        >
+          <VenuesSection />
+        </CollapsibleRow>
 
         <CollapsibleRow
           icon={<GraduationCap className="w-4 h-4" />}
@@ -275,16 +280,6 @@ function ProfilePage() {
           subtitle={(p as any).is_coach ? tr("You're listed as a coach", "Apareces como coach", "Tu es listé comme coach") : tr("Turn on coach mode", "Activa el modo coach", "Activer le mode coach")}
         >
           <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
-        </CollapsibleRow>
-
-        <CollapsibleRow
-          icon={<Pencil className="w-4 h-4" />}
-          title={tr("Player card details", "Detalles de tu tarjeta", "Détails de ta carte")}
-          subtitle={tr("Level, style, clubs, goals — what others see on your card", "Nivel, estilo, clubes, objetivos — lo que verán en tu tarjeta", "Niveau, style, clubs, objectifs — ce que les autres voient sur ta carte")}
-          contentCard
-          defaultOpen={false}
-        >
-          <PlayerCardDetailsForm profile={p} />
         </CollapsibleRow>
 
         <CollapsibleRow
@@ -337,105 +332,36 @@ function EditSectionsMenu() {
   );
 }
 
-function EditSectionsStrip({ hasPhoto, hasBio }: { hasPhoto: boolean; hasBio: boolean }) {
+function EditSectionsStrip() {
   const tr = useTr();
-
-  const groups: Array<{
-    key: string;
-    tone: "required" | "important" | "optional";
-    title: string;
-    subtitle: string;
-    badge: string;
-    items: Array<{ step: number; label: string; alert?: boolean }>;
-  }> = [
-    {
-      key: "signup",
-      tone: "required",
-      title: tr("Sign-up", "Registro", "Inscription"),
-      subtitle: tr("Required to use the app", "Obligatorio para usar la app", "Requis pour utiliser l'app"),
-      badge: tr("Required", "Obligatorio", "Requis"),
-      items: [
-        { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
-        { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
-        { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
-      ],
-    },
-    {
-      key: "card",
-      tone: "important",
-      title: tr("Player card", "Tarjeta de jugador", "Carte de joueur"),
-      subtitle: tr("What others see. Fill whenever — we'll remind you.", "Lo que ven los demás. Rellena cuando puedas — te lo recordamos.", "Ce que voient les autres. Remplis quand tu veux — on te rappellera."),
-      badge: tr("Important", "Importante", "Important"),
-      items: [
-        { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio"), alert: !hasPhoto || !hasBio },
-      ],
-    },
-    {
-      key: "compat",
-      tone: "optional",
-      title: tr("Compatibility", "Compatibilidad", "Compatibilité"),
-      subtitle: tr("Good to find your best matches", "Bien para encontrar tus mejores matches", "Bien pour trouver tes meilleurs matchs"),
-      badge: tr("Optional", "Opcional", "Optionnel"),
-      items: [
-        { step: 4, label: tr("Values & style", "Valores y estilo", "Valeurs et style") },
-      ],
-    },
+  const sections: Array<{ step: number; label: string }> = [
+    { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
+    { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
+    { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
+    { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
+    { step: 4, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨") },
   ];
-
-  const toneClass = (tone: "required" | "important" | "optional") =>
-    tone === "required"
-      ? "border-[var(--ink)]/30 bg-[var(--ink)]/[0.04]"
-      : tone === "important"
-      ? "border-[var(--plum)]/35 bg-[var(--plum)]/[0.05]"
-      : "border-[var(--ink)]/15 bg-[var(--paper)]";
-
-  const badgeClass = (tone: "required" | "important" | "optional") =>
-    tone === "required"
-      ? "bg-[var(--ink)] text-[var(--paper)]"
-      : tone === "important"
-      ? "bg-[var(--plum)] text-white"
-      : "bg-[var(--paper-2)] text-[var(--ink)]/70 border border-[var(--ink)]/20";
-
   return (
-    <div className="mt-4 space-y-2.5">
-      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 px-1">
-        {tr("Edit your profile", "Edita tu perfil", "Modifie ton profil")}
+    <div className="mt-3">
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mb-2 px-1">
+        {tr("Edit a section", "Editar una sección", "Modifier une section")}
       </div>
-      {groups.map((g) => (
-        <div key={g.key} className={`rounded-2xl border ${toneClass(g.tone)} p-3.5`}>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${badgeClass(g.tone)}`}>
-                  {g.badge}
-                </span>
-                <h3 className="text-[15px] font-semibold text-[var(--ink)] leading-tight truncate">{g.title}</h3>
-              </div>
-              <p className="mt-1 text-xs text-[var(--ink)]/65 leading-snug">{g.subtitle}</p>
-            </div>
-          </div>
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {g.items.map((it) => (
-              <Link
-                key={it.step}
-                to="/app/onboarding"
-                search={{ step: it.step }}
-                className="relative inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-white border border-[var(--ink)]/20 text-xs text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--ink)]/40 transition whitespace-nowrap"
-              >
-                <Pencil className="w-3 h-3" />
-                {it.label}
-                {it.alert && (
-                  <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-red-500" aria-label="needs attention" />
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
+        {sections.map((s) => (
+          <Link
+            key={s.step}
+            to="/app/onboarding"
+            search={{ step: s.step }}
+            className="shrink-0 inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/20 text-xs text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--ink)]/40 transition whitespace-nowrap"
+          >
+            <Pencil className="w-3 h-3" />
+            {s.label}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
-
 
 
 function FeedbackBox() {

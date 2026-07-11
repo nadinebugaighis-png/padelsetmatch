@@ -56,44 +56,14 @@ export const PERSONAL_TRAITS = [...PERSONAL_STRENGTHS, ...HONEST_EDGES] as const
 export type PersonalTrait = (typeof PERSONAL_TRAITS)[number];
 
 export const PADEL_STYLES = [
-  "Defensive", "Strategic", "Balanced", "Aggressive", "Power hitter",
-  "Fast & athletic", "Patient", "Creative", "Net specialist", "Smash lover",
-  // Legacy values kept so existing profiles remain valid
-  "Competitive", "Casual", "Team player", "Coachable", "Loves tournaments",
-  "Just for fun", "Always improving", "Fitness-focused", "Social player",
+  "Competitive", "Casual", "Strategic", "Aggressive", "Defensive", "Team player",
+  "Coachable", "Loves tournaments", "Just for fun", "Always improving",
+  "Fitness-focused", "Social player",
 ] as const;
 export type PadelStyle = (typeof PADEL_STYLES)[number];
 
 export const PADEL_LEVELS = ["just starting", "casual", "intermediate", "advanced", "competitive"] as const;
 export type PadelLevel = (typeof PADEL_LEVELS)[number];
-
-// New 7-tier detail label. Stored in profiles.level_detail. Old `level` stays authoritative for filters.
-export const PADEL_LEVEL_DETAILS = [
-  "Beginner", "Beginner+", "Intermediate", "Intermediate+",
-  "Advanced", "Advanced+", "Competition / Pro",
-] as const;
-export type PadelLevelDetail = (typeof PADEL_LEVEL_DETAILS)[number];
-
-export const PLAY_FREQUENCIES = [
-  "Every day", "5–6 times/week", "3–4 times/week",
-  "1–2 times/week", "A few times/month", "Occasionally",
-] as const;
-export type PlayFrequency = (typeof PLAY_FREQUENCIES)[number];
-
-export const LOOKING_FOR_TAGS = [
-  "Competitive matches", "Casual games", "Training partner", "Mixed matches",
-  "Women's matches", "Men's matches", "Tournaments", "New friends",
-  "Long-term padel partner", "Last-minute games", "Players nearby",
-  "Improve my level", "Coaching",
-] as const;
-export type LookingForTag = (typeof LOOKING_FOR_TAGS)[number];
-
-export const MAIN_GOALS = [
-  "Play more often", "Meet players my level", "Find regular partners",
-  "Improve my game", "Join tournaments", "Find mixed matches",
-  "Expand my social circle", "Stay active", "Discover new clubs",
-] as const;
-export type MainGoal = (typeof MAIN_GOALS)[number];
 
 export const AVAILABILITY_SLOTS = [
   "Weekday mornings", "Weekday lunchtime", "Weekday evenings",
@@ -247,13 +217,6 @@ export type Profile = {
   padel_style?: string[];
   world_mode?: boolean;
   is_coach?: boolean;
-  // Added Phase 1 — new player-card fields
-  play_frequency?: string | null;
-  favorite_clubs?: string[];
-  other_sports?: string[];
-  main_goal?: string | null;
-  looking_for_tags?: string[];
-  level_detail?: string | null;
 };
 
 

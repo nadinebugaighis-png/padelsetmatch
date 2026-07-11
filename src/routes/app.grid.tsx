@@ -215,12 +215,18 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
-  // Silent variant used by the tiny thumbs-up on the card — no toast, no navigation.
+  // Quick variant used by the tiny thumbs-up on the card — small toast, no navigation unless it's a match.
   const likeSilentM = useMutation({
     mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
-    onSuccess: () => {
+    onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
+      if (res?.matchId) {
+        toast.success("🎾 It's a match! Opening chat…", { duration: 2500 });
+        setTimeout(() => navigate({ to: "/app/matches/$matchId", params: { matchId: res.matchId! } }), 600);
+      } else {
+        toast.success("👍 Sent", { duration: 1600 });
+      }
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });

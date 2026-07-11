@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS qa_answers_profile_created_idx ON public.qa_answers (profile_id, created_at DESC);

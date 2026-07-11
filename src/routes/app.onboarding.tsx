@@ -671,6 +671,21 @@ function Onboarding() {
                 ))}
               </div>
             </div>
+            <div>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("How often do you play?", "¿Con qué frecuencia juegas?", "À quelle fréquence joues-tu ?")}</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {PLAY_FREQUENCIES.map((f) => {
+                  const lbl = f === "<1/week" ? tr("<1×/week", "<1×/sem", "<1×/sem.")
+                    : f === "1-2/week" ? tr("1-2×/week", "1-2×/sem", "1-2×/sem.")
+                    : f === "3-4/week" ? tr("3-4×/week", "3-4×/sem", "3-4×/sem.")
+                    : f === "5+/week" ? tr("5+/week", "5+/sem", "5+/sem.")
+                    : tr("Daily", "A diario", "Tous les jours");
+                  return (
+                    <button key={f} type="button" onClick={() => setPlayFrequency(playFrequency === f ? "" : f)} className={`chip-paper ${playFrequency === f ? "chip-paper-selected" : ""}`}>{lbl}</button>
+                  );
+                })}
+              </div>
+            </div>
             <div data-field="court_side" className={fieldCls("court_side")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Preferred court side", "Lado de pista preferido", "Côté de pista préféré")}</label>
               <div className="flex flex-wrap gap-2 mt-1">

@@ -210,7 +210,7 @@ function ProfilePage() {
         )}
       </div>
 
-      <EditSectionsStrip />
+      <EditSectionsStrip hasPhoto={!!p.photo_url} hasBio={!!(p.bio && p.bio.trim().length > 0)} />
 
 
       {/* Messages — placed right under name & photo for quick access */}

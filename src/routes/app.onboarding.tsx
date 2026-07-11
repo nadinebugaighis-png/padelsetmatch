@@ -878,7 +878,7 @@ function Onboarding() {
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
-            onClick={() => navigate({ to: "/app" })}
+            onClick={() => navigate({ to: "/app/profile" })}
             className="text-[var(--ink)]/60"
           >
             {tr("Exit", "Salir", "Quitter")}

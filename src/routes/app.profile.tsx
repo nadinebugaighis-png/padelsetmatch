@@ -216,7 +216,7 @@ function ProfilePage() {
         )}
       </div>
 
-      <EditSectionsStrip />
+      
 
       {/* Messages — placed right under name & photo for quick access */}
       <div className="mt-3 sm:mt-4">

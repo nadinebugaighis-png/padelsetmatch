@@ -749,14 +749,14 @@ function Discover() {
                           if (c.liked) unlikeM.mutate(c.id);
                           else likeM.mutate(c.id);
                         }}
-                        className={`absolute top-2 right-2 z-20 w-10 h-10 rounded-full backdrop-blur-sm border flex items-center justify-center shadow-md transition active:scale-90 ${c.liked ? "bg-[var(--ink)] border-[var(--ink)] text-[var(--cream)]" : "bg-white/95 border-[var(--ink)]/15 text-[var(--ink)] hover:bg-white"}`}
+                        className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white"
                         aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Thumbs up ${c.first_name}`, `Pulsa para conectar con ${c.first_name}`, `Pouce pour connecter avec ${c.first_name}`)}
                         title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Thumbs up to connect", "Pulsa para conectar", "Pouce pour connecter")}
                       >
                         <ThumbsUp
-                          className="w-5 h-5 transition"
+                          className={`w-2.5 h-2.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
                           fill={c.liked ? "currentColor" : "none"}
-                          strokeWidth={2}
+                          strokeWidth={1.6}
                         />
                       </button>
 

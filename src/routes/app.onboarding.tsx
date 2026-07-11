@@ -707,7 +707,7 @@ function Onboarding() {
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>
         )}
-        {step === 3 && (
+        {step === 4 && (
           <div className="space-y-8">
             <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
               <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">

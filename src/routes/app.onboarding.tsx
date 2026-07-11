@@ -876,16 +876,16 @@ function Onboarding() {
           <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
         <div className="flex items-center gap-2">
-          {step === 3 && (
-            <Button variant="ghost" onClick={() => save.mutate()} disabled={save.isPending} className="text-[var(--ink)]/70">
-              {tr("Skip — jump in", "Saltar — entrar ya", "Passer — entrer")}
+          {step === 3 && !photoUrl && (
+            <Button variant="ghost" onClick={() => setStep(4)} className="text-[var(--ink)]/70">
+              {tr("Skip photo", "Saltar foto", "Passer la photo")}
             </Button>
           )}
           {step < steps.length - 1 ? (
             <Button onClick={goNext}>{t("ob.next")}</Button>
           ) : (
             <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-              {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}
+              {save.isPending ? t("ob.saving") : (priorities.length > 0 || personalTraits.length > 0) ? t("ob.start") : tr("Skip & start", "Saltar y empezar", "Passer et commencer")}
             </Button>
           )}
         </div>

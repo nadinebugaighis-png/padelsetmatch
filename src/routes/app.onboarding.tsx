@@ -841,7 +841,7 @@ function Onboarding() {
             </section>
           </div>
         )}
-        {step === 4 && (
+        {step === 3 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>

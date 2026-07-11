@@ -742,23 +742,6 @@ function Discover() {
                         >
                           <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
                         </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!c.liked) {
-                              toast.info(tr(`Connect with ${c.first_name} first to request a match`, `Conecta primero con ${c.first_name} para proponer un partido`, `Connecte-toi d'abord avec ${c.first_name} pour proposer un match`));
-                              return;
-                            }
-                            navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
-                          }}
-                          className={`w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
-                          aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
-                          title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
-                        >
-                          <Zap className="w-2.5 h-2.5" fill="currentColor" strokeWidth={1.5} />
-
-                        </button>
                       </div>
 
                       <button

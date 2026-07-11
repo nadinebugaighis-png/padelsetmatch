@@ -240,11 +240,10 @@ function PlayerCardPreview() {
         <div className="mt-6 grid grid-cols-4 gap-3 text-[var(--ink)]">
           <div className="space-y-3">
             <ColumnHeader>Languages</ColumnHeader>
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {sample.languages.map((l) => (
-                <div key={l.label} className="flex flex-col items-center gap-1">
-                  <span className="text-[18px] leading-none">{l.flag}</span>
-                  <span className="text-[11px]">{l.label}</span>
+                <div key={l.label} className="text-center text-[12px] text-[var(--ink)]">
+                  {l.label}
                 </div>
               ))}
             </div>

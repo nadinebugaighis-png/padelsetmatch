@@ -1193,6 +1193,60 @@ function Discover() {
           })()}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={introOpen} onOpenChange={(o) => { if (!o) { setIntroOpen(false); setIntroBody(""); } }}>
+        <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
+          <div className="p-5">
+            <DialogTitle className="text-serif text-2xl text-[var(--ink)] uppercase">
+              {tr("Say hi", "Saluda", "Dis salut")}{preview ? ` — ${preview.first_name}` : ""}
+            </DialogTitle>
+            <p className="text-[13px] text-[var(--ink)]/65 mt-1.5">
+              {tr(
+                "One intro message. If they reply, you'll be connected.",
+                "Un mensaje de presentación. Si te responde, quedaréis conectados.",
+                "Un mot d'intro. S'il/elle répond, vous êtes connectés.",
+              )}
+            </p>
+            <textarea
+              value={introBody}
+              onChange={(e) => setIntroBody(e.target.value.slice(0, 140))}
+              rows={4}
+              placeholder={tr(
+                "e.g. Saw you play at La Moraleja — free Thursday evening?",
+                "p. ej. Te vi jugar en La Moraleja, ¿libre el jueves por la tarde?",
+                "ex. Vu que tu joues à La Moraleja, libre jeudi soir ?",
+              )}
+              className="mt-3 w-full rounded-xl border border-[var(--ink)]/20 bg-white p-3 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/35 focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/25 resize-none"
+              autoFocus
+              maxLength={140}
+            />
+            <div className="mt-1.5 flex items-center justify-between text-[11px] text-[var(--ink)]/50">
+              <span>{introBody.length}/140</span>
+              <span>{tr("Limit: 5 intros / 24h", "Máx. 5 presentaciones / 24 h", "Max 5 intros / 24h")}</span>
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => { setIntroOpen(false); setIntroBody(""); }}
+                className="flex-1 h-11 rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[12px] font-semibold uppercase tracking-widest hover:bg-[var(--ink)]/5"
+              >
+                {tr("Cancel", "Cancelar", "Annuler")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!preview || introBody.trim().length === 0 || introM.isPending) return;
+                  introM.mutate({ targetProfileId: preview.id, body: introBody.trim() });
+                }}
+                disabled={!preview || introBody.trim().length === 0 || introM.isPending}
+                className="flex-1 h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-bold uppercase tracking-widest disabled:opacity-50 hover:brightness-110"
+              >
+                {introM.isPending ? tr("Sending…", "Enviando…", "Envoi…") : tr("Send intro", "Enviar", "Envoyer")}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
 
   );

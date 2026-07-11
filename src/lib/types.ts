@@ -217,6 +217,9 @@ export type Profile = {
   padel_style?: string[];
   world_mode?: boolean;
   is_coach?: boolean;
+  story_hook_en?: string | null;
+  story_hook_es?: string | null;
+  story_hook_fr?: string | null;
 };
 
 

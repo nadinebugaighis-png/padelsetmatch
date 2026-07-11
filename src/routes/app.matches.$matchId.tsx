@@ -353,7 +353,7 @@ function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; ot
   const submitM = useMutation({
     mutationFn: () => submitFn({ data: { matchId, stars, tags, comment: comment.trim() || undefined } }),
     onSuccess: () => {
-      toast.success(tr("Thanks — this makes future matches smarter", "Gracias — así mejoramos tus próximos matches", "Merci — cela améliore les futurs matches"));
+      toast.success(tr("Thanks 🙏", "Gracias 🙏", "Merci 🙏"));
       qc.invalidateQueries({ queryKey: ["match-rating", matchId] });
       onClose();
     },

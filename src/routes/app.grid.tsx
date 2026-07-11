@@ -215,15 +215,14 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
-  // Quick variant used by the tiny thumbs-up on the card — small toast, no navigation unless it's a match.
+  // Quick variant used by the tiny thumbs-up on the card — silent connect, never navigates away.
   const likeSilentM = useMutation({
     mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
       if (res?.matchId) {
-        toast.success("🎾 It's a match! Opening chat…", { duration: 2500 });
-        setTimeout(() => navigate({ to: "/app/matches/$matchId", params: { matchId: res.matchId! } }), 600);
+        toast.success("🎾 It's a match!", { duration: 2000 });
       } else {
         toast.success("👍 Sent", { duration: 1600 });
       }

@@ -945,20 +945,20 @@ function Discover() {
                       ) : (
                         <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] bg-[var(--paper-2)]" />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none lg:hidden" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none hidden lg:block" />
 
                       {/* Top controls — mobile only */}
                       <button
                         type="button"
                         onClick={closePreview}
-                        className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
+                        className="absolute -top-1 -left-1 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
                         aria-label="Back"
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
 
-                      {/* Overlaid identity — mobile only */}
-                      <div className="absolute left-0 right-0 bottom-0 px-5 pb-5 lg:hidden">
+                      {/* Overlaid identity — desktop only (kept for large-screen hero) */}
+                      <div className="absolute left-0 right-0 bottom-0 px-5 pb-5 hidden lg:hidden">
                         <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
                           {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
                         </div>
@@ -966,7 +966,16 @@ function Discover() {
                         <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}</div>
                       </div>
                     </div>
+                    {/* Mobile identity — below the smaller polaroid */}
+                    <div className="mt-3 text-center lg:hidden">
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
+                        {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                      </div>
+                      <div className="text-display text-[32px] leading-[0.95] text-[var(--ink)] uppercase tracking-tight mt-1.5">{preview.first_name}</div>
+                      <div className="text-[13px] text-[var(--ink)]/70 mt-0.5">{preview.zone} · {label(preview.level)}</div>
+                    </div>
                   </div>
+
 
                   {/* Body — scrollable on desktop */}
                   <div className="lg:w-[60%] lg:overflow-y-auto">

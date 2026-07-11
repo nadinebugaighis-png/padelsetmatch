@@ -498,6 +498,7 @@ function Onboarding() {
         {step === 2 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
+            <p className="text-sm text-[var(--ink)]/70">{tr("Last required page — after this you're in the app.", "Última página obligatoria — después ya estás dentro de la app.", "Dernière page obligatoire — après tu es dans l'app.")}</p>
 
             <div data-field="locations" className={fieldCls("locations")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>

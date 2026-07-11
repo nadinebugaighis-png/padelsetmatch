@@ -1611,6 +1611,19 @@ export type Database = {
         Args: { _acting_user_id: string; _match_id: string }
         Returns: undefined
       }
+      admin_clear_profile_photo: {
+        Args: { _profile_id: string }
+        Returns: Json
+      }
+      admin_dashboard_stats: { Args: never; Returns: Json }
+      admin_resolve_report: {
+        Args: { _report_id: string; _status: string }
+        Returns: Json
+      }
+      admin_set_suspended: {
+        Args: { _profile_id: string; _suspend: boolean }
+        Returns: Json
+      }
       claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
       cleanup_relationship_with: {
         Args: { _other: string }

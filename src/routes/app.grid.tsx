@@ -824,9 +824,9 @@ function Discover() {
 
                     <div className="mt-2 flex items-center justify-between">
                       {c.free_court_access ? (
-                        <span className="px-2 py-0.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)] text-[8px] font-bold uppercase tracking-tight flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
-                          Free Court
+                        <span className="px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[8px] font-extrabold uppercase tracking-tight inline-flex items-center gap-1">
+                          <CourtIcon className="w-3 h-1.5" strokeWidth={2.4} />
+                          {tr("Free court", "Pista gratis", "Terrain gratuit")}
                         </span>
                       ) : <span />}
                       <div

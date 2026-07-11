@@ -735,7 +735,12 @@ export const sendMessage = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("messages" as never)
       .insert({ match_id: data.matchId, sender_profile_id: myId, body: data.body } as never);
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (/INTRO_LIMIT/i.test(error.message)) {
+        return { ok: false as const, reason: "intro_limit" as const };
+      }
+      throw new Error(error.message);
+    }
 
     // Auto-reply from seed players to keep the demo chat alive
     const { data: match } = await context.supabase

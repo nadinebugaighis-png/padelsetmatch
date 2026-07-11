@@ -311,6 +311,7 @@ function Onboarding() {
           sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
           personal_traits: personalTraits,
           padel_style: padelStyle,
+          play_frequency: playFrequency || null,
         },
       });
     },

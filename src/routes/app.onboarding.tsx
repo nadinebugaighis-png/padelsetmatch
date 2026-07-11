@@ -701,9 +701,16 @@ function Onboarding() {
         )}
         {step === 3 && (
           <div className="space-y-8">
-            <div>
-              <h2 className="text-display text-3xl">{t("ob.h3")}</h2>
-              <p className="text-sm text-[var(--ink)]/70 mt-1">{tr("Two quick picks so we can match you well.", "Dos elecciones rápidas para emparejarte bien.", "Deux choix rapides pour bien te matcher.")} <span className="text-[var(--ink)]/50">{t("ob.h3priv")}</span></p>
+            <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
+                {tr("Optional — for fun", "Opcional — por diversión", "Optionnel — pour le fun")}
+              </p>
+              <h2 className="text-display text-2xl mt-1">
+                {tr("Unlock compatibility ✨", "Desbloquea compatibilidad ✨", "Débloque la compatibilité ✨")}
+              </h2>
+              <p className="text-sm text-[var(--ink)]/75 mt-1">
+                {tr("Fill this whenever you feel like it — it powers your AI compatibility with other players. Skip for now and jump into the app.", "Rellénalo cuando quieras — alimenta tu compatibilidad IA con otros jugadores. Sáltatelo y entra ya en la app.", "Remplis quand tu veux — ça alimente ta compatibilité IA avec les autres joueurs. Passe et entre dans l'app tout de suite.")}
+              </p>
             </div>
 
             {/* SECTION 1 — Priorities */}

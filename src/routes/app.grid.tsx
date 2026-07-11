@@ -762,14 +762,11 @@ function Discover() {
 
                       {c.free_court_access && (
                         <div
-                          className="absolute bottom-2 left-2 z-10 inline-flex items-center gap-1 px-1.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+                          className="absolute bottom-2 left-2 z-10 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
                           title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
                           aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
                         >
-                          <CourtIcon className="w-3.5 h-2 shrink-0" strokeWidth={2.2} />
-                          <span className="text-[8px] font-extrabold uppercase tracking-wider leading-none">
-                            {tr("Free", "Gratis", "Gratuit")}
-                          </span>
+                          <CourtIcon className="w-4 h-2.5 text-[var(--ink)]" strokeWidth={2.2} />
                         </div>
                       )}
 
@@ -823,12 +820,8 @@ function Discover() {
                     })()}
 
                     <div className="mt-2 flex items-center justify-between">
-                      {c.free_court_access ? (
-                        <span className="px-2 py-0.5 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[8px] font-extrabold uppercase tracking-tight inline-flex items-center gap-1">
-                          <CourtIcon className="w-3 h-1.5" strokeWidth={2.4} />
-                          {tr("Free court", "Pista gratis", "Terrain gratuit")}
-                        </span>
-                      ) : <span />}
+                      <span />
+
                       <div
                         className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
                         title={t("disc.scoreTooltip")}
@@ -932,13 +925,6 @@ function Discover() {
 
                       {/* Overall % lives on the photo badge; per-category scores live inside each analysis card below. */}
 
-                      {preview.free_court_access && (
-                        <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-4">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-[11px] font-extrabold uppercase tracking-wider"><CourtIcon className="w-4 h-2.5" strokeWidth={2.4} /> {tr("Free court access", "Pista gratis", "Terrain gratuit")}</div>
-                          {preview.free_court_note && <p className="text-xs text-[var(--ink)]/75 mt-2">{preview.free_court_note}</p>}
-                            
-                        </div>
-                      )}
 
                       <SharedVenuesBadge otherProfileId={preview.id} />
 

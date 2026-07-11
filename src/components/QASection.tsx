@@ -101,7 +101,7 @@ export function QASection() {
       </div>
 
       <div className="mt-4 space-y-3">
-        {queue.map((q) => {
+        {queue.filter((q) => !answered.some((a) => a.question === q.question)).map((q) => {
           const value = draft[q.question] ?? "";
           return (
             <div key={q.question} className="rounded-xl border border-[var(--ink)]/10 p-4">

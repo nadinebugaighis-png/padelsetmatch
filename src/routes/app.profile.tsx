@@ -15,6 +15,7 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
+import { PlayerCardDetailsForm } from "@/components/PlayerCardDetailsForm";
 
 
 

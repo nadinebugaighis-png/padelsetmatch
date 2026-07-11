@@ -168,6 +168,9 @@ export const updatePlayerCardDetails = createServerFn({ method: "POST" })
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+
 
 async function moderatePhotoWithAi(photoUrl: string): Promise<{ verdict: "approved" | "rejected"; reason: string }> {
   const apiKey = process.env.LOVABLE_API_KEY;

@@ -283,16 +283,9 @@ function EventsPage() {
         {/* Title row */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-serif text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[var(--ink)]">
+            <h1 className="text-serif text-2xl sm:text-4xl lg:text-5xl tracking-tight leading-none text-[var(--ink)]">
               {tr("MATCHES", "PARTIDOS", "MATCHES")}
             </h1>
-            <p className="text-sm text-[var(--ink)]/60 mt-2">
-              {tr(
-                "Casual matches around you. Tap to join.",
-                "Partidos casuales cerca de ti. Toca para unirte.",
-                "Matches décontractés autour de toi. Touche pour rejoindre.",
-              )}
-            </p>
           </div>
           <button
             type="button"
@@ -799,15 +792,8 @@ function EmptyFeed({
   return (
     <div className="mt-8 rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-6 text-center">
       <div className="text-serif text-xl text-[var(--ink)]">
-        {tr("No matches match your filters", "No hay partidos con estos filtros", "Aucun match avec ces filtres")}
+        {tr("No matches found", "Sin partidos", "Aucun match")}
       </div>
-      <p className="text-sm text-[var(--ink)]/60 mt-1">
-        {tr(
-          "Try widening the days or the area — or start your own.",
-          "Prueba con más días o amplía la zona — o convoca el tuyo.",
-          "Élargis les jours ou la zone — ou lance le tien.",
-        )}
-      </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <button
           type="button"
@@ -866,9 +852,7 @@ function MyMatchesList({
         <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
           {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
         </div>
-        <p className="text-sm text-[var(--ink)]/60 mb-4">
-          {tr("Join a match or convene your own to see it here.", "Únete a un partido o convoca el tuyo para verlo aquí.", "Rejoins un match ou lance le tien pour le voir ici.")}
-        </p>
+        <div className="mb-4" />
         <button
           type="button"
           onClick={onFind}

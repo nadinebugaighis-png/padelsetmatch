@@ -365,8 +365,7 @@ function Discover() {
   return (
     <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-        <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[32px] sm:text-[38px] lg:text-[44px] xl:text-[52px]">{t("disc.h1")}</h1>
-        <p className="text-serif italic text-[var(--ink)]/70 mt-2 leading-[1.15] text-[20px] sm:text-[22px] lg:text-[24px] xl:text-[26px]">{t("disc.sub")}</p>
+        <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
 
         {(() => {
           const me = feedQ.data.me as unknown as {
@@ -433,12 +432,7 @@ function Discover() {
         })()}
 
 
-        <div className="mt-5 lg:mt-6 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 lg:p-4 flex items-start gap-3">
-          <div className="shrink-0 w-7 h-7 rounded-full bg-white text-[var(--ink)] flex items-center justify-center text-[13px] font-bold border border-[var(--ink)]/20">87</div>
-          <p className="text-[13px] lg:text-[14px] leading-snug text-[var(--ink)]/75">
-            {t("disc.scoreA")} <b className="text-[var(--ink)]">{t("disc.scoreBold")}</b> {t("disc.scoreB")} {t("disc.scoreC")}
-          </p>
-        </div>
+
 
         <div className="mt-5 lg:mt-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
@@ -532,7 +526,7 @@ function Discover() {
                   <option key={`all-${z}`} value={z} />
                 ))}
               </datalist>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1 italic">{tr("Type any city, barrio or area. Matches players' city, barrio or listed areas.", "Escribe cualquier ciudad, barrio o zona. Coincide con la ciudad, el barrio o las zonas indicadas.", "Tape n'importe quelle ville, quartier ou zone. Correspond à la ville, au quartier ou aux zones indiquées.")}</p>
+              
             </div>
 
             {activeFilterCount > 0 && (
@@ -545,11 +539,6 @@ function Discover() {
               </button>
             )}
           </div>
-        )}
-        {world && (
-          <p className="text-[11px] text-[var(--ink)]/60 italic mt-3">
-            {t("disc.world.note")}
-          </p>
         )}
 
         <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />

@@ -18,7 +18,7 @@ import {
   Heart,
 } from "lucide-react";
 
-export const Route = createFileRoute("/preview/player-card")({
+export const Route = createFileRoute("/preview/player-card-v2-v2")({
   component: PlayerCardPreview,
   head: () => ({
     meta: [

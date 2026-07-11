@@ -20,6 +20,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as SCodeRouteImport } from './routes/s.$code'
+import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
 import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
@@ -91,6 +92,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const SCodeRoute = SCodeRouteImport.update({
   id: '/s/$code',
   path: '/s/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewPlayerCardV2Route = PreviewPlayerCardV2RouteImport.update({
+  id: '/preview/player-card-v2',
+  path: '/preview/player-card-v2',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviewPlayerCardRoute = PreviewPlayerCardRouteImport.update({
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
+  '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
+  '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
   '/app': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
+  '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/g/$eventId'
     | '/m/$eventId'
     | '/preview/player-card'
+    | '/preview/player-card-v2'
     | '/s/$code'
     | '/app/'
     | '/app/events/$eventId'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/g/$eventId'
     | '/m/$eventId'
     | '/preview/player-card'
+    | '/preview/player-card-v2'
     | '/s/$code'
     | '/app'
     | '/app/events/$eventId'
@@ -352,6 +363,7 @@ export interface FileRouteTypes {
     | '/g/$eventId'
     | '/m/$eventId'
     | '/preview/player-card'
+    | '/preview/player-card-v2'
     | '/s/$code'
     | '/app/'
     | '/app/events/$eventId'
@@ -374,6 +386,7 @@ export interface RootRouteChildren {
   GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
   PreviewPlayerCardRoute: typeof PreviewPlayerCardRoute
+  PreviewPlayerCardV2Route: typeof PreviewPlayerCardV2Route
   SCodeRoute: typeof SCodeRoute
 }
 
@@ -454,6 +467,13 @@ declare module '@tanstack/react-router' {
       path: '/s/$code'
       fullPath: '/s/$code'
       preLoaderRoute: typeof SCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview/player-card-v2': {
+      id: '/preview/player-card-v2'
+      path: '/preview/player-card-v2'
+      fullPath: '/preview/player-card-v2'
+      preLoaderRoute: typeof PreviewPlayerCardV2RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview/player-card': {
@@ -648,6 +668,7 @@ const rootRouteChildren: RootRouteChildren = {
   GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
   PreviewPlayerCardRoute: PreviewPlayerCardRoute,
+  PreviewPlayerCardV2Route: PreviewPlayerCardV2Route,
   SCodeRoute: SCodeRoute,
 }
 export const routeTree = rootRouteImport

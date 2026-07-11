@@ -254,7 +254,7 @@ function Discover() {
     mutationFn: (id: string) => reportPhotoFn({ data: { reportedProfileId: id, reason: "Inappropriate photo" } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast.success(tr("Photo reported — thanks. Our team will review it.", "Foto reportada — gracias. Nuestro equipo la revisará.", "Photo signalée — merci. Notre équipe va la vérifier."));
+      toast.success(tr("Reported — thanks 🙏", "Reportado — gracias 🙏", "Signalé — merci 🙏"));
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not send report", "No se pudo enviar el reporte", "Impossible d'envoyer le signalement")),
   });

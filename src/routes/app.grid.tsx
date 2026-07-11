@@ -10,6 +10,7 @@ import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
 import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venues.functions";
+import { openIntroChat } from "@/lib/intro.functions";
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";

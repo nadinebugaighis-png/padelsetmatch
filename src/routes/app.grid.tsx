@@ -1173,6 +1173,7 @@ function Discover() {
                           <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
                         )}
                       </div>
+                      )}
 
 
                       {/* Me-style profile card (age intentionally omitted for privacy) */}

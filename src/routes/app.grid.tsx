@@ -1058,6 +1058,7 @@ function Discover() {
 
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
+                      {!isSelf && (
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
                         <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2.5">
                           <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}

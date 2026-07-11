@@ -336,6 +336,17 @@ function PlayerCardPreview() {
             Save
           </button>
         </div>
+
+        {/* Edit own profile */}
+        <Link
+          to="/app/profile"
+          className="mt-3 block rounded-[10px] py-3.5 bg-white border border-dashed border-[color-mix(in_oklab,var(--ink)_30%,transparent)] text-[var(--ink)] text-center text-[13px] font-semibold uppercase tracking-[0.18em]"
+        >
+          <span className="inline-flex items-center gap-2">
+            <Pencil className="w-4 h-4" strokeWidth={1.8} />
+            Edit my player card
+          </span>
+        </Link>
       </div>
     </div>
   );

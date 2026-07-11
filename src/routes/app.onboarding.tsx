@@ -498,6 +498,7 @@ function Onboarding() {
         {step === 2 && (
           <>
             <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
+            <p className="text-sm text-[var(--ink)]/70">{tr("Last required page — after this you're in the app.", "Última página obligatoria — después ya estás dentro de la app.", "Dernière page obligatoire — après tu es dans l'app.")}</p>
 
             <div data-field="locations" className={fieldCls("locations")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
@@ -701,9 +702,16 @@ function Onboarding() {
         )}
         {step === 3 && (
           <div className="space-y-8">
-            <div>
-              <h2 className="text-display text-3xl">{t("ob.h3")}</h2>
-              <p className="text-sm text-[var(--ink)]/70 mt-1">{tr("Two quick picks so we can match you well.", "Dos elecciones rápidas para emparejarte bien.", "Deux choix rapides pour bien te matcher.")} <span className="text-[var(--ink)]/50">{t("ob.h3priv")}</span></p>
+            <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
+                {tr("Optional — for fun", "Opcional — por diversión", "Optionnel — pour le fun")}
+              </p>
+              <h2 className="text-display text-2xl mt-1">
+                {tr("Unlock compatibility ✨", "Desbloquea compatibilidad ✨", "Débloque la compatibilité ✨")}
+              </h2>
+              <p className="text-sm text-[var(--ink)]/75 mt-1">
+                {tr("Fill this whenever you feel like it — it powers your AI compatibility with other players. Skip for now and jump into the app.", "Rellénalo cuando quieras — alimenta tu compatibilidad IA con otros jugadores. Sáltatelo y entra ya en la app.", "Remplis quand tu veux — ça alimente ta compatibilité IA avec les autres joueurs. Passe et entre dans l'app tout de suite.")}
+              </p>
             </div>
 
             {/* SECTION 1 — Priorities */}
@@ -713,11 +721,11 @@ function Onboarding() {
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>
                   {tr("Your top values", "Tus valores principales", "Tes valeurs principales")}
                 </h3>
-                <span className={`text-[11px] font-medium ${priorities.length >= 3 ? "text-[var(--grass)]" : "text-[var(--ink)]/55"}`}>
-                  {priorities.length}/3 {tr("min", "mín", "min")}
+                <span className="text-[11px] font-medium text-[var(--ink)]/55">
+                  {priorities.length} {tr("picked", "elegidos", "choisis")}
                 </span>
               </div>
-              <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick at least 3. Order matters — top = most important.", "Elige al menos 3. El orden cuenta — arriba = más importante.", "Choisis-en au moins 3. L'ordre compte — haut = plus important.")}</p>
+              <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick as many as you like. Order matters — top = most important.", "Elige los que quieras. El orden cuenta — arriba = más importante.", "Choisis-en autant que tu veux. L'ordre compte — haut = plus important.")}</p>
 
               <div className="flex flex-wrap gap-2">
                 {PRIORITY_TRAITS.map((tr) => {
@@ -860,13 +868,20 @@ function Onboarding() {
         {step > 0 ? (
           <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
         ) : <div />}
-        {step < steps.length - 1 ? (
-          <Button onClick={goNext}>{t("ob.next")}</Button>
-        ) : (
-          <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-            {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {step === 3 && (
+            <Button variant="ghost" onClick={() => save.mutate()} disabled={save.isPending} className="text-[var(--ink)]/70">
+              {tr("Skip — jump in", "Saltar — entrar ya", "Passer — entrer")}
+            </Button>
+          )}
+          {step < steps.length - 1 ? (
+            <Button onClick={goNext}>{t("ob.next")}</Button>
+          ) : (
+            <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
+              {save.isPending ? t("ob.saving") : photoUrl ? t("ob.start") : tr("Skip photo & start", "Saltar foto y empezar", "Passer la photo et commencer")}
+            </Button>
+          )}
+        </div>
       </div>
     </main>
   );

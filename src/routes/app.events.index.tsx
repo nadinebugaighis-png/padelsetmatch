@@ -283,16 +283,9 @@ function EventsPage() {
         {/* Title row */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-serif text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-none text-[var(--ink)]">
+            <h1 className="text-serif text-2xl sm:text-4xl lg:text-5xl tracking-tight leading-none text-[var(--ink)]">
               {tr("MATCHES", "PARTIDOS", "MATCHES")}
             </h1>
-            <p className="text-sm text-[var(--ink)]/60 mt-2">
-              {tr(
-                "Casual matches around you. Tap to join.",
-                "Partidos casuales cerca de ti. Toca para unirte.",
-                "Matches décontractés autour de toi. Touche pour rejoindre.",
-              )}
-            </p>
           </div>
           <button
             type="button"

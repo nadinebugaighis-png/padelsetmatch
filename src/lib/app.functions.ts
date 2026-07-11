@@ -620,8 +620,8 @@ export const likeProfile = createServerFn({ method: "POST" })
           _profile_id: data.likedProfileId,
           _type: "like_received",
           _pref_column: "matches",
-          _title: `👍 ${name} likes you`,
-          _body: "Tap 👍 back to unlock chat.",
+          _title: `${name} 👍`,
+          _body: "",
           _url: `/app/grid?previewId=${myId}`,
         } as never);
       } catch (e) {

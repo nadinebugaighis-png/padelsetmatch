@@ -432,12 +432,7 @@ function Discover() {
         })()}
 
 
-        <div className="mt-5 lg:mt-6 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-3 lg:p-4 flex items-start gap-3">
-          <div className="shrink-0 w-7 h-7 rounded-full bg-white text-[var(--ink)] flex items-center justify-center text-[13px] font-bold border border-[var(--ink)]/20">87</div>
-          <p className="text-[13px] lg:text-[14px] leading-snug text-[var(--ink)]/75">
-            {t("disc.scoreA")} <b className="text-[var(--ink)]">{t("disc.scoreBold")}</b> {t("disc.scoreB")} {t("disc.scoreC")}
-          </p>
-        </div>
+
 
         <div className="mt-5 lg:mt-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">

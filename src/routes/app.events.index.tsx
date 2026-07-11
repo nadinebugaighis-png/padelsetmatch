@@ -484,7 +484,7 @@ function EventsPage() {
             tr={tr}
             pending={pending}
             onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
-            onManage={setMyMatchSheet}
+            onManage={(e) => navigate({ to: "/app/events/$eventId", params: { eventId: e.id } })}
             onLeave={instantLeave}
             onFind={() => setMode("find")}
           />

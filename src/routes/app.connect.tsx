@@ -136,13 +136,6 @@ function ConnectPage() {
             {tr("New post", "Publicar", "Publier")}
           </Button>
         </div>
-        <p className="text-sm text-[var(--ink)]/65 mt-2 max-w-lg">
-          {tr(
-            "Travel plans, tickets, questions, news — share anything with the community.",
-            "Viajes, entradas, preguntas, noticias — comparte con la comunidad.",
-            "Voyages, billets, questions, actualités — partagez avec la communauté.",
-          )}
-        </p>
       </div>
 
       {/* Filters */}

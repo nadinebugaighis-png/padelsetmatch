@@ -341,9 +341,8 @@ function Onboarding() {
       !nationality ? { key: "nationality", label: tr("nationality", "nacionalidad", "nationalité") } : null,
       languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
-      !courtSide ? { key: "court_side", label: tr("preferred court side", "lado de pista preferido", "côté de piste préféré") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
-    (priorities.length < 3 ? [{ key: "priorities", label: tr("at least 3 values", "al menos 3 valores", "au moins 3 valeurs") }] : []),
+    [],
     [],
   ];
 

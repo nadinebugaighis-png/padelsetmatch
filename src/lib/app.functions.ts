@@ -591,9 +591,11 @@ export const likeProfile = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("Create your profile first");
-    const { error } = await context.supabase
+    const { data: inserted, error } = await context.supabase
       .from("likes" as never)
-      .insert({ liker_profile_id: myId, liked_profile_id: data.likedProfileId } as never);
+      .insert({ liker_profile_id: myId, liked_profile_id: data.likedProfileId } as never)
+      .select("liker_profile_id")
+      .maybeSingle();
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
     // Check if a match was created (trigger handles reciprocal)
     const a = myId < data.likedProfileId ? myId : data.likedProfileId;
@@ -605,6 +607,21 @@ export const likeProfile = createServerFn({ method: "POST" })
       .eq("profile_b", b)
       .maybeSingle();
     const matchId = (m as { id: string } | null)?.id ?? null;
+    // Anonymous nudge: only for a freshly inserted like that isn't already a mutual match.
+    if (inserted && !matchId) {
+      try {
+        await context.supabase.rpc("enqueue_notification" as never, {
+          _profile_id: data.likedProfileId,
+          _type: "like_received",
+          _pref_column: "matches",
+          _title: "👀 Someone likes you",
+          _body: "Tap 👍 back to unlock chat.",
+          _url: "/app/grid",
+        } as never);
+      } catch (e) {
+        console.warn("like nudge failed", e);
+      }
+    }
     return { ok: true, matchId };
   });
 

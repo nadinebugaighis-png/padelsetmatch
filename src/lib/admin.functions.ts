@@ -45,7 +45,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
       supabaseAdmin.from("reports" as never).select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabaseAdmin
         .from("profiles" as never)
-        .select("id, user_id, first_name, age, zone, created_at, suspended_at")
+        .select("id, user_id, first_name, age, zone, created_at, suspended_at, onboarding_stage")
         .eq("is_seed", false)
         .order("created_at", { ascending: false })
         .limit(500),

@@ -11,14 +11,9 @@ export const Route = createFileRoute("/app/admin")({
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
 
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("id")
-      .eq("user_id", userData.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
+    const { data, error } = await supabase.rpc("is_current_user_admin");
 
-    if (error || !data) throw redirect({ to: "/app" });
+    if (error || data !== true) throw redirect({ to: "/app" });
   },
   component: AdminPage,
 });

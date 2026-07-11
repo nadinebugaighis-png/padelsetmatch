@@ -768,6 +768,7 @@ function Discover() {
                 </div>
               );
             })()}
+            {list.map((c) => {
               const away = (() => {
                 const au = (c as unknown as { away_until?: string | null }).away_until;
                 return !!(au && au >= new Date().toISOString().slice(0, 10));

@@ -216,10 +216,13 @@ function ProfilePage() {
         )}
       </div>
 
+      <EditSectionsStrip />
+
       {/* Messages — placed right under name & photo for quick access */}
       <div className="mt-3 sm:mt-4">
         <MessagesRow />
       </div>
+
 
       <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />

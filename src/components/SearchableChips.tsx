@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Search } from "lucide-react";
+
 
 type Props = {
   options: readonly string[];

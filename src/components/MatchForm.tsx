@@ -23,6 +23,7 @@ export type MatchFormValues = {
   note: string | null;
   playtomic_link: string | null;
   court_booked: boolean;
+  is_private_court: boolean;
 };
 
 export type MatchFormInitial = Partial<MatchFormValues> & {

@@ -41,17 +41,27 @@ export const PRIORITY_TRAITS = [
 
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 
+// Curated from the Big Five personality model (Openness, Conscientiousness,
+// Extraversion, Agreeableness, Emotional Stability) plus humor — the traits
+// most consistently linked to relationship and friendship quality in research.
 export const PERSONAL_STRENGTHS = [
-  "Honest", "Kind", "Calm", "Curious", "Confident", "Friendly", "Loyal", "Patient",
-  "Organized", "Open-minded", "Ambitious", "Ambidextrous", "Brave", "Creative",
-  "Determined", "Diplomatic", "Easygoing", "Empathetic", "Energetic", "Flexible",
-  "Generous", "Humble", "Independent", "Introverted", "Outgoing", "Practical",
-  "Reflective", "Reliable", "Serious", "Witty/funny",
+  // Agreeableness (warmth / trust)
+  "Honest", "Kind", "Empathetic", "Loyal",
+  // Emotional stability
+  "Calm", "Patient",
+  // Openness
+  "Curious", "Creative", "Open-minded",
+  // Conscientiousness
+  "Reliable", "Ambitious",
+  // Extraversion
+  "Confident", "Outgoing",
+  // Humor (universally valued)
+  "Witty/funny",
 ] as const;
 export const HONEST_EDGES = [
-  "Direct", "Reserved", "Quiet", "Sensitive", "Emotional",
-  "Impatient", "Stubborn", "Perfectionist",
+  "Direct", "Reserved", "Sensitive",
 ] as const;
+
 export const PERSONAL_TRAITS = [...PERSONAL_STRENGTHS, ...HONEST_EDGES] as const;
 export type PersonalTrait = (typeof PERSONAL_TRAITS)[number];
 

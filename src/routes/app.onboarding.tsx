@@ -429,10 +429,10 @@ function Onboarding() {
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Age bracket", "Rango de edad", "Tranche d'âge")}</label>
               <p className="text-[11px] text-[var(--ink)]/55 mt-1">{tr("Never shown on your profile — used only to find good matches.", "Nunca se muestra en tu perfil — solo se usa para encontrar buenos matches.", "Jamais affiché sur ton profil — sert uniquement à trouver de bons matchs.")}</p>
               <div className="mt-3 flex w-full overflow-hidden rounded-full border border-[var(--ink)]/20 bg-[var(--paper,#fdfaf3)] shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
-                {([[18,24],[25,29],[30,34],[35,39],[40,49],[50,99]] as const).map(([lo, hi], idx) => {
+                {([[18,24],[25,34],[35,45],[46,55],[56,99]] as const).map(([lo, hi], idx) => {
                   const mid = Math.round((lo + hi) / 2);
                   const selected = age === mid;
-                  const labelTxt = hi >= 99 ? "50+" : `${lo}–${hi}`;
+                  const labelTxt = hi >= 99 ? "56+" : `${lo}–${hi}`;
                   return (
                     <button
                       key={labelTxt}

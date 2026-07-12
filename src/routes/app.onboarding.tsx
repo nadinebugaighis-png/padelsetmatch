@@ -731,25 +731,23 @@ function Onboarding() {
 
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
-            <div className="flex flex-wrap gap-2">
-              {PADEL_STYLES.map((s) => {
-                const on = padelStyle.includes(s);
-                return (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() =>
-                      setPadelStyle((cur) =>
-                        cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
-                      )
-                    }
-                    className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                  >
-                    {on ? "✓ " : "+ "}{label(s)}
-                  </button>
-                );
-              })}
-            </div>
+            <SearchableChips
+              options={PADEL_STYLES as readonly string[]}
+              selected={padelStyle}
+              onToggle={(s) =>
+                setPadelStyle((cur) =>
+                  cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
+                )
+              }
+              onAddCustom={(v) => {
+                setPadelStyle((cur) => (cur.length >= 3 || cur.includes(v) ? cur : [...cur, v]));
+              }}
+              labelFn={label}
+              placeholder={tr("Search or type your style…", "Busca o escribe tu estilo…", "Cherche ou tape ton style…")}
+              addWord={tr("Add", "Añadir", "Ajouter")}
+              moreWord={tr("more", "más", "plus")}
+              lessWord={tr("Show less", "Ver menos", "Voir moins")}
+            />
 
             <div data-field="level" className={fieldCls("level")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>

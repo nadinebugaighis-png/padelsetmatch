@@ -425,13 +425,19 @@ function Onboarding() {
             <div data-field="age" className={fieldCls("age")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Age bracket", "Rango de edad", "Tranche d'âge")}</label>
               <p className="text-[11px] text-[var(--ink)]/55 mt-1">{tr("Never shown on your profile — used only to find good matches.", "Nunca se muestra en tu perfil — solo se usa para encontrar buenos matches.", "Jamais affiché sur ton profil — sert uniquement à trouver de bons matchs.")}</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {([[18,24],[25,29],[30,34],[35,39],[40,49],[50,99]] as const).map(([lo, hi]) => {
+              <div className="mt-3 flex w-full overflow-hidden rounded-full border border-[var(--ink)]/20 bg-[var(--paper,#fdfaf3)] shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
+                {([[18,24],[25,29],[30,34],[35,39],[40,49],[50,99]] as const).map(([lo, hi], idx) => {
                   const mid = Math.round((lo + hi) / 2);
                   const selected = age === mid;
                   const labelTxt = hi >= 99 ? "50+" : `${lo}–${hi}`;
                   return (
-                    <button key={labelTxt} onClick={() => setAge(mid)} className={`chip-paper ${selected ? "chip-paper-selected" : ""}`}>{labelTxt}</button>
+                    <button
+                      key={labelTxt}
+                      onClick={() => setAge(mid)}
+                      className={`flex-1 py-2.5 text-[13px] font-medium tracking-tight transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/15" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper,#fdfaf3)]" : "text-[var(--ink)]/75 hover:bg-[var(--ink)]/5"}`}
+                    >
+                      {labelTxt}
+                    </button>
                   );
                 })}
               </div>

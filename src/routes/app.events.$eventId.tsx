@@ -460,6 +460,24 @@ function EventDetail() {
               )}
             </div>
 
+            {event.is_private_court && (
+              <div className="flex items-start gap-2 border-t border-[var(--ink)]/15 bg-amber-50 px-4 py-3 text-xs text-amber-950">
+                <span aria-hidden className="mt-0.5 text-sm leading-none">⚠️</span>
+                <div>
+                  <div className="uppercase tracking-[0.2em] text-[10px] font-semibold text-amber-900">
+                    {tr("Private court", "Pista privada", "Terrain privé")}
+                  </div>
+                  <div className="mt-0.5 leading-relaxed">
+                    {tr(
+                      "This match is at a private residence. Confirm the host in chat before heading over, share your location with a friend, and meet in daylight when possible.",
+                      "Este partido es en un domicilio privado. Confirma con el organizador por chat antes de ir, comparte tu ubicación con alguien de confianza y, si puedes, queda con luz de día.",
+                      "Ce match a lieu dans une résidence privée. Confirme avec l'hôte par chat avant de t'y rendre, partage ta position avec un proche et privilégie la lumière du jour.",
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {event.lock_active && event.invite_lock_until && (
               <div className="flex items-start gap-2 border-t border-[var(--ink)]/15 bg-[var(--plum)]/[0.08] px-4 py-3 text-xs text-[var(--ink)]">
                 <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--plum)] shrink-0" />

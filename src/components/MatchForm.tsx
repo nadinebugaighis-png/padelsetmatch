@@ -23,6 +23,7 @@ export type MatchFormValues = {
   note: string | null;
   playtomic_link: string | null;
   court_booked: boolean;
+  is_private_court: boolean;
 };
 
 export type MatchFormInitial = Partial<MatchFormValues> & {
@@ -111,6 +112,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
   const [courtBooked, setCourtBooked] = useState<boolean>(initial?.court_booked ?? false);
+  const [isPrivateCourt, setIsPrivateCourt] = useState<boolean>(initial?.is_private_court ?? false);
   const [playtomicLink, setPlaytomicLink] = useState(initial?.playtomic_link ?? "");
   const [playtomicError, setPlaytomicError] = useState<string | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
@@ -146,6 +148,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             note: note || null,
             playtomic_link: normalized.url,
             court_booked: courtBooked,
+            is_private_court: false,
           }
         : {
             starts_at: new Date(when).toISOString(),
@@ -163,6 +166,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             note: note || null,
             playtomic_link: normalized.url,
             court_booked: courtBooked,
+            is_private_court: isPrivateCourt,
           };
     await onSubmit(values);
   };
@@ -217,6 +221,25 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             <p className={helperCls}>
               {tr("Use this if your club isn't on Google, or for private / residential courts.", "Úsalo si tu club no está en Google, o para pistas privadas o residenciales.", "À utiliser si ton club n'est pas sur Google, ou pour les terrains privés / résidentiels.")}
             </p>
+
+            <div className="pt-2">
+              <label className={labelCls}>{tr("Is this a private court?", "¿Es una pista privada?", "Est-ce un terrain privé ?")}</label>
+              <div className="grid grid-cols-2 gap-2">
+                <SegButton active={!isPrivateCourt} onClick={() => setIsPrivateCourt(false)}>
+                  {tr("No — club or residential", "No — club o urbanización", "Non — club ou résidence")}
+                </SegButton>
+                <SegButton active={isPrivateCourt} onClick={() => setIsPrivateCourt(true)}>
+                  {tr("Yes — private home", "Sí — casa privada", "Oui — domicile privé")}
+                </SegButton>
+              </div>
+              <p className={helperCls}>
+                {tr(
+                  "Private = inside someone's home or property. A residential complex or urbanization court open to residents is not private. Guests will see a 'Private court' tag so they know what to expect.",
+                  "Privada = dentro de la casa o propiedad de alguien. Una pista de una urbanización o complejo residencial abierta a residentes no es privada. Los invitados verán una etiqueta 'Pista privada' para saber a qué atenerse.",
+                  "Privé = à l'intérieur du domicile ou de la propriété de quelqu'un. Un terrain de complexe résidentiel ouvert aux résidents n'est pas privé. Les invités verront une étiquette « Terrain privé » pour savoir à quoi s'attendre.",
+                )}
+              </p>
+            </div>
           </div>
         )}
       </section>

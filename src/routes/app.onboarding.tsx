@@ -864,7 +864,6 @@ function Onboarding() {
                 <span className="text-[11px] font-medium text-[var(--ink)]/55">{personalTraits.length}/10</span>
               </div>
               <p className="text-[12px] text-[var(--ink)]/60">{tr("Optional — pick a mix of strengths and a couple of honest edges.", "Opcional — elige una mezcla: fortalezas y un par de aristas honestas.", "Optionnel — mélange forces et petits défauts assumés.")}</p>
-              <p className="text-[11px] text-[var(--ink)]/50 italic">🔒 {tr("Nothing goes on your profile — used only for compatibility matching.", "Nada aparece en tu perfil — solo se usa para la compatibilidad.", "Rien n'apparaît sur ton profil — utilisé uniquement pour la compatibilité.")}</p>
 
               <div className="space-y-3">
                 <div>

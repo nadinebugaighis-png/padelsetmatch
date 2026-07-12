@@ -110,6 +110,7 @@ function EditEvent() {
           note: event.note,
           playtomic_link: event.playtomic_link,
           court_booked: event.court_booked,
+          is_private_court: event.is_private_court,
           app_players_count: event.participants?.length ?? 1,
         }}
       />

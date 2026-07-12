@@ -32,6 +32,12 @@ export function SearchableChips({
 }: Props) {
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (searchOpen) inputRef.current?.focus();
+  }, [searchOpen]);
+
   const q = query.trim().toLowerCase();
   const label = labelFn ?? ((v: string) => v);
 

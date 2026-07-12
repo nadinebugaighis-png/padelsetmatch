@@ -623,11 +623,19 @@ export type PublicMatchView = {
 // ---------- Save "lite" profile: first_name + level (+ optional city) ----------
 export const saveLiteProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { first_name: string; level: (typeof PADEL_LEVELS)[number]; city?: string | null }) =>
+  .inputValidator((d: {
+    first_name: string;
+    level: (typeof PADEL_LEVELS)[number];
+    city?: string | null;
+    gender?: "woman" | "man" | "non-binary" | "self-describe" | null;
+    photo_url?: string | null;
+  }) =>
     z.object({
       first_name: z.string().trim().min(1).max(40),
       level: z.enum(PADEL_LEVELS),
       city: z.string().trim().max(120).nullable().optional(),
+      gender: z.enum(["woman", "man", "non-binary", "self-describe"]).nullable().optional(),
+      photo_url: z.string().trim().max(2000).nullable().optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -645,6 +653,8 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
         onboarding_stage: nextStage,
       };
       if (data.city) patch.locations = [data.city];
+      if (data.gender) patch.gender = data.gender;
+      if (data.photo_url) patch.photo_url = data.photo_url;
       const { error } = await supabase.from("profiles").update(patch as never).eq("user_id", userId);
       if (error) throw new Error(error.message);
     } else {
@@ -656,11 +666,14 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
         is_seed: false,
       };
       if (data.city) row.locations = [data.city];
+      if (data.gender) row.gender = data.gender;
+      if (data.photo_url) row.photo_url = data.photo_url;
       const { error } = await supabase.from("profiles").insert(row as never);
       if (error) throw new Error(error.message);
     }
     return { ok: true };
   });
+
 
 // ---------- Invites ----------
 const LOCK_HOURS = 10;

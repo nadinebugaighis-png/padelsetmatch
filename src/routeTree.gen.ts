@@ -24,6 +24,7 @@ import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player
 import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
+import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
 import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
@@ -113,6 +114,11 @@ const GEventIdRoute = GEventIdRouteImport.update({
   id: '/g/$eventId',
   path: '/g/$eventId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppQuickStartRoute = AppQuickStartRouteImport.update({
+  id: '/quick-start',
+  path: '/quick-start',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppQuestionsRoute = AppQuestionsRouteImport.update({
   id: '/questions',
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
@@ -234,6 +241,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/questions': typeof AppQuestionsRoute
+  '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/preview/player-card'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/preview/player-card'
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/questions'
+    | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/preview/player-card'
@@ -497,6 +509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GEventIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/quick-start': {
+      id: '/app/quick-start'
+      path: '/quick-start'
+      fullPath: '/app/quick-start'
+      preLoaderRoute: typeof AppQuickStartRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/questions': {
       id: '/app/questions'
       path: '/questions'
@@ -631,6 +650,7 @@ interface AppRouteChildren {
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
   AppQuestionsRoute: typeof AppQuestionsRoute
+  AppQuickStartRoute: typeof AppQuickStartRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEventsEventIdRoute: typeof AppEventsEventIdRouteWithChildren
   AppEventsNewRoute: typeof AppEventsNewRoute
@@ -647,6 +667,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
   AppQuestionsRoute: AppQuestionsRoute,
+  AppQuickStartRoute: AppQuickStartRoute,
   AppIndexRoute: AppIndexRoute,
   AppEventsEventIdRoute: AppEventsEventIdRouteWithChildren,
   AppEventsNewRoute: AppEventsNewRoute,
@@ -674,13 +695,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

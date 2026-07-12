@@ -77,6 +77,7 @@ function ConnectPage() {
   const del = useServerFn(deleteConnectPost);
   const addC = useServerFn(addConnectComment);
   const updC = useServerFn(updateConnectComment);
+  const delCFeed = useServerFn(deleteConnectComment);
 
   const [city, setCity] = useState("");
   const [cityInput, setCityInput] = useState("");
@@ -120,6 +121,16 @@ function ConnectPage() {
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
       qc.invalidateQueries({ queryKey: ["connect-comments"] });
       toast.success(tr("Comment updated", "Comentario actualizado", "Commentaire mis à jour"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
+  const delCommentMut = useMutation({
+    mutationFn: (id: string) => delCFeed({ data: { id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      qc.invalidateQueries({ queryKey: ["connect-comments"] });
+      toast.success(tr("Comment deleted", "Comentario eliminado", "Commentaire supprimé"));
     },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
@@ -246,13 +257,22 @@ function ConnectPage() {
                                   <span>·</span>
                                   <span>{timeAgo(c.created_at, tr)}</span>
                                   {mine && !isEditing && (
-                                    <button
-                                      onClick={() => setEditingComment({ id: c.id, body: c.body })}
-                                      className="ml-auto inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
-                                      aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
-                                    >
-                                      <Pencil className="w-3 h-3" />
-                                    </button>
+                                    <div className="ml-auto flex items-center gap-0.5">
+                                      <button
+                                        onClick={() => setEditingComment({ id: c.id, body: c.body })}
+                                        className="inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
+                                        aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
+                                      >
+                                        <Pencil className="w-3 h-3" />
+                                      </button>
+                                      <button
+                                        onClick={() => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); }}
+                                        className="inline-flex items-center text-red-500/70 hover:text-red-500 transition px-1"
+                                        aria-label={tr("Delete comment", "Eliminar comentario", "Supprimer le commentaire")}
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    </div>
                                   )}
                                 </div>
                                 {isEditing ? (

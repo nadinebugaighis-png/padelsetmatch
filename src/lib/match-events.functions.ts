@@ -98,6 +98,7 @@ const CreateInput = z.object({
   note: z.string().max(500).nullable().optional(),
   playtomic_link: z.string().max(500).nullable().optional(),
   court_booked: z.boolean(),
+  is_private_court: z.boolean().optional(),
 });
 
 export const createMatchEvent = createServerFn({ method: "POST" })
@@ -472,6 +473,7 @@ const UpdateInput = z.object({
   note: z.string().max(500).nullable().optional(),
   playtomic_link: z.string().max(500).nullable().optional(),
   court_booked: z.boolean().optional(),
+  is_private_court: z.boolean().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });
 export const updateMatchEvent = createServerFn({ method: "POST" })

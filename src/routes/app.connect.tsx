@@ -246,13 +246,22 @@ function ConnectPage() {
                                   <span>·</span>
                                   <span>{timeAgo(c.created_at, tr)}</span>
                                   {mine && !isEditing && (
-                                    <button
-                                      onClick={() => setEditingComment({ id: c.id, body: c.body })}
-                                      className="ml-auto inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
-                                      aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
-                                    >
-                                      <Pencil className="w-3 h-3" />
-                                    </button>
+                                    <div className="ml-auto flex items-center gap-0.5">
+                                      <button
+                                        onClick={() => setEditingComment({ id: c.id, body: c.body })}
+                                        className="inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
+                                        aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
+                                      >
+                                        <Pencil className="w-3 h-3" />
+                                      </button>
+                                      <button
+                                        onClick={() => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); }}
+                                        className="inline-flex items-center text-red-500/70 hover:text-red-500 transition px-1"
+                                        aria-label={tr("Delete comment", "Eliminar comentario", "Supprimer le commentaire")}
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    </div>
                                   )}
                                 </div>
                                 {isEditing ? (

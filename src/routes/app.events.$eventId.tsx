@@ -620,7 +620,29 @@ function EventDetail() {
                 {event.court_booked ? <><Check className="w-3.5 h-3.5" /> {tr("Booked", "Reservada", "Réservée")}</> : tr("Mark booked", "Marcar reservada", "Marquer réservée")}
               </button>
             </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={onCancel}
+                className="py-2.5 rounded-full border border-[var(--ink)]/25 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors inline-flex items-center justify-center gap-1.5"
+              >
+                <X className="w-3.5 h-3.5" /> {tr("Cancel match", "Cancelar partido", "Annuler")}
+              </button>
+              <button
+                onClick={onDelete}
+                className="py-2.5 rounded-full border border-red-400/50 text-[11px] uppercase tracking-[0.22em] text-red-500 hover:bg-red-500/5 transition-colors inline-flex items-center justify-center gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> {tr("Delete", "Eliminar", "Supprimer")}
+              </button>
+            </div>
           </>
+        )}
+        {me?.iAmHost && event.status === "cancelled" && (
+          <button
+            onClick={onDelete}
+            className="w-full py-2.5 rounded-full border border-red-400/50 text-[11px] uppercase tracking-[0.22em] text-red-500 hover:bg-red-500/5 transition-colors inline-flex items-center justify-center gap-1.5"
+          >
+            <Trash2 className="w-3.5 h-3.5" /> {tr("Delete match", "Eliminar partido", "Supprimer le match")}
+          </button>
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
           <p className="text-[11px] text-[var(--ink)]/50 text-center italic pt-1">

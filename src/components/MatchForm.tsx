@@ -189,7 +189,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <div className="grid grid-cols-2 gap-2 mb-3">
           {[
             { v: "club" as const, l: tr("Padel club", "Club de pádel", "Club de padel") },
-            { v: "address" as const, l: tr("Address", "Dirección", "Adresse") },
+            { v: "address" as const, l: tr("Type it in", "Escríbelo yo", "Saisir moi-même") },
           ].map((o) => (
             <SegButton key={o.v} active={locMode === o.v} onClick={() => setLocMode(o.v)}>
               {o.l}
@@ -204,18 +204,18 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               type="text"
               value={customAddress}
               onChange={(e) => setCustomAddress(e.target.value)}
-              placeholder={tr("Street address", "Dirección", "Adresse postale")}
+              placeholder={tr("Court name or street address", "Nombre de la pista o dirección", "Nom du terrain ou adresse")}
               className={inputCls}
             />
             <input
               type="text"
               value={customCity}
               onChange={(e) => setCustomCity(e.target.value)}
-              placeholder={tr("City / area (optional)", "Ciudad / zona (opcional)", "Ville / zone (optionnel)")}
+              placeholder={tr("City (e.g. Dubai, Madrid, Paris)", "Ciudad (ej. Dubái, Madrid, París)", "Ville (ex. Dubaï, Madrid, Paris)")}
               className={inputCls}
             />
             <p className={helperCls}>
-              {tr("Use this for residential / private courts that aren't on Google.", "Úsalo para pistas privadas o residenciales que no están en Google.", "À utiliser pour les pistas résidentielles / privées qui ne sont pas sur Google.")}
+              {tr("Use this if your club isn't on Google, or for private / residential courts.", "Úsalo si tu club no está en Google, o para pistas privadas o residenciales.", "À utiliser si ton club n'est pas sur Google, ou pour les terrains privés / résidentiels.")}
             </p>
           </div>
         )}

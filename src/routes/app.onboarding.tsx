@@ -654,11 +654,39 @@ function Onboarding() {
 
             <div data-field="languages" className={fieldCls("languages")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {LANGUAGES.map((l) => (
-                  <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-                ))}
-              </div>
+              {(() => {
+                const COMMON = ["English", "Spanish", "Portuguese", "French", "Italian", "German", "Arabic"];
+                const visible = showAllLangs
+                  ? (LANGUAGES as readonly string[])
+                  : Array.from(new Set([...COMMON, ...languages])).filter((l) => (LANGUAGES as readonly string[]).includes(l));
+                const hiddenCount = (LANGUAGES as readonly string[]).length - visible.length;
+                return (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {visible.map((l) => (
+                      <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
+                    ))}
+                    {hiddenCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllLangs(true)}
+                        className="chip-paper"
+                        aria-label={tr("Show more languages", "Ver más idiomas", "Voir plus de langues")}
+                      >
+                        + {hiddenCount} {tr("more", "más", "plus")}
+                      </button>
+                    )}
+                    {showAllLangs && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAllLangs(false)}
+                        className="chip-paper"
+                      >
+                        − {tr("Show less", "Ver menos", "Voir moins")}
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>

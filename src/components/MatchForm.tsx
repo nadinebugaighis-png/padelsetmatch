@@ -112,6 +112,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
   const [courtBooked, setCourtBooked] = useState<boolean>(initial?.court_booked ?? false);
+  const [isPrivateCourt, setIsPrivateCourt] = useState<boolean>(initial?.is_private_court ?? false);
   const [playtomicLink, setPlaytomicLink] = useState(initial?.playtomic_link ?? "");
   const [playtomicError, setPlaytomicError] = useState<string | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
@@ -147,6 +148,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             note: note || null,
             playtomic_link: normalized.url,
             court_booked: courtBooked,
+            is_private_court: false,
           }
         : {
             starts_at: new Date(when).toISOString(),
@@ -164,6 +166,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             note: note || null,
             playtomic_link: normalized.url,
             court_booked: courtBooked,
+            is_private_court: isPrivateCourt,
           };
     await onSubmit(values);
   };

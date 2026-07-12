@@ -124,6 +124,16 @@ function ConnectPage() {
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
 
+  const delCommentMut = useMutation({
+    mutationFn: (id: string) => delCFeed({ data: { id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      qc.invalidateQueries({ queryKey: ["connect-comments"] });
+      toast.success(tr("Comment deleted", "Comentario eliminado", "Commentaire supprimé"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
   return (
     <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">
       {/* Header */}

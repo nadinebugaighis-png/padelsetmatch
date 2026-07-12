@@ -422,6 +422,20 @@ function Onboarding() {
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
               <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             </div>
+            <div data-field="age" className={fieldCls("age")}>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Age bracket", "Rango de edad", "Tranche d'âge")}</label>
+              <p className="text-[11px] text-[var(--ink)]/55 mt-1">{tr("Never shown on your profile — used only to find good matches.", "Nunca se muestra en tu perfil — solo se usa para encontrar buenos matches.", "Jamais affiché sur ton profil — sert uniquement à trouver de bons matchs.")}</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {([[18,24],[25,29],[30,34],[35,39],[40,49],[50,99]] as const).map(([lo, hi]) => {
+                  const mid = Math.round((lo + hi) / 2);
+                  const selected = age === mid;
+                  const labelTxt = hi >= 99 ? "50+" : `${lo}–${hi}`;
+                  return (
+                    <button key={labelTxt} onClick={() => setAge(mid)} className={`chip-paper ${selected ? "chip-paper-selected" : ""}`}>{labelTxt}</button>
+                  );
+                })}
+              </div>
+            </div>
             <div data-field="gender" className={fieldCls("gender")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
               <div className="flex flex-wrap gap-2 mt-1">

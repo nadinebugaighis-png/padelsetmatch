@@ -199,7 +199,7 @@ function ProfilePage() {
               <div className="min-w-0">
                 <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
                 <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
-                  {p.age} · {label(p.level)} · {p.nationality}
+                  {label(p.level)} · {p.nationality}
                 </p>
                 <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
               </div>

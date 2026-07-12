@@ -658,38 +658,76 @@ function Onboarding() {
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
               {(() => {
                 const COMMON = ["English", "Spanish", "Portuguese", "French", "Italian", "German", "Arabic"];
-                const visible = showAllLangs
-                  ? (LANGUAGES as readonly string[])
-                  : Array.from(new Set([...COMMON, ...languages])).filter((l) => (LANGUAGES as readonly string[]).includes(l));
-                const hiddenCount = (LANGUAGES as readonly string[]).length - visible.length;
+                const ALL = LANGUAGES as readonly string[];
+                const q = langQuery.trim().toLowerCase();
+                const base = showAllLangs || q
+                  ? ALL
+                  : Array.from(new Set([...COMMON, ...languages])).filter((l) => ALL.includes(l));
+                const visible = q
+                  ? ALL.filter((l) => l.toLowerCase().includes(q))
+                  : base;
+                const trimmed = langQuery.trim();
+                const canAddCustom =
+                  trimmed.length >= 2 &&
+                  !languages.some((l) => l.toLowerCase() === trimmed.toLowerCase()) &&
+                  !ALL.some((l) => l.toLowerCase() === trimmed.toLowerCase());
+                const hiddenCount = !q && !showAllLangs ? ALL.length - visible.length : 0;
+                const addCustom = () => {
+                  const name = trimmed.replace(/\s+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+                  if (!name) return;
+                  if (!languages.some((l) => l.toLowerCase() === name.toLowerCase())) {
+                    setLanguages((cur) => [...cur, name]);
+                  }
+                  setLangQuery("");
+                };
                 return (
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {visible.map((l) => (
-                      <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-                    ))}
-                    {hiddenCount > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setShowAllLangs(true)}
-                        className="chip-paper"
-                        aria-label={tr("Show more languages", "Ver más idiomas", "Voir plus de langues")}
-                      >
-                        + {hiddenCount} {tr("more", "más", "plus")}
-                      </button>
+                  <div className="mt-1 space-y-2">
+                    <input
+                      type="text"
+                      value={langQuery}
+                      onChange={(e) => setLangQuery(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (canAddCustom) addCustom(); } }}
+                      placeholder={tr("Search or type your language…", "Busca o escribe tu idioma…", "Cherche ou tape ta langue…")}
+                      className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm"
+                    />
+                    {/* Selected languages not in ALL — always show as removable chips */}
+                    {languages.filter((l) => !ALL.includes(l)).length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {languages.filter((l) => !ALL.includes(l)).map((l) => (
+                          <button key={l} onClick={() => toggleLanguage(l)} className="chip-paper chip-paper-selected">
+                            ✓ {l}
+                          </button>
+                        ))}
+                      </div>
                     )}
-                    {showAllLangs && (
-                      <button
-                        type="button"
-                        onClick={() => setShowAllLangs(false)}
-                        className="chip-paper"
-                      >
-                        − {tr("Show less", "Ver menos", "Voir moins")}
-                      </button>
+                    <div className="flex flex-wrap gap-2">
+                      {visible.map((l) => (
+                        <button key={l} onClick={() => toggleLanguage(l)} className={`chip-paper ${languages.includes(l) ? "chip-paper-selected" : ""}`}>{label(l)}</button>
+                      ))}
+                      {canAddCustom && (
+                        <button type="button" onClick={addCustom} className="chip-paper">
+                          + {tr("Add", "Añadir", "Ajouter")} "{trimmed}"
+                        </button>
+                      )}
+                      {hiddenCount > 0 && (
+                        <button type="button" onClick={() => setShowAllLangs(true)} className="chip-paper">
+                          + {hiddenCount} {tr("more", "más", "plus")}
+                        </button>
+                      )}
+                      {showAllLangs && !q && (
+                        <button type="button" onClick={() => setShowAllLangs(false)} className="chip-paper">
+                          − {tr("Show less", "Ver menos", "Voir moins")}
+                        </button>
+                      )}
+                    </div>
+                    {visible.length === 0 && !canAddCustom && (
+                      <p className="text-xs text-[var(--ink)]/60">{tr("No match. Type a name and press Enter to add.", "Sin resultados. Escribe un nombre y pulsa Intro para añadirlo.", "Aucun résultat. Tape un nom et appuie sur Entrée pour l'ajouter.")}</p>
                     )}
                   </div>
                 );
               })()}
             </div>
+
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
             <div className="flex flex-wrap gap-2">

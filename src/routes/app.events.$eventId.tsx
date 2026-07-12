@@ -460,7 +460,7 @@ function EventDetail() {
               )}
             </div>
 
-            {event.is_private_court && (
+            {event.is_private_court && me?.id !== event.host_profile_id && (
               <div className="flex items-start gap-2 border-t border-[var(--ink)]/15 bg-amber-50 px-4 py-3 text-xs text-amber-950">
                 <span aria-hidden className="mt-0.5 text-sm leading-none">⚠️</span>
                 <div>

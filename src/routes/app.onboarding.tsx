@@ -867,48 +867,46 @@ function Onboarding() {
               <div className="space-y-3">
                 <div>
                   <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">✨ {tr("Strengths", "Fortalezas", "Forces")}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {PERSONAL_STRENGTHS.map((pt) => {
-                      const on = personalTraits.includes(pt);
-                      return (
-                        <button
-                          key={pt}
-                          type="button"
-                          onClick={() =>
-                            setPersonalTraits((cur) =>
-                              cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                            )
-                          }
-                          className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                        >
-                          {on ? "✓ " : "+ "}{label(pt)}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <SearchableChips
+                    options={PERSONAL_STRENGTHS as readonly string[]}
+                    selected={personalTraits.filter((p) => (PERSONAL_STRENGTHS as readonly string[]).includes(p) || (!(HONEST_EDGES as readonly string[]).includes(p) && !!p))}
+                    onToggle={(pt) =>
+                      setPersonalTraits((cur) =>
+                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                      )
+                    }
+                    onAddCustom={(v) => {
+                      setPersonalTraits((cur) => {
+                        if (cur.length >= 10) return cur;
+                        if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
+                        return [...cur, v];
+                      });
+                    }}
+                    labelFn={label}
+                    placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
+                    addWord={tr("Add", "Añadir", "Ajouter")}
+                    moreWord={tr("more", "más", "plus")}
+                    lessWord={tr("Show less", "Ver menos", "Voir moins")}
+                    initialVisible={12}
+                  />
                 </div>
 
                 <div>
                   <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">🔥 {tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {HONEST_EDGES.map((pt) => {
-                      const on = personalTraits.includes(pt);
-                      return (
-                        <button
-                          key={pt}
-                          type="button"
-                          onClick={() =>
-                            setPersonalTraits((cur) =>
-                              cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                            )
-                          }
-                          className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                        >
-                          {on ? "✓ " : "+ "}{label(pt)}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <SearchableChips
+                    options={HONEST_EDGES as readonly string[]}
+                    selected={personalTraits.filter((p) => (HONEST_EDGES as readonly string[]).includes(p))}
+                    onToggle={(pt) =>
+                      setPersonalTraits((cur) =>
+                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                      )
+                    }
+                    labelFn={label}
+                    placeholder={tr("Search an edge…", "Busca una arista…", "Cherche un défaut…")}
+                    addWord={tr("Add", "Añadir", "Ajouter")}
+                    moreWord={tr("more", "más", "plus")}
+                    lessWord={tr("Show less", "Ver menos", "Voir moins")}
+                  />
                 </div>
               </div>
             </section>

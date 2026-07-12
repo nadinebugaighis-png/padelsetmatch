@@ -90,6 +90,7 @@ function Onboarding() {
   const [nationality, setNationality] = useState("");
   const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
   const [languages, setLanguages] = useState<string[]>([]);
+  const [showAllLangs, setShowAllLangs] = useState(false);
   const [level, setLevel] = useState<PadelLevel | "">("");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");

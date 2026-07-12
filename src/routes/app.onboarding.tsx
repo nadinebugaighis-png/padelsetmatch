@@ -816,16 +816,24 @@ function Onboarding() {
               </div>
               <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick as many as you like. Order matters — top = most important.", "Elige los que quieras. El orden cuenta — arriba = más importante.", "Choisis-en autant que tu veux. L'ordre compte — haut = plus important.")}</p>
 
-              <div className="flex flex-wrap gap-2">
-                {PRIORITY_TRAITS.map((tr) => {
-                  const picked = priorities.includes(tr);
-                  return (
-                    <button key={tr} onClick={() => togglePriority(tr)} className={`chip-paper ${picked ? "chip-paper-selected" : ""}`}>
-                      {picked ? "✓ " : "+ "}{label(tr)}
-                    </button>
-                  );
-                })}
-              </div>
+              <SearchableChips
+                options={PRIORITY_TRAITS as readonly string[]}
+                selected={priorities}
+                onToggle={togglePriority}
+                onAddCustom={(v) => {
+                  const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
+                  if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
+                  if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
+                  if (priorities.some((p) => p.toLowerCase() === v.toLowerCase())) { toast.error(t("ob.errDup")); return; }
+                  setPriorities((cur) => [...cur, v.toLowerCase()]);
+                }}
+                labelFn={label}
+                placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
+                addWord={tr("Add", "Añadir", "Ajouter")}
+                moreWord={tr("more", "más", "plus")}
+                lessWord={tr("Show less", "Ver menos", "Voir moins")}
+                initialVisible={14}
+              />
 
               {priorities.length > 0 && (
                 <div className="mt-2 rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper-2)] p-3">
@@ -843,23 +851,6 @@ function Onboarding() {
                   </ul>
                 </div>
               )}
-
-              <details className="group">
-                <summary className="text-[12px] text-[var(--ink)]/60 cursor-pointer hover:text-[var(--ink)] select-none list-none flex items-center gap-1">
-                  <Plus className="w-3.5 h-3.5" />
-                  {t("ob.addOwn")}
-                </summary>
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    value={customTrait}
-                    onChange={(e) => setCustomTrait(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
-                    placeholder={t("ob.addOwnPh")}
-                    maxLength={30}
-                  />
-                  <Button type="button" variant="outline" onClick={addCustom}>{tr("Add", "Añadir", "Ajouter")}</Button>
-                </div>
-              </details>
             </section>
 
             {/* SECTION 2 — Personal traits */}

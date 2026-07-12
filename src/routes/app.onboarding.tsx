@@ -436,6 +436,7 @@ function Onboarding() {
                 })}
               </div>
             </div>
+            <div data-field="gender" className={fieldCls("gender")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
               <div className="flex flex-wrap gap-2 mt-1">
                 {GENDERS.map((g) => (

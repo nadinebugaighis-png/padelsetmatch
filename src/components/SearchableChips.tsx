@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Search } from "lucide-react";
+
 
 type Props = {
   options: readonly string[];
@@ -30,6 +32,12 @@ export function SearchableChips({
 }: Props) {
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (searchOpen) inputRef.current?.focus();
+  }, [searchOpen]);
+
   const q = query.trim().toLowerCase();
   const label = labelFn ?? ((v: string) => v);
 
@@ -60,19 +68,35 @@ export function SearchableChips({
 
   return (
     <div className="mt-1 space-y-2">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            doAdd();
-          }
-        }}
-        placeholder={placeholder}
-        className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm"
-      />
+      {searchOpen ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              doAdd();
+            }
+          }}
+          onBlur={() => {
+            if (!query.trim()) setSearchOpen(false);
+          }}
+          placeholder={placeholder}
+          className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setSearchOpen(true)}
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--ink)]/60 hover:text-[var(--ink)] px-2 py-1 rounded-md border border-[var(--cream)]/20"
+        >
+          <Search className="w-3 h-3" />
+          {placeholder}
+        </button>
+      )}
+
       {customSelected.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {customSelected.map((s) => (

@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
+import { SearchableChips } from "@/components/SearchableChips";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
@@ -730,25 +731,23 @@ function Onboarding() {
 
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
-            <div className="flex flex-wrap gap-2">
-              {PADEL_STYLES.map((s) => {
-                const on = padelStyle.includes(s);
-                return (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() =>
-                      setPadelStyle((cur) =>
-                        cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
-                      )
-                    }
-                    className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                  >
-                    {on ? "✓ " : "+ "}{label(s)}
-                  </button>
-                );
-              })}
-            </div>
+            <SearchableChips
+              options={PADEL_STYLES as readonly string[]}
+              selected={padelStyle}
+              onToggle={(s) =>
+                setPadelStyle((cur) =>
+                  cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
+                )
+              }
+              onAddCustom={(v) => {
+                setPadelStyle((cur) => (cur.length >= 3 || cur.includes(v) ? cur : [...cur, v]));
+              }}
+              labelFn={label}
+              placeholder={tr("Search or type your style…", "Busca o escribe tu estilo…", "Cherche ou tape ton style…")}
+              addWord={tr("Add", "Añadir", "Ajouter")}
+              moreWord={tr("more", "más", "plus")}
+              lessWord={tr("Show less", "Ver menos", "Voir moins")}
+            />
 
             <div data-field="level" className={fieldCls("level")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
@@ -817,16 +816,24 @@ function Onboarding() {
               </div>
               <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick as many as you like. Order matters — top = most important.", "Elige los que quieras. El orden cuenta — arriba = más importante.", "Choisis-en autant que tu veux. L'ordre compte — haut = plus important.")}</p>
 
-              <div className="flex flex-wrap gap-2">
-                {PRIORITY_TRAITS.map((tr) => {
-                  const picked = priorities.includes(tr);
-                  return (
-                    <button key={tr} onClick={() => togglePriority(tr)} className={`chip-paper ${picked ? "chip-paper-selected" : ""}`}>
-                      {picked ? "✓ " : "+ "}{label(tr)}
-                    </button>
-                  );
-                })}
-              </div>
+              <SearchableChips
+                options={PRIORITY_TRAITS as readonly string[]}
+                selected={priorities}
+                onToggle={togglePriority}
+                onAddCustom={(v) => {
+                  const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
+                  if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
+                  if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
+                  if (priorities.some((p) => p.toLowerCase() === v.toLowerCase())) { toast.error(t("ob.errDup")); return; }
+                  setPriorities((cur) => [...cur, v.toLowerCase()]);
+                }}
+                labelFn={label}
+                placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
+                addWord={tr("Add", "Añadir", "Ajouter")}
+                moreWord={tr("more", "más", "plus")}
+                lessWord={tr("Show less", "Ver menos", "Voir moins")}
+                initialVisible={14}
+              />
 
               {priorities.length > 0 && (
                 <div className="mt-2 rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper-2)] p-3">
@@ -844,23 +851,6 @@ function Onboarding() {
                   </ul>
                 </div>
               )}
-
-              <details className="group">
-                <summary className="text-[12px] text-[var(--ink)]/60 cursor-pointer hover:text-[var(--ink)] select-none list-none flex items-center gap-1">
-                  <Plus className="w-3.5 h-3.5" />
-                  {t("ob.addOwn")}
-                </summary>
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    value={customTrait}
-                    onChange={(e) => setCustomTrait(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
-                    placeholder={t("ob.addOwnPh")}
-                    maxLength={30}
-                  />
-                  <Button type="button" variant="outline" onClick={addCustom}>{tr("Add", "Añadir", "Ajouter")}</Button>
-                </div>
-              </details>
             </section>
 
             {/* SECTION 2 — Personal traits */}
@@ -877,48 +867,46 @@ function Onboarding() {
               <div className="space-y-3">
                 <div>
                   <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">✨ {tr("Strengths", "Fortalezas", "Forces")}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {PERSONAL_STRENGTHS.map((pt) => {
-                      const on = personalTraits.includes(pt);
-                      return (
-                        <button
-                          key={pt}
-                          type="button"
-                          onClick={() =>
-                            setPersonalTraits((cur) =>
-                              cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                            )
-                          }
-                          className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                        >
-                          {on ? "✓ " : "+ "}{label(pt)}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <SearchableChips
+                    options={PERSONAL_STRENGTHS as readonly string[]}
+                    selected={personalTraits.filter((p) => (PERSONAL_STRENGTHS as readonly string[]).includes(p) || (!(HONEST_EDGES as readonly string[]).includes(p) && !!p))}
+                    onToggle={(pt) =>
+                      setPersonalTraits((cur) =>
+                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                      )
+                    }
+                    onAddCustom={(v) => {
+                      setPersonalTraits((cur) => {
+                        if (cur.length >= 10) return cur;
+                        if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
+                        return [...cur, v];
+                      });
+                    }}
+                    labelFn={label}
+                    placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
+                    addWord={tr("Add", "Añadir", "Ajouter")}
+                    moreWord={tr("more", "más", "plus")}
+                    lessWord={tr("Show less", "Ver menos", "Voir moins")}
+                    initialVisible={12}
+                  />
                 </div>
 
                 <div>
                   <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">🔥 {tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {HONEST_EDGES.map((pt) => {
-                      const on = personalTraits.includes(pt);
-                      return (
-                        <button
-                          key={pt}
-                          type="button"
-                          onClick={() =>
-                            setPersonalTraits((cur) =>
-                              cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                            )
-                          }
-                          className={`chip-paper ${on ? "chip-paper-selected" : ""}`}
-                        >
-                          {on ? "✓ " : "+ "}{label(pt)}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <SearchableChips
+                    options={HONEST_EDGES as readonly string[]}
+                    selected={personalTraits.filter((p) => (HONEST_EDGES as readonly string[]).includes(p))}
+                    onToggle={(pt) =>
+                      setPersonalTraits((cur) =>
+                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
+                      )
+                    }
+                    labelFn={label}
+                    placeholder={tr("Search an edge…", "Busca una arista…", "Cherche un défaut…")}
+                    addWord={tr("Add", "Añadir", "Ajouter")}
+                    moreWord={tr("more", "más", "plus")}
+                    lessWord={tr("Show less", "Ver menos", "Voir moins")}
+                  />
                 </div>
               </div>
             </section>

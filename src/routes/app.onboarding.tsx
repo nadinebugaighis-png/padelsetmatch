@@ -422,11 +422,6 @@ function Onboarding() {
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
               <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
             </div>
-            <div data-field="age" className={fieldCls("age")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.age")}</label>
-              <AgeInput value={age} onCommit={setAge} placeholder={tr("e.g. 32", "p. ej. 32", "p. ex. 32")} />
-              <p className="text-[11px] text-[var(--ink)]/55">{tr("Enter your age (18–99), not your birth year.", "Introduce tu edad (18–99), no tu año de nacimiento.", "Saisis ton âge (18–99), pas ton année de naissance.")}</p>
-            </div>
             <div data-field="gender" className={fieldCls("gender")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
               <div className="flex flex-wrap gap-2 mt-1">

@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
+import { SearchableChips } from "@/components/SearchableChips";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({

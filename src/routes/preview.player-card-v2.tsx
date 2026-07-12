@@ -202,7 +202,6 @@ function PlayerCardPreview() {
           <div className="pt-1">
             <h1 className="text-serif text-[38px] leading-[0.95] text-[var(--ink)]">
               {sample.name}
-              <span className="text-[color-mix(in_oklab,#c9a84c_95%,transparent)] font-normal">, {sample.age}</span>
             </h1>
             <div className="flex items-center gap-1 mt-2 text-[13px] text-[color-mix(in_oklab,var(--ink)_80%,transparent)]">
               <MapPin className="w-3.5 h-3.5" strokeWidth={1.6} />

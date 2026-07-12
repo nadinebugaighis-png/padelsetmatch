@@ -62,6 +62,7 @@ type EventLite = {
   level_max?: string;
   note?: string | null;
   court_booked?: boolean;
+  is_private_court?: boolean;
   host?: { first_name?: string } | null;
   participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
 };
@@ -695,8 +696,13 @@ function MatchCard({
           <MapPin className="w-4 h-4 text-[var(--ink)]/60" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-[var(--ink)] truncate">
-            {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+          <div className="text-sm font-semibold text-[var(--ink)] truncate flex items-center gap-1.5">
+            <span className="truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</span>
+            {e.is_private_court && (
+              <span className="shrink-0 text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                {tr("Private", "Privada", "Privé")}
+              </span>
+            )}
           </div>
           <div className="text-[11px] text-[var(--ink)]/55 truncate">
             {e.city || e.club_address || ""}

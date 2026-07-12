@@ -91,6 +91,7 @@ function Onboarding() {
   const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [showAllLangs, setShowAllLangs] = useState(false);
+  const [langQuery, setLangQuery] = useState("");
   const [level, setLevel] = useState<PadelLevel | "">("");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");

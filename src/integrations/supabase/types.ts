@@ -752,6 +752,7 @@ export type Database = {
           host_profile_id: string
           id: string
           invite_lock_until: string | null
+          is_private_court: boolean
           level_max: string
           level_min: string
           note: string | null
@@ -775,6 +776,7 @@ export type Database = {
           host_profile_id: string
           id?: string
           invite_lock_until?: string | null
+          is_private_court?: boolean
           level_max?: string
           level_min?: string
           note?: string | null
@@ -798,6 +800,7 @@ export type Database = {
           host_profile_id?: string
           id?: string
           invite_lock_until?: string | null
+          is_private_court?: boolean
           level_max?: string
           level_min?: string
           note?: string | null

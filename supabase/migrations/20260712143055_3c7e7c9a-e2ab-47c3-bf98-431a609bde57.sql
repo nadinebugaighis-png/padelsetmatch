@@ -1,0 +1,1 @@
+ALTER TABLE public.match_events ADD COLUMN IF NOT EXISTS is_private_court boolean NOT NULL DEFAULT false;

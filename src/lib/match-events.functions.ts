@@ -403,6 +403,24 @@ export const deleteMatchEvent = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ---------- Transfer host to another joined player ----------
+export const transferMatchHost = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string; new_host_profile_id: string }) =>
+    z.object({ id: z.string().uuid(), new_host_profile_id: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { error } = await supabase.rpc("transfer_match_host", {
+      _event: data.id,
+      _new_host_profile_id: data.new_host_profile_id,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
+
 // ---------- Duplicate (host) — copy match to another slot, keep participants ----------
 export const duplicateMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

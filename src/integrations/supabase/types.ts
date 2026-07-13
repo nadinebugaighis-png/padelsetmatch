@@ -1731,6 +1731,10 @@ export type Database = {
         Returns: string
       }
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
+      transfer_match_host: {
+        Args: { _event: string; _new_host_profile_id: string }
+        Returns: undefined
+      }
       upsert_compat_score: {
         Args: {
           _blurb: string

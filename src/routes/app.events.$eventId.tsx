@@ -21,6 +21,7 @@ import {
   respondToMatchInvite,
   revokeMatchInvite,
   sendEventMessage,
+  transferMatchHost,
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";

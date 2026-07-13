@@ -668,6 +668,14 @@ function EventDetail() {
                 <Trash2 className="w-3.5 h-3.5" /> {tr("Delete", "Eliminar", "Supprimer")}
               </button>
             </div>
+            {(event.participants?.length ?? 0) > 0 && (
+              <button
+                onClick={() => setTransferOpen(true)}
+                className="w-full py-2.5 rounded-full border border-[var(--ink)]/25 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors inline-flex items-center justify-center gap-1.5"
+              >
+                <UserPlus className="w-3.5 h-3.5" /> {tr("Pass hosting to a player", "Pasar la organización a un jugador", "Transférer l'organisation à un joueur")}
+              </button>
+            )}
           </>
         )}
         {me?.iAmHost && event.status === "cancelled" && (

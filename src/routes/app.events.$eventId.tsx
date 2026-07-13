@@ -710,6 +710,45 @@ function EventDetail() {
         />
       )}
 
+      {transferOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-4" onClick={() => setTransferOpen(false)}>
+          <div className="w-full max-w-md bg-[var(--paper)] rounded-2xl p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-[var(--ink)]">{tr("Pass hosting to…", "Pasar la organización a…", "Transférer l'organisation à…")}</h3>
+              <button onClick={() => setTransferOpen(false)} className="text-[var(--ink)]/50 hover:text-[var(--ink)]"><X className="w-4 h-4" /></button>
+            </div>
+            <p className="text-[11px] text-[var(--ink)]/60 mb-3">
+              {tr("You'll stay in the match as a regular player.", "Seguirás en el partido como jugador.", "Tu resteras dans le match comme joueur.")}
+            </p>
+            <div className="space-y-2">
+              {(event.participants ?? []).map((p: any) => {
+                const prof = p.profiles;
+                if (!prof) return null;
+                return (
+                  <button
+                    key={prof.id}
+                    onClick={() => onTransferHost(prof.id, prof.first_name ?? "")}
+                    className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--ink)]/5 transition-colors text-left"
+                  >
+                    {prof.photo_url ? (
+                      <img src={prof.photo_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-[var(--ink)]/10" />
+                    )}
+                    <div className="text-sm text-[var(--ink)]">{prof.first_name}</div>
+                  </button>
+                );
+              })}
+              {(event.participants?.length ?? 0) === 0 && (
+                <p className="text-xs text-[var(--ink)]/50 italic">{tr("No joined players yet.", "Aún no hay jugadores.", "Pas encore de joueurs.")}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
       {/* Chat — auto-opens for participants once at least 2 players joined */}
       {me?.iAmParticipant && (event.participants?.length ?? 0) >= 2 && (
 

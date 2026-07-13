@@ -86,6 +86,8 @@ function EventDetail() {
   const respondInvite = useServerFn(respondToMatchInvite);
   const revokeInvite = useServerFn(revokeMatchInvite);
   const claimInvite = useServerFn(claimMatchInviteByToken);
+  const transferHost = useServerFn(transferMatchHost);
+  const [transferOpen, setTransferOpen] = useState(false);
 
   // Auto-claim a share-link invite token if present on this URL, then strip it
   useEffect(() => {

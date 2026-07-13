@@ -309,7 +309,9 @@ function EventDetail() {
     }
   };
 
+  return (
     <div className="mx-auto w-full max-w-md sm:max-w-2xl lg:max-w-3xl max-w-[100dvw] overflow-x-hidden px-5 sm:px-6 py-4 sm:py-6 pb-32">
+
       <div className="flex items-center justify-between mb-4">
         <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> {tr("All matches", "Todos los partidos", "Tous les matches")}

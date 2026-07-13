@@ -297,7 +297,18 @@ function EventDetail() {
     qc.invalidateQueries({ queryKey: ["event", eventId] });
   };
 
-  return (
+  const onTransferHost = async (newHostProfileId: string, name: string) => {
+    if (!confirm(tr(`Pass hosting to ${name}? You'll stay in the match as a player.`, `¿Pasar la organización a ${name}? Seguirás en el partido como jugador.`, `Passer l'organisation à ${name} ? Tu resteras dans le match comme joueur.`))) return;
+    try {
+      await transferHost({ data: { id: eventId, new_host_profile_id: newHostProfileId } });
+      toast.success(tr("Hosting passed", "Organización traspasada", "Organisation transférée"));
+      setTransferOpen(false);
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Couldn't transfer", "No se pudo traspasar", "Impossible de transférer"));
+    }
+  };
+
     <div className="mx-auto w-full max-w-md sm:max-w-2xl lg:max-w-3xl max-w-[100dvw] overflow-x-hidden px-5 sm:px-6 py-4 sm:py-6 pb-32">
       <div className="flex items-center justify-between mb-4">
         <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition-colors">

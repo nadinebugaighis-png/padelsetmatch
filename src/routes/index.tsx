@@ -128,7 +128,7 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
-            <ShareQR url="https://padelmatchapp.lovable.app" label="Join me on PadelMatch" />
+            <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 
           <Link

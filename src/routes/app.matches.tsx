@@ -119,6 +119,14 @@ function Matches() {
                         >
                           <X className="w-3.5 h-3.5" /> {tr("Ignore", "Ignorar", "Ignorer")}
                         </button>
+                        <button
+                          disabled={busyId === m.match_id}
+                          onClick={() => removeThread(m.match_id, m.other!.first_name)}
+                          aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
+                          className="h-9 w-9 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/60 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </li>
                   ))}

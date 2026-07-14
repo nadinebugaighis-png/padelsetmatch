@@ -1273,6 +1273,48 @@ function Discover() {
           })()}
         </DialogContent>
       </Dialog>
+
+      <Dialog open={introOpen} onOpenChange={setIntroOpen}>
+        <DialogContent className="max-w-md bg-[var(--paper)] border border-[var(--ink)]/12">
+          <DialogTitle className="text-serif text-3xl text-[var(--ink)]">
+            {preview ? tr(`Send ${preview.first_name} a message`, `Enviar mensaje a ${preview.first_name}`, `Envoyer un message à ${preview.first_name}`) : ""}
+          </DialogTitle>
+          <p className="text-[13px] text-[var(--ink)]/70 -mt-1">
+            {tr(
+              "One message only. They'll see it once and can accept to open the chat, or ignore it.",
+              "Un solo mensaje. Lo verán una vez y pueden aceptar para abrir el chat, o ignorarlo.",
+              "Un seul message. Ils le verront une fois et pourront accepter pour ouvrir la discussion, ou l'ignorer.",
+            )}
+          </p>
+          <textarea
+            value={introText}
+            onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
+            rows={4}
+            placeholder={tr("Hey! We played at Padel Now last month — up for another game?", "¡Hola! Jugamos en Padel Now el mes pasado — ¿otro partido?", "Salut ! On a joué à Padel Now le mois dernier — on rejoue ?")}
+            className="w-full rounded-2xl border border-[var(--ink)]/20 bg-white p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--plum)] resize-none"
+          />
+          <div className="flex items-center justify-between text-[11px] text-[var(--ink)]/55">
+            <span>{introText.length}/300</span>
+          </div>
+          <div className="flex gap-2 mt-1">
+            <button
+              type="button"
+              onClick={() => setIntroOpen(false)}
+              className="flex-1 h-11 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]/80 text-[11px] uppercase tracking-[0.16em] font-semibold"
+            >
+              {tr("Cancel", "Cancelar", "Annuler")}
+            </button>
+            <button
+              type="button"
+              disabled={introM.isPending || introText.trim().length === 0 || !preview}
+              onClick={() => { if (preview) introM.mutate({ targetProfileId: preview.id, body: introText.trim() }); }}
+              className="flex-1 h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-[0.16em] font-semibold disabled:opacity-50"
+            >
+              {introM.isPending ? tr("Sending…", "Enviando…", "Envoi…") : tr("Send", "Enviar", "Envoyer")}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
 
   );

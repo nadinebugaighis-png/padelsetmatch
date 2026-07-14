@@ -171,23 +171,27 @@ function Landing() {
         </div>
 
         {/* Stats row */}
-        <div className="mt-5 lg:mt-4 max-w-xl grid grid-cols-[auto_1px_1fr] items-center gap-5 sm:gap-6">
+        <div className={`mt-5 lg:mt-4 max-w-xl grid ${isStandalone ? "grid-cols-1" : "grid-cols-[auto_1px_1fr]"} items-center gap-5 sm:gap-6`}>
           <div>
             <div className="text-serif text-3xl lg:text-4xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
             <div className="mt-1 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
           </div>
-          <div className="h-12 w-px bg-[var(--ink)]/15" />
-          <button
-            onClick={install.openModal}
-            className="flex items-center gap-3 text-left group"
-          >
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] transition">
-              <Smartphone className="w-4 h-4" />
-            </span>
-            <span className="text-sm font-medium text-[var(--ink)] leading-tight">
-              Add to your<br />home screen
-            </span>
-          </button>
+          {!isStandalone && (
+            <>
+              <div className="h-12 w-px bg-[var(--ink)]/15" />
+              <button
+                onClick={install.openModal}
+                className="flex items-center gap-3 text-left group"
+              >
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] transition">
+                  <Smartphone className="w-4 h-4" />
+                </span>
+                <span className="text-sm font-medium text-[var(--ink)] leading-tight">
+                  Add to your<br />home screen
+                </span>
+              </button>
+            </>
+          )}
         </div>
       </section>
 

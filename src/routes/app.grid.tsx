@@ -1000,6 +1000,18 @@ function Discover() {
                       </div>
                       <div className="text-display text-[32px] leading-[0.95] text-[var(--ink)] uppercase tracking-tight mt-1.5">{preview.first_name}</div>
                       <div className="text-[13px] text-[var(--ink)]/70 mt-0.5">{preview.zone} · {label(preview.level)}</div>
+                      {typeof (preview as any).founding_number === "number" && (preview as any).founding_number > 0 && (
+                        <div
+                          className={`mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                            (preview as any).founding_number <= 100
+                              ? "bg-[var(--ball)] text-[var(--court-deep)]"
+                              : "bg-[var(--paper-2)] border border-[var(--ink)]/20 text-[var(--ink)]/75"
+                          }`}
+                        >
+                          {(preview as any).founding_number <= 100 ? "★ " : "🎾 "}
+                          {tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
+                        </div>
+                      )}
                     </div>
                   </div>
 

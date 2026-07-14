@@ -887,7 +887,7 @@ function Discover() {
                         }
                       >
                         {(c as any).founding_number <= 100 ? "★ " : "🎾 "}
-                        {tr("Player", "Jugador", "Joueur")} #{(c as any).founding_number}
+                        {(c as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(c as any).founding_number}
                       </div>
                     )}
                     {away && (
@@ -1009,7 +1009,7 @@ function Discover() {
                           }`}
                         >
                           {(preview as any).founding_number <= 100 ? "★ " : "🎾 "}
-                          {tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
+                          {(preview as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
                         </div>
                       )}
                     </div>
@@ -1033,7 +1033,7 @@ function Discover() {
                               }`}
                             >
                               {(preview as any).founding_number <= 100 ? "★ " : "🎾 "}
-                              {tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
+                              {(preview as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
                             </div>
                           )}
                         </div>

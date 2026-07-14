@@ -1009,7 +1009,7 @@ function Discover() {
                           }`}
                         >
                           {(preview as any).founding_number <= 100 ? "★ " : "🎾 "}
-                          {tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
+                          {(preview as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
                         </div>
                       )}
                     </div>

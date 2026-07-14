@@ -331,17 +331,17 @@ function ConnectPage() {
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => { setEditingPost(p); setComposerOpen(true); }}
-                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] transition px-2 py-1 rounded-full hover:bg-[var(--ink)]/5"
+                            className="inline-flex items-center text-[var(--ink)]/60 hover:text-[var(--ink)] transition p-1.5 rounded-full hover:bg-[var(--ink)]/5"
+                            aria-label={tr("Edit", "Editar", "Modifier")}
                           >
                             <Pencil className="w-3.5 h-3.5" />
-                            {tr("Edit", "Editar", "Modifier")}
                           </button>
                           <button
                             onClick={() => { if (confirm(tr("Delete this post?", "¿Eliminar esta publicación?", "Supprimer cette publication ?"))) delMut.mutate(p.id); }}
-                            className="inline-flex items-center gap-1 text-xs font-medium text-red-500/80 hover:text-red-600 transition px-2 py-1 rounded-full hover:bg-red-500/5"
+                            className="inline-flex items-center text-red-500/80 hover:text-red-600 transition p-1.5 rounded-full hover:bg-red-500/5"
+                            aria-label={tr("Delete", "Eliminar", "Supprimer")}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
-                            {tr("Delete", "Eliminar", "Supprimer")}
                           </button>
                         </div>
                       )}

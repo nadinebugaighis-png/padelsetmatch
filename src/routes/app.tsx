@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, isRedirect, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -17,6 +17,7 @@ import { SmartInstallPrompt } from "@/components/SmartInstallPrompt";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 
 export const Route = createFileRoute("/app")({
+  ssr: false,
   beforeLoad: async () => {
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -31,8 +32,7 @@ export const Route = createFileRoute("/app")({
       }
       return { user: data.user };
     } catch (err) {
-      // Re-throw router redirects (they carry `to` or `isRedirect`)
-      if (err && typeof err === "object" && (("to" in (err as Record<string, unknown>)) || ("isRedirect" in (err as Record<string, unknown>)))) throw err;
+      if (isRedirect(err)) throw err;
       try { await supabase.auth.signOut(); } catch { /* ignore */ }
       throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
     }

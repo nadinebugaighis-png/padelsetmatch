@@ -68,8 +68,23 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
-          toast.success(t("auth.welcome"));
+          toast.success(
+            tr(
+              "Welcome aboard! 🎾",
+              "¡Bienvenido a la pista! 🎾",
+              "Bienvenue sur le court ! 🎾",
+            ),
+            {
+              description: tr(
+                "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
+                "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+                "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+              ),
+              duration: 7000,
+            },
+          );
           navigate(signupTarget() as never);
+
         } else {
           toast.success(t("auth.confirmEmail"));
           setMode("signin");

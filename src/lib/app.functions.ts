@@ -687,6 +687,9 @@ export const getMyMatches = createServerFn({ method: "GET" })
       const last = matchMsgs[0];
       const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
       const other = map.get(row.profile_a === myId ? row.profile_b : row.profile_a);
+      const r = row as unknown as { id: string; profile_a: string; profile_b: string; created_at: string; last_message_at: string; initiator_profile_id?: string | null; accepted_at?: string | null };
+      const isPending = !!r.initiator_profile_id && !r.accepted_at;
+      const iInitiated = r.initiator_profile_id === myId;
       return {
         match_id: row.id,
         created_at: row.created_at,
@@ -695,8 +698,40 @@ export const getMyMatches = createServerFn({ method: "GET" })
         unread,
         other,
         shared_intents: other ? sharedIntents(me, other) : [],
+        pending: isPending,
+        pending_incoming: isPending && !iInitiated,
+        pending_outgoing: isPending && iInitiated,
       };
     }).filter((x) => x.other);
+  });
+
+
+export const sendIntroMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ targetProfileId: z.string().uuid(), body: z.string().min(1).max(300) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: res, error } = await context.supabase.rpc("send_intro_message" as never, {
+      _target_profile_id: data.targetProfileId,
+      _body: data.body,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { matchId: res as unknown as string };
+  });
+
+export const respondToIntro = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ matchId: z.string().uuid(), accept: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.rpc("respond_to_intro" as never, {
+      _match_id: data.matchId,
+      _accept: data.accept,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 export const markMatchRead = createServerFn({ method: "POST" })

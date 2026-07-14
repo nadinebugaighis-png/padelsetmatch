@@ -1726,8 +1726,12 @@ export type Database = {
       }
       padel_level_rank: { Args: { lvl: string }; Returns: number }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
+      respond_to_intro: {
+        Args: { _accept: boolean; _match_id: string }
+        Returns: undefined
+      }
       send_intro_message: {
-        Args: { message_body: string; other_profile_id: string }
+        Args: { _body: string; _target_profile_id: string }
         Returns: string
       }
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }

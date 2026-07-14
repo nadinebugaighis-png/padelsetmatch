@@ -229,6 +229,21 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
+  const sendIntro = useServerFn(sendIntroMessage);
+  const [introOpen, setIntroOpen] = useState(false);
+  const [introText, setIntroText] = useState("");
+  const introM = useMutation({
+    mutationFn: (args: { targetProfileId: string; body: string }) => sendIntro({ data: args }),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ["discover"] });
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+      setIntroOpen(false);
+      setIntroText("");
+      toast.success(tr("Message sent · they'll see it once", "Mensaje enviado · lo verán una vez", "Message envoyé · ils le verront une fois"), { duration: 2400 });
+      if (res?.matchId) setTimeout(() => navigate({ to: "/app/matches" }), 400);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't send", "No se pudo enviar", "Envoi impossible")),
+  });
   const unlikeM = useMutation({
     mutationFn: (id: string) => unlike({ data: { likedProfileId: id } }),
     onSuccess: () => {

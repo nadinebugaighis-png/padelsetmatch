@@ -16,6 +16,7 @@ function Matches() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getMatches = useServerFn(getMyMatches);
   const respond = useServerFn(respondToIntro);
+  const deleteThread = useServerFn(deleteMatchThread);
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const { t, label } = useI18n();

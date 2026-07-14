@@ -14,13 +14,10 @@ import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
 import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
 import { SmartInstallPrompt } from "@/components/SmartInstallPrompt";
+import { reportLovableError } from "@/lib/lovable-error-reporting";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
-    // getSession recovers from localStorage and refreshes the token if expired.
-    // If the stored refresh token is stale (e.g. right after signup on a device
-    // where the session hasn't finished persisting, or after a server-side
-    // token rotation), clear it and bounce to /auth instead of blanking the app.
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !sessionData.session) {
@@ -34,27 +31,46 @@ export const Route = createFileRoute("/app")({
       }
       return { user: data.user };
     } catch (err) {
-      // Re-throw router redirects; only swallow unexpected auth errors
-      if (err && typeof err === "object" && "to" in (err as Record<string, unknown>)) throw err;
+      // Re-throw router redirects (they carry `to` or `isRedirect`)
+      if (err && typeof err === "object" && (("to" in (err as Record<string, unknown>)) || ("isRedirect" in (err as Record<string, unknown>)))) throw err;
       try { await supabase.auth.signOut(); } catch { /* ignore */ }
       throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
     }
   },
   component: AuthShell,
   errorComponent: ({ error, reset }) => {
-    // Never leave the user on a blank dark screen. Show a recoverable message.
     // eslint-disable-next-line no-console
     console.error("[/app errorComponent]", error);
-    return <AppErrorFallback reset={reset} />;
+    return <AppErrorFallback error={error} reset={reset} />;
   },
   notFoundComponent: () => <AppNotFoundFallback />,
 });
 
-function AppErrorFallback({ reset }: { reset: () => void }) {
+async function hardResetAndReload() {
+  try {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister().catch(() => false)));
+    }
+    if (typeof caches !== "undefined") {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k).catch(() => false)));
+    }
+  } catch { /* ignore */ }
+  if (typeof window !== "undefined") window.location.href = "/";
+}
+
+function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void }) {
   const t = useT();
+  const [showDetails, setShowDetails] = useState(false);
+  useEffect(() => {
+    reportLovableError(error, { boundary: "app_route_error_component" });
+  }, [error]);
+  const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  const stack = error instanceof Error && error.stack ? error.stack : "";
   return (
     <div className="min-h-screen flex items-center justify-center px-6 text-center programme-page">
-      <div className="max-w-sm">
+      <div className="max-w-sm w-full">
         <h1 className="text-serif text-3xl tracking-tight text-[var(--ink)]">{t("shell.err.title")}</h1>
         <p className="mt-3 text-sm text-[var(--ink)]/70">{t("shell.err.body")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
@@ -64,6 +80,12 @@ function AppErrorFallback({ reset }: { reset: () => void }) {
           >
             {t("shell.err.retry")}
           </button>
+          <button
+            onClick={hardResetAndReload}
+            className="rounded-full border border-[var(--ink)]/30 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            Fix &amp; reload
+          </button>
           <Link
             to="/auth"
             search={{ redirect: undefined, join: undefined }}
@@ -72,6 +94,18 @@ function AppErrorFallback({ reset }: { reset: () => void }) {
             {t("shell.err.signin")}
           </Link>
         </div>
+        <button
+          onClick={() => setShowDetails((s) => !s)}
+          className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/40 hover:text-[var(--ink)]/70"
+        >
+          {showDetails ? "Hide details" : "Show details"}
+        </button>
+        {showDetails && (
+          <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-md bg-[var(--ink)]/5 p-3 text-left text-[10px] leading-snug text-[var(--ink)]/70">
+{message}
+{stack ? "\n\n" + stack : ""}
+          </pre>
+        )}
       </div>
     </div>
   );

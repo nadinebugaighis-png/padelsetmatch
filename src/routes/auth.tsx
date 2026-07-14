@@ -68,12 +68,25 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
+          let ordinal: number | null = null;
+          try {
+            const { data: n } = await supabase.rpc("get_signup_ordinal", {
+              _user_id: data.session.user.id,
+            });
+            if (typeof n === "number" && n > 0) ordinal = n;
+          } catch { /* non-blocking */ }
           toast.success(
-            tr(
-              "Welcome aboard! 🎾",
-              "¡Bienvenido a la pista! 🎾",
-              "Bienvenue sur le court ! 🎾",
-            ),
+            ordinal
+              ? tr(
+                  `Welcome, player #${ordinal}! 🎾`,
+                  `¡Bienvenido, jugador #${ordinal}! 🎾`,
+                  `Bienvenue, joueur n°${ordinal} ! 🎾`,
+                )
+              : tr(
+                  "Welcome aboard! 🎾",
+                  "¡Bienvenido a la pista! 🎾",
+                  "Bienvenue sur le court ! 🎾",
+                ),
             {
               description: tr(
                 "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
@@ -84,6 +97,8 @@ function AuthPage() {
             },
           );
           navigate(signupTarget() as never);
+
+
 
         } else {
           toast.success(t("auth.confirmEmail"));

@@ -1673,6 +1673,7 @@ export type Database = {
       get_pair_qa: { Args: { _other: string }; Returns: Json }
       get_player_count: { Args: never; Returns: number }
       get_profiles_minimal: { Args: { _ids: string[] }; Returns: Json }
+      get_signup_ordinal: { Args: { _user_id: string }; Returns: number }
       guest_get_room: {
         Args: { _event_id: string; _token: string }
         Returns: Json

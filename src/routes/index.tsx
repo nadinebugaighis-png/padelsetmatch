@@ -7,6 +7,24 @@ import { useT, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
+import { useEffect, useState } from "react";
+
+function useIsStandalone() {
+  const [standalone, setStandalone] = useState(false);
+  useEffect(() => {
+    const nav = window.navigator as Navigator & { standalone?: boolean };
+    const check = () =>
+      setStandalone(
+        window.matchMedia?.("(display-mode: standalone)").matches ||
+          nav.standalone === true,
+      );
+    check();
+    const mq = window.matchMedia?.("(display-mode: standalone)");
+    mq?.addEventListener?.("change", check);
+    return () => mq?.removeEventListener?.("change", check);
+  }, []);
+  return standalone;
+}
 
 import shareBanner from "@/assets/padel-share-logo.jpg.asset.json";
 import court from "@/assets/landing-court.jpg.asset.json";

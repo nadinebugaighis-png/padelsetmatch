@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { QrCode, X, Copy, Check } from "lucide-react";
 
-const SHARE_URL = "https://padelmatchapp.lovable.app/";
+const SHARE_URL = "https://padelsetmatch.com/";
 const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=8&data=${encodeURIComponent(SHARE_URL)}`;
 
 export function QRShareButton() {

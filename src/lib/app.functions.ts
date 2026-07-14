@@ -687,6 +687,9 @@ export const getMyMatches = createServerFn({ method: "GET" })
       const last = matchMsgs[0];
       const unread = matchMsgs.filter((x) => x.sender_profile_id !== myId && x.created_at > lastRead).length;
       const other = map.get(row.profile_a === myId ? row.profile_b : row.profile_a);
+      const r = row as unknown as { id: string; profile_a: string; profile_b: string; created_at: string; last_message_at: string; initiator_profile_id?: string | null; accepted_at?: string | null };
+      const isPending = !!r.initiator_profile_id && !r.accepted_at;
+      const iInitiated = r.initiator_profile_id === myId;
       return {
         match_id: row.id,
         created_at: row.created_at,
@@ -695,6 +698,9 @@ export const getMyMatches = createServerFn({ method: "GET" })
         unread,
         other,
         shared_intents: other ? sharedIntents(me, other) : [],
+        pending: isPending,
+        pending_incoming: isPending && !iInitiated,
+        pending_outgoing: isPending && iInitiated,
       };
     }).filter((x) => x.other);
   });

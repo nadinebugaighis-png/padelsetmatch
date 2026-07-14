@@ -394,6 +394,31 @@ function EventsPage() {
 
             {/* Day chip row */}
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 mt-2 pb-2">
+              {(() => {
+                const allActive = selectedDays.size === days.length;
+                return (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSelectedDays(
+                        allActive
+                          ? new Set([dayKey(days[0])])
+                          : new Set(days.map((d) => dayKey(d))),
+                      )
+                    }
+                    className={`shrink-0 rounded-2xl px-3 py-2 min-w-[54px] text-center transition ${
+                      allActive
+                        ? "bg-[var(--plum)] text-white shadow-sm"
+                        : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
+                    }`}
+                  >
+                    <div className={`text-[9px] uppercase tracking-widest font-bold leading-none ${allActive ? "text-white/80" : "text-[var(--ink)]/55"}`}>
+                      {tr("View", "Ver", "Voir")}
+                    </div>
+                    <div className="text-serif text-lg leading-none mt-1">{tr("All", "Todo", "Tout")}</div>
+                  </button>
+                );
+              })()}
               {days.map((d, i) => {
                 const k = dayKey(d);
                 const active = selectedDays.has(k);

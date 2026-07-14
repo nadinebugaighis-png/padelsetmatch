@@ -3,8 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, X } from "lucide-react";
-import { getMyMatches, respondToIntro } from "@/lib/app.functions";
+import { Check, X, Trash2 } from "lucide-react";
+import { getMyMatches, respondToIntro, deleteMatchThread } from "@/lib/app.functions";
 import { useI18n, useTr } from "@/lib/i18n";
 
 

@@ -873,23 +873,6 @@ function Discover() {
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
                       </div>
                     )}
-                    {typeof (c as any).founding_number === "number" && (c as any).founding_number > 0 && (
-                      <div
-                        className={`mt-2 ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-extrabold uppercase tracking-wider ${
-                          (c as any).founding_number <= 100
-                            ? "bg-[var(--ball)]/90 border border-[var(--ball)] text-[var(--court-deep)]"
-                            : "bg-[var(--paper-2)] border border-[var(--ink)]/20 text-[var(--ink)]/75"
-                        }`}
-                        title={
-                          (c as any).founding_number <= 100
-                            ? tr("One of our first 100 players", "Uno de nuestros 100 primeros jugadores", "L'un de nos 100 premiers joueurs")
-                            : tr("Signup number on PadelMatch", "Número de registro en PadelMatch", "Numéro d'inscription sur PadelMatch")
-                        }
-                      >
-                        {(c as any).founding_number <= 100 ? "★ " : "🎾 "}
-                        {(c as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(c as any).founding_number}
-                      </div>
-                    )}
                     {away && (
                       <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
                         ✈ On holidays

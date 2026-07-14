@@ -114,7 +114,7 @@ function EventsPage() {
   // Filters
   const [selectedDays, setSelectedDays] = useState<Set<string>>(() => {
     const s = new Set<string>();
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < DAY_COUNT; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
       s.add(dayKey(d));

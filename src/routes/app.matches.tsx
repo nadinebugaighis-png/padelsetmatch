@@ -41,6 +41,25 @@ function Matches() {
     }
   };
 
+  const removeThread = async (matchId: string, name: string) => {
+    const confirmMsg = tr(
+      `Delete entire conversation with ${name}? This cannot be undone.`,
+      `¿Eliminar toda la conversación con ${name}? No se puede deshacer.`,
+      `Supprimer toute la conversation avec ${name} ? Irréversible.`,
+    );
+    if (!window.confirm(confirmMsg)) return;
+    setBusyId(matchId);
+    try {
+      await deleteThread({ data: { matchId } });
+      toast.success(tr("Conversation deleted", "Conversación eliminada", "Conversation supprimée"));
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Something went wrong", "Algo salió mal", "Erreur"));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const items = q.data ?? [];
   const requests = items.filter((m) => m.pending_incoming && m.other);
   const chats = items.filter((m) => !m.pending_incoming && m.other);

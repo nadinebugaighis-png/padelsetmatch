@@ -705,6 +705,35 @@ export const getMyMatches = createServerFn({ method: "GET" })
     }).filter((x) => x.other);
   });
 
+
+export const sendIntroMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ targetProfileId: z.string().uuid(), body: z.string().min(1).max(300) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: res, error } = await context.supabase.rpc("send_intro_message" as never, {
+      _target_profile_id: data.targetProfileId,
+      _body: data.body,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { matchId: res as unknown as string };
+  });
+
+export const respondToIntro = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ matchId: z.string().uuid(), accept: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.rpc("respond_to_intro" as never, {
+      _match_id: data.matchId,
+      _accept: data.accept,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const markMatchRead = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))

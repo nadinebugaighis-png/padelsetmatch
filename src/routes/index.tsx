@@ -138,9 +138,6 @@ function Landing() {
             {t("land.howItWorks")} <ArrowRight className="w-4 h-4" />
           </Link>
 
-          <p className="mt-2 lg:mt-1 text-sm text-[var(--ink)]/70 max-w-sm leading-relaxed">
-            {t("land.cta.sub")}
-          </p>
         </div>
 
         {/* Stats row */}

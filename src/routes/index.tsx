@@ -131,6 +131,12 @@ function Landing() {
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 
+          <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">
+            &nbsp;
+          </p>
+
+
+
           <Link
             to="/how-it-works"
             className="mt-3 lg:mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"

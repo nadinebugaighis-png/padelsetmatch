@@ -1070,6 +1070,16 @@ function Discover() {
                         </div>
                       )}
 
+                      {!isSelf && !match && (
+                        <button
+                          type="button"
+                          onClick={() => { setIntroText(""); setIntroOpen(true); }}
+                          className="w-full text-[12px] text-[var(--ink)]/70 hover:text-[var(--plum)] underline underline-offset-4 decoration-[var(--ink)]/25 hover:decoration-[var(--plum)] transition"
+                        >
+                          {tr("Send a one-time message", "Envía un mensaje único", "Envoyer un message unique")}
+                        </button>
+                      )}
+
 
                       {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
                       {!isSelf && (

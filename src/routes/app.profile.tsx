@@ -80,6 +80,16 @@ function ProfilePage() {
   const deleteAcct = useServerFn(deleteMyAccount);
   const updatePhoto = useServerFn(updateMyPhoto);
   const q = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+  const ordinalQ = useQuery({
+    queryKey: ["my-signup-ordinal", q.data?.user_id],
+    enabled: !!q.data?.user_id,
+    staleTime: 1000 * 60 * 60,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_signup_ordinal", { _user_id: q.data!.user_id! });
+      if (error) return null;
+      return typeof data === "number" ? data : null;
+    },
+  });
   const photoInputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);

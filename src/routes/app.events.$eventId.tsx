@@ -808,22 +808,22 @@ function EventDetail() {
                       )}
                     </div>
                     {mine && !isEditing && (
-                      <div className="mt-1 flex gap-2 pr-1">
+                      <div className="mt-1 flex gap-1.5 pr-1">
                         <button
                           type="button"
                           onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--ink)]/5 px-2 text-[10px] uppercase tracking-wider text-[var(--ink)] hover:bg-[var(--ink)]/10"
-                          aria-label="Edit message"
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-[var(--ink)]/10"
+                          aria-label={tr("Edit", "Editar", "Modifier")}
                         >
-                          <Pencil className="h-3 w-3" /> {tr("Edit", "Editar", "Modifier")}
+                          <Pencil className="h-3 w-3" />
                         </button>
                         <button
                           type="button"
                           onClick={() => onDeleteMessage(m.id)}
-                          className="inline-flex h-6 items-center gap-1 rounded-full bg-[var(--ink)]/5 px-2 text-[10px] uppercase tracking-wider text-[var(--ink)] hover:bg-red-500/20 hover:text-red-300"
-                          aria-label="Delete message"
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-red-500/20 hover:text-red-500"
+                          aria-label={tr("Delete", "Borrar", "Supprimer")}
                         >
-                          <Trash2 className="h-3 w-3" /> {tr("Delete", "Borrar", "Supprimer")}
+                          <Trash2 className="h-3 w-3" />
                         </button>
                       </div>
                     )}

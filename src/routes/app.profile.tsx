@@ -212,12 +212,25 @@ function ProfilePage() {
                   {label(p.level)} · {p.nationality}
                 </p>
                 <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
+                {typeof ordinalQ.data === "number" && ordinalQ.data > 0 && (
+                  <span
+                    className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-[var(--ink)]/20 bg-[var(--paper-2)] px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--ink)]/75"
+                    title={tr(
+                      "Your signup number on PadelMatch",
+                      "Tu número de registro en PadelMatch",
+                      "Ton numéro d'inscription sur PadelMatch",
+                    )}
+                  >
+                    🎾 {tr("Player", "Jugador", "Joueur")} #{ordinalQ.data}
+                  </span>
+                )}
               </div>
               <EditSectionsMenu />
 
             </div>
           </div>
         </div>
+
 
         {p.bio && (
           <p className="mt-2 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">

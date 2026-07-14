@@ -1653,6 +1653,7 @@ export type Database = {
         Args: { _endpoints: string[] }
         Returns: undefined
       }
+      delete_match_thread: { Args: { _match_id: string }; Returns: undefined }
       delete_my_account_data: { Args: never; Returns: undefined }
       enqueue_notification: {
         Args: {

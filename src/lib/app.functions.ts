@@ -734,6 +734,17 @@ export const respondToIntro = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const deleteMatchThread = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.rpc("delete_match_thread" as never, {
+      _match_id: data.matchId,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const markMatchRead = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))

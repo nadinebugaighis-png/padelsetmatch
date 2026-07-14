@@ -3,8 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, X } from "lucide-react";
-import { getMyMatches, respondToIntro } from "@/lib/app.functions";
+import { Check, X, Trash2 } from "lucide-react";
+import { getMyMatches, respondToIntro, deleteMatchThread } from "@/lib/app.functions";
 import { useI18n, useTr } from "@/lib/i18n";
 
 
@@ -16,6 +16,7 @@ function Matches() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const getMatches = useServerFn(getMyMatches);
   const respond = useServerFn(respondToIntro);
+  const deleteThread = useServerFn(deleteMatchThread);
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const { t, label } = useI18n();
@@ -32,6 +33,25 @@ function Matches() {
       toast.success(accept
         ? tr("Chat opened", "Chat abierto", "Discussion ouverte")
         : tr("Request ignored", "Solicitud ignorada", "Demande ignorée"));
+      qc.invalidateQueries({ queryKey: ["my-matches"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : tr("Something went wrong", "Algo salió mal", "Erreur"));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const removeThread = async (matchId: string, name: string) => {
+    const confirmMsg = tr(
+      `Delete entire conversation with ${name}? This cannot be undone.`,
+      `¿Eliminar toda la conversación con ${name}? No se puede deshacer.`,
+      `Supprimer toute la conversation avec ${name} ? Irréversible.`,
+    );
+    if (!window.confirm(confirmMsg)) return;
+    setBusyId(matchId);
+    try {
+      await deleteThread({ data: { matchId } });
+      toast.success(tr("Conversation deleted", "Conversación eliminada", "Conversation supprimée"));
       qc.invalidateQueries({ queryKey: ["my-matches"] });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Something went wrong", "Algo salió mal", "Erreur"));
@@ -99,6 +119,14 @@ function Matches() {
                         >
                           <X className="w-3.5 h-3.5" /> {tr("Ignore", "Ignorar", "Ignorer")}
                         </button>
+                        <button
+                          disabled={busyId === m.match_id}
+                          onClick={() => removeThread(m.match_id, m.other!.first_name)}
+                          aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
+                          className="h-9 w-9 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/60 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </li>
                   ))}
@@ -109,8 +137,8 @@ function Matches() {
             {chats.length > 0 && (
               <ul className="mt-5 sm:mt-6 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {chats.map((m) => m.other && (
-                  <li key={m.match_id}>
-                    <Link to="/app/matches/$matchId" params={{ matchId: m.match_id }} className="flex items-center gap-3 sm:gap-4 programme-card p-3 sm:p-4 hover:bg-[var(--ink)]/[0.03] relative h-full">
+                  <li key={m.match_id} className="relative">
+                    <Link to="/app/matches/$matchId" params={{ matchId: m.match_id }} className="flex items-center gap-3 sm:gap-4 programme-card p-3 sm:p-4 pr-11 hover:bg-[var(--ink)]/[0.03] relative h-full">
                       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[var(--paper-2)] shrink-0 relative">
                         {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
                         {m.unread > 0 && (
@@ -133,6 +161,14 @@ function Matches() {
                         </div>
                       </div>
                     </Link>
+                    <button
+                      disabled={busyId === m.match_id}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeThread(m.match_id, m.other!.first_name); }}
+                      aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/15 text-[var(--ink)]/50 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center z-10"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </li>
                 ))}
               </ul>

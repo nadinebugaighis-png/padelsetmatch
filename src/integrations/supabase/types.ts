@@ -1728,6 +1728,16 @@ export type Database = {
       }
       padel_level_rank: { Args: { lvl: string }; Returns: number }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
+      qa_affinity_scores: {
+        Args: { _ids: string[]; _me_id: string }
+        Returns: {
+          profile_id: string
+          q_close: number
+          q_same: number
+          q_shared: number
+          qa_bonus: number
+        }[]
+      }
       respond_to_intro: {
         Args: { _accept: boolean; _match_id: string }
         Returns: undefined

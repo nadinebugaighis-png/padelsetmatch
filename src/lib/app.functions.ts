@@ -419,25 +419,22 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       return false;
     }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
 
-    // QA affinity: use the signed-in client only; RLS decides which answers are readable.
-    // Include the embedding so we can score by MEANING (semantic), not just exact-string equality.
-    // Fetch AFTER the city filter — embeddings are ~6KB each, so this used to pull
-    // megabytes for candidates we then discarded.
-    const { parsePgVector, cosineSim } = await import("./embeddings.server");
-    const ids = [me.id, ...candidates.map((c) => c.id)];
-    const { data: qaRows } = await context.supabase
-      .from("qa_answers" as never)
-      .select("profile_id, question, answer_norm, answer_embedding")
-      .in("profile_id", ids);
-
-    type QAEntry = { norm: string; vec: number[] | null };
-    const byProfile = new Map<string, Map<string, QAEntry>>();
-    ((qaRows as Array<{ profile_id: string; question: string; answer_norm: string; answer_embedding: unknown }> | null) ?? []).forEach((r) => {
-      let m = byProfile.get(r.profile_id);
-      if (!m) { m = new Map(); byProfile.set(r.profile_id, m); }
-      m.set(r.question, { norm: r.answer_norm, vec: parsePgVector(r.answer_embedding) });
-    });
-    const myAns = byProfile.get(me.id) ?? new Map<string, QAEntry>();
+    // QA affinity: compute in the database via SECURITY DEFINER RPC.
+    // Previously we shipped every candidate's 1536-dim answer embeddings (~6KB each)
+    // to the app, then scored client-side — the single largest slow query.
+    // Now the DB returns just numeric summaries per candidate.
+    const candIdList = candidates.map((c) => c.id);
+    type QaScore = { profile_id: string; qa_bonus: number; q_same: number; q_close: number; q_shared: number };
+    const qaScoreByProfile = new Map<string, QaScore>();
+    if (candIdList.length > 0) {
+      const { data: qaScoreRows } = await context.supabase.rpc(
+        "qa_affinity_scores" as never,
+        { _me_id: me.id, _ids: candIdList } as never,
+      );
+      ((qaScoreRows as QaScore[] | null) ?? []).forEach((r) => {
+        qaScoreByProfile.set(r.profile_id, r);
+      });
+    }
 
     // ---- Learned personal weights from user feedback ----
     // Positive signals: 4-5 star match ratings + thumbs-up on AI compat.
@@ -525,23 +522,11 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .filter((c) => world || (c.age >= me.age_min && c.age <= me.age_max))
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
-        // Semantic Q&A affinity — same question, compare answers by meaning.
-        const theirAns = byProfile.get(c.id) ?? new Map<string, QAEntry>();
-        let qaBonus = 0;
-        let qSame = 0;
-        let qClose = 0;
-        let qShared = 0;
-        myAns.forEach((mine, q) => {
-          const theirs = theirAns.get(q);
-          if (!theirs) return;
-          qShared++;
-          if (theirs.norm === mine.norm) { qaBonus += 5; qSame++; return; }
-          const sim = cosineSim(mine.vec, theirs.vec);
-          if (sim >= 0.85) { qaBonus += 4; qClose++; }
-          else if (sim >= 0.7) { qaBonus += 3; qClose++; }
-          else if (sim >= 0.55) { qaBonus += 2; }
-          else qaBonus += 1;
-        });
+        const qa = qaScoreByProfile.get(c.id);
+        const qaBonus = qa?.qa_bonus ?? 0;
+        const qSame = qa?.q_same ?? 0;
+        const qClose = qa?.q_close ?? 0;
+        const qShared = qa?.q_shared ?? 0;
         const bonus = Math.min(30, qaBonus);
         const learned = personalBoost(c);
         const finalScore = Math.max(0, Math.min(100, score + bonus + learned.delta));

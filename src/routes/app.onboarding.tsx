@@ -341,19 +341,13 @@ function Onboarding() {
       age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
       !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
       goals.length === 0 ? { key: "goals", label: tr("what you are looking for", "qué estás buscando", "ce que tu cherches") } : null,
-    ].filter(Boolean) as Array<{ key: string; label: string }>),
-    ([
       hasPartnerGoal && !meetPref ? { key: "meetPref", label: tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") } : null,
       age_min === null || age_max === null ? { key: "age_range", label: tr("age range", "rango de edad", "tranche d'âge") } : null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
-    ].filter(Boolean) as Array<{ key: string; label: string }>),
-    ([
       validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
-      null,
       languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
-    [],
     [],
   ];
 

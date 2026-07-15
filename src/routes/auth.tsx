@@ -62,6 +62,24 @@ function AuthPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "signup" && password !== confirmPassword) {
+      toast.error(
+        tr(
+          "Passwords don't match.",
+          "Las contraseñas no coinciden.",
+          "Les mots de passe ne correspondent pas.",
+        ),
+        {
+          description: tr(
+            "Please retype the same password in both fields.",
+            "Vuelve a escribir la misma contraseña en ambos campos.",
+            "Retape le même mot de passe dans les deux champs.",
+          ),
+          duration: 6000,
+        },
+      );
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {

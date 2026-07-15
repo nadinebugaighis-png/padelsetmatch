@@ -371,6 +371,17 @@ function AuthPage() {
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
+          {mode === "signup" && (
+            <Input
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={8}
+              placeholder={tr("Confirm password", "Confirma la contraseña", "Confirme le mot de passe")}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              aria-invalid={confirmPassword.length > 0 && confirmPassword !== password}
+            />
+          )}
           <Button type="submit" disabled={loading} className="w-full h-11 bg-[var(--ink)] text-[var(--paper)] hover:brightness-110 font-semibold uppercase tracking-[0.15em] shadow-[0_10px_30px_-12px_rgba(15,62,46,0.45)]">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
         </form>
 

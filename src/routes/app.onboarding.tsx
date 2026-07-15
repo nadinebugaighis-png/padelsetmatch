@@ -294,7 +294,7 @@ function Onboarding() {
   ]));
 
   const save = useMutation({
-    mutationFn: () => {
+    mutationFn: async (opts?: { destination?: "grid" | "profile" }) => {
       const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
       const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
       const friendAud = hasFriendGoal ? ["everyone"] : [];
@@ -304,7 +304,7 @@ function Onboarding() {
       if (age === null || age_min === null || age_max === null || !gender || !level) {
         throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
       }
-      return upsert({
+      await upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
           friend_interested_in: friendAud, partner_interested_in: partnerAud,
@@ -321,11 +321,12 @@ function Onboarding() {
           padel_style: padelStyle,
         },
       });
+      return opts?.destination ?? "grid";
     },
-    onSuccess: () => {
+    onSuccess: (dest) => {
       qc.invalidateQueries();
       toast.success(t("ob.saved"));
-      navigate({ to: "/app/grid" });
+      navigate({ to: dest === "profile" ? "/app/profile" : "/app/grid" });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });

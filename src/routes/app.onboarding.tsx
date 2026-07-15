@@ -913,9 +913,9 @@ function Onboarding() {
             </section>
           </div>
         )}
-        {step === 3 && (
+        {step === 1 && (
           <>
-            <h2 className="text-display text-3xl">{t("ob.h4")}</h2>
+            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
             <label className="block aspect-[3/4] rounded-2xl border border-dashed border-[var(--cream)]/30 overflow-hidden relative cursor-pointer">
               {photoUrl ? (

@@ -88,7 +88,7 @@ function Onboarding() {
   const [partner_interested_in, setPartnerAud] = useState<string[]>([]);
   const [age_min, setAgeMin] = useState<number | null>(null);
   const [age_max, setAgeMax] = useState<number | null>(null);
-  const [nationality, setNationality] = useState("");
+  const [nationality, setNationality] = useState("__none__");
   const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [showAllLangs, setShowAllLangs] = useState(false);
@@ -124,7 +124,7 @@ function Onboarding() {
       setAgeMax(p.age_max ?? null);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
-      setNationality(p.nationality ?? "");
+      setNationality(p.nationality ? p.nationality : "__none__");
       setLevel((p.level ?? "") as PadelLevel | "");
       setPriorities(Array.isArray(p.priorities) ? p.priorities : []);
       setLookingFor((p.looking_for ?? "both") as LookingFor);
@@ -308,7 +308,7 @@ function Onboarding() {
         data: {
           first_name, age, gender, interested_in: legacy,
           friend_interested_in: friendAud, partner_interested_in: partnerAud,
-          age_min, age_max, nationality,
+          age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
           zone: first ? first.city : "",
           locations: encodedLocations, languages,
           level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
@@ -650,10 +650,12 @@ function Onboarding() {
             <div data-field="nationality" className={fieldCls("nationality")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
               <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality} onChange={(e) => setNationality(e.target.value)}>
+                <option value="__none__" className="bg-[var(--court-deep)]">{tr("Select country", "Selecciona país", "Sélectionne un pays")}</option>
+                {NATIONALITIES.filter((n) => n !== "Other").map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
+                <option value="Other" className="bg-[var(--court-deep)]">{tr("Other", "Otro", "Autre")}</option>
                 <option value="" className="bg-[var(--court-deep)]">{tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}</option>
-                {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
               </select>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional — leave blank to skip.", "Opcional — déjalo en blanco para omitir.", "Optionnel — laisse vide pour passer.")}</p>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional", "Opcional", "Optionnel")}</p>
             </div>
 
             <div data-field="languages" className={fieldCls("languages")}>
@@ -944,32 +946,52 @@ function Onboarding() {
         )}
       </div>
 
-      <div className="mt-5 flex justify-between gap-3">
-        {step > 0 ? (
-          <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
-        ) : <div />}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            onClick={() => navigate({ to: "/app/profile" })}
-            className="text-[var(--ink)]/60"
-          >
-            {tr("Exit", "Salir", "Quitter")}
-          </Button>
-          {step === 3 && !photoUrl && (
-            <Button variant="ghost" onClick={() => setStep(4)} className="text-[var(--ink)]/70">
-              {tr("Skip photo", "Saltar foto", "Passer la photo")}
-            </Button>
-          )}
-          {step < steps.length - 1 ? (
-            <Button onClick={goNext}>{t("ob.next")}</Button>
-          ) : (
-            <Button onClick={() => save.mutate()} disabled={!canStep[step] || save.isPending}>
-              {save.isPending ? t("ob.saving") : (priorities.length > 0 || personalTraits.length > 0) ? t("ob.start") : tr("Skip & start", "Saltar y empezar", "Passer et commencer")}
-            </Button>
-          )}
-        </div>
-      </div>
+      {(() => {
+        // "Start" (save & go home) is available only once the required core fields are done.
+        const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&
+          (!hasPartnerGoal || !!meetPref) &&
+          age_min !== null && age_max !== null && age_min <= age_max &&
+          validBlocks.length > 0 && languages.length > 0 && !!level;
+        const isLast = step === steps.length - 1;
+        return (
+          <div className="mt-5 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              {step > 0 ? (
+                <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
+              ) : <div />}
+              {isLast ? (
+                <Button onClick={() => save.mutate()} disabled={!coreDone || save.isPending}>
+                  {save.isPending ? t("ob.saving") : t("ob.start")}
+                </Button>
+              ) : (
+                <Button onClick={goNext}>{t("ob.next")}</Button>
+              )}
+            </div>
+            <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/app/profile" })}
+                className="text-[var(--ink)]/55 hover:text-[var(--ink)]"
+              >
+                {tr("Exit to Me", "Salir a Mí", "Quitter vers Moi")}
+              </button>
+              {coreDone && !isLast && (
+                <>
+                  <span className="text-[var(--ink)]/20">·</span>
+                  <button
+                    type="button"
+                    onClick={() => save.mutate()}
+                    disabled={save.isPending}
+                    className="font-semibold text-[var(--ink)] hover:underline disabled:opacity-50"
+                  >
+                    {save.isPending ? t("ob.saving") : tr("Start now", "Empezar ya", "Commencer")}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
     </main>
   );

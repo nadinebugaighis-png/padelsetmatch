@@ -117,6 +117,33 @@ function AppNotFoundFallback() {
 }
 
 
+function useBottomOverlayOffset() {
+  // Chrome iOS (and some in-app browsers) overlay the fixed bottom nav with
+  // their own toolbar. env(safe-area-inset-bottom) doesn't account for it.
+  // visualViewport tells us the real visible area; we push the nav up by
+  // the difference between layout height and visible bottom.
+  const [offset, setOffset] = useState(0);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const layoutBottom = window.innerHeight;
+      const visibleBottom = vv.height + vv.offsetTop;
+      const diff = Math.max(0, layoutBottom - visibleBottom);
+      setOffset(diff);
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+  return offset;
+}
+
 function AuthShell() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -128,6 +155,7 @@ function AuthShell() {
   const getInvites = useServerFn(listMyPendingInvites);
   const getConnect = useServerFn(getConnectLatest);
   const tr = useTr();
+  const bottomOverlay = useBottomOverlayOffset();
 
   const safe = async <T,>(fn: () => Promise<T>): Promise<T | null> => {
     try {

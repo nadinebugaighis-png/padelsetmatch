@@ -34,7 +34,7 @@ export const Route = createFileRoute("/app/onboarding")({
   validateSearch: (search: Record<string, unknown>): { step?: number } => {
     const raw = Number(search.step);
     if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(4, Math.floor(raw)));
+    const clamped = Math.max(0, Math.min(1, Math.floor(raw)));
     return { step: clamped };
   },
   component: Onboarding,
@@ -184,6 +184,41 @@ function Onboarding() {
     }
   }, [profileQ.data]);
 
+  // Welcome toast — fires once for brand-new users (no profile yet).
+  // Covers OAuth signups that bypass the auth.tsx toast path.
+  const [welcomed, setWelcomed] = useState(false);
+  useEffect(() => {
+    if (!profileQ.isSuccess || profileQ.data || welcomed) return;
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("pm-welcomed") === "1") { setWelcomed(true); return; }
+    setWelcomed(true);
+    sessionStorage.setItem("pm-welcomed", "1");
+    (async () => {
+      let ordinal: number | null = null;
+      try {
+        const { data: u } = await supabase.auth.getUser();
+        if (u.user) {
+          const { data: n } = await supabase.rpc("get_signup_ordinal", { _user_id: u.user.id });
+          if (typeof n === "number" && n > 0) ordinal = n;
+        }
+      } catch { /* non-blocking */ }
+      toast.success(
+        ordinal
+          ? tr(`Welcome, player #${ordinal}! 🎾`, `¡Bienvenido, jugador #${ordinal}! 🎾`, `Bienvenue, joueur n°${ordinal} ! 🎾`)
+          : tr("Welcome aboard! 🎾", "¡Bienvenido a la pista! 🎾", "Bienvenue sur le court ! 🎾"),
+        {
+          description: tr(
+            "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
+            "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+            "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+          ),
+          duration: 8000,
+        },
+      );
+    })();
+  }, [profileQ.isSuccess, profileQ.data, welcomed, tr]);
+
+
   const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
   const togglePriority = (t: string) => {
@@ -294,7 +329,7 @@ function Onboarding() {
   ]));
 
   const save = useMutation({
-    mutationFn: () => {
+    mutationFn: async (opts?: { destination?: "grid" | "profile" }) => {
       const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
       const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
       const friendAud = hasFriendGoal ? ["everyone"] : [];
@@ -304,7 +339,7 @@ function Onboarding() {
       if (age === null || age_min === null || age_max === null || !gender || !level) {
         throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
       }
-      return upsert({
+      await upsert({
         data: {
           first_name, age, gender, interested_in: legacy,
           friend_interested_in: friendAud, partner_interested_in: partnerAud,
@@ -321,11 +356,12 @@ function Onboarding() {
           padel_style: padelStyle,
         },
       });
+      return opts?.destination ?? "grid";
     },
-    onSuccess: () => {
+    onSuccess: (dest) => {
       qc.invalidateQueries();
       toast.success(t("ob.saved"));
-      navigate({ to: "/app/grid" });
+      navigate({ to: dest === "profile" ? "/app/profile" : "/app/grid" });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
@@ -340,19 +376,13 @@ function Onboarding() {
       age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
       !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
       goals.length === 0 ? { key: "goals", label: tr("what you are looking for", "qué estás buscando", "ce que tu cherches") } : null,
-    ].filter(Boolean) as Array<{ key: string; label: string }>),
-    ([
       hasPartnerGoal && !meetPref ? { key: "meetPref", label: tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") } : null,
       age_min === null || age_max === null ? { key: "age_range", label: tr("age range", "rango de edad", "tranche d'âge") } : null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
-    ].filter(Boolean) as Array<{ key: string; label: string }>),
-    ([
       validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
-      null,
       languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
-    [],
     [],
   ];
 
@@ -381,7 +411,10 @@ function Onboarding() {
     setStep(step + 1);
   };
 
-  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s4"), t("ob.s3")];
+  const steps = [
+    tr("Registration", "Registro", "Inscription"),
+    tr("Optional", "Opcional", "Optionnel"),
+  ];
 
   if (profileQ.isLoading) {
     return (
@@ -479,9 +512,9 @@ function Onboarding() {
 
           </>
         )}
-        {step === 1 && (
+        {step === 0 && (
           <>
-            <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
+            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
 
             {hasPartnerGoal && (
               <div data-field="meetPref" className={fieldCls("meetPref")}>
@@ -520,10 +553,9 @@ function Onboarding() {
             </div>
           </>
         )}
-        {step === 2 && (
+        {step === 0 && (
           <>
-            <h2 className="text-display text-3xl">{t("ob.h2")}</h2>
-            <p className="text-sm text-[var(--ink)]/70">{tr("Last required page — after this you're in the app.", "Última página obligatoria — después ya estás dentro de la app.", "Dernière page obligatoire — après tu es dans l'app.")}</p>
+            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h2")}</h2>
 
             <div data-field="locations" className={fieldCls("locations")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
@@ -792,7 +824,7 @@ function Onboarding() {
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
           </>
         )}
-        {step === 4 && (
+        {step === 1 && (
           <div className="space-y-8">
             <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
               <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
@@ -916,9 +948,9 @@ function Onboarding() {
             </section>
           </div>
         )}
-        {step === 3 && (
+        {step === 1 && (
           <>
-            <h2 className="text-display text-3xl">{t("ob.h4")}</h2>
+            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
             <label className="block aspect-[3/4] rounded-2xl border border-dashed border-[var(--cream)]/30 overflow-hidden relative cursor-pointer">
               {photoUrl ? (
@@ -947,46 +979,43 @@ function Onboarding() {
       </div>
 
       {(() => {
-        // "Start" (save & go home) is available only once the required core fields are done.
         const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&
           (!hasPartnerGoal || !!meetPref) &&
           age_min !== null && age_max !== null && age_min <= age_max &&
           validBlocks.length > 0 && languages.length > 0 && !!level;
-        const isLast = step === steps.length - 1;
+        const isRegPage = step === 0;
         return (
           <div className="mt-5 space-y-3">
             <div className="flex items-center justify-between gap-3">
-              {step > 0 ? (
-                <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
+              {!isRegPage ? (
+                <Button variant="outline" onClick={() => setStep(0)}>{t("ob.back")}</Button>
               ) : <div />}
-              {isLast ? (
-                <Button onClick={() => save.mutate()} disabled={!coreDone || save.isPending}>
+              {isRegPage ? (
+                <Button onClick={goNext}>{t("ob.next")}</Button>
+              ) : (
+                <Button onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
                   {save.isPending ? t("ob.saving") : t("ob.start")}
                 </Button>
-              ) : (
-                <Button onClick={goNext}>{t("ob.next")}</Button>
               )}
             </div>
             <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/app/profile" })}
-                className="text-[var(--ink)]/55 hover:text-[var(--ink)]"
-              >
-                {tr("Exit to Me", "Salir a Mí", "Quitter vers Moi")}
-              </button>
-              {coreDone && !isLast && (
-                <>
-                  <span className="text-[var(--ink)]/20">·</span>
-                  <button
-                    type="button"
-                    onClick={() => save.mutate()}
-                    disabled={save.isPending}
-                    className="font-semibold text-[var(--ink)] hover:underline disabled:opacity-50"
-                  >
-                    {save.isPending ? t("ob.saving") : tr("Start now", "Empezar ya", "Commencer")}
-                  </button>
-                </>
+              {isRegPage ? (
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/app/profile" })}
+                  className="text-[var(--ink)]/55 hover:text-[var(--ink)]"
+                >
+                  {tr("Exit to Me", "Salir a Mí", "Quitter vers Moi")}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => save.mutate({ destination: "profile" })}
+                  disabled={!coreDone || save.isPending}
+                  className="text-[var(--ink)]/55 hover:text-[var(--ink)] disabled:opacity-40"
+                >
+                  {save.isPending ? t("ob.saving") : tr("Skip — go to Me", "Saltar — ir a Mí", "Passer — vers Moi")}
+                </button>
               )}
             </div>
           </div>

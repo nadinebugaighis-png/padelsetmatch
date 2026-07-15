@@ -29,6 +29,9 @@ function QuickStart() {
   const saveLite = useServerFn(saveLiteProfile);
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getMe(), retry: false });
 
+  // Legacy route — send everyone to the unified onboarding page.
+  useEffect(() => { navigate({ to: "/app/onboarding", replace: true }); }, [navigate]);
+
   const [firstName, setFirstName] = useState("");
   const [gender, setGender] = useState<Gender | "">("");
   const [level, setLevel] = useState<(typeof PADEL_LEVELS)[number] | "">("");

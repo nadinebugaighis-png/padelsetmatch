@@ -944,46 +944,43 @@ function Onboarding() {
       </div>
 
       {(() => {
-        // "Start" (save & go home) is available only once the required core fields are done.
         const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&
           (!hasPartnerGoal || !!meetPref) &&
           age_min !== null && age_max !== null && age_min <= age_max &&
           validBlocks.length > 0 && languages.length > 0 && !!level;
-        const isLast = step === steps.length - 1;
+        const isRegPage = step === 0;
         return (
           <div className="mt-5 space-y-3">
             <div className="flex items-center justify-between gap-3">
-              {step > 0 ? (
-                <Button variant="outline" onClick={() => setStep(step - 1)}>{t("ob.back")}</Button>
+              {!isRegPage ? (
+                <Button variant="outline" onClick={() => setStep(0)}>{t("ob.back")}</Button>
               ) : <div />}
-              {isLast ? (
-                <Button onClick={() => save.mutate()} disabled={!coreDone || save.isPending}>
+              {isRegPage ? (
+                <Button onClick={goNext}>{t("ob.next")}</Button>
+              ) : (
+                <Button onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
                   {save.isPending ? t("ob.saving") : t("ob.start")}
                 </Button>
-              ) : (
-                <Button onClick={goNext}>{t("ob.next")}</Button>
               )}
             </div>
             <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/app/profile" })}
-                className="text-[var(--ink)]/55 hover:text-[var(--ink)]"
-              >
-                {tr("Exit to Me", "Salir a Mí", "Quitter vers Moi")}
-              </button>
-              {coreDone && !isLast && (
-                <>
-                  <span className="text-[var(--ink)]/20">·</span>
-                  <button
-                    type="button"
-                    onClick={() => save.mutate()}
-                    disabled={save.isPending}
-                    className="font-semibold text-[var(--ink)] hover:underline disabled:opacity-50"
-                  >
-                    {save.isPending ? t("ob.saving") : tr("Start now", "Empezar ya", "Commencer")}
-                  </button>
-                </>
+              {isRegPage ? (
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/app/profile" })}
+                  className="text-[var(--ink)]/55 hover:text-[var(--ink)]"
+                >
+                  {tr("Exit to Me", "Salir a Mí", "Quitter vers Moi")}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => save.mutate({ destination: "profile" })}
+                  disabled={!coreDone || save.isPending}
+                  className="text-[var(--ink)]/55 hover:text-[var(--ink)] disabled:opacity-40"
+                >
+                  {save.isPending ? t("ob.saving") : tr("Skip — go to Me", "Saltar — ir a Mí", "Passer — vers Moi")}
+                </button>
               )}
             </div>
           </div>

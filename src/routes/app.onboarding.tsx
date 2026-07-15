@@ -348,7 +348,7 @@ function Onboarding() {
     ].filter(Boolean) as Array<{ key: string; label: string }>),
     ([
       validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
-      !nationality ? { key: "nationality", label: tr("nationality", "nacionalidad", "nationalité") } : null,
+      null,
       languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
@@ -650,9 +650,10 @@ function Onboarding() {
             <div data-field="nationality" className={fieldCls("nationality")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
               <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality} onChange={(e) => setNationality(e.target.value)}>
-                <option value="" className="bg-[var(--court-deep)]">{tr("— Select —", "— Selecciona —", "— Choisir —")}</option>
+                <option value="" className="bg-[var(--court-deep)]">{tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}</option>
                 {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
               </select>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional — leave blank to skip.", "Opcional — déjalo en blanco para omitir.", "Optionnel — laisse vide pour passer.")}</p>
             </div>
 
             <div data-field="languages" className={fieldCls("languages")}>

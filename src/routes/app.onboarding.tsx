@@ -88,7 +88,7 @@ function Onboarding() {
   const [partner_interested_in, setPartnerAud] = useState<string[]>([]);
   const [age_min, setAgeMin] = useState<number | null>(null);
   const [age_max, setAgeMax] = useState<number | null>(null);
-  const [nationality, setNationality] = useState("");
+  const [nationality, setNationality] = useState("__none__");
   const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [showAllLangs, setShowAllLangs] = useState(false);

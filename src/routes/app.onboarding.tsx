@@ -34,7 +34,7 @@ export const Route = createFileRoute("/app/onboarding")({
   validateSearch: (search: Record<string, unknown>): { step?: number } => {
     const raw = Number(search.step);
     if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(4, Math.floor(raw)));
+    const clamped = Math.max(0, Math.min(1, Math.floor(raw)));
     return { step: clamped };
   },
   component: Onboarding,

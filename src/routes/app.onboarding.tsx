@@ -1015,19 +1015,25 @@ function Onboarding() {
         return (
           <div className="mt-5 space-y-3">
             <div className="flex items-center justify-between gap-3">
-              {!isRegPage ? (
-                <Button variant="outline" onClick={() => setStep(0)}>{t("ob.back")}</Button>
+              {step > 0 ? (
+                <Button variant="outline" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
               ) : <div />}
-              {isRegPage ? (
+              {step === 0 && (
                 <Button onClick={goNext}>{t("ob.next")}</Button>
-              ) : (
+              )}
+              {step === 1 && (
+                <Button onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
+                  {tr("Continue", "Continuar", "Continuer")}
+                </Button>
+              )}
+              {step === 2 && (
                 <Button onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
                   {save.isPending ? t("ob.saving") : t("ob.start")}
                 </Button>
               )}
             </div>
-            <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
-              {!isRegPage && (
+            {!isRegPage && (
+              <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
                 <button
                   type="button"
                   onClick={() => save.mutate({ destination: "profile" })}
@@ -1036,8 +1042,8 @@ function Onboarding() {
                 >
                   {save.isPending ? t("ob.saving") : tr("Skip — go to Me", "Saltar — ir a Mí", "Passer — vers Moi")}
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         );
       })()}

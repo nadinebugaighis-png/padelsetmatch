@@ -230,6 +230,35 @@ function AuthPage() {
               type="button"
               onClick={async () => {
                 if (!email) { toast.error(t("auth.enterEmailFirst")); return; }
+                // Check what providers this email uses, so OAuth-only users get a
+                // helpful message instead of a reset email that will never work.
+                try {
+                  const info = await getEmailAuthProviders({ data: { email } });
+                  const providers = info?.providers ?? [];
+                  const hasEmail = providers.includes("email");
+                  const oauthProviders = providers.filter((p) => p !== "email");
+                  if (info?.exists && !hasEmail && oauthProviders.length > 0) {
+                    const label = oauthProviders
+                      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+                      .join(" / ");
+                    toast.error(
+                      tr(
+                        `This account uses ${label}.`,
+                        `Esta cuenta usa ${label}.`,
+                        `Ce compte utilise ${label}.`,
+                      ),
+                      {
+                        description: tr(
+                          `Tap "Continue with ${label}" above to sign in — no password needed.`,
+                          `Pulsa "Continuar con ${label}" arriba para iniciar sesión — no necesitas contraseña.`,
+                          `Appuie sur « Continuer avec ${label} » ci-dessus pour te connecter — aucun mot de passe requis.`,
+                        ),
+                        duration: 9000,
+                      },
+                    );
+                    return;
+                  }
+                } catch { /* fall through to reset */ }
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });

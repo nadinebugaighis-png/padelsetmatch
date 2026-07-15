@@ -21,7 +21,7 @@ function AppIndexRedirect() {
 
   useEffect(() => {
     if (!profileQ.isSuccess) return;
-    if (!profileQ.data) navigate({ to: "/app/quick-start", replace: true });
+    if (!profileQ.data) navigate({ to: "/app/onboarding", replace: true });
     else navigate({ to: "/app/grid", replace: true });
   }, [profileQ.isSuccess, profileQ.data, navigate]);
 

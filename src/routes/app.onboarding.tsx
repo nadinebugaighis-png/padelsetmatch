@@ -999,15 +999,7 @@ function Onboarding() {
               )}
             </div>
             <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
-              {isRegPage ? (
-                <button
-                  type="button"
-                  onClick={() => navigate({ to: "/app/profile" })}
-                  className="text-[var(--ink)]/55 hover:text-[var(--ink)]"
-                >
-                  {tr("Exit to Me", "Salir a Mí", "Quitter vers Moi")}
-                </button>
-              ) : (
+              {!isRegPage && (
                 <button
                   type="button"
                   onClick={() => save.mutate({ destination: "profile" })}

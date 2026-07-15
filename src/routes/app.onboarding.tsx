@@ -376,7 +376,10 @@ function Onboarding() {
     setStep(step + 1);
   };
 
-  const steps = [t("ob.s0"), t("ob.s1"), t("ob.s2"), t("ob.s4"), t("ob.s3")];
+  const steps = [
+    tr("Registration", "Registro", "Inscription"),
+    tr("Optional", "Opcional", "Optionnel"),
+  ];
 
   if (profileQ.isLoading) {
     return (

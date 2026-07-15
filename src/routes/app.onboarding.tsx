@@ -982,7 +982,29 @@ function Onboarding() {
             )}
           </>
         )}
+        {step === 2 && (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
+                {tr("Optional — for fun", "Opcional — por diversión", "Optionnel — pour le fun")}
+              </p>
+              <h2 className="text-display text-2xl mt-1">
+                {tr("Answer a few questions ✨", "Responde unas preguntas ✨", "Réponds à quelques questions ✨")}
+              </h2>
+              <p className="text-sm text-[var(--ink)]/75 mt-1">
+                {tr(
+                  "Tap Generate to get fresh AI questions. Answer as many as you like — you can always come back later.",
+                  "Toca Generar para obtener preguntas de IA. Responde las que quieras — puedes volver cuando quieras.",
+                  "Appuie sur Générer pour de nouvelles questions IA. Réponds à celles que tu veux — tu peux revenir plus tard.",
+                )}
+              </p>
+              <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Only used to improve your matches.", "Solo se usa para mejorar tus matches.", "Sert seulement à améliorer tes matches.")}</p>
+            </div>
+            <QASection />
+          </div>
+        )}
       </div>
+
 
       {(() => {
         const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&

@@ -235,7 +235,7 @@ function QuickStart() {
           >
             {busy
               ? tr("Saving…", "Guardando…", "Enregistrement…")
-              : tr("Start matching", "Empezar", "Commencer")}
+              : tr("Continue", "Continuar", "Continuer")}
           </button>
 
           <Link

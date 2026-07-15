@@ -184,6 +184,41 @@ function Onboarding() {
     }
   }, [profileQ.data]);
 
+  // Welcome toast — fires once for brand-new users (no profile yet).
+  // Covers OAuth signups that bypass the auth.tsx toast path.
+  const [welcomed, setWelcomed] = useState(false);
+  useEffect(() => {
+    if (!profileQ.isSuccess || profileQ.data || welcomed) return;
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("pm-welcomed") === "1") { setWelcomed(true); return; }
+    setWelcomed(true);
+    sessionStorage.setItem("pm-welcomed", "1");
+    (async () => {
+      let ordinal: number | null = null;
+      try {
+        const { data: u } = await supabase.auth.getUser();
+        if (u.user) {
+          const { data: n } = await supabase.rpc("get_signup_ordinal", { _user_id: u.user.id });
+          if (typeof n === "number" && n > 0) ordinal = n;
+        }
+      } catch { /* non-blocking */ }
+      toast.success(
+        ordinal
+          ? tr(`Welcome, player #${ordinal}! 🎾`, `¡Bienvenido, jugador #${ordinal}! 🎾`, `Bienvenue, joueur n°${ordinal} ! 🎾`)
+          : tr("Welcome aboard! 🎾", "¡Bienvenido a la pista! 🎾", "Bienvenue sur le court ! 🎾"),
+        {
+          description: tr(
+            "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
+            "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+            "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+          ),
+          duration: 8000,
+        },
+      );
+    })();
+  }, [profileQ.isSuccess, profileQ.data, welcomed, tr]);
+
+
   const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
   const togglePriority = (t: string) => {

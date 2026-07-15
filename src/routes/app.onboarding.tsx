@@ -948,6 +948,24 @@ function Onboarding() {
                 </div>
               </div>
             </section>
+
+            {/* SECTION 3 — Q&A link */}
+            <section className="space-y-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-serif text-lg flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">3</span>
+                  {tr("Answer a few questions", "Responde algunas preguntas", "Réponds à quelques questions")}
+                </h3>
+              </div>
+              <p className="text-[12px] text-[var(--ink)]/60">{tr("Fun compatibility questions — helps us find your best matches.", "Preguntas divertidas de compatibilidad — nos ayudan a encontrar tus mejores matches.", "Questions de compatibilité — pour trouver tes meilleurs matchs.")}</p>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate({ to: "/app/questions" })}
+              >
+                {tr("Open Q&A →", "Abrir preguntas →", "Ouvrir les questions →")}
+              </Button>
+            </section>
           </div>
         )}
         {step === 1 && (

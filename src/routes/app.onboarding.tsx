@@ -477,9 +477,9 @@ function Onboarding() {
 
           </>
         )}
-        {step === 1 && (
+        {step === 0 && (
           <>
-            <h2 className="text-display text-3xl">{t("ob.h1")}</h2>
+            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
 
             {hasPartnerGoal && (
               <div data-field="meetPref" className={fieldCls("meetPref")}>

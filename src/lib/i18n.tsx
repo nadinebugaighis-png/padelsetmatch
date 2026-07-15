@@ -59,7 +59,7 @@ const en: Dict = {
   "shell.discover": "Discover",
   "shell.signout": "Sign out",
   "shell.tab.discover": "Discover",
-  "shell.tab.questions": "Matchmaking code",
+  "shell.tab.questions": "Matching code",
   "shell.tab.questions.short": "Code",
   "shell.tab.matches": "Matchat",
   "shell.tab.connect": "Connect",
@@ -135,9 +135,9 @@ const en: Dict = {
   "disc.reportPrompt": "Report {name}?\n\nDescribe what happened (harassment, fake photo, abuse, threats…). The account is suspended immediately and reviewed by our team.",
   "disc.reportConfirm": "Send report? {name}'s account will be suspended pending staff review.",
   "disc.blockConfirm": "Block {name}? You won't see each other anywhere in the app.",
-  "disc.qaBannerTitle": "Unlock your Matchmaking code",
+  "disc.qaBannerTitle": "Unlock your Matching code",
   "disc.qaBannerSub": "Answer a few questions so the AI can find your best court matches — personality, values and what you click on.",
-  "disc.qaBannerCta": "Start matchmaking →",
+  "disc.qaBannerCta": "Start matching →",
 
   // Matches list
   "ml.h1": "Your courts",

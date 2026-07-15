@@ -112,8 +112,8 @@ function QuickStart() {
           photo_url: photoUrl,
         },
       });
-      toast.success(tr("You're in!", "¡Listo!", "C'est parti !"));
-      navigate({ to: "/app/grid" });
+      toast.success(tr("Saved!", "¡Guardado!", "Enregistré !"));
+      navigate({ to: "/app/onboarding" });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Impossible d'enregistrer"));
     } finally {

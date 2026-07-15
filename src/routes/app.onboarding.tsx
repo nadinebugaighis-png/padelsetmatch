@@ -409,6 +409,8 @@ function Onboarding() {
       return;
     }
     setStep(step + 1);
+    setShowStepHelp(false);
+    setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30);
   };
 
   const steps = [

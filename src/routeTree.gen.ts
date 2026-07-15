@@ -39,6 +39,8 @@ import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$mat
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
 
 const TermsRoute = TermsRouteImport.update({
@@ -192,6 +194,16 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppEventsEventIdEditRoute = AppEventsEventIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -229,6 +241,8 @@ export interface FileRoutesByFullPath {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
@@ -261,6 +275,8 @@ export interface FileRoutesByTo {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
@@ -295,6 +311,8 @@ export interface FileRoutesById {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
@@ -330,6 +348,8 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/events/'
     | '/app/events/$eventId/edit'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -362,6 +382,8 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/events'
     | '/app/events/$eventId/edit'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   id:
     | '__root__'
@@ -395,6 +417,8 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/events/'
     | '/app/events/$eventId/edit'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
@@ -413,6 +437,8 @@ export interface RootRouteChildren {
   PreviewPlayerCardRoute: typeof PreviewPlayerCardRoute
   PreviewPlayerCardV2Route: typeof PreviewPlayerCardV2Route
   SCodeRoute: typeof SCodeRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
@@ -628,6 +654,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/events/$eventId/edit': {
       id: '/app/events/$eventId/edit'
       path: '/edit'
@@ -712,6 +752,8 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewPlayerCardRoute: PreviewPlayerCardRoute,
   PreviewPlayerCardV2Route: PreviewPlayerCardV2Route,
   SCodeRoute: SCodeRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport

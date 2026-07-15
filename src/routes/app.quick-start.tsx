@@ -35,8 +35,9 @@ function QuickStart() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [prefilledFromGoogle, setPrefilledFromGoogle] = useState(false);
+  const [welcomed, setWelcomed] = useState(false);
 
-  // Prefill from existing profile OR from Google auth metadata
+  // Prefill from existing profile OR Google auth metadata + welcome new users
   useEffect(() => {
     const me = meQ.data as { first_name?: string | null; gender?: string | null; level?: string | null; photo_url?: string | null } | null;
     if (me?.first_name) setFirstName(me.first_name);
@@ -44,7 +45,6 @@ function QuickStart() {
     if (me?.level) setLevel(me.level as (typeof PADEL_LEVELS)[number]);
     if (me?.photo_url) setPhotoUrl(me.photo_url);
 
-    // Google fallback: only when profile fields are empty
     if (!me?.first_name || !me?.photo_url) {
       supabase.auth.getUser().then(({ data }) => {
         const meta = data.user?.user_metadata as Record<string, unknown> | undefined;
@@ -64,7 +64,35 @@ function QuickStart() {
         if (touched) setPrefilledFromGoogle(true);
       });
     }
-  }, [meQ.data]);
+
+    // Welcome toast for brand-new users (no profile yet). Fires once.
+    if (meQ.isSuccess && !me && !welcomed) {
+      setWelcomed(true);
+      supabase.auth.getUser().then(async ({ data }) => {
+        const uid = data.user?.id;
+        let ordinal: number | null = null;
+        if (uid) {
+          try {
+            const { data: n } = await supabase.rpc("get_signup_ordinal", { _user_id: uid });
+            if (typeof n === "number" && n > 0) ordinal = n;
+          } catch { /* non-blocking */ }
+        }
+        toast.success(
+          ordinal
+            ? tr(`Welcome, player #${ordinal}! 🎾`, `¡Bienvenido, jugador #${ordinal}! 🎾`, `Bienvenue, joueur n°${ordinal} ! 🎾`)
+            : tr("Welcome aboard! 🎾", "¡Bienvenido a la pista! 🎾", "Bienvenue sur le court ! 🎾"),
+          {
+            description: tr(
+              "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
+              "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+              "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+            ),
+            duration: 8000,
+          },
+        );
+      });
+    }
+  }, [meQ.data, meQ.isSuccess, welcomed, tr]);
 
   const canSubmit = firstName.trim().length > 0 && !!gender && !!level && !busy;
 

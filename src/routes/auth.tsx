@@ -114,11 +114,20 @@ function AuthPage() {
       }
     } catch (err) {
       const raw = err instanceof Error ? err.message : "";
+      const code = (err as { code?: string } | null)?.code ?? "";
       const status = (err as { status?: number } | null)?.status;
       const isRateLimit =
         status === 429 ||
         /rate limit|too many|for security purposes/i.test(raw);
       const isInvalidCreds = /invalid login credentials/i.test(raw);
+      const isWeakPassword =
+        code === "weak_password" || /weak.?password|pwned|password.*(short|weak|known)/i.test(raw);
+      const isShortPassword = /at least|minimum|too short|6 characters|8 characters/i.test(raw);
+      const isBadEmail = /invalid.*email|email.*invalid|email address.*invalid/i.test(raw);
+      const isAlreadyRegistered =
+        code === "user_already_exists" ||
+        /already (registered|exists|been registered)|user.*exists/i.test(raw);
+
       if (isRateLimit) {
         toast.error(
           tr(
@@ -127,6 +136,71 @@ function AuthPage() {
             "Trop de tentatives. Patiente un instant puis réessaie.",
           ),
         );
+      } else if (isWeakPassword) {
+        toast.error(
+          tr(
+            "This password is too common.",
+            "Esta contraseña es demasiado común.",
+            "Ce mot de passe est trop courant.",
+          ),
+          {
+            description: tr(
+              "Please choose a stronger password — mix letters, numbers and a symbol.",
+              "Elige una contraseña más segura — combina letras, números y un símbolo.",
+              "Choisis un mot de passe plus fort — mélange lettres, chiffres et un symbole.",
+            ),
+            duration: 8000,
+          },
+        );
+      } else if (isShortPassword) {
+        toast.error(
+          tr(
+            "Password is too short.",
+            "La contraseña es demasiado corta.",
+            "Le mot de passe est trop court.",
+          ),
+          {
+            description: tr(
+              "Use at least 8 characters.",
+              "Usa al menos 8 caracteres.",
+              "Utilise au moins 8 caractères.",
+            ),
+            duration: 7000,
+          },
+        );
+      } else if (isBadEmail) {
+        toast.error(
+          tr(
+            "That email doesn't look right.",
+            "Ese correo no parece válido.",
+            "Cet e-mail ne semble pas valide.",
+          ),
+          {
+            description: tr(
+              "Check for typos and try again.",
+              "Revisa si hay errores e inténtalo de nuevo.",
+              "Vérifie s'il y a une faute et réessaie.",
+            ),
+            duration: 7000,
+          },
+        );
+      } else if (isAlreadyRegistered && mode === "signup") {
+        toast.error(
+          tr(
+            "This email is already registered.",
+            "Este correo ya está registrado.",
+            "Cet e-mail est déjà utilisé.",
+          ),
+          {
+            description: tr(
+              'Tap "Already have an account? Sign in" below.',
+              'Pulsa "¿Ya tienes cuenta? Inicia sesión" abajo.',
+              'Appuie sur « Déjà un compte ? Se connecter » ci-dessous.',
+            ),
+            duration: 8000,
+          },
+        );
+        setMode("signin");
       } else if (isInvalidCreds && mode === "signin") {
         // Distinguish "no such account" from "wrong password" / OAuth-only.
         let handled = false;
@@ -193,10 +267,20 @@ function AuthPage() {
             },
           );
         }
-
-        toast.error(raw || t("auth.fail"));
+      } else {
+        // Generic fallback — never silently swallow an auth error.
+        toast.error(
+          tr(
+            "Something went wrong.",
+            "Algo salió mal.",
+            "Une erreur est survenue.",
+          ),
+          {
+            description: raw || t("auth.fail"),
+            duration: 7000,
+          },
+        );
       }
-
     } finally {
       setLoading(false);
     }

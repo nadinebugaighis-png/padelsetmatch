@@ -124,7 +124,7 @@ function Onboarding() {
       setAgeMax(p.age_max ?? null);
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
-      setNationality(p.nationality ?? "");
+      setNationality(p.nationality ? p.nationality : "__none__");
       setLevel((p.level ?? "") as PadelLevel | "");
       setPriorities(Array.isArray(p.priorities) ? p.priorities : []);
       setLookingFor((p.looking_for ?? "both") as LookingFor);

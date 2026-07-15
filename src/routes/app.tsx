@@ -299,8 +299,8 @@ function AuthShell() {
         <nav
           className="fixed left-0 right-0 programme-nav z-40"
           style={{
-            bottom: 0,
-            paddingBottom: "env(safe-area-inset-bottom, 0px)",
+            bottom: bottomOverlay,
+            paddingBottom: bottomOverlay > 0 ? 0 : "max(env(safe-area-inset-bottom, 0px), 8px)",
             transform: "translateZ(0)",
             WebkitTransform: "translateZ(0)",
             willChange: "transform",

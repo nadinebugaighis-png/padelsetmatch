@@ -128,22 +128,72 @@ function AuthPage() {
           ),
         );
       } else if (isInvalidCreds && mode === "signin") {
-        toast.error(
-          tr(
-            "Wrong email or password.",
-            "Correo o contraseña incorrectos.",
-            "E-mail ou mot de passe incorrect.",
-          ),
-          {
-            description: tr(
-              "If you signed up with Google or Apple, use those buttons above instead.",
-              "Si te registraste con Google o Apple, usa esos botones de arriba.",
-              "Si tu t'es inscrit avec Google ou Apple, utilise ces boutons ci-dessus.",
+        // Distinguish "no such account" from "wrong password" / OAuth-only.
+        let handled = false;
+        try {
+          const info = await getEmailAuthProviders({ data: { email } });
+          if (!info?.exists) {
+            toast.error(
+              tr(
+                "No account found with this email.",
+                "No hay ninguna cuenta con este correo.",
+                "Aucun compte trouvé avec cet e-mail.",
+              ),
+              {
+                description: tr(
+                  'Tap "New here? Create an account" below to sign up.',
+                  'Pulsa "¿Nuevo aquí? Crea una cuenta" abajo para registrarte.',
+                  'Appuie sur « Nouveau ici ? Créer un compte » ci-dessous pour t\'inscrire.',
+                ),
+                duration: 8000,
+              },
+            );
+            handled = true;
+          } else {
+            const providers = info.providers ?? [];
+            const hasEmail = providers.includes("email");
+            const oauthProviders = providers.filter((p) => p !== "email");
+            if (!hasEmail && oauthProviders.length > 0) {
+              const label = oauthProviders
+                .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+                .join(" / ");
+              toast.error(
+                tr(
+                  `This account uses ${label}.`,
+                  `Esta cuenta usa ${label}.`,
+                  `Ce compte utilise ${label}.`,
+                ),
+                {
+                  description: tr(
+                    `Tap "Continue with ${label}" above to sign in — no password needed.`,
+                    `Pulsa "Continuar con ${label}" arriba para iniciar sesión — no necesitas contraseña.`,
+                    `Appuie sur « Continuer avec ${label} » ci-dessus pour te connecter — aucun mot de passe requis.`,
+                  ),
+                  duration: 9000,
+                },
+              );
+              handled = true;
+            }
+          }
+        } catch { /* fall through */ }
+        if (!handled) {
+          toast.error(
+            tr(
+              "Wrong email or password.",
+              "Correo o contraseña incorrectos.",
+              "E-mail ou mot de passe incorrect.",
             ),
-            duration: 8000,
-          },
-        );
-      } else {
+            {
+              description: tr(
+                "Double-check your password, or tap \"Forgot password?\" below.",
+                "Revisa tu contraseña o pulsa \"¿Olvidaste la contraseña?\" abajo.",
+                "Vérifie ton mot de passe ou appuie sur « Mot de passe oublié ? » ci-dessous.",
+              ),
+              duration: 8000,
+            },
+          );
+        }
+
         toast.error(raw || t("auth.fail"));
       }
 

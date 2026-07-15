@@ -117,6 +117,7 @@ function AuthPage() {
       const isRateLimit =
         status === 429 ||
         /rate limit|too many|for security purposes/i.test(raw);
+      const isInvalidCreds = /invalid login credentials/i.test(raw);
       if (isRateLimit) {
         toast.error(
           tr(
@@ -125,9 +126,26 @@ function AuthPage() {
             "Trop de tentatives. Patiente un instant puis réessaie.",
           ),
         );
+      } else if (isInvalidCreds && mode === "signin") {
+        toast.error(
+          tr(
+            "Wrong email or password.",
+            "Correo o contraseña incorrectos.",
+            "E-mail ou mot de passe incorrect.",
+          ),
+          {
+            description: tr(
+              "If you signed up with Google or Apple, use those buttons above instead.",
+              "Si te registraste con Google o Apple, usa esos botones de arriba.",
+              "Si tu t'es inscrit avec Google ou Apple, utilise ces boutons ci-dessus.",
+            ),
+            duration: 8000,
+          },
+        );
       } else {
         toast.error(raw || t("auth.fail"));
       }
+
     } finally {
       setLoading(false);
     }

@@ -23,6 +23,7 @@ import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
+import { QASection } from "@/components/QASection";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/app/onboarding")({
   validateSearch: (search: Record<string, unknown>): { step?: number } => {
     const raw = Number(search.step);
     if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(1, Math.floor(raw)));
+    const clamped = Math.max(0, Math.min(2, Math.floor(raw)));
     return { step: clamped };
   },
   component: Onboarding,
@@ -384,6 +385,7 @@ function Onboarding() {
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
     [],
+    [],
   ];
 
   const missingByStep = missingByStepDetailed.map((arr) => arr.map((x) => x.label));
@@ -415,7 +417,8 @@ function Onboarding() {
 
   const steps = [
     tr("Registration", "Registro", "Inscription"),
-    tr("Optional", "Opcional", "Optionnel"),
+    tr("Personality", "Personalidad", "Personnalité"),
+    tr("Q&A", "Preguntas", "Q&R"),
   ];
 
   if (profileQ.isLoading) {

@@ -650,10 +650,12 @@ function Onboarding() {
             <div data-field="nationality" className={fieldCls("nationality")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
               <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality} onChange={(e) => setNationality(e.target.value)}>
+                <option value="__none__" className="bg-[var(--court-deep)]">{tr("Select country", "Selecciona país", "Sélectionne un pays")}</option>
+                {NATIONALITIES.filter((n) => n !== "Other").map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
+                <option value="Other" className="bg-[var(--court-deep)]">{tr("Other", "Otro", "Autre")}</option>
                 <option value="" className="bg-[var(--court-deep)]">{tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}</option>
-                {NATIONALITIES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
               </select>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional — leave blank to skip.", "Opcional — déjalo en blanco para omitir.", "Optionnel — laisse vide pour passer.")}</p>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional", "Opcional", "Optionnel")}</p>
             </div>
 
             <div data-field="languages" className={fieldCls("languages")}>

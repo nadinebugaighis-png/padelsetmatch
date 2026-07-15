@@ -23,13 +23,11 @@ export default async function config(env: ConfigEnv) {
   })(env);
 
   return mergeConfig(baseConfig, {
-    vite: {
-      resolve: {
-        alias: {
-          "entities/lib/decode.js": resolve(entitiesRoot, "lib/decode.js"),
-          "entities/lib/encode.js": resolve(entitiesRoot, "lib/encode.js"),
-          entities: entitiesRoot,
-        },
+    resolve: {
+      alias: {
+        "entities/lib/decode.js": resolve(entitiesRoot, "lib/decode.js"),
+        "entities/lib/encode.js": resolve(entitiesRoot, "lib/encode.js"),
+        entities: entitiesRoot,
       },
     },
   });

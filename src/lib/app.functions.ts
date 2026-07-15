@@ -522,23 +522,11 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .filter((c) => world || (c.age >= me.age_min && c.age <= me.age_max))
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
-        // Semantic Q&A affinity — same question, compare answers by meaning.
-        const theirAns = byProfile.get(c.id) ?? new Map<string, QAEntry>();
-        let qaBonus = 0;
-        let qSame = 0;
-        let qClose = 0;
-        let qShared = 0;
-        myAns.forEach((mine, q) => {
-          const theirs = theirAns.get(q);
-          if (!theirs) return;
-          qShared++;
-          if (theirs.norm === mine.norm) { qaBonus += 5; qSame++; return; }
-          const sim = cosineSim(mine.vec, theirs.vec);
-          if (sim >= 0.85) { qaBonus += 4; qClose++; }
-          else if (sim >= 0.7) { qaBonus += 3; qClose++; }
-          else if (sim >= 0.55) { qaBonus += 2; }
-          else qaBonus += 1;
-        });
+        const qa = qaScoreByProfile.get(c.id);
+        const qaBonus = qa?.qa_bonus ?? 0;
+        const qSame = qa?.q_same ?? 0;
+        const qClose = qa?.q_close ?? 0;
+        const qShared = qa?.q_shared ?? 0;
         const bonus = Math.min(30, qaBonus);
         const learned = personalBoost(c);
         const finalScore = Math.max(0, Math.min(100, score + bonus + learned.delta));

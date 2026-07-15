@@ -23,6 +23,7 @@ import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
+import { QASection } from "@/components/QASection";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/app/onboarding")({
   validateSearch: (search: Record<string, unknown>): { step?: number } => {
     const raw = Number(search.step);
     if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(1, Math.floor(raw)));
+    const clamped = Math.max(0, Math.min(2, Math.floor(raw)));
     return { step: clamped };
   },
   component: Onboarding,
@@ -384,6 +385,7 @@ function Onboarding() {
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
     [],
+    [],
   ];
 
   const missingByStep = missingByStepDetailed.map((arr) => arr.map((x) => x.label));
@@ -415,7 +417,8 @@ function Onboarding() {
 
   const steps = [
     tr("Registration", "Registro", "Inscription"),
-    tr("Optional", "Opcional", "Optionnel"),
+    tr("Personality", "Personalidad", "Personnalité"),
+    tr("Q&A", "Preguntas", "Q&R"),
   ];
 
   if (profileQ.isLoading) {
@@ -979,7 +982,29 @@ function Onboarding() {
             )}
           </>
         )}
+        {step === 2 && (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
+                {tr("Optional — for fun", "Opcional — por diversión", "Optionnel — pour le fun")}
+              </p>
+              <h2 className="text-display text-2xl mt-1">
+                {tr("Answer a few questions ✨", "Responde unas preguntas ✨", "Réponds à quelques questions ✨")}
+              </h2>
+              <p className="text-sm text-[var(--ink)]/75 mt-1">
+                {tr(
+                  "Tap Generate to get fresh AI questions. Answer as many as you like — you can always come back later.",
+                  "Toca Generar para obtener preguntas de IA. Responde las que quieras — puedes volver cuando quieras.",
+                  "Appuie sur Générer pour de nouvelles questions IA. Réponds à celles que tu veux — tu peux revenir plus tard.",
+                )}
+              </p>
+              <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Only used to improve your matches.", "Solo se usa para mejorar tus matches.", "Sert seulement à améliorer tes matches.")}</p>
+            </div>
+            <QASection />
+          </div>
+        )}
       </div>
+
 
       {(() => {
         const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&
@@ -990,19 +1015,25 @@ function Onboarding() {
         return (
           <div className="mt-5 space-y-3">
             <div className="flex items-center justify-between gap-3">
-              {!isRegPage ? (
-                <Button variant="outline" onClick={() => setStep(0)}>{t("ob.back")}</Button>
+              {step > 0 ? (
+                <Button variant="outline" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
               ) : <div />}
-              {isRegPage ? (
+              {step === 0 && (
                 <Button onClick={goNext}>{t("ob.next")}</Button>
-              ) : (
+              )}
+              {step === 1 && (
+                <Button onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
+                  {tr("Continue", "Continuar", "Continuer")}
+                </Button>
+              )}
+              {step === 2 && (
                 <Button onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
                   {save.isPending ? t("ob.saving") : t("ob.start")}
                 </Button>
               )}
             </div>
-            <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
-              {!isRegPage && (
+            {!isRegPage && (
+              <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
                 <button
                   type="button"
                   onClick={() => save.mutate({ destination: "profile" })}
@@ -1011,8 +1042,8 @@ function Onboarding() {
                 >
                   {save.isPending ? t("ob.saving") : tr("Skip — go to Me", "Saltar — ir a Mí", "Passer — vers Moi")}
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         );
       })()}

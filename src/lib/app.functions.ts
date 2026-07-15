@@ -884,7 +884,14 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { error } = await context.supabase.rpc("delete_my_account_data" as never, {} as never);
     if (error) throw new Error(error.message);
-    // Note: auth.users row remains; users can sign out. Admin cleanup handled separately.
+    // Fully delete the auth user so the email can be reused for a fresh signup.
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { error: authErr } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
+      if (authErr) console.error("[deleteMyAccount] auth delete failed:", authErr.message);
+    } catch (e) {
+      console.error("[deleteMyAccount] admin import failed:", e);
+    }
     return { ok: true };
   });
 

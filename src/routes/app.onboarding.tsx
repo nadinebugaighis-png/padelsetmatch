@@ -308,7 +308,7 @@ function Onboarding() {
         data: {
           first_name, age, gender, interested_in: legacy,
           friend_interested_in: friendAud, partner_interested_in: partnerAud,
-          age_min, age_max, nationality,
+          age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
           zone: first ? first.city : "",
           locations: encodedLocations, languages,
           level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,

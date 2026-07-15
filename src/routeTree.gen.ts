@@ -38,6 +38,7 @@ import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
 
 const TermsRoute = TermsRouteImport.update({
@@ -185,6 +186,12 @@ const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
   path: '/events/$eventId',
   getParentRoute: () => AppRoute,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppEventsEventIdEditRoute = AppEventsEventIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -222,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -253,6 +261,7 @@ export interface FileRoutesByTo {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -286,6 +295,7 @@ export interface FileRoutesById {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/events/'
     | '/app/events/$eventId/edit'
+    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/events'
     | '/app/events/$eventId/edit'
+    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/events/'
     | '/app/events/$eventId/edit'
+    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -400,6 +413,7 @@ export interface RootRouteChildren {
   PreviewPlayerCardRoute: typeof PreviewPlayerCardRoute
   PreviewPlayerCardV2Route: typeof PreviewPlayerCardV2Route
   SCodeRoute: typeof SCodeRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -607,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsEventIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/events/$eventId/edit': {
       id: '/app/events/$eventId/edit'
       path: '/edit'
@@ -691,6 +712,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewPlayerCardRoute: PreviewPlayerCardRoute,
   PreviewPlayerCardV2Route: PreviewPlayerCardV2Route,
   SCodeRoute: SCodeRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

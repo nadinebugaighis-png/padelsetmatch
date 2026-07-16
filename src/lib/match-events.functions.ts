@@ -296,13 +296,12 @@ export const getMatchEvent = createServerFn({ method: "POST" })
       .eq("match_event_id", data.id);
     const invites = invitesRaw ?? [];
     const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
-    const lockUntil = (event as any).invite_lock_until as string | null;
-    const lockActive = !!lockUntil && new Date(lockUntil).getTime() > Date.now();
 
     return {
-      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: lockUntil, lock_active: lockActive },
+      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
       me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
     };
+
   });
 
 // ---------- Join ----------

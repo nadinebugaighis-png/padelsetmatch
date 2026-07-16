@@ -676,11 +676,10 @@ function EventDetail() {
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
           <p className="text-[11px] text-[var(--ink)]/50 text-center italic pt-1">
-            {event.lock_active
-              ? tr("This match is reserved for invited players right now.", "Este partido está reservado para invitados ahora mismo.", "Ce match est réservé aux joueurs invités pour l'instant.")
-              : tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
+            {tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
           </p>
         )}
+
       </div>
 
       {/* Invite panel */}

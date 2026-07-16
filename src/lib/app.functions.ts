@@ -1178,11 +1178,8 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const me = meRow as Profile | null;
     if (!me) throw new Error("Create your profile first");
 
-    // Derive intent flags from profile so we tailor questions silently.
+    // Q&A is padel + light personality + lifestyle only — never romantic, sexual, or overly personal.
     const myIntents = deriveIntents({ intents: me.intents, looking_for: me.looking_for });
-    const wantsRelationship = myIntents.includes("relationship");
-    const wantsFriend = myIntents.includes("friend");
-    const padelOnly = !wantsRelationship && !wantsFriend;
 
     const { data: existing } = await context.supabase
       .from("qa_answers" as never)
@@ -1192,15 +1189,13 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
       .limit(40);
     const asked = ((existing as Array<{ question: string }> | null) ?? []).map((r) => r.question);
 
-    // Filter fallback pool based on intent (silent — driven by profile only).
-    const isRelationshipQuestion = (q: GeneratedQuestion): boolean => {
+    // Always strip anything romantic/sexual/overly personal from fallback pool.
+    const isSensitiveQuestion = (q: GeneratedQuestion): boolean => {
       const t = `${q.question} ${q.category}`.toLowerCase();
-      return /(relationship|dealbreaker|soulmate|love language|partner|dating|romance|romantic|kids|children|pareja|relaci[oó]n|alma gemela|lenguaje del amor|dating|hijos|sentimental|intimacy|intimidad|attraction|atracci[oó]n)/.test(t);
+      return /(relationship|dealbreaker|soulmate|love language|partner|dating|romance|romantic|kids|children|marriage|marry|sex|sexual|intimacy|intimate|attraction|attracted|flirt|crush|pareja|relaci[oó]n|alma gemela|lenguaje del amor|hijos|sentimental|matrimonio|casarse|sexo|sexual|intimidad|atracci[oó]n|coquet|religion|religi[oó]n|politic|pol[ií]tica|income|salary|salario|ingresos|money mindset|dinero)/.test(t);
     };
-    const filterPool = (pool: GeneratedQuestion[]): GeneratedQuestion[] => {
-      if (wantsRelationship) return pool;
-      return pool.filter((q) => !isRelationshipQuestion(q));
-    };
+    const filterPool = (pool: GeneratedQuestion[]): GeneratedQuestion[] =>
+      pool.filter((q) => !isSensitiveQuestion(q));
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
@@ -1214,44 +1209,14 @@ export const generateQaQuestions = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-2.5-flash");
 
-    // Build intent-aware guidance appended to the system prompt.
-    const intentGuidanceEs = padelOnly
-      ? " El usuario SOLO busca compañeros de pádel — NO hagas preguntas sobre citas, relaciones, romance, atracción física, lenguajes del amor, dealbreakers de pareja, hijos deseados ni intimidad. Céntrate casi todo en pádel (estilo, actitud, competitividad, disponibilidad) y en personalidad/estilo de vida ligeros y adecuados para amistad. Proporción: ~60% pádel, ~40% personalidad/estilo de vida amistosos."
-      : !wantsRelationship
-      ? " El usuario busca amistad, NO pareja — NO hagas preguntas sobre citas, romance, atracción, lenguajes del amor, dealbreakers de pareja, hijos deseados ni intimidad. Céntrate en pádel, personalidad, valores y estilo de vida. Proporción: ~40% pádel, ~35% personalidad/valores, ~25% estilo de vida."
-      : "";
-    const intentGuidanceEn = padelOnly
-      ? " The user is ONLY looking for padel partners — do NOT ask about dating, relationships, romance, physical attraction, love languages, partner dealbreakers, wanting kids, or intimacy. Focus almost entirely on padel (style, attitude, competitiveness, availability) and light, friendship-appropriate personality/lifestyle. Ratio: ~60% padel, ~40% friendship-friendly personality/lifestyle."
-      : !wantsRelationship
-      ? " The user is looking for friendship, NOT a partner — do NOT ask about dating, romance, attraction, love languages, partner dealbreakers, wanting kids, or intimacy. Focus on padel, personality, values, and lifestyle. Ratio: ~40% padel, ~35% personality/values, ~25% lifestyle."
-      : "";
-    const intentGuidanceFr = padelOnly
-      ? " L'utilisateur cherche UNIQUEMENT des partenaires de padel — NE pose PAS de questions sur les rencontres, relations, romance, attirance physique, langages de l'amour, dealbreakers de couple, envie d'enfants ou intimité. Concentre-toi presque tout sur le padel (style, attitude, compétitivité, disponibilité) et sur une personnalité/style de vie légers et adaptés à l'amitié. Ratio : ~60% padel, ~40% personnalité/style de vie amicaux."
-      : !wantsRelationship
-      ? " L'utilisateur cherche de l'amitié, PAS un·e partenaire — NE pose PAS de questions sur les rencontres, romance, attirance, langages de l'amour, dealbreakers de couple, envie d'enfants ou intimité. Concentre-toi sur le padel, la personnalité, les valeurs et le style de vie. Ratio : ~40% padel, ~35% personnalité/valeurs, ~25% style de vie."
-      : "";
+    const sysEs = "Eres una IA que crea preguntas cortas, ligeras y de OPCIÓN MÚLTIPLE para descubrir afinidad entre jugadores de pádel. SOLO tres temas: pádel, personalidad y estilo de vida. NUNCA hagas preguntas románticas, sentimentales, sexuales, sobre pareja, citas, atracción, hijos, matrimonio, religión, política, ingresos ni nada íntimo o incómodo. Todo debe ser apropiado para compartir entre compañeros de pádel que no se conocen. Usa castellano natural de España, tuteando siempre (nunca 'usted'). Responde SIEMPRE en castellano.";
+    const sysEn = "You are an AI that writes short, light, MULTIPLE-CHOICE questions to find affinity between padel players. ONLY three topics: padel, personality, and lifestyle. NEVER ask anything romantic, sentimental, sexual, about dating, partners, attraction, kids, marriage, religion, politics, income, or anything intimate or uncomfortable. Everything must be appropriate to share between padel teammates who don't know each other yet. Always reply in English.";
+    const sysFr = "Tu es une IA qui rédige des questions courtes, légères et à CHOIX MULTIPLE pour révéler une affinité entre joueurs de padel. UNIQUEMENT trois sujets : padel, personnalité et style de vie. Ne pose JAMAIS de questions romantiques, sentimentales, sexuelles, sur les rencontres, partenaires, attirance, enfants, mariage, religion, politique, revenus, ni rien d'intime ou d'inconfortable. Tout doit être approprié à partager entre coéquipiers de padel qui ne se connaissent pas encore. Utilise un français de France naturel, tutoie toujours. Réponds TOUJOURS en français.";
+    const sys = data.lang === "es" ? sysEs : data.lang === "fr" ? sysFr : sysEn;
 
-    const sysEs = "Eres una IA experta en compatibilidad y psicología de las relaciones. Creas preguntas breves, reveladoras y de OPCIÓN MÚLTIPLE para descubrir afinidad real entre personas (amistad, pareja o media naranja). Mezcla por defecto: ~35% personalidad y valores, ~30% estilo de vida y contexto (rutina diaria, situación laboral, estudios, estado sentimental, hijos, hábitos, viajes, salud, fumar/beber, mascotas, vivienda, religión, política) y ~35% pádel (cómo juega, actitud en pista, estilo, mentalidad competitiva). Usa castellano natural de España, tuteando siempre (nunca 'usted'), sin anglicismos innecesarios ni giros latinoamericanos. Responde SIEMPRE en castellano.";
-    const sysEn = "You are an AI expert in compatibility and relational psychology. You generate short, revealing, MULTIPLE-CHOICE questions to find real affinity between people (friendship, partner, or soulmate). Default mix: ~35% personality/values, ~30% lifestyle and status (daily routine, work situation, education level, current relationship status, kids, habits, travel, health, smoking/drinking, pets, living situation, religion, politics) and ~35% padel (how they play, on-court attitude, style, competitive mindset). Always reply in English.";
-    const sysFr = "Tu es une IA experte en compatibilité et en psychologie des relations. Tu rédiges des questions courtes, révélatrices et à CHOIX MULTIPLE pour révéler une vraie affinité entre les personnes (amitié, partenaire ou âme sœur). Mélange par défaut : ~35% personnalité et valeurs, ~30% style de vie et contexte (routine quotidienne, situation professionnelle, études, situation sentimentale, enfants, habitudes, voyages, santé, tabac/alcool, animaux, logement, religion, politique) et ~35% padel (façon de jouer, attitude sur le court, style, mentalité compétitive). Utilise un français de France naturel, tutoie toujours le lecteur, évite les anglicismes inutiles et les tournures québécoises. Réponds TOUJOURS en français.";
-    const sys = (data.lang === "es" ? sysEs : data.lang === "fr" ? sysFr : sysEn)
-      + (data.lang === "es" ? intentGuidanceEs : data.lang === "fr" ? intentGuidanceFr : intentGuidanceEn);
-
-    const ratioEs = padelOnly
-      ? "Proporción OBLIGATORIA: ~60% pádel, ~40% personalidad ligera y estilo de vida (rutina, deporte, viajes, humor, energía social, mascotas). NADA de romance, citas, pareja, hijos ni atracción."
-      : !wantsRelationship
-      ? "Proporción OBLIGATORIA: ~40% pádel, ~35% personalidad/valores (humor, energía social, estilo de conflicto, ambición), ~25% estilo de vida (rutina, viajes, comida, fumar/beber, mascotas). NADA de romance, citas, pareja ni hijos."
-      : "Proporción: ~35% personalidad (lenguaje del amor, apego, estilo de conflicto, humor, dealbreakers, familia, ambición, energía social, comodidad con la intimidad, qué les hace sentir queridos), ~30% estilo de vida y estatus (etapa laboral, estudios, situación sentimental, hijos o querer hijos, vivienda, fumar, beber, dieta, deporte, sueño, viajes, mascotas, religión, política, mentalidad con el dinero, fin de semana ideal), ~35% pádel (lado preferido, estilo agresivo/defensivo, cómo reacciona al perder, cómo trata a compañeros, intensidad, social vs competitivo, compañero ideal).";
-    const ratioEn = padelOnly
-      ? "MANDATORY ratio: ~60% padel, ~40% light personality and lifestyle (routine, fitness, travel, humor, social energy, pets). NOTHING about romance, dating, partners, kids, or attraction."
-      : !wantsRelationship
-      ? "MANDATORY ratio: ~40% padel, ~35% personality/values (humor, social energy, conflict style, ambition), ~25% lifestyle (routine, travel, food, smoking/drinking, pets). NOTHING about romance, dating, partners, or kids."
-      : "Ratio: ~35% personality (love language, attachment, conflict style, humor, dealbreakers, family, ambition, social energy, intimacy comfort, what makes them feel loved), ~30% lifestyle & status (work/career stage, education, current relationship status, kids or wanting kids, living situation, smoking, drinking, diet, fitness routine, sleep schedule, travel frequency, pets, religion, politics, money mindset, ideal weekend), ~35% padel (preferred side, style aggressive/defensive, how they react to losing, how they treat partners, intensity, social vs competitive, dream playing partner).";
-    const ratioFr = padelOnly
-      ? "Ratio OBLIGATOIRE : ~60% padel, ~40% personnalité légère et style de vie (routine, fitness, voyages, humour, énergie sociale, animaux). RIEN sur la romance, les rencontres, les partenaires, les enfants ou l'attirance."
-      : !wantsRelationship
-      ? "Ratio OBLIGATOIRE : ~40% padel, ~35% personnalité/valeurs (humour, énergie sociale, style de conflit, ambition), ~25% style de vie (routine, voyages, cuisine, tabac/alcool, animaux). RIEN sur la romance, les rencontres, les partenaires ou les enfants."
-      : "Ratio : ~35% personnalité (langage de l'amour, attachement, style de conflit, humour, dealbreakers, famille, ambition, énergie sociale, aisance avec l'intimité, ce qui fait se sentir aimé), ~30% style de vie et statut (étape professionnelle, études, situation sentimentale, enfants ou envie d'enfants, logement, tabac, alcool, régime, sport, sommeil, voyages, animaux, religion, politique, rapport à l'argent, week-end idéal), ~35% padel (côté préféré, style agressif/défensif, réaction à la défaite, comportement avec les partenaires, intensité, social vs compétitif, partenaire idéal).";
+    const ratioEs = "Proporción OBLIGATORIA: ~50% pádel (lado preferido, estilo agresivo/defensivo, cómo reacciona al perder, cómo trata a compañeros, intensidad, social vs competitivo, disponibilidad, compañero ideal), ~25% personalidad ligera (humor, energía social, cómo maneja el estrés, optimismo, estilo en grupo), ~25% estilo de vida (rutina, deporte fuera del pádel, comida, café/té, viajes, mascotas, fin de semana ideal, música). PROHIBIDO: romance, citas, pareja, hijos, atracción, matrimonio, religión, política, dinero, sexo, intimidad.";
+    const ratioEn = "MANDATORY ratio: ~50% padel (preferred side, aggressive/defensive style, reaction to losing, how they treat partners, intensity, social vs competitive, availability, dream partner), ~25% light personality (humor, social energy, stress handling, optimism, group style), ~25% lifestyle (routine, fitness outside padel, food, coffee/tea, travel, pets, ideal weekend, music). FORBIDDEN: romance, dating, partners, kids, attraction, marriage, religion, politics, money, sex, intimacy.";
+    const ratioFr = "Ratio OBLIGATOIRE : ~50% padel (côté préféré, style agressif/défensif, réaction à la défaite, comportement avec les partenaires, intensité, social vs compétitif, disponibilité, partenaire idéal), ~25% personnalité légère (humour, énergie sociale, gestion du stress, optimisme, style en groupe), ~25% style de vie (routine, sport hors padel, cuisine, café/thé, voyages, animaux, week-end idéal, musique). INTERDIT : romance, rencontres, partenaires, enfants, attirance, mariage, religion, politique, argent, sexe, intimité.";
     const ratioLine = data.lang === "es" ? ratioEs : data.lang === "fr" ? ratioFr : ratioEn;
 
     const prompt = `Person context:
@@ -1266,11 +1231,12 @@ ${asked.map((q, i) => `${i + 1}. ${q}`).join("\n") || "(none yet)"}
 
 Generate exactly ${data.count} NEW questions as MULTIPLE CHOICE.
 ${ratioLine}
-EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic. Never ask for income amounts.
+EVERY question MUST include 3 to 5 short, mutually exclusive options. No open-ended questions. Keep options under 6 words each. Warm, specific, never generic. Never ask for income amounts, romance, dating, kids, religion, politics, or anything intimate.
 
 Return ONLY valid JSON, no prose, no markdown:
 {"questions":[{"question":"...","category":"lifestyle","options":["opt1","opt2","opt3","opt4"]}]}
-Categories must be lowercase single words (personality, values, lifestyle, status, padel, etc.).`;
+Categories must be lowercase single words (padel, personality, lifestyle).`;
+
 
     let text = "";
     try {

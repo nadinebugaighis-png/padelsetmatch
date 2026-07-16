@@ -296,13 +296,12 @@ export const getMatchEvent = createServerFn({ method: "POST" })
       .eq("match_event_id", data.id);
     const invites = invitesRaw ?? [];
     const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
-    const lockUntil = (event as any).invite_lock_until as string | null;
-    const lockActive = !!lockUntil && new Date(lockUntil).getTime() > Date.now();
 
     return {
-      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: lockUntil, lock_active: lockActive },
+      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
       me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
     };
+
   });
 
 // ---------- Join ----------
@@ -323,22 +322,19 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
     if (event.status !== "open") throw new Error("This match is no longer open");
     if (event.gender_rule === "men_only" && profile.gender && profile.gender !== "man") throw new Error("This match is for men only");
     if (event.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") throw new Error("This match is for women only");
-    const lockUntil = (event as any).invite_lock_until as string | null;
-    const lockActive = !!lockUntil && new Date(lockUntil).getTime() > Date.now();
-    if (lockActive && event.host_profile_id !== profile.id) {
+    // First-come, first-served: no invite lock. Auto-accept a pending invite if the invitee joins directly.
+    if (profile && event.host_profile_id !== profile.id) {
       const { data: inv } = await supabase
         .from("match_event_invites")
         .select("id, status")
         .eq("match_event_id", data.id)
         .eq("invitee_profile_id", profile.id)
         .maybeSingle();
-      if (!inv) {
-        throw new Error(`INVITE_LOCK:${lockUntil}`);
-      }
-      if (inv.status === "pending") {
+      if (inv && inv.status === "pending") {
         await supabase.from("match_event_invites").update({ status: "accepted", responded_at: new Date().toISOString() } as never).eq("id", inv.id);
       }
     }
+
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })
@@ -696,30 +692,9 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
 
 
 // ---------- Invites ----------
-const LOCK_HOURS = 10;
+// First-come, first-served: invites are notifications, not reservations.
 
-function lockCutoffIso(existing: string | null | undefined, startsAtIso: string): string {
-  const now = Date.now();
-  const startsAt = new Date(startsAtIso).getTime();
-  const defaultCutoff = now + LOCK_HOURS * 60 * 60 * 1000;
-  // Don't lock past the match start
-  const cutoff = Math.min(defaultCutoff, startsAt);
-  const existingMs = existing ? new Date(existing).getTime() : 0;
-  return new Date(Math.max(existingMs, cutoff)).toISOString();
-}
 
-async function ensureLock(supabase: any, eventId: string) {
-  const { data: ev } = await supabase
-    .from("match_events")
-    .select("invite_lock_until, starts_at")
-    .eq("id", eventId)
-    .maybeSingle();
-  if (!ev) return;
-  const cutoff = lockCutoffIso(ev.invite_lock_until as string | null, ev.starts_at as string);
-  if (ev.invite_lock_until !== cutoff) {
-    await supabase.from("match_events").update({ invite_lock_until: cutoff } as never).eq("id", eventId);
-  }
-}
 
 async function assertHost(supabase: any, userId: string, eventId: string): Promise<string> {
   const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
@@ -751,8 +726,8 @@ export const inviteToMatchEvent = createServerFn({ method: "POST" })
       .from("match_event_invites")
       .upsert(rows as never, { onConflict: "match_event_id,invitee_profile_id", ignoreDuplicates: true });
     if (error) throw new Error(error.message);
-    await ensureLock(supabase, data.eventId);
     return { invited: rows.length };
+
   });
 
 // Create a shareable invite link (token)
@@ -775,8 +750,8 @@ export const createMatchInviteLink = createServerFn({ method: "POST" })
       .select("id, token")
       .single();
     if (error) throw new Error(error.message);
-    await ensureLock(supabase, data.eventId);
     return { id: row.id, token: row.token as string };
+
   });
 
 // Respond to invite (accept / decline)

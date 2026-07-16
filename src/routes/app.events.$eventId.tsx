@@ -25,7 +25,7 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, Lock } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
@@ -230,14 +230,9 @@ function EventDetail() {
       qc.invalidateQueries({ queryKey: ["open-events"] });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
-      if (msg.startsWith("INVITE_LOCK:")) {
-        const iso = msg.slice("INVITE_LOCK:".length);
-        const opensAt = new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
-        toast.error(tr(`Reserved for invited players until ${opensAt}. Come back then!`, `Reservado para invitados hasta ${opensAt}. ¡Vuelve entonces!`));
-      } else {
-        toast.error(msg || tr("Could not join", "No te pudimos unir", "Impossible de rejoindre"));
-      }
+      toast.error(msg || tr("Could not join", "No te pudimos unir", "Impossible de rejoindre"));
     }
+
   };
 
   const onLeave = async () => {
@@ -499,20 +494,8 @@ function EventDetail() {
               </div>
             )}
 
-            {event.lock_active && event.invite_lock_until && (
-              <div className="flex items-start gap-2 border-t border-[var(--ink)]/15 bg-[var(--plum)]/[0.08] px-4 py-3 text-xs text-[var(--ink)]">
-                <Lock className="mt-0.5 h-3.5 w-3.5 text-[var(--plum)] shrink-0" />
-                <div>
-                  <div className="text-[var(--ink)] uppercase tracking-[0.2em] text-[10px] font-semibold">{tr("Priority window", "Ventana prioritaria", "Fenêtre prioritaire")}</div>
-                  <div className="mt-0.5">
-                    {tr(
-                      `Invited players first — opens to everyone at ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
-                      `Prioridad para invitados — se abre a todos el ${new Date(event.invite_lock_until).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })}`,
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+
+
           </section>
         );
       })()}
@@ -693,11 +676,10 @@ function EventDetail() {
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
           <p className="text-[11px] text-[var(--ink)]/50 text-center italic pt-1">
-            {event.lock_active
-              ? tr("This match is reserved for invited players right now.", "Este partido está reservado para invitados ahora mismo.", "Ce match est réservé aux joueurs invités pour l'instant.")
-              : tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
+            {tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
           </p>
         )}
+
       </div>
 
       {/* Invite panel */}
@@ -981,7 +963,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                 {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
               </h2>
               <p className="mt-1.5 text-xs text-[var(--ink)]/60 leading-relaxed max-w-sm">
-                {tr("Invitees get first dibs for 10h.", "Los invitados tienen prioridad 10 h.", "Invités prioritaires pendant 10 h.")}
+                {tr("First come, first served — anyone can still join.", "Por orden de llegada — cualquiera puede unirse.", "Premier arrivé, premier servi — tout le monde peut rejoindre.")}
               </p>
             </div>
             <button

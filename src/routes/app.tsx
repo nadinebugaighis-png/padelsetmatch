@@ -62,6 +62,7 @@ async function hardResetAndReload() {
 
 function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void }) {
   const t = useT();
+  const tr = useTr();
   const [showDetails, setShowDetails] = useState(false);
   useEffect(() => {
     reportLovableError(error, { boundary: "app_route_error_component" });
@@ -84,7 +85,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
             onClick={hardResetAndReload}
             className="rounded-full border border-[var(--ink)]/30 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
-            Fix &amp; reload
+            {tr("Fix & reload", "Reparar y recargar", "Réparer et recharger")}
           </button>
           <Link
             to="/auth"
@@ -98,7 +99,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
           onClick={() => setShowDetails((s) => !s)}
           className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/40 hover:text-[var(--ink)]/70"
         >
-          {showDetails ? "Hide details" : "Show details"}
+          {showDetails ? tr("Hide details", "Ocultar detalles", "Masquer les détails") : tr("Show details", "Ver detalles", "Voir les détails")}
         </button>
         {showDetails && (
           <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-md bg-[var(--ink)]/5 p-3 text-left text-[10px] leading-snug text-[var(--ink)]/70">

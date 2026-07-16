@@ -141,7 +141,7 @@ function ConnectPage() {
       <div className="mb-6">
         <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("Community board", "Tablón comunitario", "Tableau communautaire")}</div>
         <div className="flex items-end justify-between gap-3 mt-1">
-          <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none">Connect</h1>
+          <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none">{tr("Connect", "Conecta", "Connecter")}</h1>
           <Button onClick={() => { setEditingPost(null); setComposerOpen(true); }} className="shrink-0 bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-9 px-4">
             <Plus className="w-4 h-4 mr-1" />
             {tr("New post", "Publicar", "Publier")}

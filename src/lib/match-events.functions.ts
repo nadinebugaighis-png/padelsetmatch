@@ -322,22 +322,19 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
     if (event.status !== "open") throw new Error("This match is no longer open");
     if (event.gender_rule === "men_only" && profile.gender && profile.gender !== "man") throw new Error("This match is for men only");
     if (event.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") throw new Error("This match is for women only");
-    const lockUntil = (event as any).invite_lock_until as string | null;
-    const lockActive = !!lockUntil && new Date(lockUntil).getTime() > Date.now();
-    if (lockActive && event.host_profile_id !== profile.id) {
+    // First-come, first-served: no invite lock. Auto-accept a pending invite if the invitee joins directly.
+    if (profile && event.host_profile_id !== profile.id) {
       const { data: inv } = await supabase
         .from("match_event_invites")
         .select("id, status")
         .eq("match_event_id", data.id)
         .eq("invitee_profile_id", profile.id)
         .maybeSingle();
-      if (!inv) {
-        throw new Error(`INVITE_LOCK:${lockUntil}`);
-      }
-      if (inv.status === "pending") {
+      if (inv && inv.status === "pending") {
         await supabase.from("match_event_invites").update({ status: "accepted", responded_at: new Date().toISOString() } as never).eq("id", inv.id);
       }
     }
+
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })

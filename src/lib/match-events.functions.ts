@@ -692,30 +692,9 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
 
 
 // ---------- Invites ----------
-const LOCK_HOURS = 10;
+// First-come, first-served: invites are notifications, not reservations.
 
-function lockCutoffIso(existing: string | null | undefined, startsAtIso: string): string {
-  const now = Date.now();
-  const startsAt = new Date(startsAtIso).getTime();
-  const defaultCutoff = now + LOCK_HOURS * 60 * 60 * 1000;
-  // Don't lock past the match start
-  const cutoff = Math.min(defaultCutoff, startsAt);
-  const existingMs = existing ? new Date(existing).getTime() : 0;
-  return new Date(Math.max(existingMs, cutoff)).toISOString();
-}
 
-async function ensureLock(supabase: any, eventId: string) {
-  const { data: ev } = await supabase
-    .from("match_events")
-    .select("invite_lock_until, starts_at")
-    .eq("id", eventId)
-    .maybeSingle();
-  if (!ev) return;
-  const cutoff = lockCutoffIso(ev.invite_lock_until as string | null, ev.starts_at as string);
-  if (ev.invite_lock_until !== cutoff) {
-    await supabase.from("match_events").update({ invite_lock_until: cutoff } as never).eq("id", eventId);
-  }
-}
 
 async function assertHost(supabase: any, userId: string, eventId: string): Promise<string> {
   const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();

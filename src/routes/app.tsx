@@ -99,7 +99,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
           onClick={() => setShowDetails((s) => !s)}
           className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/40 hover:text-[var(--ink)]/70"
         >
-          {showDetails ? "Hide details" : "Show details"}
+          {showDetails ? tr("Hide details", "Ocultar detalles", "Masquer les détails") : tr("Show details", "Ver detalles", "Voir les détails")}
         </button>
         {showDetails && (
           <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-md bg-[var(--ink)]/5 p-3 text-left text-[10px] leading-snug text-[var(--ink)]/70">

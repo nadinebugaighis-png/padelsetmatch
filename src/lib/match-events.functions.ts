@@ -747,8 +747,8 @@ export const inviteToMatchEvent = createServerFn({ method: "POST" })
       .from("match_event_invites")
       .upsert(rows as never, { onConflict: "match_event_id,invitee_profile_id", ignoreDuplicates: true });
     if (error) throw new Error(error.message);
-    await ensureLock(supabase, data.eventId);
     return { invited: rows.length };
+
   });
 
 // Create a shareable invite link (token)

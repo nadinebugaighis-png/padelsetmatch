@@ -35,7 +35,7 @@ const LEVEL_INDEX: Record<string, number> = {
   competitive: 4,
 };
 
-const DAY_COUNT = 10;
+const DAY_COUNT = 45;
 
 function startOfDay(d: Date) {
   const x = new Date(d);

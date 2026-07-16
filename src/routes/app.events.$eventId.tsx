@@ -34,8 +34,15 @@ export const Route = createFileRoute("/app/events/$eventId")({
   }),
   component: EventRoute,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--ink)]/70">{error.message}</div>,
-  notFoundComponent: () => <div className="p-6 text-[var(--ink)]/70">Not found</div>,
+  notFoundComponent: () => <NotFoundBlock />,
 });
+
+function NotFoundBlock() {
+  const tr = useTr();
+  return <div className="p-6 text-[var(--ink)]/70">{tr("Not found", "No encontrado", "Introuvable")}</div>;
+}
+
+const _unused = () => ({
 
 function EventRoute() {
   const path = useRouterState({ select: (s) => s.location.pathname });

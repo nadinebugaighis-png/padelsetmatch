@@ -131,7 +131,10 @@ function useBottomOverlayOffset() {
       const layoutBottom = window.innerHeight;
       const visibleBottom = vv.height + vv.offsetTop;
       const diff = Math.max(0, layoutBottom - visibleBottom);
-      setOffset(diff);
+      // Only react to keyboard-sized changes. Chrome/Safari mobile toolbars
+      // toggle a small (~40–90px) diff on scroll and would make the nav
+      // slide up and down. Ignore anything under 150px.
+      setOffset(diff > 150 ? diff : 0);
     };
     update();
     vv.addEventListener("resize", update);

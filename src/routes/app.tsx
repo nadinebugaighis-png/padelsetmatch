@@ -85,7 +85,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
             onClick={hardResetAndReload}
             className="rounded-full border border-[var(--ink)]/30 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
-            Fix &amp; reload
+            {tr("Fix & reload", "Reparar y recargar", "Réparer et recharger")}
           </button>
           <Link
             to="/auth"

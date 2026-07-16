@@ -62,6 +62,7 @@ async function hardResetAndReload() {
 
 function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void }) {
   const t = useT();
+  const tr = useTr();
   const [showDetails, setShowDetails] = useState(false);
   useEffect(() => {
     reportLovableError(error, { boundary: "app_route_error_component" });

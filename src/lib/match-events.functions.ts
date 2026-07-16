@@ -771,8 +771,8 @@ export const createMatchInviteLink = createServerFn({ method: "POST" })
       .select("id, token")
       .single();
     if (error) throw new Error(error.message);
-    await ensureLock(supabase, data.eventId);
     return { id: row.id, token: row.token as string };
+
   });
 
 // Respond to invite (accept / decline)

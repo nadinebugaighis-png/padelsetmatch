@@ -494,26 +494,7 @@ function Onboarding() {
                 <Input className="mt-2" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
               )}
             </div>
-            <div data-field="goals" className={fieldCls("goals")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {[
-                  { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
-                  { id: "friends", label: tr("Friends", "Amistad", "Amis") },
-                  { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
-                  { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
-                ].map((g) => (
-                  <button
-                    key={g.id}
-                    onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
-                    className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
-                  >
-                    {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
-                  </button>
-                ))}
-              </div>
-              <p className="text-xs text-[var(--ink)]/55 mt-1">{t("ob.privateNote")}</p>
-            </div>
+            {/* "What are you looking for?" removed — everyone is a padel player. */}
 
           </>
         )}

@@ -1,4 +1,4 @@
-import { useI18n } from "@/lib/i18n";
+// (i18n import removed — component is now a no-op)
 
 export function deriveIntentsFromProfile(p: {
   intents?: string[] | null;

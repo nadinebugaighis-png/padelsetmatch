@@ -465,19 +465,6 @@ function Discover() {
 
         <div className="mt-5 lg:mt-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            {(["all", "padel", "friend", "relationship"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition ${
-                  filter === f
-                    ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
-                    : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
-                }`}
-              >
-                {f === "all" ? t("disc.filter.all") : f === "padel" ? t("disc.filter.padel") : f === "friend" ? t("disc.filter.friend") : t("disc.filter.relationship")}
-              </button>
-            ))}
             <button
               onClick={() => {
                 const next = !world;

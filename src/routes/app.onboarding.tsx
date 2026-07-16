@@ -98,7 +98,7 @@ function Onboarding() {
   const [priorities, setPriorities] = useState<string[]>([]);
   const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
-  const [goals, setGoals] = useState<string[]>([]);
+  const [goals, setGoals] = useState<string[]>(["padel"]);
   const [meetPref, setMeetPref] = useState<"men" | "women" | "everyone" | "">("");
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -376,8 +376,8 @@ function Onboarding() {
       !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
       age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
       !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
-      goals.length === 0 ? { key: "goals", label: tr("what you are looking for", "qué estás buscando", "ce que tu cherches") } : null,
-      hasPartnerGoal && !meetPref ? { key: "meetPref", label: tr("who you would like to meet", "a quién te gustaría conocer", "qui tu veux rencontrer") } : null,
+      null,
+      null,
       age_min === null || age_max === null ? { key: "age_range", label: tr("age range", "rango de edad", "tranche d'âge") } : null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
       validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
@@ -494,26 +494,7 @@ function Onboarding() {
                 <Input className="mt-2" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
               )}
             </div>
-            <div data-field="goals" className={fieldCls("goals")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("What are you looking for?", "¿Qué estás buscando?", "Que cherches-tu ?")}</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {[
-                  { id: "padel", label: tr("Padel partners", "Compis de pádel", "Partenaires de padel") },
-                  { id: "friends", label: tr("Friends", "Amistad", "Amis") },
-                  { id: "relationship", label: tr("Relationship", "Relación", "Relation") },
-                  { id: "all", label: tr("Open to all", "Abierto a todo", "Ouvert à tout") },
-                ].map((g) => (
-                  <button
-                    key={g.id}
-                    onClick={() => setGoals((cur) => cur.includes(g.id) ? cur.filter((x) => x !== g.id) : [...cur, g.id])}
-                    className={`chip-paper ${goals.includes(g.id) ? "chip-paper-selected" : ""}`}
-                  >
-                    {goals.includes(g.id) ? "☑ " : "☐ "}{g.label}
-                  </button>
-                ))}
-              </div>
-              <p className="text-xs text-[var(--ink)]/55 mt-1">{t("ob.privateNote")}</p>
-            </div>
+            {/* "What are you looking for?" removed — everyone is a padel player. */}
 
           </>
         )}

@@ -42,8 +42,6 @@ function NotFoundBlock() {
   return <div className="p-6 text-[var(--ink)]/70">{tr("Not found", "No encontrado", "Introuvable")}</div>;
 }
 
-const _unused = () => ({
-
 function EventRoute() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   if (path.endsWith("/edit")) return <Outlet />;

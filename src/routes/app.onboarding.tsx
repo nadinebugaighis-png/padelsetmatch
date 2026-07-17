@@ -1081,6 +1081,16 @@ function Onboarding() {
         );
       })()}
 
+      <PhotoCropDialog
+        file={pendingPhotoFile}
+        onCancel={() => setPendingPhotoFile(null)}
+        onConfirm={(cropped) => {
+          setPendingPhotoFile(null);
+          setLastPhotoFile(cropped);
+          uploadPhoto(cropped);
+        }}
+      />
+
     </main>
   );
 }

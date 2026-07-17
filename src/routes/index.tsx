@@ -154,13 +154,6 @@ function Landing() {
             >
               {t("land.signin")}
             </Link>
-            <Link
-              to="/demo"
-              className="group inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--ink)]/70 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30"
-            >
-              Peek inside
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" />
-            </Link>
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 

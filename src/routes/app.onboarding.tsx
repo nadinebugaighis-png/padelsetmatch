@@ -19,11 +19,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Camera, Crop, Plus, Trash2, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
 import { QASection } from "@/components/QASection";
+import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({

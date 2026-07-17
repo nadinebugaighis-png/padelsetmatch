@@ -164,9 +164,43 @@ function ProfilePage() {
   return (
     <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
 
-      {/* Hero: name & meta first, photo at the end */}
+      {/* Hero: photo left, name & meta right */}
       <div className="programme-card p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="relative shrink-0">
+            {p.photo_url ? (
+              <img
+                src={p.photo_url}
+                alt={p.first_name}
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
+              />
+            ) : (
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+                <Camera className="w-6 h-6" />
+              </div>
+            )}
+            <input
+              ref={fileRef}
+              id={photoInputId}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              disabled={uploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) setPendingFile(f);
+                e.target.value = "";
+              }}
+            />
+            <label
+              htmlFor={photoInputId}
+              aria-disabled={uploading}
+              title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
+              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+            >
+              <Camera className="w-3.5 h-3.5" />
+            </label>
+          </div>
           <div className="min-w-0 flex-1">
             <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
             <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
@@ -199,84 +233,9 @@ function ProfilePage() {
             {p.bio}
           </p>
         )}
-
-        {/* Photo at the end */}
-        <div className="mt-4 flex justify-center">
-          <div className="relative shrink-0">
-            {p.photo_url ? (
-              <img
-                src={p.photo_url}
-                alt={p.first_name}
-                className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
-              />
-            ) : (
-              <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
-                <Camera className="w-6 h-6" />
-              </div>
-            )}
-            <input
-              ref={fileRef}
-              id={photoInputId}
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              disabled={uploading}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) setPendingFile(f);
-                e.target.value = "";
-              }}
-            />
-            <label
-              htmlFor={photoInputId}
-              aria-disabled={uploading}
-              title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
-            >
-              <Camera className="w-3.5 h-3.5" />
-            </label>
-          </div>
-        </div>
       </div>
 
 
-      
-
-      {/* Messages — placed right under name & photo for quick access */}
-      <div className="mt-3 sm:mt-4">
-        <MessagesRow />
-      </div>
-
-
-      <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
-        <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
-
-        {hasDetails && (
-          <CollapsibleRow
-            icon={<MapPin className="w-4 h-4" />}
-            title={tr("Where & languages", "Dónde y idiomas", "Où et langues")}
-            subtitle={[
-              locations[0],
-              (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
-            ].filter(Boolean).join(" · ") || undefined}
-            contentCard
-          >
-            <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-              {locations.length > 0 && (
-                <Section title={t("prof.playsIn")}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
-                  </div>
-                </Section>
-              )}
-              {p.languages?.length > 0 && (
-                <Section title={t("prof.languages")}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
-                  </div>
-                </Section>
-              )}
-            </div>
             {p.free_court_access && (
               <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
                 <div className="flex items-center gap-2 flex-wrap">

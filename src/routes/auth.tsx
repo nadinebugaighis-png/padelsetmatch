@@ -327,14 +327,35 @@ function AuthPage() {
           <LangSwitch />
         </div>
         <Link to="/" className="mt-4 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
-        <div className="mt-6 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--grass)]" />
-          {mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}
+        <div
+          role="tablist"
+          aria-label={tr("Authentication mode", "Modo de autenticación", "Mode d'authentification")}
+          className="mt-6 grid grid-cols-2 gap-1 p-1 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/10"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === "signup"}
+            onClick={() => { setMode("signup"); setConfirmPassword(""); }}
+            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signup" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
+          >
+            {tr("Create account", "Crear cuenta", "Créer un compte")}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === "signin"}
+            onClick={() => { setMode("signin"); setConfirmPassword(""); }}
+            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signin" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
+          >
+            {tr("Sign in", "Iniciar sesión", "Se connecter")}
+          </button>
         </div>
-        <h1 className="text-display text-5xl mt-2 leading-none">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
+        <h1 className="text-display text-4xl sm:text-5xl mt-5 leading-none">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
         <p className="text-[15px] text-[var(--ink)]/70 mt-3 leading-relaxed">
           {mode === "signup" ? t("auth.sub.signup") : t("auth.sub.signin")}
         </p>
+
 
         <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
            {t("auth.google")}

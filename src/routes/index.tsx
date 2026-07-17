@@ -147,13 +147,6 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
-            <Link
-              to="/auth"
-              search={{ redirect: undefined, join: undefined, mode: "signin" }}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-5 py-3 hover:bg-[var(--ink)]/5 transition"
-            >
-              {t("land.signin")}
-            </Link>
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 

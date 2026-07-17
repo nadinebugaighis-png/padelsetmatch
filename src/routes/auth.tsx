@@ -16,16 +16,17 @@ export const Route = createFileRoute("/auth")({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,
     join: typeof s.join === "string" ? s.join : undefined,
     i: typeof s.i === "string" ? s.i : undefined,
+    mode: s.mode === "signup" || s.mode === "signin" ? s.mode : undefined,
   }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
-  const { redirect, join, i } = Route.useSearch();
+  const { redirect, join, i, mode: modeParam } = Route.useSearch();
   const t = useT();
   const tr = useTr();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(modeParam ?? "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

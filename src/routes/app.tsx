@@ -236,8 +236,9 @@ function AuthShell() {
   const isAdmin = adminQ.data === true;
 
   return (
-    <div className="min-h-screen pb-24 lg:pb-0 programme-page">
-      <div className="lg:sticky lg:top-0 lg:z-40 lg:bg-[var(--paper)]/95 lg:backdrop-blur lg:border-b lg:border-[var(--ink)]/10">
+    <div className="min-h-screen pb-24 lg:pb-0 lg:pt-[73px] programme-page">
+      <div className="lg:fixed lg:top-0 lg:left-0 lg:right-0 lg:z-40 lg:bg-[var(--paper)]/95 lg:backdrop-blur lg:border-b lg:border-[var(--ink)]/10">
+
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 lg:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (

@@ -154,13 +154,6 @@ function Landing() {
             >
               {t("land.signin")}
             </Link>
-            <Link
-              to="/demo"
-              className="group inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--ink)]/70 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30"
-            >
-              Peek inside
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" />
-            </Link>
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 
@@ -169,10 +162,10 @@ function Landing() {
           </p>
 
           <Link
-            to="/how-it-works"
+            to="/demo"
             className="mt-3 lg:mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
           >
-            {t("land.howItWorks")} <ArrowRight className="w-4 h-4" />
+            Peek inside <ArrowRight className="w-4 h-4" />
           </Link>
 
           <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">

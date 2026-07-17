@@ -110,7 +110,9 @@ function DemoPage() {
           <ArrowLeft className="w-4 h-4" /> Back
         </Link>
         <BrandMark />
-        <div className="w-10" />
+        <Link to="/how-it-works" className="text-[13px] font-semibold text-[var(--plum)] underline underline-offset-4 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]">
+          How it works
+        </Link>
       </header>
 
       {/* Tabs */}

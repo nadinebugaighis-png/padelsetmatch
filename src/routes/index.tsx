@@ -223,7 +223,7 @@ function Landing() {
           </div>
           <Link
             to="/auth"
-            search={{ redirect: undefined, join: undefined }}
+            search={{ redirect: undefined, join: undefined, mode: "signup" }}
             className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.16em] text-[12px] px-5 py-2.5 hover:brightness-110 transition"
           >
             {t("land.preview.cta")}
@@ -245,7 +245,7 @@ function Landing() {
                 <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-[var(--ink)]/50 backdrop-blur-sm">
-                <Link to="/auth" search={{ redirect: undefined, join: undefined }} className="rounded-full bg-[var(--paper)] text-[var(--ink)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</Link>
+                <Link to="/auth" search={{ redirect: undefined, join: undefined, mode: "signup" }} className="rounded-full bg-[var(--paper)] text-[var(--ink)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</Link>
               </div>
             </div>
           ))}

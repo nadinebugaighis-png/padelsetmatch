@@ -1009,12 +1009,11 @@ function Onboarding() {
           (!hasPartnerGoal || !!meetPref) &&
           age_min !== null && age_max !== null && age_min <= age_max &&
           validBlocks.length > 0 && languages.length > 0 && !!level;
-        const isRegPage = step === 0;
         return (
-          <div className="mt-5 space-y-3">
-            <div className="flex items-center justify-between gap-3">
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ink)]/10 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/85 pb-[env(safe-area-inset-bottom)]">
+            <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
               {step > 0 ? (
-                <Button variant="outline" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
+                <Button variant="outline" size="sm" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
               ) : <div />}
               {step === 0 && (
                 <Button onClick={goNext}>{t("ob.next")}</Button>
@@ -1030,18 +1029,6 @@ function Onboarding() {
                 </Button>
               )}
             </div>
-            {!isRegPage && (
-              <div className="flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.2em]">
-                <button
-                  type="button"
-                  onClick={() => save.mutate({ destination: "profile" })}
-                  disabled={!coreDone || save.isPending}
-                  className="text-[var(--ink)]/55 hover:text-[var(--ink)] disabled:opacity-40"
-                >
-                  {save.isPending ? t("ob.saving") : tr("Skip — go to Me", "Saltar — ir a Mí", "Passer — vers Moi")}
-                </button>
-              </div>
-            )}
           </div>
         );
       })()}

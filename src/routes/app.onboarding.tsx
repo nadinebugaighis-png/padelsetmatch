@@ -440,13 +440,34 @@ function Onboarding() {
   }
 
   return (
-    <main className="px-4 py-6 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-      <div className="flex items-center justify-between text-xs uppercase tracking-widest text-[var(--ink)]/70">
-        <span>{t("ob.step")} {step + 1} {t("ob.of")} {steps.length}</span>
-        <span>{steps[step]}</span>
-      </div>
-      <div className="h-1 mt-2 rounded-full bg-[var(--ink)]/10 overflow-hidden">
-        <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+    <main className="px-4 py-6 pb-32 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
+      <div className="sticky top-0 z-20 -mx-4 px-4 pt-2 pb-3 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/80">
+        <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-widest text-[var(--ink)]/70">
+          {step > 0 ? (
+            <button
+              type="button"
+              aria-label={t("ob.back")}
+              onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}
+              className="inline-flex items-center justify-center w-8 h-8 -ml-1 rounded-full hover:bg-[var(--ink)]/10 active:bg-[var(--ink)]/15"
+            >
+              <ArrowUp className="w-4 h-4 -rotate-90" />
+            </button>
+          ) : <span className="w-8" />}
+          <span className="flex-1 text-center">{t("ob.step")} {step + 1} {t("ob.of")} {steps.length} · {steps[step]}</span>
+          {step > 0 ? (
+            <button
+              type="button"
+              onClick={() => save.mutate({ destination: "profile" })}
+              disabled={save.isPending}
+              className="text-[10px] tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] disabled:opacity-40"
+            >
+              {tr("Exit", "Salir", "Sortir")}
+            </button>
+          ) : <span className="w-8" />}
+        </div>
+        <div className="h-1 mt-2 rounded-full bg-[var(--ink)]/10 overflow-hidden">
+          <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+        </div>
       </div>
 
       <div className="mt-6 rounded-3xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-sm p-5 sm:p-8 space-y-4">

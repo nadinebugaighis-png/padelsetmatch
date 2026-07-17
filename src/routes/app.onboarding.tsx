@@ -104,6 +104,8 @@ function Onboarding() {
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [pendingPhotoFile, setPendingPhotoFile] = useState<File | null>(null);
+  const [lastPhotoFile, setLastPhotoFile] = useState<File | null>(null);
   const [availability, setAvailability] = useState<string[]>([]);
   const [courtSide, setCourtSide] = useState<CourtSide | "">("");
   const [mixedDoubles, setMixedDoubles] = useState(false);

@@ -1049,23 +1049,33 @@ function Onboarding() {
           validBlocks.length > 0 && languages.length > 0 && !!level;
         return (
           <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ink)]/10 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/85 pb-[env(safe-area-inset-bottom)]">
-            <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2 flex-wrap">
               {step > 0 ? (
                 <Button variant="outline" size="sm" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
               ) : <div />}
-              {step === 0 && (
-                <Button onClick={goNext}>{t("ob.next")}</Button>
-              )}
-              {step === 1 && (
-                <Button onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
-                  {tr("Continue", "Continuar", "Continuer")}
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => save.mutate({ destination: "profile" })}
+                  disabled={save.isPending || uploading}
+                >
+                  {save.isPending ? t("ob.saving") : tr("Save", "Guardar", "Enregistrer")}
                 </Button>
-              )}
-              {step === 2 && (
-                <Button onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
-                  {save.isPending ? t("ob.saving") : t("ob.start")}
-                </Button>
-              )}
+                {step === 0 && (
+                  <Button size="sm" onClick={goNext}>{t("ob.next")}</Button>
+                )}
+                {step === 1 && (
+                  <Button size="sm" onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
+                    {tr("Continue", "Continuar", "Continuer")}
+                  </Button>
+                )}
+                {step === 2 && (
+                  <Button size="sm" onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
+                    {save.isPending ? t("ob.saving") : t("ob.start")}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         );

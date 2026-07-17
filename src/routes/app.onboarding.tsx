@@ -19,11 +19,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Camera, Plus, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Camera, Crop, Plus, Trash2, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
 import { QASection } from "@/components/QASection";
+import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
@@ -103,6 +104,8 @@ function Onboarding() {
   const [bio, setBio] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [pendingPhotoFile, setPendingPhotoFile] = useState<File | null>(null);
+  const [lastPhotoFile, setLastPhotoFile] = useState<File | null>(null);
   const [availability, setAvailability] = useState<string[]>([]);
   const [courtSide, setCourtSide] = useState<CourtSide | "">("");
   const [mixedDoubles, setMixedDoubles] = useState(false);
@@ -836,23 +839,54 @@ function Onboarding() {
 
             <h2 className="text-display text-2xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
-            <label className="block aspect-[3/4] w-full max-w-[220px] sm:max-w-[240px] mx-auto rounded-2xl border border-dashed border-[var(--ink)]/30 overflow-hidden relative cursor-pointer">
-              {photoUrl ? (
-                <>
+            <div className="flex flex-col items-center gap-3">
+              <label className="block aspect-[3/4] w-full max-w-[220px] sm:max-w-[240px] rounded-2xl border border-dashed border-[var(--ink)]/30 overflow-hidden relative cursor-pointer bg-[var(--paper-2)]">
+                {photoUrl ? (
                   <img src={photoUrl} alt="you" className="absolute inset-0 w-full h-full object-cover" />
-                  <button onClick={(e) => { e.preventDefault(); setPhotoUrl(null); }} className="absolute top-2 right-2 bg-black/60 rounded-full p-1.5">
-                    <X className="w-4 h-4 text-white" />
-                  </button>
-                </>
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
-                  <Camera className="w-7 h-7" />
-                  <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                  <span className="text-[11px] text-[var(--ink)]/55 px-4 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
+                    <Camera className="w-7 h-7" />
+                    <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
+                    <span className="text-[11px] text-[var(--ink)]/55 px-4 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
+                  </div>
+                )}
+                <input
+                  id="ob-photo-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) setPendingPhotoFile(f);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+
+              {photoUrl ? (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()}>
+                    <Camera className="w-3.5 h-3.5 mr-1.5" />
+                    {tr("Change", "Cambiar", "Changer")}
+                  </Button>
+                  {lastPhotoFile && (
+                    <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => setPendingPhotoFile(lastPhotoFile)}>
+                      <Crop className="w-3.5 h-3.5 mr-1.5" />
+                      {tr("Recrop", "Recortar", "Recadrer")}
+                    </Button>
+                  )}
+                  <Button type="button" variant="outline" size="sm" disabled={uploading} className="text-red-600 hover:text-red-700" onClick={() => { setPhotoUrl(null); setLastPhotoFile(null); }}>
+                    <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                    {tr("Remove", "Quitar", "Retirer")}
+                  </Button>
                 </div>
+              ) : (
+                <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()}>
+                  <Camera className="w-3.5 h-3.5 mr-1.5" />
+                  {uploading ? t("ob.uploading") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
+                </Button>
               )}
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
-            </label>
+            </div>
 
             {!photoUrl && (
               <p className="text-[11px] text-[var(--ink)]/55 text-center">
@@ -1015,27 +1049,47 @@ function Onboarding() {
           validBlocks.length > 0 && languages.length > 0 && !!level;
         return (
           <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ink)]/10 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/85 pb-[env(safe-area-inset-bottom)]">
-            <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2 flex-wrap">
               {step > 0 ? (
                 <Button variant="outline" size="sm" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
               ) : <div />}
-              {step === 0 && (
-                <Button onClick={goNext}>{t("ob.next")}</Button>
-              )}
-              {step === 1 && (
-                <Button onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
-                  {tr("Continue", "Continuar", "Continuer")}
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => save.mutate({ destination: "profile" })}
+                  disabled={save.isPending || uploading}
+                >
+                  {save.isPending ? t("ob.saving") : tr("Save", "Guardar", "Enregistrer")}
                 </Button>
-              )}
-              {step === 2 && (
-                <Button onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
-                  {save.isPending ? t("ob.saving") : t("ob.start")}
-                </Button>
-              )}
+                {step === 0 && (
+                  <Button size="sm" onClick={goNext}>{t("ob.next")}</Button>
+                )}
+                {step === 1 && (
+                  <Button size="sm" onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
+                    {tr("Continue", "Continuar", "Continuer")}
+                  </Button>
+                )}
+                {step === 2 && (
+                  <Button size="sm" onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
+                    {save.isPending ? t("ob.saving") : t("ob.start")}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         );
       })()}
+
+      <PhotoCropDialog
+        file={pendingPhotoFile}
+        onCancel={() => setPendingPhotoFile(null)}
+        onConfirm={(cropped) => {
+          setPendingPhotoFile(null);
+          setLastPhotoFile(cropped);
+          uploadPhoto(cropped);
+        }}
+      />
 
     </main>
   );

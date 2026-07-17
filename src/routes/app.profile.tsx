@@ -164,54 +164,20 @@ function ProfilePage() {
   return (
     <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
 
-      {/* Hero: name & meta first, photo at the end */}
+      {/* Hero: compact photo + name side-by-side, even on mobile */}
       <div className="programme-card p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
-            <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
-              {label(p.level)} · {p.nationality}
-            </p>
-            <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
-            {typeof ordinalQ.data === "number" && ordinalQ.data > 0 && (
-              <span
-                className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] ${
-                  ordinalQ.data <= 100
-                    ? "bg-[var(--ball)] text-[var(--court-deep)]"
-                    : "border border-[var(--ink)]/20 bg-[var(--paper-2)] text-[var(--ink)]/75"
-                }`}
-                title={tr(
-                  "Your signup number on PadelMatch",
-                  "Tu número de registro en PadelMatch",
-                  "Ton numéro d'inscription sur PadelMatch",
-                )}
-              >
-                {ordinalQ.data <= 100 ? "★ " : "🎾 "}
-                {ordinalQ.data <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{ordinalQ.data}
-              </span>
-            )}
-          </div>
-          <EditSectionsMenu />
-        </div>
-
-        {p.bio && (
-          <p className="mt-3 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
-            {p.bio}
-          </p>
-        )}
-
-        {/* Photo at the end */}
-        <div className="mt-4 flex justify-center">
+        <div className="flex items-start gap-3 sm:gap-5">
+          {/* Photo */}
           <div className="relative shrink-0">
             {p.photo_url ? (
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
+                className="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
               />
             ) : (
-              <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
-                <Camera className="w-6 h-6" />
+              <div className="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+                <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
             )}
             <input
@@ -231,14 +197,52 @@ function ProfilePage() {
               htmlFor={photoInputId}
               aria-disabled={uploading}
               title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
             >
               <Camera className="w-3.5 h-3.5" />
             </label>
           </div>
-        </div>
-      </div>
 
+          {/* Name + meta */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
+                <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
+                  {label(p.level)} · {p.nationality}
+                </p>
+                <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
+                {typeof ordinalQ.data === "number" && ordinalQ.data > 0 && (
+                  <span
+                    className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] ${
+                      ordinalQ.data <= 100
+                        ? "bg-[var(--ball)] text-[var(--court-deep)]"
+                        : "border border-[var(--ink)]/20 bg-[var(--paper-2)] text-[var(--ink)]/75"
+                    }`}
+                    title={tr(
+                      "Your signup number on PadelMatch",
+                      "Tu número de registro en PadelMatch",
+                      "Ton numéro d'inscription sur PadelMatch",
+                    )}
+                  >
+                    {ordinalQ.data <= 100 ? "★ " : "🎾 "}
+                    {ordinalQ.data <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{ordinalQ.data}
+                  </span>
+                )}
+              </div>
+              <EditSectionsMenu />
+
+            </div>
+          </div>
+        </div>
+
+
+        {p.bio && (
+          <p className="mt-2 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
+            {p.bio}
+          </p>
+        )}
+      </div>
 
       
 

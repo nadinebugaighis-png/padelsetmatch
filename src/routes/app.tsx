@@ -310,7 +310,7 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav
-          className="fixed left-0 right-0 programme-nav z-40"
+          className="fixed left-0 right-0 programme-nav z-40 lg:hidden"
           style={{
             bottom: bottomOverlay,
             paddingBottom: bottomOverlay > 0 ? 0 : "max(env(safe-area-inset-bottom, 0px), 8px)",

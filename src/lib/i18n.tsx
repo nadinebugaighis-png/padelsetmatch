@@ -491,7 +491,7 @@ const es: Dict = {
   "ob.iAm": "Soy",
   "ob.lookingFor": "Busco",
   "ob.privateNote": "Tus respuestas aquí son privadas — nunca se muestran en tu perfil ni se comparten. Puedes rehacer el cuestionario cuando quieras.",
-  "ob.h1": "¿A quién quieres conocer?",
+  "ob.h1": "¿Con qué grupo de edad prefieres jugar?",
   "ob.audIntro1": "Elige por separado para amistad y para una relación — pulsa tantos como encajen. Pulsa",
   "ob.audIntro2": "si te abres a todo el mundo.",
   "ob.audPrivate": "Solo se usa para el matching — nunca se muestra en tu perfil.",

@@ -15,6 +15,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -71,6 +72,11 @@ const PlayRoute = PlayRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/demo': typeof DemoRoute
   '/how-it-works': typeof HowItWorksRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/demo'
     | '/how-it-works'
     | '/play'
     | '/privacy'
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/demo'
     | '/how-it-works'
     | '/play'
     | '/privacy'
@@ -390,6 +401,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/demo'
     | '/how-it-works'
     | '/play'
     | '/privacy'
@@ -426,6 +438,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  DemoRoute: typeof DemoRoute
   HowItWorksRoute: typeof HowItWorksRoute
   PlayRoute: typeof PlayRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -741,6 +761,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  DemoRoute: DemoRoute,
   HowItWorksRoute: HowItWorksRoute,
   PlayRoute: PlayRoute,
   PrivacyRoute: PrivacyRoute,

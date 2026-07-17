@@ -410,10 +410,7 @@ function AuthPage() {
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <button onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setConfirmPassword(""); }} className="text-[var(--ink)]/60 hover:text-[var(--ink)]">
-            {mode === "signup" ? t("auth.toggleToSignin") : t("auth.toggleToSignup")}
-          </button>
+        <div className="mt-4 flex items-center justify-end text-sm">
           {mode === "signin" && (
             <button
               type="button"

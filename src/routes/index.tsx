@@ -162,10 +162,10 @@ function Landing() {
           </p>
 
           <Link
-            to="/how-it-works"
+            to="/demo"
             className="mt-3 lg:mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
           >
-            {t("land.howItWorks")} <ArrowRight className="w-4 h-4" />
+            Peek inside <ArrowRight className="w-4 h-4" />
           </Link>
 
           <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">

@@ -351,11 +351,6 @@ function AuthPage() {
             {tr("Sign in", "Iniciar sesión", "Se connecter")}
           </button>
         </div>
-        <h1 className="text-display text-4xl sm:text-5xl mt-5 leading-none">{mode === "signup" ? t("auth.title.signup") : t("auth.title.signin")}</h1>
-        <p className="text-[15px] text-[var(--ink)]/70 mt-3 leading-relaxed">
-          {mode === "signup" ? t("auth.sub.signup") : t("auth.sub.signin")}
-        </p>
-
 
         <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
            {t("auth.google")}
@@ -409,17 +404,13 @@ function AuthPage() {
 
         {mode === "signup" && (
           <p className="mt-3 text-center text-[13px] text-[var(--ink)]/60">
-            Not sure yet?{" "}
             <Link to="/demo" className="text-[var(--plum)] font-semibold underline underline-offset-2 hover:brightness-110">
-              Take a quick tour →
+              {tr("Take a quick tour →", "Haz un tour rápido →", "Fais un tour rapide →")}
             </Link>
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <button onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setConfirmPassword(""); }} className="text-[var(--ink)]/60 hover:text-[var(--ink)]">
-            {mode === "signup" ? t("auth.toggleToSignin") : t("auth.toggleToSignup")}
-          </button>
+        <div className="mt-4 flex items-center justify-end text-sm">
           {mode === "signin" && (
             <button
               type="button"

@@ -212,7 +212,7 @@ const en: Dict = {
   "ob.lookingFor": "Looking for",
   "ob.privateNote": "Your answers here stay private — they're never shown on your profile and will not be shared. You can retake this questionnaire any time to change them.",
   // step 1
-  "ob.h1": "Who do you want to meet?",
+  "ob.h1": "Which age group do you prefer to play with?",
   "ob.audIntro1": "Pick separately for friendship and for a relationship — tap as many as fit. Choose",
   "ob.audIntro2": "if you're open to all.",
   "ob.audPrivate": "Only used for matching — never shown on your profile.",

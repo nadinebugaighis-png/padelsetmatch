@@ -139,7 +139,7 @@ function Landing() {
           <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-3">
             <Link
               to="/auth"
-              search={{ redirect: undefined, join: undefined }}
+              search={{ redirect: undefined, join: undefined, mode: "signup" }}
               className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
             >
               {t("land.cta")}
@@ -148,11 +148,18 @@ function Landing() {
               </span>
             </Link>
             <Link
+              to="/auth"
+              search={{ redirect: undefined, join: undefined, mode: "signin" }}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-5 py-3 hover:bg-[var(--ink)]/5 transition"
+            >
+              {t("land.signin")}
+            </Link>
+            <Link
               to="/demo"
-              className="group inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-5 py-3 hover:bg-[var(--ink)]/5 transition"
+              className="group inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--ink)]/70 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30"
             >
               Peek inside
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" />
             </Link>
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>

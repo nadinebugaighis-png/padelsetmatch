@@ -839,23 +839,54 @@ function Onboarding() {
 
             <h2 className="text-display text-2xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
-            <label className="block aspect-[3/4] w-full max-w-[220px] sm:max-w-[240px] mx-auto rounded-2xl border border-dashed border-[var(--ink)]/30 overflow-hidden relative cursor-pointer">
-              {photoUrl ? (
-                <>
+            <div className="flex flex-col items-center gap-3">
+              <label className="block aspect-[3/4] w-full max-w-[220px] sm:max-w-[240px] rounded-2xl border border-dashed border-[var(--ink)]/30 overflow-hidden relative cursor-pointer bg-[var(--paper-2)]">
+                {photoUrl ? (
                   <img src={photoUrl} alt="you" className="absolute inset-0 w-full h-full object-cover" />
-                  <button onClick={(e) => { e.preventDefault(); setPhotoUrl(null); }} className="absolute top-2 right-2 bg-black/60 rounded-full p-1.5">
-                    <X className="w-4 h-4 text-white" />
-                  </button>
-                </>
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
-                  <Camera className="w-7 h-7" />
-                  <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                  <span className="text-[11px] text-[var(--ink)]/55 px-4 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
+                    <Camera className="w-7 h-7" />
+                    <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
+                    <span className="text-[11px] text-[var(--ink)]/55 px-4 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
+                  </div>
+                )}
+                <input
+                  id="ob-photo-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) setPendingPhotoFile(f);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+
+              {photoUrl ? (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()}>
+                    <Camera className="w-3.5 h-3.5 mr-1.5" />
+                    {tr("Change", "Cambiar", "Changer")}
+                  </Button>
+                  {lastPhotoFile && (
+                    <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => setPendingPhotoFile(lastPhotoFile)}>
+                      <Crop className="w-3.5 h-3.5 mr-1.5" />
+                      {tr("Recrop", "Recortar", "Recadrer")}
+                    </Button>
+                  )}
+                  <Button type="button" variant="outline" size="sm" disabled={uploading} className="text-red-600 hover:text-red-700" onClick={() => { setPhotoUrl(null); setLastPhotoFile(null); }}>
+                    <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                    {tr("Remove", "Quitar", "Retirer")}
+                  </Button>
                 </div>
+              ) : (
+                <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()}>
+                  <Camera className="w-3.5 h-3.5 mr-1.5" />
+                  {uploading ? t("ob.uploading") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
+                </Button>
               )}
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
-            </label>
+            </div>
 
             {!photoUrl && (
               <p className="text-[11px] text-[var(--ink)]/55 text-center">

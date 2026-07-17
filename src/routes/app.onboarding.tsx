@@ -960,34 +960,6 @@ function Onboarding() {
 
           </div>
         )}
-        {step === 1 && (
-          <>
-            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
-            <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
-            <label className="block aspect-[3/4] rounded-2xl border border-dashed border-[var(--cream)]/30 overflow-hidden relative cursor-pointer">
-              {photoUrl ? (
-                <>
-                  <img src={photoUrl} alt="you" className="absolute inset-0 w-full h-full object-cover" />
-                  <button onClick={(e) => { e.preventDefault(); setPhotoUrl(null); }} className="absolute top-2 right-2 bg-black/60 rounded-full p-1.5">
-                    <X className="w-4 h-4" />
-                  </button>
-                </>
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
-                  <Camera className="w-8 h-8" />
-                  <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                  <span className="text-[11px] text-[var(--ink)]/55 px-6 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
-                </div>
-              )}
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(f); }} />
-            </label>
-            {!photoUrl && (
-              <p className="text-[11px] text-[var(--ink)]/55 text-center">
-                {tr("No photo? No problem — you can add one anytime from your profile.", "¿Sin foto? Sin problema — puedes añadirla cuando quieras desde tu perfil.", "Pas de photo ? Pas de souci — tu peux en ajouter une plus tard depuis ton profil.")}
-              </p>
-            )}
-          </>
-        )}
         {step === 2 && (
           <div className="space-y-4">
             <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">

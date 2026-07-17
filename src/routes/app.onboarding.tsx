@@ -454,16 +454,20 @@ function Onboarding() {
             </button>
           ) : <span className="w-8" />}
           <span className="flex-1 text-center">{t("ob.step")} {step + 1} {t("ob.of")} {steps.length} · {steps[step]}</span>
-          {step > 0 ? (
-            <button
-              type="button"
-              onClick={() => save.mutate({ destination: "profile" })}
-              disabled={save.isPending}
-              className="text-[10px] tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] disabled:opacity-40"
-            >
-              {tr("Exit", "Salir", "Sortir")}
-            </button>
-          ) : <span className="w-8" />}
+          <button
+            type="button"
+            onClick={() => {
+              if (step === 0) {
+                navigate({ to: "/app/profile" });
+              } else {
+                save.mutate({ destination: "profile" });
+              }
+            }}
+            disabled={save.isPending}
+            className="text-[10px] tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] disabled:opacity-40"
+          >
+            {tr("Exit", "Salir", "Sortir")}
+          </button>
         </div>
         <div className="h-1 mt-2 rounded-full bg-[var(--ink)]/10 overflow-hidden">
           <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />

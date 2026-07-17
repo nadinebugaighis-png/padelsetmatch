@@ -767,7 +767,7 @@ const fr: Dict = {
   "ob.iAm": "Je suis",
   "ob.lookingFor": "Je cherche",
   "ob.privateNote": "Tes réponses ici restent privées — jamais affichées sur ton profil, jamais partagées. Tu peux refaire ce questionnaire quand tu veux.",
-  "ob.h1": "Qui veux-tu rencontrer ?",
+  "ob.h1": "Avec quelle tranche d'âge préfères-tu jouer ?",
   "ob.audIntro1": "Choisis séparément pour l'amitié et pour une relation — tape autant que tu veux. Appuie sur",
   "ob.audIntro2": "si tu es ouvert·e à tout le monde.",
   "ob.audPrivate": "Utilisé seulement pour le matching — jamais affiché sur ton profil.",

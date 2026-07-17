@@ -147,6 +147,13 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
+            <Link
+              to="/demo"
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-5 py-3 hover:bg-[var(--ink)]/5 transition"
+            >
+              Peek inside
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
+            </Link>
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 

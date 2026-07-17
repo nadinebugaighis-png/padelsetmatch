@@ -385,6 +385,15 @@ function AuthPage() {
           <Button type="submit" disabled={loading} className="w-full h-11 bg-[var(--ink)] text-[var(--paper)] hover:brightness-110 font-semibold uppercase tracking-[0.15em] shadow-[0_10px_30px_-12px_rgba(15,62,46,0.45)]">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
         </form>
 
+        {mode === "signup" && (
+          <p className="mt-3 text-center text-[13px] text-[var(--ink)]/60">
+            Not sure yet?{" "}
+            <Link to="/demo" className="text-[var(--plum)] font-semibold underline underline-offset-2 hover:brightness-110">
+              Take a quick tour →
+            </Link>
+          </p>
+        )}
+
         <div className="mt-4 flex items-center justify-between text-sm">
           <button onClick={() => { setMode(mode === "signup" ? "signin" : "signup"); setConfirmPassword(""); }} className="text-[var(--ink)]/60 hover:text-[var(--ink)]">
             {mode === "signup" ? t("auth.toggleToSignin") : t("auth.toggleToSignup")}

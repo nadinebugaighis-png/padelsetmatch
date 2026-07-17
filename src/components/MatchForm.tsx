@@ -368,7 +368,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </section>
 
       {/* Sticky submit */}
-      <div className="fixed left-0 right-0 bottom-16 px-5 z-30 pointer-events-none">
+      <div className="fixed left-0 right-0 px-5 z-30 pointer-events-none" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 5.5rem)" }}>
         <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto pointer-events-auto">
           <button
             onClick={handleSubmit}

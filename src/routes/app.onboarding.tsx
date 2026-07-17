@@ -845,10 +845,7 @@ function Onboarding() {
               <h2 className="text-display text-2xl mt-1">
                 {tr("Unlock compatibility with other padel players ✨", "Desbloquea la compatibilidad con otros jugadores de pádel ✨", "Débloque la compatibilité avec d'autres joueurs de padel ✨")}
               </h2>
-              <p className="text-sm text-[var(--ink)]/75 mt-1">
-                {tr("Powers your AI matches. Do it anytime.", "Impulsa tus matches IA. Hazlo cuando quieras.", "Booste tes matchs IA. Quand tu veux.")}
-              </p>
-              <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Nothing goes on your profile — used only for compatibility matching.", "Nada aparece en tu perfil — solo se usa para la compatibilidad.", "Rien n'apparaît sur ton profil — utilisé uniquement pour la compatibilité.")}</p>
+              <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Nothing shared, nothing on your profile — only the AI uses it to match you.", "Nada se comparte ni aparece en tu perfil — solo la IA lo usa para emparejarte.", "Rien n'est partagé ni affiché sur ton profil — seule l'IA l'utilise pour t'associer.")}</p>
 
             </div>
 

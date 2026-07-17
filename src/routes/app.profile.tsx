@@ -173,11 +173,11 @@ function ProfilePage() {
               <img
                 src={p.photo_url}
                 alt={p.first_name}
-                className="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
+                className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
               />
             ) : (
-              <div className="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
-                <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
+                <Camera className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
             )}
             <input

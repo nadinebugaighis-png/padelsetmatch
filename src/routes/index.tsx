@@ -116,7 +116,7 @@ function Landing() {
           <Link
             to="/auth"
             search={{ redirect: undefined, join: undefined, mode: "signin" }}
-            className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2.5 hover:brightness-110 transition"
+            className="inline-flex items-center whitespace-nowrap rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2.5 hover:brightness-110 transition"
           >
             {t("land.signin")}
           </Link>

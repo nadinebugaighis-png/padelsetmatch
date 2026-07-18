@@ -1362,6 +1362,7 @@ const STORAGE_KEY = "padel_lang_v1";
 function detectBrowserLang(): Lang {
   if (typeof navigator === "undefined") return "en";
   const langs = (navigator.languages ?? [navigator.language ?? "en"]).map((s) => s.toLowerCase());
+  if (langs.some((l) => l.startsWith("ar"))) return "ar";
   if (langs.some((l) => l.startsWith("es"))) return "es";
   if (langs.some((l) => l.startsWith("fr"))) return "fr";
   return "en";
@@ -1373,7 +1374,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-      if (stored === "en" || stored === "es" || stored === "fr") {
+      if (stored === "en" || stored === "es" || stored === "fr" || stored === "ar") {
         setLangState(stored);
       } else {
         setLangState(detectBrowserLang());
@@ -1386,6 +1387,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.lang = lang;
+    document.documentElement.dir = isRTL(lang) ? "rtl" : "ltr";
   }, [lang]);
 
   const setLang = (l: Lang) => {

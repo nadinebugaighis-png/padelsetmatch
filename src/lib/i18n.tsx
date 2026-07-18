@@ -727,7 +727,7 @@ const fr: Dict = {
   "prof.gender": "Genre",
   "prof.playsIn": "Joue à",
   "prof.languages": "Langues",
-  "prof.privacy": "Tes préférences (qui tu cherches, tranche d'âge, valeurs) restent privées — elles ne servent qu'à l'IA pour trouver tes matches, jamais affichées sur ton profil. Refais le questionnaire quand tu veux pour les mettre à jour.",
+  "prof.privacy": "Tes préférences (tranche d'âge, valeurs) restent privées — elles ne servent qu'à l'IA pour trouver tes meilleurs matches de padel, jamais affichées sur ton profil. Refais le questionnaire quand tu veux pour les mettre à jour.",
   "prof.retake": "Modifier le profil",
   "prof.delete": "Supprimer mon compte",
   "prof.deleteConfirm": "Supprimer ton compte pour de bon ? Cela efface ton profil, tes likes, matches et chats. Irréversible.",

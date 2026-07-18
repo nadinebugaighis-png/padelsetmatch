@@ -323,14 +323,12 @@ function Onboarding() {
     }
   };
 
-  const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
-  const hasFriendGoal = goals.includes("friends") || goals.includes("all");
-  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("relationship") || goals.includes("all");
-  const derivedIntents = Array.from(new Set<string>([
-    ...(hasPadelGoal ? ["padel"] : []),
-    ...(hasFriendGoal ? ["friend"] : []),
-    ...(hasPartnerGoal ? ["relationship"] : []),
-  ]));
+  // App is now a padel-player directory only. No friendship/relationship intents.
+  const hasPartnerGoal = false;
+  const hasFriendGoal = false;
+  const hasPadelGoal = true;
+  const derivedIntents = ["padel"];
+
 
   const save = useMutation({
     mutationFn: async (opts?: { destination?: "grid" | "profile" }) => {

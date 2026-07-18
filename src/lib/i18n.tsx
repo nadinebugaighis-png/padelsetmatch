@@ -1465,16 +1465,16 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
     : "border-[var(--ink)]/15 bg-[var(--paper)]/70 text-[var(--ink)] hover:bg-[var(--paper)] backdrop-blur";
 
   return (
-    <div ref={ref} className={`relative inline-block ${className}`}>
+    <div ref={ref} className={`relative inline-block ${className}`} style={{ zIndex: 60 }}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Language: ${current.name}`}
-        className={`inline-flex items-center gap-1.5 rounded-full border pl-2.5 pr-2 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${trigger}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border pl-3 pr-2 py-1 text-[12px] font-semibold tracking-wide transition ${trigger}`}
       >
-        <span>{current.code.toUpperCase()}</span>
+        <span>{current.name}</span>
         <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden className={`transition ${open ? "rotate-180" : ""}`}>
           <path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -1482,7 +1482,8 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 mt-1.5 z-50 min-w-[9rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
+          className="absolute right-0 mt-1.5 min-w-[8rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-xl overflow-hidden"
+          style={{ zIndex: 9999 }}
         >
           {options.map((o) => (
             <li key={o.code}>
@@ -1491,10 +1492,9 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
                 role="option"
                 aria-selected={lang === o.code}
                 onClick={() => { setLang(o.code); setOpen(false); }}
-                className={`w-full flex items-center gap-2 px-3 py-1.5 text-[13px] text-left transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)] font-semibold" : "text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
+                className={`w-full block px-3 py-2 text-[14px] text-left transition ${lang === o.code ? "bg-[var(--ink)]/8 text-[var(--ink)] font-semibold" : "text-[var(--ink)]/85 hover:bg-[var(--ink)]/5"}`}
               >
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]/50 w-6">{o.code.toUpperCase()}</span>
-                <span>{o.name}</span>
+                {o.name}
               </button>
             </li>
           ))}

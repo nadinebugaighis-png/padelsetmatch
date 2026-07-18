@@ -4,12 +4,12 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       { title: "Terms of Service · PadelMatch" },
-      { name: "description", content: "Terms of Service for PadelMatch — the padel-first matching app." },
+      { name: "description", content: "Terms of Service for PadelMatch — the padel player matching app." },
       { property: "og:title", content: "Terms of Service · PadelMatch" },
-      { property: "og:description", content: "Terms of Service for PadelMatch — the padel-first matching app." },
-      { property: "og:url", content: "https://padelmatchapp.lovable.app/terms" },
+      { property: "og:description", content: "Terms of Service for PadelMatch — the padel player matching app." },
+      { property: "og:url", content: "https://padelsetmatch.com/terms" },
     ],
-    links: [{ rel: "canonical", href: "https://padelmatchapp.lovable.app/terms" }],
+    links: [{ rel: "canonical", href: "https://padelsetmatch.com/terms" }],
   }),
   component: Terms,
 });
@@ -39,7 +39,7 @@ function Terms() {
       <p>You keep ownership of your photos, bio and messages. You grant PadelMatch a non-exclusive licence to display them inside the app for the purpose of running the service. You can delete your account at any time from the Profile screen.</p>
 
       <h2 className="text-display text-2xl mt-6">6. No guarantees</h2>
-      <p>We don't guarantee matches, dates, friendships, or that anyone you meet is who they say they are. The service is provided "as is" without warranties to the extent allowed by law.</p>
+      <p>We don't guarantee matches, games, or that anyone you meet is who they say they are. The service is provided "as is" without warranties to the extent allowed by law.</p>
 
       <h2 className="text-display text-2xl mt-6">7. Changes</h2>
       <p>We may update these terms. If we make material changes we'll notify you in the app.</p>

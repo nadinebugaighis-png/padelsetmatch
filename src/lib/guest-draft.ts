@@ -4,10 +4,10 @@
 
 export type GuestDraft = {
   priorities?: string[]; // ranked traits
-  looking_for?: "partner" | "friend" | "both";
   level?: "beginner" | "intermediate" | "advanced" | "competitive";
   answeredAt?: number;
 };
+
 
 const KEY = "padelmatch:guest-draft:v1";
 

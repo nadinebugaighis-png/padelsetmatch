@@ -1531,7 +1531,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
         ? "Réponds TOUJOURS en français."
         : "Always reply in English.";
 
-    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
+    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel player directory app that helps players find good on-court partners and easy padel friendships. Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
 
 ${langInstruction}
 

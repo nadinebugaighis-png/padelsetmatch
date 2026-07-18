@@ -528,32 +528,8 @@ function Onboarding() {
           <>
             <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
 
-            {hasPartnerGoal && (
-              <div data-field="meetPref" className={fieldCls("meetPref")}>
-                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {(["men", "women", "everyone"] as const).map((o) => (
-                    <button key={o} onClick={() => setMeetPref(o)} className={`chip-paper ${meetPref === o ? "chip-paper-selected" : ""}`}>
-                      {o === "men" ? tr("Men", "Hombres", "Hommes") : o === "women" ? tr("Women", "Mujeres", "Femmes") : tr("Everyone", "Todos", "Tout le monde")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {hasPartnerGoal && meetPref === "everyone" && (
-              <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)", "Profil avancé (optionnel)")}</div>
-                <label className="text-[11px] text-[var(--ink)]/70">{tr("Sexual orientation", "Orientación sexual", "Orientation sexuelle")}</label>
-                <Input
-                  value={sexualOrientation}
-                  onChange={(e) => setSexualOrientation(e.target.value)}
-                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…", "p. ex. hétéro, gay, bisexuel·le, queer, pansexuel·le…")}
-                  maxLength={60}
-                />
-                <p className="text-[10px] text-[var(--ink)]/55">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.", "Privé — utilisé seulement pour améliorer les matches. Pas affiché sur ton profil.")}</p>
-              </div>
-            )}
+
 
             <div data-field="age_range" className={fieldCls("age_range")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>

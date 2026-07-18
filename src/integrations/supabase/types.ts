@@ -1875,6 +1875,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      resolve_short_link: { Args: { _code: string }; Returns: string }
       respond_to_intro: {
         Args: { _accept: boolean; _match_id: string }
         Returns: undefined

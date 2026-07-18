@@ -1474,7 +1474,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
         aria-label={`Language: ${current.name}`}
         className={`inline-flex items-center gap-1.5 rounded-full border pl-3 pr-2 py-1 text-[12px] font-semibold tracking-wide transition ${trigger}`}
       >
-        <span>{current.name}</span>
+        <span>{current.short}</span>
         <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden className={`transition ${open ? "rotate-180" : ""}`}>
           <path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

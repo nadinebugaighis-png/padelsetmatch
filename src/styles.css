@@ -55,6 +55,26 @@
   --font-display: "Bebas Neue", "Impact", sans-serif;
   --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Barlow", system-ui, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Arabic: swap all display / serif / sans stacks to IBM Plex Sans Arabic so
+   headings, body, and accents render cohesively in RTL. */
+html[lang="ar"] {
+  --font-display: var(--font-arabic);
+  --font-serif: var(--font-arabic);
+  --font-sans: var(--font-arabic);
+}
+html[lang="ar"] body,
+html[dir="rtl"] body {
+  font-family: var(--font-arabic);
+  letter-spacing: 0;
+}
+html[dir="rtl"] {
+  /* Flip directional arrow glyphs used in CTAs so they still point "forward" */
+}
+html[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
 }
 
 

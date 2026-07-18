@@ -1131,7 +1131,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 mt-1.5 z-50 min-w-[9rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
+          className="absolute right-0 mt-1.5 z-50 min-w-[4.5rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
         >
           {options.map((o) => (
             <li key={o.code}>
@@ -1139,11 +1139,11 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
                 type="button"
                 role="option"
                 aria-selected={lang === o.code}
+                aria-label={o.name}
                 onClick={() => { setLang(o.code); setOpen(false); }}
-                className={`w-full flex items-center gap-2 px-3 py-1.5 text-[13px] text-left transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)] font-semibold" : "text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
+                className={`w-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-center transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)]" : "text-[var(--ink)]/70 hover:bg-[var(--ink)]/5"}`}
               >
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]/50 w-6">{o.code.toUpperCase()}</span>
-                <span>{o.name}</span>
+                {o.code.toUpperCase()}
               </button>
             </li>
           ))}

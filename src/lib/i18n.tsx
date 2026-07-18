@@ -1102,10 +1102,10 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
     };
   }, [open]);
 
-  const options: { code: Lang; flag: string; name: string }[] = [
-    { code: "en", flag: "🇬🇧", name: "English" },
-    { code: "es", flag: "🇪🇸", name: "Español" },
-    { code: "fr", flag: "🇫🇷", name: "Français" },
+  const options: { code: Lang; name: string }[] = [
+    { code: "en", name: "English" },
+    { code: "es", name: "Español" },
+    { code: "fr", name: "Français" },
   ];
   const current = options.find((o) => o.code === lang) ?? options[0];
 
@@ -1121,9 +1121,8 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Language: ${current.name}`}
-        className={`inline-flex items-center gap-1.5 rounded-full border pl-2 pr-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${trigger}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border pl-2.5 pr-2 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${trigger}`}
       >
-        <span aria-hidden className="text-[13px] leading-none">{current.flag}</span>
         <span>{current.code.toUpperCase()}</span>
         <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden className={`transition ${open ? "rotate-180" : ""}`}>
           <path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -1143,7 +1142,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
                 onClick={() => { setLang(o.code); setOpen(false); }}
                 className={`w-full flex items-center gap-2 px-3 py-1.5 text-[13px] text-left transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)] font-semibold" : "text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
               >
-                <span aria-hidden className="text-[15px] leading-none">{o.flag}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]/50 w-6">{o.code.toUpperCase()}</span>
                 <span>{o.name}</span>
               </button>
             </li>

@@ -181,7 +181,7 @@ function Onboarding() {
       if (draft) {
         if (draft.priorities?.length) setPriorities((cur) => cur.length ? cur : draft.priorities!);
         if (draft.level) setLevel(draft.level as PadelLevel);
-        if (draft.looking_for) setLookingFor(draft.looking_for as LookingFor);
+        // Legacy looking_for hydration removed — app is now padel-only.
         clearGuestDraft();
         toast.success("We pre-filled your answers from the preview.");
       }

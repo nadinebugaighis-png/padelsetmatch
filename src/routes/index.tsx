@@ -111,12 +111,12 @@ function Landing() {
       {/* Header */}
       <header className="relative z-30 px-5 sm:px-8 lg:px-16 pt-3 lg:pt-4 pb-2 lg:pb-3 flex items-center justify-between">
         <BrandMark />
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 leading-none">
           <LangSwitch />
           <Link
             to="/auth"
             search={{ redirect: undefined, join: undefined, mode: "signin" }}
-            className="inline-flex items-center whitespace-nowrap rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2.5 hover:brightness-110 transition"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] leading-none h-8 px-4 hover:brightness-110 transition"
           >
             {t("land.signin")}
           </Link>

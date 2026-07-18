@@ -18,13 +18,20 @@ export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
     <Link
       to={to}
       className={`inline-flex items-baseline ${className}`}
-      aria-label="Padel Match — home"
+      aria-label="Padel Set Match — home"
     >
       <span
         className={`text-serif leading-none text-[var(--ink)] ${word}`}
         style={{ fontWeight: 600, letterSpacing: "0" }}
       >
-        Padel<span className="italic text-[var(--plum)]">Match</span>
+        Padel
+        <span
+          className="italic text-[var(--ink)]/50 mx-[0.12em]"
+          style={{ fontWeight: 400 }}
+        >
+          Set
+        </span>
+        <span className="italic text-[var(--plum)]">Match</span>
       </span>
     </Link>
   );

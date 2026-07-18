@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 export type Lang = "en" | "es" | "fr";
 
@@ -1084,30 +1084,73 @@ export function useTr() {
 
 export function LangSwitch({ className = "", variant = "light" }: { className?: string; variant?: "dark" | "light" }) {
   const { lang, setLang } = useI18n();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
   const isDark = variant === "dark";
-  const wrapClass = isDark
-    ? "border-[var(--paper)]/25 bg-[var(--paper)]/5"
-    : "border-[var(--ink)]/15 bg-[var(--paper)]/70 backdrop-blur";
-  const activeClass = isDark
-    ? "bg-[var(--paper)] text-[var(--ink)]"
-    : "bg-[var(--ink)] text-[var(--paper)]";
-  const inactiveClass = isDark
-    ? "text-[var(--paper)]/60 hover:text-[var(--paper)]"
-    : "text-[var(--ink)]/55 hover:text-[var(--ink)]";
-  const btn = (l: Lang, label: string) => (
-    <button
-      key={l}
-      type="button"
-      onClick={() => setLang(l)}
-      className={`px-2.5 py-1 rounded-full font-semibold transition ${lang === l ? activeClass : inactiveClass}`}
-      aria-pressed={lang === l}
-    >{label}</button>
-  );
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const options: { code: Lang; flag: string; name: string }[] = [
+    { code: "en", flag: "🇬🇧", name: "English" },
+    { code: "es", flag: "🇪🇸", name: "Español" },
+    { code: "fr", flag: "🇫🇷", name: "Français" },
+  ];
+  const current = options.find((o) => o.code === lang) ?? options[0];
+
+  const trigger = isDark
+    ? "border-[var(--paper)]/25 bg-[var(--paper)]/5 text-[var(--paper)] hover:bg-[var(--paper)]/10"
+    : "border-[var(--ink)]/15 bg-[var(--paper)]/70 text-[var(--ink)] hover:bg-[var(--paper)] backdrop-blur";
+
   return (
-    <div className={`inline-flex items-center gap-0.5 rounded-full border p-0.5 text-[10px] uppercase tracking-[0.18em] ${wrapClass} ${className}`}>
-      {btn("en", "EN")}
-      {btn("es", "ES")}
-      {btn("fr", "FR")}
+    <div ref={ref} className={`relative inline-block ${className}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={`Language: ${current.name}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border pl-2 pr-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] transition ${trigger}`}
+      >
+        <span aria-hidden className="text-[13px] leading-none">{current.flag}</span>
+        <span>{current.code.toUpperCase()}</span>
+        <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden className={`transition ${open ? "rotate-180" : ""}`}>
+          <path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <ul
+          role="listbox"
+          className="absolute right-0 mt-1.5 z-50 min-w-[9rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
+        >
+          {options.map((o) => (
+            <li key={o.code}>
+              <button
+                type="button"
+                role="option"
+                aria-selected={lang === o.code}
+                onClick={() => { setLang(o.code); setOpen(false); }}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 text-[13px] text-left transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)] font-semibold" : "text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
+              >
+                <span aria-hidden className="text-[15px] leading-none">{o.flag}</span>
+                <span>{o.name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
+

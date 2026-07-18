@@ -1,14 +1,13 @@
 export const PRIORITY_TRAITS = [
-  // Social & relationships
-  "Friendship",
+  // Social
   "Family",
-  "Romance & relationships",
   "Community",
   "Deep conversations",
   "Humor & laughter",
   // Lifestyle & wellbeing
   "Health & wellbeing",
   "Fitness",
+
   "Mindfulness & meditation",
   "Comfort & home life",
   "Food & cooking",

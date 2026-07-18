@@ -24,7 +24,16 @@ export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
         className={`text-serif leading-none text-[var(--ink)] ${word}`}
         style={{ fontWeight: 600, letterSpacing: "0" }}
       >
-        Padel<span className="italic text-[var(--plum)]">Match</span>
+        Padel<span
+          aria-hidden="true"
+          className="mx-[0.04em] align-baseline italic"
+          style={{
+            color: "color-mix(in oklab, var(--ink) 30%, transparent)",
+            fontSize: "0.5em",
+            letterSpacing: "0.01em",
+            fontWeight: 500,
+          }}
+        >Set</span><span className="italic text-[var(--plum)]">Match</span>
       </span>
     </Link>
   );

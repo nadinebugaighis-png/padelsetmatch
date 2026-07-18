@@ -189,12 +189,16 @@ function Discover() {
 
   useEffect(() => {
     if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {
+      // Within the force-on window, keep the UI in World mode even if the
+      // server-stored preference is false.
+      if (Date.now() < FORCE_WORLD_ON_UNTIL && feedQ.data.me.world_mode === false) return;
       setWorld(feedQ.data.me.world_mode);
       if (typeof window !== "undefined") {
         window.localStorage.setItem("world-mode", feedQ.data.me.world_mode ? "true" : "false");
       }
     }
   }, [feedQ.data?.me?.world_mode]);
+
 
   const worldModeFn = useServerFn(setWorldMode);
   const setWorldM = useMutation({

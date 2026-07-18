@@ -41,8 +41,9 @@ export const PRIORITY_TRAITS = [
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 
 // Curated from the Big Five personality model (Openness, Conscientiousness,
-// Extraversion, Agreeableness, Emotional Stability) plus humor — the traits
-// most consistently linked to relationship and friendship quality in research.
+// Extraversion, Agreeableness, Emotional Stability) plus humor — traits
+// most consistently linked to good on-court chemistry and easy teamwork.
+
 export const PERSONAL_STRENGTHS = [
   // Agreeableness (warmth / trust)
   "Honest", "Kind", "Empathetic", "Loyal",

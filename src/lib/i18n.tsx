@@ -1452,10 +1452,11 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
     };
   }, [open]);
 
-  const options: { code: Lang; name: string }[] = [
-    { code: "en", name: "English" },
-    { code: "es", name: "Español" },
-    { code: "fr", name: "Français" },
+  const options: { code: Lang; name: string; short: string }[] = [
+    { code: "en", name: "English", short: "EN" },
+    { code: "es", name: "Español", short: "ES" },
+    { code: "fr", name: "Français", short: "FR" },
+    { code: "ar", name: "العربية", short: "AR" },
   ];
   const current = options.find((o) => o.code === lang) ?? options[0];
 

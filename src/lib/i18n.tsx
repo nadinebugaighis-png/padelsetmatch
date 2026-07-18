@@ -1474,7 +1474,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
         aria-label={`Language: ${current.name}`}
         className={`inline-flex items-center gap-1.5 rounded-full border pl-3 pr-2 py-1 text-[12px] font-semibold tracking-wide transition ${trigger}`}
       >
-        <span>{current.name}</span>
+        <span>{current.short}</span>
         <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden className={`transition ${open ? "rotate-180" : ""}`}>
           <path d="M2 4l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -1482,7 +1482,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 mt-1.5 min-w-[8rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-xl overflow-hidden"
+          className="absolute right-0 mt-1.5 min-w-[4.5rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-xl overflow-hidden"
           style={{ zIndex: 9999 }}
         >
           {options.map((o) => (
@@ -1492,9 +1492,9 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
                 role="option"
                 aria-selected={lang === o.code}
                 onClick={() => { setLang(o.code); setOpen(false); }}
-                className={`w-full block px-3 py-2 text-[14px] text-left transition ${lang === o.code ? "bg-[var(--ink)]/8 text-[var(--ink)] font-semibold" : "text-[var(--ink)]/85 hover:bg-[var(--ink)]/5"}`}
+                className={`w-full block px-3 py-2 text-[12px] font-semibold tracking-[0.18em] text-center transition ${lang === o.code ? "bg-[var(--ink)]/8 text-[var(--ink)]" : "text-[var(--ink)]/70 hover:bg-[var(--ink)]/5"}`}
               >
-                {o.name}
+                {o.short}
               </button>
             </li>
           ))}

@@ -965,10 +965,9 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "Weekend afternoons": "Après-midis le week-end",
     "Weekend evenings": "Soirs le week-end",
     // Priority traits (PRIORITY_TRAITS keys)
-    "Friendship": "Amitié",
     "Family": "Famille",
-    "Romance & relationships": "Romance et relations",
     "Community": "Communauté",
+
     "Deep conversations": "Conversations profondes",
     "Humor & laughter": "Humour et rires",
     "Health & wellbeing": "Santé et bien-être",

@@ -7,9 +7,9 @@ export const Route = createFileRoute("/privacy")({
       { name: "description", content: "How PadelMatch collects, stores and protects your data." },
       { property: "og:title", content: "Privacy Policy · PadelMatch" },
       { property: "og:description", content: "How PadelMatch collects, stores and protects your data." },
-      { property: "og:url", content: "https://padelmatchapp.lovable.app/privacy" },
+      { property: "og:url", content: "https://padelsetmatch.com/privacy" },
     ],
-    links: [{ rel: "canonical", href: "https://padelmatchapp.lovable.app/privacy" }],
+    links: [{ rel: "canonical", href: "https://padelsetmatch.com/privacy" }],
   }),
   component: Privacy,
 });
@@ -27,7 +27,7 @@ function Privacy() {
       <ul className="list-disc pl-6 space-y-1">
         <li>Account info: email, hashed password (or Google sign-in identifier).</li>
         <li>Profile info you enter: first name, age, gender, locations, languages, padel level, photo, bio, ranked traits, availability windows, court side preference.</li>
-        <li>Activity: who you liked, who you matched with, messages you send, reports and blocks, feedback you submit.</li>
+        <li>Activity: matches you join or host, messages you send, reports and blocks, feedback you submit.</li>
       </ul>
 
       <h2 className="text-display text-2xl mt-6">What we do NOT collect</h2>
@@ -38,7 +38,7 @@ function Privacy() {
       </ul>
 
       <h2 className="text-display text-2xl mt-6">Who can see what</h2>
-      <p>Your <b>first name, photo, age, gender, level, locations, languages, bio, ranked traits and availability</b> are visible to other signed-in players whose profile is compatible with yours. Your <b>"looking for" choice, audience preferences, age range, blocks, reports and feedback</b> are private and never shown to other users.</p>
+      <p>Your <b>first name, photo, age, gender, level, locations, languages, bio, ranked traits and availability</b> are visible to other signed-in padel players. Your <b>age range preference, blocks, reports and feedback</b> are private and never shown to other users.</p>
 
       <h2 className="text-display text-2xl mt-6">Where data is stored</h2>
       <p>Data is stored on Lovable Cloud (built on Supabase) inside the EU. Access is protected by row-level security: only you can read or modify your private data; other users only see the public fields above.</p>

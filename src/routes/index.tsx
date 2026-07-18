@@ -244,10 +244,7 @@ function Landing() {
         <div className="h-1.5 bg-[var(--plum)]" aria-hidden />
         <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--paper)]/30">
-              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-            </span>
-            <span className="text-sm tracking-wide">padelmatchapp.lovable.app</span>
+            <span className="text-sm tracking-wide">padelsetmatch.com</span>
           </div>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70">
             <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>

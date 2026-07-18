@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import wordmark from "@/assets/padel-set-match-wordmark.png.asset.json";
 
 type Props = {
   size?: "sm" | "md" | "lg";
@@ -7,34 +8,26 @@ type Props = {
 };
 
 export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
-  const word =
+  // aspect ratio ~ 1179 / 188 ≈ 6.27
+  const height =
     size === "sm"
-      ? "text-[20px] md:text-[24px] lg:text-[27px]"
+      ? "h-5 md:h-6"
       : size === "lg"
-      ? "text-[30px] md:text-[36px] lg:text-[42px]"
-      : "text-[23px] md:text-[28px] lg:text-[32px]";
+      ? "h-9 md:h-11 lg:h-12"
+      : "h-7 md:h-8 lg:h-9";
 
   return (
     <Link
       to={to}
-      className={`inline-flex items-baseline ${className}`}
-      aria-label="Padel Match — home"
+      className={`inline-flex items-center ${className}`}
+      aria-label="Padel Set Match — home"
     >
-      <span
-        className={`text-serif leading-none text-[var(--ink)] ${word}`}
-        style={{ fontWeight: 600, letterSpacing: "0" }}
-      >
-        Padel<span
-          aria-hidden="true"
-          className="mx-[0.04em] align-baseline italic"
-          style={{
-            color: "color-mix(in oklab, var(--ink) 30%, transparent)",
-            fontSize: "0.5em",
-            letterSpacing: "0.01em",
-            fontWeight: 500,
-          }}
-        >Set</span><span className="italic text-[var(--plum)]">Match</span>
-      </span>
+      <img
+        src={wordmark.url}
+        alt="Padel Set Match"
+        className={`${height} w-auto select-none`}
+        draggable={false}
+      />
     </Link>
   );
 }

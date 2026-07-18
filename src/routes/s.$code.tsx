@@ -16,16 +16,15 @@ export const Route = createFileRoute("/s/$code")({
             },
           },
         );
-        const { data } = await supabase
-          .from("short_links")
-          .select("target_url")
-          .eq("code", params.code)
-          .maybeSingle();
+        const { data } = await supabase.rpc("resolve_short_link" as never, {
+          _code: params.code,
+        } as never);
+        const targetUrl = typeof data === "string" ? data : null;
 
-        if (!data?.target_url) {
+        if (!targetUrl) {
           return new Response("Short link not found", { status: 404 });
         }
-        return Response.redirect(data.target_url, 301);
+        return Response.redirect(targetUrl, 301);
       },
     },
   },

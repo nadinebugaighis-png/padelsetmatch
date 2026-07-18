@@ -1496,7 +1496,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 - Padel level: ${p.level}
 - Nationality: ${p.nationality}
 - Languages: ${(p.languages ?? []).join(", ") || "n/a"}
-- Looking for: ${(p.intents ?? []).join(", ") || p.looking_for || "n/a"}
+- Looking for: padel partners
 - Values (top): ${(p.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
 - Personal traits: ${(p.personal_traits ?? []).join(", ") || "n/a"}
 - Padel style: ${(p.padel_style ?? []).join(", ") || "n/a"}

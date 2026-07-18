@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Check, Send, Flag, Shield, UserX, Pencil, Trash2, X, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { IntentBadges } from "@/components/IntentBadge";
+
 
 export const Route = createFileRoute("/app/matches/$matchId")({
   component: ChatRoom,

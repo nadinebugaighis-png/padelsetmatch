@@ -151,8 +151,8 @@ function ChatRoom() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <div className="text-display text-xl leading-none">{other.first_name}</div>
-            <IntentBadges intents={q.data.shared_intents} compact />
           </div>
+
           <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60">{other.zone} · {label(other.level)}</div>
         </div>
 

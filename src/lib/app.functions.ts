@@ -1496,7 +1496,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 - Padel level: ${p.level}
 - Nationality: ${p.nationality}
 - Languages: ${(p.languages ?? []).join(", ") || "n/a"}
-- Looking for: ${(p.intents ?? []).join(", ") || p.looking_for || "n/a"}
+- Looking for: padel partners
 - Values (top): ${(p.priorities ?? []).slice(0, 5).join(", ") || "n/a"}
 - Personal traits: ${(p.personal_traits ?? []).join(", ") || "n/a"}
 - Padel style: ${(p.padel_style ?? []).join(", ") || "n/a"}
@@ -1517,25 +1517,13 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-2.5-flash");
 
-    const myIntents = new Set(myIntentsArr);
-    const theirIntents = new Set(theirIntentsArr);
-    const sharedIntents = myIntentsArr.filter((i) => theirIntents.has(i));
-    const asymmetric = [...myIntents, ...theirIntents].filter((i) => !sharedIntents.includes(i));
-    const focusFor = (intent: string) => {
-      if (intent === "relationship") return `RELATIONSHIP FOCUS — both are open to dating. Weight (but do not limit to): shared values, emotional style, lifestyle fit and aspirations, attraction-related preferences, communication tone. Padel skill matters less here.`;
-      if (intent === "padel") return `TEAMMATE FOCUS — both want a padel partner. Weight (but do not limit to): skill level, competitiveness, schedule/availability, reliability, communication, on-court role balance (e.g. right/left side, aggressive/defensive).`;
-      if (intent === "friend") return `FRIENDSHIP FOCUS — both are open to friendship. Weight (but do not limit to): shared interests, ease of interaction, lifestyle overlap where relevant, openness, consistency, mutual enjoyment. Remember: people with very different life situations (income, marital status, kids, career stage) can be excellent friends — personality, shared interests, background and shared experiences matter far more than surface life-stage differences.`;
-      return "";
-    };
-    const intentGuidance = sharedIntents.length > 0
-      ? sharedIntents.map(focusFor).filter(Boolean).join("\n")
-      : `GENERAL FOCUS — intents don't clearly overlap. Focus on padel fit and easy friendship rather than romance.`;
+    // App is a padel player directory only — always use teammate/friendship focus.
+    void myIntentsArr; void theirIntentsArr;
+    const sharedIntents: string[] = ["padel"];
+    const intentGuidance = `TEAMMATE FOCUS — both want a padel partner. Weight (but do not limit to): skill level, competitiveness, schedule/availability, reliability, communication, on-court role balance (e.g. right/left side, aggressive/defensive). Also consider easy off-court rapport: shared interests, humor, values, communication style — the kind of things that make a padel friendship enjoyable over time. People with very different life situations (income, marital status, kids, career stage) can be excellent padel partners and friends — personality, shared interests, and shared experiences matter far more than surface life-stage differences.`;
+    const asymNote = "";
+    const extraSubs: string[] = [];
 
-    const asymNote = asymmetric.length > 0 && sharedIntents.length > 0
-      ? `NOTE ON ASYMMETRIC INTENTS: one of you is also open to "${asymmetric.join(", ")}" while the other isn't. Score for the SHARED intent(s) only. You may add a single gentle line in "watch_out" that expectations differ on that dimension — never moralize, never say anyone is wrong.`
-      : "";
-
-    const extraSubs = sharedIntents.filter((k) => k === "friend" || k === "relationship");
 
     const langInstruction = lang === "es"
       ? "Responde SIEMPRE en español."
@@ -1543,7 +1531,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
         ? "Réponds TOUJOURS en français."
         : "Always reply in English.";
 
-    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel-focused connection app (padel partners, friendship, sometimes more). Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
+    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel player directory app that helps players find good on-court partners and easy padel friendships. Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
 
 ${langInstruction}
 

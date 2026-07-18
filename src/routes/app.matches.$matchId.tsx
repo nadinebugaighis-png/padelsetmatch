@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Check, Send, Flag, Shield, UserX, Pencil, Trash2, X, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { IntentBadges } from "@/components/IntentBadge";
+
 
 export const Route = createFileRoute("/app/matches/$matchId")({
   component: ChatRoom,
@@ -151,8 +151,8 @@ function ChatRoom() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <div className="text-display text-xl leading-none">{other.first_name}</div>
-            <IntentBadges intents={q.data.shared_intents} compact />
           </div>
+
           <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60">{other.zone} · {label(other.level)}</div>
         </div>
 

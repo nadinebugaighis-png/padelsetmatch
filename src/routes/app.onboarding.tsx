@@ -181,7 +181,7 @@ function Onboarding() {
       if (draft) {
         if (draft.priorities?.length) setPriorities((cur) => cur.length ? cur : draft.priorities!);
         if (draft.level) setLevel(draft.level as PadelLevel);
-        if (draft.looking_for) setLookingFor(draft.looking_for as LookingFor);
+        // Legacy looking_for hydration removed — app is now padel-only.
         clearGuestDraft();
         toast.success("We pre-filled your answers from the preview.");
       }
@@ -323,22 +323,20 @@ function Onboarding() {
     }
   };
 
-  const hasPartnerGoal = goals.includes("relationship") || goals.includes("all");
-  const hasFriendGoal = goals.includes("friends") || goals.includes("all");
-  const hasPadelGoal = goals.includes("padel") || goals.includes("friends") || goals.includes("relationship") || goals.includes("all");
-  const derivedIntents = Array.from(new Set<string>([
-    ...(hasPadelGoal ? ["padel"] : []),
-    ...(hasFriendGoal ? ["friend"] : []),
-    ...(hasPartnerGoal ? ["relationship"] : []),
-  ]));
+  // App is now a padel-player directory only. No friendship/relationship intents.
+  const hasPartnerGoal = false;
+  const hasFriendGoal = false;
+  const hasPadelGoal = true;
+  const derivedIntents = ["padel"];
+
 
   const save = useMutation({
     mutationFn: async (opts?: { destination?: "grid" | "profile" }) => {
-      const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
-      const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
-      const friendAud = hasFriendGoal ? ["everyone"] : [];
-      const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
-      const legacy = derived.length ? derived : interested_in;
+      const derivedLookingFor: LookingFor = "friend"; // legacy neutral value, unused in UI
+      const partnerAud: string[] = [];
+      const friendAud: string[] = [];
+      const legacy = interested_in;
+
       const first = validBlocks[0];
       if (age === null || age_min === null || age_max === null || !gender || !level) {
         throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
@@ -530,32 +528,8 @@ function Onboarding() {
           <>
             <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
 
-            {hasPartnerGoal && (
-              <div data-field="meetPref" className={fieldCls("meetPref")}>
-                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Who would you like to meet?", "¿A quién te gustaría conocer?", "Qui veux-tu rencontrer ?")}</label>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {(["men", "women", "everyone"] as const).map((o) => (
-                    <button key={o} onClick={() => setMeetPref(o)} className={`chip-paper ${meetPref === o ? "chip-paper-selected" : ""}`}>
-                      {o === "men" ? tr("Men", "Hombres", "Hommes") : o === "women" ? tr("Women", "Mujeres", "Femmes") : tr("Everyone", "Todos", "Tout le monde")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {hasPartnerGoal && meetPref === "everyone" && (
-              <div className="rounded-lg border border-[var(--cream)]/10 p-3 space-y-2">
-                <div className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Advanced profile (optional)", "Perfil avanzado (opcional)", "Profil avancé (optionnel)")}</div>
-                <label className="text-[11px] text-[var(--ink)]/70">{tr("Sexual orientation", "Orientación sexual", "Orientation sexuelle")}</label>
-                <Input
-                  value={sexualOrientation}
-                  onChange={(e) => setSexualOrientation(e.target.value)}
-                  placeholder={tr("e.g. straight, gay, bisexual, queer, pansexual…", "p. ej. hetero, gay, bisexual, queer, pansexual…", "p. ex. hétéro, gay, bisexuel·le, queer, pansexuel·le…")}
-                  maxLength={60}
-                />
-                <p className="text-[10px] text-[var(--ink)]/55">{tr("Private — used only to improve matches. Not shown on your profile.", "Privado — solo se usa para mejorar tus matches. No aparece en tu perfil.", "Privé — utilisé seulement pour améliorer les matches. Pas affiché sur ton profil.")}</p>
-              </div>
-            )}
+
 
             <div data-field="age_range" className={fieldCls("age_range")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>

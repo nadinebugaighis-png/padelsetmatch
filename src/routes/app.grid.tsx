@@ -416,10 +416,9 @@ function Discover() {
           const hasVenues = (myVenuesQ.data?.length ?? 0) > 0;
           const hasAvailability = (me.availability?.length ?? 0) > 0;
           const hasQA = (qaQ.data?.length ?? 0) >= 3;
-          const hasIntent = ((me.intents ?? []) as string[]).length > 0 || !!me.looking_for;
           const steps = [
             { done: hasPhoto, key: "photo", label: tr("Add a clear photo", "Añade una foto clara", "Ajoute une photo nette") },
-            { done: hasIntent, key: "intent", label: tr("Pick what you're here for", "Elige qué buscas aquí", "Choisis ce que tu cherches") },
+
             { done: hasAvailability, key: "availability", label: tr("Set your availability", "Indica tu disponibilidad", "Indique ta disponibilité") },
             { done: hasVenues, key: "venues", label: tr("Add a club or compound", "Añade un club o urbanización", "Ajoute un club ou une résidence") },
             { done: hasQA, key: "qa", label: tr("Answer 3+ questions", "Responde 3+ preguntas", "Réponds à 3+ questions") },

@@ -332,11 +332,11 @@ function Onboarding() {
 
   const save = useMutation({
     mutationFn: async (opts?: { destination?: "grid" | "profile" }) => {
-      const derivedLookingFor: LookingFor = hasPartnerGoal && hasFriendGoal ? "both" : hasPartnerGoal ? "partner" : "friend";
-      const partnerAud = hasPartnerGoal && meetPref ? [meetPref] : [];
-      const friendAud = hasFriendGoal ? ["everyone"] : [];
-      const derived = Array.from(new Set([...audToGenders(friendAud), ...audToGenders(partnerAud)]));
-      const legacy = derived.length ? derived : interested_in;
+      const derivedLookingFor: LookingFor = "friend"; // legacy neutral value, unused in UI
+      const partnerAud: string[] = [];
+      const friendAud: string[] = [];
+      const legacy = interested_in;
+
       const first = validBlocks[0];
       if (age === null || age_min === null || age_max === null || !gender || !level) {
         throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));

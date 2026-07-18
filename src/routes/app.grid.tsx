@@ -72,14 +72,18 @@ function Discover() {
   const reportPhotoFn = useServerFn(reportPhoto);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   const [world, setWorld] = useState<boolean>(true);
-  // Hydrate world preference from localStorage AFTER mount to avoid SSR mismatch,
-  // then keep it in sync with the server value once the feed loads. Default is
-  // World mode ON so new users see players immediately instead of an empty grid.
+  // Force World mode ON by default until 2027-01-18 (3 months from launch push).
+  // During this window we ignore any cached "false" preference so new & returning
+  // users see players from everywhere immediately. They can still toggle it off
+  // per session; the override just prevents a stale OFF state from sticking.
+  const FORCE_WORLD_ON_UNTIL = new Date("2027-01-18T00:00:00Z").getTime();
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (Date.now() < FORCE_WORLD_ON_UNTIL) return;
     const cached = window.localStorage.getItem("world-mode");
     if (cached === "false") setWorld(false);
   }, []);
+
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);

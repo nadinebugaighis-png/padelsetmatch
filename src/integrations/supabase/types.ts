@@ -1807,6 +1807,10 @@ export type Database = {
         }
         Returns: Json
       }
+      guest_leave_by_phone: {
+        Args: { _event_id: string; _phone: string }
+        Returns: boolean
+      }
       guest_leave_match: {
         Args: { _event_id: string; _token: string }
         Returns: undefined

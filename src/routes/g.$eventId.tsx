@@ -6,7 +6,7 @@ import { Calendar, MapPin, Users, Send, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
 
 export const Route = createFileRoute("/g/$eventId")({
   head: () => ({ meta: [{ title: "Join match as guest — PadelMatch" }] }),

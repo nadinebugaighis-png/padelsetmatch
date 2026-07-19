@@ -6,7 +6,7 @@ import { Calendar, MapPin, Users, Send, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
 
 export const Route = createFileRoute("/g/$eventId")({
   head: () => ({ meta: [{ title: "Join match as guest — PadelMatch" }] }),
@@ -42,6 +42,11 @@ function GuestMatchRoom() {
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
+  const leaveByPhone = useServerFn(guestLeaveByPhone);
+
+  const [cancelMode, setCancelMode] = useState(false);
+  const [cancelPhone, setCancelPhone] = useState("");
+  const [cancelBusy, setCancelBusy] = useState(false);
 
   const [token, setToken] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -176,6 +181,57 @@ function GuestMatchRoom() {
               </Link>
             </div>
           </form>
+
+          {/* Cancel-my-spot: hidden by default, one subtle link → one inline input */}
+          <div className="mt-8 pt-6 border-t border-[var(--cream)]/10 text-center">
+            {!cancelMode ? (
+              <button
+                type="button"
+                onClick={() => setCancelMode(true)}
+                className="text-[11px] uppercase tracking-widest text-[var(--cream)]/45 hover:text-[var(--cream)]/80"
+              >
+                {tr("Already joined? Cancel my spot", "¿Ya te uniste? Cancelar mi plaza", "Déjà inscrit·e ? Annuler ma place")}
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 bg-black/20 border border-[var(--cream)]/15 rounded-full pl-4 pr-1 py-1">
+                <input
+                  autoFocus
+                  value={cancelPhone}
+                  onChange={(e) => setCancelPhone(e.target.value)}
+                  inputMode="tel"
+                  maxLength={32}
+                  placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
+                  onKeyDown={(e) => { if (e.key === "Escape") { setCancelMode(false); setCancelPhone(""); } }}
+                  className="flex-1 min-w-0 bg-transparent text-sm text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none py-2"
+                />
+                <button
+                  type="button"
+                  disabled={cancelBusy || cancelPhone.trim().length < 4}
+                  onClick={async () => {
+                    setCancelBusy(true);
+                    try {
+                      const res = await leaveByPhone({ data: { eventId, phone: cancelPhone.trim() } });
+                      if (res.ok) {
+                        clearToken(eventId);
+                        toast.success(tr("Your spot has been cancelled. Thanks for letting the group know.", "Tu plaza ha sido cancelada. Gracias por avisar al grupo.", "Ta place a été annulée. Merci d'avoir prévenu le groupe."));
+                        setCancelMode(false);
+                        setCancelPhone("");
+                      } else {
+                        toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
+                      }
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
+                    } finally {
+                      setCancelBusy(false);
+                    }
+                  }}
+                  className="shrink-0 h-9 px-4 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
+                >
+                  {cancelBusy ? "…" : tr("Cancel", "Cancelar", "Annuler")}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </main>
     );

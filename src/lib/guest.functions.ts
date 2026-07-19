@@ -49,6 +49,20 @@ export const guestLeaveMatch = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const guestLeaveByPhone = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ eventId: uuid, phone: z.string().trim().min(4).max(32) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const sb = guestClient();
+    const { data: res, error } = await sb.rpc("guest_leave_by_phone" as never, {
+      _event_id: data.eventId,
+      _phone: data.phone,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: Boolean(res) };
+  });
+
 export const guestSendMessage = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ eventId: uuid, token: uuid, body: z.string().trim().min(1).max(2000) }).parse(d),

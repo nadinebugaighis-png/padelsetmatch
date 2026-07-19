@@ -236,9 +236,16 @@ function EventDetail() {
   };
 
   const onLeave = async () => {
-    await leave({ data: { id: eventId } });
-    qc.invalidateQueries({ queryKey: ["event", eventId] });
-    qc.invalidateQueries({ queryKey: ["open-events"] });
+    if (!confirm(tr("Leave this match? Your spot will open up for someone else.", "¿Salir de este partido? Tu plaza quedará libre para otro jugador.", "Quitter ce match ? Ta place sera libérée pour un autre joueur."))) return;
+    try {
+      await leave({ data: { id: eventId } });
+      toast.success(tr("You left the match. Thanks for letting the group know.", "Has salido del partido. Gracias por avisar al grupo.", "Tu as quitté le match. Merci d'avoir prévenu le groupe."));
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+      qc.invalidateQueries({ queryKey: ["open-events"] });
+      qc.invalidateQueries({ queryKey: ["my-events"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not leave — please try again.", "No se pudo salir — inténtalo de nuevo.", "Impossible de quitter — réessaie."));
+    }
   };
 
   const onCancel = async () => {

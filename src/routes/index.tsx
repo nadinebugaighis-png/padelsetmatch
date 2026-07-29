@@ -3,7 +3,7 @@ import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { Smartphone, ArrowRight } from "lucide-react";
-import { useT, LangSwitch } from "@/lib/i18n";
+import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
@@ -65,6 +65,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const t = useT();
+  const tr = useTr();
   const fetchCount = useServerFn(getPlayerCount);
   const countQ = useQuery({
     queryKey: ["player-count"],
@@ -147,8 +148,28 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
+            {!isStandalone && (
+              <button
+                onClick={install.openModal}
+                className="group inline-flex items-center gap-2.5 rounded-full border-2 border-[var(--ink)]/25 bg-[var(--paper)] text-[var(--ink)] font-semibold uppercase tracking-[0.16em] text-[13px] px-5 py-3 hover:border-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
+              >
+                <Smartphone className="w-4 h-4" />
+                {tr("Get the app", "Instalar la app", "Installer l'app")}
+              </button>
+            )}
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
+
+          {!isStandalone && (
+            <p className="mt-2.5 text-[12px] text-[var(--ink)]/55 max-w-md leading-snug">
+              {tr(
+                "No App Store needed — installs straight to your home screen in 10 seconds.",
+                "Sin App Store — se instala en tu pantalla de inicio en 10 segundos.",
+                "Pas besoin de l'App Store — installation sur ton écran d'accueil en 10 secondes.",
+              )}
+            </p>
+          )}
+
 
           <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">
             &nbsp;
@@ -171,27 +192,12 @@ function Landing() {
         </div>
 
         {/* Stats row */}
-        <div className={`mt-5 lg:mt-4 max-w-xl grid ${isStandalone ? "grid-cols-1" : "grid-cols-[auto_1px_1fr]"} items-center gap-5 sm:gap-6`}>
+        <div className="mt-5 lg:mt-4 max-w-xl">
           <div>
             <div className="text-serif text-3xl lg:text-4xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
             <div className="mt-1 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
           </div>
-          {!isStandalone && (
-            <>
-              <div className="h-12 w-px bg-[var(--ink)]/15" />
-              <button
-                onClick={install.openModal}
-                className="flex items-center gap-3 text-left group"
-              >
-                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)] transition">
-                  <Smartphone className="w-4 h-4" />
-                </span>
-                <span className="text-sm font-medium text-[var(--ink)] leading-tight">
-                  Add to your<br />home screen
-                </span>
-              </button>
-            </>
-          )}
+
         </div>
       </section>
 

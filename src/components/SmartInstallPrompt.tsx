@@ -9,8 +9,8 @@ const KEY_SNOOZE_UNTIL = "pm_install_prompt_snooze_until";
 const KEY_INSTALLED_SEEN = "pm_install_prompt_installed_seen";
 const MAX_DISMISSALS = 3;
 const SNOOZE_MS = 1000 * 60 * 60 * 48; // 48h
-const MIN_SESSION_MS = 25_000;
-const MIN_DISTINCT_ROUTES = 2;
+const MIN_SESSION_MS = 12_000;
+const MIN_DISTINCT_ROUTES = 1;
 
 function isMobile() {
   if (typeof navigator === "undefined") return false;
@@ -114,7 +114,7 @@ export function SmartInstallPrompt() {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--plum)]/25 text-[var(--paper)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em]">
-                    {tr("30-second setup", "Instala en 30 seg", "30 secondes")}
+                    {tr("No App Store needed", "Sin App Store", "Sans App Store")}
                   </div>
                   <h3 className="text-serif mt-2.5 text-2xl leading-tight text-[var(--paper)]">
                     {tr(

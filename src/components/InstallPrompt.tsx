@@ -101,7 +101,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
         <div className="flex items-start justify-between gap-3 mb-6">
           <div>
             <h3 className="text-display text-3xl text-[var(--cream)] leading-none">{tr("Put it on your phone", "Instálala en tu móvil", "Installe-la sur ton téléphone")}</h3>
-            <p className="mt-2 text-sm text-[var(--cream)]/70">{tr("The fastest home-screen setup for PadelMatch.", "La forma más rápida de añadir PadelMatch a tu pantalla de inicio.", "La façon la plus rapide d'ajouter PadelMatch à ton écran d'accueil.")}</p>
+            <p className="mt-2 text-sm text-[var(--cream)]/70">{tr("Not in the App Store — install it straight from here in 10 seconds.", "No está en la App Store — instálala directamente desde aquí en 10 segundos.", "Pas sur l'App Store — installe-la directement d'ici en 10 secondes.")}</p>
           </div>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-[var(--cream)]/10 text-[var(--cream)]/60" aria-label="Close">
             <X className="w-5 h-5" />

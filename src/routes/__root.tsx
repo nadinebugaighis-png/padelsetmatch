@@ -148,7 +148,10 @@ function RootComponent() {
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
+    // Native shell (iOS/Android via Capacitor) — no-op on the web
+    void import("@/lib/native").then((m) => m.initNativeShell()).catch(() => {});
     // Register the service worker for push notifications (production only)
+
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const isPreview = /^(?:id-preview|preview)--/.test(location.hostname)
         || location.hostname.endsWith(".lovableproject.com")

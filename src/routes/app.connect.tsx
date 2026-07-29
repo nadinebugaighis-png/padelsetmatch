@@ -18,6 +18,7 @@ import {
 } from "@/lib/connect.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { useTr } from "@/lib/i18n";
+import { ReportContentButton } from "@/components/ReportContentButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -256,6 +257,11 @@ function ConnectPage() {
                                   <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
                                   <span>·</span>
                                   <span>{timeAgo(c.created_at, tr)}</span>
+                                  {!mine && (
+                                    <span className="ml-auto">
+                                      <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
+                                    </span>
+                                  )}
                                   {mine && !isEditing && (
                                     <div className="ml-auto flex items-center gap-0.5">
                                       <button
@@ -327,6 +333,9 @@ function ConnectPage() {
                           ? tr("Comment", "Comentar", "Commenter")
                           : `${p.comment_count} ${tr("comments", "comentarios", "commentaires")}`}
                       </button>
+                      {!mine && (
+                        <ReportContentButton kind="post" contentId={p.id} authorProfileId={p.author_profile_id} className="ml-1" />
+                      )}
                       {mine && (
                         <div className="flex items-center gap-1">
                           <button
@@ -532,6 +541,11 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
                       <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
                       <span>·</span>
                       <span>{timeAgo(c.created_at, tr)}</span>
+                      {!mine && (
+                        <span className="ml-auto">
+                          <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
+                        </span>
+                      )}
                       {mine && !isEditing && (
                         <div className="ml-auto flex items-center gap-1">
                           <button

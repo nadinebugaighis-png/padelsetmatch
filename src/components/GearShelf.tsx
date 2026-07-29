@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
-import { ExternalLink, Loader2, Plus, Trash2, X } from "lucide-react";
+import { ExternalLink, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 
 export type GearItem = {
   id: string;
@@ -116,6 +116,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const q = useGear(profileId);
   const items = q.data ?? [];
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [kind, setKind] = useState<string>("racket");
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
@@ -125,8 +126,20 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const fileId = useId();
 
   const reset = () => {
-    setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null); setOpen(false);
+    setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null);
+    setEditingId(null); setOpen(false);
   };
+
+  const startEdit = (it: GearItem) => {
+    setEditingId(it.id);
+    setKind(it.kind);
+    setTitle(it.title);
+    setBrand(it.brand ?? "");
+    setLink(it.link_url ?? "");
+    setImage(it.image_url);
+    setOpen(true);
+  };
+
 
   const upload = async (file: File) => {
     setUploading(true);
@@ -149,27 +162,38 @@ export function GearEditor({ profileId }: { profileId: string }) {
     }
   };
 
-  const add = useMutation({
+  const save = useMutation({
     mutationFn: async () => {
       const name = title.trim();
       if (!name) throw new Error(tr("Add a name", "Añade un nombre", "Ajoute un nom"));
       let url = link.trim();
       if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
-      const { error } = await supabase.from("profile_gear").insert({
-        profile_id: profileId,
+      const payload = {
         kind,
         title: name.slice(0, 60),
         brand: brand.trim() ? brand.trim().slice(0, 40) : null,
         link_url: url ? url.slice(0, 500) : null,
         image_url: image,
-        sort_order: items.length,
-      });
-      if (error) throw error;
+      };
+      if (editingId) {
+        const { error } = await supabase.from("profile_gear").update(payload).eq("id", editingId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("profile_gear")
+          .insert({ ...payload, profile_id: profileId, sort_order: items.length });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
+      const wasEdit = !!editingId;
       qc.invalidateQueries({ queryKey: ["profile-gear", profileId] });
       reset();
-      toast.success(tr("Added to your kit", "Añadido a tu equipo", "Ajouté à ton matériel"));
+      toast.success(
+        wasEdit
+          ? tr("Updated", "Actualizado", "Mis à jour")
+          : tr("Added to your kit", "Añadido a tu equipo", "Ajouté à ton matériel"),
+      );
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Échec")),
   });
@@ -179,40 +203,58 @@ export function GearEditor({ profileId }: { profileId: string }) {
       const { error } = await supabase.from("profile_gear").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["profile-gear", profileId] }),
+    onSuccess: (_d, id) => {
+      if (editingId === id) reset();
+      qc.invalidateQueries({ queryKey: ["profile-gear", profileId] });
+    },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not delete", "No se pudo borrar", "Échec")),
   });
 
   return (
     <div className="space-y-3">
       {items.length > 0 && (
-        <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-1">
+        <div className="flex gap-2.5 overflow-x-auto overflow-y-visible -mx-2 px-2 pt-3 pb-2">
           {items.map((it) => (
             <div
               key={it.id}
-              className="relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border border-[var(--ink)]/10 shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)]"
+              className={`relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] ${
+                editingId === it.id ? "border-[var(--ink)]" : "border-[var(--ink)]/10"
+              }`}
             >
-              <button
-                type="button"
-                onClick={() => remove.mutate(it.id)}
-                aria-label={tr("Remove", "Quitar", "Retirer")}
-                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center shadow"
-              >
-                <Trash2 className="w-3 h-3" />
-              </button>
-              <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
-                {it.image_url ? (
-                  <img src={it.image_url} alt={it.title} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-2xl">{GEAR_EMOJI[it.kind] ?? "✨"}</span>
-                )}
+              <div className="absolute -top-2.5 -right-2 flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => startEdit(it)}
+                  aria-label={tr("Edit", "Editar", "Modifier")}
+                  className="w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)] flex items-center justify-center shadow"
+                >
+                  <Pencil className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => remove.mutate(it.id)}
+                  aria-label={tr("Remove", "Quitar", "Retirer")}
+                  className="w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center shadow"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
               </div>
-              <div className="mt-1.5 text-[11px] font-semibold leading-tight line-clamp-2 text-[var(--ink)]">{it.title}</div>
-              {it.brand && <div className="text-[10px] text-[var(--ink)]/55 truncate">{it.brand}</div>}
+              <button type="button" onClick={() => startEdit(it)} className="w-full text-left">
+                <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
+                  {it.image_url ? (
+                    <img src={it.image_url} alt={it.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl">{GEAR_EMOJI[it.kind] ?? "✨"}</span>
+                  )}
+                </div>
+                <div className="mt-1.5 text-[11px] font-semibold leading-tight line-clamp-2 text-[var(--ink)]">{it.title}</div>
+                {it.brand && <div className="text-[10px] text-[var(--ink)]/55 truncate">{it.brand}</div>}
+              </button>
             </div>
           ))}
         </div>
       )}
+
 
       {!open ? (
         items.length >= MAX_ITEMS ? (
@@ -231,7 +273,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
         <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper-2)]/60 p-3 space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--ink)]/60">
-              {tr("New item", "Nuevo objeto", "Nouvel objet")}
+              {editingId ? tr("Edit item", "Editar objeto", "Modifier l'objet") : tr("New item", "Nuevo objeto", "Nouvel objet")}
             </div>
             <button type="button" onClick={reset} aria-label={tr("Close", "Cerrar", "Fermer")}>
               <X className="w-4 h-4 text-[var(--ink)]/60" />
@@ -306,12 +348,17 @@ export function GearEditor({ profileId }: { profileId: string }) {
 
           <button
             type="button"
-            onClick={() => add.mutate()}
-            disabled={add.isPending || uploading}
+            onClick={() => save.mutate()}
+            disabled={save.isPending || uploading}
             className="w-full h-10 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
           >
-            {add.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Save item", "Guardar objeto", "Enregistrer")}
+            {save.isPending
+              ? tr("Saving…", "Guardando…", "Enregistrement…")
+              : editingId
+                ? tr("Save changes", "Guardar cambios", "Enregistrer")
+                : tr("Save item", "Guardar objeto", "Enregistrer")}
           </button>
+
         </div>
       )}
     </div>

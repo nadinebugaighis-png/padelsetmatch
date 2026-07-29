@@ -980,6 +980,13 @@ function Onboarding() {
                         cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
                       )
                     }
+                    onAddCustom={(v) => {
+                      setPersonalTraits((cur) => {
+                        if (cur.length >= 10) return cur;
+                        if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
+                        return [...cur, v];
+                      });
+                    }}
                     labelFn={label}
                     placeholder={tr("Search an edge…", "Busca una arista…", "Cherche un défaut…")}
                     addWord={tr("Add", "Añadir", "Ajouter")}

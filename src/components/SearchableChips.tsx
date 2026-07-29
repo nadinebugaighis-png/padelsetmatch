@@ -14,6 +14,7 @@ type Props = {
   lessWord: string; // e.g. "Show less"
   emptyHint?: string;
   initialVisible?: number; // when list is long, collapse to this many + selected
+  hideCustom?: boolean; // caller renders custom (user-added) chips itself
   compact?: boolean;
 };
 
@@ -29,6 +30,7 @@ export function SearchableChips({
   lessWord,
   emptyHint,
   initialVisible,
+  hideCustom,
 }: Props) {
   const [query, setQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -64,7 +66,7 @@ export function SearchableChips({
     setQuery("");
   };
 
-  const customSelected = selected.filter((s) => !options.includes(s));
+  const customSelected = hideCustom ? [] : selected.filter((s) => !options.includes(s));
 
   return (
     <div className="mt-1 space-y-2">

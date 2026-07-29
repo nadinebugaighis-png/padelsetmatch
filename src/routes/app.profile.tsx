@@ -251,6 +251,18 @@ function ProfilePage() {
         <MessagesRow />
       </div>
 
+      {/* My kit — gear shelf */}
+      <div className="mt-3 sm:mt-4 programme-card p-5">
+        <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">
+          {tr("My kit", "Mi equipo", "Mon matériel")}
+        </h2>
+        <p className="text-xs text-[var(--ink)]/60 mt-1 mb-3">
+          {tr("Racket, shoes, anything you love. Shows on your player card.", "Pala, zapatillas, lo que te guste. Se ve en tu ficha.", "Raquette, chaussures, ce que tu aimes. Visible sur ta fiche.")}
+        </p>
+        <GearEditor profileId={p.id} />
+      </div>
+
+
 
       <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />

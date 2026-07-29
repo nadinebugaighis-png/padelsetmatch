@@ -1014,35 +1014,57 @@ function Onboarding() {
                   />
                 </div>
 
-                {personalTraits.filter(
-                  (p) =>
-                    !(PERSONAL_STRENGTHS as readonly string[]).includes(p) &&
-                    !(HONEST_EDGES as readonly string[]).includes(p)
-                ).length > 0 && (
+                {customBank.length > 0 && (
                   <div>
-                    <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">
+                    <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-1">
                       ✍️ {tr("Your own words", "Tus propias palabras", "Tes propres mots")}
                     </p>
+                    <p className="text-[11px] text-[var(--ink)]/50 mb-2">
+                      {tr("Tap to turn on/off · × deletes it", "Toca para activar/desactivar · × lo elimina", "Touche pour activer/désactiver · × le supprime")}
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {personalTraits
-                        .filter(
-                          (p) =>
-                            !(PERSONAL_STRENGTHS as readonly string[]).includes(p) &&
-                            !(HONEST_EDGES as readonly string[]).includes(p)
-                        )
-                        .map((p) => (
-                          <button
+                      {customBank.map((p) => {
+                        const on = personalTraits.some((x) => x.toLowerCase() === p.toLowerCase());
+                        return (
+                          <span
                             key={p}
-                            type="button"
-                            onClick={() => setPersonalTraits((cur) => cur.filter((x) => x !== p))}
-                            className="chip-paper chip-paper-selected"
+                            className={`chip-paper inline-flex items-center gap-1 pr-1 ${on ? "chip-paper-selected" : "opacity-60"}`}
                           >
-                            ✓ {p} ×
-                          </button>
-                        ))}
+                            <button
+                              type="button"
+                              aria-pressed={on}
+                              onClick={() =>
+                                setPersonalTraits((cur) => {
+                                  if (on) return cur.filter((x) => x.toLowerCase() !== p.toLowerCase());
+                                  if (cur.length >= 10) {
+                                    toast.error(t("ob.errMaxTraits"));
+                                    return cur;
+                                  }
+                                  return [...cur, p];
+                                })
+                              }
+                              className="inline-flex items-center gap-1"
+                            >
+                              {on ? "✓" : "+"} {p}
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={tr("Delete", "Eliminar", "Supprimer")}
+                              onClick={() => {
+                                setCustomBank((cur) => cur.filter((x) => x !== p));
+                                setPersonalTraits((cur) => cur.filter((x) => x.toLowerCase() !== p.toLowerCase()));
+                              }}
+                              className="p-0.5 rounded-full text-current/60 hover:text-[var(--clay)]"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
+
               </div>
             </section>
 

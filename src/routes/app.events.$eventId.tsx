@@ -29,7 +29,7 @@ import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil,
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (s: Record<string, unknown>): { i?: string } => ({
     i: typeof s.i === "string" ? s.i : undefined,
   }),
   component: EventRoute,

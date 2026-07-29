@@ -1773,3 +1773,29 @@ export const reportPhoto = createServerFn({ method: "POST" })
     const distinctCount = ((result as { distinctCount?: number } | null)?.distinctCount) ?? 0;
     return { ok: true, distinctCount };
   });
+
+/**
+ * Report a piece of user-generated content (post, comment or message).
+ * Stored in the same moderation queue as profile reports so admins see everything
+ * in one place — required by App Store guideline 1.2.
+ */
+export const reportContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      kind: z.enum(["post", "comment", "message"]),
+      contentId: z.string().uuid(),
+      authorProfileId: z.string().uuid(),
+      reason: z.string().trim().min(3).max(500),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const reason = `[${data.kind}:${data.contentId}] ${data.reason}`;
+    const { error } = await context.supabase.rpc("handle_report" as never, {
+      _reported: data.authorProfileId,
+      _reason: reason,
+      _category: "content",
+    } as never);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

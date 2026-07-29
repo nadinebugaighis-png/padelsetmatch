@@ -69,23 +69,46 @@ export function SearchableChips({
   return (
     <div className="mt-1 space-y-2">
       {searchOpen ? (
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              doAdd();
-            }
-          }}
-          onBlur={() => {
-            if (!query.trim()) setSearchOpen(false);
-          }}
-          placeholder={placeholder}
-          className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm"
-        />
+        <div className="space-y-1">
+          <div className="flex gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  doAdd();
+                }
+              }}
+              onBlur={() => {
+                if (!query.trim()) setSearchOpen(false);
+              }}
+              placeholder={placeholder}
+              className="flex-1 bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm"
+            />
+            {canAddCustom && (
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={doAdd}
+                className="shrink-0 h-9 px-3 rounded-md bg-[var(--ball)] text-[var(--court-deep)] text-xs uppercase tracking-widest font-semibold"
+              >
+                {addWord}
+              </button>
+            )}
+          </div>
+          {trimmed.length > 0 && (
+            <p className="text-[11px] text-[var(--ink)]/60">
+              {visible.length > 0
+                ? `${visible.length} ↓`
+                : canAddCustom
+                  ? `↵ ${addWord} "${trimmed}"`
+                  : ""}
+            </p>
+          )}
+        </div>
       ) : (
         <button
           type="button"

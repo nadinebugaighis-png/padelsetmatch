@@ -12,7 +12,9 @@ import { getEmailAuthProviders } from "@/lib/auth-check.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
-  validateSearch: (s: Record<string, unknown>) => ({
+  validateSearch: (
+    s: Record<string, unknown>,
+  ): { redirect?: string; join?: string; i?: string; mode?: "signin" | "signup" } => ({
     redirect: typeof s.redirect === "string" ? s.redirect : undefined,
     join: typeof s.join === "string" ? s.join : undefined,
     i: typeof s.i === "string" ? s.i : undefined,

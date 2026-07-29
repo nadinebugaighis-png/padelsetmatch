@@ -3,7 +3,7 @@ import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { Smartphone, ArrowRight } from "lucide-react";
-import { useT, LangSwitch } from "@/lib/i18n";
+import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
@@ -65,6 +65,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const t = useT();
+  const tr = useTr();
   const fetchCount = useServerFn(getPlayerCount);
   const countQ = useQuery({
     queryKey: ["player-count"],

@@ -1,0 +1,319 @@
+import { useId, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useTr } from "@/lib/i18n";
+import { ExternalLink, Loader2, Plus, Trash2, X } from "lucide-react";
+
+export type GearItem = {
+  id: string;
+  profile_id: string;
+  kind: string;
+  title: string;
+  brand: string | null;
+  note: string | null;
+  image_url: string | null;
+  link_url: string | null;
+  sort_order: number;
+};
+
+export const GEAR_KINDS = ["racket", "shoes", "bag", "balls", "apparel", "other"] as const;
+export const GEAR_EMOJI: Record<string, string> = {
+  racket: "🎾",
+  shoes: "👟",
+  bag: "🎒",
+  balls: "🟡",
+  apparel: "👕",
+  other: "✨",
+};
+
+const MAX_ITEMS = 4;
+
+function useGear(profileId: string | undefined) {
+  return useQuery({
+    queryKey: ["profile-gear", profileId],
+    enabled: !!profileId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile_gear")
+        .select("id, profile_id, kind, title, brand, note, image_url, link_url, sort_order")
+        .eq("profile_id", profileId!)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as GearItem[];
+    },
+  });
+}
+
+function kindLabel(kind: string, tr: ReturnType<typeof useTr>) {
+  switch (kind) {
+    case "racket": return tr("Racket", "Pala", "Raquette");
+    case "shoes": return tr("Shoes", "Zapatillas", "Chaussures");
+    case "bag": return tr("Bag", "Paletero", "Sac");
+    case "balls": return tr("Balls", "Bolas", "Balles");
+    case "apparel": return tr("Apparel", "Ropa", "Tenue");
+    default: return tr("Other", "Otro", "Autre");
+  }
+}
+
+/** Read-only kit shelf shown on a player's card. */
+export function GearShelf({ profileId, title }: { profileId: string; title?: string }) {
+  const tr = useTr();
+  const q = useGear(profileId);
+  const items = q.data ?? [];
+  if (!items.length) return null;
+
+  return (
+    <div>
+      <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--ink)]/55 mb-2">
+        {title ?? tr("My kit", "Mi equipo", "Mon matériel")}
+      </div>
+      <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-1 snap-x">
+        {items.map((it) => {
+          const inner = (
+            <>
+              <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
+                {it.image_url ? (
+                  <img src={it.image_url} alt={it.title} className="w-full h-full object-cover" loading="lazy" />
+                ) : (
+                  <span className="text-2xl">{GEAR_EMOJI[it.kind] ?? "✨"}</span>
+                )}
+              </div>
+              <div className="mt-1.5 text-[11px] font-semibold leading-tight text-[var(--ink)] line-clamp-2">
+                {it.title}
+              </div>
+              {it.brand && (
+                <div className="text-[10px] text-[var(--ink)]/55 truncate">{it.brand}</div>
+              )}
+              {it.link_url && (
+                <span className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-[var(--plum)] font-semibold">
+                  <ExternalLink className="w-3 h-3" />
+                  {tr("View", "Ver", "Voir")}
+                </span>
+              )}
+            </>
+          );
+          const cls =
+            "snap-start shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] border border-[var(--ink)]/10 text-left";
+          return it.link_url ? (
+            <a key={it.id} href={it.link_url} target="_blank" rel="noopener noreferrer nofollow" className={cls}>
+              {inner}
+            </a>
+          ) : (
+            <div key={it.id} className={cls}>{inner}</div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Editable kit shelf for the signed-in player's own profile. */
+export function GearEditor({ profileId }: { profileId: string }) {
+  const tr = useTr();
+  const qc = useQueryClient();
+  const q = useGear(profileId);
+  const items = q.data ?? [];
+  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<string>("racket");
+  const [title, setTitle] = useState("");
+  const [brand, setBrand] = useState("");
+  const [link, setLink] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileId = useId();
+
+  const reset = () => {
+    setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null); setOpen(false);
+  };
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) throw new Error(tr("Please sign in again", "Inicia sesión de nuevo", "Reconnecte-toi"));
+      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+      const path = `${u.user.id}/gear-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("padel-photos").upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data: signed, error: sErr } = await supabase.storage
+        .from("padel-photos")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (sErr || !signed) throw sErr ?? new Error("Could not sign URL");
+      setImage(signed.signedUrl);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Upload failed", "Error al subir", "Échec du téléversement"));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const add = useMutation({
+    mutationFn: async () => {
+      const name = title.trim();
+      if (!name) throw new Error(tr("Add a name", "Añade un nombre", "Ajoute un nom"));
+      let url = link.trim();
+      if (url && !/^https?:\/\//i.test(url)) url = `https://${url}`;
+      const { error } = await supabase.from("profile_gear").insert({
+        profile_id: profileId,
+        kind,
+        title: name.slice(0, 60),
+        brand: brand.trim() ? brand.trim().slice(0, 40) : null,
+        link_url: url ? url.slice(0, 500) : null,
+        image_url: image,
+        sort_order: items.length,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["profile-gear", profileId] });
+      reset();
+      toast.success(tr("Added to your kit", "Añadido a tu equipo", "Ajouté à ton matériel"));
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Échec")),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("profile_gear").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["profile-gear", profileId] }),
+    onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not delete", "No se pudo borrar", "Échec")),
+  });
+
+  return (
+    <div className="space-y-3">
+      {items.length > 0 && (
+        <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-1">
+          {items.map((it) => (
+            <div
+              key={it.id}
+              className="relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border border-[var(--ink)]/10 shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)]"
+            >
+              <button
+                type="button"
+                onClick={() => remove.mutate(it.id)}
+                aria-label={tr("Remove", "Quitar", "Retirer")}
+                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center shadow"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+              <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
+                {it.image_url ? (
+                  <img src={it.image_url} alt={it.title} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-2xl">{GEAR_EMOJI[it.kind] ?? "✨"}</span>
+                )}
+              </div>
+              <div className="mt-1.5 text-[11px] font-semibold leading-tight line-clamp-2 text-[var(--ink)]">{it.title}</div>
+              {it.brand && <div className="text-[10px] text-[var(--ink)]/55 truncate">{it.brand}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!open ? (
+        items.length >= MAX_ITEMS ? (
+          <p className="text-xs text-[var(--ink)]/55">{tr("Kit is full (4 items)", "Equipo completo (4 objetos)", "Matériel complet (4 objets)")}</p>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-[var(--ink)]/25 text-[12px] font-semibold text-[var(--ink)]"
+          >
+            <Plus className="w-4 h-4" />
+            {tr("Add item", "Añadir objeto", "Ajouter un objet")}
+          </button>
+        )
+      ) : (
+        <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper-2)]/60 p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--ink)]/60">
+              {tr("New item", "Nuevo objeto", "Nouvel objet")}
+            </div>
+            <button type="button" onClick={reset} aria-label={tr("Close", "Cerrar", "Fermer")}>
+              <X className="w-4 h-4 text-[var(--ink)]/60" />
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5">
+            {GEAR_KINDS.map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setKind(k)}
+                className={`px-2.5 h-8 rounded-full text-[12px] border transition ${
+                  kind === k
+                    ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
+                    : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/75"
+                }`}
+              >
+                {GEAR_EMOJI[k]} {kindLabel(k, tr)}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-3">
+            <label
+              htmlFor={fileId}
+              className="shrink-0 w-[76px] h-[76px] rounded-[8px] border border-dashed border-[var(--ink)]/30 bg-white flex items-center justify-center overflow-hidden cursor-pointer"
+            >
+              {uploading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-[var(--ink)]/60" />
+              ) : image ? (
+                <img src={image} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-[10px] text-[var(--ink)]/55 text-center px-1">
+                  {tr("Photo", "Foto", "Photo")}
+                </span>
+              )}
+            </label>
+            <input
+              id={fileId}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void upload(f);
+                e.target.value = "";
+              }}
+            />
+            <div className="flex-1 space-y-2">
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={tr("Name (e.g. Bullpadel Vertex)", "Nombre (p. ej. Bullpadel Vertex)", "Nom (ex. Bullpadel Vertex)")}
+                className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/20 bg-white text-sm"
+              />
+              <input
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                placeholder={tr("Brand (optional)", "Marca (opcional)", "Marque (optionnel)")}
+                className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/20 bg-white text-sm"
+              />
+            </div>
+          </div>
+
+          <input
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+            placeholder={tr("Link (optional)", "Enlace (opcional)", "Lien (optionnel)")}
+            className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/20 bg-white text-sm"
+          />
+
+          <button
+            type="button"
+            onClick={() => add.mutate()}
+            disabled={add.isPending || uploading}
+            className="w-full h-10 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
+          >
+            {add.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Save item", "Guardar objeto", "Enregistrer")}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

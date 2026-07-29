@@ -59,7 +59,7 @@ export const PERSONAL_STRENGTHS = [
   "Witty/funny",
 ] as const;
 export const HONEST_EDGES = [
-  "Direct", "Reserved", "Sensitive",
+  "Direct", "Reserved", "Sensitive", "Over-thinker",
 ] as const;
 
 export const PERSONAL_TRAITS = [...PERSONAL_STRENGTHS, ...HONEST_EDGES] as const;

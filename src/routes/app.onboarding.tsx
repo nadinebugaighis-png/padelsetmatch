@@ -948,7 +948,7 @@ function Onboarding() {
                   <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">✨ {tr("Strengths", "Fortalezas", "Forces")}</p>
                   <SearchableChips
                     options={PERSONAL_STRENGTHS as readonly string[]}
-                    selected={personalTraits.filter((p) => (PERSONAL_STRENGTHS as readonly string[]).includes(p) || (!(HONEST_EDGES as readonly string[]).includes(p) && !!p))}
+                    selected={personalTraits.filter((p) => (PERSONAL_STRENGTHS as readonly string[]).includes(p))}
                     onToggle={(pt) =>
                       setPersonalTraits((cur) =>
                         cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
@@ -956,11 +956,12 @@ function Onboarding() {
                     }
                     onAddCustom={(v) => {
                       setPersonalTraits((cur) => {
-                        if (cur.length >= 10) return cur;
+                        if (cur.length >= 10) { toast.error(t("ob.errMaxTraits")); return cur; }
                         if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
                         return [...cur, v];
                       });
                     }}
+                    hideCustom
                     labelFn={label}
                     placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
                     addWord={tr("Add", "Añadir", "Ajouter")}
@@ -982,11 +983,12 @@ function Onboarding() {
                     }
                     onAddCustom={(v) => {
                       setPersonalTraits((cur) => {
-                        if (cur.length >= 10) return cur;
+                        if (cur.length >= 10) { toast.error(t("ob.errMaxTraits")); return cur; }
                         if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
                         return [...cur, v];
                       });
                     }}
+                    hideCustom
                     labelFn={label}
                     placeholder={tr("Search an edge…", "Busca una arista…", "Cherche un défaut…")}
                     addWord={tr("Add", "Añadir", "Ajouter")}
@@ -994,6 +996,36 @@ function Onboarding() {
                     lessWord={tr("Show less", "Ver menos", "Voir moins")}
                   />
                 </div>
+
+                {personalTraits.filter(
+                  (p) =>
+                    !(PERSONAL_STRENGTHS as readonly string[]).includes(p) &&
+                    !(HONEST_EDGES as readonly string[]).includes(p)
+                ).length > 0 && (
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">
+                      ✍️ {tr("Your own words", "Tus propias palabras", "Tes propres mots")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {personalTraits
+                        .filter(
+                          (p) =>
+                            !(PERSONAL_STRENGTHS as readonly string[]).includes(p) &&
+                            !(HONEST_EDGES as readonly string[]).includes(p)
+                        )
+                        .map((p) => (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => setPersonalTraits((cur) => cur.filter((x) => x !== p))}
+                            className="chip-paper chip-paper-selected"
+                          >
+                            ✓ {p} ×
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
 

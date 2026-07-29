@@ -348,12 +348,17 @@ export function GearEditor({ profileId }: { profileId: string }) {
 
           <button
             type="button"
-            onClick={() => add.mutate()}
-            disabled={add.isPending || uploading}
+            onClick={() => save.mutate()}
+            disabled={save.isPending || uploading}
             className="w-full h-10 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
           >
-            {add.isPending ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Save item", "Guardar objeto", "Enregistrer")}
+            {save.isPending
+              ? tr("Saving…", "Guardando…", "Enregistrement…")
+              : editingId
+                ? tr("Save changes", "Guardar cambios", "Enregistrer")
+                : tr("Save item", "Guardar objeto", "Enregistrer")}
           </button>
+
         </div>
       )}
     </div>

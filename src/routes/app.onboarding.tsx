@@ -1019,9 +1019,6 @@ function Onboarding() {
                     <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-1">
                       ✍️ {tr("Your own words", "Tus propias palabras", "Tes propres mots")}
                     </p>
-                    <p className="text-[11px] text-[var(--ink)]/50 mb-2">
-                      {tr("Tap to turn on/off · × deletes it", "Toca para activar/desactivar · × lo elimina", "Touche pour activer/désactiver · × le supprime")}
-                    </p>
                     <div className="flex flex-wrap gap-2">
                       {customBank.map((p) => {
                         const on = personalTraits.some((x) => x.toLowerCase() === p.toLowerCase());

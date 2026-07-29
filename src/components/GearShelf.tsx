@@ -116,6 +116,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const q = useGear(profileId);
   const items = q.data ?? [];
   const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [kind, setKind] = useState<string>("racket");
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
@@ -125,8 +126,20 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const fileId = useId();
 
   const reset = () => {
-    setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null); setOpen(false);
+    setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null);
+    setEditingId(null); setOpen(false);
   };
+
+  const startEdit = (it: GearItem) => {
+    setEditingId(it.id);
+    setKind(it.kind);
+    setTitle(it.title);
+    setBrand(it.brand ?? "");
+    setLink(it.link_url ?? "");
+    setImage(it.image_url);
+    setOpen(true);
+  };
+
 
   const upload = async (file: File) => {
     setUploading(true);

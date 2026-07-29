@@ -1258,6 +1258,56 @@ export type Database = {
           },
         ]
       }
+      profile_gear: {
+        Row: {
+          brand: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          kind: string
+          link_url: string | null
+          note: string | null
+          profile_id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          link_url?: string | null
+          note?: string | null
+          profile_id: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          link_url?: string | null
+          note?: string | null
+          profile_id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_gear_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_venues: {
         Row: {
           created_at: string

@@ -877,6 +877,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "Witty/funny": "Ingenioso/gracioso",
     Direct: "Directo", Reserved: "Reservado", Quiet: "Callado",
     Sensitive: "Sensible", Emotional: "Emocional", Impatient: "Impaciente",
+    "Over-thinker": "Le da muchas vueltas",
     Stubborn: "Terco", Perfectionist: "Perfeccionista",
     // Padel styles
     Competitive: "Competitivo", Strategic: "Estratégico", Aggressive: "Agresivo",
@@ -950,6 +951,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "Witty/funny": "Spirituel·le / drôle",
     Direct: "Direct·e", Reserved: "Réservé·e", Quiet: "Discret·ète",
     Sensitive: "Sensible", Emotional: "Émotif·ve", Impatient: "Impatient·e",
+    "Over-thinker": "Cogite beaucoup",
     Stubborn: "Têtu·e", Perfectionist: "Perfectionniste",
     // Padel styles
     Competitive: "Compétitif", Strategic: "Stratégique", Aggressive: "Agressif",

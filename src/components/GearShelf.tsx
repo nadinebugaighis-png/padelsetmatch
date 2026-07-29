@@ -273,7 +273,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
         <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper-2)]/60 p-3 space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--ink)]/60">
-              {tr("New item", "Nuevo objeto", "Nouvel objet")}
+              {editingId ? tr("Edit item", "Editar objeto", "Modifier l'objet") : tr("New item", "Nuevo objeto", "Nouvel objet")}
             </div>
             <button type="button" onClick={reset} aria-label={tr("Close", "Cerrar", "Fermer")}>
               <X className="w-4 h-4 text-[var(--ink)]/60" />

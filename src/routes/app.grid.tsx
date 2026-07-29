@@ -1038,6 +1038,9 @@ function Discover() {
 
                       <SharedVenuesBadge otherProfileId={preview.id} />
 
+                      <GearShelf profileId={preview.id} />
+
+
                       {/* Primary actions — coach card + message/like button placed above the fold */}
                       {preview.is_coach && (
                         <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />

@@ -113,8 +113,25 @@ function Onboarding() {
   const [freeCourtNote, setFreeCourtNote] = useState("");
   const [sexualOrientation, setSexualOrientation] = useState("");
   const [personalTraits, setPersonalTraits] = useState<string[]>([]);
+  const [customBank, setCustomBank] = useState<string[]>([]);
   const [padelStyle, setPadelStyle] = useState<string[]>([]);
   const [showStepHelp, setShowStepHelp] = useState(false);
+
+  // Any custom (non-preset) trait ever added stays in the bank so it can be re-added with one tap
+  useEffect(() => {
+    const customs = personalTraits.filter(
+      (p) =>
+        !(PERSONAL_STRENGTHS as readonly string[]).includes(p) &&
+        !(HONEST_EDGES as readonly string[]).includes(p)
+    );
+    if (customs.length) {
+      setCustomBank((cur) => {
+        const missing = customs.filter((c) => !cur.some((x) => x.toLowerCase() === c.toLowerCase()));
+        return missing.length ? [...cur, ...missing] : cur;
+      });
+    }
+  }, [personalTraits]);
+
 
   useEffect(() => {
     const p = profileQ.data;

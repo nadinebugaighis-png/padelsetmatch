@@ -966,7 +966,7 @@ function Discover() {
                       {/* Overlaid identity — desktop only (kept for large-screen hero) */}
                       <div className="absolute left-0 right-0 bottom-0 px-5 pb-5 hidden lg:hidden">
                         <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
-                          {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                          {preview.score}% {tr("Match", "Match", "Match")}
                         </div>
                         <div className="text-display text-[44px] leading-[0.95] text-[var(--cream)] uppercase tracking-tight mt-1.5">{preview.first_name},</div>
                         <div className="text-sm text-[var(--cream)]/85 mt-0.5">{preview.zone} · {label(preview.level)}</div>
@@ -975,7 +975,7 @@ function Discover() {
                     {/* Mobile identity — below the smaller polaroid */}
                     <div className="mt-3 text-center lg:hidden">
                       <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
-                        {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                        {preview.score}% {tr("Match", "Match", "Match")}
                       </div>
                       <div className="text-display text-[32px] leading-[0.95] text-[var(--ink)] uppercase tracking-tight mt-1.5">{preview.first_name}</div>
                       <div className="text-[13px] text-[var(--ink)]/70 mt-0.5">{preview.zone} · {label(preview.level)}</div>
@@ -1017,7 +1017,7 @@ function Discover() {
                           )}
                         </div>
                         <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-sm font-extrabold tracking-widest uppercase">
-                          {(compatQ.data?.score ?? preview.score)}% {tr("Match", "Match", "Match")}
+                          {preview.score}% {tr("Match", "Match", "Match")}
                         </div>
                       </div>
 

@@ -944,7 +944,7 @@ function Discover() {
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
                   {/* Hero photo — Polaroid-style white frame on desktop and mobile */}
                   <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 sm:p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
-                    <div className="relative bg-white p-2 sm:p-2.5 pb-3 lg:p-3 lg:pb-10 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] lg:shadow-[0_22px_54px_-14px_rgba(31,58,46,0.38)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto lg:-rotate-[1.2deg]">
+                    <div className="relative bg-white p-2 sm:p-2.5 pb-3 lg:p-3 lg:pb-3 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] lg:shadow-[0_22px_54px_-14px_rgba(31,58,46,0.38)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto">
 
                       <div className="relative overflow-hidden">
                         {preview.photo_url ? (
@@ -955,12 +955,6 @@ function Discover() {
                         <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)]/45 to-transparent pointer-events-none hidden lg:block" />
                       </div>
 
-                      {/* Polaroid caption — desktop only */}
-                      <div className="hidden lg:block absolute left-0 right-0 bottom-1.5 text-center px-3">
-                        <div className="text-display text-[15px] uppercase tracking-[0.14em] text-[var(--ink)]/80 truncate">
-                          {preview.first_name} · {preview.zone}
-                        </div>
-                      </div>
 
                       {/* Top controls — mobile only */}
                       <button

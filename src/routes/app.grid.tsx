@@ -1127,33 +1127,36 @@ function Discover() {
                               );
                             })()}
 
-                            {/* Tiny sub-score bars — replaces the two long paragraphs */}
-                            {(compatQ.data.sub_scores?.padel != null || compatQ.data.sub_scores?.personality != null) && (
-                              <div className="mt-3.5 pt-3 border-t border-[var(--ink)]/8 grid grid-cols-2 gap-3">
-                                {compatQ.data.sub_scores?.padel != null && (
-                                  <div>
-                                    <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--ink)]/55 mb-1">
-                                      <span>🎾 {tr("On-court", "En pista", "Sur le court")}</span>
-                                      <span className="tabular-nums text-[var(--ink)]/70">{compatQ.data.sub_scores.padel}</span>
-                                    </div>
-                                    <div className="h-1 rounded-full bg-[var(--ink)]/8 overflow-hidden">
-                                      <div className="h-full bg-[var(--ink)]" style={{ width: `${compatQ.data.sub_scores.padel}%` }} />
-                                    </div>
-                                  </div>
-                                )}
-                                {compatQ.data.sub_scores?.personality != null && (
-                                  <div>
-                                    <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.15em] text-[var(--ink)]/55 mb-1">
-                                      <span>✨ {tr("Off-court", "Fuera de pista", "Hors court")}</span>
-                                      <span className="tabular-nums text-[var(--ink)]/70">{compatQ.data.sub_scores.personality}</span>
-                                    </div>
-                                    <div className="h-1 rounded-full bg-[var(--ink)]/8 overflow-hidden">
-                                      <div className="h-full bg-[var(--ink)]" style={{ width: `${compatQ.data.sub_scores.personality}%` }} />
-                                    </div>
-                                  </div>
-                                )}
+                            {/* Two plain-language bars: on-court = the same algorithm score as the badge, off-court = AI vibe read */}
+                            <div className="mt-3.5 pt-3 border-t border-[var(--ink)]/8 space-y-3">
+                              <div>
+                                <div className="flex items-center justify-between text-[12px] text-[var(--ink)] mb-1">
+                                  <span>🎾 {tr("Fit on court", "Encaje en pista", "Compatibilité sur le court")}</span>
+                                  <span className="tabular-nums font-semibold">{preview.score}%</span>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-[var(--ink)]/8 overflow-hidden">
+                                  <div className="h-full bg-[var(--ink)]" style={{ width: `${preview.score}%` }} />
+                                </div>
+                                <p className="mt-1 text-[11px] text-[var(--ink)]/50 leading-snug">
+                                  {tr("Level, side, schedule and clubs", "Nivel, lado, horarios y clubes", "Niveau, côté, horaires et clubs")}
+                                </p>
                               </div>
-                            )}
+                              {compatQ.data.sub_scores?.personality != null && (
+                                <div>
+                                  <div className="flex items-center justify-between text-[12px] text-[var(--ink)] mb-1">
+                                    <span>✨ {tr("Fit off court", "Encaje fuera de pista", "Compatibilité hors court")}</span>
+                                    <span className="tabular-nums font-semibold">{compatQ.data.sub_scores.personality}%</span>
+                                  </div>
+                                  <div className="h-1.5 rounded-full bg-[var(--ink)]/8 overflow-hidden">
+                                    <div className="h-full bg-[#a37a4a]" style={{ width: `${compatQ.data.sub_scores.personality}%` }} />
+                                  </div>
+                                  <p className="mt-1 text-[11px] text-[var(--ink)]/50 leading-snug">
+                                    {tr("Personality, style and interests", "Personalidad, estilo e intereses", "Personnalité, style et intérêts")}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
 
                             {/* Watch-out — only when the AI flagged something concrete */}
                             {compatQ.data.friction && (

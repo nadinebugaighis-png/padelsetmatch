@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
-import { Smartphone, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -75,8 +74,6 @@ function Landing() {
     retry: false,
   });
   const count = countQ.data?.count ?? 0;
-  const install = useInstallModal();
-  const isStandalone = useIsStandalone();
 
   return (
     <main className="programme-page min-h-screen flex flex-col relative overflow-hidden">
@@ -148,27 +145,10 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
-            {!isStandalone && (
-              <button
-                onClick={install.openModal}
-                className="group inline-flex items-center gap-2.5 rounded-full border-2 border-[var(--ink)]/25 bg-[var(--paper)] text-[var(--ink)] font-semibold uppercase tracking-[0.16em] text-[13px] px-5 py-3 hover:border-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
-              >
-                <Smartphone className="w-4 h-4" />
-                {tr("Get the app", "Instalar la app", "Installer l'app")}
-              </button>
-            )}
             <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
           </div>
 
-          {!isStandalone && (
-            <p className="mt-2.5 text-[12px] text-[var(--ink)]/55 max-w-md leading-snug">
-              {tr(
-                "No App Store needed — installs straight to your home screen in 10 seconds.",
-                "Sin App Store — se instala en tu pantalla de inicio en 10 segundos.",
-                "Pas besoin de l'App Store — installation sur ton écran d'accueil en 10 secondes.",
-              )}
-            </p>
-          )}
+
 
 
           <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">
@@ -259,7 +239,6 @@ function Landing() {
           </div>
         </div>
       </footer>
-      <InstallModal open={install.open} onClose={install.closeModal} />
     </main>
   );
 }

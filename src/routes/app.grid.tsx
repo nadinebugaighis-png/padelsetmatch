@@ -944,13 +944,14 @@ function Discover() {
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
                   {/* Hero photo — Polaroid-style white frame on desktop and mobile */}
                   <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 sm:p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
-                    <div className="relative bg-white p-2 sm:p-2.5 lg:p-3.5 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-none">
+                    <div className="relative bg-white p-2 sm:p-2.5 lg:p-3 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto">
 
                       {preview.photo_url ? (
-                        <img src={preview.photo_url} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] object-cover" />
+                        <img src={preview.photo_url} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] object-cover" />
                       ) : (
-                        <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[420px] xl:h-[480px] bg-[var(--paper-2)]" />
+                        <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] bg-[var(--paper-2)]" />
                       )}
+
                       <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)] via-[var(--court-deep)]/30 to-transparent pointer-events-none hidden lg:block" />
 
                       {/* Top controls — mobile only */}

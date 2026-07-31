@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
-import { Smartphone, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";

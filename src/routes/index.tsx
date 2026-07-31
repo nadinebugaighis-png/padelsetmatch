@@ -74,7 +74,6 @@ function Landing() {
     retry: false,
   });
   const count = countQ.data?.count ?? 0;
-  const isStandalone = useIsStandalone();
 
   return (
     <main className="programme-page min-h-screen flex flex-col relative overflow-hidden">

@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { InstallModal, useInstallModal } from "@/components/InstallPrompt";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { Smartphone, ArrowRight } from "lucide-react";
@@ -75,7 +74,6 @@ function Landing() {
     retry: false,
   });
   const count = countQ.data?.count ?? 0;
-  const install = useInstallModal();
   const isStandalone = useIsStandalone();
 
   return (
@@ -242,7 +240,6 @@ function Landing() {
           </div>
         </div>
       </footer>
-      <InstallModal open={install.open} onClose={install.closeModal} />
     </main>
   );
 }

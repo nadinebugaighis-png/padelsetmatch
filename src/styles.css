@@ -127,9 +127,8 @@
   * { border-color: var(--color-border); }
 
   html, body {
-    background: var(--gradient-dusk);
-    background-attachment: fixed;
-    color: var(--color-foreground);
+    background: var(--paper);
+    color: var(--ink);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "ss02", "cv11";
     -webkit-font-smoothing: antialiased;

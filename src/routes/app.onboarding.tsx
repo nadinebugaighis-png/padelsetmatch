@@ -512,13 +512,7 @@ function Onboarding() {
           <span className="flex-1 text-center">{t("ob.step")} {step + 1} {t("ob.of")} {steps.length} · {steps[step]}</span>
           <button
             type="button"
-            onClick={() => {
-              if (step === 0) {
-                navigate({ to: "/app/profile" });
-              } else {
-                save.mutate({ destination: "profile" });
-              }
-            }}
+            onClick={requestExit}
             disabled={save.isPending}
             className="text-[10px] tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] disabled:opacity-40"
           >

@@ -1152,7 +1152,7 @@ function Onboarding() {
                   </Button>
                 )}
                 {step === 2 && (
-                  <Button size="sm" onClick={() => save.mutate({ destination: "grid" })} disabled={!coreDone || save.isPending}>
+                  <Button size="sm" onClick={() => requestSave("grid")} disabled={save.isPending}>
                     {save.isPending ? t("ob.saving") : t("ob.start")}
                   </Button>
                 )}

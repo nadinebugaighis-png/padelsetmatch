@@ -11,7 +11,7 @@ const ProfileInput = z.object({
   first_name: z.string().min(1).max(40),
   age: z.number().int().min(18).max(120),
   gender: z.enum(GENDERS),
-  interested_in: z.array(z.enum(GENDERS)).min(1),
+  interested_in: z.array(z.enum(GENDERS)).default([]),
   friend_interested_in: z.array(z.string()).default([]),
   partner_interested_in: z.array(z.string()).default([]),
   age_min: z.number().int().min(18).max(120),

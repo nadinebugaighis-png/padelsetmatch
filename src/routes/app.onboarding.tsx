@@ -132,8 +132,14 @@ function Onboarding() {
     }
   }, [personalTraits]);
 
-
+  // Hydrate the form from the saved profile exactly ONCE. Without this guard a
+  // background refetch (reconnect, cache invalidation, remount) re-runs the
+  // effect and silently wipes whatever the user is typing.
+  const hydratedRef = useRef(false);
   useEffect(() => {
+    if (hydratedRef.current) return;
+    if (profileQ.data === undefined) return;
+    hydratedRef.current = true;
     const p = profileQ.data;
     if (p) {
       setFirstName(p.first_name ?? "");

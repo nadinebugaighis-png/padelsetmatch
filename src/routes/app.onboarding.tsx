@@ -415,6 +415,38 @@ function Onboarding() {
   const missingByStep = missingByStepDetailed.map((arr) => arr.map((x) => x.label));
   const canStep = missingByStep.map((items) => items.length === 0);
 
+  // Saving always validates the required (step 1) fields. If something is
+  // missing we send the user back to that step with the fields highlighted,
+  // instead of failing with a vague error from the server call.
+  const requestSave = (destination: "grid" | "profile") => {
+    const missing = missingByStepDetailed[0] ?? [];
+    if (missing.length > 0) {
+      setStep(0);
+      setShowStepHelp(true);
+      toast.error(`${tr("Please complete", "Falta por completar", "À compléter")} ${missing.map((x) => x.label).join(", ")}.`);
+      setTimeout(() => {
+        const el = document.querySelector<HTMLElement>(`[data-field="${missing[0].key}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 80);
+      return;
+    }
+    save.mutate({ destination });
+  };
+
+  // Exit: save when the profile is valid, otherwise confirm before discarding.
+  const requestExit = () => {
+    const missing = missingByStepDetailed[0] ?? [];
+    if (missing.length === 0) { save.mutate({ destination: "profile" }); return; }
+    const ok = window.confirm(tr(
+      "Leave without saving? Your changes on this screen will be lost.",
+      "¿Salir sin guardar? Se perderán los cambios de esta pantalla.",
+      "Quitter sans enregistrer ? Les modifications de cet écran seront perdues.",
+    ));
+    if (ok) navigate({ to: "/app/profile" });
+  };
+
+
+
   const missingKeysThisStep = new Set(
     showStepHelp ? (missingByStepDetailed[step] ?? []).map((x) => x.key) : []
   );

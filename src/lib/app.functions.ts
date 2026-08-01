@@ -48,16 +48,10 @@ function audienceAcceptsGender(audience: string[], gender: string): boolean {
   return false;
 }
 
-// Returns the list of shared intents between two profiles.
-// Falls back to legacy looking_for so users who haven't re-saved still match.
-function deriveIntents(p: { intents?: string[] | null; looking_for?: string | null }): string[] {
-  if (p.intents && p.intents.length > 0) return p.intents;
-  switch (p.looking_for) {
-    case "partner": return ["relationship", "padel"];
-    case "friend": return ["friend", "padel"];
-    case "both": return ["relationship", "friend", "padel"];
-    default: return ["padel"];
-  }
+// Padel-only directory: every profile is a padel player, so "padel" is always
+// a shared intent. Legacy dating/friendship intents are ignored entirely.
+function deriveIntents(_p: { intents?: string[] | null; looking_for?: string | null }): string[] {
+  return ["padel"];
 }
 function sharedIntents(a: Profile, b: Profile): string[] {
   const av = new Set(deriveIntents(a));

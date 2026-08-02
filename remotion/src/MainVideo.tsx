@@ -68,8 +68,8 @@ export const MainVideo: React.FC = () => {
           />
           <TransitionSeries.Sequence durationInFrames={130}>
             <ScreenScene
-              kicker="Free courts"
-              title="Play more, spend less."
+              kicker="Why PadelSetMatch"
+              title="Find players. Play more."
               src="images/6_how.jpg"
               scroll={60}
               enterFrom="right"

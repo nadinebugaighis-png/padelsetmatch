@@ -232,7 +232,10 @@ function Landing() {
           <div className="flex items-center gap-3">
             <span className="text-sm tracking-wide">padelsetmatch.com</span>
           </div>
-          <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70">
+          <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70 flex-wrap">
+            <Link to="/social-padel" className="hover:text-[var(--paper)]">Social padel</Link>
+            <Link to="/free-padel-courts" className="hover:text-[var(--paper)]">Free padel courts</Link>
+            <Link to="/how-it-works" className="hover:text-[var(--paper)]">How it works</Link>
             <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>
             <Link to="/privacy" className="hover:text-[var(--paper)]">Privacy</Link>
             <span>v0.1</span>

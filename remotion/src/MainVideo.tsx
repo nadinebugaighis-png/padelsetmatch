@@ -31,7 +31,7 @@ export const MainVideo: React.FC = () => {
               kicker="Open matches"
               title="See who's playing tonight."
               src="images/2_matches.jpg"
-              scroll={340}
+              scroll={55}
               enterFrom="bottom"
             />
           </TransitionSeries.Sequence>
@@ -44,7 +44,7 @@ export const MainVideo: React.FC = () => {
               kicker="Player directory"
               title="Real players, near your court."
               src="images/3_players.jpg"
-              scroll={420}
+              scroll={70}
               enterFrom="right"
             />
           </TransitionSeries.Sequence>
@@ -57,7 +57,7 @@ export const MainVideo: React.FC = () => {
               kicker="Chat"
               title="Every match gets a group chat."
               src="images/4_chat.jpg"
-              scroll={300}
+              scroll={45}
               enterFrom="left"
               captionSide="bottom"
             />
@@ -70,8 +70,8 @@ export const MainVideo: React.FC = () => {
             <ScreenScene
               kicker="Free courts"
               title="Play more, spend less."
-              src="images/1_home.jpg"
-              scroll={380}
+              src="images/6_how.jpg"
+              scroll={60}
               enterFrom="right"
             />
           </TransitionSeries.Sequence>

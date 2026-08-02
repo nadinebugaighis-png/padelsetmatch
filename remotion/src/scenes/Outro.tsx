@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Img, staticFile, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 import { Backdrop } from "../components/Backdrop";
+import { DISPLAY, BODY } from "../fonts";
 import { INK, PAPER, PLUM, GRASS } from "../theme";
 
 const Pill: React.FC<{ text: string; delay: number; bg: string; color: string }> = ({ text, delay, bg, color }) => {
@@ -14,7 +15,7 @@ const Pill: React.FC<{ text: string; delay: number; bg: string; color: string }>
         opacity: interpolate(frame - delay, [0, 12], [0, 1], { extrapolateRight: "clamp", extrapolateLeft: "clamp" }),
         background: bg,
         color,
-        fontFamily: "IS",
+        fontFamily: BODY,
         fontWeight: 700,
         fontSize: 30,
         letterSpacing: 1,
@@ -59,7 +60,7 @@ export const Outro: React.FC = () => {
 
         <div
           style={{
-            fontFamily: "Gloock",
+            fontFamily: DISPLAY,
             fontSize: 64,
             color: INK,
             marginTop: 70,
@@ -70,7 +71,7 @@ export const Outro: React.FC = () => {
         </div>
         <div
           style={{
-            fontFamily: "IS",
+            fontFamily: BODY,
             fontWeight: 700,
             fontSize: 26,
             letterSpacing: 5,

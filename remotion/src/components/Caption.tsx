@@ -1,5 +1,6 @@
 import React from "react";
 import { useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
+import { DISPLAY, BODY } from "../fonts";
 import { INK, PLUM } from "../theme";
 
 export const Caption: React.FC<{ kicker: string; title: string; delay?: number; align?: "left" | "center" }> = ({
@@ -19,7 +20,7 @@ export const Caption: React.FC<{ kicker: string; title: string; delay?: number; 
     <div style={{ transform: `translateY(${y}px)`, opacity: op, textAlign: align }}>
       <div
         style={{
-          fontFamily: "IS",
+          fontFamily: BODY,
           fontWeight: 700,
           fontSize: 26,
           letterSpacing: 4,
@@ -30,7 +31,7 @@ export const Caption: React.FC<{ kicker: string; title: string; delay?: number; 
       >
         {kicker.toUpperCase()}
       </div>
-      <div style={{ fontFamily: "Gloock", fontSize: 78, lineHeight: 1.02, color: INK, maxWidth: 900 }}>{title}</div>
+      <div style={{ fontFamily: DISPLAY, fontSize: 78, lineHeight: 1.02, color: INK, maxWidth: 900 }}>{title}</div>
     </div>
   );
 };

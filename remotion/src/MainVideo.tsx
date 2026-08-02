@@ -3,15 +3,11 @@ import { AbsoluteFill } from "remotion";
 import { TransitionSeries, springTiming } from "@remotion/transitions";
 import { slide } from "@remotion/transitions/slide";
 import { fade } from "@remotion/transitions/fade";
-import { loadFont as loadGloock } from "@remotion/google-fonts/Gloock";
-import { loadFont as loadIS } from "@remotion/google-fonts/InstrumentSans";
+import { DISPLAY, BODY } from "./fonts";
 import { Intro } from "./scenes/Intro";
 import { Outro } from "./scenes/Outro";
 import { ScreenScene } from "./scenes/ScreenScene";
 import { PAPER } from "./theme";
-
-const gloock = loadGloock("normal", { weights: ["400"], subsets: ["latin"] });
-const is = loadIS("normal", { weights: ["400", "700"], subsets: ["latin"] });
 
 const T = () => (
   <TransitionSeries.Transition
@@ -25,13 +21,10 @@ export const MainVideo: React.FC = () => {
     <AbsoluteFill
       style={{
         background: PAPER,
-        fontFamily: `Gloock, ${gloock.fontFamily}`,
+        fontFamily: BODY,
       }}
     >
-      <style>{`
-        @font-face { font-family: 'Gloock'; src: local('${gloock.fontFamily}'); }
-      `}</style>
-      <AbsoluteFill style={{ fontFamily: is.fontFamily }}>
+      <AbsoluteFill style={{ fontFamily: BODY }}>
         <TransitionSeries>
           <TransitionSeries.Sequence durationInFrames={110}>
             <Intro />

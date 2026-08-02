@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Img, staticFile, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 import { Backdrop } from "../components/Backdrop";
+import { DISPLAY, BODY } from "../fonts";
 import { INK, PLUM, GRASS } from "../theme";
 
 export const Intro: React.FC = () => {
@@ -25,7 +26,7 @@ export const Intro: React.FC = () => {
         <div style={{ width: lineW, height: 4, background: GRASS, margin: "44px 0 40px", borderRadius: 4 }} />
         <div
           style={{
-            fontFamily: "Gloock",
+            fontFamily: DISPLAY,
             fontSize: 66,
             color: INK,
             textAlign: "center",
@@ -38,7 +39,7 @@ export const Intro: React.FC = () => {
         </div>
         <div
           style={{
-            fontFamily: "IS",
+            fontFamily: BODY,
             fontWeight: 700,
             fontSize: 28,
             letterSpacing: 5,

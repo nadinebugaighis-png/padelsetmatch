@@ -56,12 +56,15 @@ export const Phone: React.FC<Props> = ({ src, scroll = 260, enterFrom = "right",
             src={staticFile(src)}
             style={{
               position: "absolute",
-              top: scrollY,
-              left: 0,
+              inset: 0,
               width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              objectPosition: `50% ${pan}%`,
               display: "block",
             }}
           />
+
         </div>
       </div>
     </AbsoluteFill>

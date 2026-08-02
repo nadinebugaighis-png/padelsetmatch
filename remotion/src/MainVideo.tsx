@@ -9,13 +9,6 @@ import { Outro } from "./scenes/Outro";
 import { ScreenScene } from "./scenes/ScreenScene";
 import { PAPER } from "./theme";
 
-const T = () => (
-  <TransitionSeries.Transition
-    presentation={slide({ direction: "from-right" })}
-    timing={springTiming({ config: { damping: 200 }, durationInFrames: 22 })}
-  />
-);
-
 export const MainVideo: React.FC = () => {
   return (
     <AbsoluteFill
@@ -42,7 +35,10 @@ export const MainVideo: React.FC = () => {
               enterFrom="bottom"
             />
           </TransitionSeries.Sequence>
-          <T />
+          <TransitionSeries.Transition
+            presentation={slide({ direction: "from-right" })}
+            timing={springTiming({ config: { damping: 200 }, durationInFrames: 22 })}
+          />
           <TransitionSeries.Sequence durationInFrames={150}>
             <ScreenScene
               kicker="Player directory"
@@ -52,7 +48,10 @@ export const MainVideo: React.FC = () => {
               enterFrom="right"
             />
           </TransitionSeries.Sequence>
-          <T />
+          <TransitionSeries.Transition
+            presentation={slide({ direction: "from-right" })}
+            timing={springTiming({ config: { damping: 200 }, durationInFrames: 22 })}
+          />
           <TransitionSeries.Sequence durationInFrames={140}>
             <ScreenScene
               kicker="Chat"
@@ -63,7 +62,10 @@ export const MainVideo: React.FC = () => {
               captionSide="bottom"
             />
           </TransitionSeries.Sequence>
-          <T />
+          <TransitionSeries.Transition
+            presentation={slide({ direction: "from-right" })}
+            timing={springTiming({ config: { damping: 200 }, durationInFrames: 22 })}
+          />
           <TransitionSeries.Sequence durationInFrames={130}>
             <ScreenScene
               kicker="Free courts"

@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as SocialPadelRouteImport } from './routes/social-padel'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
@@ -55,6 +57,11 @@ const SupportRoute = SupportRouteImport.update({
   path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SocialPadelRoute = SocialPadelRouteImport.update({
+  id: '/social-padel',
+  path: '/social-padel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -78,6 +85,11 @@ const PlayRoute = PlayRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreePadelCourtsRoute = FreePadelCourtsRouteImport.update({
+  id: '/free-padel-courts',
+  path: '/free-padel-courts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoRoute = DemoRouteImport.update({
@@ -227,11 +239,13 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
+  '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
@@ -263,11 +277,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
+  '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
@@ -301,11 +317,13 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/demo': typeof DemoRoute
+  '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/app/admin': typeof AppAdminRoute
@@ -340,11 +358,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/demo'
+    | '/free-padel-courts'
     | '/how-it-works'
     | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/social-padel'
     | '/support'
     | '/terms'
     | '/app/admin'
@@ -376,11 +396,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/demo'
+    | '/free-padel-courts'
     | '/how-it-works'
     | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/social-padel'
     | '/support'
     | '/terms'
     | '/app/admin'
@@ -413,11 +435,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/demo'
+    | '/free-padel-courts'
     | '/how-it-works'
     | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/social-padel'
     | '/support'
     | '/terms'
     | '/app/admin'
@@ -451,11 +475,13 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   DemoRoute: typeof DemoRoute
+  FreePadelCourtsRoute: typeof FreePadelCourtsRoute
   HowItWorksRoute: typeof HowItWorksRoute
   PlayRoute: typeof PlayRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SocialPadelRoute: typeof SocialPadelRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   GEventIdRoute: typeof GEventIdRoute
@@ -482,6 +508,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social-padel': {
+      id: '/social-padel'
+      path: '/social-padel'
+      fullPath: '/social-padel'
+      preLoaderRoute: typeof SocialPadelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -517,6 +550,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free-padel-courts': {
+      id: '/free-padel-courts'
+      path: '/free-padel-courts'
+      fullPath: '/free-padel-courts'
+      preLoaderRoute: typeof FreePadelCourtsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo': {
@@ -782,11 +822,13 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   DemoRoute: DemoRoute,
+  FreePadelCourtsRoute: FreePadelCourtsRoute,
   HowItWorksRoute: HowItWorksRoute,
   PlayRoute: PlayRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SocialPadelRoute: SocialPadelRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   GEventIdRoute: GEventIdRoute,

@@ -4,4 +4,4 @@ Disallow: /app/
 Disallow: /auth
 Disallow: /reset-password
 
-Sitemap: https://padelmatchapp.lovable.app/sitemap.xml
+Sitemap: https://padelsetmatch.com/sitemap.xml

@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Img, staticFile, useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
-import { INK, PAPER2 } from "./theme";
+import { INK, PAPER2 } from "../theme";
 
 type Props = {
   src: string;

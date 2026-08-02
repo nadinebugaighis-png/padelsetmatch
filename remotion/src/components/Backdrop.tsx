@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
-import { PAPER, GRASS, PLUM } from "./theme";
+import { PAPER, GRASS, PLUM } from "../theme";
 
 export const Backdrop: React.FC = () => {
   const frame = useCurrentFrame();

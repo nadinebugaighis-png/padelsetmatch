@@ -26,7 +26,12 @@ export const Phone: React.FC<Props> = ({ src, scroll = 260, enterFrom = "right",
   const R = 60 * scale;
 
   const drift = Math.sin(frame / 70) * 6;
-  const scrollY = interpolate(frame, [10, 150], [0, -scroll], { extrapolateRight: "clamp", extrapolateLeft: "clamp" });
+  // pan the screenshot vertically (0% = top of screen, 100% = bottom)
+  const pan = interpolate(frame, [12, 150], [0, Math.max(0, Math.min(100, scroll))], {
+    extrapolateRight: "clamp",
+    extrapolateLeft: "clamp",
+  });
+
 
   return (
     <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>

@@ -33,7 +33,7 @@ import landing3 from "@/assets/landing3.jpg.asset.json";
 import landing4 from "@/assets/landing4.jpg.asset.json";
 const LANDING_TILES = [landing1.url, landing2.url, landing3.url, landing4.url];
 
-const SHARE_IMAGE = `https://padelmatchapp.lovable.app${shareBanner.url}`;
+const SHARE_IMAGE = `https://padelsetmatch.com${shareBanner.url}`;
 const SHARE_DESC = "Connect with Padel players nearby you, join games, discover courts, and build your community.";
 
 export const Route = createFileRoute("/")({
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/")({
       { name: "description", content: SHARE_DESC },
       { property: "og:title", content: "Padel Match App — More Friends, Better Games" },
       { property: "og:description", content: SHARE_DESC },
-      { property: "og:url", content: "https://padelmatchapp.lovable.app/" },
+      { property: "og:url", content: "https://padelsetmatch.com/" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: SHARE_IMAGE },
       { property: "og:image:secure_url", content: SHARE_IMAGE },
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: SHARE_IMAGE },
     ],
     links: [
-      { rel: "canonical", href: "https://padelmatchapp.lovable.app/" },
+      { rel: "canonical", href: "https://padelsetmatch.com/" },
     ],
   }),
   component: Landing,

@@ -2,10 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
-  ArrowLeft, ArrowRight, MessageCircle, Send, ThumbsUp,
-  Users, Calendar, MapPin, Clock, X, Sparkles,
+  ArrowRight, MessageCircle, Send, ThumbsUp, Users, Calendar, MapPin,
+  Clock, X, Camera, Star, Trophy, Zap, Check, Plus, Settings, Bell, Search,
 } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
+import { CourtIcon } from "@/components/CourtIcon";
 import p1 from "@/assets/seed/p1.jpg.asset.json";
 import p2 from "@/assets/seed/p2.jpg.asset.json";
 import p3 from "@/assets/seed/p3.jpg.asset.json";
@@ -14,9 +15,14 @@ import p5 from "@/assets/seed/p5.jpg.asset.json";
 import p6 from "@/assets/seed/p6.jpg.asset.json";
 import p7 from "@/assets/seed/p7.jpg.asset.json";
 import p8 from "@/assets/seed/p8.jpg.asset.json";
+import p9 from "@/assets/seed/p9.jpg.asset.json";
+import p10 from "@/assets/seed/p10.jpg.asset.json";
+import p11 from "@/assets/seed/p11.jpg.asset.json";
+import p12 from "@/assets/seed/p12.jpg.asset.json";
 
-const TITLE = "Try PadelMatch — Peek Inside the App";
-const DESC = "Take a quick, no-signup tour of PadelMatch. Browse players, matches and chats, then sign up when you're ready.";
+const TITLE = "PadelSetMatch demo — players, matches and courts";
+const DESC =
+  "A no-signup tour of PadelSetMatch: find padel players near you, join open matches, chat with your four, and track your court time.";
 
 export const Route = createFileRoute("/demo")({
   head: () => ({
@@ -36,316 +42,549 @@ export const Route = createFileRoute("/demo")({
 });
 
 type Player = {
-  name: string; city: string; country: string; age: string;
-  level: number; score: number; photo: string; side: "L" | "R" | "B";
-  traits: string[];
+  name: string;
+  club: string;
+  city: string;
+  level: number;
+  fit: number;
+  photo: string;
+  side: "Left" | "Right" | "Both";
+  plays: string;
+  freeCourt?: boolean;
+  coach?: boolean;
+  tags: string[];
 };
 
 const PLAYERS: Player[] = [
-  { name: "Lucía",  city: "Madrid",     country: "🇪🇸", age: "28–34", level: 3.5, score: 92, photo: p1.url, side: "R", traits: ["Competitive", "Fast rallies"] },
-  { name: "Marc",   city: "Barcelona",  country: "🇪🇸", age: "35–44", level: 3.0, score: 88, photo: p2.url, side: "L", traits: ["Social", "Weekends"] },
-  { name: "Aisha",  city: "Dubai",      country: "🇦🇪", age: "25–34", level: 2.5, score: 85, photo: p3.url, side: "B", traits: ["Beginner-friendly"] },
-  { name: "Kenji",  city: "Tokyo",      country: "🇯🇵", age: "28–34", level: 4.0, score: 81, photo: p4.url, side: "R", traits: ["Advanced", "Early bird"] },
-  { name: "Sofia",  city: "Lisbon",     country: "🇵🇹", age: "25–34", level: 3.0, score: 79, photo: p5.url, side: "L", traits: ["Fun over score"] },
-  { name: "Diego",  city: "Buenos Aires", country: "🇦🇷", age: "35–44", level: 3.5, score: 77, photo: p6.url, side: "R", traits: ["Coach", "Loves lobs"] },
-  { name: "Nadia",  city: "Beirut",     country: "🇱🇧", age: "28–34", level: 2.5, score: 74, photo: p7.url, side: "B", traits: ["Casual"] },
-  { name: "Yusuf",  city: "Istanbul",   country: "🇹🇷", age: "25–34", level: 3.0, score: 71, photo: p8.url, side: "L", traits: ["Weekly regulars"] },
+  { name: "Lucía", club: "Padel Chamartín", city: "Madrid", level: 3.5, fit: 92, photo: p1.url, side: "Right", plays: "3–4 / week", freeCourt: true, tags: ["Competitive", "Evenings"] },
+  { name: "Marc", club: "La Finca Padel", city: "Madrid", level: 3.0, fit: 88, photo: p2.url, side: "Left", plays: "2 / week", tags: ["Social", "Weekends"] },
+  { name: "Aisha", club: "Padel Las Rozas", city: "Madrid", level: 2.5, fit: 85, photo: p3.url, side: "Both", plays: "1–2 / week", tags: ["Improving", "Mornings"] },
+  { name: "Kenji", club: "Club Pozuelo", city: "Madrid", level: 4.0, fit: 81, photo: p4.url, side: "Right", plays: "4+ / week", coach: true, tags: ["Coach", "Early bird"] },
+  { name: "Sofía", club: "Padel Retiro", city: "Madrid", level: 3.0, fit: 79, photo: p5.url, side: "Left", plays: "2–3 / week", freeCourt: true, tags: ["Consistent", "Lob lover"] },
+  { name: "Diego", club: "Puerto Padel", city: "Madrid", level: 3.5, fit: 77, photo: p6.url, side: "Right", plays: "3 / week", tags: ["Aggressive net"] },
+  { name: "Nadia", club: "Padel Alcobendas", city: "Madrid", level: 2.5, fit: 74, photo: p7.url, side: "Both", plays: "1 / week", tags: ["Casual", "Fun first"] },
+  { name: "Yusuf", club: "Boadilla Indoor", city: "Madrid", level: 3.0, fit: 71, photo: p8.url, side: "Left", plays: "2 / week", freeCourt: true, tags: ["Regular four"] },
+  { name: "Elena", club: "Padel Chamberí", city: "Madrid", level: 3.5, fit: 69, photo: p9.url, side: "Right", plays: "3 / week", tags: ["Tournaments"] },
+  { name: "Tomás", club: "Padel Getafe", city: "Madrid", level: 2.0, fit: 66, photo: p10.url, side: "Both", plays: "1 / week", tags: ["Just started"] },
+  { name: "Irene", club: "Padel Aravaca", city: "Madrid", level: 4.0, fit: 64, photo: p11.url, side: "Left", plays: "4 / week", coach: true, tags: ["Coach", "Drills"] },
+  { name: "Pablo", club: "Padel Vallecas", city: "Madrid", level: 3.0, fit: 61, photo: p12.url, side: "Right", plays: "2 / week", freeCourt: true, tags: ["Free court", "Nights"] },
 ];
 
 const MATCHES = [
-  { host: PLAYERS[0], when: "Today, 19:00", club: "Padel Barrio · Madrid", players: [PLAYERS[0], PLAYERS[1]], slots: 2, level: "3.0–3.5", price: "€8" },
-  { host: PLAYERS[2], when: "Tomorrow, 08:00", club: "The Els Club · Dubai", players: [PLAYERS[2], PLAYERS[3], PLAYERS[4]], slots: 1, level: "2.5–3.0", price: "AED 60" },
-  { host: PLAYERS[5], when: "Sat, 17:30", club: "Puerto Padel · Buenos Aires", players: [PLAYERS[5]], slots: 3, level: "3.5–4.0", price: "$5" },
+  { when: "Today", time: "19:00", club: "Padel Chamartín", zone: "Chamartín · Madrid", players: [PLAYERS[0], PLAYERS[1]], slots: 2, level: "3.0 – 3.5", price: "€8 p.p.", tone: "evening" as const, free: false },
+  { when: "Tomorrow", time: "08:30", club: "La Finca Padel", zone: "Pozuelo · Madrid", players: [PLAYERS[2], PLAYERS[3], PLAYERS[4]], slots: 1, level: "2.5 – 3.0", price: "Free court", tone: "morning" as const, free: true },
+  { when: "Saturday", time: "17:30", club: "Padel Retiro", zone: "Retiro · Madrid", players: [PLAYERS[5]], slots: 3, level: "3.5 – 4.0", price: "€6 p.p.", tone: "afternoon" as const, free: false },
+  { when: "Sunday", time: "11:00", club: "Boadilla Indoor", zone: "Boadilla · Madrid", players: [PLAYERS[7], PLAYERS[8]], slots: 2, level: "3.0", price: "Free court", tone: "morning" as const, free: true },
 ];
 
-const CHATS = [
-  { with: PLAYERS[1], preview: "Sounds good, see you Friday 👍", time: "12m", unread: 2 },
-  { with: PLAYERS[3], preview: "First time in Tokyo — courts near Shibuya?", time: "1h", unread: 0 },
-  { with: PLAYERS[4], preview: "I'll bring the balls this time!", time: "Yesterday", unread: 0 },
+const CONVERSATION = [
+  { from: "them" as const, who: PLAYERS[0], text: "We're 3 for tonight at Chamartín, 19:00. Court 4 is booked 👌", time: "17:42" },
+  { from: "me" as const, text: "I'm in. Left or right side?", time: "17:44" },
+  { from: "them" as const, who: PLAYERS[0], text: "You take the right, Marc plays left. Aisha is bringing new balls.", time: "17:45" },
+  { from: "me" as const, text: "Perfect. I'll be there 10 min early to warm up.", time: "17:46" },
+  { from: "them" as const, who: PLAYERS[1], text: "Same. Padel Set Match ✌️", time: "17:47" },
 ];
 
-const FEED = [
-  { author: PLAYERS[6], q: "Best padel racket for control vs power at 3.0 level?", replies: 5, likes: 12 },
-  { author: PLAYERS[7], q: "Anyone playing indoor courts in winter in Istanbul?", replies: 3, likes: 7 },
-];
+const ME = {
+  name: "Álvaro",
+  city: "Madrid",
+  photo: p6.url,
+  level: 3.5,
+  side: "Right",
+  plays: "3 / week",
+  matches: 42,
+  hours: 63,
+  partners: 18,
+  clubs: ["Padel Chamartín", "La Finca Padel", "Padel Retiro"],
+  traits: ["Competitive", "Reliable", "Fast rallies", "Evenings"],
+};
+
+const toneBg: Record<string, string> = {
+  morning: "color-mix(in oklab, var(--grass) 26%, transparent)",
+  afternoon: "color-mix(in oklab, #E8B84B 30%, transparent)",
+  evening: "color-mix(in oklab, var(--plum) 20%, transparent)",
+};
+
+function LevelDots({ level }: { level: number }) {
+  return (
+    <span className="inline-flex items-end gap-[2px] h-3">
+      {[2, 2.5, 3, 3.5, 4].map((s) => (
+        <span
+          key={s}
+          className="w-[3px] rounded-sm"
+          style={{
+            height: 4 + (s - 2) * 3.5,
+            background:
+              s <= level ? "var(--ink)" : "color-mix(in oklab, var(--ink) 18%, transparent)",
+          }}
+        />
+      ))}
+    </span>
+  );
+}
 
 function DemoPage() {
-  const [tab, setTab] = useState<"play" | "grid" | "chat">("play");
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [tab, setTab] = useState<"home" | "play" | "chat" | "me">("home");
+  const [clean, setClean] = useState(false);
+  const [selected, setSelected] = useState<Player | null>(null);
   const navigate = useNavigate();
 
-  const goSignup = () => navigate({ to: "/auth", search: { redirect: undefined, join: undefined } });
+  const goSignup = () =>
+    navigate({ to: "/auth", search: { redirect: undefined, join: undefined } });
 
-  const nudge = (msg: string) => {
+  const nudge = (msg: string) =>
     toast(msg, {
-      description: "Sign up (it's free) to unlock this.",
+      description: "Sign up (free) to unlock this.",
       action: { label: "Sign up", onClick: goSignup },
     });
-  };
 
   return (
-    <main className="programme-page min-h-screen bg-[var(--paper)] pb-24">
-      {/* Sticky demo banner */}
-      <div className="sticky top-0 z-40 bg-[var(--ink)] text-[var(--paper)] px-4 py-2.5 flex items-center justify-between gap-3 shadow-md">
-        <div className="flex items-center gap-2 min-w-0">
-          <Sparkles className="w-4 h-4 flex-shrink-0" />
-          <span className="text-[13px] font-medium truncate">You're browsing a demo</span>
+    <main className="programme-page min-h-screen bg-[var(--paper)] pb-28">
+      {!clean && (
+        <div className="sticky top-0 z-40 bg-[var(--ink)] text-[var(--paper)] px-4 py-2.5 flex items-center justify-between gap-3 shadow-md">
+          <span className="text-[13px] font-medium truncate">Demo preview — sample players</span>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => setClean(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--paper)]/40 text-[12px] px-2.5 py-1.5"
+              aria-label="Hide demo chrome for screenshots"
+            >
+              <Camera className="w-3.5 h-3.5" /> Clean
+            </button>
+            <button
+              onClick={goSignup}
+              className="rounded-full bg-[var(--paper)] text-[var(--ink)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5"
+            >
+              Sign up
+            </button>
+            <Link to="/" className="text-[var(--paper)]/70 p-1" aria-label="Exit demo">
+              <X className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button
-            onClick={goSignup}
-            className="rounded-full bg-[var(--paper)] text-[var(--ink)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 hover:brightness-95"
-          >
-            Sign up
-          </button>
-          <Link to="/" className="text-[var(--paper)]/70 hover:text-[var(--paper)] p-1" aria-label="Exit demo">
-            <X className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
+      )}
+      {clean && (
+        <button
+          onClick={() => setClean(false)}
+          className="fixed bottom-24 right-3 z-50 w-9 h-9 rounded-full bg-[var(--ink)]/25 text-[var(--paper)] flex items-center justify-center"
+          aria-label="Show demo controls"
+        >
+          <Camera className="w-4 h-4" />
+        </button>
+      )}
 
-      {/* Header */}
-      <header className="px-5 pt-4 pb-2 flex items-center justify-between">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-[var(--ink)]/70 hover:text-[var(--ink)] text-sm">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Link>
-        <BrandMark />
-        <Link to="/how-it-works" className="text-[13px] font-semibold text-[var(--plum)] underline underline-offset-4 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]">
-          How it works
-        </Link>
+      {/* App-like top bar */}
+      <header className="px-5 pt-4 pb-3 flex items-center justify-between">
+        <BrandMark size="sm" />
+        <div className="flex items-center gap-3 text-[var(--ink)]/70">
+          <Search className="w-5 h-5" strokeWidth={1.7} />
+          <div className="relative">
+            <Bell className="w-5 h-5" strokeWidth={1.7} />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)]" />
+          </div>
+        </div>
       </header>
 
-      {/* Tabs */}
-      <nav className="px-5 pt-3 pb-2 flex items-center gap-2 border-b border-[var(--ink)]/10">
-        {([
-          { id: "play", label: "Play", icon: Calendar },
-          { id: "grid", label: "Players", icon: Users },
-          { id: "chat", label: "Chat", icon: MessageCircle },
-        ] as const).map((t) => {
-          const Icon = t.icon;
-          const active = tab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] transition ${
-                active
-                  ? "bg-[var(--ink)] text-[var(--paper)]"
-                  : "bg-transparent text-[var(--ink)]/60 hover:text-[var(--ink)]"
-              }`}
-            >
-              <Icon className="w-3.5 h-3.5" /> {t.label}
-            </button>
-          );
-        })}
-      </nav>
+      <div className="px-4 sm:px-5">
+        {/* HOME */}
+        {tab === "home" && (
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-serif text-[30px] leading-[1.05] text-[var(--ink)]">
+              12 players near you
+            </h1>
+            <p className="text-[13px] text-[var(--ink)]/60 mt-1">
+              Madrid · within 8 km · matched on level, side and schedule
+            </p>
 
-      <div className="px-4 sm:px-5 pt-4">
-        {tab === "play" && (
-          <div className="space-y-3 max-w-2xl mx-auto">
-            {MATCHES.map((m, i) => (
-              <div key={i} className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-serif text-[22px] leading-tight text-[var(--ink)]">{m.when}</div>
-                    <div className="mt-1 flex items-center gap-1 text-[13px] text-[var(--ink)]/70">
-                      <MapPin className="w-3.5 h-3.5" /> {m.club}
-                    </div>
-                    <div className="mt-1 flex items-center gap-3 text-[11px] uppercase tracking-[0.14em] text-[var(--ink)]/55">
-                      <span>Level {m.level}</span>
-                      <span>·</span>
-                      <span>{m.price}</span>
-                    </div>
-                  </div>
-                  <span className="text-[10px] uppercase tracking-[0.18em] rounded-full bg-[var(--plum)]/12 text-[var(--plum)] px-2 py-1 font-semibold whitespace-nowrap">
-                    {m.slots} spot{m.slots > 1 ? "s" : ""}
-                  </span>
-                </div>
-
-                <div className="mt-3 flex items-center gap-2">
-                  {m.players.map((p, j) => (
-                    <img key={j} src={p.photo} alt={p.name} className="w-9 h-9 rounded-full object-cover border-2 border-[var(--paper)] shadow" />
-                  ))}
-                  {Array.from({ length: m.slots }).map((_, j) => (
-                    <button
-                      key={`s${j}`}
-                      onClick={() => nudge("Nice — join this match?")}
-                      className="w-9 h-9 rounded-full border-2 border-dashed border-[var(--ink)]/25 text-[var(--ink)]/40 hover:border-[var(--plum)] hover:text-[var(--plum)] flex items-center justify-center transition"
-                      aria-label="Join empty slot"
-                    >
-                      +
-                    </button>
-                  ))}
-                  <div className="ml-auto">
-                    <button
-                      onClick={() => nudge("Great pick!")}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2 hover:brightness-110"
-                    >
-                      Join <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <div className="mt-6 rounded-2xl border border-dashed border-[var(--ink)]/20 p-5 text-center">
-              <div className="text-serif text-lg text-[var(--ink)]">Host your own match</div>
-              <p className="text-sm text-[var(--ink)]/60 mt-1">Pick a court, invite the vibe.</p>
-              <button
-                onClick={goSignup}
-                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--plum)] text-white text-[12px] font-semibold uppercase tracking-[0.14em] px-4 py-2"
-              >
-                Sign up to host
-              </button>
-            </div>
-          </div>
-        )}
-
-        {tab === "grid" && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-            {PLAYERS.map((p, i) => (
-              <button
-                key={i}
-                onClick={() => setSelectedPlayer(p)}
-                className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 shadow-sm text-left"
-              >
-                <img src={p.photo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/80 via-[var(--ink)]/10 to-transparent" />
-                <span className="absolute top-2 right-2 text-[10px] font-semibold bg-[var(--paper)] text-[var(--ink)] rounded-full px-2 py-0.5">
-                  {p.score}
-                </span>
-                <div className="absolute bottom-2 left-2 right-2 text-[var(--paper)]">
-                  <div className="text-serif text-[17px] leading-tight">{p.name}</div>
-                  <div className="text-[10px] uppercase tracking-[0.16em] opacity-80">
-                    {p.country} {p.city}
-                  </div>
-                  <div className="text-[10px] opacity-75 mt-0.5">Level {p.level.toFixed(1)}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {tab === "chat" && (
-          <div className="max-w-2xl mx-auto">
-            <div className="divide-y divide-[var(--ink)]/10 rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-sm overflow-hidden">
-              {CHATS.map((c, i) => (
-                <button
-                  key={i}
-                  onClick={() => nudge(`Reply to ${c.with.name}?`)}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[var(--ink)]/[0.03] transition"
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              {["All", "Level 3.0–3.5", "Free court", "Evenings", "Coaches"].map((f, i) => (
+                <span
+                  key={f}
+                  className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-semibold ${
+                    i === 0
+                      ? "bg-[var(--ink)] text-[var(--paper)]"
+                      : "border border-[var(--ink)]/15 text-[var(--ink)]/70"
+                  }`}
                 >
-                  <img src={c.with.photo} alt={c.with.name} className="w-11 h-11 rounded-full object-cover" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="text-serif text-[15px] text-[var(--ink)] truncate">{c.with.name}</div>
-                      <div className="text-[11px] text-[var(--ink)]/50 whitespace-nowrap">{c.time}</div>
-                    </div>
-                    <div className="text-[13px] text-[var(--ink)]/65 truncate">{c.preview}</div>
-                  </div>
-                  {c.unread > 0 && (
-                    <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-5 rounded-full bg-[var(--plum)] text-white text-[11px] font-semibold px-1.5">
-                      {c.unread}
-                    </span>
-                  )}
-                </button>
+                  {f}
+                </span>
               ))}
             </div>
 
-            {/* Community feed preview */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-serif text-xl text-[var(--ink)]">Community</h3>
-                <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/55">Connect</span>
-              </div>
-              <div className="space-y-3">
-                {FEED.map((f, i) => (
-                  <div key={i} className="rounded-2xl border border-[var(--ink)]/10 p-4 bg-[var(--paper)]">
-                    <div className="flex items-center gap-2">
-                      <img src={f.author.photo} alt={f.author.name} className="w-8 h-8 rounded-full object-cover" />
-                      <div className="text-[13px] font-semibold text-[var(--ink)]">{f.author.name}</div>
-                      <div className="text-[11px] text-[var(--ink)]/50 ml-auto">{f.author.city}</div>
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {PLAYERS.map((p) => (
+                <button
+                  key={p.name}
+                  onClick={() => setSelected(p)}
+                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 shadow-sm text-left"
+                >
+                  <img src={p.photo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/85 via-[var(--ink)]/10 to-transparent" />
+                  <span className="absolute top-2 right-2 text-[10px] font-bold bg-[var(--paper)] text-[var(--ink)] rounded-full px-2 py-0.5">
+                    {p.fit}%
+                  </span>
+                  <div className="absolute top-2 left-2 flex flex-col gap-1">
+                    {p.freeCourt && (
+                      <span className="w-6 h-6 rounded-full bg-[var(--grass)] text-[var(--ink)] flex items-center justify-center" title="Free court access">
+                        <CourtIcon className="w-3.5 h-3.5" strokeWidth={2} />
+                      </span>
+                    )}
+                    {p.coach && (
+                      <span className="w-6 h-6 rounded-full bg-[var(--plum)] text-white flex items-center justify-center" title="Coach">
+                        <Star className="w-3 h-3 fill-current" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="absolute bottom-2 left-2 right-2 text-[var(--paper)]">
+                    <div className="text-serif text-[17px] leading-tight">{p.name}</div>
+                    <div className="text-[10px] uppercase tracking-[0.16em] opacity-85 truncate">
+                      {p.club}
                     </div>
-                    <p className="mt-2 text-[14px] text-[var(--ink)]/85 leading-snug">{f.q}</p>
-                    <div className="mt-3 flex items-center gap-4 text-[12px] text-[var(--ink)]/60">
-                      <button onClick={() => nudge("Like this post?")} className="inline-flex items-center gap-1 hover:text-[var(--plum)]">
-                        <ThumbsUp className="w-3.5 h-3.5" /> {f.likes}
+                    <div className="mt-1 flex items-center gap-1.5 text-[10px] opacity-90">
+                      <span className="rounded bg-[var(--paper)]/20 px-1.5 py-0.5">Lvl {p.level.toFixed(1)}</span>
+                      <span className="rounded bg-[var(--paper)]/20 px-1.5 py-0.5">{p.side[0]}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* PLAY */}
+        {tab === "play" && (
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <h1 className="text-serif text-[30px] leading-[1.05] text-[var(--ink)]">Open matches</h1>
+            <p className="text-[13px] text-[var(--ink)]/60 -mt-1">Madrid · next 7 days</p>
+
+            {MATCHES.map((m, i) => (
+              <div key={i} className="rounded-2xl border border-[var(--ink)]/10 bg-white/70 overflow-hidden shadow-sm">
+                <div className="flex">
+                  <div
+                    className="w-[92px] flex-shrink-0 flex flex-col items-center justify-center py-4"
+                    style={{ background: toneBg[m.tone] }}
+                  >
+                    <div className="text-serif text-[26px] leading-none text-[var(--ink)]">{m.time}</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold">
+                      {m.when}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0 p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="text-[15px] font-semibold text-[var(--ink)] truncate">{m.club}</div>
+                        <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60">
+                          <MapPin className="w-3.5 h-3.5" /> {m.zone}
+                        </div>
+                      </div>
+                      <span className="text-[10px] uppercase tracking-[0.16em] rounded-full bg-[var(--plum)]/12 text-[var(--plum)] px-2 py-1 font-semibold whitespace-nowrap">
+                        {m.slots} spot{m.slots > 1 ? "s" : ""}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
+                      <span className="inline-flex items-center gap-1">
+                        <LevelDots level={parseFloat(m.level)} /> {m.level}
+                      </span>
+                      <span>·</span>
+                      <span className={m.free ? "inline-flex items-center gap-1 text-[var(--ink)] font-semibold" : ""}>
+                        {m.free && <CourtIcon className="w-3.5 h-3" strokeWidth={2} />}
+                        {m.price}
+                      </span>
+                      <span>·</span>
+                      <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> 90 min</span>
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-2">
+                      {m.players.map((p, j) => (
+                        <img key={j} src={p.photo} alt={p.name} className="w-9 h-9 rounded-full object-cover border-2 border-white shadow" />
+                      ))}
+                      {Array.from({ length: m.slots }).map((_, j) => (
+                        <button
+                          key={`s${j}`}
+                          onClick={() => nudge("Join this match?")}
+                          className="w-9 h-9 rounded-full border-2 border-dashed border-[var(--ink)]/25 text-[var(--ink)]/40 flex items-center justify-center"
+                          aria-label="Open slot"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => nudge("Join this match?")}
+                        className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2"
+                      >
+                        Join <ArrowRight className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => nudge("Join the conversation?")} className="inline-flex items-center gap-1 hover:text-[var(--plum)]">
-                        <MessageCircle className="w-3.5 h-3.5" /> {f.replies}
-                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <button
+              onClick={goSignup}
+              className="w-full mt-2 rounded-2xl border border-dashed border-[var(--ink)]/25 py-5 text-center"
+            >
+              <div className="text-serif text-lg text-[var(--ink)]">Host your own match</div>
+              <p className="text-[13px] text-[var(--ink)]/60 mt-0.5">Pick a court, we'll find your four.</p>
+            </button>
+          </div>
+        )}
+
+        {/* CHAT */}
+        {tab === "chat" && (
+          <div className="max-w-2xl mx-auto">
+            <div className="rounded-2xl border border-[var(--ink)]/10 bg-white/70 overflow-hidden shadow-sm">
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ink)]/10">
+                <div className="flex -space-x-2">
+                  {[PLAYERS[0], PLAYERS[1], PLAYERS[2]].map((p) => (
+                    <img key={p.name} src={p.photo} alt={p.name} className="w-8 h-8 rounded-full object-cover border-2 border-white" />
+                  ))}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-serif text-[16px] text-[var(--ink)] leading-tight">Tonight · Chamartín 19:00</div>
+                  <div className="text-[11px] text-[var(--ink)]/55">Lucía, Marc, Aisha · 1 spot left</div>
+                </div>
+                <span className="ml-auto text-[10px] uppercase tracking-[0.16em] font-semibold text-[var(--ink)]/60">
+                  Court 4
+                </span>
+              </div>
+
+              <div className="px-4 py-4 space-y-3 bg-[var(--paper)]">
+                {CONVERSATION.map((m, i) => (
+                  <div key={i} className={`flex gap-2 ${m.from === "me" ? "justify-end" : ""}`}>
+                    {m.from === "them" && (
+                      <img src={m.who.photo} alt={m.who.name} className="w-7 h-7 rounded-full object-cover self-end" />
+                    )}
+                    <div className={`max-w-[76%] ${m.from === "me" ? "items-end" : ""}`}>
+                      {m.from === "them" && (
+                        <div className="text-[10px] uppercase tracking-[0.14em] text-[var(--ink)]/50 mb-0.5">{m.who.name}</div>
+                      )}
+                      <div
+                        className={`rounded-2xl px-3.5 py-2 text-[14px] leading-snug ${
+                          m.from === "me"
+                            ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-md"
+                            : "bg-white text-[var(--ink)] border border-[var(--ink)]/10 rounded-bl-md"
+                        }`}
+                      >
+                        {m.text}
+                      </div>
+                      <div className={`text-[10px] text-[var(--ink)]/40 mt-0.5 ${m.from === "me" ? "text-right" : ""}`}>
+                        {m.time}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
+
+              <div className="flex items-center gap-2 px-3 py-3 border-t border-[var(--ink)]/10 bg-white/70">
+                <div className="flex-1 rounded-full border border-[var(--ink)]/15 px-4 py-2.5 text-[13px] text-[var(--ink)]/40">
+                  Message your four…
+                </div>
+                <button
+                  onClick={() => nudge("Send a message?")}
+                  className="w-10 h-10 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center"
+                  aria-label="Send"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              {[
+                { p: PLAYERS[3], text: "Drills session Thursday if you're up for it 🎾", time: "1h" },
+                { p: PLAYERS[4], text: "I'll bring the balls this time!", time: "Yesterday" },
+                { p: PLAYERS[7], text: "Court at my building is free Sunday 11:00", time: "2d" },
+              ].map((c, i) => (
+                <button
+                  key={i}
+                  onClick={() => nudge(`Open chat with ${c.p.name}?`)}
+                  className="w-full flex items-center gap-3 rounded-2xl border border-[var(--ink)]/10 bg-white/60 px-4 py-3 text-left"
+                >
+                  <img src={c.p.photo} alt={c.p.name} className="w-10 h-10 rounded-full object-cover" />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-serif text-[15px] text-[var(--ink)]">{c.p.name}</span>
+                      <span className="text-[11px] text-[var(--ink)]/45">{c.time}</span>
+                    </div>
+                    <div className="text-[13px] text-[var(--ink)]/65 truncate">{c.text}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ME */}
+        {tab === "me" && (
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-start gap-4">
+              <div className="bg-white p-2 pb-6 shadow-[0_10px_30px_-15px_rgba(15,62,46,0.4)]">
+                <img src={ME.photo} alt={ME.name} className="w-[112px] h-[140px] object-cover" />
+              </div>
+              <div className="pt-1 min-w-0">
+                <h1 className="text-serif text-[32px] leading-[0.95] text-[var(--ink)]">{ME.name}</h1>
+                <div className="mt-1.5 flex items-center gap-1 text-[13px] text-[var(--ink)]/70">
+                  <MapPin className="w-3.5 h-3.5" /> {ME.city}
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-semibold px-2.5 py-1">
+                    <CourtIcon className="w-3.5 h-3" strokeWidth={2} /> Free court
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold px-2.5 py-1">
+                    <Trophy className="w-3 h-3" /> Founder #57
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 rounded-2xl border border-[var(--ink)]/10 bg-white/60 divide-x divide-[var(--ink)]/10">
+              {[
+                { v: ME.matches, l: "Matches" },
+                { v: ME.hours, l: "Hours on court" },
+                { v: ME.partners, l: "Partners" },
+              ].map((s) => (
+                <div key={s.l} className="py-3.5 text-center">
+                  <div className="text-serif text-[24px] leading-none text-[var(--ink)]">{s.v}</div>
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mt-1.5 font-semibold">{s.l}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {[
+                { icon: <Zap className="w-5 h-5" />, l: "Level", v: ME.level.toFixed(1) },
+                { icon: <CourtIcon className="w-6 h-4" />, l: "Side", v: ME.side },
+                { icon: <Calendar className="w-5 h-5" />, l: "Plays", v: ME.plays },
+              ].map((s) => (
+                <div key={s.l} className="rounded-2xl border border-[var(--ink)]/10 bg-white/60 py-3 flex flex-col items-center gap-1.5 text-[var(--ink)]">
+                  {s.icon}
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/55 font-semibold">{s.l}</div>
+                  <div className="text-[13px] font-semibold">{s.v}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 font-semibold">My clubs</div>
+              <div className="mt-2 space-y-2">
+                {ME.clubs.map((c) => (
+                  <div key={c} className="flex items-center gap-2 rounded-xl border border-[var(--ink)]/10 bg-white/60 px-3.5 py-2.5 text-[14px] text-[var(--ink)]">
+                    <MapPin className="w-4 h-4 text-[var(--ink)]/60" /> {c}
+                    <Check className="w-4 h-4 ml-auto text-[var(--grass)]" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 font-semibold">On court I am</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {ME.traits.map((t) => (
+                  <span key={t} className="rounded-full border border-[var(--ink)]/15 px-3 py-1.5 text-[12px] text-[var(--ink)]">{t}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button onClick={goSignup} className="rounded-xl bg-[var(--ink)] text-[var(--paper)] py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
+                Edit profile
+              </button>
+              <button onClick={() => nudge("Open settings?")} className="rounded-xl border border-[var(--ink)]/20 bg-white/60 text-[var(--ink)] py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
+                <Settings className="w-4 h-4" /> Settings
+              </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Player profile modal */}
-      {selectedPlayer && (
-        <div className="fixed inset-0 z-50 bg-[var(--ink)]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setSelectedPlayer(null)}>
-          <div className="bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="relative aspect-[4/5]">
-              <img src={selectedPlayer.photo} alt={selectedPlayer.name} className="w-full h-full object-cover" />
-              <button
-                onClick={() => setSelectedPlayer(null)}
-                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-[var(--paper)]/95 flex items-center justify-center shadow"
-                aria-label="Close"
-              >
-                <X className="w-4 h-4" />
+      {/* Player sheet */}
+      {selected && (
+        <div className="fixed inset-0 z-50 bg-[var(--ink)]/40 flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={() => setSelected(null)}>
+          <div
+            className="w-full sm:max-w-sm bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative">
+              <img src={selected.photo} alt={selected.name} className="w-full h-64 object-cover" />
+              <button onClick={() => setSelected(null)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[var(--paper)]/90 flex items-center justify-center" aria-label="Close">
+                <X className="w-4 h-4 text-[var(--ink)]" />
               </button>
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[var(--ink)]/90 to-transparent text-[var(--paper)]">
-                <div className="text-serif text-3xl leading-none">{selectedPlayer.name}</div>
-                <div className="text-[11px] uppercase tracking-[0.18em] opacity-80 mt-1">
-                  {selectedPlayer.country} {selectedPlayer.city} · Level {selectedPlayer.level.toFixed(1)} · {selectedPlayer.age}
-                </div>
-              </div>
             </div>
-            <div className="p-5 space-y-4">
-              <div>
-                <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/55 mb-1.5">Vibe</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedPlayer.traits.map((tr, i) => (
-                    <span key={i} className="rounded-full bg-[var(--ink)]/6 border border-[var(--ink)]/10 px-2.5 py-1 text-[12px] text-[var(--ink)]/75">{tr}</span>
-                  ))}
+            <div className="p-5">
+              <div className="flex items-end justify-between gap-3">
+                <div>
+                  <div className="text-serif text-[26px] leading-none text-[var(--ink)]">{selected.name}</div>
+                  <div className="text-[12px] text-[var(--ink)]/60 mt-1.5">{selected.club} · {selected.city}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-serif text-[26px] leading-none text-[var(--ink)]">{selected.fit}%</div>
+                  <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--ink)]/55 font-semibold mt-1">Fit on court</div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <button
-                  onClick={goSignup}
-                  className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[12px] font-semibold uppercase tracking-[0.14em] py-2.5 hover:bg-[var(--ink)]/5 inline-flex items-center justify-center gap-1.5"
-                >
-                  <ThumbsUp className="w-3.5 h-3.5" /> Connect
+
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                {[
+                  { l: "Level", v: selected.level.toFixed(1) },
+                  { l: "Side", v: selected.side },
+                  { l: "Plays", v: selected.plays },
+                ].map((s) => (
+                  <div key={s.l} className="rounded-xl bg-[var(--ink)]/[0.05] py-2.5">
+                    <div className="text-[9px] uppercase tracking-[0.16em] text-[var(--ink)]/55 font-semibold">{s.l}</div>
+                    <div className="text-[13px] font-semibold text-[var(--ink)] mt-0.5">{s.v}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {selected.freeCourt && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-semibold px-2.5 py-1">
+                    <CourtIcon className="w-3.5 h-3" strokeWidth={2} /> Free court
+                  </span>
+                )}
+                {selected.tags.map((t) => (
+                  <span key={t} className="rounded-full border border-[var(--ink)]/15 px-2.5 py-1 text-[11px] text-[var(--ink)]">{t}</span>
+                ))}
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button onClick={() => nudge(`Message ${selected.name}?`)} className="rounded-xl bg-[var(--ink)] text-[var(--paper)] py-3 text-[12px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
+                  <MessageCircle className="w-4 h-4" /> Message
                 </button>
-                <button
-                  onClick={goSignup}
-                  className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] py-2.5 hover:brightness-110 inline-flex items-center justify-center gap-1.5"
-                >
-                  <Send className="w-3.5 h-3.5" /> Message
+                <button onClick={() => nudge(`Invite ${selected.name} to a match?`)} className="rounded-xl border border-[var(--ink)]/20 text-[var(--ink)] py-3 text-[12px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
+                  <ThumbsUp className="w-4 h-4" /> Invite
                 </button>
               </div>
-              <p className="text-[11px] text-[var(--ink)]/50 text-center pt-1">
-                <Clock className="w-3 h-3 inline mr-1" />
-                Demo profile — sign up to meet real players near you.
-              </p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Bottom fixed CTA */}
-      <div className="fixed bottom-0 inset-x-0 z-30 bg-gradient-to-t from-[var(--paper)] via-[var(--paper)] to-transparent pt-6 pb-4 px-4">
-        <div className="max-w-md mx-auto flex items-center gap-2">
-          <button
-            onClick={goSignup}
-            className="flex-1 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.16em] text-[13px] py-3.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)]"
-          >
-            Sign up to play for real
-          </button>
+      {/* Bottom app nav */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-[var(--ink)]/10 bg-[var(--paper)]/95 backdrop-blur px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div className="max-w-2xl mx-auto grid grid-cols-4">
+          {([
+            { id: "home", label: "Players", icon: Users },
+            { id: "play", label: "Play", icon: Calendar },
+            { id: "chat", label: "Chat", icon: MessageCircle },
+            { id: "me", label: "Me", icon: Trophy },
+          ] as const).map((t) => {
+            const Icon = t.icon;
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => { setTab(t.id); setSelected(null); window.scrollTo({ top: 0 }); }}
+                className={`flex flex-col items-center gap-1 py-1.5 ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/45"}`}
+              >
+                <Icon className="w-5 h-5" strokeWidth={active ? 2.2 : 1.7} />
+                <span className="text-[10px] uppercase tracking-[0.14em] font-semibold">{t.label}</span>
+              </button>
+            );
+          })}
         </div>
-      </div>
+      </nav>
     </main>
   );
 }

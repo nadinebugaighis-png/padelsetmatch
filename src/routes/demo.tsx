@@ -86,7 +86,7 @@ const CONVERSATION = [
 ];
 
 const ME = {
-  name: "Álvaro",
+  name: "Clara",
   city: "Madrid",
   photo: p6.url,
   level: 3.5,

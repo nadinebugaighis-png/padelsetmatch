@@ -78,11 +78,11 @@ const MATCHES = [
 ];
 
 const CONVERSATION = [
-  { from: "them" as const, who: PLAYERS[0], text: "We're 3 for tonight at Chamartín, 19:00. Court 4 is booked 👌", time: "17:42" },
+  { from: "them" as const, who: PLAYERS[0], text: "We're 3 for tonight at Chamartín, 19:00. Court 4 is booked.", time: "17:42" },
   { from: "me" as const, text: "I'm in. Left or right side?", time: "17:44" },
   { from: "them" as const, who: PLAYERS[0], text: "You take the right, Marc plays left. Aisha is bringing new balls.", time: "17:45" },
   { from: "me" as const, text: "Perfect. I'll be there 10 min early to warm up.", time: "17:46" },
-  { from: "them" as const, who: PLAYERS[1], text: "Same. Padel Set Match ✌️", time: "17:47" },
+  { from: "them" as const, who: PLAYERS[1], text: "Same. Padel, set, match.", time: "17:47" },
 ];
 
 const ME = {
@@ -393,7 +393,7 @@ function DemoPage() {
 
             <div className="mt-4 space-y-2">
               {[
-                { p: PLAYERS[3], text: "Drills session Thursday if you're up for it 🎾", time: "1h" },
+                { p: PLAYERS[3], text: "Drills session Thursday if you are up for it", time: "1h" },
                 { p: PLAYERS[4], text: "I'll bring the balls this time!", time: "Yesterday" },
                 { p: PLAYERS[7], text: "Court at my building is free Sunday 11:00", time: "2d" },
               ].map((c, i) => (

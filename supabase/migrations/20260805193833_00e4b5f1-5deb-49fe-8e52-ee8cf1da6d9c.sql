@@ -1,0 +1,2 @@
+UPDATE public.app_alerts SET acknowledged_at = now() WHERE acknowledged_at IS NULL AND title ILIKE '%TEST_TELEMETRY_CRASH%';
+DELETE FROM public.app_events WHERE name = 'TEST_TELEMETRY_CRASH' OR message ILIKE '%TEST_TELEMETRY_CRASH%';

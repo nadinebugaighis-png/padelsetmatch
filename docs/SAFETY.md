@@ -41,6 +41,7 @@ PadelSetMatch is a padel players' directory: people find neighbours to play with
 - **Reliability signals.** Members confirm matches they actually played, and can report a no-show. Played counts and no-show counts are visible so you know who turns up.
 - **Anonymous, verified coach reviews.** Only players a coach has confirmed coaching can rate them, and the rating stays anonymous — real feedback without fear.
 - **Group chat per match.** Every open match has its own chat so plans stay in one place and nobody needs to share a phone number.
+- **Private home courts are flagged.** When a host sets the match location as a private home or property, every player sees a clear "Private court" notice on the match before joining — so nobody turns up at a stranger's house without knowing. Residential complex or urbanisation courts open to residents are not counted as private.
 - **Guests are limited.** Guest participants join a single match through a one-off link; they cannot browse the member directory.
 
 ## 6. Your data

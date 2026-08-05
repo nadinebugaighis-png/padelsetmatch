@@ -53,7 +53,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const es = readLang() === "es";
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    void import("@/lib/telemetry").then((m) =>
+      m.reportError(error, { fatal: true, props: { boundary: "root_error_component" } }),
+    ).catch(() => {});
   }, [error]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -143,6 +147,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
+    // Crash reporting + analytics (web and the native iOS/Android shell)
+    void import("@/lib/telemetry").then((m) => {
+      m.initTelemetry();
+      m.trackScreen(window.location.pathname);
+    }).catch(() => {});
+    const unsubNav = router.subscribe("onResolved", ({ toLocation }) => {
+      void import("@/lib/telemetry").then((m) => m.trackScreen(toLocation.pathname)).catch(() => {});
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
@@ -150,6 +162,7 @@ function RootComponent() {
     });
     // Native shell (iOS/Android via Capacitor) — no-op on the web
     void import("@/lib/native").then((m) => m.initNativeShell()).catch(() => {});
+
     // Register the service worker for push notifications (production only)
 
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
@@ -162,7 +175,7 @@ function RootComponent() {
         });
       }
     }
-    return () => { sub.subscription.unsubscribe(); };
+    return () => { sub.subscription.unsubscribe(); unsubNav(); };
   }, [router, queryClient]);
   return (
     <QueryClientProvider client={queryClient}>

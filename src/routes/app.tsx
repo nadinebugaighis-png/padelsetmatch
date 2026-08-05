@@ -195,15 +195,31 @@ function AuthShell() {
     if (typeof window === "undefined") return "";
     return localStorage.getItem("connect-last-seen") ?? "";
   });
+  const connectLatest = connectQ.data?.latest ?? null;
+  const onConnect = path.startsWith("/app/connect");
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!path.startsWith("/app/connect")) return;
-    const now = new Date().toISOString();
-    localStorage.setItem("connect-last-seen", now);
-    setConnectSeen(now);
-  }, [path]);
-  const connectLatest = connectQ.data?.latest ?? null;
-  const connectHasNew = !!connectLatest && (!connectSeen || connectLatest > connectSeen);
+    if (!onConnect) return;
+    // Mark everything currently published as seen. Use the newest server
+    // timestamp when it is ahead of the device clock, so clock skew or
+    // timestamp-format differences can't leave the dot stuck on.
+    const nowMs = Date.now();
+    const latestMs = connectLatest ? Date.parse(connectLatest) : 0;
+    const stamp = new Date(Math.max(nowMs, Number.isNaN(latestMs) ? 0 : latestMs) + 1000).toISOString();
+    localStorage.setItem("connect-last-seen", stamp);
+    setConnectSeen(stamp);
+  }, [onConnect, connectLatest]);
+  const connectHasNew = (() => {
+    if (onConnect) return false;
+    if (!connectLatest) return false;
+    const latestMs = Date.parse(connectLatest);
+    if (Number.isNaN(latestMs)) return false;
+    if (!connectSeen) return true;
+    const seenMs = Date.parse(connectSeen);
+    if (Number.isNaN(seenMs)) return true;
+    return latestMs > seenMs;
+  })();
+
   const rawInvites = (invitesQ.data?.invites ?? []) as Array<{
     id: string;
     event: { id: string; starts_at: string; club_name: string | null; city: string | null; status: string; host: { first_name: string | null } | null } | null;

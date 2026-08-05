@@ -180,7 +180,7 @@ export const adminGetReportedContent = createServerFn({ method: "POST" })
 export const adminDeleteContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({ kind: z.enum(["post", "comment", "message"]), contentId: z.string().uuid() }).parse(d),
+    z.object({ kind: z.enum(["post", "comment", "message", "gear", "photo"]), contentId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
@@ -191,3 +191,18 @@ export const adminDeleteContent = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const adminModerationFeed = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data, error } = await (context.supabase as any).rpc("admin_moderation_feed", { _limit: 40 });
+    if (error) throw new Error(error.message);
+    return data as {
+      posts: Array<{ id: string; created_at: string; title: string; body: string; author_profile_id: string; author_name: string | null }>;
+      comments: Array<{ id: string; created_at: string; body: string; author_profile_id: string; author_name: string | null }>;
+      photos: Array<{ id: string; created_at: string; first_name: string | null; photo_url: string | null; zone: string | null }>;
+      gear: Array<{ id: string; created_at: string; title: string; kind: string; note: string | null; image_url: string | null; profile_id: string; author_name: string | null }>;
+    };
+  });
+

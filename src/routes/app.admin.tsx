@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert, adminGetReportedContent, adminDeleteContent } from "@/lib/admin.functions";
+import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert, adminGetReportedContent, adminDeleteContent, adminModerationFeed } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/app/admin")({
   component: AdminPage,
 });
 
-type Tab = "overview" | "reports" | "members" | "feedback" | "health";
+type Tab = "overview" | "reports" | "moderate" | "members" | "feedback" | "health";
 
 function AdminPage() {
   const qc = useQueryClient();
@@ -97,6 +97,7 @@ function AdminPage() {
         {([
           ["overview", "Overview"],
           ["reports", `Reports${pendingReports.length ? ` · ${pendingReports.length}` : ""}`],
+          ["moderate", "Moderate"],
           ["members", "Members"],
           ["feedback", "Feedback"],
           ["health", "Health"],
@@ -304,7 +305,150 @@ function AdminPage() {
         </Card>
       )}
 
+      {tab === "moderate" && <ModerateTab />}
+
       {tab === "health" && <HealthTab />}
+    </div>
+  );
+}
+
+type ModFeed = {
+  posts: Array<{ id: string; created_at: string; title: string; body: string; author_profile_id: string; author_name: string | null }>;
+  comments: Array<{ id: string; created_at: string; body: string; author_profile_id: string; author_name: string | null }>;
+  photos: Array<{ id: string; created_at: string; first_name: string | null; photo_url: string | null; zone: string | null }>;
+  gear: Array<{ id: string; created_at: string; title: string; kind: string; note: string | null; image_url: string | null; profile_id: string; author_name: string | null }>;
+};
+
+/** Proactive moderation: browse newest content + photos and remove anything inappropriate. */
+function ModerateTab() {
+  const fetchFeed = useServerFn(adminModerationFeed);
+  const removeContent = useServerFn(adminDeleteContent);
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ["admin-moderation"], queryFn: () => fetchFeed() });
+  const [sub, setSub] = useState<"photos" | "gear" | "posts" | "comments">("photos");
+
+  const del = useMutation({
+    mutationFn: (v: { kind: "post" | "comment" | "gear" | "photo"; contentId: string }) =>
+      removeContent({ data: v }),
+    onSuccess: () => {
+      toast.success("Removed");
+      qc.invalidateQueries({ queryKey: ["admin-moderation"] });
+      qc.invalidateQueries({ queryKey: ["admin-stats"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+
+  const RemoveBtn = ({ kind, id, label }: { kind: "post" | "comment" | "gear" | "photo"; id: string; label: string }) => (
+    <button
+      type="button"
+      disabled={del.isPending}
+      onClick={() => { if (confirm(`${label}?`)) del.mutate({ kind, contentId: id }); }}
+      className="shrink-0 text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-500 hover:bg-red-500/30"
+    >
+      Remove
+    </button>
+  );
+
+  if (q.isLoading) return <div className="p-2 text-sm text-[var(--ink)]/70">Loading…</div>;
+  if (q.error || !q.data) return <div className="p-2 text-sm text-[var(--ink)]/70">Could not load content.</div>;
+  const f = q.data as ModFeed;
+
+  return (
+    <div className="space-y-4">
+      <nav className="flex gap-1 p-1 rounded-full bg-[var(--ink)]/8 border border-[var(--ink)]/10">
+        {([
+          ["photos", `Photos · ${f.photos.length}`],
+          ["gear", `Kit · ${f.gear.length}`],
+          ["posts", `Posts · ${f.posts.length}`],
+          ["comments", `Comments · ${f.comments.length}`],
+        ] as [typeof sub, string][]).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setSub(id)}
+            className={`flex-1 text-[11px] font-semibold py-1.5 rounded-full transition ${
+              sub === id ? "bg-[var(--grass)] text-[var(--ink)]" : "text-[var(--ink)]/70 hover:text-[var(--ink)]"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      {sub === "photos" && (
+        <Card title="Newest profile photos">
+          <div className="grid grid-cols-3 gap-2">
+            {f.photos.map((p) => (
+              <div key={p.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/10 bg-[var(--ink)]/5">
+                <img src={p.photo_url ?? ""} alt={p.first_name ?? "member"} className="w-full aspect-square object-cover" loading="lazy" />
+                <div className="p-1.5 space-y-1">
+                  <div className="text-[11px] font-semibold truncate">{p.first_name ?? "—"}</div>
+                  <RemoveBtn kind="photo" id={p.id} label={`Remove ${p.first_name ?? "this"} photo`} />
+                </div>
+              </div>
+            ))}
+            {f.photos.length === 0 && <p className="text-sm text-[var(--ink)]/60">No photos.</p>}
+          </div>
+        </Card>
+      )}
+
+      {sub === "gear" && (
+        <Card title="Newest kit items">
+          <div className="grid grid-cols-3 gap-2">
+            {f.gear.map((g) => (
+              <div key={g.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/10 bg-[var(--ink)]/5">
+                {g.image_url
+                  ? <img src={g.image_url} alt={g.title} className="w-full aspect-square object-cover" loading="lazy" />
+                  : <div className="w-full aspect-square grid place-items-center text-[10px] text-[var(--ink)]/40">no photo</div>}
+                <div className="p-1.5 space-y-1">
+                  <div className="text-[11px] font-semibold truncate">{g.title}</div>
+                  <div className="text-[10px] text-[var(--ink)]/55 truncate">{g.author_name ?? "—"}</div>
+                  <RemoveBtn kind="gear" id={g.id} label={`Remove kit item "${g.title}"`} />
+                </div>
+              </div>
+            ))}
+            {f.gear.length === 0 && <p className="text-sm text-[var(--ink)]/60">No kit items.</p>}
+          </div>
+        </Card>
+      )}
+
+      {sub === "posts" && (
+        <Card title="Newest Connect posts">
+          <div className="space-y-2">
+            {f.posts.map((p) => (
+              <div key={p.id} className="rounded-lg border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-2.5 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+                    {p.author_name ?? "unknown"} · {new Date(p.created_at).toLocaleString()}
+                  </div>
+                  <div className="text-sm font-semibold truncate">{p.title}</div>
+                  <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap">{p.body}</p>
+                </div>
+                <RemoveBtn kind="post" id={p.id} label="Remove this post" />
+              </div>
+            ))}
+            {f.posts.length === 0 && <p className="text-sm text-[var(--ink)]/60">No posts.</p>}
+          </div>
+        </Card>
+      )}
+
+      {sub === "comments" && (
+        <Card title="Newest comments">
+          <div className="space-y-2">
+            {f.comments.map((c) => (
+              <div key={c.id} className="rounded-lg border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-2.5 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+                    {c.author_name ?? "unknown"} · {new Date(c.created_at).toLocaleString()}
+                  </div>
+                  <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap">{c.body}</p>
+                </div>
+                <RemoveBtn kind="comment" id={c.id} label="Remove this comment" />
+              </div>
+            ))}
+            {f.comments.length === 0 && <p className="text-sm text-[var(--ink)]/60">No comments.</p>}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

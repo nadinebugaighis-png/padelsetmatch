@@ -156,3 +156,38 @@ export const adminAckAlert = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Fetch the actual post/comment/message behind a content report. */
+export const adminGetReportedContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ kind: z.enum(["post", "comment", "message"]), contentId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { data: row, error } = await (context.supabase as any).rpc("admin_get_reported_content", {
+      _kind: data.kind,
+      _id: data.contentId,
+    });
+    if (error) throw new Error(error.message);
+    return row as {
+      kind: string; id: string; exists: boolean;
+      body?: string; created_at?: string; author_profile_id?: string; author_name?: string | null;
+    };
+  });
+
+/** Remove reported content (post/comment deleted, message redacted). */
+export const adminDeleteContent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ kind: z.enum(["post", "comment", "message"]), contentId: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await (context.supabase as any).rpc("admin_delete_content", {
+      _kind: data.kind,
+      _id: data.contentId,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

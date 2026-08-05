@@ -171,7 +171,7 @@ function RootComponent() {
         });
       }
     }
-    return () => { sub.subscription.unsubscribe(); };
+    return () => { sub.subscription.unsubscribe(); unsubNav(); };
   }, [router, queryClient]);
   return (
     <QueryClientProvider client={queryClient}>

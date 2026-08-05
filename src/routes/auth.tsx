@@ -280,6 +280,10 @@ function AuthPage() {
           <LangSwitch />
         </div>
         <Link to="/" className="mt-4 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
+        <h1 className="text-serif mt-4 text-3xl uppercase text-[var(--ink)] leading-[0.95]">
+          {tr("Join PadelSetMatch", "Únete a PadelSetMatch", "Rejoignez PadelSetMatch")}
+        </h1>
+
         <div
           role="tablist"
           aria-label={tr("Authentication mode", "Modo de autenticación", "Mode d'authentification")}

@@ -286,9 +286,78 @@ function AdminPage() {
           </div>
         </Card>
       )}
+
+      {tab === "health" && <HealthTab />}
     </div>
   );
 }
+
+function HealthTab() {
+  const fetchHealth = useServerFn(getAdminHealth);
+  const q = useQuery({ queryKey: ["admin-health"], queryFn: () => fetchHealth() });
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  if (q.isLoading) return <div className="p-2 text-sm text-[var(--ink)]/70">Loading…</div>;
+  if (q.error || !q.data) return <div className="p-2 text-sm text-[var(--ink)]/70">Could not load health data.</div>;
+  const h = q.data;
+
+  return (
+    <div className="space-y-4">
+      <section className="grid grid-cols-3 gap-2">
+        <BigStat label="Crash-free" value={`${h.crashFreeRate}%`} accent />
+        <BigStat label="Crashes 7d" value={h.crashCount} />
+        <BigStat label="Sessions 7d" value={h.sessions} />
+      </section>
+
+      <Card title={`Recent crashes & errors (${h.recent.length})`} tone={h.crashCount > 0 ? "danger" : "default"}>
+        {h.recent.length === 0 && <p className="text-sm text-[var(--ink)]/60">Nothing reported. 🎉</p>}
+        <div className="space-y-2">
+          {h.recent.map((c) => (
+            <div key={c.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3">
+              <button className="w-full text-left" onClick={() => setOpenId(openId === c.id ? null : c.id)}>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${c.kind === "crash" ? "bg-red-500/20 text-red-600" : "bg-amber-500/20 text-amber-700"}`}>
+                    {c.kind}
+                  </span>
+                  <span className="text-sm font-semibold text-[var(--ink)] truncate">{c.name}</span>
+                </div>
+                <div className="text-sm text-[var(--ink)]/80 mt-1 line-clamp-2">{c.message}</div>
+                <div className="text-[11px] text-[var(--ink)]/50 mt-1.5">
+                  {new Date(c.created_at).toLocaleString()} · {c.platform ?? "web"} · v{c.app_version ?? "?"} · {c.route ?? "/"}
+                </div>
+              </button>
+              {openId === c.id && c.stack && (
+                <pre className="mt-2 text-[10px] leading-relaxed overflow-x-auto bg-[var(--ink)]/8 rounded p-2 text-[var(--ink)]/80 whitespace-pre-wrap">{c.stack}</pre>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <div className="grid sm:grid-cols-2 gap-3">
+        <Card title="Top screens (7d)"><TallyList rows={h.topScreens} /></Card>
+        <Card title="Top actions (7d)"><TallyList rows={h.topEvents} /></Card>
+        <Card title="Top crash signatures"><TallyList rows={h.topCrashes} /></Card>
+        <Card title="Platforms"><TallyList rows={h.byPlatform} /></Card>
+      </div>
+    </div>
+  );
+}
+
+function TallyList({ rows }: { rows: Array<{ name: string; count: number }> }) {
+  if (rows.length === 0) return <p className="text-sm text-[var(--ink)]/60">No data yet.</p>;
+  return (
+    <ul className="space-y-1.5">
+      {rows.map((r) => (
+        <li key={r.name} className="flex items-center justify-between gap-3 text-sm">
+          <span className="text-[var(--ink)]/85 truncate">{r.name}</span>
+          <span className="text-[var(--ink)]/60 tabular-nums">{r.count}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 
 function Card({ title, children, tone = "default" }: { title: string; children: React.ReactNode; tone?: "default" | "danger" | "warn" }) {
   const border =

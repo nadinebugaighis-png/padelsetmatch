@@ -106,6 +106,40 @@ export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileI
         {message.isPending ? "…" : tr(`Message ${coachName}`, `Enviar mensaje a ${coachName}`, `Envoyer un message à ${coachName}`)}
       </button>
 
+      {mine && (
+        <div className="mt-3 rounded-xl border border-[var(--ink)]/10 bg-white/60 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Star key={n} className={`w-3.5 h-3.5 ${mine.stars && n <= mine.stars ? "fill-[var(--ink)] text-[var(--ink)]" : "text-[var(--ink)]/25"}`} />
+              ))}
+            </div>
+            <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/45 font-medium">
+              {tr("Your review", "Tu valoración", "Votre avis")}
+            </span>
+          </div>
+          {mine.comment && <p className="mt-1.5 text-[12px] text-[var(--ink)]/80 italic leading-snug">"{mine.comment}"</p>}
+          <p className="mt-2 text-[11px] leading-snug text-[var(--ink)]/65">
+            {mine.status === "approved"
+              ? tr(
+                  "Confirmed by the coach and now counted in their rating. It stays anonymous — nobody sees your name.",
+                  "Confirmada por el entrenador y ya cuenta en su valoración. Sigue siendo anónima: nadie ve tu nombre.",
+                  "Confirmé par le coach et compté dans sa note. Reste anonyme — personne ne voit votre nom.",
+                )
+              : mine.status === "pending"
+                ? tr(
+                    "Waiting for the coach to confirm they coached you. Not visible to anyone yet.",
+                    "Esperando a que el entrenador confirme que te entrenó. Todavía no la ve nadie.",
+                    "En attente de confirmation du coach. Pas encore visible.",
+                  )
+                : tr(
+                    "The coach didn't confirm this session, so it isn't counted.",
+                    "El entrenador no confirmó la sesión, así que no cuenta.",
+                    "Le coach n'a pas confirmé la séance, elle n'est donc pas comptée.",
+                  )}
+          </p>
+        </div>
+      )}
 
 
       {open && !mine && (

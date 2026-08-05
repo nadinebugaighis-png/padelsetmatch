@@ -191,11 +191,12 @@ function DemoPage() {
         {tab === "home" && (
           <div className="max-w-4xl mx-auto">
             <h1 className="text-serif text-[30px] leading-[1.05] text-[var(--ink)]">
-              12 players near you
+              12 neighbours near you
             </h1>
             <p className="text-[13px] text-[var(--ink)]/60 mt-1">
-              Madrid · within 8 km · matched on level, side and schedule
+              Madrid · within 8 km · <span className="inline-flex items-center gap-1 font-semibold text-[var(--ink)]"><CourtIcon className="w-4 h-2.5" strokeWidth={2.2} /> 4 with free court access</span>
             </p>
+
 
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
               {["All", "Level 3.0–3.5", "Free court", "Evenings", "Coaches"].map((f, i) => (

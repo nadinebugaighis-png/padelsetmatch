@@ -57,7 +57,10 @@ export function setTelemetryEnabled(enabled: boolean) {
     queue = [];
     if (timer) { clearTimeout(timer); timer = undefined; }
     try { localStorage.removeItem(QUEUE_KEY); } catch { /* ignore */ }
+    return;
   }
+  // Re-opting in starts collection again without a reload.
+  if (!started) initTelemetry();
 }
 
 function uid() {

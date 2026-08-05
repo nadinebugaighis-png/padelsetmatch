@@ -51,8 +51,14 @@ function AdminPage() {
   if (q.error || !q.data) return <div className="p-6 text-[var(--ink)]/70">Could not load admin data.</div>;
 
   const { counts, allSignups, recentFeedback, recentReports } = q.data;
-  const incomplete = allSignups.filter((u) => !u.profile_completed);
-  const completed = allSignups.filter((u) => u.profile_completed);
+  const needle = memberSearch.trim().toLowerCase();
+  const matchesSearch = (u: { first_name: string | null; email: string | null; zone: string | null }) =>
+    !needle ||
+    (u.first_name ?? "").toLowerCase().includes(needle) ||
+    (u.email ?? "").toLowerCase().includes(needle) ||
+    (u.zone ?? "").toLowerCase().includes(needle);
+  const incomplete = allSignups.filter((u) => !u.profile_completed && matchesSearch(u));
+  const completed = allSignups.filter((u) => u.profile_completed && matchesSearch(u));
   const pendingReports = recentReports.filter((r) => r.status === "pending");
   const handledReports = recentReports.filter((r) => r.status !== "pending");
 

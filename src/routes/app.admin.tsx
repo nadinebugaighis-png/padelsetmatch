@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended } from "@/lib/admin.functions";
+import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/app/admin")({
   component: AdminPage,
 });
 
-type Tab = "overview" | "reports" | "members" | "feedback";
+type Tab = "overview" | "reports" | "members" | "feedback" | "health";
 
 function AdminPage() {
   const qc = useQueryClient();
@@ -92,6 +92,7 @@ function AdminPage() {
           ["reports", `Reports${pendingReports.length ? ` · ${pendingReports.length}` : ""}`],
           ["members", "Members"],
           ["feedback", "Feedback"],
+          ["health", "Health"],
         ] as [Tab, string][]).map(([id, label]) => (
           <button
             key={id}
@@ -312,7 +313,7 @@ function HealthTab() {
       <Card title={`Recent crashes & errors (${h.recent.length})`} tone={h.crashCount > 0 ? "danger" : "default"}>
         {h.recent.length === 0 && <p className="text-sm text-[var(--ink)]/60">Nothing reported. 🎉</p>}
         <div className="space-y-2">
-          {h.recent.map((c) => (
+          {h.recent.map((c: (typeof h.recent)[number]) => (
             <div key={c.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3">
               <button className="w-full text-left" onClick={() => setOpenId(openId === c.id ? null : c.id)}>
                 <div className="flex items-center gap-2">
@@ -372,7 +373,7 @@ function Card({ title, children, tone = "default" }: { title: string; children: 
   );
 }
 
-function BigStat({ label, value, accent, danger }: { label: string; value: number; accent?: boolean; danger?: boolean }) {
+function BigStat({ label, value, accent, danger }: { label: string; value: number | string; accent?: boolean; danger?: boolean }) {
   const bg = danger ? "bg-red-500/15 border-red-400/30" : accent ? "bg-[var(--grass)]/15 border-[var(--grass)]/40" : "bg-[var(--ink)]/5 border-[var(--ink)]/10";
   const valColor = danger ? "text-red-200" : accent ? "text-[var(--grass)]" : "text-[var(--ink)]";
   return (

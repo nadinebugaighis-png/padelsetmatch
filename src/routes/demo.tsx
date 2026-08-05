@@ -213,41 +213,70 @@ function DemoPage() {
 
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {PLAYERS.map((p) => (
-                <button
+                <div
                   key={p.name}
-                  onClick={() => setSelected(p)}
-                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 shadow-sm text-left"
+                  className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md"
                 >
-                  <img src={p.photo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/85 via-[var(--ink)]/10 to-transparent" />
-                  <span className="absolute top-2 right-2 text-[10px] font-bold bg-[var(--paper)] text-[var(--ink)] rounded-full px-2 py-0.5">
-                    {p.fit}%
-                  </span>
-                  <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    {p.freeCourt && (
-                      <span className="w-6 h-6 rounded-full bg-[var(--grass)] text-[var(--ink)] flex items-center justify-center" title="Free court access">
-                        <CourtIcon className="w-3.5 h-3.5" strokeWidth={2} />
+                  {/* Polaroid-style photo frame — same as Home */}
+                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                      <img
+                        src={p.photo}
+                        alt={p.name}
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                      <span className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)]">
+                        <ThumbsUp className="w-2.5 h-2.5" strokeWidth={1.6} />
                       </span>
-                    )}
+                      <button
+                        type="button"
+                        onClick={() => setSelected(p)}
+                        className="absolute inset-0 w-full h-full text-left"
+                        aria-label={`View ${p.name}'s profile`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white">
+                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{p.name}</h3>
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
+                      {p.zone} · Lvl {p.level.toFixed(1)}
+                    </p>
+
                     {p.coach && (
-                      <span className="w-6 h-6 rounded-full bg-[var(--plum)] text-white flex items-center justify-center" title="Coach">
-                        <Star className="w-3 h-3 fill-current" />
-                      </span>
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
+                        <Star className="w-2.5 h-2.5 fill-current" /> Coach
+                      </div>
                     )}
-                  </div>
-                  <div className="absolute bottom-2 left-2 right-2 text-[var(--paper)]">
-                    <div className="text-serif text-[17px] leading-tight">{p.name}</div>
-                    <div className="text-[10px] uppercase tracking-[0.16em] opacity-85 truncate">
-                      {p.club}
+
+                    {p.freeCourt && (
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full">
+                        <CourtIcon className="w-3.5 h-2 shrink-0" strokeWidth={2.2} />
+                        <span className="truncate">Free court</span>
+                      </div>
+                    )}
+
+                    <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full">
+                      <MapPin className="w-2.5 h-2.5 shrink-0" />
+                      <span className="truncate">{p.club}</span>
                     </div>
-                    <div className="mt-1 flex items-center gap-1.5 text-[10px] opacity-90">
-                      <span className="rounded bg-[var(--paper)]/20 px-1.5 py-0.5">Lvl {p.level.toFixed(1)}</span>
-                      <span className="rounded bg-[var(--paper)]/20 px-1.5 py-0.5">{p.side[0]}</span>
+
+                    <div className="mt-2 flex items-center justify-between">
+                      {p.freeCourt ? (
+                        <span className="inline-flex items-center justify-center" title="Free court access">
+                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                        </span>
+                      ) : <span />}
+                      <div className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20">
+                        {p.fit}
+                      </div>
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
+
           </div>
         )}
 

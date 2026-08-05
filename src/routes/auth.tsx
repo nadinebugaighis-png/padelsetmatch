@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
-import { getEmailAuthProviders } from "@/lib/auth-check.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
@@ -224,71 +223,23 @@ function AuthPage() {
         );
         setMode("signin");
       } else if (isInvalidCreds && mode === "signin") {
-        // Distinguish "no such account" from "wrong password" / OAuth-only.
-        let handled = false;
-        try {
-          const info = await getEmailAuthProviders({ data: { email } });
-          if (!info?.exists) {
-            toast.error(
-              tr(
-                "No account found with this email.",
-                "No hay ninguna cuenta con este correo.",
-                "Aucun compte trouvé avec cet e-mail.",
-              ),
-              {
-                description: tr(
-                  'Tap "New here? Create an account" below to sign up.',
-                  'Pulsa "¿Nuevo aquí? Crea una cuenta" abajo para registrarte.',
-                  'Appuie sur « Nouveau ici ? Créer un compte » ci-dessous pour t\'inscrire.',
-                ),
-                duration: 8000,
-              },
-            );
-            handled = true;
-          } else {
-            const providers = info.providers ?? [];
-            const hasEmail = providers.includes("email");
-            const oauthProviders = providers.filter((p) => p !== "email");
-            if (!hasEmail && oauthProviders.length > 0) {
-              const label = oauthProviders
-                .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-                .join(" / ");
-              toast.error(
-                tr(
-                  `This account uses ${label}.`,
-                  `Esta cuenta usa ${label}.`,
-                  `Ce compte utilise ${label}.`,
-                ),
-                {
-                  description: tr(
-                    `Tap "Continue with ${label}" above to sign in — no password needed.`,
-                    `Pulsa "Continuar con ${label}" arriba para iniciar sesión — no necesitas contraseña.`,
-                    `Appuie sur « Continuer avec ${label} » ci-dessus pour te connecter — aucun mot de passe requis.`,
-                  ),
-                  duration: 9000,
-                },
-              );
-              handled = true;
-            }
-          }
-        } catch { /* fall through */ }
-        if (!handled) {
-          toast.error(
-            tr(
-              "Wrong email or password.",
-              "Correo o contraseña incorrectos.",
-              "E-mail ou mot de passe incorrect.",
+        // Generic message on purpose — never reveal whether an account exists
+        // or which provider it uses (account enumeration).
+        toast.error(
+          tr(
+            "Wrong email or password.",
+            "Correo o contraseña incorrectos.",
+            "E-mail ou mot de passe incorrect.",
+          ),
+          {
+            description: tr(
+              'Double-check your password, tap "Forgot password?" below, or use "Continue with Google / Apple" if you signed up that way.',
+              'Revisa tu contraseña, pulsa "¿Olvidaste la contraseña?" abajo, o usa "Continuar con Google / Apple" si te registraste así.',
+              'Vérifie ton mot de passe, appuie sur « Mot de passe oublié ? » ci-dessous, ou utilise « Continuer avec Google / Apple ».',
             ),
-            {
-              description: tr(
-                "Double-check your password, or tap \"Forgot password?\" below.",
-                "Revisa tu contraseña o pulsa \"¿Olvidaste la contraseña?\" abajo.",
-                "Vérifie ton mot de passe ou appuie sur « Mot de passe oublié ? » ci-dessous.",
-              ),
-              duration: 8000,
-            },
-          );
-        }
+            duration: 8000,
+          },
+        );
       } else {
         // Generic fallback — never silently swallow an auth error.
         toast.error(
@@ -418,35 +369,6 @@ function AuthPage() {
               type="button"
               onClick={async () => {
                 if (!email) { toast.error(t("auth.enterEmailFirst")); return; }
-                // Check what providers this email uses, so OAuth-only users get a
-                // helpful message instead of a reset email that will never work.
-                try {
-                  const info = await getEmailAuthProviders({ data: { email } });
-                  const providers = info?.providers ?? [];
-                  const hasEmail = providers.includes("email");
-                  const oauthProviders = providers.filter((p) => p !== "email");
-                  if (info?.exists && !hasEmail && oauthProviders.length > 0) {
-                    const label = oauthProviders
-                      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-                      .join(" / ");
-                    toast.error(
-                      tr(
-                        `This account uses ${label}.`,
-                        `Esta cuenta usa ${label}.`,
-                        `Ce compte utilise ${label}.`,
-                      ),
-                      {
-                        description: tr(
-                          `Tap "Continue with ${label}" above to sign in — no password needed.`,
-                          `Pulsa "Continuar con ${label}" arriba para iniciar sesión — no necesitas contraseña.`,
-                          `Appuie sur « Continuer avec ${label} » ci-dessus pour te connecter — aucun mot de passe requis.`,
-                        ),
-                        duration: 9000,
-                      },
-                    );
-                    return;
-                  }
-                } catch { /* fall through to reset */ }
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });

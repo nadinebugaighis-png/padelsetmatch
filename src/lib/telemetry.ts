@@ -193,6 +193,8 @@ export function initTelemetry() {
   if (!isTelemetryEnabled()) {
     // Opted out: no listeners, no queue, nothing left over from before.
     try { localStorage.removeItem(QUEUE_KEY); } catch { /* ignore */ }
+    started = false;
+    w.__psmTelemetry = false;
     return;
   }
 

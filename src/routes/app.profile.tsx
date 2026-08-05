@@ -6,16 +6,17 @@ import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, submitFeedb
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Sparkles, Star, User } from "lucide-react";
+import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, ShieldCheck, Sparkles, Star, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
 import { GearEditor } from "@/components/GearShelf";
+import { isTelemetryEnabled, setTelemetryEnabled } from "@/lib/telemetry";
 
 
 
@@ -340,6 +341,14 @@ function ProfilePage() {
           <FeedbackBox />
         </CollapsibleRow>
 
+        <CollapsibleRow
+          icon={<ShieldCheck className="w-4 h-4" />}
+          title={tr("Privacy", "Privacidad", "Confidentialité")}
+          subtitle={tr("Analytics & crash reports", "Analítica e informes de fallos", "Analytique et rapports de plantage")}
+        >
+          <AnalyticsConsent />
+        </CollapsibleRow>
+
 
         <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
       </div>
@@ -578,6 +587,51 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
       </div>
+    </div>
+  );
+}
+
+function AnalyticsConsent() {
+  const tr = useTr();
+  const [enabled, setEnabled] = useState(true);
+  // localStorage is client-only: read after hydration.
+  useEffect(() => { setEnabled(isTelemetryEnabled()); }, []);
+
+  const toggle = () => {
+    const next = !enabled;
+    setEnabled(next);
+    setTelemetryEnabled(next);
+    toast.success(
+      next
+        ? tr("Analytics on — thanks for helping", "Analítica activada — gracias por ayudar", "Analytique activée — merci")
+        : tr("Analytics off", "Analítica desactivada", "Analytique désactivée"),
+    );
+  };
+
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="min-w-0">
+        <div className="text-[15px] font-semibold text-[var(--ink)]">
+          {tr("Share usage & crash data", "Compartir uso y fallos", "Partager l'usage et les plantages")}
+        </div>
+        <p className="text-xs text-[var(--ink)]/60 mt-1">
+          {tr(
+            "Anonymous app events and crash reports help us fix bugs. Never sold, never used for ads.",
+            "Eventos anónimos e informes de fallos nos ayudan a corregir errores. Nunca se venden ni se usan para anuncios.",
+            "Des événements anonymes et rapports de plantage nous aident à corriger les bugs. Jamais vendus, jamais pour la publicité.",
+          )}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={toggle}
+        role="switch"
+        aria-checked={enabled}
+        aria-label={tr("Share usage & crash data", "Compartir uso y fallos", "Partager l'usage et les plantages")}
+        className={`relative shrink-0 w-12 h-7 rounded-full transition-colors ${enabled ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}
+      >
+        <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${enabled ? "translate-x-5" : ""}`} />
+      </button>
     </div>
   );
 }

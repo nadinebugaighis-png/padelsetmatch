@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_events: {
+        Row: {
+          app_version: string | null
+          created_at: string
+          id: string
+          kind: string
+          message: string | null
+          name: string
+          platform: string | null
+          props: Json
+          route: string | null
+          session_id: string | null
+          stack: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          app_version?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          message?: string | null
+          name: string
+          platform?: string | null
+          props?: Json
+          route?: string | null
+          session_id?: string | null
+          stack?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          app_version?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string | null
+          name?: string
+          platform?: string | null
+          props?: Json
+          route?: string | null
+          session_id?: string | null
+          stack?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       blocks: {
         Row: {
           blocked_profile_id: string

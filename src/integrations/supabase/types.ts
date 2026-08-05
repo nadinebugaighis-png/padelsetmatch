@@ -1885,6 +1885,7 @@ export type Database = {
         Args: { _id: string; _kind: string }
         Returns: Json
       }
+      admin_moderation_feed: { Args: { _limit?: number }; Returns: Json }
       admin_resolve_report: {
         Args: { _report_id: string; _status: string }
         Returns: Json

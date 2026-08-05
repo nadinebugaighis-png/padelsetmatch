@@ -45,6 +45,7 @@ type Player = {
   name: string;
   club: string;
   city: string;
+  zone: string;
   level: number;
   fit: number;
   photo: string;
@@ -56,18 +57,18 @@ type Player = {
 };
 
 const PLAYERS: Player[] = [
-  { name: "Lucía", club: "Padel Chamartín", city: "Madrid", level: 3.5, fit: 92, photo: p1.url, side: "Right", plays: "3–4 / week", freeCourt: true, tags: ["Competitive", "Evenings"] },
-  { name: "Marc", club: "La Finca Padel", city: "Madrid", level: 3.0, fit: 88, photo: p2.url, side: "Left", plays: "2 / week", tags: ["Social", "Weekends"] },
-  { name: "Aisha", club: "Padel Las Rozas", city: "Madrid", level: 2.5, fit: 85, photo: p3.url, side: "Both", plays: "1–2 / week", tags: ["Improving", "Mornings"] },
-  { name: "Kenji", club: "Club Pozuelo", city: "Madrid", level: 4.0, fit: 81, photo: p4.url, side: "Right", plays: "4+ / week", coach: true, tags: ["Coach", "Early bird"] },
-  { name: "Sofía", club: "Padel Retiro", city: "Madrid", level: 3.0, fit: 79, photo: p5.url, side: "Left", plays: "2–3 / week", freeCourt: true, tags: ["Consistent", "Lob lover"] },
-  { name: "Diego", club: "Puerto Padel", city: "Madrid", level: 3.5, fit: 77, photo: p6.url, side: "Right", plays: "3 / week", tags: ["Aggressive net"] },
-  { name: "Nadia", club: "Padel Alcobendas", city: "Madrid", level: 2.5, fit: 74, photo: p7.url, side: "Both", plays: "1 / week", tags: ["Casual", "Fun first"] },
-  { name: "Yusuf", club: "Boadilla Indoor", city: "Madrid", level: 3.0, fit: 71, photo: p8.url, side: "Left", plays: "2 / week", freeCourt: true, tags: ["Regular four"] },
-  { name: "Elena", club: "Padel Chamberí", city: "Madrid", level: 3.5, fit: 69, photo: p9.url, side: "Right", plays: "3 / week", tags: ["Tournaments"] },
-  { name: "Tomás", club: "Padel Getafe", city: "Madrid", level: 2.0, fit: 66, photo: p10.url, side: "Both", plays: "1 / week", tags: ["Just started"] },
-  { name: "Irene", club: "Padel Aravaca", city: "Madrid", level: 4.0, fit: 64, photo: p11.url, side: "Left", plays: "4 / week", coach: true, tags: ["Coach", "Drills"] },
-  { name: "Pablo", club: "Padel Vallecas", city: "Madrid", level: 3.0, fit: 61, photo: p12.url, side: "Right", plays: "2 / week", freeCourt: true, tags: ["Free court", "Nights"] },
+  { name: "Lucía", zone: "Chamartín", club: "Padel Chamartín", city: "Madrid", level: 3.5, fit: 92, photo: p1.url, side: "Right", plays: "3–4 / week", freeCourt: true, tags: ["Competitive", "Evenings"] },
+  { name: "Marc", zone: "Pozuelo", club: "La Finca Padel", city: "Madrid", level: 3.0, fit: 88, photo: p2.url, side: "Left", plays: "2 / week", tags: ["Social", "Weekends"] },
+  { name: "Aisha", zone: "Las Rozas", club: "Padel Las Rozas", city: "Madrid", level: 2.5, fit: 85, photo: p3.url, side: "Both", plays: "1–2 / week", tags: ["Improving", "Mornings"] },
+  { name: "Kenji", zone: "Pozuelo", club: "Club Pozuelo", city: "Madrid", level: 4.0, fit: 81, photo: p4.url, side: "Right", plays: "4+ / week", coach: true, tags: ["Coach", "Early bird"] },
+  { name: "Sofía", zone: "Retiro", club: "Padel Retiro", city: "Madrid", level: 3.0, fit: 79, photo: p5.url, side: "Left", plays: "2–3 / week", freeCourt: true, tags: ["Consistent", "Lob lover"] },
+  { name: "Diego", zone: "Chamberí", club: "Puerto Padel", city: "Madrid", level: 3.5, fit: 77, photo: p6.url, side: "Right", plays: "3 / week", tags: ["Aggressive net"] },
+  { name: "Nadia", zone: "Alcobendas", club: "Padel Alcobendas", city: "Madrid", level: 2.5, fit: 74, photo: p7.url, side: "Both", plays: "1 / week", tags: ["Casual", "Fun first"] },
+  { name: "Yusuf", zone: "Boadilla", club: "Boadilla Indoor", city: "Madrid", level: 3.0, fit: 71, photo: p8.url, side: "Left", plays: "2 / week", freeCourt: true, tags: ["Regular four"] },
+  { name: "Elena", zone: "Chamberí", club: "Padel Chamberí", city: "Madrid", level: 3.5, fit: 69, photo: p9.url, side: "Right", plays: "3 / week", tags: ["Tournaments"] },
+  { name: "Tomás", zone: "Getafe", club: "Padel Getafe", city: "Madrid", level: 2.0, fit: 66, photo: p10.url, side: "Both", plays: "1 / week", tags: ["Just started"] },
+  { name: "Irene", zone: "Aravaca", club: "Padel Aravaca", city: "Madrid", level: 4.0, fit: 64, photo: p11.url, side: "Left", plays: "4 / week", coach: true, tags: ["Coach", "Drills"] },
+  { name: "Pablo", zone: "Vallecas", club: "Padel Vallecas", city: "Madrid", level: 3.0, fit: 61, photo: p12.url, side: "Right", plays: "2 / week", freeCourt: true, tags: ["Free court", "Nights"] },
 ];
 
 const MATCHES = [
@@ -190,11 +191,12 @@ function DemoPage() {
         {tab === "home" && (
           <div className="max-w-4xl mx-auto">
             <h1 className="text-serif text-[30px] leading-[1.05] text-[var(--ink)]">
-              12 players near you
+              12 neighbours near you
             </h1>
             <p className="text-[13px] text-[var(--ink)]/60 mt-1">
-              Madrid · within 8 km · matched on level, side and schedule
+              Madrid · within 8 km · <span className="inline-flex items-center gap-1 font-semibold text-[var(--ink)]"><CourtIcon className="w-4 h-2.5" strokeWidth={2.2} /> 4 with free court access</span>
             </p>
+
 
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
               {["All", "Level 3.0–3.5", "Free court", "Evenings", "Coaches"].map((f, i) => (
@@ -213,41 +215,70 @@ function DemoPage() {
 
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {PLAYERS.map((p) => (
-                <button
+                <div
                   key={p.name}
-                  onClick={() => setSelected(p)}
-                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 shadow-sm text-left"
+                  className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md"
                 >
-                  <img src={p.photo} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/85 via-[var(--ink)]/10 to-transparent" />
-                  <span className="absolute top-2 right-2 text-[10px] font-bold bg-[var(--paper)] text-[var(--ink)] rounded-full px-2 py-0.5">
-                    {p.fit}%
-                  </span>
-                  <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    {p.freeCourt && (
-                      <span className="w-6 h-6 rounded-full bg-[var(--grass)] text-[var(--ink)] flex items-center justify-center" title="Free court access">
-                        <CourtIcon className="w-3.5 h-3.5" strokeWidth={2} />
+                  {/* Polaroid-style photo frame — same as Home */}
+                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                      <img
+                        src={p.photo}
+                        alt={p.name}
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                      <span className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)]">
+                        <ThumbsUp className="w-2.5 h-2.5" strokeWidth={1.6} />
                       </span>
-                    )}
+                      <button
+                        type="button"
+                        onClick={() => setSelected(p)}
+                        className="absolute inset-0 w-full h-full text-left"
+                        aria-label={`View ${p.name}'s profile`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white">
+                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{p.name}</h3>
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/55 tracking-[0.18em] font-semibold uppercase truncate">
+                      {p.zone} · Lvl {p.level.toFixed(1)}
+                    </p>
+
                     {p.coach && (
-                      <span className="w-6 h-6 rounded-full bg-[var(--plum)] text-white flex items-center justify-center" title="Coach">
-                        <Star className="w-3 h-3 fill-current" />
-                      </span>
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
+                        <Star className="w-2.5 h-2.5 fill-current" /> Coach
+                      </div>
                     )}
-                  </div>
-                  <div className="absolute bottom-2 left-2 right-2 text-[var(--paper)]">
-                    <div className="text-serif text-[17px] leading-tight">{p.name}</div>
-                    <div className="text-[10px] uppercase tracking-[0.16em] opacity-85 truncate">
-                      {p.club}
+
+                    {p.freeCourt && (
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full">
+                        <CourtIcon className="w-3.5 h-2 shrink-0" strokeWidth={2.2} />
+                        <span className="truncate">Free court</span>
+                      </div>
+                    )}
+
+                    <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/15 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full">
+                      <MapPin className="w-2.5 h-2.5 shrink-0" />
+                      <span className="truncate">{p.club}</span>
                     </div>
-                    <div className="mt-1 flex items-center gap-1.5 text-[10px] opacity-90">
-                      <span className="rounded bg-[var(--paper)]/20 px-1.5 py-0.5">Lvl {p.level.toFixed(1)}</span>
-                      <span className="rounded bg-[var(--paper)]/20 px-1.5 py-0.5">{p.side[0]}</span>
+
+                    <div className="mt-2 flex items-center justify-between">
+                      {p.freeCourt ? (
+                        <span className="inline-flex items-center justify-center" title="Free court access">
+                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                        </span>
+                      ) : <span />}
+                      <div className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20">
+                        {p.fit}
+                      </div>
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
+
           </div>
         )}
 

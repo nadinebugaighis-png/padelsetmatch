@@ -312,6 +312,13 @@ function AdminPage() {
   );
 }
 
+type ModFeed = {
+  posts: Array<{ id: string; created_at: string; title: string; body: string; author_profile_id: string; author_name: string | null }>;
+  comments: Array<{ id: string; created_at: string; body: string; author_profile_id: string; author_name: string | null }>;
+  photos: Array<{ id: string; created_at: string; first_name: string | null; photo_url: string | null; zone: string | null }>;
+  gear: Array<{ id: string; created_at: string; title: string; kind: string; note: string | null; image_url: string | null; profile_id: string; author_name: string | null }>;
+};
+
 /** Proactive moderation: browse newest content + photos and remove anything inappropriate. */
 function ModerateTab() {
   const fetchFeed = useServerFn(adminModerationFeed);
@@ -344,7 +351,7 @@ function ModerateTab() {
 
   if (q.isLoading) return <div className="p-2 text-sm text-[var(--ink)]/70">Loading…</div>;
   if (q.error || !q.data) return <div className="p-2 text-sm text-[var(--ink)]/70">Could not load content.</div>;
-  const f = q.data;
+  const f = q.data as ModFeed;
 
   return (
     <div className="space-y-4">

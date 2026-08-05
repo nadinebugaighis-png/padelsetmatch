@@ -157,6 +157,8 @@ function AdminPage() {
                         <span className="text-[10px] text-[var(--ink)]/50">{new Date(r.created_at).toLocaleString()}</span>
                       </div>
                       <p className="text-sm text-[var(--ink)]/85 mt-2 whitespace-pre-wrap bg-[var(--ink)]/40 rounded-md px-2 py-1.5 border border-[var(--ink)]/5">{r.reason}</p>
+                      <ReportedContent reason={r.reason} />
+
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1.5 pt-1">

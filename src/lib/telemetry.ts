@@ -24,6 +24,7 @@ type Queued = {
 };
 
 const QUEUE_KEY = "psm_telemetry_queue_v1";
+const CONSENT_KEY = "psm_analytics_consent_v1";
 const SESSION_KEY = "psm_telemetry_session_v1";
 const MAX_QUEUE = 25;
 const FLUSH_MS = 8000;
@@ -35,6 +36,29 @@ let sessionId = "";
 let platform = "web";
 let lastSignature = "";
 let lastSignatureAt = 0;
+
+/**
+ * Privacy consent. Analytics + crash reporting are on by default and the user
+ * can opt out; opting out stops all collection and drops anything queued.
+ */
+export function isTelemetryEnabled() {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(CONSENT_KEY) !== "off";
+  } catch {
+    return true;
+  }
+}
+
+export function setTelemetryEnabled(enabled: boolean) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(CONSENT_KEY, enabled ? "on" : "off"); } catch { /* ignore */ }
+  if (!enabled) {
+    queue = [];
+    if (timer) { clearTimeout(timer); timer = undefined; }
+    try { localStorage.removeItem(QUEUE_KEY); } catch { /* ignore */ }
+  }
+}
 
 function uid() {
   try {
@@ -80,6 +104,11 @@ function scheduleFlush(delay = FLUSH_MS) {
 
 export async function flush() {
   if (typeof window === "undefined" || queue.length === 0) return;
+  if (!isTelemetryEnabled()) {
+    queue = [];
+    try { localStorage.removeItem(QUEUE_KEY); } catch { /* ignore */ }
+    return;
+  }
   const batch = queue.slice(0, MAX_QUEUE);
   queue = queue.slice(batch.length);
   persist();
@@ -94,6 +123,7 @@ export async function flush() {
 
 function enqueue(e: Queued) {
   if (typeof window === "undefined") return;
+  if (!isTelemetryEnabled()) return;
   queue.push({
     ...e,
     at: new Date().toISOString(),
@@ -156,6 +186,12 @@ export function initTelemetry() {
     if (cap?.getPlatform) platform = cap.getPlatform();
     else platform = /iphone|ipad|ipod/i.test(navigator.userAgent) ? "ios-web" : "web";
   } catch { /* ignore */ }
+
+  if (!isTelemetryEnabled()) {
+    // Opted out: no listeners, no queue, nothing left over from before.
+    try { localStorage.removeItem(QUEUE_KEY); } catch { /* ignore */ }
+    return;
+  }
 
   getSessionId();
   restore();

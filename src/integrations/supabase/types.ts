@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          alert_key: string
+          body: string | null
+          created_at: string
+          details: Json
+          id: string
+          kind: string
+          title: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          alert_key: string
+          body?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          kind: string
+          title: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          alert_key?: string
+          body?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          kind?: string
+          title?: string
+        }
+        Relationships: []
+      }
       app_events: {
         Row: {
           app_version: string | null
@@ -1851,6 +1884,7 @@ export type Database = {
         Args: { _profile_id: string; _suspend: boolean }
         Returns: Json
       }
+      check_app_health_alerts: { Args: never; Returns: Json }
       claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
       cleanup_relationship_with: {
         Args: { _other: string }
@@ -1968,6 +2002,16 @@ export type Database = {
           q_shared: number
           qa_bonus: number
         }[]
+      }
+      raise_app_alert: {
+        Args: {
+          _body: string
+          _details: Json
+          _key: string
+          _kind: string
+          _title: string
+        }
+        Returns: boolean
       }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }

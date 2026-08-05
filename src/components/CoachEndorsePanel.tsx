@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GraduationCap, MessageCircle, Star } from "lucide-react";
+import { GraduationCap, MessageCircle, Star, ShieldCheck, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -75,11 +75,20 @@ export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileI
         </div>
 
         {mine?.status === "approved" ? (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--grass)] font-bold">{tr("You endorsed", "Ya lo valoraste", "Vous avez validé")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--grass)]/35 bg-[var(--grass)]/12 px-2.5 py-1 text-[10px] uppercase tracking-widest text-[var(--grass)] font-bold">
+            <ShieldCheck className="w-3 h-3" />
+            {tr("Verified", "Verificada", "Vérifié")}
+          </span>
         ) : mine?.status === "pending" ? (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 font-bold">{tr("Pending", "Pendiente", "En attente")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ink)]/15 bg-[var(--ink)]/[0.05] px-2.5 py-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/60 font-bold">
+            <Clock className="w-3 h-3" />
+            {tr("Awaiting coach", "Pendiente del entrenador", "En attente du coach")}
+          </span>
         ) : mine?.status === "rejected" ? (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/40 font-bold">{tr("Not confirmed", "No confirmado", "Non confirmé")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ink)]/12 px-2.5 py-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/40 font-bold">
+            <XCircle className="w-3 h-3" />
+            {tr("Not confirmed", "No confirmada", "Non confirmé")}
+          </span>
         ) : (
           <Button type="button" size="sm" variant="outline" onClick={() => setOpen((o) => !o)}>
             {tr("I was coached", "Me entrenó", "M'a coaché")}
@@ -97,6 +106,40 @@ export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileI
         {message.isPending ? "…" : tr(`Message ${coachName}`, `Enviar mensaje a ${coachName}`, `Envoyer un message à ${coachName}`)}
       </button>
 
+      {mine && (
+        <div className="mt-3 rounded-xl border border-[var(--ink)]/10 bg-white/60 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <Star key={n} className={`w-3.5 h-3.5 ${mine.stars && n <= mine.stars ? "fill-[var(--ink)] text-[var(--ink)]" : "text-[var(--ink)]/25"}`} />
+              ))}
+            </div>
+            <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/45 font-medium">
+              {tr("Your review", "Tu valoración", "Votre avis")}
+            </span>
+          </div>
+          {mine.comment && <p className="mt-1.5 text-[12px] text-[var(--ink)]/80 italic leading-snug">"{mine.comment}"</p>}
+          <p className="mt-2 text-[11px] leading-snug text-[var(--ink)]/65">
+            {mine.status === "approved"
+              ? tr(
+                  "Confirmed by the coach and now counted in their rating. It stays anonymous — nobody sees your name.",
+                  "Confirmada por el entrenador y ya cuenta en su valoración. Sigue siendo anónima: nadie ve tu nombre.",
+                  "Confirmé par le coach et compté dans sa note. Reste anonyme — personne ne voit votre nom.",
+                )
+              : mine.status === "pending"
+                ? tr(
+                    "Waiting for the coach to confirm they coached you. Not visible to anyone yet.",
+                    "Esperando a que el entrenador confirme que te entrenó. Todavía no la ve nadie.",
+                    "En attente de confirmation du coach. Pas encore visible.",
+                  )
+                : tr(
+                    "The coach didn't confirm this session, so it isn't counted.",
+                    "El entrenador no confirmó la sesión, así que no cuenta.",
+                    "Le coach n'a pas confirmé la séance, elle n'est donc pas comptée.",
+                  )}
+          </p>
+        </div>
+      )}
 
 
       {open && !mine && (

@@ -27,13 +27,24 @@ App icons and splash screens from `public/`:
 npx capacitor-assets generate --ios
 ```
 
+## Privacy manifest (required)
+
+```bash
+cp docs/ios/PrivacyInfo.xcprivacy ios/App/App/PrivacyInfo.xcprivacy
+```
+
+Add it to the **App** target in Xcode. Full details and the App Store Connect
+nutrition-label answers: `docs/ios/APP_STORE_PRIVACY.md`.
+
 ## In Xcode
 
 - **Signing & Capabilities** → select your Team, bundle id `com.moorisharches.padelsetmatch`.
 - Add capability **Push Notifications**.
 - Add capability **Background Modes** → Remote notifications.
 - Set **Display Name** to `PadelSetMatch`, version `1.0`, build `1`.
+- Confirm `PrivacyInfo.xcprivacy` is in *Build Phases → Copy Bundle Resources*.
 - `Product ▸ Archive` → `Distribute App` → `App Store Connect` → Upload.
+
 
 ## App Store Connect listing
 

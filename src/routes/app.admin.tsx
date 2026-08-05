@@ -28,6 +28,7 @@ function AdminPage() {
   const setSuspended = useServerFn(adminSetSuspended);
   const q = useQuery({ queryKey: ["admin-stats"], queryFn: () => fetchStats() });
   const [tab, setTab] = useState<Tab>("overview");
+  const [memberSearch, setMemberSearch] = useState("");
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["admin-stats"] });
   const resolveM = useMutation({

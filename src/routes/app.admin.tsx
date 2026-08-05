@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert } from "@/lib/admin.functions";
+import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert, adminGetReportedContent, adminDeleteContent } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -28,6 +28,7 @@ function AdminPage() {
   const setSuspended = useServerFn(adminSetSuspended);
   const q = useQuery({ queryKey: ["admin-stats"], queryFn: () => fetchStats() });
   const [tab, setTab] = useState<Tab>("overview");
+  const [memberSearch, setMemberSearch] = useState("");
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["admin-stats"] });
   const resolveM = useMutation({
@@ -51,8 +52,14 @@ function AdminPage() {
   if (q.error || !q.data) return <div className="p-6 text-[var(--ink)]/70">Could not load admin data.</div>;
 
   const { counts, allSignups, recentFeedback, recentReports } = q.data;
-  const incomplete = allSignups.filter((u) => !u.profile_completed);
-  const completed = allSignups.filter((u) => u.profile_completed);
+  const needle = memberSearch.trim().toLowerCase();
+  const matchesSearch = (u: { first_name: string | null; email: string | null; zone: string | null }) =>
+    !needle ||
+    (u.first_name ?? "").toLowerCase().includes(needle) ||
+    (u.email ?? "").toLowerCase().includes(needle) ||
+    (u.zone ?? "").toLowerCase().includes(needle);
+  const incomplete = allSignups.filter((u) => !u.profile_completed && matchesSearch(u));
+  const completed = allSignups.filter((u) => u.profile_completed && matchesSearch(u));
   const pendingReports = recentReports.filter((r) => r.status === "pending");
   const handledReports = recentReports.filter((r) => r.status !== "pending");
 
@@ -157,6 +164,8 @@ function AdminPage() {
                         <span className="text-[10px] text-[var(--ink)]/50">{new Date(r.created_at).toLocaleString()}</span>
                       </div>
                       <p className="text-sm text-[var(--ink)]/85 mt-2 whitespace-pre-wrap bg-[var(--ink)]/40 rounded-md px-2 py-1.5 border border-[var(--ink)]/5">{r.reason}</p>
+                      <ReportedContent reason={r.reason} />
+
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -213,6 +222,13 @@ function AdminPage() {
 
       {tab === "members" && (
         <div className="space-y-4">
+          <input
+            value={memberSearch}
+            onChange={(e) => setMemberSearch(e.target.value)}
+            placeholder="Search name, email or zone…"
+            className="w-full text-sm rounded-full px-4 py-2 bg-[var(--ink)]/5 border border-[var(--ink)]/15 outline-none focus:border-[var(--grass)]"
+          />
+
           {incomplete.length > 0 && (
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
               <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>
@@ -292,6 +308,65 @@ function AdminPage() {
     </div>
   );
 }
+
+/** Reported content viewer + remover. Reports embed "[post:<uuid>] reason". */
+function ReportedContent({ reason }: { reason: string }) {
+  const match = reason.match(/^\[(post|comment|message):([0-9a-f-]{36})\]/i);
+  const fetchContent = useServerFn(adminGetReportedContent);
+  const removeContent = useServerFn(adminDeleteContent);
+  const [shown, setShown] = useState(false);
+  const [removed, setRemoved] = useState(false);
+
+  const kind = match?.[1] as "post" | "comment" | "message" | undefined;
+  const contentId = match?.[2];
+
+  const q = useQuery({
+    queryKey: ["admin-reported-content", contentId],
+    queryFn: () => fetchContent({ data: { kind: kind!, contentId: contentId! } }),
+    enabled: shown && !!kind && !!contentId,
+  });
+
+  const del = useMutation({
+    mutationFn: () => removeContent({ data: { kind: kind!, contentId: contentId! } }),
+    onSuccess: () => { setRemoved(true); toast.success("Content removed"); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+
+  if (!kind || !contentId) return null;
+
+  return (
+    <div className="mt-2">
+      {!shown ? (
+        <button onClick={() => setShown(true)} className="text-xs px-2.5 py-1 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]/75 hover:bg-[var(--ink)]/20">
+          View reported {kind}
+        </button>
+      ) : (
+        <div className="rounded-lg border border-[var(--ink)]/15 bg-[var(--ink)]/5 p-2.5 space-y-2">
+          {q.isLoading && <p className="text-xs text-[var(--ink)]/60">Loading…</p>}
+          {q.data && !q.data.exists && <p className="text-xs text-[var(--ink)]/60">Already deleted.</p>}
+          {q.data?.exists && (
+            <>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+                {kind} · {q.data.author_name ?? "unknown"} · {q.data.created_at ? new Date(q.data.created_at).toLocaleString() : ""}
+              </div>
+              <p className="text-sm whitespace-pre-wrap text-[var(--ink)]/90">{q.data.body}</p>
+              {removed ? (
+                <span className="text-xs text-emerald-500">Removed ✓</span>
+              ) : (
+                <button
+                  disabled={del.isPending}
+                  onClick={() => { if (confirm(`Remove this ${kind}?`)) del.mutate(); }}
+                  className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-300 hover:bg-red-500/30"
+                >Remove {kind}</button>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function HealthTab() {
   const fetchHealth = useServerFn(getAdminHealth);

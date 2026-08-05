@@ -1877,6 +1877,14 @@ export type Database = {
         Returns: Json
       }
       admin_dashboard_stats: { Args: never; Returns: Json }
+      admin_delete_content: {
+        Args: { _id: string; _kind: string }
+        Returns: Json
+      }
+      admin_get_reported_content: {
+        Args: { _id: string; _kind: string }
+        Returns: Json
+      }
       admin_resolve_report: {
         Args: { _report_id: string; _status: string }
         Returns: Json

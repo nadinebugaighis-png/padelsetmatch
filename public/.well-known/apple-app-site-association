@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["UHPD255T85.com.moorisharches.padelsetmatch"],
+        "components": [
+          { "/": "/app/*", "comment": "In-app screens" },
+          { "/": "/m/*", "comment": "Match links" },
+          { "/": "/g/*", "comment": "Group links" },
+          { "/": "/s/*", "comment": "Short links" },
+          { "/": "/auth", "comment": "Sign in" },
+          { "/": "/", "comment": "Home" }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["UHPD255T85.com.moorisharches.padelsetmatch"]
+  }
+}

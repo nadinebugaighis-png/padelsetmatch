@@ -295,6 +295,65 @@ function AdminPage() {
   );
 }
 
+/** Reported content viewer + remover. Reports embed "[post:<uuid>] reason". */
+function ReportedContent({ reason }: { reason: string }) {
+  const match = reason.match(/^\[(post|comment|message):([0-9a-f-]{36})\]/i);
+  const fetchContent = useServerFn(adminGetReportedContent);
+  const removeContent = useServerFn(adminDeleteContent);
+  const [shown, setShown] = useState(false);
+  const [removed, setRemoved] = useState(false);
+
+  const kind = match?.[1] as "post" | "comment" | "message" | undefined;
+  const contentId = match?.[2];
+
+  const q = useQuery({
+    queryKey: ["admin-reported-content", contentId],
+    queryFn: () => fetchContent({ data: { kind: kind!, contentId: contentId! } }),
+    enabled: shown && !!kind && !!contentId,
+  });
+
+  const del = useMutation({
+    mutationFn: () => removeContent({ data: { kind: kind!, contentId: contentId! } }),
+    onSuccess: () => { setRemoved(true); toast.success("Content removed"); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+
+  if (!kind || !contentId) return null;
+
+  return (
+    <div className="mt-2">
+      {!shown ? (
+        <button onClick={() => setShown(true)} className="text-xs px-2.5 py-1 rounded-full bg-[var(--ink)]/10 text-[var(--ink)]/75 hover:bg-[var(--ink)]/20">
+          View reported {kind}
+        </button>
+      ) : (
+        <div className="rounded-lg border border-[var(--ink)]/15 bg-[var(--ink)]/5 p-2.5 space-y-2">
+          {q.isLoading && <p className="text-xs text-[var(--ink)]/60">Loading…</p>}
+          {q.data && !q.data.exists && <p className="text-xs text-[var(--ink)]/60">Already deleted.</p>}
+          {q.data?.exists && (
+            <>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+                {kind} · {q.data.author_name ?? "unknown"} · {q.data.created_at ? new Date(q.data.created_at).toLocaleString() : ""}
+              </div>
+              <p className="text-sm whitespace-pre-wrap text-[var(--ink)]/90">{q.data.body}</p>
+              {removed ? (
+                <span className="text-xs text-emerald-500">Removed ✓</span>
+              ) : (
+                <button
+                  disabled={del.isPending}
+                  onClick={() => { if (confirm(`Remove this ${kind}?`)) del.mutate(); }}
+                  className="text-xs px-2.5 py-1 rounded-full bg-red-500/20 text-red-300 hover:bg-red-500/30"
+                >Remove {kind}</button>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 function HealthTab() {
   const fetchHealth = useServerFn(getAdminHealth);
   const ackAlert = useServerFn(adminAckAlert);

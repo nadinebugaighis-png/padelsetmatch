@@ -81,3 +81,57 @@ export const adminSetSuspended = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const getAdminHealth = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const sb = context.supabase as any;
+    const since = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+
+    const [crashesRes, eventsRes] = await Promise.all([
+      sb.from("app_events")
+        .select("id,created_at,kind,name,message,stack,route,platform,app_version,session_id")
+        .in("kind", ["crash", "error"])
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(100),
+      sb.from("app_events")
+        .select("name,kind,platform,session_id,created_at")
+        .in("kind", ["event", "screen"])
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(2000),
+    ]);
+    if (crashesRes.error) throw new Error(crashesRes.error.message);
+    if (eventsRes.error) throw new Error(eventsRes.error.message);
+
+    const crashes = (crashesRes.data ?? []) as Array<{
+      id: string; created_at: string; kind: string; name: string; message: string | null;
+      stack: string | null; route: string | null; platform: string | null; app_version: string | null; session_id: string | null;
+    }>;
+    const events = (eventsRes.data ?? []) as Array<{ name: string; kind: string; platform: string | null; session_id: string | null }>;
+
+    const tally = (rows: Array<{ name: string }>) => {
+      const m = new Map<string, number>();
+      for (const r of rows) m.set(r.name, (m.get(r.name) ?? 0) + 1);
+      return [...m.entries()].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
+    };
+
+    const sessions = new Set(events.map((e) => e.session_id).filter(Boolean));
+    const crashSessions = new Set(crashes.map((c) => c.session_id).filter(Boolean));
+    const byPlatform = tally(events.map((e) => ({ name: e.platform ?? "unknown" }))).slice(0, 6);
+
+    return {
+      sinceDays: 7,
+      sessions: sessions.size,
+      crashCount: crashes.filter((c) => c.kind === "crash").length,
+      errorCount: crashes.filter((c) => c.kind === "error").length,
+      crashFreeRate: sessions.size ? Math.round((1 - crashSessions.size / sessions.size) * 1000) / 10 : 100,
+      topCrashes: tally(crashes.map((c) => ({ name: `${c.name}: ${c.message ?? ""}`.slice(0, 120) }))).slice(0, 8),
+      topScreens: tally(events.filter((e) => e.kind === "screen")).slice(0, 8),
+      topEvents: tally(events.filter((e) => e.kind === "event")).slice(0, 8),
+      byPlatform,
+      recent: crashes.slice(0, 25),
+    };
+  });

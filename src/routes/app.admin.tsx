@@ -222,6 +222,13 @@ function AdminPage() {
 
       {tab === "members" && (
         <div className="space-y-4">
+          <input
+            value={memberSearch}
+            onChange={(e) => setMemberSearch(e.target.value)}
+            placeholder="Search name, email or zone…"
+            className="w-full text-sm rounded-full px-4 py-2 bg-[var(--ink)]/5 border border-[var(--ink)]/15 outline-none focus:border-[var(--grass)]"
+          />
+
           {incomplete.length > 0 && (
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
               <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>

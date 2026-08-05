@@ -10,7 +10,7 @@ import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — PadelMatch" }] }),
+  head: () => ({ meta: [{ title: "Sign in — PadelSetMatch" }] }),
   validateSearch: (
     s: Record<string, unknown>,
   ): { redirect?: string; join?: string; i?: string; mode?: "signin" | "signup" } => ({

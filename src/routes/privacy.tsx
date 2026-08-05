@@ -3,9 +3,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy · PadelMatch" },
+      { title: "Privacy Policy · PadelSetMatch" },
       { name: "description", content: "How PadelMatch collects, stores and protects your data." },
-      { property: "og:title", content: "Privacy Policy · PadelMatch" },
+      { property: "og:title", content: "Privacy Policy · PadelSetMatch" },
       { property: "og:description", content: "How PadelMatch collects, stores and protects your data." },
       { property: "og:url", content: "https://padelsetmatch.com/privacy" },
     ],
@@ -16,10 +16,10 @@ export const Route = createFileRoute("/privacy")({
 
 function Privacy() {
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10 text-[var(--cream)]/90 space-y-4">
-      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← Home</Link>
+    <main className="bg-[var(--paper)] min-h-screen max-w-2xl mx-auto px-6 py-10 text-[var(--ink)]/90 space-y-4">
+      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← Home</Link>
       <h1 className="text-display text-4xl">Privacy Policy</h1>
-      <p className="text-sm text-[var(--cream)]/60">Last updated: {new Date().toLocaleDateString()}</p>
+      <p className="text-sm text-[var(--ink)]/60">Last updated: {new Date().toLocaleDateString()}</p>
 
       <p>
         PadelMatch is a padel player directory operated by <b>Moorish Arches S.L.</b> (Madrid, Spain).

@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/app/connect")({
-  head: () => ({ meta: [{ title: "Connect · PadelMatch" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Connect · PadelSetMatch" }, { name: "robots", content: "noindex" }] }),
   component: ConnectPage,
 });
 

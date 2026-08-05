@@ -39,9 +39,9 @@ const SHARE_DESC = "Connect with Padel players nearby you, join games, discover 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Padel Match App — More Friends, Better Games" },
+      { title: "PadelSetMatch — Find Padel Players Near You" },
       { name: "description", content: SHARE_DESC },
-      { property: "og:title", content: "Padel Match App — More Friends, Better Games" },
+      { property: "og:title", content: "PadelSetMatch — Find Padel Players Near You" },
       { property: "og:description", content: SHARE_DESC },
       { property: "og:url", content: "https://padelsetmatch.com/" },
       { property: "og:type", content: "website" },
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Padel Match App — More Friends, Better Games" },
+      { name: "twitter:title", content: "PadelSetMatch — Find Padel Players Near You" },
       { name: "twitter:description", content: SHARE_DESC },
       { name: "twitter:image", content: SHARE_IMAGE },
     ],
@@ -233,7 +233,6 @@ function Landing() {
             <span className="text-sm tracking-wide">padelsetmatch.com</span>
           </div>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70 flex-wrap">
-            <Link to="/social-padel" className="hover:text-[var(--paper)]">Social padel</Link>
             <Link to="/free-padel-courts" className="hover:text-[var(--paper)]">Free padel courts</Link>
             <Link to="/how-it-works" className="hover:text-[var(--paper)]">How it works</Link>
             <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>

@@ -67,7 +67,7 @@ function isTransientUploadError(message: string) {
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
     meta: [
-      { title: "Your profile · PadelMatch" },
+      { title: "Your profile · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),

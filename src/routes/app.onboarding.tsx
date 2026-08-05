@@ -29,7 +29,7 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
     meta: [
-      { title: "Create your profile · PadelMatch" },
+      { title: "Create your profile · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),

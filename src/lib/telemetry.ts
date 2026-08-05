@@ -144,6 +144,10 @@ export function reportError(
 /** Call once on app start (client only). */
 export function initTelemetry() {
   if (started || typeof window === "undefined") return;
+  // Guard across duplicate module instances (HMR / double-mount)
+  const w = window as unknown as { __psmTelemetry?: boolean };
+  if (w.__psmTelemetry) return;
+  w.__psmTelemetry = true;
   started = true;
 
   try {

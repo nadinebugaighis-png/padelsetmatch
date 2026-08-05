@@ -38,6 +38,7 @@ import { Route as AppHiddenRouteImport } from './routes/app.hidden'
 import { Route as AppGridRouteImport } from './routes/app.grid'
 import { Route as AppConnectRouteImport } from './routes/app.connect'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './routes/[.]well-known.apple-app-site-association'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
@@ -192,6 +193,12 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const DotwellKnownAppleAppSiteAssociationRoute =
+  DotwellKnownAppleAppSiteAssociationRouteImport.update({
+    id: '/.well-known/apple-app-site-association',
+    path: '/.well-known/apple-app-site-association',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppEventsIndexRoute = AppEventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
@@ -248,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
@@ -286,6 +294,7 @@ export interface FileRoutesByTo {
   '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
@@ -326,6 +335,7 @@ export interface FileRoutesById {
   '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
+  '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/social-padel'
     | '/support'
     | '/terms'
+    | '/.well-known/apple-app-site-association'
     | '/app/admin'
     | '/app/connect'
     | '/app/grid'
@@ -405,6 +416,7 @@ export interface FileRouteTypes {
     | '/social-padel'
     | '/support'
     | '/terms'
+    | '/.well-known/apple-app-site-association'
     | '/app/admin'
     | '/app/connect'
     | '/app/grid'
@@ -444,6 +456,7 @@ export interface FileRouteTypes {
     | '/social-padel'
     | '/support'
     | '/terms'
+    | '/.well-known/apple-app-site-association'
     | '/app/admin'
     | '/app/connect'
     | '/app/grid'
@@ -484,6 +497,7 @@ export interface RootRouteChildren {
   SocialPadelRoute: typeof SocialPadelRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
+  DotwellKnownAppleAppSiteAssociationRoute: typeof DotwellKnownAppleAppSiteAssociationRoute
   GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
   PreviewPlayerCardRoute: typeof PreviewPlayerCardRoute
@@ -699,6 +713,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/.well-known/apple-app-site-association': {
+      id: '/.well-known/apple-app-site-association'
+      path: '/.well-known/apple-app-site-association'
+      fullPath: '/.well-known/apple-app-site-association'
+      preLoaderRoute: typeof DotwellKnownAppleAppSiteAssociationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/events/': {
       id: '/app/events/'
       path: '/events'
@@ -831,6 +852,8 @@ const rootRouteChildren: RootRouteChildren = {
   SocialPadelRoute: SocialPadelRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
+  DotwellKnownAppleAppSiteAssociationRoute:
+    DotwellKnownAppleAppSiteAssociationRoute,
   GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
   PreviewPlayerCardRoute: PreviewPlayerCardRoute,

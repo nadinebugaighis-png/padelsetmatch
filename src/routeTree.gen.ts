@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
-import { Route as SocialPadelRouteImport } from './routes/social-padel'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -56,11 +55,6 @@ const TermsRoute = TermsRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SocialPadelRoute = SocialPadelRouteImport.update({
-  id: '/social-padel',
-  path: '/social-padel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -252,7 +246,6 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
@@ -291,7 +284,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
@@ -332,7 +324,6 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/social-padel': typeof SocialPadelRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
@@ -374,7 +365,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/social-padel'
     | '/support'
     | '/terms'
     | '/.well-known/apple-app-site-association'
@@ -413,7 +403,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/social-padel'
     | '/support'
     | '/terms'
     | '/.well-known/apple-app-site-association'
@@ -453,7 +442,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/social-padel'
     | '/support'
     | '/terms'
     | '/.well-known/apple-app-site-association'
@@ -494,7 +482,6 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  SocialPadelRoute: typeof SocialPadelRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   DotwellKnownAppleAppSiteAssociationRoute: typeof DotwellKnownAppleAppSiteAssociationRoute
@@ -522,13 +509,6 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/social-padel': {
-      id: '/social-padel'
-      path: '/social-padel'
-      fullPath: '/social-padel'
-      preLoaderRoute: typeof SocialPadelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -849,7 +829,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  SocialPadelRoute: SocialPadelRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   DotwellKnownAppleAppSiteAssociationRoute:

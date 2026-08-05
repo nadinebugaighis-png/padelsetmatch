@@ -168,12 +168,8 @@ function FreeCourtsPage() {
           <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
             PadelMatch is a directory of padel players near you. See who plays your level, who is free
             this week, and who can bring a court.{" "}
-            <Link to="/social-padel" className="text-[var(--plum)] underline underline-offset-4">
-              Read about social padel
-            </Link>{" "}
-            or{" "}
             <Link to="/how-it-works" className="text-[var(--plum)] underline underline-offset-4">
-              see how it works
+              See how it works
             </Link>
             .
           </p>

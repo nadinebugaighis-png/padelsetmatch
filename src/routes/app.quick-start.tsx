@@ -13,7 +13,7 @@ import { BrandMark } from "@/components/BrandMark";
 export const Route = createFileRoute("/app/quick-start")({
   head: () => ({
     meta: [
-      { title: "Quick start · PadelMatch" },
+      { title: "Quick start · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),

@@ -21,7 +21,7 @@ import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/li
 export const Route = createFileRoute("/app/grid")({
   head: () => ({
     meta: [
-      { title: "Home · PadelMatch" },
+      { title: "Home · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -676,9 +676,9 @@ function Discover() {
                 onClick: () => {
                   const url = typeof window !== "undefined" ? window.location.origin : "";
                   const text = tr(
-                    `Join me on PadelMatch — social padel by zone. ${url}`,
-                    `Únete a mí en PadelMatch — pádel social por zona. ${url}`,
-                    `Rejoins-moi sur PadelMatch — padel social par zone. ${url}`,
+                    `Join me on PadelSetMatch — social padel by zone. ${url}`,
+                    `Únete a mí en PadelSetMatch — pádel social por zona. ${url}`,
+                    `Rejoins-moi sur PadelSetMatch — padel social par zone. ${url}`,
                   );
                   const nav2 = (navigator as unknown as { share?: (d: { text: string }) => Promise<void> });
                   if (nav2.share) nav2.share({ text }).catch(() => {});

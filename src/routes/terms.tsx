@@ -3,10 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service · PadelMatch" },
-      { name: "description", content: "Terms of Service for PadelMatch — the padel player directory." },
-      { property: "og:title", content: "Terms of Service · PadelMatch" },
-      { property: "og:description", content: "Terms of Service for PadelMatch — the padel player directory." },
+      { title: "Terms of Service · PadelSetMatch" },
+      { name: "description", content: "Terms of Service for PadelSetMatch — the padel player directory." },
+      { property: "og:title", content: "Terms of Service · PadelSetMatch" },
+      { property: "og:description", content: "Terms of Service for PadelSetMatch — the padel player directory." },
       { property: "og:url", content: "https://padelsetmatch.com/terms" },
     ],
     links: [{ rel: "canonical", href: "https://padelsetmatch.com/terms" }],
@@ -16,10 +16,10 @@ export const Route = createFileRoute("/terms")({
 
 function Terms() {
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10 text-[var(--cream)]/90 space-y-4">
-      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← Home</Link>
+    <main className="bg-[var(--paper)] min-h-screen max-w-2xl mx-auto px-6 py-10 text-[var(--ink)]/90 space-y-4">
+      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← Home</Link>
       <h1 className="text-display text-4xl">Terms of Service</h1>
-      <p className="text-sm text-[var(--cream)]/60">Last updated: {new Date().toLocaleDateString()}</p>
+      <p className="text-sm text-[var(--ink)]/60">Last updated: {new Date().toLocaleDateString()}</p>
 
       <p>
         PadelMatch is a padel player directory and match-finding app operated by <b>Moorish Arches

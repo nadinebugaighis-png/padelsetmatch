@@ -12,17 +12,18 @@ const EventSchema = z.object({
   sessionId: z.string().max(64).optional().nullable(),
   platform: z.string().max(32).optional().nullable(),
   appVersion: z.string().max(32).optional().nullable(),
+  userAgent: z.string().max(300).transform(clip(300)).optional().nullable(),
   props: z.record(z.string(), z.unknown()).optional(),
   at: z.string().max(40).optional().nullable(),
 });
 
+/** Public ingest endpoint — crashes also happen while signed out. */
 export const ingestAppEvents = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ events: z.array(EventSchema).min(1).max(25) }).parse(d),
   )
-  .handler(async ({ data, request }) => {
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const ua = (request?.headers.get("user-agent") ?? "").slice(0, 300);
 
     const rows = data.events.map((e) => ({
       kind: e.kind,
@@ -33,7 +34,7 @@ export const ingestAppEvents = createServerFn({ method: "POST" })
       session_id: e.sessionId ?? null,
       platform: e.platform ?? null,
       app_version: e.appVersion ?? null,
-      user_agent: ua || null,
+      user_agent: e.userAgent ?? null,
       props: (e.props ?? {}) as Record<string, unknown>,
       created_at: e.at ?? new Date().toISOString(),
     }));
@@ -44,11 +45,4 @@ export const ingestAppEvents = createServerFn({ method: "POST" })
       return { ok: false };
     }
     return { ok: true };
-  });
-
-export const getAppHealth = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { requireSupabaseAuthCheck } = await import("./telemetry.server");
-    await requireSupabaseAuthCheck();
-    return null;
   });

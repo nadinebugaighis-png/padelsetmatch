@@ -97,6 +97,7 @@ function AdminPage() {
         {([
           ["overview", "Overview"],
           ["reports", `Reports${pendingReports.length ? ` · ${pendingReports.length}` : ""}`],
+          ["moderate", "Moderate"],
           ["members", "Members"],
           ["feedback", "Feedback"],
           ["health", "Health"],

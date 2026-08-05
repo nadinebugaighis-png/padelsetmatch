@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth } from "@/lib/admin.functions";
+import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -295,6 +295,7 @@ function AdminPage() {
 
 function HealthTab() {
   const fetchHealth = useServerFn(getAdminHealth);
+  const ackAlert = useServerFn(adminAckAlert);
   const q = useQuery({ queryKey: ["admin-health"], queryFn: () => fetchHealth() });
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -309,6 +310,29 @@ function HealthTab() {
         <BigStat label="Crashes 7d" value={h.crashCount} />
         <BigStat label="Sessions 7d" value={h.sessions} />
       </section>
+
+      {h.alerts.length > 0 && (
+        <Card title={`Alerts (${h.alerts.length})`} tone="danger">
+          <div className="space-y-2">
+            {h.alerts.map((a: (typeof h.alerts)[number]) => (
+              <div key={a.id} className="rounded-lg bg-red-500/10 border border-red-400/25 p-3 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-[var(--ink)] truncate">{a.title}</div>
+                  {a.body && <div className="text-sm text-[var(--ink)]/80 mt-0.5">{a.body}</div>}
+                  <div className="text-[11px] text-[var(--ink)]/50 mt-1">{new Date(a.created_at).toLocaleString()}</div>
+                </div>
+                <button
+                  type="button"
+                  className="shrink-0 text-[11px] uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)]"
+                  onClick={async () => { await ackAlert({ data: { alertId: a.id } }); await q.refetch(); }}
+                >
+                  Dismiss
+                </button>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <Card title={`Recent crashes & errors (${h.recent.length})`} tone={h.crashCount > 0 ? "danger" : "default"}>
         {h.recent.length === 0 && <p className="text-sm text-[var(--ink)]/60">Nothing reported. 🎉</p>}

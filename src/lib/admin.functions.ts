@@ -89,7 +89,7 @@ export const getAdminHealth = createServerFn({ method: "GET" })
     const sb = context.supabase as any;
     const since = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
 
-    const [crashesRes, eventsRes] = await Promise.all([
+    const [crashesRes, eventsRes, alertsRes] = await Promise.all([
       sb.from("app_events")
         .select("id,created_at,kind,name,message,stack,route,platform,app_version,session_id")
         .in("kind", ["crash", "error"])
@@ -102,9 +102,15 @@ export const getAdminHealth = createServerFn({ method: "GET" })
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .limit(2000),
+      sb.from("app_alerts")
+        .select("id,kind,title,body,created_at,acknowledged_at")
+        .is("acknowledged_at", null)
+        .order("created_at", { ascending: false })
+        .limit(20),
     ]);
     if (crashesRes.error) throw new Error(crashesRes.error.message);
     if (eventsRes.error) throw new Error(eventsRes.error.message);
+    if (alertsRes.error) throw new Error(alertsRes.error.message);
 
     const crashes = (crashesRes.data ?? []) as Array<{
       id: string; created_at: string; kind: string; name: string; message: string | null;
@@ -123,6 +129,9 @@ export const getAdminHealth = createServerFn({ method: "GET" })
     const byPlatform = tally(events.map((e) => ({ name: e.platform ?? "unknown" }))).slice(0, 6);
 
     return {
+      alerts: (alertsRes.data ?? []) as Array<{
+        id: string; kind: string; title: string; body: string | null; created_at: string;
+      }>,
       sinceDays: 7,
       sessions: sessions.size,
       crashCount: crashes.filter((c) => c.kind === "crash").length,
@@ -134,4 +143,16 @@ export const getAdminHealth = createServerFn({ method: "GET" })
       byPlatform,
       recent: crashes.slice(0, 25),
     };
+  });
+
+export const adminAckAlert = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ alertId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await (context.supabase as any).rpc("admin_ack_app_alert", {
+      _alert_id: data.alertId,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });

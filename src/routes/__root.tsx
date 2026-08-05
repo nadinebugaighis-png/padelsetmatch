@@ -53,7 +53,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const es = readLang() === "es";
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    void import("@/lib/telemetry").then((m) =>
+      m.reportError(error, { fatal: true, props: { boundary: "root_error_component" } }),
+    ).catch(() => {});
   }, [error]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">

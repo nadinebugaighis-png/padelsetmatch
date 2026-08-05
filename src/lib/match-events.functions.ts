@@ -947,11 +947,39 @@ function makeShortCode(length = 8): string {
     .join("");
 }
 
+// Hosts of allow-listed domains that short links may point at.
+const SHORT_LINK_ALLOWED_HOSTS = [
+  "padelsetmatch.com",
+  "padelmatchdoce.com",
+  "lovable.app",
+];
 
-// Create a short redirect link for any URL (used for match invites / shares)
+function isAllowedShortLinkTarget(raw: string): boolean {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return false;
+  }
+  if (u.protocol !== "https:") return false;
+  const host = u.hostname.toLowerCase();
+  return SHORT_LINK_ALLOWED_HOSTS.some((d) => host === d || host.endsWith(`.${d}`));
+}
+
+// Create a short redirect link for our own URLs (used for match invites / shares)
 export const createShortLink = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { targetUrl: string }) => z.object({ targetUrl: z.string().url() }).parse(d))
+  .inputValidator((d: { targetUrl: string }) =>
+    z
+      .object({
+        targetUrl: z
+          .string()
+          .url()
+          .max(2000)
+          .refine(isAllowedShortLinkTarget, "Short links may only point at PadelSetMatch URLs"),
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     let code = makeShortCode();

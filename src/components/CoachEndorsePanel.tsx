@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GraduationCap, MessageCircle, Star } from "lucide-react";
+import { GraduationCap, MessageCircle, Star, ShieldCheck, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -75,11 +75,20 @@ export function CoachEndorsePanel({ coachProfileId, coachName }: { coachProfileI
         </div>
 
         {mine?.status === "approved" ? (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--grass)] font-bold">{tr("You endorsed", "Ya lo valoraste", "Vous avez validé")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--grass)]/35 bg-[var(--grass)]/12 px-2.5 py-1 text-[10px] uppercase tracking-widest text-[var(--grass)] font-bold">
+            <ShieldCheck className="w-3 h-3" />
+            {tr("Verified", "Verificada", "Vérifié")}
+          </span>
         ) : mine?.status === "pending" ? (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 font-bold">{tr("Pending", "Pendiente", "En attente")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ink)]/15 bg-[var(--ink)]/[0.05] px-2.5 py-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/60 font-bold">
+            <Clock className="w-3 h-3" />
+            {tr("Awaiting coach", "Pendiente del entrenador", "En attente du coach")}
+          </span>
         ) : mine?.status === "rejected" ? (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/40 font-bold">{tr("Not confirmed", "No confirmado", "Non confirmé")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ink)]/12 px-2.5 py-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/40 font-bold">
+            <XCircle className="w-3 h-3" />
+            {tr("Not confirmed", "No confirmada", "Non confirmé")}
+          </span>
         ) : (
           <Button type="button" size="sm" variant="outline" onClick={() => setOpen((o) => !o)}>
             {tr("I was coached", "Me entrenó", "M'a coaché")}

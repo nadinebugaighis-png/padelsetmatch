@@ -45,6 +45,7 @@ type Player = {
   name: string;
   club: string;
   city: string;
+  zone: string;
   level: number;
   fit: number;
   photo: string;
@@ -56,18 +57,18 @@ type Player = {
 };
 
 const PLAYERS: Player[] = [
-  { name: "Lucía", club: "Padel Chamartín", city: "Madrid", level: 3.5, fit: 92, photo: p1.url, side: "Right", plays: "3–4 / week", freeCourt: true, tags: ["Competitive", "Evenings"] },
-  { name: "Marc", club: "La Finca Padel", city: "Madrid", level: 3.0, fit: 88, photo: p2.url, side: "Left", plays: "2 / week", tags: ["Social", "Weekends"] },
-  { name: "Aisha", club: "Padel Las Rozas", city: "Madrid", level: 2.5, fit: 85, photo: p3.url, side: "Both", plays: "1–2 / week", tags: ["Improving", "Mornings"] },
-  { name: "Kenji", club: "Club Pozuelo", city: "Madrid", level: 4.0, fit: 81, photo: p4.url, side: "Right", plays: "4+ / week", coach: true, tags: ["Coach", "Early bird"] },
-  { name: "Sofía", club: "Padel Retiro", city: "Madrid", level: 3.0, fit: 79, photo: p5.url, side: "Left", plays: "2–3 / week", freeCourt: true, tags: ["Consistent", "Lob lover"] },
-  { name: "Diego", club: "Puerto Padel", city: "Madrid", level: 3.5, fit: 77, photo: p6.url, side: "Right", plays: "3 / week", tags: ["Aggressive net"] },
-  { name: "Nadia", club: "Padel Alcobendas", city: "Madrid", level: 2.5, fit: 74, photo: p7.url, side: "Both", plays: "1 / week", tags: ["Casual", "Fun first"] },
-  { name: "Yusuf", club: "Boadilla Indoor", city: "Madrid", level: 3.0, fit: 71, photo: p8.url, side: "Left", plays: "2 / week", freeCourt: true, tags: ["Regular four"] },
-  { name: "Elena", club: "Padel Chamberí", city: "Madrid", level: 3.5, fit: 69, photo: p9.url, side: "Right", plays: "3 / week", tags: ["Tournaments"] },
-  { name: "Tomás", club: "Padel Getafe", city: "Madrid", level: 2.0, fit: 66, photo: p10.url, side: "Both", plays: "1 / week", tags: ["Just started"] },
-  { name: "Irene", club: "Padel Aravaca", city: "Madrid", level: 4.0, fit: 64, photo: p11.url, side: "Left", plays: "4 / week", coach: true, tags: ["Coach", "Drills"] },
-  { name: "Pablo", club: "Padel Vallecas", city: "Madrid", level: 3.0, fit: 61, photo: p12.url, side: "Right", plays: "2 / week", freeCourt: true, tags: ["Free court", "Nights"] },
+  { name: "Lucía", zone: "Chamartín", club: "Padel Chamartín", city: "Madrid", level: 3.5, fit: 92, photo: p1.url, side: "Right", plays: "3–4 / week", freeCourt: true, tags: ["Competitive", "Evenings"] },
+  { name: "Marc", zone: "Pozuelo", club: "La Finca Padel", city: "Madrid", level: 3.0, fit: 88, photo: p2.url, side: "Left", plays: "2 / week", tags: ["Social", "Weekends"] },
+  { name: "Aisha", zone: "Las Rozas", club: "Padel Las Rozas", city: "Madrid", level: 2.5, fit: 85, photo: p3.url, side: "Both", plays: "1–2 / week", tags: ["Improving", "Mornings"] },
+  { name: "Kenji", zone: "Pozuelo", club: "Club Pozuelo", city: "Madrid", level: 4.0, fit: 81, photo: p4.url, side: "Right", plays: "4+ / week", coach: true, tags: ["Coach", "Early bird"] },
+  { name: "Sofía", zone: "Retiro", club: "Padel Retiro", city: "Madrid", level: 3.0, fit: 79, photo: p5.url, side: "Left", plays: "2–3 / week", freeCourt: true, tags: ["Consistent", "Lob lover"] },
+  { name: "Diego", zone: "Chamberí", club: "Puerto Padel", city: "Madrid", level: 3.5, fit: 77, photo: p6.url, side: "Right", plays: "3 / week", tags: ["Aggressive net"] },
+  { name: "Nadia", zone: "Alcobendas", club: "Padel Alcobendas", city: "Madrid", level: 2.5, fit: 74, photo: p7.url, side: "Both", plays: "1 / week", tags: ["Casual", "Fun first"] },
+  { name: "Yusuf", zone: "Boadilla", club: "Boadilla Indoor", city: "Madrid", level: 3.0, fit: 71, photo: p8.url, side: "Left", plays: "2 / week", freeCourt: true, tags: ["Regular four"] },
+  { name: "Elena", zone: "Chamberí", club: "Padel Chamberí", city: "Madrid", level: 3.5, fit: 69, photo: p9.url, side: "Right", plays: "3 / week", tags: ["Tournaments"] },
+  { name: "Tomás", zone: "Getafe", club: "Padel Getafe", city: "Madrid", level: 2.0, fit: 66, photo: p10.url, side: "Both", plays: "1 / week", tags: ["Just started"] },
+  { name: "Irene", zone: "Aravaca", club: "Padel Aravaca", city: "Madrid", level: 4.0, fit: 64, photo: p11.url, side: "Left", plays: "4 / week", coach: true, tags: ["Coach", "Drills"] },
+  { name: "Pablo", zone: "Vallecas", club: "Padel Vallecas", city: "Madrid", level: 3.0, fit: 61, photo: p12.url, side: "Right", plays: "2 / week", freeCourt: true, tags: ["Free court", "Nights"] },
 ];
 
 const MATCHES = [

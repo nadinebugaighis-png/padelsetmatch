@@ -1871,6 +1871,7 @@ export type Database = {
         Args: { _acting_user_id: string; _match_id: string }
         Returns: undefined
       }
+      admin_ack_app_alert: { Args: { _alert_id: string }; Returns: Json }
       admin_clear_profile_photo: {
         Args: { _profile_id: string }
         Returns: Json

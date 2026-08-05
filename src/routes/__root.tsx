@@ -143,6 +143,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
+    // Crash reporting + analytics (web and the native iOS/Android shell)
+    void import("@/lib/telemetry").then((m) => {
+      m.initTelemetry();
+      m.trackScreen(window.location.pathname);
+    }).catch(() => {});
+    const unsubNav = router.subscribe("onResolved", ({ toLocation }) => {
+      void import("@/lib/telemetry").then((m) => m.trackScreen(toLocation.pathname)).catch(() => {});
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
@@ -150,6 +158,7 @@ function RootComponent() {
     });
     // Native shell (iOS/Android via Capacitor) — no-op on the web
     void import("@/lib/native").then((m) => m.initNativeShell()).catch(() => {});
+
     // Register the service worker for push notifications (production only)
 
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {

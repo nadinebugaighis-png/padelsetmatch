@@ -438,6 +438,28 @@ function Onboarding() {
     save.mutate({ destination });
   };
 
+  // The compatibility questions need a saved profile. Instead of showing a red
+  // error, silently save what the user has so far (or send them back to the
+  // missing fields with a gentle hint).
+  const ensureProfileSaved = async () => {
+    const missing = missingByStepDetailed[0] ?? [];
+    if (missing.length > 0) {
+      setStep(0);
+      setShowStepHelp(true);
+      toast.message(
+        `${tr("Save your info first", "Guarda tus datos primero", "Enregistre tes infos d'abord")} — ${missing.map((x) => x.label).join(", ")}.`,
+      );
+      setTimeout(() => {
+        const el = document.querySelector<HTMLElement>(`[data-field="${missing[0].key}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 80);
+      throw new Error("PROFILE_INCOMPLETE");
+    }
+    await persistProfile();
+    qc.invalidateQueries({ queryKey: ["my-profile"] });
+  };
+
+
   // Exit: save when the profile is valid, otherwise confirm before discarding.
   const requestExit = () => {
     const missing = missingByStepDetailed[0] ?? [];

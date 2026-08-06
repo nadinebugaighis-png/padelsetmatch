@@ -16,7 +16,8 @@ export const searchClubs = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-    const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+    const GOOGLE_MAPS_API_KEY =
+      process.env.GOOGLE_MAPS_API_KEY_1 || process.env.GOOGLE_MAPS_API_KEY;
     if (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY) return { results: [] as ClubResult[] };
 
     const body: Record<string, unknown> = {

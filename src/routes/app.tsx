@@ -7,7 +7,7 @@ import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites } from "@/lib/match-events.functions";
 import { getConnectLatest } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
@@ -191,10 +191,12 @@ function AuthShell() {
     refetchInterval: 60_000,
     refetchOnWindowFocus: true,
   });
-  const [connectSeen, setConnectSeen] = useState<string>(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("connect-last-seen") ?? "";
-  });
+  // Read on the client only (after hydration) so SSR and first client render match.
+  const [connectSeen, setConnectSeen] = useState<string>("");
+  useEffect(() => {
+    try { setConnectSeen(localStorage.getItem("connect-last-seen") ?? ""); } catch { /* ignore */ }
+  }, []);
+
   const connectLatest = connectQ.data?.latest ?? null;
   const onConnect = path.startsWith("/app/connect");
   useEffect(() => {
@@ -226,15 +228,17 @@ function AuthShell() {
   }>;
   const invites = rawInvites.filter((i) => i.event && new Date(i.event.starts_at).getTime() > Date.now() && i.event.status !== "cancelled");
 
-  const [dismissedIds, setDismissedIds] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try { return JSON.parse(localStorage.getItem("invite-banner-dismissed") ?? "[]"); } catch { return []; }
-  });
+  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+  const dismissedLoaded = useRef(false);
+  useEffect(() => {
+    try { setDismissedIds(JSON.parse(localStorage.getItem("invite-banner-dismissed") ?? "[]")); } catch { /* ignore */ }
+    dismissedLoaded.current = true;
+  }, []);
   const visibleInvites = invites.filter((i) => !dismissedIds.includes(i.id));
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("invite-banner-dismissed", JSON.stringify(dismissedIds));
+    if (!dismissedLoaded.current) return;
+    try { localStorage.setItem("invite-banner-dismissed", JSON.stringify(dismissedIds)); } catch { /* ignore */ }
   }, [dismissedIds]);
 
 

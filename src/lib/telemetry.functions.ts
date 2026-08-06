@@ -23,7 +23,14 @@ export const ingestAppEvents = createServerFn({ method: "POST" })
     z.object({ events: z.array(EventSchema).min(1).max(25) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let supabaseAdmin;
+    try {
+      ({ supabaseAdmin } = await import("@/integrations/supabase/client.server"));
+    } catch (e) {
+      console.error("telemetry unavailable", (e as Error).message);
+      return { ok: false };
+    }
+
 
     const rows = data.events.map((e) => ({
       kind: e.kind,

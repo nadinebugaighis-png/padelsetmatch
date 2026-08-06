@@ -191,10 +191,12 @@ function AuthShell() {
     refetchInterval: 60_000,
     refetchOnWindowFocus: true,
   });
-  const [connectSeen, setConnectSeen] = useState<string>(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("connect-last-seen") ?? "";
-  });
+  // Read on the client only (after hydration) so SSR and first client render match.
+  const [connectSeen, setConnectSeen] = useState<string>("");
+  useEffect(() => {
+    try { setConnectSeen(localStorage.getItem("connect-last-seen") ?? ""); } catch { /* ignore */ }
+  }, []);
+
   const connectLatest = connectQ.data?.latest ?? null;
   const onConnect = path.startsWith("/app/connect");
   useEffect(() => {

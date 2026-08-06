@@ -68,7 +68,7 @@ function AuthPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "signup" && password !== confirmPassword) {
-      toast.error(
+      toast.warning(
         tr(
           "Passwords don't match.",
           "Las contraseñas no coinciden.",
@@ -375,7 +375,7 @@ function AuthPage() {
             <button
               type="button"
               onClick={async () => {
-                if (!email) { toast.error(t("auth.enterEmailFirst")); return; }
+                if (!email) { toast.info(t("auth.enterEmailFirst")); return; }
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });

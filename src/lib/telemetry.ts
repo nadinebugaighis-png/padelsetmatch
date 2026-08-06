@@ -153,6 +153,20 @@ export function trackScreen(route: string) {
 }
 
 /** Report a caught or uncaught error. */
+/**
+ * React hydration mismatches (#418/#423/#425 and the verbose dev message) are
+ * recoverable: React re-renders the tree on the client and the user sees
+ * nothing. They are also commonly caused by browser extensions or in-browser
+ * page translation, so they must never be reported as crashes.
+ */
+function isRecoverableHydrationError(message: string): boolean {
+  return (
+    message.includes("Hydration failed because") ||
+    message.includes("There was an error while hydrating") ||
+    /Minified React error #(418|423|425)\b/.test(message)
+  );
+}
+
 export function reportError(
   error: unknown,
   opts?: { fatal?: boolean; name?: string; props?: Record<string, unknown> },
@@ -165,9 +179,11 @@ export function reportError(
   lastSignature = signature;
   lastSignatureAt = now;
 
+  const hydration = isRecoverableHydrationError(err.message);
+
   enqueue({
-    kind: opts?.fatal ? "crash" : "error",
-    name: opts?.name ?? err.name ?? "Error",
+    kind: hydration ? "event" : opts?.fatal ? "crash" : "error",
+    name: hydration ? "hydration_mismatch" : opts?.name ?? err.name ?? "Error",
     message: err.message,
     stack: err.stack ?? null,
     props: opts?.props,

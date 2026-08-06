@@ -46,10 +46,16 @@ export const ingestAppEvents = createServerFn({ method: "POST" })
       created_at: e.at ?? new Date().toISOString(),
     }));
 
-    const { error } = await supabaseAdmin.from("app_events").insert(rows as never);
-    if (error) {
-      console.error("app_events insert failed", error.message);
+    try {
+      const { error } = await supabaseAdmin.from("app_events").insert(rows as never);
+      if (error) {
+        console.error("app_events insert failed", error.message);
+        return { ok: false };
+      }
+    } catch (e) {
+      console.error("app_events insert threw", (e as Error).message);
       return { ok: false };
     }
     return { ok: true };
+
   });

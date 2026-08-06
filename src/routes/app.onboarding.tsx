@@ -1144,7 +1144,7 @@ function Onboarding() {
               </p>
               <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Only used to improve your matches.", "Solo se usa para mejorar tus matches.", "Sert seulement à améliorer tes matches.")}</p>
             </div>
-            <QASection />
+            <QASection ensureProfile={ensureProfileSaved} />
           </div>
         )}
       </div>

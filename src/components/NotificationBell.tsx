@@ -21,10 +21,21 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [busyInvite, setBusyInvite] = useState<string | null>(null);
   const boxRef = useRef<HTMLDivElement | null>(null);
+  // These server fns require auth — never call them while signed out.
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    void supabase.auth.getSession().then(({ data }) => { if (alive) setSignedIn(!!data.session); });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setSignedIn(!!session));
+    return () => { alive = false; sub.subscription.unsubscribe(); };
+  }, []);
 
   const q = useQuery({
     queryKey: ["notifications"],
     queryFn: () => list(),
+    enabled: signedIn,
+    retry: false,
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
   });
@@ -32,12 +43,15 @@ export function NotificationBell() {
   const invitesQ = useQuery({
     queryKey: ["pending-invites"],
     queryFn: () => listInvites(),
+    enabled: signedIn,
+    retry: false,
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
   });
 
   // Realtime updates
   useEffect(() => {
+    if (!signedIn) return;
     const ch = supabase
       .channel("notifications-inbox")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications" }, () => {
@@ -48,15 +62,17 @@ export function NotificationBell() {
       })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [qc]);
+  }, [qc, signedIn]);
 
   // Opportunistic drain
   useEffect(() => {
+    if (!signedIn) return;
     const tick = () => { drain().catch(() => {}); };
     tick();
     const id = setInterval(tick, 25_000);
     return () => clearInterval(id);
-  }, [drain]);
+  }, [drain, signedIn]);
+
 
   useEffect(() => {
     if (!open) return;

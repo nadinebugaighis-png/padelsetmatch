@@ -547,12 +547,16 @@ function Info({ label, v }: { label: string; v: string }) {
   );
 }
 
-function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; onSaved: () => void }) {
+function AvailabilityCard({ awayUntil, slots, onSaved }: { awayUntil: string | null; slots: string[]; onSaved: () => void }) {
   const setAway = useServerFn(setAwayStatus);
+  const saveAvail = useServerFn(setMyAvailability);
+  const { label } = useI18n();
   const tr = useTr();
   const today = new Date().toISOString().slice(0, 10);
   const isAway = !!awayUntil && awayUntil >= today;
   const [busy, setBusy] = useState(false);
+  const [picked, setPicked] = useState<string[]>(slots);
+  const dirty = picked.length !== slots.length || picked.some((s) => !slots.includes(s));
 
   const toggle = async () => {
     setBusy(true);
@@ -560,6 +564,19 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
       const payload = isAway ? null : "2999-12-31";
       await setAway({ data: { away_until: payload } });
       toast.success(payload ? tr("On holidays 🌴", "De vacaciones 🌴", "En vacances 🌴") : tr("Back on 🎾", "De vuelta 🎾", "De retour 🎾"));
+      onSaved();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not update", "No se pudo actualizar", "Impossible de mettre à jour"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const saveSlots = async () => {
+    setBusy(true);
+    try {
+      await saveAvail({ data: { availability: picked } });
+      toast.success(tr("Saved", "Guardado", "Enregistré"));
       onSaved();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not update", "No se pudo actualizar", "Impossible de mettre à jour"));
@@ -586,6 +603,37 @@ function AvailabilityCard({ awayUntil, onSaved }: { awayUntil: string | null; on
         >
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
         </button>
+      </div>
+
+      <div className="mt-4 border-t border-[var(--ink)]/10 pt-4">
+        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
+          {tr("When do you usually play?", "¿Cuándo sueles jugar?", "Quand joues-tu d'habitude ?")}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {AVAILABILITY_SLOTS.map((s) => {
+            const on = picked.includes(s);
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setPicked((cur) => (cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]))}
+                className={`px-3 py-1.5 rounded-full text-xs border transition ${on ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80 hover:bg-[var(--ink)]/[0.04]"}`}
+              >
+                {label(s)}
+              </button>
+            );
+          })}
+        </div>
+        {dirty && (
+          <button
+            type="button"
+            onClick={saveSlots}
+            disabled={busy}
+            className="mt-3 px-4 py-2 rounded-full bg-[var(--plum)] text-white text-xs font-bold uppercase tracking-widest disabled:opacity-60"
+          >
+            {tr("Save", "Guardar", "Enregistrer")}
+          </button>
+        )}
       </div>
     </div>
   );

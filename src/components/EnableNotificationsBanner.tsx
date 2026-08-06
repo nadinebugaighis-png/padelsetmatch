@@ -59,24 +59,31 @@ export function EnableNotificationsBanner() {
 
   if (!show) return null;
   return (
-    <div className="border-b border-[var(--ink)]/10 bg-[var(--plum)]/8">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-2.5 flex items-center gap-3">
-        <Bell className="w-4 h-4 text-[var(--plum)] shrink-0" />
-        <div className="flex-1 min-w-0 text-sm text-[var(--ink)]">
-          {tr(
-            "Turn on notifications to hear from matches, coaches and messages instantly.",
-            "Activa las notificaciones para enterarte al instante de matches, coaches y mensajes.",
-            "Active les notifications pour être averti·e des matchs, coachs et messages.",
-          )}
+    <div className="border-b border-[var(--ink)]/10 bg-[color-mix(in_oklab,var(--plum)_6%,var(--paper))]">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 flex items-center gap-3">
+        <span className="shrink-0 w-8 h-8 rounded-full border border-[var(--plum)]/25 bg-[var(--paper)] flex items-center justify-center">
+          <Bell className="w-4 h-4 text-[var(--plum)]" />
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+            {tr("Notifications", "Notificaciones", "Notifications")}
+          </div>
+          <div className="text-[13px] leading-snug text-[var(--ink)]/85 truncate sm:whitespace-normal">
+            {tr(
+              "Get pinged when a match, coach or message needs you.",
+              "Te avisamos cuando haya un partido, coach o mensaje.",
+              "Sois prévenu·e pour un match, un coach ou un message.",
+            )}
+          </div>
         </div>
         <button
           onClick={enable}
           disabled={busy}
-          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-3 py-1.5 shrink-0 disabled:opacity-60"
+          className="rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-bold px-3.5 py-1.5 shrink-0 disabled:opacity-60 hover:opacity-90 transition"
         >
           {tr("Enable", "Activar", "Activer")}
         </button>
-        <button onClick={dismiss} aria-label="dismiss" className="text-[var(--ink)]/50 hover:text-[var(--ink)] shrink-0">
+        <button onClick={dismiss} aria-label="dismiss" className="text-[var(--ink)]/40 hover:text-[var(--ink)] shrink-0 transition">
           <X className="w-4 h-4" />
         </button>
       </div>

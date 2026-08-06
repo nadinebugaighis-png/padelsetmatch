@@ -68,7 +68,7 @@ function AuthPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "signup" && password !== confirmPassword) {
-      toast.error(
+      toast.warning(
         tr(
           "Passwords don't match.",
           "Las contraseñas no coinciden.",
@@ -153,7 +153,7 @@ function AuthPage() {
         /already (registered|exists|been registered)|user.*exists/i.test(raw);
 
       if (isRateLimit) {
-        toast.error(
+        toast.info(
           tr(
             "Too many attempts. Please wait a moment and try again.",
             "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
@@ -161,7 +161,7 @@ function AuthPage() {
           ),
         );
       } else if (isWeakPassword) {
-        toast.error(
+        toast.warning(
           tr(
             "This password is too common.",
             "Esta contraseña es demasiado común.",
@@ -177,7 +177,7 @@ function AuthPage() {
           },
         );
       } else if (isShortPassword) {
-        toast.error(
+        toast.warning(
           tr(
             "Password is too short.",
             "La contraseña es demasiado corta.",
@@ -193,7 +193,7 @@ function AuthPage() {
           },
         );
       } else if (isBadEmail) {
-        toast.error(
+        toast.warning(
           tr(
             "That email doesn't look right.",
             "Ese correo no parece válido.",
@@ -209,7 +209,7 @@ function AuthPage() {
           },
         );
       } else if (isAlreadyRegistered && mode === "signup") {
-        toast.error(
+        toast.info(
           tr(
             "This email is already registered.",
             "Este correo ya está registrado.",
@@ -228,7 +228,7 @@ function AuthPage() {
       } else if (isInvalidCreds && mode === "signin") {
         // Generic message on purpose — never reveal whether an account exists
         // or which provider it uses (account enumeration).
-        toast.error(
+        toast.warning(
           tr(
             "Wrong email or password.",
             "Correo o contraseña incorrectos.",
@@ -375,7 +375,7 @@ function AuthPage() {
             <button
               type="button"
               onClick={async () => {
-                if (!email) { toast.error(t("auth.enterEmailFirst")); return; }
+                if (!email) { toast.info(t("auth.enterEmailFirst")); return; }
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });

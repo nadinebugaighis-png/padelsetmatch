@@ -10,6 +10,9 @@ import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/auth")({
+  // Rendered on the client only: the /app guard redirects here after hydration,
+  // so server-rendering this page produces a hydration mismatch.
+  ssr: false,
   head: () => ({ meta: [{ title: "Sign in — PadelSetMatch" }] }),
   validateSearch: (
     s: Record<string, unknown>,

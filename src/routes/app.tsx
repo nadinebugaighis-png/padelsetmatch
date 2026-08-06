@@ -228,15 +228,17 @@ function AuthShell() {
   }>;
   const invites = rawInvites.filter((i) => i.event && new Date(i.event.starts_at).getTime() > Date.now() && i.event.status !== "cancelled");
 
-  const [dismissedIds, setDismissedIds] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try { return JSON.parse(localStorage.getItem("invite-banner-dismissed") ?? "[]"); } catch { return []; }
-  });
+  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+  const dismissedLoaded = useRef(false);
+  useEffect(() => {
+    try { setDismissedIds(JSON.parse(localStorage.getItem("invite-banner-dismissed") ?? "[]")); } catch { /* ignore */ }
+    dismissedLoaded.current = true;
+  }, []);
   const visibleInvites = invites.filter((i) => !dismissedIds.includes(i.id));
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    localStorage.setItem("invite-banner-dismissed", JSON.stringify(dismissedIds));
+    if (!dismissedLoaded.current) return;
+    try { localStorage.setItem("invite-banner-dismissed", JSON.stringify(dismissedIds)); } catch { /* ignore */ }
   }, [dismissedIds]);
 
 

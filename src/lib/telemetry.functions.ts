@@ -23,7 +23,14 @@ export const ingestAppEvents = createServerFn({ method: "POST" })
     z.object({ events: z.array(EventSchema).min(1).max(25) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let supabaseAdmin;
+    try {
+      ({ supabaseAdmin } = await import("@/integrations/supabase/client.server"));
+    } catch (e) {
+      console.error("telemetry unavailable", (e as Error).message);
+      return { ok: false };
+    }
+
 
     const rows = data.events.map((e) => ({
       kind: e.kind,
@@ -39,10 +46,16 @@ export const ingestAppEvents = createServerFn({ method: "POST" })
       created_at: e.at ?? new Date().toISOString(),
     }));
 
-    const { error } = await supabaseAdmin.from("app_events").insert(rows as never);
-    if (error) {
-      console.error("app_events insert failed", error.message);
+    try {
+      const { error } = await supabaseAdmin.from("app_events").insert(rows as never);
+      if (error) {
+        console.error("app_events insert failed", error.message);
+        return { ok: false };
+      }
+    } catch (e) {
+      console.error("app_events insert threw", (e as Error).message);
       return { ok: false };
     }
     return { ok: true };
+
   });

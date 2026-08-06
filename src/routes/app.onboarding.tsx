@@ -353,34 +353,38 @@ function Onboarding() {
   const derivedIntents = ["padel"];
 
 
+  const persistProfile = async () => {
+    const derivedLookingFor: LookingFor = "friend"; // legacy neutral value, unused in UI
+    const partnerAud: string[] = [];
+    const friendAud: string[] = [];
+    const legacy = interested_in;
+
+    const first = validBlocks[0];
+    if (age === null || age_min === null || age_max === null || !gender || !level) {
+      throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
+    }
+    await upsert({
+      data: {
+        first_name, age, gender, interested_in: legacy,
+        friend_interested_in: friendAud, partner_interested_in: partnerAud,
+        age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
+        zone: first ? first.city : "",
+        locations: encodedLocations, languages,
+        level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
+        bio: bio || null, photo_url: photoUrl,
+        availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
+        free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
+        gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
+        sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
+        personal_traits: personalTraits,
+        padel_style: padelStyle,
+      },
+    });
+  };
+
   const save = useMutation({
     mutationFn: async (opts?: { destination?: "grid" | "profile" }) => {
-      const derivedLookingFor: LookingFor = "friend"; // legacy neutral value, unused in UI
-      const partnerAud: string[] = [];
-      const friendAud: string[] = [];
-      const legacy = interested_in;
-
-      const first = validBlocks[0];
-      if (age === null || age_min === null || age_max === null || !gender || !level) {
-        throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
-      }
-      await upsert({
-        data: {
-          first_name, age, gender, interested_in: legacy,
-          friend_interested_in: friendAud, partner_interested_in: partnerAud,
-          age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
-          zone: first ? first.city : "",
-          locations: encodedLocations, languages,
-          level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
-          bio: bio || null, photo_url: photoUrl,
-          availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
-          free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
-          gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
-          sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
-          personal_traits: personalTraits,
-          padel_style: padelStyle,
-        },
-      });
+      await persistProfile();
       return opts?.destination ?? "grid";
     },
     onSuccess: (dest) => {
@@ -390,6 +394,7 @@ function Onboarding() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("ob.saveFail")),
   });
+
 
   const audOk = goals.length > 0 && (!hasPartnerGoal || !!meetPref);
 

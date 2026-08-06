@@ -123,6 +123,20 @@ export const setAwayStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const setMyAvailability = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ availability: z.array(z.string().min(1).max(40)).max(10) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profiles" as never)
+      .update({ availability: data.availability } as never)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const setWorldMode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ world_mode: z.boolean() }).parse(d))

@@ -181,7 +181,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <Outlet />
-        <Toaster richColors position="top-center" />
+        <Toaster position="top-center" />
         <CookieBanner />
         <QRShareButton />
         <UpdatePrompt />

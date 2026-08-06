@@ -7,7 +7,7 @@ import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites } from "@/lib/match-events.functions";
 import { getConnectLatest } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";

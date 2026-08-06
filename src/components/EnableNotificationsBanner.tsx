@@ -28,7 +28,17 @@ export function EnableNotificationsBanner() {
       if (!key) { toast.error("Push not configured"); return; }
       const sub = await subscribeToPush(key);
       if (!sub) {
-        toast.error(tr("Notifications blocked", "Notificaciones bloqueadas", "Notifications bloquées"));
+        // Permission was denied at browser/OS level — the banner can't help
+        // any more, so explain where to change it and stop showing it.
+        toast.info(
+          tr(
+            "Notifications are blocked in your browser settings. Allow them for this site, then try again.",
+            "Las notificaciones están bloqueadas en los ajustes del navegador. Permítelas para este sitio y vuelve a intentarlo.",
+            "Les notifications sont bloquées dans les réglages du navigateur. Autorisez-les pour ce site, puis réessayez.",
+          ),
+          { duration: 7000 },
+        );
+        dismiss();
         return;
       }
       await save({ data: { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth, userAgent: navigator.userAgent } });

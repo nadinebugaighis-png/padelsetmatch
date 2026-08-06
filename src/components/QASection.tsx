@@ -14,7 +14,7 @@ import { useI18n } from "@/lib/i18n";
 
 type Q = { question: string; category: string; options?: string[] };
 
-export function QASection() {
+export function QASection({ ensureProfile }: { ensureProfile?: () => Promise<void> } = {}) {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
 
@@ -29,7 +29,10 @@ export function QASection() {
   const [draft, setDraft] = useState<Record<string, string>>({});
 
   const generate = useMutation({
-    mutationFn: () => genFn({ data: { count: 5, lang } }),
+    mutationFn: async () => {
+      if (ensureProfile) await ensureProfile();
+      return genFn({ data: { count: 5, lang } });
+    },
     onSuccess: (res) => {
       const fresh = (res?.questions ?? []) as Q[];
       if (fresh.length === 0) {
@@ -41,8 +44,13 @@ export function QASection() {
         return [...prev, ...fresh.filter((q) => !seen.has(q.question))];
       });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "AI failed"),
+    onError: (e) => {
+      const msg = e instanceof Error ? e.message : "AI failed";
+      if (msg === "PROFILE_INCOMPLETE") return; // already guided the user
+      toast.error(msg);
+    },
   });
+
 
   const submit = useMutation({
     mutationFn: (v: { question: string; category: string; answer: string }) =>

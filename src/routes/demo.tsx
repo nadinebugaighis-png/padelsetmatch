@@ -19,6 +19,7 @@ import p9 from "@/assets/seed/p9.jpg.asset.json";
 import p10 from "@/assets/seed/p10.jpg.asset.json";
 import p11 from "@/assets/seed/p11.jpg.asset.json";
 import p12 from "@/assets/seed/p12.jpg.asset.json";
+import mePhoto from "@/assets/seed/me.jpg.asset.json";
 
 const TITLE = "PadelSetMatch demo — players, matches and courts";
 const DESC =
@@ -89,7 +90,7 @@ const CONVERSATION = [
 const ME = {
   name: "Clara",
   city: "Madrid",
-  photo: p6.url,
+  photo: mePhoto.url,
   level: 3.5,
   side: "Right",
   plays: "3 / week",

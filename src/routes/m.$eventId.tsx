@@ -17,7 +17,7 @@ export const Route = createFileRoute("/m/$eventId")({
   }),
   head: () => {
     const title = "Join my padel match — PadelSetMatch";
-    const description = "You're invited to a padel match on PadelMatch. Tap to grab an open spot.";
+    const description = "You're invited to a padel match on PadelSetMatch. Tap to grab an open spot.";
     return {
       meta: [
         { title },

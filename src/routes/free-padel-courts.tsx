@@ -5,7 +5,7 @@ import { LangSwitch } from "@/lib/i18n";
 
 const TITLE = "Free Padel Courts — Find Free & Private Courts Near You";
 const DESC =
-  "How to find free padel courts near you: community courts, urbanisation and private courts opened up by neighbours, and off-peak club slots. Join players with free court access on PadelMatch.";
+  "How to find free padel courts near you: community courts, urbanisation and private courts opened up by neighbours, and off-peak club slots. Join players with free court access on PadelSetMatch.";
 const URL = "https://padelsetmatch.com/free-padel-courts";
 
 const FAQ = [

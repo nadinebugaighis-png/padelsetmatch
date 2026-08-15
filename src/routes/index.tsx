@@ -145,7 +145,7 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
-            <ShareQR url="https://padelsetmatch.com" label="Join me on PadelMatch" />
+            <ShareQR url="https://padelsetmatch.com" label="Join me on PadelSetMatch" />
           </div>
 
 

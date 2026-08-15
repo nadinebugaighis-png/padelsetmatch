@@ -2,7 +2,7 @@
 
 *Maintained by Moorish Arches S.L. Last updated: August 2026.*
 
-PadelSetMatch is a padel players' directory: people find neighbours to play with, join open matches and share free-court access. It is **not** a dating or friendship app — there are no romantic or relationship features anywhere in the product.
+PadelSetMatch is a padel players' directory: people find neighbours to play with, join open matches and share free-court access. It is especially useful for meeting nearby players who live in the same neighbourhood and share a similar lifestyle and schedule. It is **not** a dating or friendship app — there are no romantic or relationship features anywhere in the product.
 
 ---
 
@@ -56,7 +56,7 @@ PadelSetMatch is a padel players' directory: people find neighbours to play with
 
 ## 7. Age and conduct
 
-- **18+ only.** The app is for adults; under-18 accounts are not permitted.
+- **Recommended 18+.** The app is designed to be safe for a younger audience and contains no dating or relationship functionality, but we recommend users be 18 or older for responsible in-person meetups to play.
 - **Zero tolerance** for nudity, sexual content, harassment, insults, hate speech, spam and commercial scams. Breaking these rules gets content removed and the account suspended.
 - **No dating.** Romantic advances are treated as harassment and handled like any other violation.
 

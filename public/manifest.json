@@ -1,7 +1,7 @@
 {
-  "name": "PadelMatch",
-  "short_name": "PadelMatch",
-  "description": "Find your padel partner and maybe more. Matches, friendship, and great games worldwide.",
+  "name": "PadelSetMatch",
+  "short_name": "PadelSetMatch",
+  "description": "A directory of padel players around you. Find a fourth player at your level, join open matches, and meet players in your neighbourhood.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",

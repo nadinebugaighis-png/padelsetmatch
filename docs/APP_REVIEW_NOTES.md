@@ -27,17 +27,21 @@ Upload it to an unlisted YouTube/Vimeo/Dropbox link and paste the link in the re
 (Adjust to the devices you actually used.)
 
 ## 3. App functions and target audience
-PadelSetMatch is a free social directory for padel players aged 18+. It solves the
-single biggest problem in padel: finding a fourth player at your level, at your club,
-at the time you can play. Users create a profile (level, preferred side, availability,
-clubs, languages), browse other players nearby, create or join open matches, and chat
-to arrange the game. There is no dating or relationship functionality — it is a
-players' directory and match-organising tool. Value: fewer cancelled games, faster
-match-making, and a way to meet players when travelling to a new city.
+PadelSetMatch is a free social directory for padel players. It is especially useful
+for meeting padel players who live nearby or in the same neighbourhood, so you can
+find partners with a similar lifestyle and schedule. While the app is safe for a younger
+audience and contains no dating or relationship functionality, we recommend users be
+18 or older for responsible in-person meetups to play. It solves the single biggest
+problem in padel: finding a fourth player at your level, at your club, at the time you
+can play. Users create a profile (level, preferred side, availability, clubs, languages),
+browse other players nearby, create or join open matches, and chat to arrange the game.
+There is no dating or relationship functionality — it is a players' directory and
+match-organising tool. Value: fewer cancelled games, faster match-making, and a way
+to meet players when travelling to a new city.
 
 ## 4. How to set up and access the main features
 Demo account (full access, no paid tiers):
-- Email: appreview@marches.es
+- Email: nadine@marches.es
 - Password: <paste the current password here>
 
 Steps: Sign in → Home ("Grid") shows nearby players → "Play" tab lists open matches →

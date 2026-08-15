@@ -50,7 +50,7 @@ Full description: reuse the App Store copy (EN / ES / FR).
 - **Content rating** questionnaire: social app with user-generated content + chat → likely Teen/PEGI 12. Declare UGC and moderation.
 - **Target audience**: 18+.
 - **Ads**: No.
-- **App access**: provide the review login (`appreview@marches.es`) — Play testers need it just like Apple.
+- **App access**: provide the review login (`nadine@marches.es`) — Play testers need it just like Apple.
 - **Government / financial features**: No.
 
 ## 4. Release

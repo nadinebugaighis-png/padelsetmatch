@@ -9,9 +9,9 @@ import { useTr } from "@/lib/i18n";
 export const Route = createFileRoute("/play")({
   head: () => ({
     meta: [
-      { title: "Open padel matches near you — PadelMatch" },
+      { title: "Open padel matches near you — PadelSetMatch" },
       { name: "description", content: "Browse open padel matches in your city. Join a spot in one tap — no account required." },
-      { property: "og:title", content: "Open padel matches near you — PadelMatch" },
+      { property: "og:title", content: "Open padel matches near you — PadelSetMatch" },
       { property: "og:description", content: "Browse open padel matches in your city. Join a spot in one tap — no account required." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -57,7 +57,7 @@ function PublicPlayFeed() {
     <main className="min-h-screen bg-[var(--court-deep)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 py-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelMatch</Link>
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelSetMatch</Link>
           <Link to="/auth" className="text-[11px] uppercase tracking-widest text-[var(--cream)]/70 hover:text-[var(--cream)] underline">
             {tr("Sign in", "Iniciar sesión", "Se connecter")}
           </Link>

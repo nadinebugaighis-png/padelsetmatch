@@ -31,7 +31,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "padelmatchapp"
+const SITE_NAME = "PadelSetMatch"
 const SENDER_DOMAIN = "notify.padelsetmatch.com"
 const ROOT_DOMAIN = "padelsetmatch.com"
 const FROM_DOMAIN = "padelsetmatch.com"

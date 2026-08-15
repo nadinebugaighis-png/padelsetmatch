@@ -8,7 +8,7 @@ export const Route = createFileRoute("/how-it-works")({
     meta: [
       { title: "How it works — PadelSetMatch" },
       { name: "description", content: "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time." },
-      { property: "og:title", content: "How PadelMatch works" },
+      { property: "og:title", content: "How PadelSetMatch works" },
       { property: "og:description", content: "Find players. Play more." },
     ],
   }),
@@ -105,7 +105,7 @@ function HowItWorksPage() {
       {/* Hero */}
       <section className="relative px-5 sm:px-8 lg:px-16 pt-10 sm:pt-14 pb-10 max-w-6xl mx-auto w-full">
         <span className="inline-flex items-center rounded-full border border-[color-mix(in_oklab,var(--plum)_35%,transparent)] text-[var(--plum)] text-[11px] font-semibold uppercase tracking-[0.22em] px-4 py-1.5">
-          {tr("Why PadelMatch", "Por qué PadelMatch", "Pourquoi PadelMatch")}
+          {tr("Why PadelSetMatch", "Por qué PadelSetMatch", "Pourquoi PadelSetMatch")}
         </span>
         <h1 className="mt-6 text-serif uppercase text-[var(--ink)] leading-[0.92] tracking-[-0.02em] text-[2.75rem] sm:text-6xl lg:text-7xl">
           {tr("Find players. Play more.", "Encuentra jugadores. Juega más.", "Trouve des joueurs. Joue plus.")}

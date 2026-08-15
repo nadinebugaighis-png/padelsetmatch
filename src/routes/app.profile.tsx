@@ -223,9 +223,9 @@ function ProfilePage() {
                         : "border border-[var(--ink)]/20 bg-[var(--paper-2)] text-[var(--ink)]/75"
                     }`}
                     title={tr(
-                      "Your signup number on PadelMatch",
-                      "Tu número de registro en PadelMatch",
-                      "Ton numéro d'inscription sur PadelMatch",
+                      "Your signup number on PadelSetMatch",
+                      "Tu número de registro en PadelSetMatch",
+                      "Ton numéro d'inscription sur PadelSetMatch",
                     )}
                   >
                     {ordinalQ.data <= 100 ? "★ " : "🎾 "}

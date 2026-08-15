@@ -30,7 +30,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
   const nativeShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: "PadelMatch", text: label || tr("Join me on PadelMatch", "Únete a mí en PadelMatch", "Rejoins-moi sur PadelMatch"), url });
+        await navigator.share({ title: "PadelSetMatch", text: label || tr("Join me on PadelSetMatch", "Únete a mí en PadelSetMatch", "Rejoins-moi sur PadelSetMatch"), url });
       } catch {
         // ignore cancellation
       }
@@ -59,7 +59,7 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
             >
               <X className="w-4 h-4" />
             </button>
-            <p className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Share PadelMatch", "Compartir PadelMatch", "Partager PadelMatch")}</p>
+            <p className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Share PadelSetMatch", "Compartir PadelSetMatch", "Partager PadelSetMatch")}</p>
             <p className="text-xs text-[var(--ink)]/60 mt-1">{tr("Scan to open", "Escanea para abrir", "Scanne pour ouvrir")}</p>
 
 

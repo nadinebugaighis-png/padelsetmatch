@@ -75,7 +75,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
 
   const shareLink = async () => {
     if (navigator.share) {
-      await navigator.share({ title: "PadelMatch", text: tr("Join me on PadelMatch", "Únete conmigo a PadelMatch", "Rejoins-moi sur PadelMatch"), url: appUrl });
+      await navigator.share({ title: "PadelSetMatch", text: tr("Join me on PadelSetMatch", "Únete conmigo a PadelSetMatch", "Rejoins-moi sur PadelSetMatch"), url: appUrl });
       return;
     }
     await copyLink();
@@ -88,7 +88,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
         <div className="surface-card max-w-sm w-full p-8 text-center" onClick={(e) => e.stopPropagation()}>
           <Smartphone className="w-12 h-12 text-[var(--cream)] mx-auto mb-4" />
           <h3 className="text-display text-2xl text-[var(--cream)]">{tr("Already installed!", "¡Ya está instalada!", "Déjà installée !")}</h3>
-          <p className="mt-2 text-[var(--cream)]/70">{tr("Open PadelMatch from your home screen for the full app experience.", "Abre PadelMatch desde tu pantalla de inicio para la experiencia completa.", "Ouvre PadelMatch depuis ton écran d'accueil pour l'expérience complète.")}</p>
+          <p className="mt-2 text-[var(--cream)]/70">{tr("Open PadelSetMatch from your home screen for the full app experience.", "Abre PadelSetMatch desde tu pantalla de inicio para la experiencia completa.", "Ouvre PadelSetMatch depuis ton écran d'accueil pour l'expérience complète.")}</p>
           <button onClick={onClose} className="mt-6 inline-flex items-center rounded-full bg-[var(--ball)] text-[var(--court-deep)] font-semibold px-6 py-3 hover:opacity-90">{tr("Close", "Cerrar", "Fermer")}</button>
         </div>
       </div>
@@ -244,7 +244,7 @@ export function InstallPrompt() {
           >
             <Smartphone className="w-6 h-6 text-[var(--cream)] shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-[var(--cream)]">{tr("Put PadelMatch on your phone", "Instala PadelMatch en tu móvil", "Installe PadelMatch sur ton téléphone")}</p>
+              <p className="text-sm font-bold text-[var(--cream)]">{tr("Put PadelSetMatch on your phone", "Instala PadelSetMatch en tu móvil", "Installe PadelSetMatch sur ton téléphone")}</p>
               <p className="text-xs text-[var(--cream)]">{tr("Quick guided setup →", "Instalación guiada rápida →", "Installation guidée rapide →")}</p>
             </div>
             <Download className="w-5 h-5 text-[var(--cream)] shrink-0" />

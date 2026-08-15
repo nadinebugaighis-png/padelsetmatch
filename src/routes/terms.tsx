@@ -22,19 +22,19 @@ function Terms() {
       <p className="text-sm text-[var(--ink)]/60">Last updated: {new Date().toLocaleDateString()}</p>
 
       <p>
-        PadelMatch is a padel player directory and match-finding app operated by <b>Moorish Arches
+        PadelSetMatch is a padel player directory and match-finding app operated by <b>Moorish Arches
         S.L.</b> (Madrid, Spain). By creating an account you agree to these terms.
       </p>
 
-      <h2 className="text-display text-2xl mt-6">1. What PadelMatch is</h2>
+      <h2 className="text-display text-2xl mt-6">1. What PadelSetMatch is</h2>
       <p>
-        PadelMatch helps padel players find other padel players of a similar level in their city or
+        PadelSetMatch helps padel players find other padel players of a similar level in their city or
         club, and organise casual matches. It is <b>not</b> a dating, romantic or friendship app, and
         it is <b>not</b> a court-booking service — you should book courts through Playtomic or your
         club as usual.
       </p>
 
-      <h2 className="text-display text-2xl mt-6">2. Who can use PadelMatch</h2>
+      <h2 className="text-display text-2xl mt-6">2. Who can use PadelSetMatch</h2>
       <p>
         You must be <b>18 or older</b>. One account per person. You must provide accurate information
         about yourself, including a real first name and a recent photo of you (preferably playing
@@ -52,7 +52,7 @@ function Terms() {
       <h2 className="text-display text-2xl mt-6">4. Meeting in person</h2>
       <p>
         Matches should be played at public padel clubs, ideally booked through Playtomic or another
-        legitimate court-booking service so the meeting is at a supervised venue. PadelMatch is a
+        legitimate court-booking service so the meeting is at a supervised venue. PadelSetMatch is a
         discovery and chat platform — <b>we are not responsible for what happens off-platform</b>.
         Meet in public, tell a friend, and trust your instincts. If a match is at a private or
         residential court, hosts must flag it as "Private" so other players know before joining.

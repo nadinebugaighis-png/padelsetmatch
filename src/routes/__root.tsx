@@ -110,13 +110,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "Organization",
-              name: "PadelMatch",
+              name: "PadelSetMatch",
               url: "https://padelsetmatch.com",
               logo: "https://padelsetmatch.com/icon-512.png",
             },
             {
               "@type": "WebSite",
-              name: "PadelMatch",
+              name: "PadelSetMatch",
               url: "https://padelsetmatch.com",
             },
           ],

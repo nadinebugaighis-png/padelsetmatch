@@ -7,7 +7,7 @@ import { getMyProfile } from "@/lib/app.functions";
 export const Route = createFileRoute("/app/")({
   head: () => ({
     meta: [
-      { title: "PadelMatch" },
+      { title: "PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),

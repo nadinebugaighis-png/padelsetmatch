@@ -47,7 +47,7 @@ export function QRShareButton() {
               <X className="h-4 w-4" />
             </button>
             <h2 className="text-center text-sm font-semibold uppercase tracking-wider text-neutral-700">
-              Share PadelMatch
+              Share PadelSetMatch
             </h2>
             <div className="mt-4 flex justify-center">
               <img

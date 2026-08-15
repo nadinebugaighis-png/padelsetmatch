@@ -33,7 +33,7 @@ const en: Dict = {
 
   // Auth
   "auth.back": "← Back",
-  "auth.title.signup": "Join PadelMatch",
+  "auth.title.signup": "Join PadelSetMatch",
   "auth.title.signin": "Welcome back",
   "auth.sub.signup": "We only ask what helps the match. Your photo is for matches, not the world.",
   "auth.sub.signin": "Sign back in to your padel feed.",
@@ -181,7 +181,7 @@ const en: Dict = {
   "fb.title": "Make this app better",
   "fb.sub": "Suggestions, bugs, things you'd love — it all comes straight to the team.",
   "fb.anon": "Your feedback is completely anonymous.",
-  "fb.placeholder": "What would make PadelMatch better for you?",
+  "fb.placeholder": "What would make PadelSetMatch better for you?",
   "fb.send": "Send",
   "fb.sending": "Sending…",
   "fb.thanks": "Thanks — your feedback was sent.",
@@ -314,7 +314,7 @@ const es: Dict = {
 
   // Auth
   "auth.back": "← Atrás",
-  "auth.title.signup": "Únete a PadelMatch",
+  "auth.title.signup": "Únete a PadelSetMatch",
   "auth.title.signin": "Bienvenido de nuevo",
   "auth.sub.signup": "Solo te preguntamos lo que ayuda al match. Tu foto es para tus matches, no para todo el mundo.",
   "auth.sub.signin": "Vuelve a entrar en tu feed de pádel.",
@@ -462,7 +462,7 @@ const es: Dict = {
   "fb.title": "Ayúdanos a mejorar esta app",
   "fb.sub": "Sugerencias, errores o lo que te encantaría — llega directo al equipo.",
   "fb.anon": "Tu feedback es totalmente anónimo.",
-  "fb.placeholder": "¿Qué haría que PadelMatch fuera mejor para ti?",
+  "fb.placeholder": "¿Qué haría que PadelSetMatch fuera mejor para ti?",
   "fb.send": "Enviar",
   "fb.sending": "Enviando…",
   "fb.thanks": "Gracias — hemos recibido tu feedback.",
@@ -590,7 +590,7 @@ const fr: Dict = {
 
   // Auth
   "auth.back": "← Retour",
-  "auth.title.signup": "Rejoins PadelMatch",
+  "auth.title.signup": "Rejoins PadelSetMatch",
   "auth.title.signin": "Bon retour",
   "auth.sub.signup": "On ne demande que ce qui aide au match. Ta photo est pour tes matches, pas pour tout le monde.",
   "auth.sub.signin": "Reconnecte-toi à ton fil padel.",
@@ -738,7 +738,7 @@ const fr: Dict = {
   "fb.title": "Améliore cette app",
   "fb.sub": "Suggestions, bugs, ce que tu adorerais — ça arrive directement à l'équipe.",
   "fb.anon": "Ton feedback est totalement anonyme.",
-  "fb.placeholder": "Qu'est-ce qui rendrait PadelMatch meilleur pour toi ?",
+  "fb.placeholder": "Qu'est-ce qui rendrait PadelSetMatch meilleur pour toi ?",
   "fb.send": "Envoyer",
   "fb.sending": "Envoi…",
   "fb.thanks": "Merci — ton feedback a été envoyé.",

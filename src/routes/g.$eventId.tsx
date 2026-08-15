@@ -9,7 +9,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
 
 export const Route = createFileRoute("/g/$eventId")({
-  head: () => ({ meta: [{ title: "Join match as guest — PadelMatch" }] }),
+  head: () => ({ meta: [{ title: "Join match as guest — PadelSetMatch" }] }),
   component: GuestMatchRoom,
 });
 
@@ -137,7 +137,7 @@ function GuestMatchRoom() {
     return (
       <main className="min-h-screen bg-[var(--court-deep)]">
         <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-8">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelMatch</Link>
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelSetMatch</Link>
           <div className="mt-6 text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
           <h1 className="text-3xl text-[var(--cream)] font-medium mt-1 leading-tight">
             {tr("No account needed — just three quick things.", "Sin cuenta — solo tres cosas rápidas.", "Sans compte — juste trois infos rapides.")}

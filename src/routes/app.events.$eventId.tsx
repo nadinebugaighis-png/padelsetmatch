@@ -192,8 +192,8 @@ function EventDetail() {
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name + " " + (event.city ?? ""))}`;
   const shareText = tr(
-    `Join my padel match on PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
-    `Únete a mi partido de pádel en PadelMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
+    `Join my padel match on PadelSetMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
+    `Únete a mi partido de pádel en PadelSetMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
   );
 
   const displayShareUrl = shortShareUrl || shareUrl;
@@ -209,7 +209,7 @@ function EventDetail() {
 
   const nativeShare = async () => {
     try {
-      await navigator.share({ title: "PadelMatch", text: shareText, url: shortShareUrl || shareUrl });
+      await navigator.share({ title: "PadelSetMatch", text: shareText, url: shortShareUrl || shareUrl });
     } catch (err: any) {
       if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
     }

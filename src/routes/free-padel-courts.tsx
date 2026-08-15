@@ -15,7 +15,7 @@ const FAQ = [
   },
   {
     q: "How do I find a free padel court near me?",
-    a: "Start with your local council's sports pages for municipal courts, then look for players who already have court access. On PadelMatch, players who can bring a free or private court are marked with a court badge, so you can see who to ask before you book anything.",
+    a: "Start with your local council's sports pages for municipal courts, then look for players who already have court access. On PadelSetMatch, players who can bring a free or private court are marked with a court badge, so you can see who to ask before you book anything.",
   },
   {
     q: "Do I need a club membership to play?",
@@ -78,7 +78,7 @@ const WAYS = [
   {
     icon: Users,
     title: "Players with court access",
-    body: "The fastest route: find someone who already has a court and needs a fourth. On PadelMatch these players carry a court badge on their card.",
+    body: "The fastest route: find someone who already has a court and needs a fourth. On PadelSetMatch these players carry a court badge on their card.",
   },
 ];
 
@@ -166,7 +166,7 @@ function FreeCourtsPage() {
             Court sorted. Now find the fourth.
           </h2>
           <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
-            PadelMatch is a directory of padel players near you. See who plays your level, who is free
+            PadelSetMatch is a directory of padel players near you. See who plays your level, who is free
             this week, and who can bring a court.{" "}
             <Link to="/how-it-works" className="text-[var(--plum)] underline underline-offset-4">
               See how it works

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/m/$eventId")({
     i: typeof s.i === "string" ? s.i : undefined,
   }),
   head: () => {
-    const title = "Join my padel match — PadelMatch";
+    const title = "Join my padel match — PadelSetMatch";
     const description = "You're invited to a padel match on PadelMatch. Tap to grab an open spot.";
     return {
       meta: [
@@ -101,7 +101,7 @@ function PublicMatchPage() {
 
   const nativeShare = async () => {
     try {
-      await navigator.share({ title: "PadelMatch", url: shareUrl });
+      await navigator.share({ title: "PadelSetMatch", url: shareUrl });
     } catch (err: any) {
       if (String(err?.name ?? "") !== "AbortError") await copyShareLink();
     }
@@ -117,7 +117,7 @@ function PublicMatchPage() {
   return (
     <main className="min-h-screen bg-[var(--court-deep)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
-        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelMatch</Link>
+        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelSetMatch</Link>
 
         {q.isLoading && <div className="mt-10 text-center text-[var(--cream)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
 

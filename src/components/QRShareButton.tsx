@@ -52,7 +52,7 @@ export function QRShareButton() {
             <div className="mt-4 flex justify-center">
               <img
                 src={QR_SRC}
-                alt="QR code for padelmatchapp.lovable.app"
+                alt="QR code for PadelSetMatch"
                 width={220}
                 height={220}
                 className="h-56 w-56 rounded-lg border border-neutral-200"

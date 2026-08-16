@@ -808,14 +808,14 @@ function SlotAvatar({
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         className="flex flex-col items-center gap-0.5 group"
       >
-        <div className={`w-9 h-9 rounded-full grid place-items-center border-2 border-dashed transition ${
+        <div className={`w-12 h-12 rounded-full grid place-items-center border-2 border-dashed transition ${
           canJoin
             ? "border-[var(--plum)]/50 text-[var(--plum)] group-hover:bg-[var(--plum)]/8 group-hover:border-[var(--plum)]"
             : "border-[var(--ink)]/20 text-[var(--ink)]/30"
         } ${isPending ? "opacity-50" : ""}`}>
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-5 h-5" />
         </div>
-        <span className={`text-[9px] uppercase tracking-widest font-semibold ${canJoin ? "text-[var(--plum)]" : "text-[var(--ink)]/40"}`}>
+        <span className={`text-[10px] uppercase tracking-widest font-semibold ${canJoin ? "text-[var(--plum)]" : "text-[var(--ink)]/40"}`}>
           {canJoin ? tr("Join", "Unirme", "Rejoindre") : tr("Open", "Libre", "Libre")}
         </span>
       </button>
@@ -824,11 +824,11 @@ function SlotAvatar({
 
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <div className="w-9 h-9 rounded-full overflow-hidden border border-[var(--ink)]/15 bg-[var(--ink)]/10 grid place-items-center">
+      <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--ink)]/15 bg-[var(--ink)]/10 grid place-items-center">
         {photo ? (
           <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
         ) : (
-          <span className="text-[11px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
+          <span className="text-[13px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
         )}
       </div>
       <span className="text-[9px] text-[var(--ink)]/70 truncate max-w-[52px]">

@@ -951,7 +951,10 @@ function MyMatchesList({
           : first.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
         return (
           <div key={key}>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 font-semibold mb-2 px-1">{label}</div>
+          <div className="inline-flex items-center gap-2 mb-2 px-1">
+            <span className="text-sm font-bold uppercase tracking-widest text-[var(--ink)]">{label}</span>
+            <span className="h-px flex-1 bg-[var(--ink)]/10" />
+          </div>
             <ul className="space-y-2">
               {list.map((e) => {
                 const isPending = pending === e.id;

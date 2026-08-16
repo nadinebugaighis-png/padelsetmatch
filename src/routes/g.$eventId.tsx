@@ -172,7 +172,7 @@ function GuestMatchRoom() {
               <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
             </div>
             <button type="submit" disabled={busy}
-              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--ink)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50">
+              className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]">
               {busy ? tr("Joining…", "Uniéndote…", "Inscription…") : tr("Join match", "Unirme al partido", "Rejoindre le match")}
             </button>
             <div className="text-center">

@@ -831,7 +831,7 @@ function SlotAvatar({
           <span className="text-[13px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
         )}
       </div>
-      <span className="text-[9px] text-[var(--ink)]/70 truncate max-w-[52px]">
+      <span className="text-[10px] text-[var(--ink)]/70 truncate max-w-[64px]">
         {name ?? "—"}
       </span>
     </div>

@@ -84,14 +84,15 @@ export const listConnectPosts = createServerFn({ method: "GET" })
         ]);
       }
     });
-    return posts.map<ConnectPost>((p) => ({
-      ...p,
-      author: authorMap.get(p.author_profile_id)
-        ? { first_name: authorMap.get(p.author_profile_id)!.first_name, photo_url: authorMap.get(p.author_profile_id)!.photo_url }
-        : null,
-      comment_count: countMap.get(p.id) ?? 0,
-      latest_comments: (latestMap.get(p.id) ?? []).reverse(),
-    }));
+    return posts.map<ConnectPost>((p) => {
+      const author = p.author_profile_id ? authorMap.get(p.author_profile_id) ?? null : null;
+      return {
+        ...p,
+        author: author ? { first_name: author.first_name, photo_url: author.photo_url } : null,
+        comment_count: countMap.get(p.id) ?? 0,
+        latest_comments: (latestMap.get(p.id) ?? []).reverse(),
+      };
+    });
   });
 
 export const createConnectPost = createServerFn({ method: "POST" })

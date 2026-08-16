@@ -101,11 +101,34 @@ export function ClubPicker({ value, onChange }: Props) {
           ))}
         </div>
       )}
-      {open && q.length >= 2 && !loading && results.length === 0 && (
-        <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg p-3 text-xs text-[var(--cream)]/60">
-          {tr("No clubs found. Try a different name.", "No se encontraron clubes. Prueba con otro nombre.", "Aucun club trouvé. Essaie un autre nom.")}
+      {open && q.trim().length >= 2 && !loading && (
+        <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg overflow-hidden shadow-xl">
+          {results.length === 0 && (
+            <div className="px-3 pt-3 text-xs text-[var(--cream)]/60">
+              {tr("No clubs found on Google.", "No se encontraron clubes en Google.", "Aucun club trouvé sur Google.")}
+            </div>
+          )}
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              const name = q.trim();
+              onChange({ place_id: "", name, address: "", lat: null, lng: null, city: "", country: "" });
+              setQ("");
+              setOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 hover:bg-[var(--cream)]/10"
+          >
+            <div className="text-sm text-[var(--cream)] truncate">
+              {tr(`Use "${q.trim()}"`, `Usar "${q.trim()}"`, `Utiliser "${q.trim()}"`)}
+            </div>
+            <div className="text-xs text-[var(--cream)]/50">
+              {tr("Keep the club name as you typed it", "Mantener el nombre del club tal como lo escribiste", "Garder le nom du club tel que saisi")}
+            </div>
+          </button>
         </div>
       )}
+
     </div>
   );
 }

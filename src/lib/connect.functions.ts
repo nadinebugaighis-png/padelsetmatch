@@ -167,7 +167,7 @@ export const listConnectComments = createServerFn({ method: "GET" })
       .order("created_at", { ascending: true });
     if (error) throw error;
     const comments = (rows ?? []) as unknown as Array<Omit<ConnectComment, "author">>;
-    const ids = Array.from(new Set(comments.map((c) => c.author_profile_id)));
+    const ids = Array.from(new Set(comments.map((c) => c.author_profile_id).filter(Boolean))) as string[];
     const { data: authors } = ids.length
       ? await context.supabase.from("profiles" as never).select("id, first_name, photo_url").in("id", ids)
       : { data: [] as any[] };
@@ -176,7 +176,7 @@ export const listConnectComments = createServerFn({ method: "GET" })
     );
     return comments.map<ConnectComment>((c) => ({
       ...c,
-      author: map.get(c.author_profile_id) ?? null,
+      author: c.author_profile_id ? map.get(c.author_profile_id) ?? null : null,
     }));
   });
 

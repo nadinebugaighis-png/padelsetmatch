@@ -159,9 +159,9 @@ function PublicMatchPage() {
 
               <div className="px-5 py-6 space-y-5">
                 {/* Date / time / location block */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-start gap-3.5">
-                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center shrink-0">
                       <Calendar className="w-4 h-4 text-[var(--ink)]" />
                     </div>
                     <div>
@@ -173,7 +173,7 @@ function PublicMatchPage() {
                   </div>
 
                   <div className="flex items-start gap-3.5">
-                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center shrink-0">
                       <Clock className="w-4 h-4 text-[var(--ink)]" />
                     </div>
                     <div>
@@ -185,7 +185,7 @@ function PublicMatchPage() {
                   </div>
 
                   <div className="flex items-start gap-3.5">
-                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center shrink-0">
                       <MapPin className="w-4 h-4 text-[var(--ink)]" />
                     </div>
                     <div className="min-w-0">
@@ -197,7 +197,7 @@ function PublicMatchPage() {
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.club_address)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink)] underline decoration-[var(--ball)] underline-offset-4"
+                          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink)] underline decoration-[var(--gold)] underline-offset-4"
                         >
                           <MapPin className="w-3 h-3" />
                           {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}

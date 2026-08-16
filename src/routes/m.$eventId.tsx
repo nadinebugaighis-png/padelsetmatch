@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Calendar, MapPin, Users, Share2 } from "lucide-react";
+import { MapPin, Users, Share2 } from "lucide-react";
 import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";

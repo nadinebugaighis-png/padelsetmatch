@@ -158,7 +158,7 @@ function GuestMatchRoom() {
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {PADEL_LEVELS.map((lvl) => (
                   <button key={lvl} type="button" onClick={() => setLevel(lvl)}
-                    className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ball)] text-[var(--ink)] border-[var(--ball)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
+                    className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
                     {lvl}
                   </button>
                 ))}

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Calendar, MapPin, Users, Share2 } from "lucide-react";
+import { MapPin, Users, Share2 } from "lucide-react";
 import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -38,11 +38,16 @@ export const Route = createFileRoute("/m/$eventId")({
   component: PublicMatchPage,
 });
 
-function fmtWhen(iso: string) {
-  return new Date(iso).toLocaleString(undefined, {
-    weekday: "long", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-  });
+function whenParts(iso: string) {
+  const d = new Date(iso);
+  return {
+    weekday: d.toLocaleDateString(undefined, { weekday: "short" }).replace(".", ""),
+    day: d.toLocaleDateString(undefined, { day: "numeric" }),
+    month: d.toLocaleDateString(undefined, { month: "short" }).replace(".", ""),
+    time: d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
+  };
 }
+
 
 function shareOrigin() {
   if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
@@ -132,53 +137,92 @@ function PublicMatchPage() {
 
         {match && (
           <>
-            <div className="mt-4 programme-card rounded-2xl p-5 space-y-3">
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
-              <h1 className="text-2xl text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
-              {match.club_address && <p className="text-xs text-[var(--ink)]/60">{match.club_address}</p>}
+            <div className="mt-4 programme-card rounded-3xl overflow-hidden">
+              {/* Hero band: date + time, the two things people scan for */}
+              <div className="bg-[var(--ink)] text-[var(--paper)] px-5 pt-4 pb-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--ball)]">
+                    {tr("You're invited", "Estás invitado", "Tu es invité·e")}
+                  </span>
+                  <span className={`text-[10px] uppercase tracking-[0.16em] px-2.5 py-1 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--ball)] text-[var(--ink)]" : "bg-white/15 text-white/80"}`}>
+                    {openSpots > 0
+                      ? tr(`${openSpots} spot${openSpots > 1 ? "s" : ""} left`, `${openSpots} ${openSpots > 1 ? "huecos" : "hueco"} libre${openSpots > 1 ? "s" : ""}`, `${openSpots} place${openSpots > 1 ? "s" : ""} libre${openSpots > 1 ? "s" : ""}`)
+                      : tr("Full", "Completo", "Complet")}
+                  </span>
+                </div>
 
-              <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ink)]/80 pt-2">
-                <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {fmtWhen(match.starts_at)}</span>
-                <span className="inline-flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {match.filled}/{totalSpots}</span>
-                {match.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {match.city}</span>}
-              </div>
-
-              <div className="flex flex-wrap gap-2 pt-1">
-                <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{genderLabel}</span>
-                <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">
-                  {tr("Level", "Nivel", "Niveau")} {match.level_min} – {match.level_max}
-                </span>
-              </div>
-
-              {match.note && <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
-
-              {match.host?.first_name && (
-                <p className="text-xs text-[var(--ink)]/60 pt-2">{tr("Hosted by", "Organizado por", "Organisé par")} <span className="text-[var(--ink)]">{match.host.first_name}</span></p>
-              )}
-
-              {/* Players — tap an open spot to join */}
-              <div className="pt-3">
-                <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
-                <div className="flex flex-wrap gap-2">
-                  {match.participant_names.map((name, i) => (
-                    <div key={`p-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)] border border-[color-mix(in_oklab,var(--ink)_10%,transparent)] rounded-full px-3 py-1.5">
-                      <div className="w-6 h-6 rounded-full bg-[color-mix(in_oklab,var(--ink)_15%,transparent)]" />
-                      <span className="text-xs text-[var(--ink)]">{name}</span>
+                <div className="mt-4 flex items-end gap-4">
+                  <div className="leading-none">
+                    <div className="text-display text-[56px] leading-[0.85] text-[var(--ball)]">
+                      {whenParts(match.starts_at).time}
                     </div>
-                  ))}
-                  {Array.from({ length: openSpots }).map((_, i) => (
-                    <button
-                      key={`o-${i}`}
-                      type="button"
-                      onClick={onJoinClick}
-                      className="flex items-center gap-2 border border-dashed border-[var(--ink)]/40 rounded-full px-3 py-1.5 hover:bg-[var(--paper-2)]"
-                    >
-                      <span className="text-xs text-[var(--ink)]">{tr("Join open spot", "Unirme al hueco libre", "Rejoindre la place")}</span>
-                    </button>
-                  ))}
+                    <div className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/90">
+                      {whenParts(match.starts_at).weekday} {whenParts(match.starts_at).day} {whenParts(match.starts_at).month}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-5 py-5 space-y-4">
+                <div>
+                  <h1 className="text-display text-3xl leading-none text-[var(--ink)] uppercase">{match.club_name}</h1>
+                  <p className="mt-1.5 inline-flex items-center gap-1.5 text-sm text-[var(--ink)]/70">
+                    <MapPin className="w-4 h-4 shrink-0" />
+                    <span>{match.club_address || match.city}</span>
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/80 font-semibold">{genderLabel}</span>
+                  <span className="text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/80 font-semibold">
+                    {tr("Level", "Nivel", "Niveau")} {match.level_min} – {match.level_max}
+                  </span>
+                  {match.host?.first_name && (
+                    <span className="text-[10px] uppercase tracking-widest px-2.5 py-1.5 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/80 font-semibold">
+                      {tr("Host", "Anfitrión", "Hôte")}: {match.host.first_name}
+                    </span>
+                  )}
+                </div>
+
+                {match.note && (
+                  <p className="text-sm text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--ball)] pl-3 italic">{match.note}</p>
+                )}
+
+                {/* Players */}
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/50 font-semibold">{tr("Players", "Jugadores", "Joueurs")}</span>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--ink)]">
+                      <Users className="w-3.5 h-3.5" /> {match.filled}/{totalSpots}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {match.participant_names.map((name, i) => (
+                      <div key={`p-${i}`} className="flex flex-col items-center gap-1.5">
+                        <div className="w-14 h-14 rounded-full bg-[color-mix(in_oklab,var(--ink)_12%,transparent)] border border-[color-mix(in_oklab,var(--ink)_12%,transparent)] flex items-center justify-center text-display text-xl text-[var(--ink)]">
+                          {name.trim().charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-[11px] text-[var(--ink)]/80 truncate max-w-full">{name}</span>
+                      </div>
+                    ))}
+                    {Array.from({ length: openSpots }).map((_, i) => (
+                      <button
+                        key={`o-${i}`}
+                        type="button"
+                        onClick={onJoinClick}
+                        className="flex flex-col items-center gap-1.5 group"
+                      >
+                        <div className="w-14 h-14 rounded-full border-2 border-dashed border-[var(--ink)]/30 flex items-center justify-center text-2xl text-[var(--ink)]/40 group-hover:border-[var(--ball)] group-hover:text-[var(--ink)] group-hover:bg-[var(--ball)]/20 transition">
+                          +
+                        </div>
+                        <span className="text-[11px] text-[var(--ink)]/50">{tr("Free", "Libre", "Libre")}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
+
 
             <div className="mt-5 space-y-2">
               <button

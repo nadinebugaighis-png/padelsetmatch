@@ -1,5 +1,34 @@
-Resolving dependencies
-Resolved, downloaded and extracted [48]
-Saved lockfile
-[31mAccess token not provided. Supply an access token by running `supabase login` or setting the SUPABASE_ACCESS_TOKEN environment variable.[39m
-Try rerunning the command with --debug to troubleshoot the error.
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export type Database = {
+  public: {
+    Tables: {
+      [table: string]: {
+        Row: Record<string, any>;
+        Insert: Record<string, any>;
+        Update: Record<string, any>;
+        Relationships: any[];
+      };
+    };
+    Views: {
+      [view: string]: {
+        Row: Record<string, any>;
+      };
+    };
+    Functions: {
+      [fn: string]: {
+        Args: Record<string, any>;
+        Returns: any;
+      };
+    };
+    Enums: {
+      [enumName: string]: any[];
+    };
+  };
+};

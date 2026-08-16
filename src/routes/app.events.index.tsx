@@ -681,23 +681,19 @@ function MatchCard({
         className="w-full text-left pl-4 pr-3 pt-3 pb-2.5"
       >
         <div className="flex items-start gap-3">
-          {/* Compact date pill — still readable but smaller */}
-          <div className="shrink-0 flex flex-col items-center justify-center text-center rounded-xl bg-[var(--paper-2)]/60 border border-[var(--ink)]/10 px-2 py-2 min-w-[58px]">
+          {/* Stacked time + date, original layout, rebalanced sizes */}
+          <div className="shrink-0 flex flex-col items-start justify-center min-w-[72px]">
+            <div className="text-serif text-[30px] sm:text-[34px] leading-none text-[var(--ink)] tracking-tight">
+              {time}
+            </div>
+            <div className="mt-1 text-[12px] sm:text-[13px] font-semibold text-[var(--ink)]/70 leading-none">
+              <span className="capitalize">{weekday}</span> {dayNum} <span className="capitalize">{monthShort}</span>
+            </div>
             {dateBadge && (
-              <div className="mb-1 rounded-full bg-[var(--plum)] text-white text-[8px] uppercase tracking-widest font-bold px-1.5 py-0.5 leading-none">
+              <div className="mt-1.5 rounded-full bg-[var(--plum)] text-white text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 leading-none">
                 {dateBadge}
               </div>
             )}
-            <div className="text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/80 leading-none">
-              <span className="capitalize">{weekday}</span>
-            </div>
-            <div className="text-serif text-[22px] leading-none text-[var(--ink)] mt-0.5">{dayNum}</div>
-            <div className="text-[9px] uppercase tracking-widest font-bold text-[var(--ink)]/55 leading-none mt-0.5">
-              <span className="capitalize">{monthShort}</span>
-            </div>
-            <div className="mt-1.5 pt-1 border-t border-[var(--ink)]/10 w-full">
-              <div className="text-xs font-semibold tabular-nums text-[var(--ink)] leading-none">{time}</div>
-            </div>
           </div>
           <div className="w-px self-stretch bg-[var(--ink)]/10" aria-hidden />
           <div className="flex-1 min-w-0">

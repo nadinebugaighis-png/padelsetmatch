@@ -158,7 +158,7 @@ function GuestMatchRoom() {
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {PADEL_LEVELS.map((lvl) => (
                   <button key={lvl} type="button" onClick={() => setLevel(lvl)}
-                    className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ball)] text-[var(--ink)] border-[var(--ball)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
+                    className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
                     {lvl}
                   </button>
                 ))}
@@ -172,7 +172,7 @@ function GuestMatchRoom() {
               <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
             </div>
             <button type="submit" disabled={busy}
-              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--ink)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50">
+              className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]">
               {busy ? tr("Joining…", "Uniéndote…", "Inscription…") : tr("Join match", "Unirme al partido", "Rejoindre le match")}
             </button>
             <div className="text-center">
@@ -266,7 +266,7 @@ function GuestMatchRoom() {
 
         <div className="programme-card rounded-2xl p-5 space-y-3">
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">{tr("You're in", "Estás dentro", "Tu es inscrit·e")}</div>
-          <h1 className="text-2xl text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
+          <h1 className="text-2xl text-serif text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
           {match.club_address && <p className="text-xs text-[var(--ink)]/60">{match.club_address}</p>}
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ink)]/80 pt-2">
@@ -300,7 +300,7 @@ function GuestMatchRoom() {
             )}
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.is_me ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.is_me ? "bg-[var(--ball)] text-[var(--ink)]" : "bg-[var(--paper-2)] text-[var(--ink)]"}`}>
+                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.is_me ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper-2)] text-[var(--ink)]"}`}>
                   {!m.is_me && <div className="text-[10px] uppercase tracking-wider opacity-70 mb-0.5">{m.sender_name}{m.is_guest ? " · guest" : ""}</div>}
                   <div className="whitespace-pre-wrap break-words">{m.body}</div>
                 </div>
@@ -315,7 +315,7 @@ function GuestMatchRoom() {
               placeholder={tr("Write a message…", "Escribe un mensaje…", "Écris un message…")}
               className="flex-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full px-4 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40" />
             <button onClick={sendMsg} disabled={!msg.trim()}
-              className="w-11 h-11 rounded-full bg-[var(--ball)] text-[var(--ink)] flex items-center justify-center disabled:opacity-40">
+              className="w-11 h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center disabled:opacity-40">
               <Send className="w-4 h-4" />
             </button>
           </div>

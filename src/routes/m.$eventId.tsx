@@ -139,18 +139,18 @@ function PublicMatchPage() {
           <>
             <div className="mt-4 programme-card rounded-3xl overflow-hidden shadow-[0_18px_50px_-18px_color-mix(in_oklab,var(--ink)_18%,transparent)]">
               {/* Invitation header */}
-              <div className="bg-[var(--ball)] px-5 pt-5 pb-4 text-center">
-                <div className="inline-flex items-center gap-2 text-[var(--ink)]">
-                  <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
+              <div className="programme-header px-5 pt-6 pb-5 text-center">
+                <div className="inline-flex items-center gap-2 text-[var(--paper)]/80">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
                   <span className="text-[10px] uppercase tracking-[0.22em] font-semibold">
                     {tr("Invitation to join a match", "Invitación para unirte a un partido", "Invitation à rejoindre un match")}
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
                 </div>
-                <div className="mt-3 text-display text-2xl leading-none text-[var(--ink)]">
+                <div className="mt-3 text-serif text-3xl leading-none text-[var(--paper)]">
                   {tr("Padel match", "Partido de pádel", "Match de padel")}
                 </div>
-                <span className={`inline-block mt-3 text-[10px] uppercase tracking-[0.16em] px-3 py-1 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
+                <span className={`inline-block mt-4 text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--paper)]/20 text-[var(--paper)]/80"}`}>
                   {openSpots > 0
                     ? tr(`${openSpots} spot${openSpots > 1 ? "s" : ""} left`, `${openSpots} ${openSpots > 1 ? "huecos" : "hueco"} libre${openSpots > 1 ? "s" : ""}`, `${openSpots} place${openSpots > 1 ? "s" : ""} libre${openSpots > 1 ? "s" : ""}`)
                     : tr("Full", "Completo", "Complet")}
@@ -159,9 +159,9 @@ function PublicMatchPage() {
 
               <div className="px-5 py-6 space-y-5">
                 {/* Date / time / location block */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-start gap-3.5">
-                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center shrink-0">
                       <Calendar className="w-4 h-4 text-[var(--ink)]" />
                     </div>
                     <div>
@@ -173,7 +173,7 @@ function PublicMatchPage() {
                   </div>
 
                   <div className="flex items-start gap-3.5">
-                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center shrink-0">
                       <Clock className="w-4 h-4 text-[var(--ink)]" />
                     </div>
                     <div>
@@ -185,19 +185,19 @@ function PublicMatchPage() {
                   </div>
 
                   <div className="flex items-start gap-3.5">
-                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center shrink-0">
                       <MapPin className="w-4 h-4 text-[var(--ink)]" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 font-semibold">{tr("Location", "Lugar", "Lieu")}</p>
-                      <h1 className="text-xl font-semibold text-[var(--ink)] leading-tight">{match.club_name}</h1>
+                      <h1 className="text-xl text-serif font-semibold text-[var(--ink)] leading-tight">{match.club_name}</h1>
                       <p className="text-sm text-[var(--ink)]/70 mt-0.5">{match.club_address || match.city}</p>
                       {match.club_address && (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.club_address)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink)] underline decoration-[var(--ball)] underline-offset-4"
+                          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink)] underline decoration-[var(--gold)] underline-offset-4"
                         >
                           <MapPin className="w-3 h-3" />
                           {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
@@ -220,7 +220,7 @@ function PublicMatchPage() {
                 </div>
 
                 {match.note && (
-                  <p className="text-sm text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--ball)] pl-3 italic">{match.note}</p>
+                  <p className="text-sm text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--gold)] pl-3 italic">{match.note}</p>
                 )}
 
                 {/* Players */}
@@ -234,7 +234,7 @@ function PublicMatchPage() {
                   <div className="grid grid-cols-4 gap-2">
                     {match.participant_names.map((name, i) => (
                       <div key={`p-${i}`} className="flex flex-col items-center gap-1.5">
-                        <div className="w-14 h-14 rounded-full bg-[color-mix(in_oklab,var(--ink)_12%,transparent)] border border-[color-mix(in_oklab,var(--ink)_12%,transparent)] flex items-center justify-center text-display text-xl text-[var(--ink)]">
+                        <div className="w-14 h-14 rounded-full bg-[color-mix(in_oklab,var(--ink)_10%,transparent)] border border-[color-mix(in_oklab,var(--ink)_12%,transparent)] flex items-center justify-center text-display text-xl text-[var(--ink)]">
                           {name.trim().charAt(0).toUpperCase()}
                         </div>
                         <span className="text-[11px] text-[var(--ink)]/80 truncate max-w-full">{name}</span>
@@ -247,7 +247,7 @@ function PublicMatchPage() {
                         onClick={onJoinClick}
                         className="flex flex-col items-center gap-1.5 group"
                       >
-                        <div className="w-14 h-14 rounded-full border-2 border-dashed border-[var(--ink)]/30 flex items-center justify-center text-2xl text-[var(--ink)]/40 group-hover:border-[var(--ball)] group-hover:text-[var(--ink)] group-hover:bg-[var(--ball)]/20 transition">
+                        <div className="w-14 h-14 rounded-full border-2 border-dashed border-[var(--ink)]/30 flex items-center justify-center text-2xl text-[var(--ink)]/40 group-hover:border-[var(--gold)] group-hover:text-[var(--ink)] group-hover:bg-[var(--paper-2)] transition">
                           +
                         </div>
                         <span className="text-[11px] text-[var(--ink)]/50">{tr("Free", "Libre", "Libre")}</span>
@@ -263,7 +263,7 @@ function PublicMatchPage() {
               <button
                 onClick={onJoinClick}
                 disabled={openSpots === 0}
-                className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--ink)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
+                className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]"
               >
                 {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
@@ -281,7 +281,6 @@ function PublicMatchPage() {
               </button>
               <p className="text-[11px] text-[var(--ink)]/50 text-center pt-1">
                 {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
-
               </p>
             </div>
           </>
@@ -309,7 +308,6 @@ function PublicMatchPage() {
                   className="rounded-full border border-[var(--ink)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/70"
                 >
                   {tr("Close", "Cerrar", "Fermer")}
-
                 </button>
               </div>
               <input
@@ -323,7 +321,7 @@ function PublicMatchPage() {
                   href={shareUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--ink)]"
+                  className="rounded-full bg-[var(--ink)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--paper)]"
                 >
                   {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
                 </a>

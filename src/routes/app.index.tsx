@@ -17,13 +17,13 @@ export const Route = createFileRoute("/app/")({
 function AppIndexRedirect() {
   const navigate = useNavigate();
   const getProfile = useServerFn(getMyProfile);
-  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile(), retry: false });
+  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile(), retry: 2, retryDelay: 400 });
 
   useEffect(() => {
-    if (!profileQ.isSuccess) return;
+    if (!profileQ.isSuccess || profileQ.isFetching) return;
     if (!profileQ.data) navigate({ to: "/app/onboarding", replace: true });
     else navigate({ to: "/app/grid", replace: true });
-  }, [profileQ.isSuccess, profileQ.data, navigate]);
+  }, [profileQ.isSuccess, profileQ.isFetching, profileQ.data, navigate]);
 
 
   return (

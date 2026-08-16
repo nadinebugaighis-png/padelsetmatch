@@ -726,7 +726,7 @@ function MatchCard({
       <div className="pl-4 pr-3 pb-3">
         <div className="grid grid-cols-[1fr_auto_1fr_1fr_1fr] items-center gap-1.5">
           <SlotAvatar slot={slots[0]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
-          <div className="h-12 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
+          <div className="h-14 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
           <SlotAvatar slot={slots[1]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
           <SlotAvatar slot={slots[2]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
           <SlotAvatar slot={slots[3]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />

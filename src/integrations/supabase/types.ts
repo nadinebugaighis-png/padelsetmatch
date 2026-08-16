@@ -309,7 +309,7 @@ export type Database = {
           category: Database["public"]["Enums"]["connect_category"]
           city: string | null
           created_at: string
-          expires_at: string
+          expires_at: string | null
           id: string
           title: string
           updated_at: string
@@ -320,7 +320,7 @@ export type Database = {
           category?: Database["public"]["Enums"]["connect_category"]
           city?: string | null
           created_at?: string
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           title: string
           updated_at?: string
@@ -331,7 +331,7 @@ export type Database = {
           category?: Database["public"]["Enums"]["connect_category"]
           city?: string | null
           created_at?: string
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           title?: string
           updated_at?: string

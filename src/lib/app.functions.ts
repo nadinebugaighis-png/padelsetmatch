@@ -72,11 +72,12 @@ function stripPrivateFields(p: Profile): any {
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase
+    const { data, error } = await context.supabase
       .from("profiles" as never)
       .select("*")
       .eq("user_id", context.userId)
       .maybeSingle();
+    if (error) throw new Error(error.message);
     return (data as Profile | null) ?? null;
   });
 
@@ -340,11 +341,14 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ world: z.boolean().optional() }).optional().parse(d) ?? {})
   .handler(async ({ data, context }) => {
     const world = data?.world === true;
-    const { data: meRow } = await context.supabase
+    const { data: meRow, error: meErr } = await context.supabase
       .from("profiles" as never)
       .select("*")
       .eq("user_id", context.userId)
       .maybeSingle();
+    // Never treat a transient read failure as "no profile" — that would bounce
+    // an existing user back into onboarding.
+    if (meErr) throw new Error(meErr.message);
     const me = meRow as Profile | null;
     if (!me) return { me: null, candidates: [] as Array<Profile & { score: number; reasons: string[]; liked: boolean }> };
 

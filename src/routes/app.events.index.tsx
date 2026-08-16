@@ -669,34 +669,34 @@ function MatchCard({
 
   return (
     <div
-      className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
+      className={`relative rounded-xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] ${
         highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
       }`}
     >
-      <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${accent.bar}`} aria-hidden />
+      <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent.bar}`} aria-hidden />
 
       <button
         type="button"
         onClick={() => onOpen(e.id)}
-        className="w-full text-left pl-5 pr-4 pt-4 pb-3"
+        className="w-full text-left pl-4 pr-3 pt-3 pb-2.5"
       >
-        <div className="flex items-start gap-4">
-          {/* Date block — made prominent so users never confuse the day */}
-          <div className="shrink-0 flex flex-col items-center justify-center text-center rounded-2xl bg-[var(--paper-2)]/60 border border-[var(--ink)]/10 px-3 py-2.5 min-w-[74px]">
+        <div className="flex items-start gap-3">
+          {/* Compact date pill — still readable but smaller */}
+          <div className="shrink-0 flex flex-col items-center justify-center text-center rounded-xl bg-[var(--paper-2)]/60 border border-[var(--ink)]/10 px-2 py-2 min-w-[58px]">
             {dateBadge && (
-              <div className="mb-1 rounded-full bg-[var(--plum)] text-white text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 leading-none">
+              <div className="mb-1 rounded-full bg-[var(--plum)] text-white text-[8px] uppercase tracking-widest font-bold px-1.5 py-0.5 leading-none">
                 {dateBadge}
               </div>
             )}
-            <div className="text-[13px] font-bold uppercase tracking-widest text-[var(--ink)]/80 leading-none">
+            <div className="text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]/80 leading-none">
               <span className="capitalize">{weekday}</span>
             </div>
-            <div className="text-serif text-[28px] leading-none text-[var(--ink)] mt-0.5">{dayNum}</div>
-            <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--ink)]/55 leading-none mt-0.5">
+            <div className="text-serif text-[22px] leading-none text-[var(--ink)] mt-0.5">{dayNum}</div>
+            <div className="text-[9px] uppercase tracking-widest font-bold text-[var(--ink)]/55 leading-none mt-0.5">
               <span className="capitalize">{monthShort}</span>
             </div>
-            <div className="mt-2 pt-1.5 border-t border-[var(--ink)]/10 w-full">
-              <div className="text-sm font-semibold tabular-nums text-[var(--ink)] leading-none">{time}</div>
+            <div className="mt-1.5 pt-1 border-t border-[var(--ink)]/10 w-full">
+              <div className="text-xs font-semibold tabular-nums text-[var(--ink)] leading-none">{time}</div>
             </div>
           </div>
           <div className="w-px self-stretch bg-[var(--ink)]/10" aria-hidden />
@@ -718,7 +718,7 @@ function MatchCard({
                 </span>
               )}
             </div>
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
+            <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
               {levelLabel && <span className="font-semibold text-[var(--ink)]/75">{levelLabel}</span>}
               {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
               <span>{genderLabel}</span>
@@ -727,15 +727,15 @@ function MatchCard({
         </div>
       </button>
 
-      <div className="pl-5 pr-4 pb-4">
-        <div className="grid grid-cols-[1fr_auto_1fr_1fr_1fr] items-center gap-2">
+      <div className="pl-4 pr-3 pb-3">
+        <div className="grid grid-cols-[1fr_auto_1fr_1fr_1fr] items-center gap-1.5">
           <SlotAvatar slot={slots[0]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
-          <div className="h-14 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
+          <div className="h-12 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
           <SlotAvatar slot={slots[1]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
           <SlotAvatar slot={slots[2]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
           <SlotAvatar slot={slots[3]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
         </div>
-        <div className="mt-1.5 grid grid-cols-[1fr_auto_1fr_1fr_1fr] gap-2 items-center text-[9px] uppercase tracking-widest font-bold text-[var(--ink)]/40">
+        <div className="mt-1 grid grid-cols-[1fr_auto_1fr_1fr_1fr] gap-1.5 items-center text-[8px] uppercase tracking-widest font-bold text-[var(--ink)]/40">
           <span className="text-center">A</span>
           <span className="w-px" />
           <span className="text-center" />
@@ -751,35 +751,35 @@ function MatchCard({
           if (e.iAmHost) onManage(e);
           else onOpen(e.id);
         }}
-        className="w-full flex items-center gap-3 pl-5 pr-4 py-3 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/45 hover:bg-[var(--paper-2)]/70 transition text-left"
+        className="w-full flex items-center gap-2.5 pl-4 pr-3 py-2.5 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/45 hover:bg-[var(--paper-2)]/70 transition text-left"
       >
-        <div className="w-9 h-9 rounded-full grid place-items-center bg-white border border-[var(--ink)]/10 shrink-0">
-          <MapPin className="w-4 h-4 text-[var(--ink)]/60" />
+        <div className="w-8 h-8 rounded-full grid place-items-center bg-white border border-[var(--ink)]/10 shrink-0">
+          <MapPin className="w-3.5 h-3.5 text-[var(--ink)]/60" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-[var(--ink)] truncate flex items-center gap-1.5">
+          <div className="text-[13px] font-semibold text-[var(--ink)] truncate flex items-center gap-1.5">
             <span className="truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</span>
             {e.is_private_court && (
-              <span className="shrink-0 text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+              <span className="shrink-0 text-[8px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
                 {tr("Private", "Privada", "Privé")}
               </span>
             )}
           </div>
-          <div className="text-[11px] text-[var(--ink)]/55 truncate">
+          <div className="text-[10px] text-[var(--ink)]/55 truncate">
             {e.city || e.club_address || ""}
           </div>
         </div>
         <div className="text-right shrink-0">
           {full ? (
-            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--ink)]/50">
+            <span className="text-[9px] uppercase tracking-widest font-bold text-[var(--ink)]/50">
               {tr("Full", "Completo", "Complet")}
             </span>
           ) : (
-            <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--plum)]">
+            <span className="text-[9px] uppercase tracking-widest font-bold text-[var(--plum)]">
               {tr(`${e.needs} left`, `Faltan ${e.needs}`, `${e.needs} à combler`)}
             </span>
           )}
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/45 mt-0.5">
+          <div className="text-[9px] uppercase tracking-widest text-[var(--ink)]/45 mt-0.5">
             {tr("90 min", "90 min", "90 min")}
           </div>
         </div>

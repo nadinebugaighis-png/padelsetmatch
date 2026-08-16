@@ -52,7 +52,7 @@ export const listConnectPosts = createServerFn({ method: "GET" })
     const { data: rows, error } = await q;
     if (error) throw error;
     const posts = (rows ?? []) as unknown as Array<Omit<ConnectPost, "author" | "comment_count" | "latest_comments">>;
-    const authorIds = Array.from(new Set(posts.map((p) => p.author_profile_id)));
+    const authorIds = Array.from(new Set(posts.map((p) => p.author_profile_id).filter(Boolean))) as string[];
     const postIds = posts.map((p) => p.id);
 
     const [{ data: authors }, { data: comments }] = await Promise.all([

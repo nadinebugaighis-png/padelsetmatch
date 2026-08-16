@@ -43,7 +43,7 @@ export const listConnectPosts = createServerFn({ method: "GET" })
   )
   .handler(async ({ data, context }) => {
     let q = context.supabase
-      .from("connect_posts" as never)
+      .from("connect_posts")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(100);
@@ -57,11 +57,11 @@ export const listConnectPosts = createServerFn({ method: "GET" })
 
     const [{ data: authors }, { data: comments }] = await Promise.all([
       authorIds.length
-        ? context.supabase.from("profiles" as never).select("id, first_name, photo_url").in("id", authorIds)
+        ? context.supabase.from("profiles").select("id, first_name, photo_url").in("id", authorIds)
         : Promise.resolve({ data: [] as any[] }),
       postIds.length
         ? context.supabase
-            .from("connect_comments" as never)
+            .from("connect_comments")
             .select("*")
             .in("post_id", postIds)
             .order("created_at", { ascending: false })
@@ -108,7 +108,7 @@ export const createConnectPost = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const myId = await myProfileId(context.supabase, context.userId);
     const { data: row, error } = await context.supabase
-      .from("connect_posts" as never)
+      .from("connect_posts")
       .insert({
         author_profile_id: myId,
         category: data.category,
@@ -126,7 +126,7 @@ export const deleteConnectPost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("connect_posts" as never).delete().eq("id", data.id);
+    const { error } = await context.supabase.from("connect_posts").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
@@ -144,7 +144,7 @@ export const updateConnectPost = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
-      .from("connect_posts" as never)
+      .from("connect_posts")
       .update({
         category: data.category,
         city: data.city?.trim() || null,
@@ -161,7 +161,7 @@ export const listConnectComments = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ postId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: rows, error } = await context.supabase
-      .from("connect_comments" as never)
+      .from("connect_comments")
       .select("*")
       .eq("post_id", data.postId)
       .order("created_at", { ascending: true });
@@ -169,7 +169,7 @@ export const listConnectComments = createServerFn({ method: "GET" })
     const comments = (rows ?? []) as unknown as Array<Omit<ConnectComment, "author">>;
     const ids = Array.from(new Set(comments.map((c) => c.author_profile_id).filter(Boolean))) as string[];
     const { data: authors } = ids.length
-      ? await context.supabase.from("profiles" as never).select("id, first_name, photo_url").in("id", ids)
+      ? await context.supabase.from("profiles").select("id, first_name, photo_url").in("id", ids)
       : { data: [] as any[] };
     const map = new Map(
       ((authors ?? []) as Array<{ id: string; first_name: string | null; photo_url: string | null }>).map((a) => [a.id, a]),
@@ -187,7 +187,7 @@ export const addConnectComment = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const myId = await myProfileId(context.supabase, context.userId);
-    const { error } = await context.supabase.from("connect_comments" as never).insert({
+    const { error } = await context.supabase.from("connect_comments").insert({
       post_id: data.postId,
       author_profile_id: myId,
       body: data.body.trim(),
@@ -200,7 +200,7 @@ export const updateConnectComment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), body: z.string().min(1).max(1000) }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("connect_comments" as never).update({ body: data.body.trim() }).eq("id", data.id);
+    const { error } = await context.supabase.from("connect_comments").update({ body: data.body.trim() }).eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
@@ -209,7 +209,7 @@ export const deleteConnectComment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("connect_comments" as never).delete().eq("id", data.id);
+    const { error } = await context.supabase.from("connect_comments").delete().eq("id", data.id);
     if (error) throw error;
     return { ok: true };
   });
@@ -221,12 +221,12 @@ export const getConnectLatest = createServerFn({ method: "GET" })
     try { myPid = await myProfileId(context.supabase, context.userId); } catch { myPid = null; }
     const [{ data: posts }, { data: comments }] = await Promise.all([
       context.supabase
-        .from("connect_posts" as never)
+        .from("connect_posts")
         .select("created_at,author_profile_id")
         .order("created_at", { ascending: false })
         .limit(5),
       context.supabase
-        .from("connect_comments" as never)
+        .from("connect_comments")
         .select("created_at,author_profile_id")
         .order("created_at", { ascending: false })
         .limit(5),

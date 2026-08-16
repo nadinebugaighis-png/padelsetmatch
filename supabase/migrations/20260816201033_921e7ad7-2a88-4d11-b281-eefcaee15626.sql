@@ -1,0 +1,1 @@
+DELETE FROM public.app_events WHERE kind IN ('crash','error') AND (message IS NULL OR btrim(lower(message)) IN ('','undefined','null','script error.','script error'));

@@ -216,14 +216,12 @@ export const deleteConnectComment = createServerFn({ method: "POST" })
 export const getConnectLatest = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const nowIso = new Date().toISOString();
     let myPid: string | null = null;
     try { myPid = await myProfileId(context.supabase, context.userId); } catch { myPid = null; }
     const [{ data: posts }, { data: comments }] = await Promise.all([
       context.supabase
         .from("connect_posts" as never)
         .select("created_at,author_profile_id")
-        .gt("expires_at", nowIso)
         .order("created_at", { ascending: false })
         .limit(5),
       context.supabase

@@ -300,7 +300,7 @@ function GuestMatchRoom() {
             )}
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.is_me ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.is_me ? "bg-[var(--ball)] text-[var(--ink)]" : "bg-[var(--paper-2)] text-[var(--ink)]"}`}>
+                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.is_me ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper-2)] text-[var(--ink)]"}`}>
                   {!m.is_me && <div className="text-[10px] uppercase tracking-wider opacity-70 mb-0.5">{m.sender_name}{m.is_guest ? " · guest" : ""}</div>}
                   <div className="whitespace-pre-wrap break-words">{m.body}</div>
                 </div>
@@ -315,7 +315,7 @@ function GuestMatchRoom() {
               placeholder={tr("Write a message…", "Escribe un mensaje…", "Écris un message…")}
               className="flex-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full px-4 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40" />
             <button onClick={sendMsg} disabled={!msg.trim()}
-              className="w-11 h-11 rounded-full bg-[var(--ball)] text-[var(--ink)] flex items-center justify-center disabled:opacity-40">
+              className="w-11 h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center disabled:opacity-40">
               <Send className="w-4 h-4" />
             </button>
           </div>

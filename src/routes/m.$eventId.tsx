@@ -44,6 +44,17 @@ function fmtWhen(iso: string) {
   });
 }
 
+function whenParts(iso: string) {
+  const d = new Date(iso);
+  return {
+    weekday: d.toLocaleDateString(undefined, { weekday: "short" }).replace(".", ""),
+    day: d.toLocaleDateString(undefined, { day: "numeric" }),
+    month: d.toLocaleDateString(undefined, { month: "short" }).replace(".", ""),
+    time: d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
+  };
+}
+
+
 function shareOrigin() {
   if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
   const { hostname, origin } = window.location;

@@ -75,11 +75,12 @@ export const listConnectPosts = createServerFn({ method: "GET" })
     const latestMap = new Map<string, ConnectComment[]>();
     ((comments ?? []) as Array<Omit<ConnectComment, "author">>).forEach((c) => {
       countMap.set(c.post_id, (countMap.get(c.post_id) ?? 0) + 1);
+      const commentAuthor = c.author_profile_id ? authorMap.get(c.author_profile_id) ?? null : null;
       const list = latestMap.get(c.post_id) ?? [];
       if (list.length < 2) {
         latestMap.set(c.post_id, [
           ...list,
-          { ...c, author: authorMap.get(c.author_profile_id) ?? null } as ConnectComment,
+          { ...c, author: commentAuthor ? { first_name: commentAuthor.first_name, photo_url: commentAuthor.photo_url } : null } as ConnectComment,
         ]);
       }
     });

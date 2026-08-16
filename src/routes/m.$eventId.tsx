@@ -220,7 +220,7 @@ function PublicMatchPage() {
                 </div>
 
                 {match.note && (
-                  <p className="text-sm text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--ball)] pl-3 italic">{match.note}</p>
+                  <p className="text-sm text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--gold)] pl-3 italic">{match.note}</p>
                 )}
 
                 {/* Players */}
@@ -234,7 +234,7 @@ function PublicMatchPage() {
                   <div className="grid grid-cols-4 gap-2">
                     {match.participant_names.map((name, i) => (
                       <div key={`p-${i}`} className="flex flex-col items-center gap-1.5">
-                        <div className="w-14 h-14 rounded-full bg-[color-mix(in_oklab,var(--ink)_12%,transparent)] border border-[color-mix(in_oklab,var(--ink)_12%,transparent)] flex items-center justify-center text-display text-xl text-[var(--ink)]">
+                        <div className="w-14 h-14 rounded-full bg-[color-mix(in_oklab,var(--ink)_10%,transparent)] border border-[color-mix(in_oklab,var(--ink)_12%,transparent)] flex items-center justify-center text-display text-xl text-[var(--ink)]">
                           {name.trim().charAt(0).toUpperCase()}
                         </div>
                         <span className="text-[11px] text-[var(--ink)]/80 truncate max-w-full">{name}</span>
@@ -247,7 +247,7 @@ function PublicMatchPage() {
                         onClick={onJoinClick}
                         className="flex flex-col items-center gap-1.5 group"
                       >
-                        <div className="w-14 h-14 rounded-full border-2 border-dashed border-[var(--ink)]/30 flex items-center justify-center text-2xl text-[var(--ink)]/40 group-hover:border-[var(--ball)] group-hover:text-[var(--ink)] group-hover:bg-[var(--ball)]/20 transition">
+                        <div className="w-14 h-14 rounded-full border-2 border-dashed border-[var(--ink)]/30 flex items-center justify-center text-2xl text-[var(--ink)]/40 group-hover:border-[var(--gold)] group-hover:text-[var(--ink)] group-hover:bg-[var(--paper-2)] transition">
                           +
                         </div>
                         <span className="text-[11px] text-[var(--ink)]/50">{tr("Free", "Libre", "Libre")}</span>

@@ -167,11 +167,33 @@ function isRecoverableHydrationError(message: string): boolean {
   );
 }
 
+/**
+ * Browser noise that is not an app bug: cross-origin script errors, cancelled
+ * requests, extension injections and rejections with no reason at all. These
+ * arrive with an empty/"undefined" message and must never raise a crash alert.
+ */
+function isNoiseError(err: Error): boolean {
+  const m = (err.message ?? "").trim().toLowerCase();
+  if (!m || m === "undefined" || m === "null" || m === "[object object]") return true;
+  return (
+    m === "script error." ||
+    m === "script error" ||
+    m.includes("load failed") ||
+    m.includes("failed to fetch") ||
+    m.includes("networkerror when attempting to fetch") ||
+    m.includes("the operation was aborted") ||
+    m.includes("cancelled") ||
+    m.includes("resizeobserver loop")
+  );
+}
+
 export function reportError(
   error: unknown,
   opts?: { fatal?: boolean; name?: string; props?: Record<string, unknown> },
 ) {
+  if (error === undefined || error === null) return;
   const err = error instanceof Error ? error : new Error(String(error));
+  if (isNoiseError(err)) return;
   const signature = `${err.name}:${err.message}`;
   const now = Date.now();
   // Suppress identical errors firing in a loop.
@@ -189,6 +211,7 @@ export function reportError(
     props: opts?.props,
   });
 }
+
 
 /** Call once on app start (client only). */
 export function initTelemetry() {

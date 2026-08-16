@@ -266,7 +266,7 @@ function GuestMatchRoom() {
 
         <div className="programme-card rounded-2xl p-5 space-y-3">
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">{tr("You're in", "Estás dentro", "Tu es inscrit·e")}</div>
-          <h1 className="text-2xl text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
+          <h1 className="text-2xl text-serif text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
           {match.club_address && <p className="text-xs text-[var(--ink)]/60">{match.club_address}</p>}
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ink)]/80 pt-2">

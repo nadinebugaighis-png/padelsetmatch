@@ -81,7 +81,7 @@ export function ClubPicker({ value, onChange }: Props) {
       {loading && (
         <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-[var(--cream)]/60" />
       )}
-      {open && results.length > 0 && (
+      {open && q.trim().length >= 2 && !loading && (
         <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg overflow-hidden shadow-xl max-h-72 overflow-y-auto">
           {results.map((r) => (
             <button
@@ -93,19 +93,39 @@ export function ClubPicker({ value, onChange }: Props) {
                 setQ("");
                 setOpen(false);
               }}
-              className="w-full text-left px-3 py-2 hover:bg-[var(--cream)]/10 border-b border-[var(--cream)]/5 last:border-b-0"
+              className="w-full text-left px-3 py-2 hover:bg-[var(--cream)]/10 border-b border-[var(--cream)]/5"
             >
               <div className="text-sm text-[var(--cream)] truncate">{r.name}</div>
               <div className="text-xs text-[var(--cream)]/50 truncate">{r.address}</div>
             </button>
           ))}
+          {results.length === 0 && (
+            <div className="px-3 pt-3 text-xs text-[var(--cream)]/60">
+              {tr("No clubs found on Google.", "No se encontraron clubes en Google.", "Aucun club trouvé sur Google.")}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              const name = q.trim();
+              onChange({ place_id: "", name, address: "", lat: null, lng: null, city: "", country: "" });
+              setQ("");
+              setOpen(false);
+            }}
+            className="w-full text-left px-3 py-2.5 hover:bg-[var(--cream)]/10"
+          >
+            <div className="text-sm text-[var(--cream)] truncate">
+              {tr(`Use "${q.trim()}"`, `Usar "${q.trim()}"`, `Utiliser "${q.trim()}"`)}
+            </div>
+            <div className="text-xs text-[var(--cream)]/50">
+              {tr("Keep the club name as you typed it", "Mantener el nombre del club tal como lo escribiste", "Garder le nom du club tel que saisi")}
+            </div>
+          </button>
         </div>
       )}
-      {open && q.length >= 2 && !loading && results.length === 0 && (
-        <div className="absolute z-50 mt-1 left-0 right-0 bg-[var(--court-deep)] border border-[var(--cream)]/20 rounded-lg p-3 text-xs text-[var(--cream)]/60">
-          {tr("No clubs found. Try a different name.", "No se encontraron clubes. Prueba con otro nombre.", "Aucun club trouvé. Essaie un autre nom.")}
-        </div>
-      )}
+
     </div>
   );
 }

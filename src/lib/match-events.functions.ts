@@ -20,57 +20,72 @@ export const searchClubs = createServerFn({ method: "POST" })
       process.env.GOOGLE_MAPS_API_KEY_1 || process.env.GOOGLE_MAPS_API_KEY;
     if (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY) return { results: [] as ClubResult[] };
 
-    const body: Record<string, unknown> = {
-      textQuery: `${data.query} padel club`,
-      maxResultCount: 8,
-    };
-    if (data.near) {
-      body.locationBias = {
-        circle: { center: { latitude: data.near.lat, longitude: data.near.lng }, radius: 50000 },
-      };
-    }
-    try {
-      const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchText`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
-          "Content-Type": "application/json",
-          "X-Goog-FieldMask":
-            "places.id,places.displayName,places.formattedAddress,places.location,places.addressComponents",
-        },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) return { results: [] as ClubResult[] };
-      const json = await res.json() as {
-        places?: Array<{
-          id: string;
-          displayName?: { text?: string };
-          formattedAddress?: string;
-          location?: { latitude: number; longitude: number };
-          addressComponents?: Array<{ types: string[]; longText: string; shortText?: string }>;
-        }>;
-      };
-      const results: ClubResult[] = (json.places ?? []).map((p) => {
-        const city = p.addressComponents?.find((c) => c.types?.includes("locality"))?.longText
-          ?? p.addressComponents?.find((c) => c.types?.includes("administrative_area_level_2"))?.longText
-          ?? "";
-        const country = p.addressComponents?.find((c) => c.types?.includes("country"))?.longText ?? "";
-        return {
-          place_id: p.id,
-          name: p.displayName?.text ?? "",
-          address: p.formattedAddress ?? "",
-          lat: p.location?.latitude ?? null,
-          lng: p.location?.longitude ?? null,
-          city,
-          country,
+    const runQuery = async (textQuery: string): Promise<ClubResult[]> => {
+      const body: Record<string, unknown> = { textQuery, maxResultCount: 8 };
+      if (data.near) {
+        body.locationBias = {
+          circle: { center: { latitude: data.near.lat, longitude: data.near.lng }, radius: 50000 },
         };
-      });
-      return { results };
-    } catch {
-      return { results: [] as ClubResult[] };
+      }
+      try {
+        const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchText`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
+            "Content-Type": "application/json",
+            "X-Goog-FieldMask":
+              "places.id,places.displayName,places.formattedAddress,places.location,places.addressComponents",
+          },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) return [];
+        const json = await res.json() as {
+          places?: Array<{
+            id: string;
+            displayName?: { text?: string };
+            formattedAddress?: string;
+            location?: { latitude: number; longitude: number };
+            addressComponents?: Array<{ types: string[]; longText: string; shortText?: string }>;
+          }>;
+        };
+        return (json.places ?? []).map((p) => {
+          const city = p.addressComponents?.find((c) => c.types?.includes("locality"))?.longText
+            ?? p.addressComponents?.find((c) => c.types?.includes("administrative_area_level_2"))?.longText
+            ?? "";
+          const country = p.addressComponents?.find((c) => c.types?.includes("country"))?.longText ?? "";
+          return {
+            place_id: p.id,
+            name: p.displayName?.text ?? "",
+            address: p.formattedAddress ?? "",
+            lat: p.location?.latitude ?? null,
+            lng: p.location?.longitude ?? null,
+            city,
+            country,
+          };
+        });
+      } catch {
+        return [];
+      }
+    };
+
+    // Search the exact text the user typed AND a padel-biased variant, then merge.
+    const q = data.query.trim();
+    const [exact, padel] = await Promise.all([
+      runQuery(q),
+      runQuery(/p[áa]del/i.test(q) ? `${q} club` : `${q} padel`),
+    ]);
+
+    const seen = new Set<string>();
+    const results: ClubResult[] = [];
+    for (const r of [...padel, ...exact]) {
+      if (!r.place_id || seen.has(r.place_id)) continue;
+      seen.add(r.place_id);
+      results.push(r);
     }
+    return { results: results.slice(0, 10) };
   });
+
 
 export type ClubResult = {
   place_id: string;

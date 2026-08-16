@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { MapPin, Users, Share2 } from "lucide-react";
+import { MapPin, Users, Share2, Calendar, Clock } from "lucide-react";
 import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -137,39 +137,74 @@ function PublicMatchPage() {
 
         {match && (
           <>
-            <div className="mt-4 programme-card rounded-3xl overflow-hidden">
-              {/* Hero band: date + time, the two things people scan for */}
-              <div className="bg-[var(--ink)] text-[var(--paper)] px-5 pt-4 pb-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--ball)]">
-                    {tr("You're invited", "Estás invitado", "Tu es invité·e")}
+            <div className="mt-4 programme-card rounded-3xl overflow-hidden shadow-[0_18px_50px_-18px_color-mix(in_oklab,var(--ink)_18%,transparent)]">
+              {/* Invitation header */}
+              <div className="bg-[var(--ball)] px-5 pt-5 pb-4 text-center">
+                <div className="inline-flex items-center gap-2 text-[var(--ink)]">
+                  <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
+                  <span className="text-[10px] uppercase tracking-[0.22em] font-semibold">
+                    {tr("Invitation to join a match", "Invitación para unirte a un partido", "Invitation à rejoindre un match")}
                   </span>
-                  <span className={`text-[10px] uppercase tracking-[0.16em] px-2.5 py-1 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--ball)] text-[var(--ink)]" : "bg-white/15 text-white/80"}`}>
-                    {openSpots > 0
-                      ? tr(`${openSpots} spot${openSpots > 1 ? "s" : ""} left`, `${openSpots} ${openSpots > 1 ? "huecos" : "hueco"} libre${openSpots > 1 ? "s" : ""}`, `${openSpots} place${openSpots > 1 ? "s" : ""} libre${openSpots > 1 ? "s" : ""}`)
-                      : tr("Full", "Completo", "Complet")}
-                  </span>
+                  <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
                 </div>
-
-                <div className="mt-4 flex items-end gap-4">
-                  <div className="leading-none">
-                    <div className="text-display text-[56px] leading-[0.85] text-[var(--ball)]">
-                      {whenParts(match.starts_at).time}
-                    </div>
-                    <div className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/90">
-                      {whenParts(match.starts_at).weekday} {whenParts(match.starts_at).day} {whenParts(match.starts_at).month}
-                    </div>
-                  </div>
+                <div className="mt-3 text-display text-2xl leading-none text-[var(--ink)]">
+                  {tr("Padel match", "Partido de pádel", "Match de padel")}
                 </div>
+                <span className={`inline-block mt-3 text-[10px] uppercase tracking-[0.16em] px-3 py-1 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
+                  {openSpots > 0
+                    ? tr(`${openSpots} spot${openSpots > 1 ? "s" : ""} left`, `${openSpots} ${openSpots > 1 ? "huecos" : "hueco"} libre${openSpots > 1 ? "s" : ""}`, `${openSpots} place${openSpots > 1 ? "s" : ""} libre${openSpots > 1 ? "s" : ""}`)
+                    : tr("Full", "Completo", "Complet")}
+                </span>
               </div>
 
-              <div className="px-5 py-5 space-y-4">
-                <div>
-                  <h1 className="text-display text-3xl leading-none text-[var(--ink)] uppercase">{match.club_name}</h1>
-                  <p className="mt-1.5 inline-flex items-center gap-1.5 text-sm text-[var(--ink)]/70">
-                    <MapPin className="w-4 h-4 shrink-0" />
-                    <span>{match.club_address || match.city}</span>
-                  </p>
+              <div className="px-5 py-6 space-y-5">
+                {/* Date / time / location block */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3.5">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                      <Calendar className="w-4 h-4 text-[var(--ink)]" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 font-semibold">{tr("Date", "Fecha", "Date")}</p>
+                      <p className="text-lg font-semibold text-[var(--ink)] leading-tight">
+                        {whenParts(match.starts_at).weekday} {whenParts(match.starts_at).day} {whenParts(match.starts_at).month}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3.5">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                      <Clock className="w-4 h-4 text-[var(--ink)]" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 font-semibold">{tr("Time", "Hora", "Heure")}</p>
+                      <p className="text-2xl text-display text-[var(--ink)] leading-none">
+                        {whenParts(match.starts_at).time}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3.5">
+                    <div className="mt-0.5 w-9 h-9 rounded-full bg-[var(--ball)]/25 flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4 text-[var(--ink)]" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 font-semibold">{tr("Location", "Lugar", "Lieu")}</p>
+                      <h1 className="text-xl font-semibold text-[var(--ink)] leading-tight">{match.club_name}</h1>
+                      <p className="text-sm text-[var(--ink)]/70 mt-0.5">{match.club_address || match.city}</p>
+                      {match.club_address && (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.club_address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--ink)] underline decoration-[var(--ball)] underline-offset-4"
+                        >
+                          <MapPin className="w-3 h-3" />
+                          {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2">

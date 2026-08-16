@@ -186,8 +186,11 @@ function Discover() {
 
 
   useEffect(() => {
-    if (feedQ.data && !feedQ.data.me) navigate({ to: "/app/onboarding" });
-  }, [feedQ.data, navigate]);
+    // Only send to onboarding on a confirmed, settled "no profile" answer.
+    if (feedQ.isSuccess && !feedQ.isFetching && feedQ.data && !feedQ.data.me) {
+      navigate({ to: "/app/onboarding" });
+    }
+  }, [feedQ.isSuccess, feedQ.isFetching, feedQ.data, navigate]);
 
   useEffect(() => {
     if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {

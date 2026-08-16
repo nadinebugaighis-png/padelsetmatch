@@ -190,7 +190,7 @@ function PublicMatchPage() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 font-semibold">{tr("Location", "Lugar", "Lieu")}</p>
-                      <h1 className="text-xl font-semibold text-[var(--ink)] leading-tight">{match.club_name}</h1>
+                      <h1 className="text-xl text-serif font-semibold text-[var(--ink)] leading-tight">{match.club_name}</h1>
                       <p className="text-sm text-[var(--ink)]/70 mt-0.5">{match.club_address || match.city}</p>
                       {match.club_address && (
                         <a

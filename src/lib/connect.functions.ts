@@ -8,13 +8,13 @@ export type ConnectCategory = (typeof CATEGORIES)[number];
 
 export type ConnectPost = {
   id: string;
-  author_profile_id: string;
+  author_profile_id: string | null;
   category: ConnectCategory;
   city: string | null;
   title: string;
   body: string;
   created_at: string;
-  expires_at: string;
+  expires_at: string | null;
   author: { first_name: string | null; photo_url: string | null } | null;
   comment_count: number;
   latest_comments: ConnectComment[];

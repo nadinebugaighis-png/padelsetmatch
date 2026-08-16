@@ -45,7 +45,6 @@ export const listConnectPosts = createServerFn({ method: "GET" })
     let q = context.supabase
       .from("connect_posts" as never)
       .select("*")
-      .gt("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false })
       .limit(100);
     if (data.city && data.city.trim()) q = q.ilike("city", `%${data.city.trim()}%`);

@@ -38,11 +38,7 @@ export const Route = createFileRoute("/m/$eventId")({
   component: PublicMatchPage,
 });
 
-function fmtWhen(iso: string) {
-  return new Date(iso).toLocaleString(undefined, {
-    weekday: "long", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-  });
-}
+function whenParts(iso: string) {
 
 function whenParts(iso: string) {
   const d = new Date(iso);

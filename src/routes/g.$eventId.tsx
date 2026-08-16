@@ -130,70 +130,70 @@ function GuestMatchRoom() {
     navigate({ to: "/play" });
   };
 
-  if (!hydrated) return <main className="min-h-screen bg-[var(--court-deep)]" />;
+  if (!hydrated) return <main className="programme-page min-h-screen" />;
 
   // ---- JOIN FORM ----
   if (!token) {
     return (
-      <main className="min-h-screen bg-[var(--court-deep)]">
+      <main className="programme-page min-h-screen">
         <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-8">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← PadelSetMatch</Link>
-          <div className="mt-6 text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
-          <h1 className="text-3xl text-[var(--cream)] font-medium mt-1 leading-tight">
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← PadelSetMatch</Link>
+          <div className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
+          <h1 className="text-3xl text-[var(--ink)] font-medium mt-1 leading-tight">
             {tr("No account needed — just three quick things.", "Sin cuenta — solo tres cosas rápidas.", "Sans compte — juste trois infos rapides.")}
           </h1>
-          <p className="text-sm text-[var(--cream)]/70 mt-2">
+          <p className="text-sm text-[var(--ink)]/70 mt-2">
             {tr("The host will see your name and level so they know who's showing up.", "El anfitrión verá tu nombre y nivel para saber quién viene.", "L'hôte verra ton prénom et ton niveau pour savoir qui vient.")}
           </p>
 
           <form onSubmit={submitJoin} className="mt-6 space-y-4">
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Your name", "Tu nombre", "Ton prénom")}</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Your name", "Tu nombre", "Ton prénom")}</label>
               <input value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={40} required
-                className="w-full mt-1 bg-black/30 border border-[var(--cream)]/20 rounded-xl px-4 py-3 text-[var(--cream)] placeholder:text-[var(--cream)]/40"
+                className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
                 placeholder="Alex" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {PADEL_LEVELS.map((lvl) => (
                   <button key={lvl} type="button" onClick={() => setLevel(lvl)}
-                    className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]" : "border-[var(--cream)]/20 text-[var(--cream)]/80"}`}>
+                    className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ball)] text-[var(--ink)] border-[var(--ball)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
                     {lvl}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Phone / WhatsApp", "Teléfono / WhatsApp", "Téléphone / WhatsApp")}</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Phone / WhatsApp", "Teléfono / WhatsApp", "Téléphone / WhatsApp")}</label>
               <input value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={32} inputMode="tel" required
-                className="w-full mt-1 bg-black/30 border border-[var(--cream)]/20 rounded-xl px-4 py-3 text-[var(--cream)] placeholder:text-[var(--cream)]/40"
+                className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
                 placeholder="+34 600 000 000" />
-              <p className="text-[10px] text-[var(--cream)]/50 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
             </div>
             <button type="submit" disabled={busy}
-              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--court-deep)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50">
+              className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--ink)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50">
               {busy ? tr("Joining…", "Uniéndote…", "Inscription…") : tr("Join match", "Unirme al partido", "Rejoindre le match")}
             </button>
             <div className="text-center">
-              <Link to="/auth" search={{ join: eventId } as never} className="text-[11px] uppercase tracking-widest text-[var(--cream)]/60 underline">
+              <Link to="/auth" search={{ join: eventId } as never} className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 underline">
                 {tr("Have an account? Sign in instead", "¿Tienes cuenta? Inicia sesión", "Tu as un compte ? Connecte-toi")}
               </Link>
             </div>
           </form>
 
           {/* Cancel-my-spot: hidden by default, one subtle link → one inline input */}
-          <div className="mt-8 pt-6 border-t border-[var(--cream)]/10 text-center">
+          <div className="mt-8 pt-6 border-t border-[var(--ink)]/10 text-center">
             {!cancelMode ? (
               <button
                 type="button"
                 onClick={() => setCancelMode(true)}
-                className="text-[11px] uppercase tracking-widest text-[var(--cream)]/45 hover:text-[var(--cream)]/80"
+                className="text-[11px] uppercase tracking-widest text-[var(--ink)]/45 hover:text-[var(--ink)]/80"
               >
                 {tr("Already joined? Cancel my spot", "¿Ya te uniste? Cancelar mi plaza", "Déjà inscrit·e ? Annuler ma place")}
               </button>
             ) : (
-              <div className="flex items-center gap-2 bg-black/20 border border-[var(--cream)]/15 rounded-full pl-4 pr-1 py-1">
+              <div className="flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
                 <input
                   autoFocus
                   value={cancelPhone}
@@ -202,7 +202,7 @@ function GuestMatchRoom() {
                   maxLength={32}
                   placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
                   onKeyDown={(e) => { if (e.key === "Escape") { setCancelMode(false); setCancelPhone(""); } }}
-                  className="flex-1 min-w-0 bg-transparent text-sm text-[var(--cream)] placeholder:text-[var(--cream)]/40 outline-none py-2"
+                  className="flex-1 min-w-0 bg-transparent text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none py-2"
                 />
                 <button
                   type="button"
@@ -225,7 +225,7 @@ function GuestMatchRoom() {
                       setCancelBusy(false);
                     }
                   }}
-                  className="shrink-0 h-9 px-4 rounded-full bg-[var(--cream)] text-[var(--court-deep)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
+                  className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
                 >
                   {cancelBusy ? "…" : tr("Cancel", "Cancelar", "Annuler")}
                 </button>
@@ -239,12 +239,12 @@ function GuestMatchRoom() {
 
   // ---- ROOM ----
   if (roomQ.isLoading || !roomQ.data) {
-    return <main className="min-h-screen bg-[var(--court-deep)] text-[var(--cream)]/60 flex items-center justify-center">{tr("Loading…", "Cargando…", "Chargement…")}</main>;
+    return <main className="programme-page min-h-screen text-[var(--ink)]/60 flex items-center justify-center">{tr("Loading…", "Cargando…", "Chargement…")}</main>;
   }
   const match = roomQ.data.match;
   if (!match) {
     return (
-      <main className="min-h-screen bg-[var(--court-deep)] text-[var(--cream)] p-8 text-center">
+      <main className="programme-page min-h-screen text-[var(--ink)] p-8 text-center">
         <p>{tr("This match is no longer available.", "Este partido ya no está disponible.", "Ce match n'est plus disponible.")}</p>
         <Link to="/play" className="inline-block mt-4 underline text-sm">{tr("Browse other matches", "Ver otros partidos", "Voir d'autres matches")}</Link>
       </main>
@@ -255,52 +255,52 @@ function GuestMatchRoom() {
   const messages = roomQ.data.messages ?? [];
 
   return (
-    <main className="min-h-screen bg-[var(--court-deep)]">
+    <main className="programme-page min-h-screen">
       <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-6 space-y-4">
         <div className="flex items-center justify-between">
-          <Link to="/play" className="text-xs uppercase tracking-widest text-[var(--cream)]/60">← {tr("All matches", "Todos los partidos", "Tous les matches")}</Link>
-          <button onClick={leaveMatch} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--cream)]/60 hover:text-[var(--cream)]">
+          <Link to="/play" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← {tr("All matches", "Todos los partidos", "Tous les matches")}</Link>
+          <button onClick={leaveMatch} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)]">
             <LogOut className="w-3 h-3" /> {tr("Leave", "Salir", "Quitter")}
           </button>
         </div>
 
-        <div className="rounded-2xl border border-[var(--cream)]/10 bg-black/30 p-5 space-y-3">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--grass)]">{tr("You're in", "Estás dentro", "Tu es inscrit·e")}</div>
-          <h1 className="text-2xl text-[var(--cream)] font-medium leading-tight">{match.club_name}</h1>
-          {match.club_address && <p className="text-xs text-[var(--cream)]/60">{match.club_address}</p>}
+        <div className="programme-card rounded-2xl p-5 space-y-3">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">{tr("You're in", "Estás dentro", "Tu es inscrit·e")}</div>
+          <h1 className="text-2xl text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
+          {match.club_address && <p className="text-xs text-[var(--ink)]/60">{match.club_address}</p>}
 
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--cream)]/80 pt-2">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ink)]/80 pt-2">
             <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {fmtWhen(match.starts_at)}</span>
             <span className="inline-flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {match.filled}/4 {openSpots > 0 && `· ${openSpots} ${tr("open", "libres", "libres")}`}</span>
             {match.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {match.city}</span>}
           </div>
           <div className="flex flex-wrap gap-2 pt-1">
-            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70">{genderLabel}</span>
-            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--cream)]/10 text-[var(--cream)]/70">{tr("Level", "Nivel", "Niveau")} {match.level_min}–{match.level_max}</span>
+            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{genderLabel}</span>
+            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")} {match.level_min}–{match.level_max}</span>
           </div>
-          {match.note && <p className="text-sm text-[var(--cream)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
+          {match.note && <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
           <div className="pt-2">
-            <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
             <div className="flex flex-wrap gap-2">
               {match.participant_names.map((name, i) => (
-                <div key={i} className="bg-black/30 border border-[var(--cream)]/10 rounded-full px-3 py-1.5 text-xs text-[var(--cream)]">{name}</div>
+                <div key={i} className="bg-[var(--paper-2)] border border-[var(--ink)]/10 rounded-full px-3 py-1.5 text-xs text-[var(--ink)]">{name}</div>
               ))}
               {Array.from({ length: openSpots }).map((_, i) => (
-                <div key={`o-${i}`} className="border border-dashed border-[var(--cream)]/30 rounded-full px-3 py-1.5 text-xs text-[var(--cream)]/50">{tr("Open", "Libre", "Libre")}</div>
+                <div key={`o-${i}`} className="border border-dashed border-[var(--ink)]/30 rounded-full px-3 py-1.5 text-xs text-[var(--ink)]/50">{tr("Open", "Libre", "Libre")}</div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--cream)]/10 bg-black/30 p-4">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-3">{tr("Match chat", "Chat del partido", "Chat du match")}</div>
+        <div className="programme-card rounded-2xl p-4">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-3">{tr("Match chat", "Chat del partido", "Chat du match")}</div>
           <div className="max-h-[45vh] overflow-y-auto space-y-2 pr-1">
             {messages.length === 0 && (
-              <p className="text-xs text-[var(--cream)]/40 py-4 text-center">{tr("No messages yet. Say hi 👋", "Aún no hay mensajes. Saluda 👋", "Pas de messages. Dis bonjour 👋")}</p>
+              <p className="text-xs text-[var(--ink)]/40 py-4 text-center">{tr("No messages yet. Say hi 👋", "Aún no hay mensajes. Saluda 👋", "Pas de messages. Dis bonjour 👋")}</p>
             )}
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.is_me ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.is_me ? "bg-[var(--ball)] text-[var(--court-deep)]" : "bg-[var(--cream)]/10 text-[var(--cream)]"}`}>
+                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.is_me ? "bg-[var(--ball)] text-[var(--ink)]" : "bg-[var(--paper-2)] text-[var(--ink)]"}`}>
                   {!m.is_me && <div className="text-[10px] uppercase tracking-wider opacity-70 mb-0.5">{m.sender_name}{m.is_guest ? " · guest" : ""}</div>}
                   <div className="whitespace-pre-wrap break-words">{m.body}</div>
                 </div>
@@ -313,16 +313,16 @@ function GuestMatchRoom() {
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } }}
               maxLength={2000}
               placeholder={tr("Write a message…", "Escribe un mensaje…", "Écris un message…")}
-              className="flex-1 bg-black/30 border border-[var(--cream)]/20 rounded-full px-4 py-2 text-sm text-[var(--cream)] placeholder:text-[var(--cream)]/40" />
+              className="flex-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full px-4 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40" />
             <button onClick={sendMsg} disabled={!msg.trim()}
-              className="w-11 h-11 rounded-full bg-[var(--ball)] text-[var(--court-deep)] flex items-center justify-center disabled:opacity-40">
+              className="w-11 h-11 rounded-full bg-[var(--ball)] text-[var(--ink)] flex items-center justify-center disabled:opacity-40">
               <Send className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         <div className="text-center pt-2">
-          <Link to="/auth" className="text-[11px] uppercase tracking-widest text-[var(--cream)]/50 underline">
+          <Link to="/auth" className="text-[11px] uppercase tracking-widest text-[var(--ink)]/50 underline">
             {tr("Create a full account to find more players", "Crea una cuenta para encontrar más jugadores", "Crée un compte pour trouver plus de joueurs")}
           </Link>
         </div>

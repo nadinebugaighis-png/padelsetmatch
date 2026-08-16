@@ -139,18 +139,18 @@ function PublicMatchPage() {
           <>
             <div className="mt-4 programme-card rounded-3xl overflow-hidden shadow-[0_18px_50px_-18px_color-mix(in_oklab,var(--ink)_18%,transparent)]">
               {/* Invitation header */}
-              <div className="bg-[var(--ball)] px-5 pt-5 pb-4 text-center">
-                <div className="inline-flex items-center gap-2 text-[var(--ink)]">
-                  <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
+              <div className="programme-header px-5 pt-6 pb-5 text-center">
+                <div className="inline-flex items-center gap-2 text-[var(--paper)]/80">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
                   <span className="text-[10px] uppercase tracking-[0.22em] font-semibold">
                     {tr("Invitation to join a match", "Invitación para unirte a un partido", "Invitation à rejoindre un match")}
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-[var(--ink)]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
                 </div>
-                <div className="mt-3 text-display text-2xl leading-none text-[var(--ink)]">
+                <div className="mt-3 text-serif text-3xl leading-none text-[var(--paper)]">
                   {tr("Padel match", "Partido de pádel", "Match de padel")}
                 </div>
-                <span className={`inline-block mt-3 text-[10px] uppercase tracking-[0.16em] px-3 py-1 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
+                <span className={`inline-block mt-4 text-[10px] uppercase tracking-[0.16em] px-3 py-1.5 rounded-full font-semibold ${openSpots > 0 ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--paper)]/20 text-[var(--paper)]/80"}`}>
                   {openSpots > 0
                     ? tr(`${openSpots} spot${openSpots > 1 ? "s" : ""} left`, `${openSpots} ${openSpots > 1 ? "huecos" : "hueco"} libre${openSpots > 1 ? "s" : ""}`, `${openSpots} place${openSpots > 1 ? "s" : ""} libre${openSpots > 1 ? "s" : ""}`)
                     : tr("Full", "Completo", "Complet")}

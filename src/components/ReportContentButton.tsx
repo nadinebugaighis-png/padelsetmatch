@@ -23,10 +23,11 @@ export function ReportContentButton({
 }: {
   kind: Kind;
   contentId: string;
-  authorProfileId: string;
+  authorProfileId: string | null;
   className?: string;
   size?: "sm" | "xs";
 }) {
+  if (!authorProfileId) return null;
   const tr = useTr();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");

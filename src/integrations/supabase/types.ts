@@ -262,7 +262,7 @@ export type Database = {
       }
       connect_comments: {
         Row: {
-          author_profile_id: string
+          author_profile_id: string | null
           body: string
           created_at: string
           id: string
@@ -270,7 +270,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          author_profile_id: string
+          author_profile_id?: string | null
           body: string
           created_at?: string
           id?: string
@@ -278,7 +278,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          author_profile_id?: string
+          author_profile_id?: string | null
           body?: string
           created_at?: string
           id?: string
@@ -304,34 +304,34 @@ export type Database = {
       }
       connect_posts: {
         Row: {
-          author_profile_id: string
+          author_profile_id: string | null
           body: string
           category: Database["public"]["Enums"]["connect_category"]
           city: string | null
           created_at: string
-          expires_at: string
+          expires_at: string | null
           id: string
           title: string
           updated_at: string
         }
         Insert: {
-          author_profile_id: string
+          author_profile_id?: string | null
           body: string
           category?: Database["public"]["Enums"]["connect_category"]
           city?: string | null
           created_at?: string
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           title: string
           updated_at?: string
         }
         Update: {
-          author_profile_id?: string
+          author_profile_id?: string | null
           body?: string
           category?: Database["public"]["Enums"]["connect_category"]
           city?: string | null
           created_at?: string
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           title?: string
           updated_at?: string

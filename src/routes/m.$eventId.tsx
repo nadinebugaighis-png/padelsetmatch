@@ -263,7 +263,7 @@ function PublicMatchPage() {
               <button
                 onClick={onJoinClick}
                 disabled={openSpots === 0}
-                className="w-full py-3 rounded-full bg-[var(--ball)] text-[var(--ink)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40"
+                className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]"
               >
                 {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
@@ -281,7 +281,6 @@ function PublicMatchPage() {
               </button>
               <p className="text-[11px] text-[var(--ink)]/50 text-center pt-1">
                 {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
-
               </p>
             </div>
           </>
@@ -309,7 +308,6 @@ function PublicMatchPage() {
                   className="rounded-full border border-[var(--ink)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/70"
                 >
                   {tr("Close", "Cerrar", "Fermer")}
-
                 </button>
               </div>
               <input
@@ -323,7 +321,7 @@ function PublicMatchPage() {
                   href={shareUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full bg-[var(--ball)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--ink)]"
+                  className="rounded-full bg-[var(--ink)] px-4 py-3 text-center text-xs font-semibold uppercase tracking-widest text-[var(--paper)]"
                 >
                   {tr("Open link", "Abrir enlace", "Ouvrir le lien")}
                 </a>

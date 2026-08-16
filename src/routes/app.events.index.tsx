@@ -659,6 +659,14 @@ function MatchCard({
 
   const slots = Array.from({ length: 4 }, (_, i) => e.participants?.[i] ?? null);
 
+  // Today / Tomorrow badge for the date block
+  const today = startOfDay(new Date());
+  const isToday = start.getTime() >= today.getTime() && start.getTime() < today.getTime() + 24 * 60 * 60 * 1000;
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const isTomorrow = start.getTime() >= tomorrow.getTime() && start.getTime() < tomorrow.getTime() + 24 * 60 * 60 * 1000;
+  const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
+
   return (
     <div
       className={`relative rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.18)] ${
@@ -673,10 +681,22 @@ function MatchCard({
         className="w-full text-left pl-5 pr-4 pt-4 pb-3"
       >
         <div className="flex items-start gap-4">
-          <div className="shrink-0 text-center">
-            <div className="text-serif text-3xl leading-none tabular-nums text-[var(--ink)]">{time}</div>
-            <div className="mt-1 text-[10px] uppercase tracking-widest font-bold text-[var(--ink)]/55">
-              <span className="capitalize">{weekday}</span> {dayNum} <span className="capitalize">{monthShort}</span>
+          {/* Date block — made prominent so users never confuse the day */}
+          <div className="shrink-0 flex flex-col items-center justify-center text-center rounded-2xl bg-[var(--paper-2)]/60 border border-[var(--ink)]/10 px-3 py-2.5 min-w-[74px]">
+            {dateBadge && (
+              <div className="mb-1 rounded-full bg-[var(--plum)] text-white text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 leading-none">
+                {dateBadge}
+              </div>
+            )}
+            <div className="text-[13px] font-bold uppercase tracking-widest text-[var(--ink)]/80 leading-none">
+              <span className="capitalize">{weekday}</span>
+            </div>
+            <div className="text-serif text-[28px] leading-none text-[var(--ink)] mt-0.5">{dayNum}</div>
+            <div className="text-[10px] uppercase tracking-widest font-bold text-[var(--ink)]/55 leading-none mt-0.5">
+              <span className="capitalize">{monthShort}</span>
+            </div>
+            <div className="mt-2 pt-1.5 border-t border-[var(--ink)]/10 w-full">
+              <div className="text-sm font-semibold tabular-nums text-[var(--ink)] leading-none">{time}</div>
             </div>
           </div>
           <div className="w-px self-stretch bg-[var(--ink)]/10" aria-hidden />

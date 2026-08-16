@@ -23,7 +23,7 @@ export type ConnectPost = {
 export type ConnectComment = {
   id: string;
   post_id: string;
-  author_profile_id: string;
+  author_profile_id: string | null;
   body: string;
   created_at: string;
   author: { first_name: string | null; photo_url: string | null } | null;

@@ -39,8 +39,6 @@ export const Route = createFileRoute("/m/$eventId")({
 });
 
 function whenParts(iso: string) {
-
-function whenParts(iso: string) {
   const d = new Date(iso);
   return {
     weekday: d.toLocaleDateString(undefined, { weekday: "short" }).replace(".", ""),

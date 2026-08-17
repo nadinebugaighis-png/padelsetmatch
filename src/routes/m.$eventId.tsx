@@ -68,6 +68,44 @@ function shareOrigin() {
   return origin;
 }
 
+function InviteTimeBlock({ match, tr }: { match: { starts_at: string }; tr: ReturnType<typeof useTr> }) {
+  const { lang } = useI18n();
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
+  const start = new Date(match.starts_at);
+  const hour = start.getHours();
+  const tod = timeOfDay(hour);
+  const toneBg =
+    tod === "morning"
+      ? "color-mix(in oklab, var(--grass) 26%, transparent)"
+      : tod === "afternoon"
+        ? "color-mix(in oklab, #E8B84B 30%, transparent)"
+        : "color-mix(in oklab, var(--plum) 20%, transparent)";
+  const parts = whenParts(match.starts_at, locale);
+  const today = startOfDay(new Date());
+  const isToday = start.getTime() >= today.getTime() && start.getTime() < today.getTime() + 24 * 60 * 60 * 1000;
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const isTomorrow = start.getTime() >= tomorrow.getTime() && start.getTime() < tomorrow.getTime() + 24 * 60 * 60 * 1000;
+  const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
+
+  return (
+    <div
+      className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
+      style={{ background: toneBg }}
+    >
+      <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{parts.time}</div>
+      <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
+        {dateBadge ?? parts.weekday}
+      </div>
+      {!dateBadge && (
+        <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
+          {parts.day} <span className="capitalize">{parts.month}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PublicMatchPage() {
   const { eventId } = Route.useParams();
   const { i: inviteToken } = Route.useSearch();

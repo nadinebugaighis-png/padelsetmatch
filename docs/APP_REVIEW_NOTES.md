@@ -36,7 +36,16 @@ problem in padel: finding a fourth player at your level, at your club, at the ti
 can play. Users create a profile (level, preferred side, availability, clubs, languages),
 browse other players nearby, create or join open matches, and chat to arrange the game.
 There is no dating or relationship functionality — it is a players' directory and
-match-organising tool. Value: fewer cancelled games, faster match-making, and a way
+match-organising tool.
+
+A key part of the app is helping players meet other players who have free or low-cost
+access to padel courts — for example through municipal courts, urbanisation or
+community courts, or off-peak club slots. In cities where booking a court is expensive,
+this makes it easier to play more often for less money. Players who can bring a court
+are marked on their profile, so others can find them and join a game without everyone
+paying full court fees.
+
+Value: fewer cancelled games, faster match-making, cheaper access to courts, and a way
 to meet players when travelling to a new city.
 
 ## 4. How to set up and access the main features

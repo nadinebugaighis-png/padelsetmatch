@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
 import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
+import { getPublicMatch } from "@/lib/match-events.functions";
+import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
 export const Route = createFileRoute("/g/$eventId")({
   head: () => ({ meta: [{ title: "Join match as guest — PadelSetMatch" }] }),

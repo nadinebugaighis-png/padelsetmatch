@@ -834,6 +834,19 @@ function EventDetail() {
                         </button>
                       </div>
                     )}
+                    {canModerate && !isEditing && (
+                      <div className="mt-1 flex gap-1.5 pl-1">
+                        <button
+                          type="button"
+                          onClick={() => onDeleteMessage(m.id)}
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-red-500/20 hover:text-red-500"
+                          aria-label={tr("Delete message", "Borrar mensaje", "Supprimer le message")}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+
                   </div>
                 </div>
               );

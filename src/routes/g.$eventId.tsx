@@ -134,12 +134,38 @@ function GuestMatchRoom() {
 
   // ---- JOIN FORM ----
   if (!token) {
+    const preview = publicQ.data?.match;
     return (
       <main className="programme-page min-h-screen">
         <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-8">
           <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← PadelSetMatch</Link>
-          <div className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
-          <h1 className="text-3xl text-[var(--ink)] font-medium mt-1 leading-tight">
+
+          <div className="mt-5 mb-3 text-center">
+            <div className="inline-flex items-center gap-2 text-[var(--ink)]/70">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
+              <span className="text-[10px] uppercase tracking-[0.22em] font-semibold">
+                {tr("Invitation to join a match", "Invitación para unirte a un partido", "Invitation à rejoindre un match")}
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
+            </div>
+          </div>
+
+          {preview && <MatchProgrammeCard match={preview as never} />}
+
+          {preview?.club_address && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(preview.club_address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/10 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
+            </a>
+          )}
+
+          <div className="mt-7 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
+          <h1 className="text-2xl text-serif text-[var(--ink)] font-medium mt-1 leading-tight">
             {tr("No account needed — just three quick things.", "Sin cuenta — solo tres cosas rápidas.", "Sans compte — juste trois infos rapides.")}
           </h1>
           <p className="text-sm text-[var(--ink)]/70 mt-2">

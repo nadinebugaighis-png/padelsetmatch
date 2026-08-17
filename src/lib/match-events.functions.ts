@@ -609,14 +609,17 @@ export const deleteEventMessage = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const { error } = await supabase
+    // RLS allows: own message, match host, or app admin.
+    const { data: deleted, error } = await supabase
       .from("match_event_messages")
       .delete()
       .eq("id", data.messageId)
-      .eq("sender_profile_id", profile.id);
+      .select("id");
     if (error) throw new Error(error.message);
+    if (!deleted || deleted.length === 0) throw new Error("You can only delete your own messages.");
     return { ok: true };
   });
+
 
 // ---------- Public read: shareable match view (no auth) ----------
 export const getPublicMatch = createServerFn({ method: "GET" })

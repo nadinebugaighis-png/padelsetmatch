@@ -673,10 +673,10 @@ function MatchCard({
   const whenLabel = dateBadge ?? weekday;
   const toneBg =
     timeOfDay === "morning"
-      ? "color-mix(in oklab, var(--grass) 26%, transparent)"
+      ? "color-mix(in oklab, var(--grass) 34%, transparent)"
       : timeOfDay === "afternoon"
-        ? "color-mix(in oklab, #E8B84B 30%, transparent)"
-        : "color-mix(in oklab, var(--plum) 20%, transparent)";
+        ? "color-mix(in oklab, #E8B84B 40%, transparent)"
+        : "color-mix(in oklab, var(--plum) 26%, transparent)";
 
   return (
     <div
@@ -689,18 +689,21 @@ function MatchCard({
         <button
           type="button"
           onClick={() => onOpen(e.id)}
-          className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
+          className="w-[92px] sm:w-[104px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
           style={{ background: toneBg }}
         >
           <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{time}</div>
-          <div className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold leading-none">
-            {whenLabel}
-          </div>
-          {!dateBadge && (
-            <div className="mt-1 text-[9px] uppercase tracking-[0.14em] text-[var(--ink)]/45 font-semibold leading-none">
-              {dayNum} <span className="capitalize">{monthShort}</span>
+          <div className="relative mt-1.5 inline-flex flex-col items-center">
+            <span className="absolute -inset-x-2 -inset-y-1 rounded-full bg-[var(--gold)]/55 blur-[2px] -rotate-2" aria-hidden="true" />
+            <div className="relative text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/85 font-semibold leading-none">
+              {whenLabel}
             </div>
-          )}
+            {!dateBadge && (
+              <div className="relative mt-1 text-[9px] uppercase tracking-[0.14em] text-[var(--ink)]/60 font-semibold leading-none">
+                {dayNum} <span className="capitalize">{monthShort}</span>
+              </div>
+            )}
+          </div>
         </button>
 
         {/* Body */}

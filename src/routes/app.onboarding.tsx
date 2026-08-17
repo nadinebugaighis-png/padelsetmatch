@@ -77,7 +77,7 @@ function Onboarding() {
   const tr = useTr();
   const getProfile = useServerFn(getMyProfile);
   const upsert = useServerFn(upsertMyProfile);
-  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile(), retry: 3, retryDelay: 500 });
   const search = Route.useSearch();
 
   const [step, setStep] = useState(search.step ?? 0);

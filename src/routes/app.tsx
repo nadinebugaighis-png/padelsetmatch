@@ -258,31 +258,30 @@ function AuthShell() {
 
   return (
     <div className="min-h-screen pb-24 md:pb-0 programme-page">
-      <div className="md:sticky md:top-0 md:z-40 md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)] md:bg-[var(--paper-2)] lg:bg-[var(--paper)]/95 lg:border-[var(--ink)]/10 lg:shadow-none">
-        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
+      <div className="md:sticky md:top-0 md:z-40 md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)] md:bg-[var(--paper-2)] min-[900px]:bg-[var(--paper)]/95 min-[900px]:border-[var(--ink)]/10 min-[900px]:shadow-none">
+        <header className="px-5 sm:px-8 min-[900px]:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <div className="shrink-0 flex items-center">
-            {/* Full wordmark on phone + desktop; compact PSM monogram on tablet */}
-            <BrandMark size="sm" className="md:hidden lg:inline-flex" />
+            {/* Full wordmark on phone + desktop; compact PSM logo on tablet only */}
+            <BrandMark size="sm" className="md:hidden min-[900px]:inline-flex" />
             <Link
               to="/app/grid"
               aria-label="PadelSetMatch — home"
-              className="hidden md:inline-flex lg:hidden items-center"
+              className="hidden md:inline-flex min-[900px]:hidden items-center"
             >
               <img src={psmMonogram.url} alt="PSM" className="h-8 w-auto select-none" draggable={false} />
             </Link>
-
           </div>
           {hasProfile && !onOnboarding && (
             <>
-              {/* Tablet nav */}
-              <nav className="hidden md:flex lg:hidden items-center gap-1 mx-1 flex-1 justify-center">
+              {/* Tablet nav (768px–899px) */}
+              <nav className="hidden md:flex min-[900px]:hidden items-center gap-1 mx-1 flex-1 justify-center">
                 <TabletTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-5 h-5" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
                 <TabletTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-5 h-5" />} active={path.startsWith("/app/events")} />
                 <TabletTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-5 h-5" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
                 <TabletTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
               </nav>
               {/* Desktop nav — original styling preserved */}
-              <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
+              <nav className="hidden min-[900px]:flex items-center gap-1 mx-4 flex-1 justify-center">
                 <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
                 <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
                 <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
@@ -291,15 +290,15 @@ function AuthShell() {
             </>
           )}
 
-          <div className="flex items-center gap-2.5 lg:gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 min-[900px]:gap-3 shrink-0">
             {isAdmin && (
-              <Link to="/app/admin" className="text-[11px] md:text-xs lg:text-[11px] uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80 font-semibold lg:font-normal">
+              <Link to="/app/admin" className="text-[11px] md:text-xs min-[900px]:text-[11px] uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80 font-semibold min-[900px]:font-normal">
                 {t("shell.admin")}
               </Link>
             )}
             {hasProfile && <NotificationBell />}
             <LangSwitch />
-            <button onClick={onSignOut} className="text-[11px] md:text-xs lg:text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 hover:text-[var(--ink)] font-semibold lg:font-normal lg:text-[var(--ink)]/55">
+            <button onClick={onSignOut} className="text-[11px] md:text-xs min-[900px]:text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 hover:text-[var(--ink)] font-semibold min-[900px]:font-normal min-[900px]:text-[var(--ink)]/55">
               {t("shell.signout")}
             </button>
           </div>

@@ -2,11 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { Calendar, MapPin, Users, Send, LogOut } from "lucide-react";
+import { MapPin, Send, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
 import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
+import { getPublicMatch } from "@/lib/match-events.functions";
+import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
 export const Route = createFileRoute("/g/$eventId")({
   head: () => ({ meta: [{ title: "Join match as guest — PadelSetMatch" }] }),
@@ -28,10 +30,6 @@ function saveToken(eventId: string, token: string) {
 function clearToken(eventId: string) {
   if (typeof window === "undefined") return;
   try { window.localStorage.removeItem(tokenKey(eventId)); } catch { /* ignore */ }
-}
-
-function fmtWhen(iso: string) {
-  return new Date(iso).toLocaleString(undefined, { weekday: "long", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
 function GuestMatchRoom() {
@@ -68,6 +66,15 @@ function GuestMatchRoom() {
     enabled: !!token,
     refetchInterval: 5000,
   });
+
+  const getPublic = useServerFn(getPublicMatch);
+  const publicQ = useQuery({
+    queryKey: ["public-match", eventId],
+    queryFn: () => getPublic({ data: { id: eventId } }),
+    enabled: !token,
+  });
+
+
 
   useEffect(() => {
     if (roomQ.data && roomQ.data.ok === false) {
@@ -134,12 +141,38 @@ function GuestMatchRoom() {
 
   // ---- JOIN FORM ----
   if (!token) {
+    const preview = publicQ.data?.match;
     return (
       <main className="programme-page min-h-screen">
         <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-8">
           <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← PadelSetMatch</Link>
-          <div className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
-          <h1 className="text-3xl text-[var(--ink)] font-medium mt-1 leading-tight">
+
+          <div className="mt-5 mb-3 text-center">
+            <div className="inline-flex items-center gap-2 text-[var(--ink)]/70">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
+              <span className="text-[10px] uppercase tracking-[0.22em] font-semibold">
+                {tr("Invitation to join a match", "Invitación para unirte a un partido", "Invitation à rejoindre un match")}
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
+            </div>
+          </div>
+
+          {preview && <MatchProgrammeCard match={preview as never} />}
+
+          {preview?.club_address && (
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(preview.club_address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/10 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
+            </a>
+          )}
+
+          <div className="mt-7 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
+          <h1 className="text-2xl text-serif text-[var(--ink)] font-medium mt-1 leading-tight">
             {tr("No account needed — just three quick things.", "Sin cuenta — solo tres cosas rápidas.", "Sans compte — juste trois infos rapides.")}
           </h1>
           <p className="text-sm text-[var(--ink)]/70 mt-2">
@@ -250,8 +283,6 @@ function GuestMatchRoom() {
       </main>
     );
   }
-  const openSpots = Math.max(0, 4 - (match.filled ?? 0));
-  const genderLabel = match.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : match.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes") : tr("Women only", "Solo mujeres", "Femmes");
   const messages = roomQ.data.messages ?? [];
 
   return (
@@ -264,33 +295,10 @@ function GuestMatchRoom() {
           </button>
         </div>
 
-        <div className="programme-card rounded-2xl p-5 space-y-3">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">{tr("You're in", "Estás dentro", "Tu es inscrit·e")}</div>
-          <h1 className="text-2xl text-serif text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
-          {match.club_address && <p className="text-xs text-[var(--ink)]/60">{match.club_address}</p>}
-
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ink)]/80 pt-2">
-            <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {fmtWhen(match.starts_at)}</span>
-            <span className="inline-flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {match.filled}/4 {openSpots > 0 && `· ${openSpots} ${tr("open", "libres", "libres")}`}</span>
-            {match.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {match.city}</span>}
-          </div>
-          <div className="flex flex-wrap gap-2 pt-1">
-            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{genderLabel}</span>
-            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")} {match.level_min}–{match.level_max}</span>
-          </div>
-          {match.note && <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
-          <div className="pt-2">
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
-            <div className="flex flex-wrap gap-2">
-              {match.participant_names.map((name, i) => (
-                <div key={i} className="bg-[var(--paper-2)] border border-[var(--ink)]/10 rounded-full px-3 py-1.5 text-xs text-[var(--ink)]">{name}</div>
-              ))}
-              {Array.from({ length: openSpots }).map((_, i) => (
-                <div key={`o-${i}`} className="border border-dashed border-[var(--ink)]/30 rounded-full px-3 py-1.5 text-xs text-[var(--ink)]/50">{tr("Open", "Libre", "Libre")}</div>
-              ))}
-            </div>
-          </div>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">
+          {tr("You're in", "Estás dentro", "Tu es inscrit·e")}
         </div>
+        <MatchProgrammeCard match={match as never} />
 
         <div className="programme-card rounded-2xl p-4">
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-3">{tr("Match chat", "Chat del partido", "Chat du match")}</div>

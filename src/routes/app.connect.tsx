@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MapPin, MessageCircle, Pencil, Plus, Trash2, X } from "lucide-react";
+import { MapPin, MessageCircle, Pencil, Plus, ShieldAlert, Trash2, X } from "lucide-react";
 import {
   addConnectComment,
   createConnectPost,
@@ -17,6 +17,7 @@ import {
   type ConnectPost,
 } from "@/lib/connect.functions";
 import { getMyProfile } from "@/lib/app.functions";
+import { adminDeleteContent, getIsAdmin } from "@/lib/admin.functions";
 import { useTr } from "@/lib/i18n";
 import { ReportContentButton } from "@/components/ReportContentButton";
 import { Button } from "@/components/ui/button";
@@ -79,6 +80,8 @@ function ConnectPage() {
   const addC = useServerFn(addConnectComment);
   const updC = useServerFn(updateConnectComment);
   const delCFeed = useServerFn(deleteConnectComment);
+  const adminDel = useServerFn(adminDeleteContent);
+  const isAdminFn = useServerFn(getIsAdmin);
 
   const [city, setCity] = useState("");
   const [cityInput, setCityInput] = useState("");
@@ -91,6 +94,8 @@ function ConnectPage() {
   const [editingComment, setEditingComment] = useState<{ id: string; body: string } | null>(null);
 
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
+  const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => isAdminFn() });
+  const isAdmin = adminQ.data === true;
   const myProfileId = (meQ.data as any)?.id as string | undefined;
 
   const postsQ = useQuery({
@@ -132,6 +137,16 @@ function ConnectPage() {
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
       qc.invalidateQueries({ queryKey: ["connect-comments"] });
       toast.success(tr("Comment deleted", "Comentario eliminado", "Commentaire supprimé"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
+  });
+
+  const adminDelMut = useMutation({
+    mutationFn: ({ kind, id }: { kind: "post" | "comment"; id: string }) => adminDel({ data: { kind, contentId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      qc.invalidateQueries({ queryKey: ["connect-comments"] });
+      toast.success(tr("Removed by admin", "Eliminado por admin", "Supprimé par l'admin"));
     },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
@@ -258,8 +273,18 @@ function ConnectPage() {
                                   <span>·</span>
                                   <span>{timeAgo(c.created_at, tr)}</span>
                                   {!mine && (
-                                    <span className="ml-auto">
+                                    <span className="ml-auto flex items-center gap-1">
                                       <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
+                                      {isAdmin && (
+                                        <button
+                                          onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); }}
+                                          className="inline-flex items-center text-red-500/70 hover:text-red-600 transition px-1"
+                                          aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
+                                          title={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
+                                        >
+                                          <ShieldAlert className="w-3 h-3" />
+                                        </button>
+                                      )}
                                     </span>
                                   )}
                                   {mine && !isEditing && (
@@ -334,7 +359,19 @@ function ConnectPage() {
                           : `${p.comment_count} ${tr("comments", "comentarios", "commentaires")}`}
                       </button>
                       {!mine && (
-                        <ReportContentButton kind="post" contentId={p.id} authorProfileId={p.author_profile_id} className="ml-1" />
+                        <div className="flex items-center gap-1">
+                          <ReportContentButton kind="post" contentId={p.id} authorProfileId={p.author_profile_id} className="ml-1" />
+                          {isAdmin && (
+                            <button
+                              onClick={() => { if (confirm(tr("Remove this post as admin?", "¿Eliminar esta publicación como admin?", "Supprimer cette publication en tant qu'admin ?"))) adminDelMut.mutate({ kind: "post", id: p.id }); }}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600/80 hover:text-red-600 transition px-2 py-1 rounded-full hover:bg-red-500/5"
+                              aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
+                            >
+                              <ShieldAlert className="w-3.5 h-3.5" />
+                              {tr("Remove", "Eliminar", "Supprimer")}
+                            </button>
+                          )}
+                        </div>
                       )}
                       {mine && (
                         <div className="flex items-center gap-1">
@@ -383,7 +420,7 @@ function ConnectPage() {
       )}
 
       {composerOpen && <Composer post={editingPost} onClose={() => { setComposerOpen(false); setEditingPost(null); }} />}
-      {openPost && <PostThread post={openPost} myProfileId={myProfileId} onClose={() => setOpenPost(null)} />}
+      {openPost && <PostThread post={openPost} myProfileId={myProfileId} isAdmin={isAdmin} onClose={() => setOpenPost(null)} />}
     </div>
   );
 }
@@ -471,13 +508,14 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
   );
 }
 
-function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfileId: string | undefined; onClose: () => void }) {
+function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost; myProfileId: string | undefined; isAdmin: boolean; onClose: () => void }) {
   const tr = useTr();
   const qc = useQueryClient();
   const listC = useServerFn(listConnectComments);
   const addC = useServerFn(addConnectComment);
   const delC = useServerFn(deleteConnectComment);
   const updC = useServerFn(updateConnectComment);
+  const adminDel = useServerFn(adminDeleteContent);
   const [body, setBody] = useState("");
   const [editingComment, setEditingComment] = useState<{ id: string; body: string } | null>(null);
 
@@ -499,6 +537,16 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
       qc.invalidateQueries({ queryKey: ["connect-comments", post.id] });
       qc.invalidateQueries({ queryKey: ["connect-posts"] });
     },
+  });
+
+  const adminDelMut = useMutation({
+    mutationFn: (id: string) => adminDel({ data: { kind: "comment" as const, contentId: id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["connect-comments", post.id] });
+      qc.invalidateQueries({ queryKey: ["connect-posts"] });
+      toast.success(tr("Removed by admin", "Eliminado por admin", "Supprimé par l'admin"));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
 
   const updateMut = useMutation({
@@ -542,8 +590,17 @@ function PostThread({ post, myProfileId, onClose }: { post: ConnectPost; myProfi
                       <span>·</span>
                       <span>{timeAgo(c.created_at, tr)}</span>
                       {!mine && (
-                        <span className="ml-auto">
+                        <span className="ml-auto flex items-center gap-1">
                           <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
+                          {isAdmin && (
+                            <button
+                              onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate(c.id); }}
+                              className="text-red-500/70 hover:text-red-600 p-1"
+                              aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
+                            >
+                              <ShieldAlert className="w-3 h-3" />
+                            </button>
+                          )}
                         </span>
                       )}
                       {mine && !isEditing && (

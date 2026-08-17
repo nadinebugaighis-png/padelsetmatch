@@ -2,11 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Send, LogOut } from "lucide-react";
+import { MapPin, Send, LogOut, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone, guestRecoverAccess } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
@@ -31,6 +31,23 @@ function clearToken(eventId: string) {
   if (typeof window === "undefined") return;
   try { window.localStorage.removeItem(tokenKey(eventId)); } catch { /* ignore */ }
 }
+function tokenFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  const t = new URLSearchParams(window.location.search).get("t");
+  return t && /^[0-9a-f-]{36}$/i.test(t) ? t : null;
+}
+function putTokenInUrl(token: string) {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("t", token);
+  window.history.replaceState(null, "", url.toString());
+}
+function stripTokenFromUrl() {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.delete("t");
+  window.history.replaceState(null, "", url.toString());
+}
 
 function GuestMatchRoom() {
   const { eventId } = Route.useParams();
@@ -41,10 +58,14 @@ function GuestMatchRoom() {
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
   const leaveByPhone = useServerFn(guestLeaveByPhone);
+  const recover = useServerFn(guestRecoverAccess);
 
   const [cancelMode, setCancelMode] = useState(false);
   const [cancelPhone, setCancelPhone] = useState("");
   const [cancelBusy, setCancelBusy] = useState(false);
+  const [recoverMode, setRecoverMode] = useState(false);
+  const [recoverPhone, setRecoverPhone] = useState("");
+  const [recoverBusy, setRecoverBusy] = useState(false);
 
   const [token, setToken] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -56,7 +77,15 @@ function GuestMatchRoom() {
   const chatEnd = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setToken(loadToken(eventId));
+    const fromUrl = tokenFromUrl();
+    if (fromUrl) {
+      saveToken(eventId, fromUrl);
+      setToken(fromUrl);
+    } else {
+      const saved = loadToken(eventId);
+      setToken(saved);
+      if (saved) putTokenInUrl(saved);
+    }
     setHydrated(true);
   }, [eventId]);
 
@@ -79,6 +108,7 @@ function GuestMatchRoom() {
   useEffect(() => {
     if (roomQ.data && roomQ.data.ok === false) {
       clearToken(eventId);
+      stripTokenFromUrl();
       setToken(null);
       toast.error(tr("Your guest session expired. Please rejoin.", "Tu sesión de invitado ha expirado. Vuelve a unirte.", "Ta session invité a expiré. Rejoins à nouveau."));
     }
@@ -98,6 +128,7 @@ function GuestMatchRoom() {
     try {
       const res = await join({ data: { eventId, displayName: firstName.trim(), level, phone: phone.trim() } });
       saveToken(eventId, res.token);
+      putTokenInUrl(res.token);
       setToken(res.token);
       toast.success(tr("You're in ✅", "¡Estás dentro ✅", "Tu es inscrit·e ✅"));
     } catch (err) {
@@ -143,6 +174,7 @@ function GuestMatchRoom() {
       await leave({ data: { eventId, token } });
     } catch { /* ignore */ }
     clearToken(eventId);
+    stripTokenFromUrl();
     setToken(null);
     navigate({ to: "/play" });
   };
@@ -232,8 +264,61 @@ function GuestMatchRoom() {
             </div>
           </form>
 
-          {/* Cancel-my-spot: hidden by default, one subtle link → one inline input */}
+          {/* Already joined on another device? Recover access to the chat */}
           <div className="mt-8 pt-6 border-t border-[var(--ink)]/10 text-center">
+            {!recoverMode ? (
+              <button
+                type="button"
+                onClick={() => setRecoverMode(true)}
+                className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)] underline"
+              >
+                {tr("Already joined? Open my match chat", "¿Ya te uniste? Abrir mi chat del partido", "Déjà inscrit·e ? Ouvrir mon chat du match")}
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
+                <input
+                  autoFocus
+                  value={recoverPhone}
+                  onChange={(e) => setRecoverPhone(e.target.value)}
+                  inputMode="tel"
+                  maxLength={32}
+                  placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
+                  onKeyDown={(e) => { if (e.key === "Escape") { setRecoverMode(false); setRecoverPhone(""); } }}
+                  className="flex-1 min-w-0 bg-transparent text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none py-2"
+                />
+                <button
+                  type="button"
+                  disabled={recoverBusy || recoverPhone.trim().length < 4}
+                  onClick={async () => {
+                    setRecoverBusy(true);
+                    try {
+                      const res = await recover({ data: { eventId, phone: recoverPhone.trim() } });
+                      if (res.token) {
+                        saveToken(eventId, res.token);
+                        putTokenInUrl(res.token);
+                        setToken(res.token);
+                        setRecoverMode(false);
+                        setRecoverPhone("");
+                        toast.success(tr("Welcome back 👋", "¡Bienvenido de nuevo 👋", "Content de te revoir 👋"));
+                      } else {
+                        toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
+                      }
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : tr("Could not open", "No se pudo abrir", "Impossible d'ouvrir"));
+                    } finally {
+                      setRecoverBusy(false);
+                    }
+                  }}
+                  className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
+                >
+                  {recoverBusy ? "…" : tr("Open", "Abrir", "Ouvrir")}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Cancel-my-spot: hidden by default, one subtle link → one inline input */}
+          <div className="mt-6 pt-6 border-t border-[var(--ink)]/10 text-center">
             {!cancelMode ? (
               <button
                 type="button"
@@ -315,6 +400,21 @@ function GuestMatchRoom() {
         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">
           {tr("You're in", "Estás dentro", "Tu es inscrit·e")}
         </div>
+
+        <button
+          type="button"
+          onClick={async () => {
+            const link = typeof window !== "undefined" ? window.location.href : "";
+            try {
+              if (navigator.share) await navigator.share({ url: link });
+              else { await navigator.clipboard.writeText(link); toast.success(tr("Private link copied — keep it to come back anytime.", "Enlace privado copiado — guárdalo para volver cuando quieras.", "Lien privé copié — garde-le pour revenir quand tu veux.")); }
+            } catch { /* cancelled */ }
+          }}
+          className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-[11px] uppercase tracking-widest font-semibold text-[var(--ink)]/80 hover:bg-[var(--paper-2)] transition"
+        >
+          <Link2 className="w-3.5 h-3.5" />
+          {tr("Save my private link", "Guardar mi enlace privado", "Garder mon lien privé")}
+        </button>
         <MatchProgrammeCard match={match as never} />
 
         <div className="programme-card rounded-2xl p-4">

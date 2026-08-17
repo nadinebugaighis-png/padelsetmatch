@@ -1957,6 +1957,10 @@ export type Database = {
         Args: { _event_id: string; _token: string }
         Returns: undefined
       }
+      guest_recover_token: {
+        Args: { _event_id: string; _phone: string }
+        Returns: string
+      }
       guest_send_message: {
         Args: { _body: string; _event_id: string; _token: string }
         Returns: string

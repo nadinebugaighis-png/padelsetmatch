@@ -402,11 +402,11 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot }: {
   );
 }
 
-function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label: string; icon: React.ReactNode; active: boolean; badge?: number; dot?: boolean }) {
+function TabletTab({ to, label, icon, active, badge, dot }: { to: string; label: string; icon: React.ReactNode; active: boolean; badge?: number; dot?: boolean }) {
   return (
     <Link
       to={to}
-      className={`relative flex items-center gap-2 px-2.5 lg:px-4 py-2 md:py-2.5 rounded-full text-[11px] lg:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.13em] font-bold transition-all ${
+      className={`relative flex items-center gap-2 px-2.5 py-2 md:py-2.5 rounded-full text-[11px] md:text-[13px] uppercase tracking-[0.1em] md:tracking-[0.13em] font-bold transition-all ${
         active
           ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_2px_0_0_color-mix(in_oklab,var(--ink)_25%,transparent)]"
           : "bg-[var(--paper)] text-[var(--ink)]/75 hover:text-[var(--ink)] border border-[var(--ink)]/12 hover:border-[var(--ink)]/25 hover:bg-[var(--paper)]"
@@ -415,10 +415,34 @@ function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label
       <span className="relative flex items-center">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] md:min-w-[18px] h-4 md:h-4.5 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] md:text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[18px] h-4.5 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
         )}
         {dot && !active && (!badge || badge <= 0) && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
+        )}
+      </span>
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label: string; icon: React.ReactNode; active: boolean; badge?: number; dot?: boolean }) {
+  return (
+    <Link
+      to={to}
+      className={`relative flex items-center gap-2 px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-semibold transition-colors ${
+        active
+          ? "bg-[var(--ink)] text-[var(--paper)]"
+          : "text-[var(--ink)]/70 hover:text-[var(--ink)] hover:bg-[var(--ink)]/5"
+      }`}
+    >
+      <span className="relative flex items-center">
+        {icon}
+        {!!badge && badge > 0 && (
+          <span className="absolute -top-1.5 -right-2 min-w-[14px] h-3.5 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] font-bold flex items-center justify-center">{badge > 9 ? "9+" : badge}</span>
+        )}
+        {dot && !active && (!badge || badge <= 0) && (
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)]" />
         )}
       </span>
       <span>{label}</span>

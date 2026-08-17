@@ -10,6 +10,8 @@ import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
+import psmMonogram from "@/assets/psm-monogram.jpg.asset.json";
+
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
 import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
@@ -264,10 +266,11 @@ function AuthShell() {
             <Link
               to="/app/grid"
               aria-label="PadelSetMatch — home"
-              className="hidden md:inline-flex lg:hidden items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] px-3 py-1.5 text-[13px] font-bold tracking-[0.16em] shadow-[0_2px_0_0_color-mix(in_oklab,var(--ink)_25%,transparent)]"
+              className="hidden md:inline-flex lg:hidden items-center"
             >
-              PSM
+              <img src={psmMonogram.url} alt="PSM" className="h-7 w-auto select-none" draggable={false} />
             </Link>
+
           </div>
           {hasProfile && !onOnboarding && (
             <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 mx-1 lg:mx-4 flex-1 justify-center">

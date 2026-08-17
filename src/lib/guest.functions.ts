@@ -20,7 +20,9 @@ export const guestJoinMatch = createServerFn({ method: "POST" })
       .object({
         eventId: uuid,
         displayName: z.string().trim().min(1).max(40),
-        level: z.enum(["casual", "beginner", "intermediate", "advanced", "competitive"]),
+        level: z
+          .enum(["just starting", "beginner", "casual", "intermediate", "advanced", "competitive"])
+          .transform((l) => (l === "beginner" ? "just starting" : l)),
         phone: z.string().trim().min(4).max(32),
       })
       .parse(d),

@@ -256,26 +256,26 @@ function AuthShell() {
 
   return (
     <div className="min-h-screen pb-24 md:pb-0 programme-page">
-      <div className="md:sticky md:top-0 md:z-40 md:bg-[var(--paper)]/95 md:backdrop-blur md:border-b md:border-[var(--ink)]/10">
+      <div className="md:sticky md:top-0 md:z-40 md:bg-[var(--paper-2)] md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)]">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
-            <nav className="hidden md:flex items-center gap-1 mx-2 lg:mx-4 flex-1 justify-center">
-              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
-              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+            <nav className="hidden md:flex items-center gap-1.5 mx-2 lg:mx-4 flex-1 justify-center">
+              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4 md:w-5 md:h-5" />} active={path.startsWith("/app/events")} />
+              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             </nav>
           )}
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-3 shrink-0">
             {isAdmin && (
-              <Link to="/app/admin" className="text-[11px] uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80">
+              <Link to="/app/admin" className="text-[11px] md:text-xs uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80 font-semibold">
                 {t("shell.admin")}
               </Link>
             )}
             {hasProfile && <NotificationBell />}
             <LangSwitch />
-            <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/55 hover:text-[var(--ink)]">
+            <button onClick={onSignOut} className="text-[11px] md:text-xs uppercase tracking-[0.18em] text-[var(--ink)]/70 hover:text-[var(--ink)] font-semibold">
               {t("shell.signout")}
             </button>
           </div>

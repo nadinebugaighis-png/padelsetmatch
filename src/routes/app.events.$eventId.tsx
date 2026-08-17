@@ -553,7 +553,21 @@ function EventDetail() {
               </button>
             );
           })}
+          {(event.guests ?? []).map((g: any) => (
+            <div
+              key={g.id}
+              className="flex items-center gap-2 bg-white border border-[var(--ink)]/10 rounded-full pl-1 pr-3 py-1"
+              title={tr("Joined via invite link", "Se unió con el enlace", "A rejoint via le lien")}
+            >
+              <div className="w-7 h-7 rounded-full bg-[var(--paper-2)] grid place-items-center text-[10px] text-[var(--ink)]/60">
+                {(g.display_name ?? "?").slice(0, 1).toUpperCase()}
+              </div>
+              <span className="text-xs text-[var(--ink)]">{g.display_name}</span>
+              <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/45">{tr("guest", "invitado", "invité")}</span>
+            </div>
+          ))}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
+
             <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/10 rounded-full px-3 py-1.5">
               <span className="text-xs text-[var(--ink)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
             </div>

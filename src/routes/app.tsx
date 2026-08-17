@@ -393,7 +393,7 @@ function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label
   return (
     <Link
       to={to}
-      className={`relative flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 rounded-full text-[11px] md:text-xs lg:text-[13px] uppercase tracking-[0.12em] md:tracking-[0.13em] font-bold transition-all ${
+      className={`relative flex items-center gap-2 px-2.5 lg:px-4 py-2 md:py-2.5 rounded-full text-[11px] lg:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.13em] font-bold transition-all ${
         active
           ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_2px_0_0_color-mix(in_oklab,var(--ink)_25%,transparent)]"
           : "bg-[var(--paper)] text-[var(--ink)]/75 hover:text-[var(--ink)] border border-[var(--ink)]/12 hover:border-[var(--ink)]/25 hover:bg-[var(--paper)]"

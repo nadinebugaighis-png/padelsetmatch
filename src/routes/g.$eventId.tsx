@@ -71,6 +71,15 @@ function GuestMatchRoom() {
     refetchInterval: 5000,
   });
 
+  const getPublic = useServerFn(getPublicMatch);
+  const publicQ = useQuery({
+    queryKey: ["public-match", eventId],
+    queryFn: () => getPublic({ data: { id: eventId } }),
+    enabled: !token,
+  });
+
+
+
   useEffect(() => {
     if (roomQ.data && roomQ.data.ok === false) {
       clearToken(eventId);

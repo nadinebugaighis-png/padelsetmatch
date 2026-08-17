@@ -564,6 +564,15 @@ function EventDetail() {
               </div>
               <span className="text-xs text-[var(--ink)]">{g.display_name}</span>
               <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/45">{tr("guest", "invitado", "invité")}</span>
+              {g.phone ? (
+                <a
+                  href={`tel:${g.phone}`}
+                  className="text-[10px] tabular-nums text-[var(--ink)]/70 underline decoration-dotted underline-offset-2"
+                  title={tr("Visible to the host only", "Solo visible para el anfitrión", "Visible uniquement par l'hôte")}
+                >
+                  {g.phone}
+                </a>
+              ) : null}
             </div>
           ))}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (

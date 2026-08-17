@@ -1972,6 +1972,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      host_get_guest_contacts: {
+        Args: { _event_id: string }
+        Returns: {
+          display_name: string
+          guest_id: string
+          phone: string
+        }[]
+      }
       ignore_intro: {
         Args: { _acting_user_id: string; _match_id: string }
         Returns: undefined

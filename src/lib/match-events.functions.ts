@@ -323,10 +323,18 @@ export const getMatchEvent = createServerFn({ method: "POST" })
       .select("id, display_name, level, created_at")
       .eq("match_event_id", data.id)
       .order("created_at", { ascending: true });
-    const guests = guestsRaw ?? [];
+    let guests: any[] = guestsRaw ?? [];
     const filled = (event.participants?.length ?? 0) + guests.length + (event.extra_confirmed ?? 0);
     const iAmHost = !!profile && event.host_profile_id === profile.id;
     const iAmParticipant = !!profile && ((event.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
+
+    // Only the current host can see guest phone numbers (works after host transfer too).
+    if (iAmHost && guests.length > 0) {
+      const { data: contacts } = await supabase.rpc("host_get_guest_contacts" as never, { _event_id: data.id } as never);
+      const phoneById = new Map<string, string>();
+      for (const c of ((contacts ?? []) as unknown as any[])) phoneById.set(c.guest_id, c.phone);
+      guests = guests.map((g: any) => ({ ...g, phone: phoneById.get(g.id) ?? null }));
+    }
 
     const { data: invitesRaw } = await supabase
       .from("match_event_invites")

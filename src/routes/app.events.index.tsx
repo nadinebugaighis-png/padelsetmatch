@@ -693,11 +693,11 @@ function MatchCard({
           style={{ background: toneBg }}
         >
           <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{time}</div>
-          <div className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold leading-none">
+          <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
             {whenLabel}
           </div>
           {!dateBadge && (
-            <div className="mt-1 text-[9px] uppercase tracking-[0.14em] text-[var(--ink)]/45 font-semibold leading-none">
+            <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
               {dayNum} <span className="capitalize">{monthShort}</span>
             </div>
           )}

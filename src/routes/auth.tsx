@@ -211,6 +211,20 @@ function AuthPage() {
           },
         );
       } else if (isAlreadyRegistered && mode === "signup") {
+        // The account already exists (often because a previous attempt actually
+        // succeeded). Try to sign the user straight in with what they typed.
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        if (!signInErr) {
+          toast.success(
+            tr(
+              "You already had an account — you're signed in.",
+              "Ya tenías cuenta — has iniciado sesión.",
+              "Tu avais déjà un compte — tu es connecté·e.",
+            ),
+          );
+          navigate(afterAuthTarget() as never);
+          return;
+        }
         toast.info(
           tr(
             "This email is already registered.",
@@ -219,14 +233,15 @@ function AuthPage() {
           ),
           {
             description: tr(
-              'Tap "Already have an account? Sign in" below.',
-              'Pulsa "¿Ya tienes cuenta? Inicia sesión" abajo.',
-              'Appuie sur « Déjà un compte ? Se connecter » ci-dessous.',
+              'Sign in with your password below, or tap "Forgot password?".',
+              'Inicia sesión con tu contraseña abajo, o pulsa "¿Olvidaste la contraseña?".',
+              'Connecte-toi avec ton mot de passe ci-dessous, ou appuie sur « Mot de passe oublié ? ».',
             ),
             duration: 8000,
           },
         );
         setMode("signin");
+
       } else if (isInvalidCreds && mode === "signin") {
         // Generic message on purpose — never reveal whether an account exists
         // or which provider it uses (account enumeration).

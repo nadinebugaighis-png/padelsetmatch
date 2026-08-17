@@ -258,10 +258,10 @@ function AuthShell() {
 
   return (
     <div className="min-h-screen pb-24 md:pb-0 programme-page">
-      <div className="md:sticky md:top-0 md:z-40 md:bg-[var(--paper-2)] md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)]">
+      <div className="md:sticky md:top-0 md:z-40 md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)] md:bg-[var(--paper-2)] lg:bg-[var(--paper)]/95 lg:border-[var(--ink)]/10 lg:shadow-none">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <div className="shrink-0 flex items-center">
-            {/* Full wordmark on phone + large screens; compact PSM monogram on tablet */}
+            {/* Full wordmark on phone + desktop; compact PSM monogram on tablet */}
             <BrandMark size="sm" className="md:hidden lg:inline-flex" />
             <Link
               to="/app/grid"
@@ -273,23 +273,33 @@ function AuthShell() {
 
           </div>
           {hasProfile && !onOnboarding && (
-            <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 mx-1 lg:mx-4 flex-1 justify-center">
-              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4 md:w-5 md:h-5" />} active={path.startsWith("/app/events")} />
-              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
-            </nav>
+            <>
+              {/* Tablet nav */}
+              <nav className="hidden md:flex lg:hidden items-center gap-1 mx-1 flex-1 justify-center">
+                <TabletTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-5 h-5" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+                <TabletTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-5 h-5" />} active={path.startsWith("/app/events")} />
+                <TabletTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-5 h-5" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+                <TabletTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-5 h-5" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+              </nav>
+              {/* Desktop nav — original styling preserved */}
+              <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
+                <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+                <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
+                <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+                <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+              </nav>
+            </>
           )}
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 lg:gap-3 shrink-0">
             {isAdmin && (
-              <Link to="/app/admin" className="text-[11px] md:text-xs uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80 font-semibold">
+              <Link to="/app/admin" className="text-[11px] md:text-xs lg:text-[11px] uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80 font-semibold lg:font-normal">
                 {t("shell.admin")}
               </Link>
             )}
             {hasProfile && <NotificationBell />}
             <LangSwitch />
-            <button onClick={onSignOut} className="text-[11px] md:text-xs uppercase tracking-[0.18em] text-[var(--ink)]/70 hover:text-[var(--ink)] font-semibold">
+            <button onClick={onSignOut} className="text-[11px] md:text-xs lg:text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 hover:text-[var(--ink)] font-semibold lg:font-normal lg:text-[var(--ink)]/55">
               {t("shell.signout")}
             </button>
           </div>

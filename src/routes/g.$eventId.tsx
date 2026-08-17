@@ -105,6 +105,16 @@ function GuestMatchRoom() {
       if (m.startsWith("INVITE_LOCK:")) {
         const opensAt = new Date(m.slice("INVITE_LOCK:".length)).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
         toast.error(tr(`Reserved for invited players until ${opensAt}.`, `Reservado para invitados hasta ${opensAt}.`, `Réservé aux invités jusqu'à ${opensAt}.`));
+      } else if (m.startsWith("LEVEL_MISMATCH:")) {
+        const [, min, max, guest] = m.split(":");
+        const range = min === max ? min : `${min} – ${max}`;
+        toast.error(
+          tr(
+            `This match is listed as ${range}. Your level (${guest}) doesn't fit.`,
+            `Este partido es de nivel ${range}. Tu nivel (${guest}) no encaja.`,
+            `Ce match est listé en ${range}. Ton niveau (${guest}) ne correspond pas.`
+          )
+        );
       } else {
         toast.error(m || tr("Could not join", "No pudimos unirte", "Impossible de rejoindre"));
       }
@@ -187,7 +197,14 @@ function GuestMatchRoom() {
                 placeholder="Alex" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+                {preview && (
+                  <span className="text-[10px] uppercase tracking-widest text-[var(--gold)] font-semibold">
+                    {tr("Match level", "Nivel del partido", "Niveau du match")}: {preview.level_min === preview.level_max ? preview.level_min : `${preview.level_min} – ${preview.level_max}`}
+                  </span>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {PADEL_LEVELS.map((lvl) => (
                   <button key={lvl} type="button" onClick={() => setLevel(lvl)}

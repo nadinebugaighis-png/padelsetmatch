@@ -302,7 +302,13 @@ export const getMatchEvent = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!event) return { event: null };
-    const filled = (event.participants?.length ?? 0) + (event.extra_confirmed ?? 0);
+    const { data: guestsRaw } = await supabase
+      .from("guest_participants")
+      .select("id, display_name, level, created_at")
+      .eq("match_event_id", data.id)
+      .order("created_at", { ascending: true });
+    const guests = guestsRaw ?? [];
+    const filled = (event.participants?.length ?? 0) + guests.length + (event.extra_confirmed ?? 0);
     const iAmHost = !!profile && event.host_profile_id === profile.id;
     const iAmParticipant = !!profile && ((event.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
 
@@ -314,9 +320,10 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
 
     return {
-      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
+      event: { ...event, guests, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
       me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
     };
+
 
   });
 
@@ -552,12 +559,13 @@ export const listEventMessages = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { data: msgs, error } = await supabase
       .from("match_event_messages")
-      .select("id, sender_profile_id, body, created_at, edited_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url)")
+      .select("id, sender_profile_id, guest_id, body, created_at, edited_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url), guest:guest_participants(display_name)")
       .eq("match_event_id", data.id)
       .order("created_at", { ascending: true })
       .limit(200);
     if (error) throw new Error(error.message);
     return { messages: msgs ?? [] };
+
   });
 
 export const sendEventMessage = createServerFn({ method: "POST" })
@@ -601,14 +609,17 @@ export const deleteEventMessage = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const { error } = await supabase
+    // RLS allows: own message, match host, or app admin.
+    const { data: deleted, error } = await supabase
       .from("match_event_messages")
       .delete()
       .eq("id", data.messageId)
-      .eq("sender_profile_id", profile.id);
+      .select("id");
     if (error) throw new Error(error.message);
+    if (!deleted || deleted.length === 0) throw new Error("You can only delete your own messages.");
     return { ok: true };
   });
+
 
 // ---------- Public read: shareable match view (no auth) ----------
 export const getPublicMatch = createServerFn({ method: "GET" })

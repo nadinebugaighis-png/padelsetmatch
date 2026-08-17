@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { getIsAdmin } from "@/lib/admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,6 +75,7 @@ function EventDetail() {
   const tr = useTr();
   const { label } = useI18n();
   const qc = useQueryClient();
+  const checkAdmin = useServerFn(getIsAdmin);
   const get = useServerFn(getMatchEvent);
   const join = useServerFn(joinMatchEvent);
   const leave = useServerFn(leaveMatchEvent);
@@ -124,6 +126,14 @@ function EventDetail() {
     retry: false,
     refetchOnWindowFocus: true,
   });
+
+  const isAdminQ = useQuery({
+    queryKey: ["is-admin"],
+    queryFn: () => checkAdmin(),
+    retry: false,
+    staleTime: 5 * 60_000,
+  });
+  const isAdmin = isAdminQ.data === true;
 
   const msgsQ = useQuery({
     queryKey: ["event-msgs", eventId],
@@ -543,7 +553,21 @@ function EventDetail() {
               </button>
             );
           })}
+          {(event.guests ?? []).map((g: any) => (
+            <div
+              key={g.id}
+              className="flex items-center gap-2 bg-white border border-[var(--ink)]/10 rounded-full pl-1 pr-3 py-1"
+              title={tr("Joined via invite link", "Se unió con el enlace", "A rejoint via le lien")}
+            >
+              <div className="w-7 h-7 rounded-full bg-[var(--paper-2)] grid place-items-center text-[10px] text-[var(--ink)]/60">
+                {(g.display_name ?? "?").slice(0, 1).toUpperCase()}
+              </div>
+              <span className="text-xs text-[var(--ink)]">{g.display_name}</span>
+              <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/45">{tr("guest", "invitado", "invité")}</span>
+            </div>
+          ))}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
+
             <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/10 rounded-full px-3 py-1.5">
               <span className="text-xs text-[var(--ink)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
             </div>
@@ -756,8 +780,10 @@ function EventDetail() {
               <div className="text-center text-xs text-[var(--ink)]/50 py-8">{tr("No messages yet. Say hi!", "Aún no hay mensajes. ¡Saluda!", "Pas encore de messages. Dis bonjour !")}</div>
             )}
             {msgsQ.data?.messages.map((m: any) => {
-              const mine = m.sender_profile_id === me?.id;
+              const mine = !!m.sender_profile_id && m.sender_profile_id === me?.id;
+              const canModerate = !mine && (me?.iAmHost || isAdmin === true);
               const isEditing = editingId === m.id;
+              const authorName = m.sender?.first_name ?? m.guest?.display_name ?? tr("Guest", "Invitado", "Invité");
               return (
                 <div key={m.id} className={`group flex w-full ${mine ? "justify-end" : "justify-start"}`}>
                   <div className={`flex min-w-0 flex-col ${mine ? "items-end" : "items-start"}`}>
@@ -770,9 +796,10 @@ function EventDetail() {
                     >
                       {!mine && !isEditing && (
                         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-0.5">
-                          {m.sender?.first_name}
+                          {authorName}
                         </div>
                       )}
+
                       {isEditing ? (
                         <form
                           onSubmit={(e) => { e.preventDefault(); void onSaveMessage(); }}
@@ -821,6 +848,19 @@ function EventDetail() {
                         </button>
                       </div>
                     )}
+                    {canModerate && !isEditing && (
+                      <div className="mt-1 flex gap-1.5 pl-1">
+                        <button
+                          type="button"
+                          onClick={() => onDeleteMessage(m.id)}
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-red-500/20 hover:text-red-500"
+                          aria-label={tr("Delete message", "Borrar mensaje", "Supprimer le message")}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+
                   </div>
                 </div>
               );

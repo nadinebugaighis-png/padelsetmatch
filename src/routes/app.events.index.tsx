@@ -456,39 +456,10 @@ function EventsPage() {
               />
             ) : (
               <div className="mt-5 space-y-6">
-                {myLevel && forYourLevel.length > 0 && (
+                {filtered.length > 0 && (
                   <FeedSection
-                    title={tr("For your level", "Para tu nivel", "Pour ton niveau")}
-                    subtitle={tr(
-                      "These matches fit your search and your level perfectly.",
-                      "Estos partidos encajan con tu búsqueda y tu nivel.",
-                      "Ces matches correspondent à ta recherche et ton niveau.",
-                    )}
-                    events={forYourLevel}
-                    locale={locale}
-                    pending={pending}
-                    onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
-                    onJoin={instantJoin}
-                    onManage={(e) => navigate({ to: "/app/events/$eventId", params: { eventId: e.id } })}
-                    tr={tr}
-                    highlight
-                  />
-                )}
-                {others.length > 0 && (
-                  <FeedSection
-                    title={myLevel && forYourLevel.length > 0
-                      ? tr("Around me", "Cerca de mí", "Autour de moi")
-                      : tr("Available matches", "Partidos disponibles", "Matches disponibles")}
-                    subtitle={
-                      myLevel && forYourLevel.length > 0
-                        ? tr(
-                            "Different level range — still open to join.",
-                            "Rango de nivel diferente — todavía abiertos.",
-                            "Autre niveau — mais toujours ouverts.",
-                          )
-                        : undefined
-                    }
-                    events={others}
+                    title={tr("Open matches", "Partidos abiertos", "Matches ouverts")}
+                    events={filtered}
                     locale={locale}
                     pending={pending}
                     onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}

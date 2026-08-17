@@ -258,13 +258,14 @@ function AuthShell() {
     <div className="min-h-screen pb-24 md:pb-0 programme-page">
       <div className="md:sticky md:top-0 md:z-40 md:bg-[var(--paper-2)] md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)]">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
-          <BrandMark size="sm" />
+          <BrandMark size="sm" compact className="md:hidden lg:inline-flex" />
+          <BrandMark size="sm" className="hidden md:inline-flex lg:hidden" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden md:flex items-center gap-1.5 mx-2 lg:mx-4 flex-1 justify-center">
-              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4 md:w-5 md:h-5" />} active={path.startsWith("/app/events")} />
-              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4 md:w-[18px] md:h-[18px]" />} active={path.startsWith("/app/events")} />
+              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             </nav>
           )}
           <div className="flex items-center gap-3 shrink-0">

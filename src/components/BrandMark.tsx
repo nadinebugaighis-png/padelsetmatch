@@ -5,10 +5,9 @@ type Props = {
   size?: "sm" | "md" | "lg";
   to?: string;
   className?: string;
-  compact?: boolean;
 };
 
-export function BrandMark({ size = "md", to = "/", className = "", compact = false }: Props) {
+export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
   // aspect ratio ~ 1179 / 188 ≈ 6.27
   const height =
     size === "sm"
@@ -16,20 +15,6 @@ export function BrandMark({ size = "md", to = "/", className = "", compact = fal
       : size === "lg"
       ? "h-9 md:h-11 lg:h-12"
       : "h-7 md:h-8 lg:h-9";
-
-  if (compact) {
-    return (
-      <Link
-        to={to}
-        className={`inline-flex items-center ${className}`}
-        aria-label="Padel Set Match — home"
-      >
-        <span className="text-display text-[var(--ink)] text-xl md:text-2xl lg:text-[1.65rem] leading-none tracking-[0.02em] font-normal">
-          PSM
-        </span>
-      </Link>
-    );
-  }
 
   return (
     <Link

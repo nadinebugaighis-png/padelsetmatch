@@ -258,14 +258,13 @@ function AuthShell() {
     <div className="min-h-screen pb-24 md:pb-0 programme-page">
       <div className="md:sticky md:top-0 md:z-40 md:bg-[var(--paper-2)] md:backdrop-blur md:border-b md:border-[var(--ink)]/15 md:shadow-[0_1px_0_0_color-mix(in_oklab,var(--ink)_6%,transparent)]">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
-          <BrandMark size="sm" compact className="hidden md:inline-flex lg:hidden" />
-          <BrandMark size="sm" className="inline-flex md:hidden lg:inline-flex" />
+          <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden md:flex items-center gap-1.5 mx-2 lg:mx-4 flex-1 justify-center">
-              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4 md:w-[18px] md:h-[18px]" />} active={path.startsWith("/app/events")} />
-              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4 md:w-[18px] md:h-[18px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4 md:w-5 md:h-5" />} active={path.startsWith("/app/events")} />
+              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4 md:w-5 md:h-5" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             </nav>
           )}
           <div className="flex items-center gap-3 shrink-0">
@@ -383,7 +382,7 @@ function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label
   return (
     <Link
       to={to}
-      className={`relative flex items-center gap-2 px-2.5 md:px-3 lg:px-4 py-2 md:py-2 rounded-full text-[11px] md:text-[11px] lg:text-xs uppercase tracking-[0.12em] md:tracking-[0.13em] font-bold transition-all ${
+      className={`relative flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 rounded-full text-[11px] md:text-xs lg:text-[13px] uppercase tracking-[0.12em] md:tracking-[0.13em] font-bold transition-all ${
         active
           ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_2px_0_0_color-mix(in_oklab,var(--ink)_25%,transparent)]"
           : "bg-[var(--paper)] text-[var(--ink)]/75 hover:text-[var(--ink)] border border-[var(--ink)]/12 hover:border-[var(--ink)]/25 hover:bg-[var(--paper)]"
@@ -392,10 +391,10 @@ function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label
       <span className="relative flex items-center">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] md:min-w-[18px] h-4 md:h-4.5 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] md:text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
         )}
         {dot && !active && (!badge || badge <= 0) && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)] ink-ring" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
         )}
       </span>
       <span>{label}</span>

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { Calendar, MapPin, Users, Send, LogOut } from "lucide-react";
+import { MapPin, Send, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
@@ -30,10 +30,6 @@ function saveToken(eventId: string, token: string) {
 function clearToken(eventId: string) {
   if (typeof window === "undefined") return;
   try { window.localStorage.removeItem(tokenKey(eventId)); } catch { /* ignore */ }
-}
-
-function fmtWhen(iso: string) {
-  return new Date(iso).toLocaleString(undefined, { weekday: "long", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
 function GuestMatchRoom() {
@@ -287,8 +283,6 @@ function GuestMatchRoom() {
       </main>
     );
   }
-  const openSpots = Math.max(0, 4 - (match.filled ?? 0));
-  const genderLabel = match.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : match.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes") : tr("Women only", "Solo mujeres", "Femmes");
   const messages = roomQ.data.messages ?? [];
 
   return (

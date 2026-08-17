@@ -2,11 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Send, LogOut } from "lucide-react";
+import { MapPin, Send, LogOut, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone, guestRecoverAccess } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
@@ -31,6 +31,23 @@ function clearToken(eventId: string) {
   if (typeof window === "undefined") return;
   try { window.localStorage.removeItem(tokenKey(eventId)); } catch { /* ignore */ }
 }
+function tokenFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  const t = new URLSearchParams(window.location.search).get("t");
+  return t && /^[0-9a-f-]{36}$/i.test(t) ? t : null;
+}
+function putTokenInUrl(token: string) {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("t", token);
+  window.history.replaceState(null, "", url.toString());
+}
+function stripTokenFromUrl() {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.delete("t");
+  window.history.replaceState(null, "", url.toString());
+}
 
 function GuestMatchRoom() {
   const { eventId } = Route.useParams();
@@ -41,6 +58,7 @@ function GuestMatchRoom() {
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
   const leaveByPhone = useServerFn(guestLeaveByPhone);
+  const recover = useServerFn(guestRecoverAccess);
 
   const [cancelMode, setCancelMode] = useState(false);
   const [cancelPhone, setCancelPhone] = useState("");
@@ -56,7 +74,15 @@ function GuestMatchRoom() {
   const chatEnd = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setToken(loadToken(eventId));
+    const fromUrl = tokenFromUrl();
+    if (fromUrl) {
+      saveToken(eventId, fromUrl);
+      setToken(fromUrl);
+    } else {
+      const saved = loadToken(eventId);
+      setToken(saved);
+      if (saved) putTokenInUrl(saved);
+    }
     setHydrated(true);
   }, [eventId]);
 
@@ -79,6 +105,7 @@ function GuestMatchRoom() {
   useEffect(() => {
     if (roomQ.data && roomQ.data.ok === false) {
       clearToken(eventId);
+      stripTokenFromUrl();
       setToken(null);
       toast.error(tr("Your guest session expired. Please rejoin.", "Tu sesión de invitado ha expirado. Vuelve a unirte.", "Ta session invité a expiré. Rejoins à nouveau."));
     }
@@ -98,6 +125,7 @@ function GuestMatchRoom() {
     try {
       const res = await join({ data: { eventId, displayName: firstName.trim(), level, phone: phone.trim() } });
       saveToken(eventId, res.token);
+      putTokenInUrl(res.token);
       setToken(res.token);
       toast.success(tr("You're in ✅", "¡Estás dentro ✅", "Tu es inscrit·e ✅"));
     } catch (err) {
@@ -143,6 +171,7 @@ function GuestMatchRoom() {
       await leave({ data: { eventId, token } });
     } catch { /* ignore */ }
     clearToken(eventId);
+    stripTokenFromUrl();
     setToken(null);
     navigate({ to: "/play" });
   };

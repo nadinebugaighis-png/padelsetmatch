@@ -756,8 +756,10 @@ function EventDetail() {
               <div className="text-center text-xs text-[var(--ink)]/50 py-8">{tr("No messages yet. Say hi!", "Aún no hay mensajes. ¡Saluda!", "Pas encore de messages. Dis bonjour !")}</div>
             )}
             {msgsQ.data?.messages.map((m: any) => {
-              const mine = m.sender_profile_id === me?.id;
+              const mine = !!m.sender_profile_id && m.sender_profile_id === me?.id;
+              const canModerate = !mine && (me?.iAmHost || isAdmin === true);
               const isEditing = editingId === m.id;
+              const authorName = m.sender?.first_name ?? m.guest?.display_name ?? tr("Guest", "Invitado", "Invité");
               return (
                 <div key={m.id} className={`group flex w-full ${mine ? "justify-end" : "justify-start"}`}>
                   <div className={`flex min-w-0 flex-col ${mine ? "items-end" : "items-start"}`}>
@@ -770,9 +772,10 @@ function EventDetail() {
                     >
                       {!mine && !isEditing && (
                         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-0.5">
-                          {m.sender?.first_name}
+                          {authorName}
                         </div>
                       )}
+
                       {isEditing ? (
                         <form
                           onSubmit={(e) => { e.preventDefault(); void onSaveMessage(); }}

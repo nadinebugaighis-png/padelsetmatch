@@ -670,122 +670,131 @@ function MatchCard({
   const isTomorrow = start.getTime() >= tomorrow.getTime() && start.getTime() < tomorrow.getTime() + 24 * 60 * 60 * 1000;
   const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
 
+  const whenLabel = dateBadge ?? weekday;
+  const toneBg =
+    timeOfDay === "morning"
+      ? "color-mix(in oklab, var(--grass) 26%, transparent)"
+      : timeOfDay === "afternoon"
+        ? "color-mix(in oklab, #E8B84B 30%, transparent)"
+        : "color-mix(in oklab, var(--plum) 20%, transparent)";
+
   return (
     <div
-      className={`relative rounded-xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] ${
+      className={`rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] ${
         highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
       }`}
     >
-      <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent.bar}`} aria-hidden />
-
-      <button
-        type="button"
-        onClick={() => onOpen(e.id)}
-        className="w-full text-left pl-4 pr-3 pt-3 pb-2.5"
-      >
-        <div className="flex items-start gap-3">
-          {/* Stacked time + date, original layout, rebalanced sizes */}
-          <div className="shrink-0 flex flex-col items-start justify-center min-w-[72px]">
-            <div className="text-serif text-[30px] sm:text-[34px] leading-none text-[var(--ink)] tracking-tight">
-              {time}
-            </div>
-            <div className="mt-1 text-[12px] sm:text-[13px] font-semibold text-[var(--ink)]/70 leading-none">
-              <span className="capitalize">{weekday}</span> {dayNum} <span className="capitalize">{monthShort}</span>
-            </div>
-            {dateBadge && (
-              <div className="mt-1.5 rounded-full bg-[var(--plum)] text-white text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 leading-none">
-                {dateBadge}
-              </div>
-            )}
+      <div className="flex">
+        {/* Date / time block */}
+        <button
+          type="button"
+          onClick={() => onOpen(e.id)}
+          className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
+          style={{ background: toneBg }}
+        >
+          <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{time}</div>
+          <div className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold leading-none">
+            {whenLabel}
           </div>
-          <div className="w-px self-stretch bg-[var(--ink)]/10" aria-hidden />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className={`text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded ${accent.chip}`}>
-                {accent.label}
-              </span>
-              {mine && (
-                <span className={`text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded ${
-                  e.iAmHost ? "bg-[var(--plum)] text-white" : "bg-[var(--ink)]/10 text-[var(--ink)]"
-                }`}>
-                  {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
-                </span>
-              )}
-              {e.court_booked && (
-                <span className="text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded bg-[var(--court-deep)]/10 text-[var(--court-deep)]">
+          {!dateBadge && (
+            <div className="mt-1 text-[9px] uppercase tracking-[0.14em] text-[var(--ink)]/45 font-semibold leading-none">
+              {dayNum} <span className="capitalize">{monthShort}</span>
+            </div>
+          )}
+        </button>
+
+        {/* Body */}
+        <div className="flex-1 min-w-0 p-3.5 sm:p-4">
+          <div className="flex items-start justify-between gap-2">
+            <button type="button" onClick={() => onOpen(e.id)} className="min-w-0 text-left">
+              <div className="text-[15px] font-semibold text-[var(--ink)] truncate">
+                {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+              </div>
+              <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60 min-w-0">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{e.city || e.club_address || "—"}</span>
+              </div>
+            </button>
+            <span
+              className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
+                full
+                  ? "bg-[var(--ink)]/8 text-[var(--ink)]/55"
+                  : "bg-[var(--plum)]/12 text-[var(--plum)]"
+              }`}
+            >
+              {full
+                ? tr("Full", "Completo", "Complet")
+                : tr(`${e.needs} spot${e.needs > 1 ? "s" : ""}`, `${e.needs} plaza${e.needs > 1 ? "s" : ""}`, `${e.needs} place${e.needs > 1 ? "s" : ""}`)}
+            </span>
+          </div>
+
+          {/* Meta row */}
+          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+            {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
+            {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
+            <span>{genderLabel}</span>
+            <span className="text-[var(--ink)]/25">·</span>
+            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> 90 min</span>
+            {e.court_booked && (
+              <>
+                <span className="text-[var(--ink)]/25">·</span>
+                <span className="font-semibold text-[var(--court-deep)]">
                   {tr("Court booked", "Pista reservada", "Court réservé")}
                 </span>
-              )}
-            </div>
-            <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-              {levelLabel && <span className="font-semibold text-[var(--ink)]/75">{levelLabel}</span>}
-              {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
-              <span>{genderLabel}</span>
-            </div>
-          </div>
-        </div>
-      </button>
-
-      <div className="pl-4 pr-3 pb-3">
-        <div className="grid grid-cols-[1fr_auto_1fr_1fr_1fr] items-center gap-1.5">
-          <SlotAvatar slot={slots[0]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
-          <div className="h-14 w-px bg-[var(--ink)]/10 mx-1" aria-hidden />
-          <SlotAvatar slot={slots[1]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
-          <SlotAvatar slot={slots[2]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
-          <SlotAvatar slot={slots[3]} tr={tr} onJoin={() => onJoin(e)} canJoin={!mine && !full} isPending={isPending} />
-        </div>
-        <div className="mt-1 grid grid-cols-[1fr_auto_1fr_1fr_1fr] gap-1.5 items-center text-[8px] uppercase tracking-widest font-bold text-[var(--ink)]/40">
-          <span className="text-center">A</span>
-          <span className="w-px" />
-          <span className="text-center" />
-          <span className="text-center" />
-          <span className="text-center text-right pr-1">B</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={(ev) => {
-          ev.stopPropagation();
-          if (e.iAmHost) onManage(e);
-          else onOpen(e.id);
-        }}
-        className="w-full flex items-center gap-2.5 pl-4 pr-3 py-2.5 border-t border-[var(--ink)]/10 bg-[var(--paper-2)]/45 hover:bg-[var(--paper-2)]/70 transition text-left"
-      >
-        <div className="w-8 h-8 rounded-full grid place-items-center bg-white border border-[var(--ink)]/10 shrink-0">
-          <MapPin className="w-3.5 h-3.5 text-[var(--ink)]/60" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-[13px] font-semibold text-[var(--ink)] truncate flex items-center gap-1.5">
-            <span className="truncate">{e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}</span>
+              </>
+            )}
             {e.is_private_court && (
-              <span className="shrink-0 text-[8px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
-                {tr("Private", "Privada", "Privé")}
-              </span>
+              <>
+                <span className="text-[var(--ink)]/25">·</span>
+                <span className="font-semibold text-amber-800">{tr("Private", "Privada", "Privé")}</span>
+              </>
+            )}
+            {mine && (
+              <>
+                <span className="text-[var(--ink)]/25">·</span>
+                <span className={`font-semibold ${e.iAmHost ? "text-[var(--plum)]" : "text-[var(--ink)]/80"}`}>
+                  {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
+                </span>
+              </>
             )}
           </div>
-          <div className="text-[10px] text-[var(--ink)]/55 truncate">
-            {e.city || e.club_address || ""}
+
+          {/* Players + action */}
+          <div className="mt-3 flex items-center gap-2">
+            {slots.map((s, i) => (
+              <SlotAvatar
+                key={i}
+                slot={s}
+                tr={tr}
+                onJoin={() => onJoin(e)}
+                canJoin={!mine && !full}
+                isPending={isPending}
+              />
+            ))}
+            <button
+              type="button"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                if (e.iAmHost) onManage(e);
+                else if (mine || full) onOpen(e.id);
+                else onJoin(e);
+              }}
+              disabled={isPending}
+              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2 disabled:opacity-50"
+            >
+              {e.iAmHost
+                ? tr("Manage", "Gestionar", "Gérer")
+                : mine || full
+                  ? tr("Open", "Abrir", "Ouvrir")
+                  : tr("Join", "Unirme", "Rejoindre")}
+            </button>
           </div>
         </div>
-        <div className="text-right shrink-0">
-          {full ? (
-            <span className="text-[9px] uppercase tracking-widest font-bold text-[var(--ink)]/50">
-              {tr("Full", "Completo", "Complet")}
-            </span>
-          ) : (
-            <span className="text-[9px] uppercase tracking-widest font-bold text-[var(--plum)]">
-              {tr(`${e.needs} left`, `Faltan ${e.needs}`, `${e.needs} à combler`)}
-            </span>
-          )}
-          <div className="text-[9px] uppercase tracking-widest text-[var(--ink)]/45 mt-0.5">
-            {tr("90 min", "90 min", "90 min")}
-          </div>
-        </div>
-      </button>
+      </div>
     </div>
   );
 }
+
 
 function SlotAvatar({
   slot,
@@ -809,36 +818,31 @@ function SlotAvatar({
         type="button"
         disabled={!canJoin || isPending}
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
-        className="flex flex-col items-center gap-0.5 group"
-      >
-        <div className={`w-12 h-12 rounded-full grid place-items-center border-2 border-dashed transition ${
+        aria-label={tr("Open slot", "Plaza libre", "Place libre")}
+        className={`w-9 h-9 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
           canJoin
-            ? "border-[var(--plum)]/50 text-[var(--plum)] group-hover:bg-[var(--plum)]/8 group-hover:border-[var(--plum)]"
-            : "border-[var(--ink)]/20 text-[var(--ink)]/30"
-        } ${isPending ? "opacity-50" : ""}`}>
-          <Plus className="w-5 h-5" />
-        </div>
-        <span className={`text-[10px] uppercase tracking-widest font-semibold ${canJoin ? "text-[var(--plum)]" : "text-[var(--ink)]/40"}`}>
-          {canJoin ? tr("Join", "Unirme", "Rejoindre") : tr("Open", "Libre", "Libre")}
-        </span>
+            ? "border-[var(--plum)]/45 text-[var(--plum)] hover:bg-[var(--plum)]/8"
+            : "border-[var(--ink)]/25 text-[var(--ink)]/35"
+        } ${isPending ? "opacity-50" : ""}`}
+      >
+        <Plus className="w-4 h-4" />
       </button>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-0.5">
-      <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--ink)]/15 bg-[var(--ink)]/10 grid place-items-center">
-        {photo ? (
-          <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
-        ) : (
-          <span className="text-[13px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
-        )}
-      </div>
-      <span className="text-[10px] text-[var(--ink)]/70 truncate max-w-[64px]">
-        {name ?? "—"}
-      </span>
+    <div
+      title={name ?? ""}
+      className="w-9 h-9 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
+    >
+      {photo ? (
+        <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
+      ) : (
+        <span className="text-[12px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
+      )}
     </div>
   );
+
 }
 
 // ---------- Empty state ----------

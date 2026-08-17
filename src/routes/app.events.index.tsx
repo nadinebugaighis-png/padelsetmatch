@@ -65,6 +65,7 @@ type EventLite = {
   is_private_court?: boolean;
   host?: { first_name?: string } | null;
   participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
+  guests?: Array<{ id: string; display_name: string; level?: string | null }>;
 };
 
 type TimeOfDay = "all" | "morning" | "afternoon" | "evening";
@@ -142,7 +143,8 @@ function EventsPage() {
     if (e.club_name?.toLowerCase().includes(searchLower)) return true;
     if (e.city?.toLowerCase().includes(searchLower)) return true;
     if (e.club_address?.toLowerCase().includes(searchLower)) return true;
-    return e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower)) ?? false;
+    if (e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower))) return true;
+    return e.guests?.some((guest) => guest.display_name.toLowerCase().includes(searchLower)) ?? false;
   }
   function eventMatchesTime(iso: string) {
     if (timeOfDay === "all") return true;
@@ -623,7 +625,11 @@ function MatchCard({
   const mine = e.iAmHost || e.iAmParticipant;
   const full = e.filled >= 4;
 
-  const slots = Array.from({ length: 4 }, (_, i) => e.participants?.[i] ?? null);
+  const playerSlots = [
+    ...(e.participants ?? []).map((participant) => ({ participant })),
+    ...(e.guests ?? []).map((guest) => ({ guest })),
+  ];
+  const slots = Array.from({ length: 4 }, (_, i) => playerSlots[i] ?? null);
 
   // Today / Tomorrow badge for the date block
   const today = startOfDay(new Date());
@@ -766,14 +772,17 @@ function SlotAvatar({
   canJoin,
   isPending,
 }: {
-  slot: EventLite["participants"] extends Array<infer T> | undefined ? (T | null) : never;
+  slot: {
+    participant?: NonNullable<EventLite["participants"]>[number];
+    guest?: NonNullable<EventLite["guests"]>[number];
+  } | null;
   tr: ReturnType<typeof useTr>;
   onJoin: () => void;
   canJoin: boolean;
   isPending: boolean;
 }) {
-  const name = slot?.profiles?.first_name;
-  const photo = slot?.profiles?.photo_url;
+  const name = slot?.participant?.profiles?.first_name ?? slot?.guest?.display_name;
+  const photo = slot?.participant?.profiles?.photo_url;
 
   if (!slot) {
     return (

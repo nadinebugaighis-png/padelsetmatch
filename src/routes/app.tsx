@@ -264,10 +264,11 @@ function AuthShell() {
             <Link
               to="/app/grid"
               aria-label="PadelSetMatch — home"
-              className="hidden md:inline-flex lg:hidden items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] px-3 py-1.5 text-[13px] font-bold tracking-[0.16em] shadow-[0_2px_0_0_color-mix(in_oklab,var(--ink)_25%,transparent)]"
+              className="hidden md:inline-flex lg:hidden items-center"
             >
-              PSM
+              <img src={psmMonogram.url} alt="PSM" className="h-7 w-auto select-none" draggable={false} />
             </Link>
+
           </div>
           {hasProfile && !onOnboarding && (
             <nav className="hidden md:flex items-center gap-1 lg:gap-1.5 mx-1 lg:mx-4 flex-1 justify-center">

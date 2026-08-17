@@ -339,6 +339,13 @@ function GuestMatchRoom() {
         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">
           {tr("You're in", "Estás dentro", "Tu es inscrit·e")}
         </div>
+        <p className="text-xs text-[var(--ink)]/55 -mt-2">
+          {tr(
+            "Come back anytime with this link — or just your phone number on the match page.",
+            "Vuelve cuando quieras con este enlace — o con tu teléfono en la página del partido.",
+            "Reviens quand tu veux avec ce lien — ou avec ton téléphone sur la page du match.",
+          )}
+        </p>
 
         <button
           type="button"
@@ -346,14 +353,15 @@ function GuestMatchRoom() {
             const link = typeof window !== "undefined" ? window.location.href : "";
             try {
               if (navigator.share) await navigator.share({ url: link });
-              else { await navigator.clipboard.writeText(link); toast.success(tr("Private link copied — keep it to come back anytime.", "Enlace privado copiado — guárdalo para volver cuando quieras.", "Lien privé copié — garde-le pour revenir quand tu veux.")); }
+              else { await navigator.clipboard.writeText(link); toast.success(tr("Link copied — keep it to come back anytime.", "Enlace copiado — guárdalo para volver cuando quieras.", "Lien copié — garde-le pour revenir quand tu veux.")); }
             } catch { /* cancelled */ }
           }}
           className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-[11px] uppercase tracking-widest font-semibold text-[var(--ink)]/80 hover:bg-[var(--paper-2)] transition"
         >
           <Link2 className="w-3.5 h-3.5" />
-          {tr("Save my private link", "Guardar mi enlace privado", "Garder mon lien privé")}
+          {tr("Send this link to myself", "Enviarme este enlace", "M'envoyer ce lien")}
         </button>
+
         <MatchProgrammeCard match={match as never} />
 
         <div className="programme-card rounded-2xl p-4">

@@ -301,33 +301,10 @@ function GuestMatchRoom() {
           </button>
         </div>
 
-        <div className="programme-card rounded-2xl p-5 space-y-3">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">{tr("You're in", "Estás dentro", "Tu es inscrit·e")}</div>
-          <h1 className="text-2xl text-serif text-[var(--ink)] font-medium leading-tight">{match.club_name}</h1>
-          {match.club_address && <p className="text-xs text-[var(--ink)]/60">{match.club_address}</p>}
-
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ink)]/80 pt-2">
-            <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {fmtWhen(match.starts_at)}</span>
-            <span className="inline-flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {match.filled}/4 {openSpots > 0 && `· ${openSpots} ${tr("open", "libres", "libres")}`}</span>
-            {match.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {match.city}</span>}
-          </div>
-          <div className="flex flex-wrap gap-2 pt-1">
-            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{genderLabel}</span>
-            <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-[var(--paper-2)] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")} {match.level_min}–{match.level_max}</span>
-          </div>
-          {match.note && <p className="text-sm text-[var(--ink)]/80 whitespace-pre-wrap pt-2">{match.note}</p>}
-          <div className="pt-2">
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-2">{tr("Players", "Jugadores", "Joueurs")}</div>
-            <div className="flex flex-wrap gap-2">
-              {match.participant_names.map((name, i) => (
-                <div key={i} className="bg-[var(--paper-2)] border border-[var(--ink)]/10 rounded-full px-3 py-1.5 text-xs text-[var(--ink)]">{name}</div>
-              ))}
-              {Array.from({ length: openSpots }).map((_, i) => (
-                <div key={`o-${i}`} className="border border-dashed border-[var(--ink)]/30 rounded-full px-3 py-1.5 text-xs text-[var(--ink)]/50">{tr("Open", "Libre", "Libre")}</div>
-              ))}
-            </div>
-          </div>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">
+          {tr("You're in", "Estás dentro", "Tu es inscrit·e")}
         </div>
+        <MatchProgrammeCard match={match as never} />
 
         <div className="programme-card rounded-2xl p-4">
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-3">{tr("Match chat", "Chat del partido", "Chat du match")}</div>

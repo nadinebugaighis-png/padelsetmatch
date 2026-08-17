@@ -382,19 +382,19 @@ function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label
   return (
     <Link
       to={to}
-      className={`relative flex items-center gap-2 px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-semibold transition-colors ${
+      className={`relative flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 rounded-full text-[11px] md:text-xs lg:text-[13px] uppercase tracking-[0.12em] md:tracking-[0.13em] font-bold transition-all ${
         active
-          ? "bg-[var(--ink)] text-[var(--paper)]"
-          : "text-[var(--ink)]/70 hover:text-[var(--ink)] hover:bg-[var(--ink)]/5"
+          ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_2px_0_0_color-mix(in_oklab,var(--ink)_25%,transparent)]"
+          : "bg-[var(--paper)] text-[var(--ink)]/75 hover:text-[var(--ink)] border border-[var(--ink)]/12 hover:border-[var(--ink)]/25 hover:bg-[var(--paper)]"
       }`}
     >
       <span className="relative flex items-center">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[14px] h-3.5 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] font-bold flex items-center justify-center">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] md:min-w-[18px] h-4 md:h-4.5 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] md:text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
         )}
         {dot && !active && (!badge || badge <= 0) && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)]" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
         )}
       </span>
       <span>{label}</span>

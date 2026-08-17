@@ -132,3 +132,18 @@ export const listPublicUpcomingMatches = createServerFn({ method: "GET" })
       host_name: string | null;
     }>) ?? [];
   });
+
+// Recover a guest's access token for a match using the phone number they joined with.
+export const guestRecoverAccess = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ eventId: uuid, phone: z.string().trim().min(4).max(32) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const sb = guestClient();
+    const { data: res, error } = await sb.rpc("guest_recover_token" as never, {
+      _event_id: data.eventId,
+      _phone: data.phone,
+    } as never);
+    if (error) throw new Error(error.message);
+    return { token: (res as string | null) ?? null };
+  });

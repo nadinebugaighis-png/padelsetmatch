@@ -36,8 +36,8 @@ function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
+
 
   const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
@@ -276,13 +276,8 @@ function AuthPage() {
     navigate(afterAuthTarget() as never);
   };
 
-  if (!mounted) {
-    return (
-      <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md h-96 programme-card animate-pulse" />
-      </main>
-    );
-  }
+
+
 
   return (
     <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">

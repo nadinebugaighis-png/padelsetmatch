@@ -6,7 +6,7 @@ import { MapPin, Send, LogOut, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone, guestRecoverAccess } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestRecoverAccess } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
@@ -57,15 +57,11 @@ function GuestMatchRoom() {
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
-  const leaveByPhone = useServerFn(guestLeaveByPhone);
   const recover = useServerFn(guestRecoverAccess);
 
-  const [cancelMode, setCancelMode] = useState(false);
-  const [cancelPhone, setCancelPhone] = useState("");
-  const [cancelBusy, setCancelBusy] = useState(false);
-  const [recoverMode, setRecoverMode] = useState(false);
   const [recoverPhone, setRecoverPhone] = useState("");
   const [recoverBusy, setRecoverBusy] = useState(false);
+
 
   const [token, setToken] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -264,109 +260,52 @@ function GuestMatchRoom() {
             </div>
           </form>
 
-          {/* Already joined on another device? Recover access to the chat */}
-          <div className="mt-8 pt-6 border-t border-[var(--ink)]/10 text-center">
-            {!recoverMode ? (
+          {/* One simple way back in: phone number → your match (chat + leave button) */}
+          <div className="mt-8 pt-6 border-t border-[var(--ink)]/10">
+            <div className="text-center text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
+              {tr("Already joined?", "¿Ya te uniste?", "Déjà inscrit·e ?")}
+            </div>
+            <p className="mt-1 text-center text-xs text-[var(--ink)]/50">
+              {tr("Enter your phone to open the chat or cancel your spot.", "Escribe tu teléfono para abrir el chat o cancelar tu plaza.", "Entre ton téléphone pour ouvrir le chat ou annuler ta place.")}
+            </p>
+            <div className="mt-3 flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
+              <input
+                value={recoverPhone}
+                onChange={(e) => setRecoverPhone(e.target.value)}
+                inputMode="tel"
+                maxLength={32}
+                placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
+                className="flex-1 min-w-0 bg-transparent text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none py-2"
+              />
               <button
                 type="button"
-                onClick={() => setRecoverMode(true)}
-                className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)] underline"
-              >
-                {tr("Already joined? Open my match chat", "¿Ya te uniste? Abrir mi chat del partido", "Déjà inscrit·e ? Ouvrir mon chat du match")}
-              </button>
-            ) : (
-              <div className="flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
-                <input
-                  autoFocus
-                  value={recoverPhone}
-                  onChange={(e) => setRecoverPhone(e.target.value)}
-                  inputMode="tel"
-                  maxLength={32}
-                  placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
-                  onKeyDown={(e) => { if (e.key === "Escape") { setRecoverMode(false); setRecoverPhone(""); } }}
-                  className="flex-1 min-w-0 bg-transparent text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none py-2"
-                />
-                <button
-                  type="button"
-                  disabled={recoverBusy || recoverPhone.trim().length < 4}
-                  onClick={async () => {
-                    setRecoverBusy(true);
-                    try {
-                      const res = await recover({ data: { eventId, phone: recoverPhone.trim() } });
-                      if (res.token) {
-                        saveToken(eventId, res.token);
-                        putTokenInUrl(res.token);
-                        setToken(res.token);
-                        setRecoverMode(false);
-                        setRecoverPhone("");
-                        toast.success(tr("Welcome back 👋", "¡Bienvenido de nuevo 👋", "Content de te revoir 👋"));
-                      } else {
-                        toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
-                      }
-                    } catch (err) {
-                      toast.error(err instanceof Error ? err.message : tr("Could not open", "No se pudo abrir", "Impossible d'ouvrir"));
-                    } finally {
-                      setRecoverBusy(false);
+                disabled={recoverBusy || recoverPhone.trim().length < 4}
+                onClick={async () => {
+                  setRecoverBusy(true);
+                  try {
+                    const res = await recover({ data: { eventId, phone: recoverPhone.trim() } });
+                    if (res.token) {
+                      saveToken(eventId, res.token);
+                      putTokenInUrl(res.token);
+                      setToken(res.token);
+                      setRecoverPhone("");
+                      toast.success(tr("Welcome back 👋", "¡Bienvenido de nuevo 👋", "Content de te revoir 👋"));
+                    } else {
+                      toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
                     }
-                  }}
-                  className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
-                >
-                  {recoverBusy ? "…" : tr("Open", "Abrir", "Ouvrir")}
-                </button>
-              </div>
-            )}
+                  } catch (err) {
+                    toast.error(err instanceof Error ? err.message : tr("Could not open", "No se pudo abrir", "Impossible d'ouvrir"));
+                  } finally {
+                    setRecoverBusy(false);
+                  }
+                }}
+                className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
+              >
+                {recoverBusy ? "…" : tr("Open my match", "Abrir mi partido", "Ouvrir mon match")}
+              </button>
+            </div>
           </div>
 
-          {/* Cancel-my-spot: hidden by default, one subtle link → one inline input */}
-          <div className="mt-6 pt-6 border-t border-[var(--ink)]/10 text-center">
-            {!cancelMode ? (
-              <button
-                type="button"
-                onClick={() => setCancelMode(true)}
-                className="text-[11px] uppercase tracking-widest text-[var(--ink)]/45 hover:text-[var(--ink)]/80"
-              >
-                {tr("Already joined? Cancel my spot", "¿Ya te uniste? Cancelar mi plaza", "Déjà inscrit·e ? Annuler ma place")}
-              </button>
-            ) : (
-              <div className="flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
-                <input
-                  autoFocus
-                  value={cancelPhone}
-                  onChange={(e) => setCancelPhone(e.target.value)}
-                  inputMode="tel"
-                  maxLength={32}
-                  placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
-                  onKeyDown={(e) => { if (e.key === "Escape") { setCancelMode(false); setCancelPhone(""); } }}
-                  className="flex-1 min-w-0 bg-transparent text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none py-2"
-                />
-                <button
-                  type="button"
-                  disabled={cancelBusy || cancelPhone.trim().length < 4}
-                  onClick={async () => {
-                    setCancelBusy(true);
-                    try {
-                      const res = await leaveByPhone({ data: { eventId, phone: cancelPhone.trim() } });
-                      if (res.ok) {
-                        clearToken(eventId);
-                        toast.success(tr("Your spot has been cancelled. Thanks for letting the group know.", "Tu plaza ha sido cancelada. Gracias por avisar al grupo.", "Ta place a été annulée. Merci d'avoir prévenu le groupe."));
-                        setCancelMode(false);
-                        setCancelPhone("");
-                      } else {
-                        toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
-                      }
-                    } catch (err) {
-                      toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
-                    } finally {
-                      setCancelBusy(false);
-                    }
-                  }}
-                  className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
-                >
-                  {cancelBusy ? "…" : tr("Cancel", "Cancelar", "Annuler")}
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </main>
     );
@@ -400,6 +339,13 @@ function GuestMatchRoom() {
         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">
           {tr("You're in", "Estás dentro", "Tu es inscrit·e")}
         </div>
+        <p className="text-xs text-[var(--ink)]/55 -mt-2">
+          {tr(
+            "Come back anytime with this link — or just your phone number on the match page.",
+            "Vuelve cuando quieras con este enlace — o con tu teléfono en la página del partido.",
+            "Reviens quand tu veux avec ce lien — ou avec ton téléphone sur la page du match.",
+          )}
+        </p>
 
         <button
           type="button"
@@ -407,14 +353,15 @@ function GuestMatchRoom() {
             const link = typeof window !== "undefined" ? window.location.href : "";
             try {
               if (navigator.share) await navigator.share({ url: link });
-              else { await navigator.clipboard.writeText(link); toast.success(tr("Private link copied — keep it to come back anytime.", "Enlace privado copiado — guárdalo para volver cuando quieras.", "Lien privé copié — garde-le pour revenir quand tu veux.")); }
+              else { await navigator.clipboard.writeText(link); toast.success(tr("Link copied — keep it to come back anytime.", "Enlace copiado — guárdalo para volver cuando quieras.", "Lien copié — garde-le pour revenir quand tu veux.")); }
             } catch { /* cancelled */ }
           }}
           className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-[11px] uppercase tracking-widest font-semibold text-[var(--ink)]/80 hover:bg-[var(--paper-2)] transition"
         >
           <Link2 className="w-3.5 h-3.5" />
-          {tr("Save my private link", "Guardar mi enlace privado", "Garder mon lien privé")}
+          {tr("Send this link to myself", "Enviarme este enlace", "M'envoyer ce lien")}
         </button>
+
         <MatchProgrammeCard match={match as never} />
 
         <div className="programme-card rounded-2xl p-4">

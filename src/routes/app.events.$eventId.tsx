@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { getIsAdmin } from "@/lib/admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,6 +75,7 @@ function EventDetail() {
   const tr = useTr();
   const { label } = useI18n();
   const qc = useQueryClient();
+  const checkAdmin = useServerFn(getIsAdmin);
   const get = useServerFn(getMatchEvent);
   const join = useServerFn(joinMatchEvent);
   const leave = useServerFn(leaveMatchEvent);
@@ -124,6 +126,14 @@ function EventDetail() {
     retry: false,
     refetchOnWindowFocus: true,
   });
+
+  const isAdminQ = useQuery({
+    queryKey: ["is-admin"],
+    queryFn: () => checkAdmin(),
+    retry: false,
+    staleTime: 5 * 60_000,
+  });
+  const isAdmin = isAdminQ.data === true;
 
   const msgsQ = useQuery({
     queryKey: ["event-msgs", eventId],

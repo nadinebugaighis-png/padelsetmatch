@@ -332,7 +332,7 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     if (iAmHost && guests.length > 0) {
       const { data: contacts } = await supabase.rpc("host_get_guest_contacts" as never, { _event_id: data.id } as never);
       const phoneById = new Map<string, string>();
-      for (const c of (contacts as any[]) ?? []) phoneById.set(c.guest_id, c.phone);
+      for (const c of ((contacts ?? []) as unknown as any[])) phoneById.set(c.guest_id, c.phone);
       guests = guests.map((g: any) => ({ ...g, phone: phoneById.get(g.id) ?? null }));
     }
 

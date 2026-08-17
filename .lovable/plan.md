@@ -1,37 +1,27 @@
-## Goal
+# Guest privacy issue on match events
 
-Get the app to a clean, publish-ready state by removing every runtime dependency on `SUPABASE_SERVICE_ROLE_KEY` (which Lovable Cloud does not expose). Today the app throws "Missing Supabase environment variable(s): SUPABASE_SERVICE_ROLE_KEY" on several actions (push drain, some grid/feed lookups, coach, venues, match events, admin).
+## What's wrong
 
-## Approach
+Guests who join a match by link are stored with a private phone number and a secret session token (the credential that lets them return to the match chat without an account).
 
-For each `supabaseAdmin` call site, pick the smallest safe replacement:
+Confirmed by inspecting the database:
 
-1. **Reads the caller already owns** (their own hides/blocks/qa) → use `context.supabase` from `requireSupabaseAuth`. RLS already allows the owner to see these rows.
-2. **Reads that need to bypass RLS for a legitimate reason** (reciprocal hides/blocks, push outbox, aggregate counts) → add a `SECURITY DEFINER` SQL function with `REVOKE ALL ... FROM PUBLIC` + `GRANT EXECUTE TO authenticated` (or `service_role`-only for outbox drain). Call it via `context.supabase.rpc(...)`.
-3. **True admin ops** (bans, role grants, etc. in `admin.functions.ts`) → keep the admin import, but gate the whole function so it only runs for `has_role(..., 'admin')`. If Cloud truly can't run these, disable the UI paths behind a role check so end users never hit them.
+- Any signed-in player who is a participant or host of the same match can read the **whole** guest row through the public data API — including the guest's **phone number** and their **session token**.
+- The token is a bearer credential: whoever holds it can post messages, view the room, or leave the match **as that guest**.
+- The app's own screens only ever request name/level, so this is not visible in the UI — but the API allows it, so a curious user can pull it directly.
 
-## Files to touch
+Also confirmed: the phone number is promised to guests as "Only visible to the host", but today every co-participant can read it.
 
-- `src/lib/app.functions.ts` — reciprocal hides/blocks/qa lookups in `getDiscoverFeed` → new `SECURITY DEFINER` RPC `discover_exclusions(_me uuid)` returning the excluded profile ids.
-- `src/lib/notifications.functions.ts` — `drainPushOutbox` → SECURITY DEFINER RPC `claim_push_outbox(limit int)` that atomically marks rows sent and returns them; keep VAPID signing in Node (that part is fine).
-- `src/lib/coach.functions.ts` — replace remaining admin reads with authed RLS or the existing `coach_stats` / `open_coach_chat` RPCs.
-- `src/lib/venues.functions.ts` — replace admin reads with `shared_venues` / `venue_overlap_for_me` RPCs already in the DB.
-- `src/lib/match-events.functions.ts` — swap admin reads for authed `context.supabase` (participants + events already have RLS for members).
-- `src/lib/admin.functions.ts` — wrap every handler with a `has_role(userId, 'admin')` check before touching `supabaseAdmin`; if a specific op truly needs service role and Cloud blocks it, hide the UI action.
+## The fix
 
-## Migration
+1. **Stop exposing the secret columns.** Replace the blanket read permission on the guest table with a column-level permission that covers only: id, match event, display name, level, invited-by, created date. Phone and session token become unreadable through the data API by anyone except the backend.
+2. **Give the host back the phone number** through a dedicated backend function that checks the caller is the host of that match, and returns only the phone for that match's guests. The match page shows it to the host only.
+3. **Verify nothing breaks**: guest join, guest room/chat, guest cancel-by-phone, host lineup, Play feed guest avatars, and the admin views all continue to work — those already go through backend functions that run with elevated rights.
+4. Record the resolution in security memory once verified.
 
-One new migration adding:
-- `discover_exclusions(_me uuid)` SECURITY DEFINER, returns `setof uuid`.
-- `claim_push_outbox(_limit int)` SECURITY DEFINER, `UPDATE ... SET sent_at = now() WHERE id IN (SELECT ... FOR UPDATE SKIP LOCKED) RETURNING ...`.
-- `REVOKE ALL ... FROM PUBLIC, anon` and `GRANT EXECUTE ... TO authenticated` on both.
+## Technical notes
 
-## Verification
-
-- Reload `/app/grid`, `/app/connect`, `/app/matches`, `/app/events`, `/app/profile`, coach profile with endorsements, notification bell — confirm no "SERVICE_ROLE_KEY" errors in console.
-- Trigger a push (send a message) and confirm the outbox drains.
-- Run the security scan; publish.
-
-## Estimate
-
-Single pass, ~1 turn of edits + 1 migration. After this the app should be publish-ready with no service-role dependency at runtime.
+- Migration: `REVOKE SELECT ON public.guest_participants FROM authenticated, anon;` then `GRANT SELECT (id, match_event_id, display_name, level, invited_by_profile_id, created_at) ON public.guest_participants TO authenticated;` (keep `service_role` full). Existing RLS policy `Event participants can view guests` stays as the row filter.
+- New `SECURITY DEFINER` function `host_get_guest_contacts(_event_id uuid)` returning `guest_id, display_name, phone`, guarded by `host_profile_id = my_profile_id()`, with `EXECUTE` granted to `authenticated` only.
+- `src/lib/match-events.functions.ts` already selects only safe columns in `listMatchEvents` and `getMatchEvent`, so no query changes are needed there; add a thin server fn wrapping the new RPC and surface phones in the host lineup on `src/routes/app.events.$eventId.tsx`.
+- `guest_*` RPCs are `SECURITY DEFINER` and validate the token internally, so they are unaffected by the revoke.

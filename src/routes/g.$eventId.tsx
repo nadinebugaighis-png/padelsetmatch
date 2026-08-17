@@ -197,7 +197,14 @@ function GuestMatchRoom() {
                 placeholder="Alex" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+                {preview && (
+                  <span className="text-[10px] uppercase tracking-widest text-[var(--gold)] font-semibold">
+                    {tr("Match level", "Nivel del partido", "Niveau du match")}: {preview.level_min === preview.level_max ? preview.level_min : `${preview.level_min} – ${preview.level_max}`}
+                  </span>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {PADEL_LEVELS.map((lvl) => (
                   <button key={lvl} type="button" onClick={() => setLevel(lvl)}

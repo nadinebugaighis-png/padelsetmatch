@@ -302,7 +302,13 @@ export const getMatchEvent = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!event) return { event: null };
-    const filled = (event.participants?.length ?? 0) + (event.extra_confirmed ?? 0);
+    const { data: guestsRaw } = await supabase
+      .from("guest_participants")
+      .select("id, display_name, level, created_at")
+      .eq("match_event_id", data.id)
+      .order("created_at", { ascending: true });
+    const guests = guestsRaw ?? [];
+    const filled = (event.participants?.length ?? 0) + guests.length + (event.extra_confirmed ?? 0);
     const iAmHost = !!profile && event.host_profile_id === profile.id;
     const iAmParticipant = !!profile && ((event.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
 
@@ -314,9 +320,10 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
 
     return {
-      event: { ...event, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
+      event: { ...event, guests, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
       me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
     };
+
 
   });
 

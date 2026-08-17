@@ -276,6 +276,14 @@ function AuthPage() {
     navigate(afterAuthTarget() as never);
   };
 
+  if (!mounted) {
+    return (
+      <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md h-96 programme-card animate-pulse" />
+      </main>
+    );
+  }
+
   return (
     <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md programme-card p-8 sm:p-10">

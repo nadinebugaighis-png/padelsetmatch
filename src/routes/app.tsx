@@ -327,15 +327,14 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav
-          className="fixed left-0 right-0 programme-nav z-40 lg:hidden"
+          className="fixed left-0 right-0 bottom-0 programme-nav z-40 lg:hidden"
           style={{
-            bottom: bottomOverlay,
-            paddingBottom: bottomOverlay > 0 ? 0 : "max(env(safe-area-inset-bottom, 0px), 8px)",
+            paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)",
             transform: "translateZ(0)",
             WebkitTransform: "translateZ(0)",
-            willChange: "transform",
           }}
         >
+
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
             <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
             <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />

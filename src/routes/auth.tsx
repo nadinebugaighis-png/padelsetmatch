@@ -126,6 +126,15 @@ function AuthPage() {
             },
           );
           navigate(signupTarget() as never);
+          // Safety net: if client routing stalls (slow network, hydration race),
+          // force a real navigation so the user never sits on a frozen screen.
+          const target = signupTarget();
+          window.setTimeout(() => {
+            if (window.location.pathname.startsWith("/auth")) {
+              window.location.assign(target.to);
+            }
+          }, 2500);
+
 
 
 

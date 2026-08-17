@@ -559,12 +559,13 @@ export const listEventMessages = createServerFn({ method: "POST" })
     const { supabase } = context;
     const { data: msgs, error } = await supabase
       .from("match_event_messages")
-      .select("id, sender_profile_id, body, created_at, edited_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url)")
+      .select("id, sender_profile_id, guest_id, body, created_at, edited_at, sender:profiles!match_event_messages_sender_profile_id_fkey(first_name, photo_url), guest:guest_participants(display_name)")
       .eq("match_event_id", data.id)
       .order("created_at", { ascending: true })
       .limit(200);
     if (error) throw new Error(error.message);
     return { messages: msgs ?? [] };
+
   });
 
 export const sendEventMessage = createServerFn({ method: "POST" })

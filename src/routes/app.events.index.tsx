@@ -525,7 +525,10 @@ function EventsPage() {
         )}
 
         {/* Sticky Start-a-match pill */}
-        <div className="fixed left-0 right-0 bottom-20 px-5 z-30 pointer-events-none">
+        <div
+          className="fixed left-0 right-0 px-5 z-30 pointer-events-none lg:bottom-6"
+          style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 104px)" }}
+        >
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pointer-events-auto flex justify-center">
             <button
               type="button"

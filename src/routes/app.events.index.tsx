@@ -171,14 +171,6 @@ function EventsPage() {
     [all, searchLower, selectedDays, timeOfDay, levelOnly, myLevel],
   );
 
-  const forYourLevel = useMemo(
-    () => (myLevel ? filtered.filter(eventMatchesLevel) : []),
-    [filtered, myLevel],
-  );
-  const others = useMemo(
-    () => (myLevel ? filtered.filter((e) => !eventMatchesLevel(e)) : filtered),
-    [filtered, myLevel],
-  );
 
   const myEvents = useMemo(
     () => all

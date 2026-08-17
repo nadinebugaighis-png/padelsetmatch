@@ -278,11 +278,27 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     }
 
     const merged = Array.from(eventsMap.values()).sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
+    const eventIds = merged.map((event: any) => event.id);
+    const guestsByEvent = new Map<string, any[]>();
+    if (eventIds.length > 0) {
+      const { data: guests, error: guestsError } = await supabase
+        .from("guest_participants")
+        .select("id, match_event_id, display_name, level, created_at")
+        .in("match_event_id", eventIds)
+        .order("created_at", { ascending: true });
+      if (guestsError) throw new Error(guestsError.message);
+      for (const guest of guests ?? []) {
+        const current = guestsByEvent.get(guest.match_event_id) ?? [];
+        current.push(guest);
+        guestsByEvent.set(guest.match_event_id, current);
+      }
+    }
     const list = merged.map((e: any) => {
-      const filled = (e.participants?.length ?? 0) + (e.extra_confirmed ?? 0);
+      const guests = guestsByEvent.get(e.id) ?? [];
+      const filled = (e.participants?.length ?? 0) + guests.length + (e.extra_confirmed ?? 0);
       const iAmHost = !!profile && e.host_profile_id === profile.id;
       const iAmParticipant = !!profile && ((e.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
-      return { ...e, filled, needs: Math.max(0, 4 - filled), iAmHost, iAmParticipant };
+      return { ...e, guests, filled, needs: Math.max(0, 4 - filled), iAmHost, iAmParticipant };
     });
     return { events: data.needs ? list.filter((e) => e.needs === data.needs) : list };
   });

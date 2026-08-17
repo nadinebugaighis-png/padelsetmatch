@@ -10,7 +10,7 @@ import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
-import psmMonogram from "@/assets/psm-monogram.jpg.asset.json";
+import psmMonogram from "@/assets/psm-logo.png.asset.json";
 
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -268,7 +268,7 @@ function AuthShell() {
               aria-label="PadelSetMatch — home"
               className="hidden md:inline-flex lg:hidden items-center"
             >
-              <img src={psmMonogram.url} alt="PSM" className="h-7 w-auto select-none" draggable={false} />
+              <img src={psmMonogram.url} alt="PSM" className="h-8 w-auto select-none" draggable={false} />
             </Link>
 
           </div>

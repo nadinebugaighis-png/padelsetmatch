@@ -255,12 +255,12 @@ function AuthShell() {
   const isAdmin = adminQ.data === true;
 
   return (
-    <div className="min-h-screen pb-24 lg:pb-0 programme-page">
-      <div className="lg:sticky lg:top-0 lg:z-40 lg:bg-[var(--paper)]/95 lg:backdrop-blur lg:border-b lg:border-[var(--ink)]/10">
-        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 lg:border-b-0 gap-3 max-w-7xl mx-auto w-full">
+    <div className="min-h-screen pb-24 md:pb-0 programme-page">
+      <div className="md:sticky md:top-0 md:z-40 md:bg-[var(--paper)]/95 md:backdrop-blur md:border-b md:border-[var(--ink)]/10">
+        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 md:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
-            <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
+            <nav className="hidden md:flex items-center gap-1 mx-2 lg:mx-4 flex-1 justify-center">
               <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
               <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
               <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
@@ -327,7 +327,7 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav
-          className="fixed left-0 right-0 programme-nav z-40 lg:hidden"
+          className="fixed left-0 right-0 programme-nav z-40 md:hidden"
           style={{
             bottom: bottomOverlay,
             paddingBottom: bottomOverlay > 0 ? 0 : "max(env(safe-area-inset-bottom, 0px), 8px)",

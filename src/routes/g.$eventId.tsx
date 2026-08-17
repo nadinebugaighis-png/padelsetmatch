@@ -6,7 +6,7 @@ import { MapPin, Send, LogOut, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone, guestRecoverAccess } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestRecoverAccess } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 

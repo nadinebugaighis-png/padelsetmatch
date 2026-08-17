@@ -2,11 +2,11 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { MapPin, Users, Share2, Calendar, Clock } from "lucide-react";
+import { MapPin, Users, Share2, Calendar, Clock, Plus } from "lucide-react";
 import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useTr } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 
 
 const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/dbc7c0f5-88b1-4692-9b4e-c13975074410/padel-share-logo.jpg";

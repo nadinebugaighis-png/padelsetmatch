@@ -57,15 +57,11 @@ function GuestMatchRoom() {
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
-  const leaveByPhone = useServerFn(guestLeaveByPhone);
   const recover = useServerFn(guestRecoverAccess);
 
-  const [cancelMode, setCancelMode] = useState(false);
-  const [cancelPhone, setCancelPhone] = useState("");
-  const [cancelBusy, setCancelBusy] = useState(false);
-  const [recoverMode, setRecoverMode] = useState(false);
   const [recoverPhone, setRecoverPhone] = useState("");
   const [recoverBusy, setRecoverBusy] = useState(false);
+
 
   const [token, setToken] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);

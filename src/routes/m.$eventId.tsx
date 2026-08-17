@@ -38,16 +38,26 @@ export const Route = createFileRoute("/m/$eventId")({
   component: PublicMatchPage,
 });
 
-function whenParts(iso: string) {
+function whenParts(iso: string, locale?: string) {
   const d = new Date(iso);
   return {
-    weekday: d.toLocaleDateString(undefined, { weekday: "short" }).replace(".", ""),
-    day: d.toLocaleDateString(undefined, { day: "numeric" }),
-    month: d.toLocaleDateString(undefined, { month: "short" }).replace(".", ""),
-    time: d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
+    weekday: d.toLocaleDateString(locale, { weekday: "short" }).replace(".", ""),
+    day: d.toLocaleDateString(locale, { day: "numeric" }),
+    month: d.toLocaleDateString(locale, { month: "short" }).replace(".", ""),
+    time: d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false }),
   };
 }
 
+function startOfDay(d: Date) {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+
+type TimeOfDay = "morning" | "afternoon" | "evening";
+function timeOfDay(hour: number): TimeOfDay {
+  return hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
+}
 
 function shareOrigin() {
   if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
@@ -63,6 +73,7 @@ function PublicMatchPage() {
   const { i: inviteToken } = Route.useSearch();
   const navigate = useNavigate();
   const tr = useTr();
+  const { lang } = useI18n();
   const getPublic = useServerFn(getPublicMatch);
   const claimInvite = useServerFn(claimMatchInviteByToken);
   const [hasSession, setHasSession] = useState<boolean | null>(null);

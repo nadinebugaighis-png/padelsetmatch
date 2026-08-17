@@ -525,7 +525,7 @@ function EventsPage() {
         )}
 
         {/* Sticky Start-a-match pill */}
-        <div className="fixed left-0 right-0 bottom-20 px-5 z-30 pointer-events-none">
+        <div className="fixed left-0 right-0 bottom-20 md:bottom-6 px-5 z-30 pointer-events-none">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pointer-events-auto flex justify-center">
             <button
               type="button"

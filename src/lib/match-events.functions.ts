@@ -16,30 +16,43 @@ export const searchClubs = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
-    const GOOGLE_MAPS_API_KEY =
-      process.env.GOOGLE_MAPS_API_KEY_1 || process.env.GOOGLE_MAPS_API_KEY;
-    if (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY) return { results: [] as ClubResult[] };
+    // Some project keys are restricted to browser referrers and reject server-side
+    // calls with 403 API_KEY_HTTP_REFERRER_BLOCKED. Try every available key.
+    const KEYS = Array.from(
+      new Set(
+        [process.env.GOOGLE_MAPS_API_KEY, process.env.GOOGLE_MAPS_API_KEY_1].filter(
+          (k): k is string => !!k,
+        ),
+      ),
+    );
+    if (!LOVABLE_API_KEY || KEYS.length === 0) return { results: [] as ClubResult[] };
 
     const runQuery = async (textQuery: string): Promise<ClubResult[]> => {
-      const body: Record<string, unknown> = { textQuery, maxResultCount: 8 };
+      const body: Record<string, unknown> = { textQuery, maxResultCount: 8, languageCode: "es" };
       if (data.near) {
         body.locationBias = {
           circle: { center: { latitude: data.near.lat, longitude: data.near.lng }, radius: 50000 },
         };
       }
       try {
-        const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchText`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
-            "Content-Type": "application/json",
-            "X-Goog-FieldMask":
-              "places.id,places.displayName,places.formattedAddress,places.location,places.addressComponents",
-          },
-          body: JSON.stringify(body),
-        });
-        if (!res.ok) return [];
+        let res: Response | null = null;
+        for (const key of KEYS) {
+          res = await fetch(`${GATEWAY_URL}/places/v1/places:searchText`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "X-Connection-Api-Key": key,
+              Referer: "https://padelsetmatch.com/",
+              "Content-Type": "application/json",
+              "X-Goog-FieldMask":
+                "places.id,places.displayName,places.formattedAddress,places.location,places.addressComponents",
+            },
+            body: JSON.stringify(body),
+          });
+          if (res.ok) break;
+          console.error(`Places search failed [${res.status}]: ${await res.clone().text()}`);
+        }
+        if (!res || !res.ok) return [];
         const json = await res.json() as {
           places?: Array<{
             id: string;

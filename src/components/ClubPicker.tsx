@@ -76,9 +76,17 @@ export function ClubPicker({ value, onChange }: Props) {
         onChange={(e) => setQ(e.target.value)}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
-        placeholder={tr("Search padel club (e.g. La Moraleja)", "Buscar club de pádel (p. ej. La Moraleja)", "Chercher un club de padel (p. ex. La Moraleja)")}
+        placeholder={tr("Search any club or city (e.g. La Moraleja, Marbella)", "Busca cualquier club o ciudad (p. ej. La Moraleja, Marbella)", "Cherche n'importe quel club ou ville (p. ex. La Moraleja, Marbella)")}
         className="w-full bg-black/30 border border-[var(--cream)]/20 rounded-lg px-3 py-2.5 text-[var(--cream)] placeholder:text-[var(--cream)]/40 focus:outline-none focus:border-[var(--cream)]"
       />
+      <p className="mt-1 text-[11px] text-[var(--cream)]/50">
+        {tr(
+          "Anywhere in the world — add the city to narrow it down.",
+          "En cualquier parte del mundo: añade la ciudad para afinar.",
+          "Partout dans le monde — ajoute la ville pour affiner.",
+        )}
+      </p>
+
       {loading && (
         <Loader2 className="w-4 h-4 animate-spin absolute right-3 top-3 text-[var(--cream)]/60" />
       )}

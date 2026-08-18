@@ -82,22 +82,139 @@ export const searchClubs = createServerFn({ method: "POST" })
       }
     };
 
+    // Google-Maps-style suggestions: autocomplete tolerates typos and partial words.
+    const runAutocomplete = async (input: string): Promise<ClubResult[]> => {
+      const body: Record<string, unknown> = { input, languageCode: "es" };
+      if (data.near) {
+        body.locationBias = {
+          circle: { center: { latitude: data.near.lat, longitude: data.near.lng }, radius: 50000 },
+        };
+      }
+      try {
+        let res: Response | null = null;
+        for (const key of KEYS) {
+          res = await fetch(`${GATEWAY_URL}/places/v1/places:autocomplete`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "X-Connection-Api-Key": key,
+              Referer: "https://padelsetmatch.com/",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+          if (res.ok) break;
+          console.error(`Places autocomplete failed [${res.status}]: ${await res.clone().text()}`);
+        }
+        if (!res || !res.ok) return [];
+        const json = (await res.json()) as {
+          suggestions?: Array<{
+            placePrediction?: {
+              placeId?: string;
+              text?: { text?: string };
+              structuredFormat?: { mainText?: { text?: string }; secondaryText?: { text?: string } };
+            };
+          }>;
+        };
+        return (json.suggestions ?? [])
+          .map((s) => s.placePrediction)
+          .filter((p): p is NonNullable<typeof p> => !!p?.placeId)
+          .map((p) => ({
+            place_id: p.placeId!,
+            name: p.structuredFormat?.mainText?.text ?? p.text?.text ?? "",
+            address: p.structuredFormat?.secondaryText?.text ?? "",
+            lat: null,
+            lng: null,
+            city: "",
+            country: "",
+          }));
+      } catch {
+        return [];
+      }
+    };
+
     // Search the exact text the user typed AND a padel-biased variant, then merge.
     const q = data.query.trim();
-    const [exact, padel] = await Promise.all([
+    const [exact, padel, suggestions, rawSuggestions] = await Promise.all([
       runQuery(q),
       runQuery(/p[áa]del/i.test(q) ? `${q} club` : `${q} padel`),
+      runAutocomplete(/p[áa]del/i.test(q) ? q : `${q} padel`),
+      runAutocomplete(q),
     ]);
 
     const seen = new Set<string>();
     const results: ClubResult[] = [];
-    for (const r of [...padel, ...exact]) {
+    for (const r of [...suggestions, ...padel, ...exact, ...rawSuggestions]) {
       if (!r.place_id || seen.has(r.place_id)) continue;
       seen.add(r.place_id);
       results.push(r);
     }
-    return { results: results.slice(0, 10) };
+    return { results: results.slice(0, 12) };
   });
+
+// Resolve a place picked from autocomplete (no coords/city yet) into full details.
+export const getClubDetails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { place_id: string }) =>
+    z.object({ place_id: z.string().min(3).max(300) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+    const KEYS = Array.from(
+      new Set(
+        [process.env.GOOGLE_MAPS_API_KEY, process.env.GOOGLE_MAPS_API_KEY_1].filter(
+          (k): k is string => !!k,
+        ),
+      ),
+    );
+    if (!LOVABLE_API_KEY || KEYS.length === 0) return { result: null as ClubResult | null };
+    try {
+      let res: Response | null = null;
+      for (const key of KEYS) {
+        res = await fetch(
+          `${GATEWAY_URL}/places/v1/places/${encodeURIComponent(data.place_id.replace(/^places\//, ""))}`,
+          {
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "X-Connection-Api-Key": key,
+              Referer: "https://padelsetmatch.com/",
+              "X-Goog-FieldMask":
+                "id,displayName,formattedAddress,location,addressComponents",
+            },
+          },
+        );
+        if (res.ok) break;
+        console.error(`Place details failed [${res.status}]: ${await res.clone().text()}`);
+      }
+      if (!res || !res.ok) return { result: null as ClubResult | null };
+      const p = (await res.json()) as {
+        id: string;
+        displayName?: { text?: string };
+        formattedAddress?: string;
+        location?: { latitude: number; longitude: number };
+        addressComponents?: Array<{ types: string[]; longText: string }>;
+      };
+      const city =
+        p.addressComponents?.find((c) => c.types?.includes("locality"))?.longText ??
+        p.addressComponents?.find((c) => c.types?.includes("administrative_area_level_2"))?.longText ??
+        "";
+      const country = p.addressComponents?.find((c) => c.types?.includes("country"))?.longText ?? "";
+      return {
+        result: {
+          place_id: p.id,
+          name: p.displayName?.text ?? "",
+          address: p.formattedAddress ?? "",
+          lat: p.location?.latitude ?? null,
+          lng: p.location?.longitude ?? null,
+          city,
+          country,
+        } as ClubResult,
+      };
+    } catch {
+      return { result: null as ClubResult | null };
+    }
+  });
+
 
 
 export type ClubResult = {

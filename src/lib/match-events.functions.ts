@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
+import { locationMatchKeywords } from "./location-matching";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 
@@ -325,26 +326,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
-    const rawLocs = (profile?.locations ?? []).filter((l): l is string => typeof l === "string" && l.length > 0);
-    // Locations are typically stored as "Country | Region | City". Some rows
-    // concatenate multiple locations without a separator, e.g.
-    // "Spain | Madrid | La Moraleja Spain | Madrid | Alcobendas". Walk in
-    // groups of 3 and collect BOTH the region (segment 2) and sub-area
-    // (segment 3) as keywords so nearby suburbs still match.
-    const keywords = new Set<string>();
-    for (const raw of rawLocs) {
-      const parts = raw.split("|").map((s) => s.trim()).filter(Boolean);
-      if (parts.length === 1) { keywords.add(parts[0]); continue; }
-      for (let i = 0; i < parts.length; i += 3) {
-        const country = parts[i];
-        const region = parts[i + 1];
-        const subcity = parts[i + 2];
-        if (region) keywords.add(region);
-        if (subcity) keywords.add(subcity);
-        if (!region && !subcity && country) keywords.add(country);
-      }
-    }
-    const myKeywords = Array.from(keywords);
+    const myKeywords = locationMatchKeywords(profile?.locations);
 
     const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))";

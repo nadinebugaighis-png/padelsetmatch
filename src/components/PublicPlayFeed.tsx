@@ -1,24 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { listPublicUpcomingMatches } from "@/lib/guest.functions";
 import { useTr } from "@/lib/i18n";
-
-export const Route = createFileRoute("/play")({
-  head: () => ({
-    meta: [
-      { title: "Open padel matches near you — PadelSetMatch" },
-      { name: "description", content: "Browse open padel matches in your city. Join a spot in one tap — no account required." },
-      { property: "og:title", content: "Open padel matches near you — PadelSetMatch" },
-      { property: "og:description", content: "Browse open padel matches in your city. Join a spot in one tap — no account required." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-  component: PublicPlayFeed,
-});
 
 function fmtDay(iso: string) {
   return new Date(iso).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short" });
@@ -27,23 +13,46 @@ function fmtTime(iso: string) {
   return new Date(iso).toLocaleString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
-function PublicPlayFeed() {
+export type PublicMatch = Awaited<ReturnType<typeof listPublicUpcomingMatches>>[number];
+
+export function PublicPlayFeed({
+  initialData,
+  city,
+  heading,
+  intro,
+}: {
+  initialData?: PublicMatch[];
+  /** When set, the feed is pre-filtered server-side to this city. */
+  city?: string;
+  heading?: string;
+  intro?: string;
+}) {
   const tr = useTr();
   const listFn = useServerFn(listPublicUpcomingMatches);
-  const q = useQuery({ queryKey: ["public-upcoming-matches"], queryFn: () => listFn({ data: { limit: 60 } }) });
+  const q = useQuery({
+    queryKey: ["public-upcoming-matches", city ?? "all"],
+    queryFn: () => listFn({ data: { limit: 60 } }),
+    initialData,
+  });
   const [search, setSearch] = useState("");
 
+  const cityFiltered = useMemo(() => {
+    const list = (q.data ?? []) as PublicMatch[];
+    if (!city) return list;
+    const c = city.toLowerCase();
+    return list.filter((m) => `${m.city ?? ""} ${m.club_address ?? ""} ${m.club_name ?? ""}`.toLowerCase().includes(c));
+  }, [q.data, city]);
+
   const filtered = useMemo(() => {
-    const list = q.data ?? [];
     const s = search.trim().toLowerCase();
-    if (!s) return list;
-    return list.filter((m) =>
+    if (!s) return cityFiltered;
+    return cityFiltered.filter((m) =>
       `${m.club_name ?? ""} ${m.city ?? ""} ${m.club_address ?? ""} ${m.host_name ?? ""}`.toLowerCase().includes(s),
     );
-  }, [q.data, search]);
+  }, [cityFiltered, search]);
 
   const byDay = useMemo(() => {
-    const map = new Map<string, typeof filtered>();
+    const map = new Map<string, PublicMatch[]>();
     filtered.forEach((m) => {
       const key = new Date(m.starts_at).toDateString();
       const arr = map.get(key) ?? [];
@@ -66,10 +75,10 @@ function PublicPlayFeed() {
         <div className="mt-6">
           <div className="text-[10px] uppercase tracking-widest text-[var(--grass)]">{tr("Open matches", "Partidos abiertos", "Matches ouverts")}</div>
           <h1 className="text-3xl text-[var(--cream)] font-medium mt-1 leading-tight">
-            {tr("Find a padel match near you.", "Encuentra un partido cerca.", "Trouve un match près de toi.")}
+            {heading ?? tr("Find a padel match near you.", "Encuentra un partido cerca.", "Trouve un match près de toi.")}
           </h1>
           <p className="text-sm text-[var(--cream)]/70 mt-2">
-            {tr("Tap any match to join a spot as a guest — no account needed.", "Toca un partido para unirte como invitado — sin cuenta.", "Touche un match pour rejoindre en invité — sans compte.")}
+            {intro ?? tr("Tap any match to join a spot as a guest — no account needed.", "Toca un partido para unirte como invitado — sin cuenta.", "Touche un match pour rejoindre en invité — sans compte.")}
           </p>
         </div>
 
@@ -85,7 +94,10 @@ function PublicPlayFeed() {
         {!q.isLoading && filtered.length === 0 && (
           <div className="mt-10 text-center text-[var(--cream)]/60 text-sm">
             {tr("No matches found. Try another search or sign up to create your own.", "Sin partidos. Prueba otra búsqueda o crea uno.", "Aucun match. Essaie une autre recherche ou crée le tien.")}
-            <div className="mt-4"><Link to="/auth" className="underline text-[var(--cream)]">{tr("Create a match", "Crear un partido", "Créer un match")}</Link></div>
+            <div className="mt-4 flex flex-col gap-2 items-center">
+              <Link to="/auth" className="underline text-[var(--cream)]">{tr("Create a match", "Crear un partido", "Créer un match")}</Link>
+              {city && <Link to="/play" className="underline text-[var(--cream)]/70">{tr("See all cities", "Ver todas las ciudades", "Voir toutes les villes")}</Link>}
+            </div>
           </div>
         )}
 

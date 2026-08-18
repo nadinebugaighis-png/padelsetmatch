@@ -640,7 +640,7 @@ function Onboarding() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Location", "Ubicación", "Lieu")} {i + 1}</span>
                       {locBlocks.length > 1 && (
-                        <button type="button" onClick={() => removeBlock(i)} className="text-[var(--ink)]/70 hover:text-[var(--clay)]">
+                        <button type="button" onClick={() => removeBlock(i)} aria-label={tr("Remove this location", "Eliminar esta ubicación", "Supprimer ce lieu")} className="text-[var(--ink)]/70 hover:text-[var(--clay)]">
                           <X className="w-4 h-4" />
                         </button>
                       )}
@@ -721,7 +721,7 @@ function Onboarding() {
                                 placeholder={`${tr("Area", "Zona", "Zone")} ${ai + 1} (${tr("optional", "opcional", "optionnel")})`}
                               />
                               {a && (
-                                <button type="button" onClick={() => updateArea(i, ai, "")} className="text-[var(--ink)]/70 hover:text-[var(--clay)] px-2">
+                                <button type="button" onClick={() => updateArea(i, ai, "")} aria-label={tr("Clear this area", "Borrar esta zona", "Effacer cette zone")} className="text-[var(--ink)]/70 hover:text-[var(--clay)] px-2">
                                   <X className="w-4 h-4" />
                                 </button>
                               )}

@@ -40,7 +40,12 @@ export const Route = createFileRoute("/free-padel-courts")({
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
-    links: [{ rel: "canonical", href: URL }],
+    links: [
+      { rel: "canonical", href: URL },
+      { rel: "alternate", hrefLang: "en", href: URL },
+      { rel: "alternate", hrefLang: "es-ES", href: "https://padelsetmatch.com/pistas-de-padel-gratis" },
+      { rel: "alternate", hrefLang: "x-default", href: URL },
+    ],
     scripts: [
       {
         type: "application/ld+json",

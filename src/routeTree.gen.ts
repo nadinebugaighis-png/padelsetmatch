@@ -22,6 +22,7 @@ import { Route as DemoRouteImport } from './routes/demo'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlayIndexRouteImport } from './routes/play.index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as SCodeRouteImport } from './routes/s.$code'
 import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
@@ -112,6 +113,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PlayIndexRoute = PlayIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PlayRoute,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
@@ -249,7 +255,7 @@ export interface FileRoutesByFullPath {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
-  '/play': typeof PlayRoute
+  '/play': typeof PlayRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
+  '/play/': typeof PlayIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -288,7 +295,6 @@ export interface FileRoutesByTo {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
-  '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -311,6 +317,7 @@ export interface FileRoutesByTo {
   '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
   '/app': typeof AppIndexRoute
+  '/play': typeof PlayIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -329,7 +336,7 @@ export interface FileRoutesById {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
-  '/play': typeof PlayRoute
+  '/play': typeof PlayRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -352,6 +359,7 @@ export interface FileRoutesById {
   '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
+  '/play/': typeof PlayIndexRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -394,6 +402,7 @@ export interface FileRouteTypes {
     | '/preview/player-card-v2'
     | '/s/$code'
     | '/app/'
+    | '/play/'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -410,7 +419,6 @@ export interface FileRouteTypes {
     | '/free-padel-courts'
     | '/how-it-works'
     | '/padel-cerca-de-mi'
-    | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -433,6 +441,7 @@ export interface FileRouteTypes {
     | '/preview/player-card-v2'
     | '/s/$code'
     | '/app'
+    | '/play'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -473,6 +482,7 @@ export interface FileRouteTypes {
     | '/preview/player-card-v2'
     | '/s/$code'
     | '/app/'
+    | '/play/'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -491,7 +501,7 @@ export interface RootRouteChildren {
   FreePadelCourtsRoute: typeof FreePadelCourtsRoute
   HowItWorksRoute: typeof HowItWorksRoute
   PadelCercaDeMiRoute: typeof PadelCercaDeMiRoute
-  PlayRoute: typeof PlayRoute
+  PlayRoute: typeof PlayRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -600,6 +610,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/play/': {
+      id: '/play/'
+      path: '/'
+      fullPath: '/play/'
+      preLoaderRoute: typeof PlayIndexRouteImport
+      parentRoute: typeof PlayRoute
     }
     '/app/': {
       id: '/app/'
@@ -838,6 +855,16 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface PlayRouteChildren {
+  PlayIndexRoute: typeof PlayIndexRoute
+}
+
+const PlayRouteChildren: PlayRouteChildren = {
+  PlayIndexRoute: PlayIndexRoute,
+}
+
+const PlayRouteWithChildren = PlayRoute._addFileChildren(PlayRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
@@ -846,7 +873,7 @@ const rootRouteChildren: RootRouteChildren = {
   FreePadelCourtsRoute: FreePadelCourtsRoute,
   HowItWorksRoute: HowItWorksRoute,
   PadelCercaDeMiRoute: PadelCercaDeMiRoute,
-  PlayRoute: PlayRoute,
+  PlayRoute: PlayRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

@@ -235,6 +235,7 @@ function Landing() {
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70 flex-wrap">
             <Link to="/padel-cerca-de-mi" className="hover:text-[var(--paper)]">Pádel cerca de mí</Link>
             <Link to="/free-padel-courts" className="hover:text-[var(--paper)]">Free padel courts</Link>
+            <Link to="/pistas-de-padel-gratis" className="hover:text-[var(--paper)]">Pistas de pádel gratis</Link>
 
             <Link to="/how-it-works" className="hover:text-[var(--paper)]">How it works</Link>
             <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>

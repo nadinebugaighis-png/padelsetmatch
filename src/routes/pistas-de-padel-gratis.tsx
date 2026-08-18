@@ -3,31 +3,32 @@ import { ArrowRight, MapPin, Users, KeyRound, CalendarCheck } from "lucide-react
 import { BrandMark } from "@/components/BrandMark";
 import { LangSwitch } from "@/lib/i18n";
 
-const TITLE = "Free Padel Courts — Find Free & Private Courts Near You";
+const TITLE = "Pistas de pádel gratis — dónde jugar sin pagar pista";
 const DESC =
-  "How to find free padel courts near you: community courts, urbanisation and private courts opened up by neighbours, and off-peak club slots. Join players with free court access on PadelSetMatch.";
-const URL = "https://padelsetmatch.com/free-padel-courts";
+  "Cómo encontrar pistas de pádel gratis cerca de ti: pistas municipales, pistas de urbanización y comunidad, horas valle en clubes y jugadores con pista propia. Encuéntralos en PadelSetMatch.";
+const URL = "https://padelsetmatch.com/pistas-de-padel-gratis";
+const EN_URL = "https://padelsetmatch.com/free-padel-courts";
 
 const FAQ = [
   {
-    q: "Are there really free padel courts?",
-    a: "Yes. Many towns run municipal courts that are free or nearly free off-peak, and thousands of private urbanisation and community courts sit empty because residents cannot find a fourth player. Those are the courts most people never hear about.",
+    q: "¿Existen de verdad pistas de pádel gratis?",
+    a: "Sí. Muchos ayuntamientos tienen pistas municipales gratuitas o casi gratuitas en horas valle, y miles de pistas privadas de urbanizaciones y comunidades están vacías porque el vecino no encuentra un cuarto jugador. Son las pistas de las que casi nadie se entera.",
   },
   {
-    q: "How do I find a free padel court near me?",
-    a: "Start with your local council's sports pages for municipal courts, then look for players who already have court access. On PadelSetMatch, players who can bring a free or private court are marked with a court badge, so you can see who to ask before you book anything.",
+    q: "¿Cómo encuentro una pista de pádel gratis cerca de mí?",
+    a: "Empieza por la web de deportes de tu ayuntamiento para las pistas municipales y después busca jugadores que ya tengan acceso a una pista. En PadelSetMatch, los jugadores que pueden aportar una pista gratuita o privada llevan un distintivo de pista, así ves a quién preguntar antes de reservar nada.",
   },
   {
-    q: "Do I need a club membership to play?",
-    a: "No. If you play on a community, urbanisation or municipal court with someone who has access, there is nothing to join and usually nothing to pay beyond a small booking fee, if any.",
+    q: "¿Necesito ser socio de un club para jugar?",
+    a: "No. Si juegas en una pista de comunidad, urbanización o municipal con alguien que tiene acceso, no hay que apuntarse a nada y normalmente no se paga nada más allá de una pequeña tasa de reserva, si la hay.",
   },
   {
-    q: "What does it cost to play padel otherwise?",
-    a: "A club court in Spain typically runs €16–€28 per hour, split between four players. Playing on a free or private court removes that cost entirely.",
+    q: "¿Cuánto cuesta jugar al pádel si pagas pista?",
+    a: "En España una pista de club suele costar entre 16 € y 28 € la hora, a repartir entre cuatro jugadores. Jugar en una pista gratuita o privada elimina ese coste por completo.",
   },
 ];
 
-export const Route = createFileRoute("/free-padel-courts")({
+export const Route = createFileRoute("/pistas-de-padel-gratis")({
   head: () => ({
     meta: [
       { title: TITLE },
@@ -36,15 +37,16 @@ export const Route = createFileRoute("/free-padel-courts")({
       { property: "og:description", content: DESC },
       { property: "og:url", content: URL },
       { property: "og:type", content: "article" },
+      { property: "og:locale", content: "es_ES" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
     links: [
       { rel: "canonical", href: URL },
-      { rel: "alternate", hrefLang: "en", href: URL },
-      { rel: "alternate", hrefLang: "es-ES", href: "https://padelsetmatch.com/pistas-de-padel-gratis" },
-      { rel: "alternate", hrefLang: "x-default", href: URL },
+      { rel: "alternate", hrefLang: "es-ES", href: URL },
+      { rel: "alternate", hrefLang: "en", href: EN_URL },
+      { rel: "alternate", hrefLang: "x-default", href: EN_URL },
     ],
     scripts: [
       {
@@ -52,6 +54,7 @@ export const Route = createFileRoute("/free-padel-courts")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
+          inLanguage: "es-ES",
           mainEntity: FAQ.map((f) => ({
             "@type": "Question",
             name: f.q,
@@ -61,33 +64,33 @@ export const Route = createFileRoute("/free-padel-courts")({
       },
     ],
   }),
-  component: FreeCourtsPage,
+  component: PistasGratisPage,
 });
 
 const WAYS = [
   {
     icon: MapPin,
-    title: "Municipal courts",
-    body: "Councils across Spain run public padel courts that are free or a few euros off-peak. Check your town hall's sports page — availability is rarely advertised anywhere else.",
+    title: "Pistas municipales",
+    body: "Muchos ayuntamientos tienen pistas de pádel públicas gratuitas o de pocos euros en horas valle. Mira la página de deportes de tu ayuntamiento: casi nunca se anuncian en otro sitio.",
   },
   {
     icon: KeyRound,
-    title: "Urbanisation & private courts",
-    body: "The biggest hidden supply. Thousands of community courts sit unused because the resident cannot find three more players. Get invited and you play for nothing.",
+    title: "Urbanizaciones y comunidades",
+    body: "La mayor oferta oculta. Miles de pistas de comunidad están sin usar porque el residente no encuentra a tres jugadores más. Si te invitan, juegas sin pagar.",
   },
   {
     icon: CalendarCheck,
-    title: "Off-peak club slots",
-    body: "Clubs discount mid-morning and late-night slots heavily. Split across four players it often lands near free.",
+    title: "Horas valle en clubes",
+    body: "Los clubes bajan mucho el precio a media mañana y a última hora. Repartido entre cuatro, sale casi gratis.",
   },
   {
     icon: Users,
-    title: "Players with court access",
-    body: "The fastest route: find someone who already has a court and needs a fourth. On PadelSetMatch these players carry a court badge on their card.",
+    title: "Jugadores con pista",
+    body: "El camino más rápido: encontrar a alguien que ya tiene pista y busca un cuarto. En PadelSetMatch esos jugadores llevan un distintivo de pista en su ficha.",
   },
 ];
 
-function FreeCourtsPage() {
+function PistasGratisPage() {
   return (
     <main className="programme-page min-h-screen bg-[var(--paper)]">
       <header className="px-5 sm:px-8 lg:px-16 pt-3 pb-2 flex items-center justify-between">
@@ -99,23 +102,24 @@ function FreeCourtsPage() {
             search={{ redirect: undefined, join: undefined, mode: "signup" }}
             className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2.5 hover:brightness-110 transition"
           >
-            Join
+            Unirme
           </Link>
         </div>
       </header>
 
       <section className="px-5 sm:px-8 lg:px-16 pt-10 pb-12 max-w-3xl">
         <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_14%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_22%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
-          Guide
+          Guía
         </p>
         <h1 className="text-serif mt-4 uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.25rem] sm:text-[3rem] lg:text-[3.75rem]">
-          Free padel courts
-          <span className="block text-[var(--plum)]">near you</span>
+          Pistas de pádel gratis
+          <span className="block text-[var(--plum)]">cerca de ti</span>
         </h1>
         <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/75">
-          Court fees are the main reason people play less padel than they want to. But a huge share of
-          courts — municipal, community, urbanisation — are free to use and sitting empty right now. The
-          hard part was never the court. It is finding the other three players.
+          El precio de la pista es el principal motivo por el que se juega menos al pádel de lo que se
+          querría. Pero una gran parte de las pistas —municipales, de comunidad, de urbanización— se pueden
+          usar gratis y están vacías ahora mismo. Lo difícil nunca fue la pista: es encontrar a los otros
+          tres jugadores.
         </p>
         <div className="mt-7">
           <Link
@@ -123,7 +127,7 @@ function FreeCourtsPage() {
             search={{ redirect: undefined, join: undefined, mode: "signup" }}
             className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3 hover:brightness-110 transition"
           >
-            Find players with courts
+            Buscar jugadores con pista
             <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[var(--paper)]/15 group-hover:translate-x-0.5 transition">
               <ArrowRight className="w-4 h-4" />
             </span>
@@ -133,7 +137,7 @@ function FreeCourtsPage() {
 
       <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
-          Four ways to play for free
+          Cuatro formas de jugar gratis
         </h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 max-w-4xl">
           {WAYS.map(({ icon: Icon, title, body }) => (
@@ -153,7 +157,7 @@ function FreeCourtsPage() {
 
       <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10 max-w-3xl">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
-          Common questions
+          Preguntas frecuentes
         </h2>
         <div className="mt-8 space-y-6">
           {FAQ.map((f) => (
@@ -168,22 +172,25 @@ function FreeCourtsPage() {
       <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/10">
         <div className="max-w-2xl">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
-            Court sorted. Now find the fourth.
+            Pista resuelta. Ahora, el cuarto.
           </h2>
           <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
-            PadelSetMatch is a directory of padel players near you. See who plays your level, who is free
-            this week, and who can bring a court.{" "}
-            <Link to="/how-it-works" className="text-[var(--plum)] underline underline-offset-4">
-              See how it works
+            PadelSetMatch es un directorio de jugadores de pádel cerca de ti. Mira quién juega tu nivel,
+            quién tiene hueco esta semana y quién puede poner la pista.{" "}
+            <Link to="/padel-cerca-de-mi" className="text-[var(--plum)] underline underline-offset-4">
+              Pádel cerca de mí
+            </Link>{" "}
+            ·{" "}
+            <Link to="/play" className="text-[var(--plum)] underline underline-offset-4">
+              Partidos abiertos
             </Link>
-            .
           </p>
           <Link
             to="/auth"
             search={{ redirect: undefined, join: undefined, mode: "signup" }}
             className="mt-6 inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.16em] text-[12px] px-5 py-3 hover:brightness-110 transition"
           >
-            Create a free profile
+            Crear perfil gratis
           </Link>
         </div>
       </section>
@@ -193,8 +200,9 @@ function FreeCourtsPage() {
         <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
           <Link to="/" className="text-sm tracking-wide">padelsetmatch.com</Link>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70">
-            <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>
-            <Link to="/privacy" className="hover:text-[var(--paper)]">Privacy</Link>
+            <Link to="/free-padel-courts" className="hover:text-[var(--paper)]">English version</Link>
+            <Link to="/terms" className="hover:text-[var(--paper)]">Términos</Link>
+            <Link to="/privacy" className="hover:text-[var(--paper)]">Privacidad</Link>
           </div>
         </div>
       </footer>

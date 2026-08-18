@@ -14,6 +14,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PistasDePadelGratisRouteImport } from './routes/pistas-de-padel-gratis'
 import { Route as PadelCercaDeMiRouteImport } from './routes/padel-cerca-de-mi'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
@@ -72,6 +73,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PistasDePadelGratisRoute = PistasDePadelGratisRouteImport.update({
+  id: '/pistas-de-padel-gratis',
+  path: '/pistas-de-padel-gratis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PadelCercaDeMiRoute = PadelCercaDeMiRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
+  '/pistas-de-padel-gratis': typeof PistasDePadelGratisRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
+  '/pistas-de-padel-gratis': typeof PistasDePadelGratisRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
+  '/pistas-de-padel-gratis': typeof PistasDePadelGratisRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/free-padel-courts'
     | '/how-it-works'
     | '/padel-cerca-de-mi'
+    | '/pistas-de-padel-gratis'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -420,6 +430,7 @@ export interface FileRouteTypes {
     | '/free-padel-courts'
     | '/how-it-works'
     | '/padel-cerca-de-mi'
+    | '/pistas-de-padel-gratis'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -461,6 +472,7 @@ export interface FileRouteTypes {
     | '/free-padel-courts'
     | '/how-it-works'
     | '/padel-cerca-de-mi'
+    | '/pistas-de-padel-gratis'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -503,6 +515,7 @@ export interface RootRouteChildren {
   FreePadelCourtsRoute: typeof FreePadelCourtsRoute
   HowItWorksRoute: typeof HowItWorksRoute
   PadelCercaDeMiRoute: typeof PadelCercaDeMiRoute
+  PistasDePadelGratisRoute: typeof PistasDePadelGratisRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -556,6 +569,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pistas-de-padel-gratis': {
+      id: '/pistas-de-padel-gratis'
+      path: '/pistas-de-padel-gratis'
+      fullPath: '/pistas-de-padel-gratis'
+      preLoaderRoute: typeof PistasDePadelGratisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/padel-cerca-de-mi': {
@@ -866,6 +886,7 @@ const rootRouteChildren: RootRouteChildren = {
   FreePadelCourtsRoute: FreePadelCourtsRoute,
   HowItWorksRoute: HowItWorksRoute,
   PadelCercaDeMiRoute: PadelCercaDeMiRoute,
+  PistasDePadelGratisRoute: PistasDePadelGratisRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

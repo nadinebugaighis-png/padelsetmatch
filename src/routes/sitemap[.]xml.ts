@@ -19,6 +19,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/play", changefreq: "daily", priority: "0.9" },
           { path: "/play/madrid", changefreq: "daily", priority: "0.9" },
           { path: "/free-padel-courts", changefreq: "monthly", priority: "0.9" },
+          { path: "/pistas-de-padel-gratis", changefreq: "monthly", priority: "0.9" },
 
           { path: "/how-it-works", changefreq: "monthly", priority: "0.7" },
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },

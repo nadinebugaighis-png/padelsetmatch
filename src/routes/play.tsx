@@ -111,10 +111,30 @@ function PublicPlayFeed() {
                           </div>
                           {m.host_name && <div className="text-[10px] text-[var(--cream)]/50 mt-1 uppercase tracking-widest">{tr("Host", "Anfitrión", "Hôte")}: {m.host_name}</div>}
                         </div>
-                        <div className={`shrink-0 text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${open > 0 ? "bg-[var(--ball)] text-[var(--court-deep)] font-semibold" : "bg-[var(--cream)]/10 text-[var(--cream)]/60"}`}>
-                          {open > 0 ? `${open} ${tr("open", "libres", "libres")}` : tr("Full", "Completo", "Complet")}
+                        <div className={`shrink-0 text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${started ? "bg-[var(--cream)]/10 text-[var(--cream)]/70" : open > 0 ? "bg-[var(--ball)] text-[var(--court-deep)] font-semibold" : "bg-[var(--cream)]/10 text-[var(--cream)]/60"}`}>
+                          {started
+                            ? tr("Playing", "En juego", "En cours")
+                            : open > 0
+                              ? `${open} ${tr("open", "libres", "libres")}`
+                              : tr("Full", "Completo", "Complet")}
                         </div>
                       </div>
+
+                      {names.length > 0 && (
+                        <div className="mt-3 flex items-center gap-2 flex-wrap">
+                          {names.map((n, i) => (
+                            <span key={`${m.id}-n-${i}`} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--cream)]/8 pl-1 pr-2.5 py-1">
+                              <span className="w-5 h-5 rounded-full bg-[var(--cream)]/20 grid place-items-center text-[10px] font-bold text-[var(--cream)]">
+                                {n.trim().charAt(0).toUpperCase()}
+                              </span>
+                              <span className="text-[11px] text-[var(--cream)]/80">{n}</span>
+                            </span>
+                          ))}
+                          {Array.from({ length: open }).map((_, i) => (
+                            <span key={`${m.id}-o-${i}`} aria-hidden className="w-6 h-6 rounded-full border border-dashed border-[var(--cream)]/30" />
+                          ))}
+                        </div>
+                      )}
                     </Link>
                   );
                 })}

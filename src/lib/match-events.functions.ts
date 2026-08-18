@@ -171,7 +171,7 @@ export const getClubDetails = createServerFn({ method: "POST" })
       let res: Response | null = null;
       for (const key of KEYS) {
         res = await fetch(
-          `${GATEWAY_URL}/places/v1/${encodeURIComponent(data.place_id).replace(/%2F/g, "/")}`,
+          `${GATEWAY_URL}/places/v1/places/${encodeURIComponent(data.place_id.replace(/^places\//, ""))}`,
           {
             headers: {
               Authorization: `Bearer ${LOVABLE_API_KEY}`,

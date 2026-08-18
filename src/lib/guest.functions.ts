@@ -128,7 +128,11 @@ export const listPublicUpcomingMatches = createServerFn({ method: "GET" })
       level_min: string;
       level_max: string;
       gender_rule: string;
+      status: string;
+      court_booked: boolean | null;
+      note: string | null;
       filled: number;
+      participant_names: string[];
       host_name: string | null;
     }>) ?? [];
   });

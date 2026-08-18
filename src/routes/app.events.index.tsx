@@ -535,10 +535,6 @@ function FeedSection({
   tr: ReturnType<typeof useTr>;
   highlight?: boolean;
 }) {
-  const PREVIEW = 3;
-  const [expanded, setExpanded] = useState(false);
-  const canCollapse = events.length > PREVIEW;
-  const shown = expanded || !canCollapse ? events : events.slice(0, PREVIEW);
   return (
     <section>
       <div className="flex items-end justify-between gap-3">
@@ -546,19 +542,9 @@ function FeedSection({
           <h2 className="text-serif text-2xl leading-tight text-[var(--ink)]">{title}</h2>
           {subtitle && <p className="text-xs text-[var(--ink)]/55 mt-1">{subtitle}</p>}
         </div>
-        {canCollapse && (
-          <button
-            onClick={() => setExpanded((v) => !v)}
-            className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--plum)] hover:underline underline-offset-4"
-          >
-            {expanded
-              ? tr("Show less", "Ver menos", "Voir moins")
-              : `${tr("View all", "Ver todos", "Voir tout")} (${events.length})`}
-          </button>
-        )}
       </div>
       <ul className="mt-3 space-y-3">
-        {shown.map((e) => (
+        {events.map((e) => (
           <li key={e.id}>
             <MatchCard
               e={e}

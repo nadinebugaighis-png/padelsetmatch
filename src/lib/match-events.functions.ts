@@ -135,15 +135,16 @@ export const searchClubs = createServerFn({ method: "POST" })
 
     // Search the exact text the user typed AND a padel-biased variant, then merge.
     const q = data.query.trim();
-    const [exact, padel, suggestions] = await Promise.all([
+    const [exact, padel, suggestions, rawSuggestions] = await Promise.all([
       runQuery(q),
       runQuery(/p[áa]del/i.test(q) ? `${q} club` : `${q} padel`),
       runAutocomplete(/p[áa]del/i.test(q) ? q : `${q} padel`),
+      runAutocomplete(q),
     ]);
 
     const seen = new Set<string>();
     const results: ClubResult[] = [];
-    for (const r of [...padel, ...exact, ...suggestions]) {
+    for (const r of [...suggestions, ...padel, ...exact, ...rawSuggestions]) {
       if (!r.place_id || seen.has(r.place_id)) continue;
       seen.add(r.place_id);
       results.push(r);

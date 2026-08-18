@@ -14,7 +14,6 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PlayRouteImport } from './routes/play'
 import { Route as PadelCercaDeMiRouteImport } from './routes/padel-cerca-de-mi'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
@@ -75,11 +74,6 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlayRoute = PlayRouteImport.update({
-  id: '/play',
-  path: '/play',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PadelCercaDeMiRoute = PadelCercaDeMiRouteImport.update({
   id: '/padel-cerca-de-mi',
   path: '/padel-cerca-de-mi',
@@ -116,9 +110,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayIndexRoute = PlayIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => PlayRoute,
+  id: '/play/',
+  path: '/play/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
@@ -141,9 +135,9 @@ const PreviewPlayerCardRoute = PreviewPlayerCardRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayMadridRoute = PlayMadridRouteImport.update({
-  id: '/madrid',
-  path: '/madrid',
-  getParentRoute: () => PlayRoute,
+  id: '/play/madrid',
+  path: '/play/madrid',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MEventIdRoute = MEventIdRouteImport.update({
   id: '/m/$eventId',
@@ -261,7 +255,6 @@ export interface FileRoutesByFullPath {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
-  '/play': typeof PlayRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -344,7 +337,6 @@ export interface FileRoutesById {
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
   '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
-  '/play': typeof PlayRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -388,7 +380,6 @@ export interface FileRouteTypes {
     | '/free-padel-courts'
     | '/how-it-works'
     | '/padel-cerca-de-mi'
-    | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -470,7 +461,6 @@ export interface FileRouteTypes {
     | '/free-padel-courts'
     | '/how-it-works'
     | '/padel-cerca-de-mi'
-    | '/play'
     | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
@@ -513,7 +503,6 @@ export interface RootRouteChildren {
   FreePadelCourtsRoute: typeof FreePadelCourtsRoute
   HowItWorksRoute: typeof HowItWorksRoute
   PadelCercaDeMiRoute: typeof PadelCercaDeMiRoute
-  PlayRoute: typeof PlayRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -522,9 +511,11 @@ export interface RootRouteChildren {
   DotwellKnownAppleAppSiteAssociationRoute: typeof DotwellKnownAppleAppSiteAssociationRoute
   GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
+  PlayMadridRoute: typeof PlayMadridRoute
   PreviewPlayerCardRoute: typeof PreviewPlayerCardRoute
   PreviewPlayerCardV2Route: typeof PreviewPlayerCardV2Route
   SCodeRoute: typeof SCodeRoute
+  PlayIndexRoute: typeof PlayIndexRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -565,13 +556,6 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/play': {
-      id: '/play'
-      path: '/play'
-      fullPath: '/play'
-      preLoaderRoute: typeof PlayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/padel-cerca-de-mi': {
@@ -625,10 +609,10 @@ declare module '@tanstack/react-router' {
     }
     '/play/': {
       id: '/play/'
-      path: '/'
+      path: '/play'
       fullPath: '/play/'
       preLoaderRoute: typeof PlayIndexRouteImport
-      parentRoute: typeof PlayRoute
+      parentRoute: typeof rootRouteImport
     }
     '/app/': {
       id: '/app/'
@@ -660,10 +644,10 @@ declare module '@tanstack/react-router' {
     }
     '/play/madrid': {
       id: '/play/madrid'
-      path: '/madrid'
+      path: '/play/madrid'
       fullPath: '/play/madrid'
       preLoaderRoute: typeof PlayMadridRouteImport
-      parentRoute: typeof PlayRoute
+      parentRoute: typeof rootRouteImport
     }
     '/m/$eventId': {
       id: '/m/$eventId'
@@ -874,18 +858,6 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
-interface PlayRouteChildren {
-  PlayMadridRoute: typeof PlayMadridRoute
-  PlayIndexRoute: typeof PlayIndexRoute
-}
-
-const PlayRouteChildren: PlayRouteChildren = {
-  PlayMadridRoute: PlayMadridRoute,
-  PlayIndexRoute: PlayIndexRoute,
-}
-
-const PlayRouteWithChildren = PlayRoute._addFileChildren(PlayRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
@@ -894,7 +866,6 @@ const rootRouteChildren: RootRouteChildren = {
   FreePadelCourtsRoute: FreePadelCourtsRoute,
   HowItWorksRoute: HowItWorksRoute,
   PadelCercaDeMiRoute: PadelCercaDeMiRoute,
-  PlayRoute: PlayRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -904,9 +875,11 @@ const rootRouteChildren: RootRouteChildren = {
     DotwellKnownAppleAppSiteAssociationRoute,
   GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
+  PlayMadridRoute: PlayMadridRoute,
   PreviewPlayerCardRoute: PreviewPlayerCardRoute,
   PreviewPlayerCardV2Route: PreviewPlayerCardV2Route,
   SCodeRoute: SCodeRoute,
+  PlayIndexRoute: PlayIndexRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,

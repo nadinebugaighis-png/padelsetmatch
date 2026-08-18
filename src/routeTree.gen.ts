@@ -15,6 +15,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlayRouteImport } from './routes/play'
+import { Route as PadelCercaDeMiRouteImport } from './routes/padel-cerca-de-mi'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
 import { Route as DemoRouteImport } from './routes/demo'
@@ -75,6 +76,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PlayRoute = PlayRouteImport.update({
   id: '/play',
   path: '/play',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PadelCercaDeMiRoute = PadelCercaDeMiRouteImport.update({
+  id: '/padel-cerca-de-mi',
+  path: '/padel-cerca-de-mi',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -280,6 +287,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/padel-cerca-de-mi': typeof PadelCercaDeMiRoute
   '/play': typeof PlayRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -361,6 +370,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/free-padel-courts'
     | '/how-it-works'
+    | '/padel-cerca-de-mi'
     | '/play'
     | '/privacy'
     | '/reset-password'
@@ -399,6 +409,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/free-padel-courts'
     | '/how-it-works'
+    | '/padel-cerca-de-mi'
     | '/play'
     | '/privacy'
     | '/reset-password'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/free-padel-courts'
     | '/how-it-works'
+    | '/padel-cerca-de-mi'
     | '/play'
     | '/privacy'
     | '/reset-password'
@@ -478,6 +490,7 @@ export interface RootRouteChildren {
   DemoRoute: typeof DemoRoute
   FreePadelCourtsRoute: typeof FreePadelCourtsRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  PadelCercaDeMiRoute: typeof PadelCercaDeMiRoute
   PlayRoute: typeof PlayRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -537,6 +550,13 @@ declare module '@tanstack/react-router' {
       path: '/play'
       fullPath: '/play'
       preLoaderRoute: typeof PlayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/padel-cerca-de-mi': {
+      id: '/padel-cerca-de-mi'
+      path: '/padel-cerca-de-mi'
+      fullPath: '/padel-cerca-de-mi'
+      preLoaderRoute: typeof PadelCercaDeMiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -825,6 +845,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoRoute: DemoRoute,
   FreePadelCourtsRoute: FreePadelCourtsRoute,
   HowItWorksRoute: HowItWorksRoute,
+  PadelCercaDeMiRoute: PadelCercaDeMiRoute,
   PlayRoute: PlayRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,

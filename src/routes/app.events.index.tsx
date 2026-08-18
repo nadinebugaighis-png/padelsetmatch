@@ -850,7 +850,7 @@ function EmptyFeed({
             onClick={onExpandArea}
             className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
-            {tr("Search worldwide", "Buscar en el mundo", "Chercher partout")}
+            {tr("Search all areas", "Buscar en todas las zonas", "Rechercher partout")}
           </button>
         )}
         <button

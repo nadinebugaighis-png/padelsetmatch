@@ -286,13 +286,13 @@ function EventsPage() {
             type="button"
             onClick={() => setWorldwide((v) => !v)}
             className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-widest ${
-              worldwide
+              !worldwide
                 ? "border-[var(--plum)] text-[var(--plum)]"
                 : "border-[var(--ink)]/25 text-[var(--ink)]/80"
             }`}
           >
             <MapPin className="w-3 h-3" />
-            {worldwide ? tr("World", "Mundo", "Monde") : tr("Around me", "Cerca de mí", "Autour de moi")}
+            {!worldwide ? tr("My areas", "Mis zonas", "Mes zones") : tr("All matches", "Todos los partidos", "Tous les matchs")}
           </button>
         </div>
 
@@ -850,7 +850,7 @@ function EmptyFeed({
             onClick={onExpandArea}
             className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
           >
-            {tr("Search worldwide", "Buscar en el mundo", "Chercher partout")}
+            {tr("Search all areas", "Buscar en todas las zonas", "Rechercher partout")}
           </button>
         )}
         <button

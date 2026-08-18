@@ -1133,6 +1133,8 @@ const SHORT_LINK_ALLOWED_HOSTS = [
   "padelsetmatch.com",
   "padelmatchdoce.com",
   "lovable.app",
+  "lovableproject.com",
+  "localhost",
 ];
 
 function isAllowedShortLinkTarget(raw: string): boolean {
@@ -1142,8 +1144,9 @@ function isAllowedShortLinkTarget(raw: string): boolean {
   } catch {
     return false;
   }
-  if (u.protocol !== "https:") return false;
   const host = u.hostname.toLowerCase();
+  const isLocal = host === "localhost" || host === "127.0.0.1";
+  if (u.protocol !== "https:" && !(isLocal && u.protocol === "http:")) return false;
   return SHORT_LINK_ALLOWED_HOSTS.some((d) => host === d || host.endsWith(`.${d}`));
 }
 

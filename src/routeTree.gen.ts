@@ -27,6 +27,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as SCodeRouteImport } from './routes/s.$code'
 import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
 import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
+import { Route as PlayMadridRouteImport } from './routes/play.madrid'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
@@ -138,6 +139,11 @@ const PreviewPlayerCardRoute = PreviewPlayerCardRouteImport.update({
   id: '/preview/player-card',
   path: '/preview/player-card',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PlayMadridRoute = PlayMadridRouteImport.update({
+  id: '/madrid',
+  path: '/madrid',
+  getParentRoute: () => PlayRoute,
 } as any)
 const MEventIdRoute = MEventIdRouteImport.update({
   id: '/m/$eventId',
@@ -274,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/play/madrid': typeof PlayMadridRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
   '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
@@ -313,6 +320,7 @@ export interface FileRoutesByTo {
   '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/play/madrid': typeof PlayMadridRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
   '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
+  '/play/madrid': typeof PlayMadridRoute
   '/preview/player-card': typeof PreviewPlayerCardRoute
   '/preview/player-card-v2': typeof PreviewPlayerCardV2Route
   '/s/$code': typeof SCodeRoute
@@ -398,6 +407,7 @@ export interface FileRouteTypes {
     | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
+    | '/play/madrid'
     | '/preview/player-card'
     | '/preview/player-card-v2'
     | '/s/$code'
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
+    | '/play/madrid'
     | '/preview/player-card'
     | '/preview/player-card-v2'
     | '/s/$code'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
+    | '/play/madrid'
     | '/preview/player-card'
     | '/preview/player-card-v2'
     | '/s/$code'
@@ -645,6 +657,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/preview/player-card'
       preLoaderRoute: typeof PreviewPlayerCardRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/play/madrid': {
+      id: '/play/madrid'
+      path: '/madrid'
+      fullPath: '/play/madrid'
+      preLoaderRoute: typeof PlayMadridRouteImport
+      parentRoute: typeof PlayRoute
     }
     '/m/$eventId': {
       id: '/m/$eventId'
@@ -856,10 +875,12 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface PlayRouteChildren {
+  PlayMadridRoute: typeof PlayMadridRoute
   PlayIndexRoute: typeof PlayIndexRoute
 }
 
 const PlayRouteChildren: PlayRouteChildren = {
+  PlayMadridRoute: PlayMadridRoute,
   PlayIndexRoute: PlayIndexRoute,
 }
 

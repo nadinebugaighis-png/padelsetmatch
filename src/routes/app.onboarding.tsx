@@ -1166,7 +1166,7 @@ function Onboarding() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => requestSave("profile")}
+                  onClick={() => requestSave("grid")}
                   disabled={save.isPending || uploading}
                 >
                   {save.isPending ? t("ob.saving") : tr("Save", "Guardar", "Enregistrer")}

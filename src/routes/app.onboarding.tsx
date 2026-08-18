@@ -524,6 +524,7 @@ function Onboarding() {
 
   return (
     <main className="px-4 py-6 pb-32 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
+      <h1 className="sr-only">{tr("Create your profile", "Crea tu perfil", "Créez votre profil")}</h1>
       <div className="sticky top-0 z-20 -mx-4 px-4 pt-2 pb-3 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/80">
         <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-widest text-[var(--ink)]/70">
           {step > 0 ? (

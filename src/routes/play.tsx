@@ -96,6 +96,8 @@ function PublicPlayFeed() {
               <div className="grid gap-2">
                 {list.map((m) => {
                   const open = Math.max(0, 4 - (m.filled ?? 0));
+                  const names = m.participant_names ?? [];
+                  const started = new Date(m.starts_at).getTime() <= Date.now();
                   return (
                     <Link key={m.id} to="/g/$eventId" params={{ eventId: m.id }}
                       className="block rounded-2xl border border-[var(--cream)]/10 bg-black/30 p-4 hover:border-[var(--cream)]/30 transition">

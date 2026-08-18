@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { searchClubs, type ClubResult } from "@/lib/match-events.functions";
+import { searchClubs, getClubDetails, type ClubResult } from "@/lib/match-events.functions";
 import { MapPin, Loader2 } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 
@@ -13,6 +13,7 @@ type Props = {
 export function ClubPicker({ value, onChange }: Props) {
   const tr = useTr();
   const search = useServerFn(searchClubs);
+  const details = useServerFn(getClubDetails);
   const [q, setQ] = useState("");
 
   const [open, setOpen] = useState(false);
@@ -35,7 +36,7 @@ export function ClubPicker({ value, onChange }: Props) {
       } finally {
         if (!cancelled) setLoading(false);
       }
-    }, 350);
+    }, 250);
     return () => {
       cancelled = true;
       clearTimeout(t);
@@ -88,10 +89,18 @@ export function ClubPicker({ value, onChange }: Props) {
               key={r.place_id}
               type="button"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
+              onClick={async () => {
                 onChange(r);
                 setQ("");
                 setOpen(false);
+                if (r.lat === null && r.place_id) {
+                  try {
+                    const { result } = await details({ data: { place_id: r.place_id } });
+                    if (result) onChange(result);
+                  } catch {
+                    /* keep the suggestion as-is */
+                  }
+                }
               }}
               className="w-full text-left px-3 py-2 hover:bg-[var(--cream)]/10 border-b border-[var(--cream)]/5"
             >

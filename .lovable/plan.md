@@ -1,24 +1,25 @@
-# Fix: blocked/reported players show as "Unknown" with no photo
+# Fix blocked/suspended user names and photos
 
-## What's happening
+## Problem
+When a user is auto-suspended after reports, the people who blocked or hid them can no longer read that profile because the `profiles` RLS policy only allows reading non-suspended other users. The "Hidden & blocked" page then falls back to "Unknown" with no photo, making it impossible to know who you are unblocking.
 
-On the Hidden & blocked page (Me → Hidden & blocked), a player you blocked and reported appears as a blank avatar with the name "Unknown", so you can't tell who you are unblocking.
+## Solution
+Allow authenticated users to read the basic profile row for anyone they have explicitly blocked or hidden, even if that account is suspended. Keep suspended users hidden from discovery and from everyone else.
 
-Confirmed cause: the list loads names and photos by reading the other player's profile as *you*. The database rule for reading profiles hides any suspended account, and reporting auto-suspends a player once three different people have reported them (one account is suspended in the database as of today). The row for a suspended — or otherwise unreadable — player therefore comes back empty, and the page falls back to "Unknown" with a grey circle.
+## Steps
+1. **Database policy update**
+   - Add a new `SELECT` policy on `public.profiles`:
+     - Allow reading a profile row if the current user has a row in `public.blocks` where they are the blocker, or a row in `public.hides` where they are the hider.
+     - This is OR'd with the existing "own profile" and "active other profiles" policies.
+   - No schema changes; only a policy addition.
 
-Note: reporting also auto-blocks the reported player from your side, so a reported player normally lands in this same list.
+2. **Verify server function**
+   - Confirm `getHiddenAndBlocked` in `src/lib/app.functions.ts` now receives `first_name`, `photo_url`, and `zone` for suspended blocked/hidden users after the policy change.
+   - If any column is still missing, switch the profile lookup to a security-definer RPC that bypasses RLS for the caller's own blocks/hides only.
 
-## The fix
+3. **UI polish**
+   - In `src/routes/app.hidden.tsx`, add a small "Account suspended" badge next to blocked/hidden users whose `suspended_at` is set, so users understand why that person is no longer visible elsewhere.
+   - Keep the existing Unhide/Unblock actions working.
 
-1. Add a small read-only database function that returns only the display fields (id, first name, photo, zone) for the exact players the signed-in user has hidden or blocked — including suspended ones. It returns nothing for anyone else, so it can't be used to browse suspended accounts.
-2. Use that function in the Hidden & blocked loader instead of the direct profile read, so every hidden/blocked row shows the real name and photo.
-3. Keep a graceful label: if a player has genuinely deleted their account, show "Deleted player" instead of "Unknown".
-4. Show a small "Suspended" note on rows whose account is suspended, so it's clear why they no longer appear anywhere else.
-
-## Technical details
-
-- New `security definer` function `public.get_my_hidden_blocked_profiles()` returning `id, first_name, photo_url, zone, suspended_at`, restricted to profile ids present in `hides.hidden_profile_id` / `blocks.blocked_profile_id` for `my_profile_id()`. `GRANT EXECUTE` to `authenticated` only (no `anon`, no `public`).
-- `getHiddenAndBlocked` in `src/lib/app.functions.ts` swaps its `profiles ... .in("id", ids)` query for `context.supabase.rpc("get_my_hidden_blocked_profiles")`.
-- `src/routes/app.hidden.tsx` renders the suspended note and the "Deleted player" fallback.
-
-No change to blocking, reporting, or moderation behaviour.
+## Result
+Users who block or report someone will still see that person's real name and photo in "Hidden & blocked", and can unblock them if they choose. Suspended accounts remain invisible everywhere else.

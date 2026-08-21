@@ -25,7 +25,7 @@ function useIsStandalone() {
   return standalone;
 }
 
-import shareBanner from "@/assets/padel-share-logo.jpg.asset.json";
+import shareBanner from "@/assets/padel-share-luxury.jpg.asset.json";
 import court from "@/assets/landing-court.jpg.asset.json";
 import landing1 from "@/assets/landing1.jpg.asset.json";
 import landing2 from "@/assets/landing2.jpg.asset.json";

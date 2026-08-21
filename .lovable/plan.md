@@ -1,24 +1,25 @@
-# Luxury link-preview image for padelsetmatch.com
+# Open Graph preview page
 
-Replace the current share card (`padel-share-logo.jpg`) with a more luxurious design in the style of your uploaded artwork, keeping the "LA MORALEJA / PADEL SOCIETY" subtitle.
+A private page at `/og-preview` where you can see exactly how padelsetmatch.com looks when shared — before publishing.
 
-## Step 1 — Three design options to choose from
+## What the page shows
 
-I'll produce three 1200x630 concepts and show them in chat so you can pick:
+**1. Card mockups** — the same title, description and image rendered in the three formats that matter:
+- WhatsApp / iMessage (small square thumbnail, title, description, domain)
+- Facebook / LinkedIn (large 1200x630 banner above the text)
+- X / Twitter summary_large_image
 
-1. **Your artwork, recropped** — your exact image reframed to 1200x630 with the wordmark, gold rule, crossed rackets and subtitle re-centred so nothing gets cut in WhatsApp/iMessage.
-2. **Golden hour terrace** — same club-terrace scene, warmer late-afternoon light, deeper greens, high-contrast cream serif wordmark with a thin gold hairline rule.
-3. **Editorial close crop** — tighter framing on the glass court and players, softer background blur, wordmark set lower-left with gold rackets as a small mark above.
+**2. Candidate image switcher** — a row of thumbnails for every share image in the project (the current `padel-share-logo.jpg`, plus `padel-share-og`, `padel-og`, `padel-mixed-share`, `padel-whatsapp-share`, and any new luxury design). Click one and all three card mockups update instantly, so you can compare before committing.
 
-All three keep: serif all-caps PADELSETMATCH, wide letterspacing, gold hairline divider, LA MORALEJA / PADEL SOCIETY subtitle in gold-tinted spaced caps.
+**3. Raw tag list** — the actual `og:*` and `twitter:*` values the homepage emits, plus a warning row if the image isn't 1200x630 or the description runs past 160 characters.
 
-## Step 2 — Wire the chosen one in
+## Design
 
-- Upload the picked image as a CDN asset (`src/assets/padel-share-luxe.jpg.asset.json`).
-- Point the homepage's `og:image`, `og:image:secure_url` and `twitter:image` in `src/routes/index.tsx` at the new asset, keeping the existing 1200x630 dimension tags and `image/jpeg` type.
-- Leave the old asset in place so previously shared links don't break.
+Matches the app's programme aesthetic — cream paper background, forest-green ink, serif headings — with the card mockups rendered on a neutral grey panel so they read like real chat bubbles.
 
-## Notes
+## Technical notes
 
-- WhatsApp, iMessage and LinkedIn cache previews. After the change goes live the old photo may still appear for a while; forcing a refresh needs each platform's link-preview debugger.
-- Only the homepage share card changes; other pages keep their current metadata.
+- New route `src/routes/og-preview.tsx`, marked `noindex` so it never shows in search.
+- Reads its data from the same constants the homepage uses in `src/routes/index.tsx`, so the preview can't drift from what's actually shipped.
+- Image list comes from the existing `.asset.json` pointers in `src/assets` — no uploads or backend changes.
+- Purely a preview surface; picking an image here does not change the live tags. Once you decide, I'll point the homepage metadata at your pick.

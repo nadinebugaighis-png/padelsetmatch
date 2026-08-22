@@ -210,6 +210,15 @@
   --input: color-mix(in oklab, var(--ink) 12%, transparent);
   --ring: var(--plum);
 }
+/* Perf: skip layout/paint work for off-screen list items (grids, feeds). */
+@utility lazy-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+@utility lazy-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 180px;
+}
 @utility programme-card {
   background: #ffffff;
   border: 1px solid color-mix(in oklab, var(--ink) 8%, transparent);

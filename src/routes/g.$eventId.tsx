@@ -54,6 +54,7 @@ function GuestMatchRoom() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
   const tr = useTr();
+  const qc = useQueryClient();
   const join = useServerFn(guestJoinMatch);
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);

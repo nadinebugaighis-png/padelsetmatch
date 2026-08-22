@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, RefreshCw } from "lucide-react";
+import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
@@ -69,105 +69,6 @@ type EventLite = {
 };
 
 type TimeOfDay = "all" | "morning" | "afternoon" | "evening";
-
-const PULL_THRESHOLD = 80;
-
-function PullToRefresh({
-  children,
-  onRefresh,
-  refreshing,
-}: {
-  children: React.ReactNode;
-  onRefresh: () => void | Promise<void>;
-  refreshing?: boolean;
-}) {
-  const tr = useTr();
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const [pullY, setPullY] = useState(0);
-  const [isPulling, setIsPulling] = useState(false);
-  const [willRefresh, setWillRefresh] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const startY = useRef(0);
-  const refreshingProp = refreshing;
-
-  const isBusy = refreshingProp ?? isRefreshing;
-
-  const onPointerDown = useCallback((e: PointerEvent) => {
-    if (isBusy) return;
-    startY.current = e.clientY;
-  }, [isBusy]);
-
-  const onPointerMove = useCallback((e: PointerEvent) => {
-    if (isBusy) return;
-    const delta = e.clientY - startY.current;
-    if (delta > 0 && window.scrollY <= 0) {
-      if (!isPulling) setIsPulling(true);
-      e.preventDefault();
-      const resisted = Math.min(delta * 0.5, PULL_THRESHOLD * 1.5);
-      setPullY(resisted);
-      setWillRefresh(resisted > PULL_THRESHOLD);
-    }
-  }, [isBusy, isPulling]);
-
-  const onPointerUp = useCallback(async () => {
-    if (!isPulling || isBusy) return;
-    setIsPulling(false);
-    if (willRefresh) {
-      setPullY(PULL_THRESHOLD * 0.6);
-      setIsRefreshing(true);
-      try {
-        await onRefresh();
-      } catch {
-        // ignore refresh errors
-      } finally {
-        setIsRefreshing(false);
-        setPullY(0);
-        setWillRefresh(false);
-      }
-    } else {
-      setPullY(0);
-      setWillRefresh(false);
-    }
-  }, [isPulling, isBusy, willRefresh, onRefresh]);
-
-  useEffect(() => {
-    const el = wrapperRef.current;
-    if (!el) return;
-    el.addEventListener("pointerdown", onPointerDown, { passive: true });
-    el.addEventListener("pointermove", onPointerMove, { passive: false });
-    el.addEventListener("pointerup", onPointerUp);
-    el.addEventListener("pointercancel", onPointerUp);
-    return () => {
-      el.removeEventListener("pointerdown", onPointerDown);
-      el.removeEventListener("pointermove", onPointerMove);
-      el.removeEventListener("pointerup", onPointerUp);
-      el.removeEventListener("pointercancel", onPointerUp);
-    };
-  }, [onPointerDown, onPointerMove, onPointerUp]);
-
-  const label = isBusy
-    ? tr("Updating…", "Actualizando…", "Mise à jour…")
-    : willRefresh
-      ? tr("Release to refresh", "Suelta para actualizar", "Relâcher pour actualiser")
-      : tr("Pull to refresh", "Tira para actualizar", "Tirer pour actualiser");
-
-  return (
-    <div ref={wrapperRef} className="relative">
-      <div
-        style={{
-          transform: `translateY(${pullY}px)`,
-          transition: isPulling ? "none" : "transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
-        <div className="absolute -top-14 left-0 right-0 h-14 flex flex-col items-center justify-center pointer-events-none">
-          <RefreshCw className={`w-5 h-5 text-[var(--plum)] mb-1 ${willRefresh || isBusy ? "animate-spin" : ""}`} />
-          <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">{label}</span>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
 
 function EventsPage() {
   const navigate = useNavigate();
@@ -285,8 +186,8 @@ function EventsPage() {
   const [pending, setPending] = useState<string | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
 
-  async function refetch() {
-    await qc.refetchQueries({ queryKey: ["open-events", myAreasOnly] });
+  function refetch() {
+    qc.invalidateQueries({ queryKey: ["open-events"] });
   }
 
   async function instantJoin(e: EventLite) {
@@ -372,9 +273,8 @@ function EventsPage() {
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
 
   return (
-    <PullToRefresh onRefresh={refetch}>
-      <div className="programme-page min-h-[calc(100vh-4rem)]">
-        <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-32">
+    <div className="programme-page min-h-[calc(100vh-4rem)]">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-32">
         {/* Title row */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -607,8 +507,7 @@ function EventsPage() {
         </div>
       </div>
     </div>
-  </PullToRefresh>
-);
+  );
 }
 
 // ---------- Feed section ----------

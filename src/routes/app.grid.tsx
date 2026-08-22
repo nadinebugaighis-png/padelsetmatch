@@ -90,6 +90,25 @@ function Discover() {
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Progressive rendering: only mount a page of cards at a time so the grid
+  // stays snappy on phones even with hundreds of candidates.
+  const PAGE = 24;
+  const [shown, setShown] = useState(PAGE);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    setShown(PAGE);
+  }, [levelFilter, zoneFilter, searchQuery, world]);
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => { if (entries[0]?.isIntersecting) setShown((s) => s + PAGE); },
+      { rootMargin: "800px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [shown]);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
@@ -748,11 +767,11 @@ function Discover() {
                 navigate({ search: { previewId: me.id }, replace: true, resetScroll: false });
               };
               return (
-                <div className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md">
+                <div className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md lazy-card">
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {me.photo_url ? (
-                        <img src={me.photo_url} alt={me.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 transition-transform duration-500 group-hover:scale-[1.03]" />
+                        <img src={me.photo_url} alt={me.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
                           {(me.first_name ?? "?").charAt(0)}
@@ -782,7 +801,7 @@ function Discover() {
                 </div>
               );
             })()}
-            {list.map((c) => {
+            {list.slice(0, shown).map((c) => {
               const away = (() => {
                 const au = (c as unknown as { away_until?: string | null }).away_until;
                 return !!(au && au >= new Date().toISOString().slice(0, 10));
@@ -790,13 +809,13 @@ function Discover() {
               return (
                 <div
                   key={c.id}
-                  className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md"
+                  className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md lazy-card"
                 >
                   {/* Polaroid-style photo frame */}
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
-                        <img src={c.photo_url} alt={c.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 transition-transform duration-500 group-hover:scale-[1.03]" />
+                        <img src={c.photo_url} alt={c.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       )}
                       {!c.photo_url && (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
@@ -808,7 +827,7 @@ function Discover() {
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                          className="w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
+                          className="w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/10 flex items-center justify-center text-[var(--ink)] hover:bg-white"
                           aria-label={tr(`Hide ${c.first_name}`, `Ocultar a ${c.first_name}`, `Masquer ${c.first_name}`)}
                           title={tr("Not interested — hide from my Home grid", "No me interesa — ocultar de mi Inicio", "Pas intéressé·e — masquer de mon accueil")}
                         >
@@ -824,7 +843,7 @@ function Discover() {
                             }
                             navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                           }}
-                          className={`w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
+                          className={`w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
                           aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
                           title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
                         >
@@ -841,7 +860,7 @@ function Discover() {
                           if (c.liked) unlikeM.mutate(c.id);
                           else likeSilentM.mutate(c.id);
                         }}
-                        className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
+                        className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
                         aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Thumbs up ${c.first_name}`, `Pulsa para conectar con ${c.first_name}`, `Pouce pour connecter avec ${c.first_name}`)}
                         title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Thumbs up to connect", "Pulsa para conectar", "Pouce pour connecter")}
                       >
@@ -920,6 +939,10 @@ function Discover() {
               );
             })}
           </div>
+        )}
+
+        {list.length > shown && (
+          <div ref={loadMoreRef} className="h-10 mt-4" aria-hidden="true" />
         )}
 
         <Link to="/app/matches" className="mt-10 block text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--plum)] hover:opacity-80">

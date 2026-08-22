@@ -582,7 +582,7 @@ const fr: Dict = {
   "land.foot": "Joue partout. Plus de padel, moins d'organisation.",
   "land.preview.chip": "Aperçu",
   "land.preview.title": "Explore le Home",
-  "land.preview.sub": "Découvre les profils qui te correspondent. Connecte-toi pour voir les photos, les niveaux et discuter.",
+  "land.preview.sub": "Trouve le bon niveau et le bon créneau. Connecte-toi pour voir les photos, les niveaux et discuter.",
   "land.preview.cta": "Inscription gratuite",
   "land.preview.unlock": "Connecte-toi pour débloquer",
   "land.preview.foot": "Aperçu uniquement. Les vrais profils apparaissent après le questionnaire.",

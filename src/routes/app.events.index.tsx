@@ -607,6 +607,7 @@ function EventsPage() {
         </div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }
 

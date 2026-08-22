@@ -100,6 +100,7 @@ function EventsPage() {
     queryKey: ["open-events", myAreasOnly],
     queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
     refetchOnWindowFocus: true,
+    refetchInterval: 15_000,
   });
 
   // Realtime: keep the feed live when other players join/leave or matches change.

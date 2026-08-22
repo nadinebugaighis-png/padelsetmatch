@@ -26,7 +26,7 @@ async function loadImage(src: string): Promise<HTMLImageElement> {
 
 async function getCroppedFile(src: string, area: Area, name: string): Promise<File> {
   const img = await loadImage(src);
-  const maxSide = 1600;
+  const maxSide = 1080;
   const scale = Math.min(1, maxSide / Math.max(area.width, area.height));
   const outW = Math.max(1, Math.round(area.width * scale));
   const outH = Math.max(1, Math.round(area.height * scale));
@@ -37,7 +37,7 @@ async function getCroppedFile(src: string, area: Area, name: string): Promise<Fi
   if (!ctx) throw new Error("Your browser blocked the image editor. Try again.");
   ctx.drawImage(img, area.x, area.y, area.width, area.height, 0, 0, outW, outH);
   const blob: Blob = await new Promise((res, rej) =>
-    canvas.toBlob((b) => (b ? res(b) : rej(new Error("Could not save the cropped photo"))), "image/jpeg", 0.9),
+    canvas.toBlob((b) => (b ? res(b) : rej(new Error("Could not save the cropped photo"))), "image/jpeg", 0.82),
   );
   return new File([blob], name, { type: "image/jpeg" });
 }

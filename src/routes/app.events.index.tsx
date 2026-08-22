@@ -372,8 +372,9 @@ function EventsPage() {
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
 
   return (
-    <div className="programme-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-32">
+    <PullToRefresh onRefresh={refetch}>
+      <div className="programme-page min-h-[calc(100vh-4rem)]">
+        <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-32">
         {/* Title row */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">

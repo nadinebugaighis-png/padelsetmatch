@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Send, LogOut, Link2 } from "lucide-react";
@@ -8,6 +8,7 @@ import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
 import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestRecoverAccess } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
 export const Route = createFileRoute("/g/$eventId")({
@@ -53,6 +54,7 @@ function GuestMatchRoom() {
   const { eventId } = Route.useParams();
   const navigate = useNavigate();
   const tr = useTr();
+  const qc = useQueryClient();
   const join = useServerFn(guestJoinMatch);
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);
@@ -98,6 +100,27 @@ function GuestMatchRoom() {
     queryFn: () => getPublic({ data: { id: eventId } }),
     enabled: !token,
   });
+
+  // Realtime: keep the guest room live when other players join/leave or match details change.
+  useEffect(() => {
+    const ch = supabase
+      .channel(`guest-room-${eventId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_events", filter: `id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["guest-room", eventId, token] });
+        qc.invalidateQueries({ queryKey: ["public-match", eventId] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_participants", filter: `match_event_id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["guest-room", eventId, token] });
+        qc.invalidateQueries({ queryKey: ["public-match", eventId] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "guest_participants", filter: `match_event_id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["guest-room", eventId, token] });
+        qc.invalidateQueries({ queryKey: ["public-match", eventId] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [eventId, token, qc]);
+
 
 
 

@@ -100,7 +100,25 @@ function EventsPage() {
     queryKey: ["open-events", myAreasOnly],
     queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
     refetchOnWindowFocus: true,
+    refetchInterval: 15_000,
   });
+
+  // Realtime: keep the feed live when other players join/leave or matches change.
+  useEffect(() => {
+    const ch = supabase
+      .channel("open-events-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_events" }, () => {
+        qc.invalidateQueries({ queryKey: ["open-events"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["open-events"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "guest_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["open-events"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
 
   const today = startOfDay(new Date());
   const days = useMemo(

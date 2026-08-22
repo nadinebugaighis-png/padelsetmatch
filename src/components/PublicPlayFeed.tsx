@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { listPublicUpcomingMatches } from "@/lib/guest.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { useTr } from "@/lib/i18n";
 
 function fmtDay(iso: string) {
@@ -29,11 +30,30 @@ export function PublicPlayFeed({
 }) {
   const tr = useTr();
   const listFn = useServerFn(listPublicUpcomingMatches);
+  const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["public-upcoming-matches", city ?? "all"],
     queryFn: () => listFn({ data: { limit: 60 } }),
     initialData,
+    refetchInterval: 10_000,
   });
+
+  // Realtime: keep the public Play feed live when other players join/leave.
+  useEffect(() => {
+    const ch = supabase
+      .channel("public-play-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_events" }, () => {
+        qc.invalidateQueries({ queryKey: ["public-upcoming-matches", city ?? "all"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["public-upcoming-matches", city ?? "all"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "guest_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["public-upcoming-matches", city ?? "all"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc, city]);
   const [search, setSearch] = useState("");
 
   const cityFiltered = useMemo(() => {

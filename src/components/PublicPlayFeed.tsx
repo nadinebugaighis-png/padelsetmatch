@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { listPublicUpcomingMatches } from "@/lib/guest.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { useTr } from "@/lib/i18n";
 
 function fmtDay(iso: string) {

@@ -801,7 +801,7 @@ function Discover() {
                 </div>
               );
             })()}
-            {list.map((c) => {
+            {list.slice(0, shown).map((c) => {
               const away = (() => {
                 const au = (c as unknown as { away_until?: string | null }).away_until;
                 return !!(au && au >= new Date().toISOString().slice(0, 10));
@@ -939,6 +939,10 @@ function Discover() {
               );
             })}
           </div>
+        )}
+
+        {list.length > shown && (
+          <div ref={loadMoreRef} className="h-10 mt-4" aria-hidden="true" />
         )}
 
         <Link to="/app/matches" className="mt-10 block text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--plum)] hover:opacity-80">

@@ -30,11 +30,29 @@ export function PublicPlayFeed({
 }) {
   const tr = useTr();
   const listFn = useServerFn(listPublicUpcomingMatches);
+  const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["public-upcoming-matches", city ?? "all"],
     queryFn: () => listFn({ data: { limit: 60 } }),
     initialData,
   });
+
+  // Realtime: keep the public Play feed live when other players join/leave.
+  useEffect(() => {
+    const ch = supabase
+      .channel("public-play-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_events" }, () => {
+        qc.invalidateQueries({ queryKey: ["public-upcoming-matches", city ?? "all"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["public-upcoming-matches", city ?? "all"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "guest_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["public-upcoming-matches", city ?? "all"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc, city]);
   const [search, setSearch] = useState("");
 
   const cityFiltered = useMemo(() => {

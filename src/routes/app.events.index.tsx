@@ -285,8 +285,8 @@ function EventsPage() {
   const [pending, setPending] = useState<string | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
 
-  function refetch() {
-    qc.invalidateQueries({ queryKey: ["open-events"] });
+  async function refetch() {
+    await qc.refetchQueries({ queryKey: ["open-events", myAreasOnly] });
   }
 
   async function instantJoin(e: EventLite) {

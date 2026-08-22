@@ -224,7 +224,7 @@ function ConnectPage() {
             const m = catMeta(p.category);
             const mine = myProfileId === p.author_profile_id;
             return (
-              <li key={p.id} className="rounded-2xl bg-white border border-[var(--ink)]/10 p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition">
+              <li key={p.id} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition">
                 <div className="flex items-start gap-3">
                   {p.author?.photo_url ? (
                     <img src={p.author.photo_url} alt="" className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white" />

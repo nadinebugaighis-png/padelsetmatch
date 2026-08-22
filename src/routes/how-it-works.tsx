@@ -199,9 +199,9 @@ function HowItWorksPage() {
             </h3>
             <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
               {tr(
-                "Found a player you might get along with or might like? Send them a match invite for a specific day, time and club. Skip the small talk.",
-                "¿Has encontrado a un jugador con el que conectas o que te gusta? Envíale una invitación para un día, hora y club concretos. Sin rodeos.",
-                "Tu as trouvé un joueur avec qui tu pourrais t'entendre ou qui te plaît ? Envoie-lui une invitation pour un jour, une heure et un club précis. Sans détour."
+                "Found a player with a compatible level and schedule? Send them a match invite for a specific day, time and club. Skip the small talk.",
+                "¿Has encontrado a un jugador con un nivel y horario compatibles? Envíale una invitación para un día, hora y club concretos. Sin rodeos.",
+                "Tu as trouvé un joueur avec un niveau et un créneau compatibles ? Envoie-lui une invitation pour un jour, une heure et un club précis. Sans détour."
               )}
             </p>
           </div>

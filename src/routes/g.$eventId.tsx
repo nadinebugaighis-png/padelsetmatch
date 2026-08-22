@@ -101,6 +101,27 @@ function GuestMatchRoom() {
     enabled: !token,
   });
 
+  // Realtime: keep the guest room live when other players join/leave or match details change.
+  useEffect(() => {
+    const ch = supabase
+      .channel(`guest-room-${eventId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_events", filter: `id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["guest-room", eventId, token] });
+        qc.invalidateQueries({ queryKey: ["public-match", eventId] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_participants", filter: `match_event_id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["guest-room", eventId, token] });
+        qc.invalidateQueries({ queryKey: ["public-match", eventId] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "guest_participants", filter: `match_event_id=eq.${eventId}` }, () => {
+        qc.invalidateQueries({ queryKey: ["guest-room", eventId, token] });
+        qc.invalidateQueries({ queryKey: ["public-match", eventId] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [eventId, token, qc]);
+
+
 
 
   useEffect(() => {

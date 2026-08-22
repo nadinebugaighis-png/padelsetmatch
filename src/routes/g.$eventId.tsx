@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Send, LogOut, Link2 } from "lucide-react";
@@ -8,6 +8,7 @@ import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
 import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestRecoverAccess } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
 export const Route = createFileRoute("/g/$eventId")({

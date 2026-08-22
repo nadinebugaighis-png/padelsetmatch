@@ -1,36 +1,25 @@
-# Kona Tuna Website Migration Plan
+# Open Graph preview page
 
-## Goal
-Move the Kona-tuna.com family tuna business website from Squarespace to Lovable, built under the Moorish Arches company, and improve its design/content in the process.
+A private page at `/og-preview` where you can see exactly how padelsetmatch.com looks when shared — before publishing.
 
-## Recommended approach
+## What the page shows
 
-### 1. Start a new Lovable project
-Create a separate Lovable project for Kona Tuna (do not modify the existing PadelSetMatch project). This keeps the two businesses isolated and cleanly managed.
+**1. Card mockups** — the same title, description and image rendered in the three formats that matter:
+- WhatsApp / iMessage (small square thumbnail, title, description, domain)
+- Facebook / LinkedIn (large 1200x630 banner above the text)
+- X / Twitter summary_large_image
 
-### 2. Keep the Squarespace site live during the rebuild
-Leave the existing Kona-tuna.com site running while the new Lovable site is being built. This ensures zero downtime for the business and gives you a reference for content.
+**2. Candidate image switcher** — a row of thumbnails for every share image in the project (the current `padel-share-logo.jpg`, plus `padel-share-og`, `padel-og`, `padel-mixed-share`, `padel-whatsapp-share`, and any new luxury design). Click one and all three card mockups update instantly, so you can compare before committing.
 
-### 3. Rebuild the site in Lovable
-Build the new site using modern, fast, SEO-friendly practices:
-- Public pages: Home, About, Products/Tuna, Contact, etc.
-- Clean, brand-aligned design for a family tuna business.
-- Optimize for mobile, speed, and search visibility.
-- Update copy, images, and any outdated information.
+**3. Raw tag list** — the actual `og:*` and `twitter:*` values the homepage emits, plus a warning row if the image isn't 1200x630 or the description runs past 160 characters.
 
-### 4. Connect the existing domain
-Once the Lovable site is ready and published, connect Kona-tuna.com to the new project. This requires adding Lovable’s A records and TXT verification record at the current DNS provider (or wherever the domain’s DNS is managed).
+## Design
 
-### 5. Switch over and decommission Squarespace
-After verifying the domain is fully pointing to Lovable and the site is live, cancel the Squarespace subscription.
+Matches the app's programme aesthetic — cream paper background, forest-green ink, serif headings — with the card mockups rendered on a neutral grey panel so they read like real chat bubbles.
 
-## Why this is the best way
-- Clean separation: PadelSetMatch and Kona Tuna remain independent projects.
-- No downtime: the old site stays live until the new one is ready.
-- Better long-term: Lovable gives you easier editing, faster performance, and more control over SEO than Squarespace for this type of site.
-- Clean slate: instead of migrating Squarespace code, you can redesign and improve the site.
+## Technical notes
 
-## Open questions to confirm before starting
-1. Is the domain Kona-tuna.com registered with Squarespace, or only hosted there (DNS managed elsewhere)?
-2. What are the main pages/features the current site has? (e.g., product catalog, contact form, gallery, blog, online ordering)
-3. Do you have branding assets (logo, colors, images, copy) ready, or should they be created/refined?
+- New route `src/routes/og-preview.tsx`, marked `noindex` so it never shows in search.
+- Reads its data from the same constants the homepage uses in `src/routes/index.tsx`, so the preview can't drift from what's actually shipped.
+- Image list comes from the existing `.asset.json` pointers in `src/assets` — no uploads or backend changes.
+- Purely a preview surface; picking an image here does not change the live tags. Once you decide, I'll point the homepage metadata at your pick.

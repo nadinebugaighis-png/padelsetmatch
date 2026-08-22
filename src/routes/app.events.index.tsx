@@ -102,6 +102,23 @@ function EventsPage() {
     refetchOnWindowFocus: true,
   });
 
+  // Realtime: keep the feed live when other players join/leave or matches change.
+  useEffect(() => {
+    const ch = supabase
+      .channel("open-events-live")
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_events" }, () => {
+        qc.invalidateQueries({ queryKey: ["open-events"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "match_event_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["open-events"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "guest_participants" }, () => {
+        qc.invalidateQueries({ queryKey: ["open-events"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
+
   const today = startOfDay(new Date());
   const days = useMemo(
     () => Array.from({ length: DAY_COUNT }, (_, i) => {

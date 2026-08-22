@@ -607,8 +607,8 @@ function EventsPage() {
         </div>
       </div>
     </div>
-    </PullToRefresh>
-  );
+  </PullToRefresh>
+);
 }
 
 // ---------- Feed section ----------

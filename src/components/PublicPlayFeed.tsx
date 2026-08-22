@@ -35,6 +35,7 @@ export function PublicPlayFeed({
     queryKey: ["public-upcoming-matches", city ?? "all"],
     queryFn: () => listFn({ data: { limit: 60 } }),
     initialData,
+    refetchInterval: 10_000,
   });
 
   // Realtime: keep the public Play feed live when other players join/leave.

@@ -140,6 +140,12 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const [image, setImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileId = useId();
+  const [order, setOrder] = useState<GearItem[]>(items);
+  useEffect(() => { setOrder(items); }, [items]);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),
+  );
 
   const reset = () => {
     setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null);

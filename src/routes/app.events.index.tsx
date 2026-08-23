@@ -101,6 +101,8 @@ function EventsPage() {
     queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
     refetchOnWindowFocus: true,
     refetchInterval: 15_000,
+    staleTime: 10_000,
+    placeholderData: keepPreviousData,
   });
 
   // Realtime: keep the feed live when other players join/leave or matches change.

@@ -251,10 +251,10 @@ function AuthShell() {
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
-              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
-              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+              <DesktopTab to="/app/grid" onPrefetch={() => prefetchTab("/app/grid")} label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+              <DesktopTab to="/app/events" onPrefetch={() => prefetchTab("/app/events")} label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
+              <DesktopTab to="/app/connect" onPrefetch={() => prefetchTab("/app/connect")} label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+              <DesktopTab to="/app/profile" onPrefetch={() => prefetchTab("/app/profile")} label={t("shell.tab.me")} icon={<User className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             </nav>
           )}
           <div className="flex items-center gap-2.5 shrink-0">
@@ -326,11 +326,11 @@ function AuthShell() {
         >
 
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
-            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />
+            <NavTab to="/app/grid" onPrefetch={() => prefetchTab("/app/grid")} label={t("shell.tab.grid")} icon={<Home className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+            <NavTab to="/app/events" onPrefetch={() => prefetchTab("/app/events")} label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+            <NavTab to="/app/connect" onPrefetch={() => prefetchTab("/app/connect")} label={t("shell.tab.connect")} icon={<Users className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+            <NavTab to="/app/profile" onPrefetch={() => prefetchTab("/app/profile")} label={t("shell.tab.me")} icon={<User className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>
       )}

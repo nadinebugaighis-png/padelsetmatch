@@ -211,8 +211,16 @@ function ConnectPage() {
       </div>
 
       {/* Feed */}
-      {postsQ.isLoading ? (
-        <div className="text-sm text-[var(--ink)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>
+      {postsQ.isLoading && !postsQ.data ? (
+        <ul className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <li key={i} className="rounded-2xl border border-[var(--ink)]/8 bg-white p-4 space-y-2.5">
+              <div className="h-3.5 w-1/3 rounded bg-[var(--ink)]/8 animate-pulse" />
+              <div className="h-4 w-3/4 rounded bg-[var(--ink)]/8 animate-pulse" />
+              <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
+            </li>
+          ))}
+        </ul>
       ) : (postsQ.data ?? []).length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--ink)]/25 p-10 text-center bg-white/60">
           <div className="text-3xl mb-2">💬</div>

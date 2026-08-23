@@ -1436,3 +1436,25 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
   );
 }
 
+
+function GridSkeleton() {
+  return (
+    <div className="programme-page px-5 py-6 min-h-[calc(100vh-4rem)]">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto">
+        <div className="h-9 w-2/3 rounded-lg bg-[var(--ink)]/8 animate-pulse" />
+        <div className="mt-3 h-4 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
+        <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-2xl overflow-hidden border border-[var(--ink)]/8 bg-white">
+              <div className="aspect-[3/4] bg-[var(--ink)]/8 animate-pulse" />
+              <div className="p-3 space-y-2">
+                <div className="h-3.5 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />
+                <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

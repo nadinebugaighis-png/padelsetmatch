@@ -279,12 +279,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
                     item={it}
                     editing={editingId === it.id}
                     onEdit={() => startEdit(it)}
-                    onRemove={() => remove.mutate(it.id)}
-                    labels={{
-                      edit: tr("Edit", "Editar", "Modifier"),
-                      remove: tr("Remove", "Quitar", "Retirer"),
-                      drag: tr("Drag to reorder", "Arrastra para reordenar", "Glisse pour réordonner"),
-                    }}
+                    editLabel={tr("Edit", "Editar", "Modifier")}
                   />
                 ))}
               </div>

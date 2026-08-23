@@ -70,8 +70,15 @@ function Matches() {
         <h1 className="text-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--ink)]">{t("ml.h1")}</h1>
         <p className="text-sm sm:text-base text-[var(--ink)]/70 mt-1 sm:mt-2">{t("ml.sub")}</p>
 
-        {q.isLoading ? (
-          <p className="mt-8 text-center text-[var(--ink)]/60">{t("ml.loading")}</p>
+        {q.isLoading && !q.data ? (
+          <ul className="mt-6 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <li key={i} className="rounded-2xl border border-[var(--ink)]/8 bg-white p-4 space-y-2.5">
+                <div className="h-4 w-1/2 rounded bg-[var(--ink)]/8 animate-pulse" />
+                <div className="h-3 w-3/4 rounded bg-[var(--ink)]/6 animate-pulse" />
+              </li>
+            ))}
+          </ul>
         ) : items.length === 0 ? (
           <div className="mt-12 text-center text-[var(--ink)]/60">
             <p>{t("ml.empty")}</p>

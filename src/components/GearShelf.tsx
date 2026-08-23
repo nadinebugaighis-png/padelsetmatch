@@ -285,15 +285,6 @@ export function GearEditor({ profileId }: { profileId: string }) {
               </div>
             </SortableContext>
           </DndContext>
-          {order.length > 1 && (
-            <p className="text-[11px] text-[var(--ink)]/50">
-              {tr(
-                "Hold the handle and drag to reorder.",
-                "Mantén pulsado el asa y arrastra para reordenar.",
-                "Maintiens la poignée et glisse pour réordonner.",
-              )}
-            </p>
-          )}
         </>
       )}
 

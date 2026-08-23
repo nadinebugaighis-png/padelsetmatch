@@ -338,12 +338,12 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number; dot?: boolean }) {
+function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot, onPrefetch }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number; dot?: boolean; onPrefetch?: () => void }) {
   const t = useT();
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[72px] sm:min-h-[76px] flex-col items-center justify-center gap-1.5 px-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.1em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
+    <Link to={to} aria-label={ariaLabel} onPointerDown={onPrefetch} onMouseEnter={onPrefetch} onTouchStart={onPrefetch} className={`flex min-h-[72px] sm:min-h-[76px] flex-col items-center justify-center gap-1.5 px-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.1em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (

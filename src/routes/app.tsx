@@ -2,10 +2,10 @@ import { createFileRoute, isRedirect, Link, Outlet, redirect, useNavigate, useRo
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMyMatches, getMyProfile } from "@/lib/app.functions";
+import { getMyMatches, getMyProfile, getDiscoverFeed } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { listMyPendingInvites } from "@/lib/match-events.functions";
-import { getConnectLatest } from "@/lib/connect.functions";
+import { listMyPendingInvites, listOpenEvents } from "@/lib/match-events.functions";
+import { getConnectLatest, listConnectPosts } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";

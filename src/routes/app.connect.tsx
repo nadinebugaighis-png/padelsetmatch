@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { MapPin, MessageCircle, Pencil, Plus, ShieldAlert, Trash2, X } from "lucide-react";

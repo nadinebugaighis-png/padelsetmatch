@@ -427,62 +427,42 @@ function SortableGearCard({
   item,
   editing,
   onEdit,
-  onRemove,
-  labels,
+  editLabel,
 }: {
   item: GearItem;
   editing: boolean;
   onEdit: () => void;
-  onRemove: () => void;
-  labels: { edit: string; remove: string; drag: string };
+  editLabel: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   return (
     <div
       ref={setNodeRef}
+      {...attributes}
+      {...listeners}
       style={{ transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 30 : undefined }}
-      className={`relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] ${
+      className={`relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] cursor-grab active:cursor-grabbing touch-none ${
         editing ? "border-[var(--ink)]" : "border-[var(--ink)]/10"
       } ${isDragging ? "opacity-90 scale-[1.03]" : ""}`}
     >
-      <div className="absolute -top-2.5 -right-2 flex gap-1">
-        <button
-          type="button"
-          onClick={onEdit}
-          aria-label={labels.edit}
-          className="w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)] flex items-center justify-center shadow"
-        >
-          <Pencil className="w-3 h-3" />
-        </button>
-        <button
-          type="button"
-          onClick={onRemove}
-          aria-label={labels.remove}
-          className="w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center shadow"
-        >
-          <Trash2 className="w-3 h-3" />
-        </button>
-      </div>
       <button
         type="button"
-        aria-label={labels.drag}
-        {...attributes}
-        {...listeners}
-        className="absolute -top-2.5 -left-2 w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)]/70 flex items-center justify-center shadow touch-none cursor-grab active:cursor-grabbing"
+        onClick={onEdit}
+        onPointerDown={(e) => e.stopPropagation()}
+        aria-label={editLabel}
+        className="absolute -top-2.5 -right-2 w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)] flex items-center justify-center shadow"
       >
-        <GripVertical className="w-3 h-3" />
+        <Pencil className="w-3 h-3" />
       </button>
-      <button type="button" onClick={onEdit} className="w-full text-left">
-        <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
-          {item.image_url ? (
-            <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-2xl">{GEAR_EMOJI[item.kind] ?? "✨"}</span>
-          )}
-        </div>
-        <div className="mt-1.5 text-[11px] font-semibold leading-tight line-clamp-2 text-[var(--ink)]">{item.title}</div>
-        {item.brand && <div className="text-[10px] text-[var(--ink)]/55 truncate">{item.brand}</div>}
-      </button>
+      <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
+        {item.image_url ? (
+          <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-2xl">{GEAR_EMOJI[item.kind] ?? "✨"}</span>
+        )}
+      </div>
+      <div className="mt-1.5 text-[11px] font-semibold leading-tight line-clamp-2 text-[var(--ink)]">{item.title}</div>
+      {item.brand && <div className="text-[10px] text-[var(--ink)]/55 truncate">{item.brand}</div>}
     </div>
   );
 }

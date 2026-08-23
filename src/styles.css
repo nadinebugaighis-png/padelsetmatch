@@ -157,9 +157,25 @@
     transition: color var(--dur-fast) var(--ease-out-soft),
                 background-color var(--dur-fast) var(--ease-out-soft),
                 border-color var(--dur-fast) var(--ease-out-soft),
-                box-shadow var(--dur-fast) var(--ease-out-soft),
-                opacity var(--dur-fast) var(--ease-out-soft),
-                transform var(--dur-base) var(--ease-out-soft);
+                opacity var(--dur-fast) var(--ease-out-soft);
+  }
+
+  /* Heavier properties only animate where the pointer can actually hover. */
+  @media (hover: hover) and (pointer: fine) {
+    button, a {
+      transition: color var(--dur-fast) var(--ease-out-soft),
+                  background-color var(--dur-fast) var(--ease-out-soft),
+                  border-color var(--dur-fast) var(--ease-out-soft),
+                  box-shadow var(--dur-fast) var(--ease-out-soft),
+                  opacity var(--dur-fast) var(--ease-out-soft),
+                  transform var(--dur-base) var(--ease-out-soft);
+    }
+  }
+
+  @keyframes nav-progress {
+    0%   { transform: scaleX(0.05); opacity: 0.9; }
+    60%  { transform: scaleX(0.75); opacity: 1; }
+    100% { transform: scaleX(1); opacity: 0.5; }
   }
 
   h1, h2, h3, .display {

@@ -212,6 +212,27 @@ function AuthShell() {
 
 
 
+  // ---- Instant tab switching: warm the next tab's data on touch/hover ----
+  const discoverFn = useServerFn(getDiscoverFeed);
+  const openEventsFn = useServerFn(listOpenEvents);
+  const connectPostsFn = useServerFn(listConnectPosts);
+
+  const prefetchTab = (to: string) => {
+    const warm = (key: unknown[], fn: () => Promise<unknown>) =>
+      void qc.prefetchQuery({ queryKey: key, queryFn: () => safe(fn), staleTime: 60_000 }).catch(() => {});
+    if (to === "/app/grid") {
+      let world = true;
+      try { world = localStorage.getItem("world-mode") !== "false"; } catch { /* ignore */ }
+      warm(["discover", world], () => discoverFn({ data: { world } }));
+    } else if (to === "/app/events") {
+      warm(["open-events", true], () => openEventsFn({ data: { city: null, needs: null, myLocations: true } }));
+    } else if (to === "/app/connect") {
+      warm(["connect-posts", { city: "", cat: null }], () => connectPostsFn({ data: { city: null, category: null } }));
+    } else if (to === "/app/profile") {
+      warm(["my-matches"], () => getMatches());
+    }
+  };
+
   const onSignOut = async () => {
     await qc.cancelQueries();
     qc.clear();

@@ -247,6 +247,14 @@ function AuthShell() {
 
   return (
     <div className="min-h-screen pb-24 lg:pb-0 programme-page">
+      {/* Thin top progress bar so tab switches never blank the shell */}
+      <div
+        aria-hidden
+        className="fixed top-0 left-0 right-0 z-[60] h-[2px] pointer-events-none"
+        style={{ opacity: navigating ? 1 : 0, transition: "opacity 200ms ease" }}
+      >
+        <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
+      </div>
       <div className="lg:sticky lg:top-0 lg:z-40 lg:bg-[var(--paper)]/95 lg:backdrop-blur lg:border-b lg:border-[var(--ink)]/10">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 lg:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />

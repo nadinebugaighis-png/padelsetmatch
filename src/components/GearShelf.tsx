@@ -1,9 +1,25 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
-import { ExternalLink, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ExternalLink, GripVertical, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export type GearItem = {
   id: string;

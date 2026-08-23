@@ -2,10 +2,10 @@ import { createFileRoute, isRedirect, Link, Outlet, redirect, useNavigate, useRo
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMyMatches, getMyProfile } from "@/lib/app.functions";
+import { getMyMatches, getMyProfile, getDiscoverFeed } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
-import { listMyPendingInvites } from "@/lib/match-events.functions";
-import { getConnectLatest } from "@/lib/connect.functions";
+import { listMyPendingInvites, listOpenEvents } from "@/lib/match-events.functions";
+import { getConnectLatest, listConnectPosts } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";
@@ -122,6 +122,7 @@ function AuthShell() {
   const qc = useQueryClient();
   const t = useT();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const navigating = useRouterState({ select: (s) => s.status === "pending" || s.isLoading });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);
@@ -212,6 +213,27 @@ function AuthShell() {
 
 
 
+  // ---- Instant tab switching: warm the next tab's data on touch/hover ----
+  const discoverFn = useServerFn(getDiscoverFeed);
+  const openEventsFn = useServerFn(listOpenEvents);
+  const connectPostsFn = useServerFn(listConnectPosts);
+
+  const prefetchTab = (to: string) => {
+    const warm = (key: unknown[], fn: () => Promise<unknown>) =>
+      void qc.prefetchQuery({ queryKey: key, queryFn: () => safe(fn), staleTime: 60_000 }).catch(() => {});
+    if (to === "/app/grid") {
+      let world = true;
+      try { world = localStorage.getItem("world-mode") !== "false"; } catch { /* ignore */ }
+      warm(["discover", world], () => discoverFn({ data: { world } }));
+    } else if (to === "/app/events") {
+      warm(["open-events", true], () => openEventsFn({ data: { city: null, needs: null, myLocations: true } }));
+    } else if (to === "/app/connect") {
+      warm(["connect-posts", { city: "", cat: null }], () => connectPostsFn({ data: { city: null, category: null } }));
+    } else if (to === "/app/profile") {
+      warm(["my-matches"], () => getMatches());
+    }
+  };
+
   const onSignOut = async () => {
     await qc.cancelQueries();
     qc.clear();
@@ -225,15 +247,23 @@ function AuthShell() {
 
   return (
     <div className="min-h-screen pb-24 lg:pb-0 programme-page">
+      {/* Thin top progress bar so tab switches never blank the shell */}
+      <div
+        aria-hidden
+        className="fixed top-0 left-0 right-0 z-[60] h-[2px] pointer-events-none"
+        style={{ opacity: navigating ? 1 : 0, transition: "opacity 200ms ease" }}
+      >
+        <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
+      </div>
       <div className="lg:sticky lg:top-0 lg:z-40 lg:bg-[var(--paper)]/95 lg:backdrop-blur lg:border-b lg:border-[var(--ink)]/10">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 lg:border-b-0 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
-              <DesktopTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-              <DesktopTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
-              <DesktopTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-              <DesktopTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+              <DesktopTab to="/app/grid" onPrefetch={() => prefetchTab("/app/grid")} label={t("shell.tab.grid")} icon={<Home className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+              <DesktopTab to="/app/events" onPrefetch={() => prefetchTab("/app/events")} label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-4 h-4" />} active={path.startsWith("/app/events")} />
+              <DesktopTab to="/app/connect" onPrefetch={() => prefetchTab("/app/connect")} label={t("shell.tab.connect")} icon={<Users className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+              <DesktopTab to="/app/profile" onPrefetch={() => prefetchTab("/app/profile")} label={t("shell.tab.me")} icon={<User className="w-4 h-4" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
             </nav>
           )}
           <div className="flex items-center gap-2.5 shrink-0">
@@ -305,11 +335,11 @@ function AuthShell() {
         >
 
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
-            <NavTab to="/app/grid" label={t("shell.tab.grid")} icon={<Home className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-            <NavTab to="/app/events" label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />
+            <NavTab to="/app/grid" onPrefetch={() => prefetchTab("/app/grid")} label={t("shell.tab.grid")} icon={<Home className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
+            <NavTab to="/app/events" onPrefetch={() => prefetchTab("/app/events")} label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />
 
-            <NavTab to="/app/connect" label={t("shell.tab.connect")} icon={<Users className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-            <NavTab to="/app/profile" label={t("shell.tab.me")} icon={<User className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+            <NavTab to="/app/connect" onPrefetch={() => prefetchTab("/app/connect")} label={t("shell.tab.connect")} icon={<Users className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+            <NavTab to="/app/profile" onPrefetch={() => prefetchTab("/app/profile")} label={t("shell.tab.me")} icon={<User className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>
       )}
@@ -317,12 +347,12 @@ function AuthShell() {
   );
 }
 
-function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number; dot?: boolean }) {
+function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot, onPrefetch }: { to: string; label: string; ariaLabel?: string; icon: React.ReactNode; active: boolean; highlight?: boolean; badge?: number; dot?: boolean; onPrefetch?: () => void }) {
   const t = useT();
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} className={`flex min-h-[72px] sm:min-h-[76px] flex-col items-center justify-center gap-1.5 px-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.1em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
+    <Link to={to} aria-label={ariaLabel} onPointerDown={onPrefetch} onMouseEnter={onPrefetch} onTouchStart={onPrefetch} className={`flex min-h-[72px] sm:min-h-[76px] flex-col items-center justify-center gap-1.5 px-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.1em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
@@ -346,10 +376,12 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot }: {
   );
 }
 
-function DesktopTab({ to, label, icon, active, badge, dot }: { to: string; label: string; icon: React.ReactNode; active: boolean; badge?: number; dot?: boolean }) {
+function DesktopTab({ to, label, icon, active, badge, dot, onPrefetch }: { to: string; label: string; icon: React.ReactNode; active: boolean; badge?: number; dot?: boolean; onPrefetch?: () => void }) {
   return (
     <Link
       to={to}
+      onPointerDown={onPrefetch}
+      onMouseEnter={onPrefetch}
       className={`relative flex items-center gap-2 px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-semibold transition-colors ${
         active
           ? "bg-[var(--ink)] text-[var(--paper)]"

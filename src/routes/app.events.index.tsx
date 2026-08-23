@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import {
   listOpenEvents,
   joinMatchEvent,
@@ -101,6 +101,8 @@ function EventsPage() {
     queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
     refetchOnWindowFocus: true,
     refetchInterval: 15_000,
+    staleTime: 10_000,
+    placeholderData: keepPreviousData,
   });
 
   // Realtime: keep the feed live when other players join/leave or matches change.
@@ -453,9 +455,15 @@ function EventsPage() {
               })}
             </div>
 
-            {eventsQ.isLoading ? (
-              <div className="mt-8 text-center text-[var(--ink)]/50 text-sm">
-                {tr("Loading matches…", "Cargando partidos…", "Chargement…")}
+            {eventsQ.isLoading && !eventsQ.data ? (
+              <div className="mt-6 space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-2xl border border-[var(--ink)]/8 bg-white p-4 space-y-2.5">
+                    <div className="h-3.5 w-1/3 rounded bg-[var(--ink)]/8 animate-pulse" />
+                    <div className="h-4 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />
+                    <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
+                  </div>
+                ))}
               </div>
             ) : filtered.length === 0 ? (
               <EmptyFeed

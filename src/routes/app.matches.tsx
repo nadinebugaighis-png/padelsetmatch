@@ -18,7 +18,7 @@ function Matches() {
   const respond = useServerFn(respondToIntro);
   const deleteThread = useServerFn(deleteMatchThread);
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
+  const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches(), staleTime: 60_000, placeholderData: keepPreviousData });
   const { t, label } = useI18n();
   const tr = useTr();
   const [busyId, setBusyId] = useState<string | null>(null);

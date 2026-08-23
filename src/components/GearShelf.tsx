@@ -27,7 +27,7 @@ export const GEAR_EMOJI: Record<string, string> = {
   other: "✨",
 };
 
-const MAX_ITEMS = 4;
+const MAX_ITEMS = 12;
 
 function useGear(profileId: string | undefined) {
   return useQuery({
@@ -188,7 +188,13 @@ export function GearEditor({ profileId }: { profileId: string }) {
     onSuccess: () => {
       const wasEdit = !!editingId;
       qc.invalidateQueries({ queryKey: ["profile-gear", profileId] });
-      reset();
+      if (wasEdit || items.length + 1 >= MAX_ITEMS) {
+        reset();
+      } else {
+        // Keep the form open so several items can be added in a row.
+        setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null);
+        setEditingId(null);
+      }
       toast.success(
         wasEdit
           ? tr("Updated", "Actualizado", "Mis à jour")
@@ -258,16 +264,27 @@ export function GearEditor({ profileId }: { profileId: string }) {
 
       {!open ? (
         items.length >= MAX_ITEMS ? (
-          <p className="text-xs text-[var(--ink)]/55">{tr("Kit is full (4 items)", "Equipo completo (4 objetos)", "Matériel complet (4 objets)")}</p>
+          <p className="text-xs text-[var(--ink)]/55">
+            {tr(
+              `Kit is full (${MAX_ITEMS} items). Remove one to add something new.`,
+              `Equipo completo (${MAX_ITEMS} objetos). Quita uno para añadir otro.`,
+              `Matériel complet (${MAX_ITEMS} objets). Retire-en un pour en ajouter.`,
+            )}
+          </p>
         ) : (
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-[var(--ink)]/25 text-[12px] font-semibold text-[var(--ink)]"
-          >
-            <Plus className="w-4 h-4" />
-            {tr("Add item", "Añadir objeto", "Ajouter un objet")}
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-[var(--ink)]/25 text-[12px] font-semibold text-[var(--ink)]"
+            >
+              <Plus className="w-4 h-4" />
+              {tr("Add item", "Añadir objeto", "Ajouter un objet")}
+            </button>
+            <span className="text-[11px] text-[var(--ink)]/50">
+              {items.length}/{MAX_ITEMS}
+            </span>
+          </div>
         )
       ) : (
         <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper-2)]/60 p-3 space-y-3">

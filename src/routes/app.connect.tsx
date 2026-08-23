@@ -101,6 +101,8 @@ function ConnectPage() {
   const postsQ = useQuery({
     queryKey: ["connect-posts", { city, cat }],
     queryFn: () => list({ data: { city: city || null, category: cat } }),
+    staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 
   const delMut = useMutation({

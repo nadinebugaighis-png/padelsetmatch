@@ -350,8 +350,7 @@ function Discover() {
     blockM.mutate(id);
   }
 
-  if (feedQ.isLoading) return <div className="programme-page px-5 py-10 text-center text-[var(--ink)]/60 min-h-[calc(100vh-4rem)]">{t("disc.loading")}</div>;
-  if (!feedQ.data?.me) return <div className="programme-page px-5 py-10 text-center text-[var(--ink)]/60 min-h-[calc(100vh-4rem)]">{t("disc.loading")}</div>;
+  if (!feedQ.data?.me) return <GridSkeleton />;
 
   const all = feedQ.data.candidates;
   const activeCat = filter === "all" ? null : filter;

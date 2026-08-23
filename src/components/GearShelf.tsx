@@ -404,6 +404,19 @@ export function GearEditor({ profileId }: { profileId: string }) {
                 : tr("Save item", "Guardar objeto", "Enregistrer")}
           </button>
 
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => remove.mutate(editingId)}
+              disabled={remove.isPending}
+              className="w-full h-10 rounded-full border border-red-500/30 text-red-600 text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
+            >
+              {remove.isPending
+                ? tr("Deleting…", "Eliminando…", "Suppression…")
+                : tr("Delete item", "Eliminar objeto", "Supprimer l'objet")}
+            </button>
+          )}
+
         </div>
       )}
     </div>

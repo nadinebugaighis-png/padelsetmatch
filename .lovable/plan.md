@@ -1,25 +1,30 @@
-# Open Graph preview page
+# Make page-to-page navigation feel instant
 
-A private page at `/og-preview` where you can see exactly how padelsetmatch.com looks when shared — before publishing.
+Today each tab in the app (Play, Grid, Matches, Connect, Profile) fetches its data only after you land on the page, and most pages show a full-screen spinner while that happens. The page code itself is also loaded on demand. That combination is what makes switching pages feel slow and "jumpy".
 
-## What the page shows
+## What will change
 
-**1. Card mockups** — the same title, description and image rendered in the three formats that matter:
-- WhatsApp / iMessage (small square thumbnail, title, description, domain)
-- Facebook / LinkedIn (large 1200x630 banner above the text)
-- X / Twitter summary_large_image
+1. **Prefetch on touch/hover of the bottom nav**
+   Tapping a tab already triggers the route code download; we'll additionally warm the page's data (via the query cache) the moment a finger touches or a cursor hovers a nav item, so the page usually has its data before it renders.
 
-**2. Candidate image switcher** — a row of thumbnails for every share image in the project (the current `padel-share-logo.jpg`, plus `padel-share-og`, `padel-og`, `padel-mixed-share`, `padel-whatsapp-share`, and any new luxury design). Click one and all three card mockups update instantly, so you can compare before committing.
+2. **Keep previously loaded pages warm**
+   Raise the cache freshness window for tab-level data (grid feed, matches, events, connect) so returning to a tab renders instantly from cache and refreshes quietly in the background instead of blanking out.
 
-**3. Raw tag list** — the actual `og:*` and `twitter:*` values the homepage emits, plus a warning row if the image isn't 1200x630 or the description runs past 160 characters.
+3. **No more full-screen spinners between tabs**
+   Replace whole-page loading spinners with either the cached content plus a subtle top progress bar, or lightweight skeletons that match the final layout — so the shell (header + bottom nav) never disappears during a switch.
 
-## Design
+4. **Stable shell + no layout shift**
+   Keep the header and bottom nav mounted across tab changes and reserve space for content so the page doesn't jump when data lands. Reset scroll to top on tab change consistently.
 
-Matches the app's programme aesthetic — cream paper background, forest-green ink, serif headings — with the card mockups rendered on a neutral grey panel so they read like real chat bubbles.
+5. **Cheaper transitions**
+   Remove/soften transition effects that force expensive repaints during navigation on mobile, and keep animations to opacity/transform only.
 
 ## Technical notes
 
-- New route `src/routes/og-preview.tsx`, marked `noindex` so it never shows in search.
-- Reads its data from the same constants the homepage uses in `src/routes/index.tsx`, so the preview can't drift from what's actually shipped.
-- Image list comes from the existing `.asset.json` pointers in `src/assets` — no uploads or backend changes.
-- Purely a preview surface; picking an image here does not change the live tags. Once you decide, I'll point the homepage metadata at your pick.
+- `src/routes/app.tsx`: add `onPointerDown` / `onMouseEnter` handlers on the nav `<Link>`s that call `queryClient.prefetchQuery` for that tab's primary key (`discover`, `my-matches`, `match-events`, `connect-posts`), plus `router.preloadRoute`.
+- `src/router.tsx`: keep `defaultPreload: "intent"` but set `defaultPreloadStaleTime` to ~30s so preloads aren't discarded, and raise the global `staleTime`.
+- Per-route `useQuery` calls in `app.grid.tsx`, `app.matches.tsx`, `app.events.index.tsx`, `app.connect.tsx`: add `placeholderData: keepPreviousData` and consistent `staleTime` (60s) so cached data paints immediately.
+- Swap the blocking `isLoading` spinner blocks in those routes for skeleton blocks / an inline top progress indicator driven by `useRouterState({ select: s => s.isLoading })`.
+- Audit the global `transition` rule in `src/styles.css` that applies to every `a`/`button` — scope it so it doesn't fire on mount of large lists.
+
+No backend, data-model, or business-logic changes.

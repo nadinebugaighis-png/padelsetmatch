@@ -188,7 +188,13 @@ export function GearEditor({ profileId }: { profileId: string }) {
     onSuccess: () => {
       const wasEdit = !!editingId;
       qc.invalidateQueries({ queryKey: ["profile-gear", profileId] });
-      reset();
+      if (wasEdit || items.length + 1 >= MAX_ITEMS) {
+        reset();
+      } else {
+        // Keep the form open so several items can be added in a row.
+        setKind("racket"); setTitle(""); setBrand(""); setLink(""); setImage(null);
+        setEditingId(null);
+      }
       toast.success(
         wasEdit
           ? tr("Updated", "Actualizado", "Mis à jour")

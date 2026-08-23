@@ -122,6 +122,7 @@ function AuthShell() {
   const qc = useQueryClient();
   const t = useT();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const navigating = useRouterState({ select: (s) => s.status === "pending" || s.isLoading });
   const getProfile = useServerFn(getMyProfile);
   const getMatches = useServerFn(getMyMatches);
   const checkAdmin = useServerFn(getIsAdmin);

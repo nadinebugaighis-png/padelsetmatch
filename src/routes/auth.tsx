@@ -367,9 +367,25 @@ function AuthPage() {
           </button>
         </div>
 
-        {/* In the native iOS/Android shell, social sign-in would leave the app
-            and open the system browser (App Store guideline 4). Email/password
-            sign-in and registration stay fully in-app, so only show those. */}
+        {/* Native iOS: Sign in with Apple uses the system sheet and never
+            leaves the app (App Store guideline 4 compliant). */}
+        {isNative() && (
+          <>
+            <Button
+              onClick={appleNative}
+              disabled={loading}
+              variant="secondary"
+              className="w-full mt-6 bg-black text-white hover:bg-black/90"
+            >
+               {t("auth.apple")}
+            </Button>
+            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/40 uppercase tracking-widest">
+              <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
+            </div>
+          </>
+        )}
+
+        {/* On web, social sign-in goes through the OAuth redirect flow. */}
         {!isNative() && (
           <>
             <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">

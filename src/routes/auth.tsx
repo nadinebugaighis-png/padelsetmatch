@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
+import { isNative } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
   // Rendered on the client only: the /app guard redirects here after hydration,
@@ -341,27 +342,34 @@ function AuthPage() {
           </button>
         </div>
 
-        <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
-           {t("auth.google")}
-        </Button>
-        <Button
-          onClick={async () => {
-            setLoading(true);
-            const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
-            if (result.error) { toast.error(result.error.message); setLoading(false); return; }
-            if (result.redirected) return;
-            navigate(afterAuthTarget() as never);
-          }}
-          disabled={loading}
-          variant="secondary"
-          className="w-full mt-2 bg-black text-white hover:bg-black/90"
-        >
-           {t("auth.apple")}
-        </Button>
+        {/* In the native iOS/Android shell, social sign-in would leave the app
+            and open the system browser (App Store guideline 4). Email/password
+            sign-in and registration stay fully in-app, so only show those. */}
+        {!isNative() && (
+          <>
+            <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
+               {t("auth.google")}
+            </Button>
+            <Button
+              onClick={async () => {
+                setLoading(true);
+                const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
+                if (result.error) { toast.error(result.error.message); setLoading(false); return; }
+                if (result.redirected) return;
+                navigate(afterAuthTarget() as never);
+              }}
+              disabled={loading}
+              variant="secondary"
+              className="w-full mt-2 bg-black text-white hover:bg-black/90"
+            >
+               {t("auth.apple")}
+            </Button>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/40 uppercase tracking-widest">
-          <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
-        </div>
+            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/40 uppercase tracking-widest">
+              <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
+            </div>
+          </>
+        )}
 
         <form onSubmit={submit} className="space-y-3">
           <Input type="email" required placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} />

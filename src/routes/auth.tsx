@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
+import { isNative } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
   // Rendered on the client only: the /app guard redirects here after hydration,

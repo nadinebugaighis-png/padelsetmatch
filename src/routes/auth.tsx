@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
-import { isNative } from "@/lib/native";
+import { isNative, nativeAppleSignIn } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
   // Rendered on the client only: the /app guard redirects here after hydration,
@@ -300,6 +300,31 @@ function AuthPage() {
     if (result.redirected) return;
     navigate(afterAuthTarget() as never);
   };
+
+  // Native iOS: Sign in with Apple via the system sheet — never leaves the app.
+  const appleNative = async () => {
+    setLoading(true);
+    try {
+      const res = await nativeAppleSignIn();
+      if (!res) { setLoading(false); return; } // user cancelled
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: "apple",
+        token: res.identityToken,
+        nonce: res.nonce,
+      });
+      if (error) {
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
+      navigate(afterAuthTarget() as never);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("auth.fail"));
+      setLoading(false);
+    }
+  };
+
+
 
 
 

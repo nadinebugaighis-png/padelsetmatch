@@ -97,12 +97,17 @@ function ConnectPage() {
   const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => isAdminFn() });
   const isAdmin = adminQ.data === true;
   const myProfileId = (meQ.data as any)?.id as string | undefined;
+  // Age gate: Connect is a social feed, so it requires a completed adult
+  // profile (age is NOT NULL and DB-constrained to 18+). Incomplete profiles
+  // are sent back to onboarding to finish.
+  const needsOnboarding = meQ.isSuccess && (!meQ.data || (meQ.data as any).age == null);
 
   const postsQ = useQuery({
     queryKey: ["connect-posts", { city, cat }],
     queryFn: () => list({ data: { city: city || null, category: cat } }),
     staleTime: 60_000,
     placeholderData: keepPreviousData,
+    enabled: !needsOnboarding,
   });
 
   const delMut = useMutation({

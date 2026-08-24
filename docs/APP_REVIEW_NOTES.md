@@ -51,7 +51,7 @@ to meet players when travelling to a new city.
 ## 4. How to set up and access the main features
 Demo account (full access, no paid tiers):
 - Email: nadine@marches.es
-- Password: <paste the current password here>
+- Password: AppReview123
 
 Steps: Sign in → Home ("Grid") shows nearby players → "Play" tab lists open matches →
 tap a match → "Join" → chat opens → "Connect" tab is the community feed (posts,

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
@@ -157,6 +157,8 @@ function ConnectPage() {
     },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
+
+  if (needsOnboarding) return <Navigate to="/app/onboarding" />;
 
   return (
     <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">

@@ -1902,6 +1902,7 @@ export type Database = {
       }
       clear_my_compat_scores: { Args: never; Returns: undefined }
       coach_stats: { Args: { _coach_profile_id: string }; Returns: Json }
+      current_user_is_adult: { Args: never; Returns: boolean }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

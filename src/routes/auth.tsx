@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
-import { isNative } from "@/lib/native";
+import { isNative, nativeAppleSignIn } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
   // Rendered on the client only: the /app guard redirects here after hydration,
@@ -301,6 +301,31 @@ function AuthPage() {
     navigate(afterAuthTarget() as never);
   };
 
+  // Native iOS: Sign in with Apple via the system sheet — never leaves the app.
+  const appleNative = async () => {
+    setLoading(true);
+    try {
+      const res = await nativeAppleSignIn();
+      if (!res) { setLoading(false); return; } // user cancelled
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: "apple",
+        token: res.identityToken,
+        nonce: res.nonce,
+      });
+      if (error) {
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
+      navigate(afterAuthTarget() as never);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("auth.fail"));
+      setLoading(false);
+    }
+  };
+
+
+
 
 
 
@@ -342,9 +367,25 @@ function AuthPage() {
           </button>
         </div>
 
-        {/* In the native iOS/Android shell, social sign-in would leave the app
-            and open the system browser (App Store guideline 4). Email/password
-            sign-in and registration stay fully in-app, so only show those. */}
+        {/* Native iOS: Sign in with Apple uses the system sheet and never
+            leaves the app (App Store guideline 4 compliant). */}
+        {isNative() && (
+          <>
+            <Button
+              onClick={appleNative}
+              disabled={loading}
+              variant="secondary"
+              className="w-full mt-6 bg-black text-white hover:bg-black/90"
+            >
+               {t("auth.apple")}
+            </Button>
+            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/40 uppercase tracking-widest">
+              <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
+            </div>
+          </>
+        )}
+
+        {/* On web, social sign-in goes through the OAuth redirect flow. */}
         {!isNative() && (
           <>
             <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">

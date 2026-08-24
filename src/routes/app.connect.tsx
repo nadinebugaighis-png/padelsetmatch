@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
@@ -97,12 +97,17 @@ function ConnectPage() {
   const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => isAdminFn() });
   const isAdmin = adminQ.data === true;
   const myProfileId = (meQ.data as any)?.id as string | undefined;
+  // Age gate: Connect is a social feed, so it requires a completed adult
+  // profile (age is NOT NULL and DB-constrained to 18+). Incomplete profiles
+  // are sent back to onboarding to finish.
+  const needsOnboarding = meQ.isSuccess && (!meQ.data || (meQ.data as any).age == null);
 
   const postsQ = useQuery({
     queryKey: ["connect-posts", { city, cat }],
     queryFn: () => list({ data: { city: city || null, category: cat } }),
     staleTime: 60_000,
     placeholderData: keepPreviousData,
+    enabled: !needsOnboarding,
   });
 
   const delMut = useMutation({
@@ -152,6 +157,8 @@ function ConnectPage() {
     },
     onError: (e: any) => toast.error(e?.message ?? "Error"),
   });
+
+  if (needsOnboarding) return <Navigate to="/app/onboarding" />;
 
   return (
     <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">

@@ -60,3 +60,28 @@ export async function initNativeShell() {
     /* plugin missing in this build — ignore */
   }
 }
+
+/**
+ * Native Sign in with Apple (iOS only). Returns the Apple identity token,
+ * or null if the user cancelled. Never available on web/Android.
+ */
+export async function nativeAppleSignIn(): Promise<{ identityToken: string; nonce?: string } | null> {
+  if (!isNative() || nativePlatform() !== "ios") return null;
+  const { SignInWithApple } = await import("@capacitor-community/apple-sign-in");
+  // Supabase verifies the identity token signature; an unhashed nonce is fine here.
+  const nonce = crypto.randomUUID();
+  try {
+    const result = await SignInWithApple.authorize({
+      clientId: "com.moorisharches.padelsetmatch",
+      redirectURI: "https://padelsetmatch.com/auth",
+      scopes: "email name",
+      nonce,
+    });
+    const identityToken = result.response?.identityToken;
+    if (!identityToken) return null;
+    return { identityToken, nonce };
+  } catch {
+    // user cancelled or capability missing
+    return null;
+  }
+}

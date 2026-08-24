@@ -65,9 +65,23 @@ export async function initNativeShell() {
  * Native Sign in with Apple (iOS only). Returns the Apple identity token,
  * or null if the user cancelled. Never available on web/Android.
  */
+interface AppleSignInPlugin {
+  authorize(options: {
+    clientId: string;
+    redirectURI: string;
+    scopes?: string;
+    nonce?: string;
+  }): Promise<{ response?: { identityToken?: string } }>;
+}
+
 export async function nativeAppleSignIn(): Promise<{ identityToken: string; nonce?: string } | null> {
   if (!isNative() || nativePlatform() !== "ios") return null;
-  const { SignInWithApple } = await import("@capacitor-community/apple-sign-in");
+  // Use Capacitor's plugin registry instead of the package's JS wrapper:
+  // the @capacitor-community/apple-sign-in web build touches `document` at
+  // module scope, which crashes the server-side render. The native iOS
+  // plugin is still shipped via `npx cap sync` and resolves by name here.
+  const { registerPlugin } = await import("@capacitor/core");
+  const SignInWithApple = registerPlugin<AppleSignInPlugin>("SignInWithApple");
   // Supabase verifies the identity token signature; an unhashed nonce is fine here.
   const nonce = crypto.randomUUID();
   try {

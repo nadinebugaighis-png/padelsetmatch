@@ -62,8 +62,9 @@ export async function initNativeShell() {
 }
 
 /**
- * Native Sign in with Apple (iOS only). Returns the Apple identity token,
- * or null if the user cancelled. Never available on web/Android.
+ * Native Sign in with Apple (iOS/iPadOS). Returns a discriminated result so the
+ * caller can tell "user cancelled" apart from "plugin unavailable / failed" and
+ * fall back to the web flow instead of silently doing nothing.
  */
 interface AppleSignInPlugin {
   authorize(options: {
@@ -74,28 +75,57 @@ interface AppleSignInPlugin {
   }): Promise<{ response?: { identityToken?: string } }>;
 }
 
-export async function nativeAppleSignIn(): Promise<{ identityToken: string; nonce?: string } | null> {
-  if (!isNative() || nativePlatform() !== "ios") return null;
+export type AppleSignInResult =
+  | { status: "ok"; identityToken: string; nonce: string }
+  | { status: "cancelled" }
+  | { status: "unavailable"; message?: string };
+
+async function sha256Hex(input: string): Promise<string> {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function isCancellation(e: unknown) {
+  const msg = (e instanceof Error ? e.message : String(e ?? "")).toLowerCase();
+  return msg.includes("cancel") || msg.includes("1001") || msg.includes("abort");
+}
+
+export async function nativeAppleSignIn(): Promise<AppleSignInResult> {
+  if (!isNative() || nativePlatform() !== "ios") return { status: "unavailable" };
   // Use Capacitor's plugin registry instead of the package's JS wrapper:
   // the @capacitor-community/apple-sign-in web build touches `document` at
   // module scope, which crashes the server-side render. The native iOS
   // plugin is still shipped via `npx cap sync` and resolves by name here.
-  const { registerPlugin } = await import("@capacitor/core");
+  const { registerPlugin, Capacitor } = await import("@capacitor/core");
+  if (!Capacitor.isPluginAvailable("SignInWithApple")) {
+    return { status: "unavailable", message: "Sign in with Apple is not available in this build." };
+  }
   const SignInWithApple = registerPlugin<AppleSignInPlugin>("SignInWithApple");
-  // Supabase verifies the identity token signature; an unhashed nonce is fine here.
-  const nonce = crypto.randomUUID();
+  // Apple must receive the SHA-256 hash of the nonce; Supabase receives the raw
+  // value and hashes it again to compare against the identity-token claim.
+  const rawNonce = crypto.randomUUID();
+  const hashedNonce = await sha256Hex(rawNonce);
   try {
-    const result = await SignInWithApple.authorize({
-      clientId: "com.moorisharches.padelsetmatch",
-      redirectURI: "https://padelsetmatch.com/auth",
-      scopes: "email name",
-      nonce,
-    });
+    const result = await Promise.race([
+      SignInWithApple.authorize({
+        clientId: "com.moorisharches.padelsetmatch",
+        redirectURI: "https://padelsetmatch.com/auth",
+        scopes: "email name",
+        nonce: hashedNonce,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("Apple sign-in timed out")), 60_000),
+      ),
+    ]);
     const identityToken = result.response?.identityToken;
-    if (!identityToken) return null;
-    return { identityToken, nonce };
-  } catch {
-    // user cancelled or capability missing
-    return null;
+    if (!identityToken) return { status: "unavailable", message: "Apple did not return an identity token." };
+    return { status: "ok", identityToken, nonce: rawNonce };
+  } catch (e) {
+    if (isCancellation(e)) return { status: "cancelled" };
+    return { status: "unavailable", message: e instanceof Error ? e.message : String(e) };
   }
 }
+

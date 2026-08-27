@@ -301,12 +301,21 @@ function AuthPage() {
     navigate(afterAuthTarget() as never);
   };
 
-  // Native iOS: Sign in with Apple via the system sheet — never leaves the app.
+  // Native iOS/iPadOS: Sign in with Apple via the system sheet — never leaves
+  // the app. If the native plugin is unavailable for any reason we fall back to
+  // the standard OAuth flow so the button always does something.
   const appleNative = async () => {
     setLoading(true);
     try {
       const res = await nativeAppleSignIn();
-      if (!res) { setLoading(false); return; } // user cancelled
+      if (res.status === "cancelled") { setLoading(false); return; }
+      if (res.status === "unavailable") {
+        const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
+        if (result.error) { toast.error(result.error.message); setLoading(false); return; }
+        if (result.redirected) return;
+        navigate(afterAuthTarget() as never);
+        return;
+      }
       const { error } = await supabase.auth.signInWithIdToken({
         provider: "apple",
         token: res.identityToken,
@@ -323,6 +332,7 @@ function AuthPage() {
       setLoading(false);
     }
   };
+
 
 
 

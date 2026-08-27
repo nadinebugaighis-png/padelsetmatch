@@ -33,6 +33,17 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>PadelSetMatch needs camera access so you can take a profile or match photo directly in the app.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>PadelSetMatch needs photo access so you can choose a profile or match photo from your library.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>PadelSetMatch saves photos you create in the app to your photo library.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>PadelSetMatch needs microphone access when you record a video with the camera.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PadelSetMatch uses your location to show padel clubs and matches near you.</string>
+
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

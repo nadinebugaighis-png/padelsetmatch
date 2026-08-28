@@ -161,36 +161,31 @@ function AuthShell() {
     refetchInterval: 60_000,
     refetchOnWindowFocus: true,
   });
-  // Read on the client only (after hydration) so SSR and first client render match.
-  const [connectSeen, setConnectSeen] = useState<string>("");
-  useEffect(() => {
-    try { setConnectSeen(localStorage.getItem("connect-last-seen") ?? ""); } catch { /* ignore */ }
-  }, []);
-
   const connectLatest = connectQ.data?.latest ?? null;
+  const connectSeen = connectQ.data?.seenAt ?? null;
   const onConnect = path.startsWith("/app/connect");
+  const markSeen = useServerFn(markConnectSeen);
+  const markedRef = useRef<string>("");
   useEffect(() => {
-    if (typeof window === "undefined") return;
     if (!onConnect) return;
-    // Mark everything currently published as seen. Use the newest server
-    // timestamp when it is ahead of the device clock, so clock skew or
-    // timestamp-format differences can't leave the dot stuck on.
-    const nowMs = Date.now();
-    const latestMs = connectLatest ? Date.parse(connectLatest) : 0;
-    const stamp = new Date(Math.max(nowMs, Number.isNaN(latestMs) ? 0 : latestMs) + 1000).toISOString();
-    localStorage.setItem("connect-last-seen", stamp);
-    setConnectSeen(stamp);
-  }, [onConnect, connectLatest]);
+    const key = connectLatest ?? "none";
+    if (markedRef.current === key) return;
+    markedRef.current = key;
+    void markSeen()
+      .then(() => qc.invalidateQueries({ queryKey: ["connect-latest"] }))
+      .catch(() => { /* ignore */ });
+  }, [onConnect, connectLatest, markSeen, qc]);
   const connectHasNew = (() => {
     if (onConnect) return false;
     if (!connectLatest) return false;
     const latestMs = Date.parse(connectLatest);
     if (Number.isNaN(latestMs)) return false;
-    if (!connectSeen) return true;
+    if (!connectSeen) return false;
     const seenMs = Date.parse(connectSeen);
-    if (Number.isNaN(seenMs)) return true;
+    if (Number.isNaN(seenMs)) return false;
     return latestMs > seenMs;
   })();
+
 
   const rawInvites = (invitesQ.data?.invites ?? []) as Array<{
     id: string;

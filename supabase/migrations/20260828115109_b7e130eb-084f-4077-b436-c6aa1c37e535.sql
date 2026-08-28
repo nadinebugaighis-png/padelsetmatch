@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.coach_stats(uuid) TO authenticated;

@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS connect_seen_at timestamptz NOT NULL DEFAULT now();

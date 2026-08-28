@@ -219,7 +219,7 @@ export const getConnectLatest = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     let myPid: string | null = null;
     try { myPid = await myProfileId(context.supabase, context.userId); } catch { myPid = null; }
-    const [{ data: posts }, { data: comments }] = await Promise.all([
+    const [{ data: posts }, { data: comments }, { data: me }] = await Promise.all([
       context.supabase
         .from("connect_posts")
         .select("created_at,author_profile_id")
@@ -230,11 +230,22 @@ export const getConnectLatest = createServerFn({ method: "GET" })
         .select("created_at,author_profile_id")
         .order("created_at", { ascending: false })
         .limit(5),
+      context.supabase.from("profiles").select("connect_seen_at").eq("user_id", context.userId).maybeSingle(),
     ]);
     const notMine = <T extends { author_profile_id: string | null }>(rows: T[]) =>
       rows.filter((r) => !myPid || r.author_profile_id !== myPid);
     const latestPost = notMine(((posts ?? []) as Array<{ created_at: string; author_profile_id: string }>))[0]?.created_at ?? null;
     const latestComment = notMine(((comments ?? []) as Array<{ created_at: string; author_profile_id: string }>))[0]?.created_at ?? null;
     const latest = [latestPost, latestComment].filter(Boolean).sort().slice(-1)[0] ?? null;
-    return { latest: latest as string | null };
+    const seenAt = ((me as { connect_seen_at: string | null } | null)?.connect_seen_at) ?? null;
+    return { latest: latest as string | null, seenAt };
   });
+
+export const markConnectSeen = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const seenAt = new Date().toISOString();
+    await context.supabase.from("profiles").update({ connect_seen_at: seenAt }).eq("user_id", context.userId);
+    return { seenAt };
+  });
+

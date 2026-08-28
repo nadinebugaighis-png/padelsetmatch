@@ -1433,6 +1433,7 @@ export type Database = {
           availability: string[] | null
           away_until: string | null
           bio: string | null
+          connect_seen_at: string
           court_side: string | null
           created_at: string
           favorite_clubs: string[]
@@ -1486,6 +1487,7 @@ export type Database = {
           availability?: string[] | null
           away_until?: string | null
           bio?: string | null
+          connect_seen_at?: string
           court_side?: string | null
           created_at?: string
           favorite_clubs?: string[]
@@ -1539,6 +1541,7 @@ export type Database = {
           availability?: string[] | null
           away_until?: string | null
           bio?: string | null
+          connect_seen_at?: string
           court_side?: string | null
           created_at?: string
           favorite_clubs?: string[]

@@ -23,7 +23,7 @@ Upload it to an unlisted YouTube/Vimeo/Dropbox link and paste the link in the re
 ## 2. Devices and OS tested
 - iPhone 15 Pro — iOS 18.5
 - iPhone 13 — iOS 18.4
-- iPad (10th gen) — iPadOS 18.5
+- iPad Air (5th generation) — iPadOS 26.5
 (Adjust to the devices you actually used.)
 
 ## 3. App functions and target audience

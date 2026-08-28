@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile, getDiscoverFeed } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites, listOpenEvents } from "@/lib/match-events.functions";
-import { getConnectLatest, listConnectPosts } from "@/lib/connect.functions";
+import { getConnectLatest, markConnectSeen, listConnectPosts } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PlayMenuIcon } from "@/components/PlayMenuIcon";

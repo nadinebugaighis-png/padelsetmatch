@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { CoachEndorsePanel } from "@/components/CoachEndorsePanel";
+import { CoachBadgePanel } from "@/components/CoachBadgePanel";
 import { CourtIcon } from "@/components/CourtIcon";
 import { GearShelf } from "@/components/GearShelf";
 
@@ -1065,7 +1065,7 @@ function Discover() {
 
                       {/* Primary actions — coach card + message/like button placed above the fold */}
                       {preview.is_coach && (
-                        <CoachEndorsePanel coachProfileId={preview.id} coachName={preview.first_name} />
+                        <CoachBadgePanel coachName={preview.first_name} />
                       )}
 
                       {isSelf ? (

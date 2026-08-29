@@ -1,7 +1,7 @@
 import { GraduationCap } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 
-export function CoachEndorsePanel({ coachName }: { coachProfileId: string; coachName: string }) {
+export function CoachBadgePanel({ coachName }: { coachName: string }) {
   const tr = useTr();
 
   return (

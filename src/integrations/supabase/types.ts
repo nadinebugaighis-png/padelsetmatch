@@ -116,57 +116,6 @@ export type Database = {
         }
         Relationships: []
       }
-      coach_endorsements: {
-        Row: {
-          approved_at: string | null
-          coach_profile_id: string
-          comment: string | null
-          created_at: string
-          id: string
-          stars: number | null
-          status: string
-          student_profile_id: string
-          updated_at: string
-        }
-        Insert: {
-          approved_at?: string | null
-          coach_profile_id: string
-          comment?: string | null
-          created_at?: string
-          id?: string
-          stars?: number | null
-          status?: string
-          student_profile_id: string
-          updated_at?: string
-        }
-        Update: {
-          approved_at?: string | null
-          coach_profile_id?: string
-          comment?: string | null
-          created_at?: string
-          id?: string
-          stars?: number | null
-          status?: string
-          student_profile_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "coach_endorsements_coach_profile_id_fkey"
-            columns: ["coach_profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "coach_endorsements_student_profile_id_fkey"
-            columns: ["student_profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       compatibility_feedback: {
         Row: {
           created_at: string
@@ -1904,7 +1853,6 @@ export type Database = {
         Returns: undefined
       }
       clear_my_compat_scores: { Args: never; Returns: undefined }
-      coach_stats: { Args: { _coach_profile_id: string }; Returns: Json }
       current_user_is_adult: { Args: never; Returns: boolean }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -2005,10 +1953,6 @@ export type Database = {
         Returns: number
       }
       my_profile_id: { Args: never; Returns: string }
-      open_coach_chat: {
-        Args: { _acting_user_id: string; _coach_profile_id: string }
-        Returns: string
-      }
       open_intro_chat: {
         Args: {
           _acting_user_id: string

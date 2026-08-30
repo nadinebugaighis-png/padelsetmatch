@@ -5,6 +5,14 @@ then also send it via **Reply to App Review**. Attach/record the screen recordin
 
 ---
 
+## What's new in Build 11
+- Simplified the coach feature to a simple on/off badge; removed coach reviews, star ratings, and coach-to-player messaging.
+- Cleaned up the unused coach endorsements table and related database functions.
+- Sign in with Apple nonce is now SHA-256 hashed with a 60-second timeout and web fallback.
+- Camera and photo library purpose strings are present in Info.plist.
+- Tested on iOS 27 beta; no issues found.
+- **Messaging and Chat** is set to **Yes** in App Store Connect.
+
 ## 1. Screen recording (you must record this on a physical iPhone)
 Record one continuous video (2–4 min), starting from tapping the app icon:
 

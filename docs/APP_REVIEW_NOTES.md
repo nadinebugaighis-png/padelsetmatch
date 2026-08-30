@@ -1,4 +1,4 @@
-# App Review reply — Guideline 2.1 (Information Needed)
+# App Review reply — Build 11
 
 Paste the block below into **App Store Connect → App Review Information → Notes**,
 then also send it via **Reply to App Review**. Attach/record the screen recording first.

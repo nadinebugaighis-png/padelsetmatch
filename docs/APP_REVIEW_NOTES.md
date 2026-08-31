@@ -1,11 +1,12 @@
-# App Review reply — Build 12
+# App Review reply — Build 13
 
 Paste the block below into **App Store Connect → App Review Information → Notes**,
 then also send it via **Reply to App Review**. Attach/record the screen recording first.
 
 ---
 
-## What's new in Build 12
+## What's new in Build 13
+- This is a resubmission addressing the previous App Review feedback.
 - Simplified the coach feature to a simple on/off badge; removed coach reviews, star ratings, and coach-to-player messaging.
 - Cleaned up the unused coach endorsements table and related database functions.
 - Sign in with Apple nonce is now SHA-256 hashed with a 60-second timeout and web fallback.

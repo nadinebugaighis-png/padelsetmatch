@@ -1,0 +1,20 @@
+Subject: Resubmission — Build 13 addresses all feedback
+
+Dear App Review Team,
+
+Thank you for your feedback on Version 1.0 (Build 10). We have addressed every point and are resubmitting Build 13 for your review.
+
+- Sign in with Apple: Fixed. We now correctly SHA-256 hash the nonce before sending it to Apple’s API, and added a 60-second timeout with a fallback to the web-based flow if the native sheet fails.
+- Camera / Photo Library crash: Fixed. We added the required NSCameraUsageDescription, NSPhotoLibraryUsageDescription, NSPhotoLibraryAddUsageDescription, and NSMicrophoneUsageDescription strings to Info.plist. “Take Photo” and “Choose from Library” now work without crashing.
+- Messaging and Chat: We have answered “Yes” to the Messaging and Chat capability question in App Store Connect.
+- Coach feature: Simplified. We removed all ratings, reviews, endorsements, and stars. It is now only a coach on/off toggle and a badge on the profile.
+- iOS 27 beta: We tested the app on iOS 27 beta and found no issues.
+
+Demo account: nadine@marches.es / AppReview123
+
+Screen recording showing the fixes: [YOUR_LINK_HERE]
+
+Please let us know if you need anything else.
+
+Best regards,
+Nadine

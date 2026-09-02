@@ -405,18 +405,36 @@ function AuthPage() {
           </button>
         </div>
 
-        {/* EULA / terms acceptance — required before registering or signing in
+        {/* EULA / terms acceptance — required to create an account
             (App Store guideline 1.2, user-generated content). */}
-        <label className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
-            aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
-          />
-          <span className="text-[12px] leading-snug text-[var(--ink)]/75">
-            {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
+        {mode === "signup" ? (
+          <label className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
+              aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
+            />
+            <span className="text-[12px] leading-snug text-[var(--ink)]/75">
+              {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
+              <Link to="/terms" className="underline font-semibold">
+                {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
+              </Link>
+              {tr(" and ", " y la ", " et la ")}
+              <Link to="/privacy" className="underline font-semibold">
+                {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
+              </Link>
+              {tr(
+                ", and I understand there is zero tolerance for objectionable content or abusive users.",
+                ", y entiendo que hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
+                ", et je comprends qu'aucune tolérance n'est accordée aux contenus répréhensibles ou aux utilisateurs abusifs.",
+              )}
+            </span>
+          </label>
+        ) : (
+          <p className="mt-6 text-[11px] leading-snug text-[var(--ink)]/60">
+            {tr("By signing in you agree to the ", "Al iniciar sesión aceptas los ", "En vous connectant, vous acceptez les ")}
             <Link to="/terms" className="underline font-semibold">
               {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
             </Link>
@@ -424,13 +442,10 @@ function AuthPage() {
             <Link to="/privacy" className="underline font-semibold">
               {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
             </Link>
-            {tr(
-              ", and I understand there is zero tolerance for objectionable content or abusive users.",
-              ", y entiendo que hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
-              ", et je comprends qu'aucune tolérance n'est accordée aux contenus répréhensibles ou aux utilisateurs abusifs.",
-            )}
-          </span>
-        </label>
+            .
+          </p>
+        )}
+
 
 
         {/* Native iOS: Sign in with Apple uses the system sheet and never

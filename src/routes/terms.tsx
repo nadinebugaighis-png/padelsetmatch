@@ -41,13 +41,25 @@ function Terms() {
         padel). Impersonation, fake profiles and duplicate accounts are not allowed.
       </p>
 
-      <h2 className="text-display text-2xl mt-6">3. How you behave on the app</h2>
+      <h2 className="text-display text-2xl mt-6">3. How you behave on the app (zero tolerance)</h2>
       <p>
-        No harassment, hate speech, threats, doxxing, scams, spam, sexual content, content involving
-        minors, or impersonation. No commercial promotion, coaching sales, court rentals, prostitution
-        or other paid services without our written permission. Treat every player the way you'd want
-        to be treated on a court.
+        <b>There is zero tolerance for objectionable content or abusive users.</b> By creating an
+        account you agree to this End User Licence Agreement and accept that objectionable content
+        and abusive behaviour are strictly prohibited.
       </p>
+      <p>
+        No harassment, hate speech, threats, doxxing, scams, spam, nudity or sexual content, content
+        involving minors, violence, or impersonation. No commercial promotion, coaching sales, court
+        rentals, prostitution or other paid services without our written permission. Treat every
+        player the way you'd want to be treated on a court.
+      </p>
+      <p>
+        Every post, comment, message and profile can be reported with the flag icon, and any player
+        can be blocked from their profile. Reported content is reviewed within 24 hours; content that
+        breaches these rules is removed and the responsible account is suspended or permanently
+        banned, without notice and without refund.
+      </p>
+
 
       <h2 className="text-display text-2xl mt-6">4. Meeting in person</h2>
       <p>

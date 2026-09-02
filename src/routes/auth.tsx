@@ -37,6 +37,29 @@ function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+
+  // App Store guideline 1.2: users must explicitly accept the EULA / terms
+  // (zero tolerance for objectionable content or abusive users) before they can
+  // register or sign in.
+  const requireAgreement = () => {
+    if (agreed) return true;
+    toast.warning(
+      tr(
+        "Please accept the Terms to continue.",
+        "Acepta los Términos para continuar.",
+        "Veuillez accepter les Conditions pour continuer.",
+      ),
+      {
+        description: tr(
+          "There is zero tolerance for objectionable content or abusive users.",
+          "Hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
+          "Aucune tolérance pour les contenus répréhensibles ou les utilisateurs abusifs.",
+        ),
+      },
+    );
+    return false;
+  };
 
 
 
@@ -70,6 +93,7 @@ function AuthPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAgreement()) return;
     if (mode === "signup" && password !== confirmPassword) {
       toast.warning(
         tr(
@@ -290,6 +314,7 @@ function AuthPage() {
   };
 
   const google = async () => {
+    if (!requireAgreement()) return;
     setLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
     if (result.error) {
@@ -305,6 +330,7 @@ function AuthPage() {
   // the app. If the native plugin is unavailable for any reason we fall back to
   // the standard OAuth flow so the button always does something.
   const appleNative = async () => {
+    if (!requireAgreement()) return;
     setLoading(true);
     try {
       const res = await nativeAppleSignIn();
@@ -377,6 +403,34 @@ function AuthPage() {
           </button>
         </div>
 
+        {/* EULA / terms acceptance — required before registering or signing in
+            (App Store guideline 1.2, user-generated content). */}
+        <label className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
+            aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
+          />
+          <span className="text-[12px] leading-snug text-[var(--ink)]/75">
+            {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
+            <Link to="/terms" className="underline font-semibold">
+              {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
+            </Link>
+            {tr(" and ", " y la ", " et la ")}
+            <Link to="/privacy" className="underline font-semibold">
+              {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
+            </Link>
+            {tr(
+              ", and I understand there is zero tolerance for objectionable content or abusive users.",
+              ", y entiendo que hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
+              ", et je comprends qu'aucune tolérance n'est accordée aux contenus répréhensibles ou aux utilisateurs abusifs.",
+            )}
+          </span>
+        </label>
+
+
         {/* Native iOS: Sign in with Apple uses the system sheet and never
             leaves the app (App Store guideline 4 compliant). */}
         {isNative() && (
@@ -385,7 +439,7 @@ function AuthPage() {
               onClick={appleNative}
               disabled={loading}
               variant="secondary"
-              className="w-full mt-6 bg-black text-white hover:bg-black/90"
+              className="w-full mt-4 bg-black text-white hover:bg-black/90"
             >
                {t("auth.apple")}
             </Button>
@@ -398,11 +452,12 @@ function AuthPage() {
         {/* On web, social sign-in goes through the OAuth redirect flow. */}
         {!isNative() && (
           <>
-            <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
+            <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-4">
                {t("auth.google")}
             </Button>
             <Button
               onClick={async () => {
+                if (!requireAgreement()) return;
                 setLoading(true);
                 const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
                 if (result.error) { toast.error(result.error.message); setLoading(false); return; }

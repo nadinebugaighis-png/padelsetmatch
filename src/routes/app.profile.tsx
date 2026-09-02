@@ -351,12 +351,23 @@ function ProfilePage() {
 
 
         <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
+
+        <button
+          onClick={onDelete}
+          className="mt-2 w-full h-11 rounded-lg border border-red-500/40 bg-red-500/5 text-sm font-semibold uppercase tracking-widest text-red-600 hover:bg-red-500/10 transition"
+        >
+          {t("prof.delete")}
+        </button>
+        <p className="text-center text-[11px] text-[var(--ink)]/50">
+          {tr(
+            "Permanently deletes your account and all your data.",
+            "Elimina tu cuenta y todos tus datos de forma permanente.",
+            "Supprime définitivement votre compte et toutes vos données.",
+          )}
+        </p>
       </div>
 
 
-      <button onClick={onDelete} className="block mx-auto mt-8 text-xs uppercase tracking-widest text-red-500/80 hover:text-red-500">
-        {t("prof.delete")}
-      </button>
 
       <PhotoCropDialog
         file={pendingFile}

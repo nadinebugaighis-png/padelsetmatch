@@ -117,7 +117,7 @@ export async function nativeAppleSignIn(): Promise<AppleSignInResult> {
         nonce: hashedNonce,
       }),
       new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Apple sign-in timed out")), 60_000),
+        setTimeout(() => reject(new Error("Apple sign-in timed out")), 30_000),
       ),
     ]);
     const identityToken = result.response?.identityToken;

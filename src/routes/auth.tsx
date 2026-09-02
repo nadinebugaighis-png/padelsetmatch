@@ -128,7 +128,7 @@ function AuthPage() {
             await supabase
               .from("profiles")
               .update({ terms_accepted_at: new Date().toISOString() })
-              .eq("id", data.session.user.id);
+              .eq("user_id", data.session.user.id);
           } catch { /* non-blocking */ }
           let ordinal: number | null = null;
 

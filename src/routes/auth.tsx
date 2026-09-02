@@ -40,10 +40,11 @@ function AuthPage() {
   const [agreed, setAgreed] = useState(false);
 
   // App Store guideline 1.2: users must explicitly accept the EULA / terms
-  // (zero tolerance for objectionable content or abusive users) before they can
-  // register or sign in.
+  // (zero tolerance for objectionable content or abusive users) when they
+  // create an account. Returning users accepted it at signup already.
   const requireAgreement = () => {
-    if (agreed) return true;
+    if (mode === "signin" || agreed) return true;
+
     toast.warning(
       tr(
         "Please accept the Terms to continue.",
@@ -122,7 +123,15 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
+          // Record the EULA acceptance against the new account (guideline 1.2).
+          try {
+            await supabase
+              .from("profiles")
+              .update({ terms_accepted_at: new Date().toISOString() })
+              .eq("user_id", data.session.user.id);
+          } catch { /* non-blocking */ }
           let ordinal: number | null = null;
+
           try {
             const { data: n } = await supabase.rpc("get_signup_ordinal", {
               _user_id: data.session.user.id,
@@ -387,7 +396,7 @@ function AuthPage() {
             type="button"
             role="tab"
             aria-selected={mode === "signup"}
-            onClick={() => { setMode("signup"); setConfirmPassword(""); }}
+            onClick={() => { setMode("signup"); setConfirmPassword(""); setAgreed(false); }}
             className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signup" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
           >
             {tr("Create account", "Crear cuenta", "Créer un compte")}
@@ -396,25 +405,44 @@ function AuthPage() {
             type="button"
             role="tab"
             aria-selected={mode === "signin"}
-            onClick={() => { setMode("signin"); setConfirmPassword(""); }}
+            onClick={() => { setMode("signin"); setConfirmPassword(""); setAgreed(false); }}
+
             className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signin" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
           >
             {tr("Sign in", "Iniciar sesión", "Se connecter")}
           </button>
         </div>
 
-        {/* EULA / terms acceptance — required before registering or signing in
+        {/* EULA / terms acceptance — required to create an account
             (App Store guideline 1.2, user-generated content). */}
-        <label className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
-            aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
-          />
-          <span className="text-[12px] leading-snug text-[var(--ink)]/75">
-            {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
+        {mode === "signup" ? (
+          <label className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
+              aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
+            />
+            <span className="text-[12px] leading-snug text-[var(--ink)]/75">
+              {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
+              <Link to="/terms" className="underline font-semibold">
+                {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
+              </Link>
+              {tr(" and ", " y la ", " et la ")}
+              <Link to="/privacy" className="underline font-semibold">
+                {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
+              </Link>
+              {tr(
+                ", and I understand there is zero tolerance for objectionable content or abusive users.",
+                ", y entiendo que hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
+                ", et je comprends qu'aucune tolérance n'est accordée aux contenus répréhensibles ou aux utilisateurs abusifs.",
+              )}
+            </span>
+          </label>
+        ) : (
+          <p className="mt-6 text-[11px] leading-snug text-[var(--ink)]/60">
+            {tr("By signing in you agree to the ", "Al iniciar sesión aceptas los ", "En vous connectant, vous acceptez les ")}
             <Link to="/terms" className="underline font-semibold">
               {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
             </Link>
@@ -422,13 +450,10 @@ function AuthPage() {
             <Link to="/privacy" className="underline font-semibold">
               {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
             </Link>
-            {tr(
-              ", and I understand there is zero tolerance for objectionable content or abusive users.",
-              ", y entiendo que hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
-              ", et je comprends qu'aucune tolérance n'est accordée aux contenus répréhensibles ou aux utilisateurs abusifs.",
-            )}
-          </span>
-        </label>
+            .
+          </p>
+        )}
+
 
 
         {/* Native iOS: Sign in with Apple uses the system sheet and never

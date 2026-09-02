@@ -452,11 +452,12 @@ function AuthPage() {
         {/* On web, social sign-in goes through the OAuth redirect flow. */}
         {!isNative() && (
           <>
-            <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-6">
+            <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-4">
                {t("auth.google")}
             </Button>
             <Button
               onClick={async () => {
+                if (!requireAgreement()) return;
                 setLoading(true);
                 const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
                 if (result.error) { toast.error(result.error.message); setLoading(false); return; }

@@ -1,18 +1,21 @@
-Subject: Resubmission — Build 13 addresses all feedback
+Subject: Resubmission — Build 14 addresses all three issues
 
 Dear App Review Team,
 
-Thank you for your feedback on Version 1.0 (Build 10). We have addressed every point and are resubmitting Build 13 for your review.
+Thank you for the detailed feedback on Version 1.0 (Build 13). We have fixed all three items and are resubmitting Build 14.
 
-- Sign in with Apple: Fixed. We now correctly SHA-256 hash the nonce before sending it to Apple’s API, and added a 60-second timeout with a fallback to the web-based flow if the native sheet fails.
-- Camera / Photo Library crash: Fixed. We added the required NSCameraUsageDescription, NSPhotoLibraryUsageDescription, NSPhotoLibraryAddUsageDescription, and NSMicrophoneUsageDescription strings to Info.plist. “Take Photo” and “Choose from Library” now work without crashing.
-- Messaging and Chat: We have answered “Yes” to the Messaging and Chat capability question in App Store Connect.
-- Coach feature: Simplified. We removed all ratings, reviews, endorsements, and stars. It is now only a coach on/off toggle and a badge on the profile.
-- iOS 27 beta: We tested the app on iOS 27 beta and found no issues.
+1. Guideline 2.1(a) — Sign in with Apple unresponsive
+Root cause found and fixed. The third-party Capacitor plugin we used was built for an older Capacitor version and was silently excluded from the build, so the button had no native implementation behind it. We removed that dependency and implemented Sign in with Apple natively in the app with ASAuthorizationController, added the Sign in with Apple entitlement to the app target, and set an explicit presentation anchor so the sheet appears correctly on iPad. Tested on iPad and iPhone.
+
+2. Guideline 1.2 — User-generated content / EULA
+The sign-in and registration screen now shows a required agreement checkbox before an account can be created or a session started: "I agree to the Terms of Use (EULA) and Privacy Policy, and I understand there is zero tolerance for objectionable content or abusive users." Both documents are linked directly from that screen. The Terms page now has a dedicated zero-tolerance section stating that objectionable content and abusive behaviour are prohibited, that reports are reviewed within 24 hours, and that offending content is removed and accounts suspended or banned. Every post, comment, message and profile has a flag icon to report content, and any user can be blocked from their profile.
+
+3. Guideline 5.1.1(v) — Account deletion
+In-app account deletion is available and has been made more prominent: Me tab -> Settings -> "Delete my account" (full-width red button at the bottom), with a single confirmation step. It permanently deletes the profile, photos, matches, chats and the authentication account. No email, phone call or website visit is required.
 
 Demo account: nadine@marches.es / AppReview123
 
-Screen recording showing the fixes: [YOUR_LINK_HERE]
+Screen recording (Sign in with Apple, the EULA agreement screen, reporting content, blocking a user, and the full account deletion flow, recorded on a physical device): [YOUR_LINK_HERE]
 
 Please let us know if you need anything else.
 

@@ -37,6 +37,29 @@ function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+
+  // App Store guideline 1.2: users must explicitly accept the EULA / terms
+  // (zero tolerance for objectionable content or abusive users) before they can
+  // register or sign in.
+  const requireAgreement = () => {
+    if (agreed) return true;
+    toast.warning(
+      tr(
+        "Please accept the Terms to continue.",
+        "Acepta los Términos para continuar.",
+        "Veuillez accepter les Conditions pour continuer.",
+      ),
+      {
+        description: tr(
+          "There is zero tolerance for objectionable content or abusive users.",
+          "Hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
+          "Aucune tolérance pour les contenus répréhensibles ou les utilisateurs abusifs.",
+        ),
+      },
+    );
+    return false;
+  };
 
 
 

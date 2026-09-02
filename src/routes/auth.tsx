@@ -123,7 +123,15 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
+          // Record the EULA acceptance against the new account (guideline 1.2).
+          try {
+            await supabase
+              .from("profiles")
+              .update({ terms_accepted_at: new Date().toISOString() })
+              .eq("id", data.session.user.id);
+          } catch { /* non-blocking */ }
           let ordinal: number | null = null;
+
           try {
             const { data: n } = await supabase.rpc("get_signup_ordinal", {
               _user_id: data.session.user.id,

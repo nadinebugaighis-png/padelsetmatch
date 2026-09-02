@@ -1424,6 +1424,7 @@ export type Database = {
           story_hook_es: string | null
           story_hook_fr: string | null
           suspended_at: string | null
+          terms_accepted_at: string | null
           updated_at: string
           user_id: string | null
           world_mode: boolean | null
@@ -1478,6 +1479,7 @@ export type Database = {
           story_hook_es?: string | null
           story_hook_fr?: string | null
           suspended_at?: string | null
+          terms_accepted_at?: string | null
           updated_at?: string
           user_id?: string | null
           world_mode?: boolean | null
@@ -1532,6 +1534,7 @@ export type Database = {
           story_hook_es?: string | null
           story_hook_fr?: string | null
           suspended_at?: string | null
+          terms_accepted_at?: string | null
           updated_at?: string
           user_id?: string | null
           world_mode?: boolean | null

@@ -103,7 +103,9 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
     }
     const { data: inserted, error } = await context.supabase
       .from("profiles" as never)
-      .insert(row as never)
+      // First profile creation follows account signup, where the EULA was accepted.
+      .insert({ ...row, terms_accepted_at: new Date().toISOString() } as never)
+
       .select("*")
       .single();
     if (error) throw new Error(error.message);

@@ -1,18 +1,23 @@
-# App Review reply — Build 13
+# App Review reply — Build 14
 
 Paste the block below into **App Store Connect → App Review Information → Notes**,
 then also send it via **Reply to App Review**. Attach/record the screen recording first.
 
 ---
 
-## What's new in Build 13
-- This is a resubmission addressing the previous App Review feedback.
-- Simplified the coach feature to a simple on/off badge; removed coach reviews, star ratings, and coach-to-player messaging.
-- Cleaned up the unused coach endorsements table and related database functions.
-- Sign in with Apple nonce is now SHA-256 hashed with a 60-second timeout and web fallback.
-- Camera and photo library purpose strings are present in Info.plist.
-- Tested on iOS 27 beta; no issues found.
-- **Messaging and Chat** is set to **Yes** in App Store Connect.
+## What's new in Build 14 (addresses the Sep 2, 2026 review)
+- **Sign in with Apple (Guideline 2.1a):** the third-party Capacitor plugin was incompatible with our
+  Capacitor version and was silently dropped from the build, so the button did nothing. We replaced it
+  with a native ASAuthorizationController implementation inside the app, added the Sign in with Apple
+  entitlement, and set an explicit iPad presentation anchor. Verified on iPad.
+- **EULA (Guideline 1.2):** the sign-in / registration screen now shows a required checkbox:
+  "I agree to the Terms of Use (EULA) and Privacy Policy, and I understand there is zero tolerance for
+  objectionable content or abusive users." Registration and sign-in are blocked until it is ticked.
+  The Terms page has a dedicated zero-tolerance section covering objectionable content and abusive users.
+- **Account deletion (Guideline 5.1.1v):** in-app deletion already existed and is now a clearly labelled
+  full-width "Delete my account" button at the bottom of **Me → Settings**, with a confirmation step.
+  It permanently deletes the profile, content and the authentication account — no email or phone call needed.
+- Report (flag icon) on every profile, post, comment and message; Block from any profile.
 
 ## 1. Screen recording (you must record this on a physical iPhone)
 Record one continuous video (2–4 min), starting from tapping the app icon:

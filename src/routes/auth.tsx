@@ -314,6 +314,7 @@ function AuthPage() {
   };
 
   const google = async () => {
+    if (!requireAgreement()) return;
     setLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
     if (result.error) {
@@ -329,6 +330,7 @@ function AuthPage() {
   // the app. If the native plugin is unavailable for any reason we fall back to
   // the standard OAuth flow so the button always does something.
   const appleNative = async () => {
+    if (!requireAgreement()) return;
     setLoading(true);
     try {
       const res = await nativeAppleSignIn();

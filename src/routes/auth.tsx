@@ -40,10 +40,11 @@ function AuthPage() {
   const [agreed, setAgreed] = useState(false);
 
   // App Store guideline 1.2: users must explicitly accept the EULA / terms
-  // (zero tolerance for objectionable content or abusive users) before they can
-  // register or sign in.
+  // (zero tolerance for objectionable content or abusive users) when they
+  // create an account. Returning users accepted it at signup already.
   const requireAgreement = () => {
-    if (agreed) return true;
+    if (mode === "signin" || agreed) return true;
+
     toast.warning(
       tr(
         "Please accept the Terms to continue.",
@@ -387,7 +388,7 @@ function AuthPage() {
             type="button"
             role="tab"
             aria-selected={mode === "signup"}
-            onClick={() => { setMode("signup"); setConfirmPassword(""); }}
+            onClick={() => { setMode("signup"); setConfirmPassword(""); setAgreed(false); }}
             className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signup" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
           >
             {tr("Create account", "Crear cuenta", "Créer un compte")}
@@ -396,7 +397,8 @@ function AuthPage() {
             type="button"
             role="tab"
             aria-selected={mode === "signin"}
-            onClick={() => { setMode("signin"); setConfirmPassword(""); }}
+            onClick={() => { setMode("signin"); setConfirmPassword(""); setAgreed(false); }}
+
             className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signin" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
           >
             {tr("Sign in", "Iniciar sesión", "Se connecter")}

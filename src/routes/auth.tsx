@@ -93,6 +93,7 @@ function AuthPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAgreement()) return;
     if (mode === "signup" && password !== confirmPassword) {
       toast.warning(
         tr(

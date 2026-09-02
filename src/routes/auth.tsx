@@ -439,7 +439,7 @@ function AuthPage() {
               onClick={appleNative}
               disabled={loading}
               variant="secondary"
-              className="w-full mt-6 bg-black text-white hover:bg-black/90"
+              className="w-full mt-4 bg-black text-white hover:bg-black/90"
             >
                {t("auth.apple")}
             </Button>

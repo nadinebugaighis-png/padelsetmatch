@@ -417,11 +417,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     });
     if (me.zone) myCities.add(me.zone.trim().toLowerCase());
 
-    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
-      if (blockedSet.has(c.id)) return false;
-      const cats = hiddenMap.get(c.id);
-      if (cats && cats.has("all")) return false;
-      if (world) return true;
+    const sharesMyCity = (c: Profile) => {
       if (myCities.size === 0) return false;
       const theirCities = new Set<string>();
       (c.locations ?? []).forEach((l) => {
@@ -431,7 +427,20 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       if (c.zone) theirCities.add(c.zone.trim().toLowerCase());
       for (const city of theirCities) if (myCities.has(city)) return true;
       return false;
-    }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
+    };
+
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
+      if (blockedSet.has(c.id)) return false;
+      const cats = hiddenMap.get(c.id);
+      if (cats && cats.has("all")) return false;
+      if (world) return true;
+      return sharesMyCity(c);
+    }).map((c) => ({
+      ...c,
+      hidden_categories: Array.from(hiddenMap.get(c.id) ?? []),
+      near_me: sharesMyCity(c),
+    }));
+
 
     // QA affinity: compute in the database via SECURITY DEFINER RPC.
     // Previously we shipped every candidate's 1536-dim answer embeddings (~6KB each)

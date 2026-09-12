@@ -599,8 +599,11 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
           const ai = aiScoreByOther.get(c.id);
           if (typeof ai === "number") c.score = ai;
         }
-        scored.sort((a, b) => b.score - a.score);
-      }
+        scored.sort((a, b) => {
+          if (a.near_me !== b.near_me) return a.near_me ? -1 : 1;
+          return b.score - a.score;
+        });
+
     }
 
     return { me, candidates: scored };

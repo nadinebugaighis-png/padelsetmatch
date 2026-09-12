@@ -39,6 +39,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const hydrated = useHydrated();
 
   // App Store guideline 1.2: users must explicitly accept the EULA / terms
   // (zero tolerance for objectionable content or abusive users) when they

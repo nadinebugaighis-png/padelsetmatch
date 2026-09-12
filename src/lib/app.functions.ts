@@ -417,11 +417,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     });
     if (me.zone) myCities.add(me.zone.trim().toLowerCase());
 
-    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
-      if (blockedSet.has(c.id)) return false;
-      const cats = hiddenMap.get(c.id);
-      if (cats && cats.has("all")) return false;
-      if (world) return true;
+    const sharesMyCity = (c: Profile) => {
       if (myCities.size === 0) return false;
       const theirCities = new Set<string>();
       (c.locations ?? []).forEach((l) => {
@@ -431,7 +427,20 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       if (c.zone) theirCities.add(c.zone.trim().toLowerCase());
       for (const city of theirCities) if (myCities.has(city)) return true;
       return false;
-    }).map((c) => ({ ...c, hidden_categories: Array.from(hiddenMap.get(c.id) ?? []) }));
+    };
+
+    const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
+      if (blockedSet.has(c.id)) return false;
+      const cats = hiddenMap.get(c.id);
+      if (cats && cats.has("all")) return false;
+      if (world) return true;
+      return sharesMyCity(c);
+    }).map((c) => ({
+      ...c,
+      hidden_categories: Array.from(hiddenMap.get(c.id) ?? []),
+      near_me: sharesMyCity(c),
+    }));
+
 
     // QA affinity: compute in the database via SECURITY DEFINER RPC.
     // Previously we shipped every candidate's 1536-dim answer embeddings (~6KB each)
@@ -551,17 +560,23 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         if (learned.reason) reasons2.push(learned.reason);
         const pub = stripPrivateFields(c);
         const vibe = Math.min(100, Math.round(categories.vibe + bonus * 2.5 + (qShared > 0 ? 15 : 0)));
-        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [] };
+        return { ...pub, score: finalScore, reasons: reasons2, liked: likedSet.has(c.id), categories: { ...categories, vibe }, hidden_categories: (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [], near_me: (c as unknown as { near_me?: boolean }).near_me === true };
       })
 
-      .filter((c) => c.score > 0)
+      // Never drop someone who plays in my own city, even if the heuristic
+      // score lands at zero — they must stay visible in both modes.
+      .filter((c) => c.score > 0 || c.near_me)
       .sort((a, b) => {
         const today = new Date().toISOString().slice(0, 10);
         const aAway = (a as any).away_until && (a as any).away_until >= today ? 1 : 0;
         const bAway = (b as any).away_until && (b as any).away_until >= today ? 1 : 0;
         if (aAway !== bAway) return aAway - bAway;
+        // Players in my city always rank above far-away ones, so turning World
+        // mode on only adds people — it never pushes neighbours out of sight.
+        if (a.near_me !== b.near_me) return a.near_me ? -1 : 1;
         return b.score - a.score;
       });
+
 
     // Override heuristic score with cached AI compatibility score when available,
     // so the badge on the profile grid matches the AI % shown on the profile card.
@@ -584,9 +599,13 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
           const ai = aiScoreByOther.get(c.id);
           if (typeof ai === "number") c.score = ai;
         }
-        scored.sort((a, b) => b.score - a.score);
+        scored.sort((a, b) => {
+          if (a.near_me !== b.near_me) return a.near_me ? -1 : 1;
+          return b.score - a.score;
+        });
       }
     }
+
 
     return { me, candidates: scored };
   });

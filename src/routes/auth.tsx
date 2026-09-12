@@ -11,9 +11,6 @@ import { BrandMark } from "@/components/BrandMark";
 import { isNative, nativeAppleSignIn } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
-  // Rendered on the client only: the /app guard redirects here after hydration,
-  // so server-rendering this page produces a hydration mismatch.
-  ssr: false,
   head: () => ({ meta: [{ title: "Sign in — PadelSetMatch" }] }),
   validateSearch: (
     s: Record<string, unknown>,

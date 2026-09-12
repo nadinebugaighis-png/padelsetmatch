@@ -283,18 +283,22 @@ function GuestMatchRoom() {
             </div>
           </form>
 
-          {/* One simple way back in: phone number → your match (chat + leave button) */}
+          {/* Lost your link? Cancel your spot with your phone number, then join again fresh. */}
           <div className="mt-8 pt-6 border-t border-[var(--ink)]/10">
             <div className="text-center text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
               {tr("Already joined?", "¿Ya te uniste?", "Déjà inscrit·e ?")}
             </div>
             <p className="mt-1 text-center text-xs text-[var(--ink)]/50">
-              {tr("Enter your phone to open the chat or cancel your spot.", "Escribe tu teléfono para abrir el chat o cancelar tu plaza.", "Entre ton téléphone pour ouvrir le chat ou annuler ta place.")}
+              {tr(
+                "Open the chat with the link you received when you joined. Lost it? Cancel your spot with your phone number and join again.",
+                "Abre el chat con el enlace que recibiste al unirte. ¿Lo perdiste? Cancela tu plaza con tu teléfono y únete de nuevo.",
+                "Ouvre le chat avec le lien reçu en t'inscrivant. Tu l'as perdu ? Annule ta place avec ton téléphone et rejoins à nouveau."
+              )}
             </p>
             <div className="mt-3 flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
               <input
-                value={recoverPhone}
-                onChange={(e) => setRecoverPhone(e.target.value)}
+                value={cancelPhone}
+                onChange={(e) => setCancelPhone(e.target.value)}
                 inputMode="tel"
                 maxLength={32}
                 placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
@@ -302,29 +306,26 @@ function GuestMatchRoom() {
               />
               <button
                 type="button"
-                disabled={recoverBusy || recoverPhone.trim().length < 4}
+                disabled={cancelBusy || cancelPhone.trim().length < 4}
                 onClick={async () => {
-                  setRecoverBusy(true);
+                  setCancelBusy(true);
                   try {
-                    const res = await recover({ data: { eventId, phone: recoverPhone.trim() } });
-                    if (res.token) {
-                      saveToken(eventId, res.token);
-                      putTokenInUrl(res.token);
-                      setToken(res.token);
-                      setRecoverPhone("");
-                      toast.success(tr("Welcome back 👋", "¡Bienvenido de nuevo 👋", "Content de te revoir 👋"));
+                    const res = await cancelSpot({ data: { eventId, phone: cancelPhone.trim() } });
+                    if (res.ok) {
+                      setCancelPhone("");
+                      toast.success(tr("Spot cancelled — you can join again below.", "Plaza cancelada — puedes unirte de nuevo abajo.", "Place annulée — tu peux rejoindre à nouveau ci-dessous."));
                     } else {
                       toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
                     }
                   } catch (err) {
-                    toast.error(err instanceof Error ? err.message : tr("Could not open", "No se pudo abrir", "Impossible d'ouvrir"));
+                    toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
                   } finally {
-                    setRecoverBusy(false);
+                    setCancelBusy(false);
                   }
                 }}
                 className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
               >
-                {recoverBusy ? "…" : tr("Open my match", "Abrir mi partido", "Ouvrir mon match")}
+                {cancelBusy ? "…" : tr("Cancel my spot", "Cancelar mi plaza", "Annuler ma place")}
               </button>
             </div>
           </div>

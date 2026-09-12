@@ -460,7 +460,7 @@ function AuthPage() {
 
         {/* Native iOS: Sign in with Apple uses the system sheet and never
             leaves the app (App Store guideline 4 compliant). */}
-        {isNative() && (
+        {hydrated && isNative() && (
           <>
             <Button
               onClick={appleNative}
@@ -477,7 +477,7 @@ function AuthPage() {
         )}
 
         {/* On web, social sign-in goes through the OAuth redirect flow. */}
-        {!isNative() && (
+        {hydrated && !isNative() && (
           <>
             <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-4">
                {t("auth.google")}

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 import { isNative, nativeAppleSignIn } from "@/lib/native";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 export const Route = createFileRoute("/auth")({
   // Client-only: this page is reached via the /app guard's client redirect,
@@ -38,6 +39,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const hydrated = useHydrated();
 
   // App Store guideline 1.2: users must explicitly accept the EULA / terms
   // (zero tolerance for objectionable content or abusive users) when they
@@ -458,7 +460,7 @@ function AuthPage() {
 
         {/* Native iOS: Sign in with Apple uses the system sheet and never
             leaves the app (App Store guideline 4 compliant). */}
-        {isNative() && (
+        {hydrated && isNative() && (
           <>
             <Button
               onClick={appleNative}
@@ -475,7 +477,7 @@ function AuthPage() {
         )}
 
         {/* On web, social sign-in goes through the OAuth redirect flow. */}
-        {!isNative() && (
+        {hydrated && !isNative() && (
           <>
             <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-4">
                {t("auth.google")}

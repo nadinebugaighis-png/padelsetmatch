@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lumb-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 import { isNative, nativeAppleSignIn } from "@/lib/native";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 export const Route = createFileRoute("/auth")({
   // Client-only: this page is reached via the /app guard's client redirect,

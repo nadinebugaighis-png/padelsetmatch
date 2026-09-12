@@ -35,6 +35,10 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  // Render a static skeleton on the server; the interactive form appears
+  // after hydration, so SSR HTML always matches the first client render.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   // App Store guideline 1.2: users must explicitly accept the EULA / terms
   // (zero tolerance for objectionable content or abusive users) when they
@@ -370,6 +374,20 @@ function AuthPage() {
 
 
 
+
+  if (!hydrated) {
+    return (
+      <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md programme-card p-8 sm:p-10 animate-pulse">
+          <div className="h-6 w-32 rounded bg-[var(--ink)]/10" />
+          <div className="mt-6 h-9 w-48 rounded bg-[var(--ink)]/10" />
+          <div className="mt-6 h-10 rounded-full bg-[var(--ink)]/5" />
+          <div className="mt-6 h-12 rounded-xl bg-[var(--ink)]/5" />
+          <div className="mt-4 h-12 rounded-xl bg-[var(--ink)]/5" />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">

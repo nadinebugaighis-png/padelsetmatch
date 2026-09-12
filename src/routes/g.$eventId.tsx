@@ -6,7 +6,7 @@ import { MapPin, Send, LogOut, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestRecoverAccess } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
@@ -59,10 +59,10 @@ function GuestMatchRoom() {
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
-  const recover = useServerFn(guestRecoverAccess);
+  const cancelSpot = useServerFn(guestLeaveByPhone);
 
-  const [recoverPhone, setRecoverPhone] = useState("");
-  const [recoverBusy, setRecoverBusy] = useState(false);
+  const [cancelPhone, setCancelPhone] = useState("");
+  const [cancelBusy, setCancelBusy] = useState(false);
 
 
   const [token, setToken] = useState<string | null>(null);
@@ -165,6 +165,8 @@ function GuestMatchRoom() {
             `Ce match est listé en ${range}. Ton niveau (${guest}) ne correspond pas.`
           )
         );
+      } else if (m === "ALREADY_JOINED") {
+        toast.error(tr("This phone already has a spot. Use your original link — or cancel your spot below and join again.", "Este teléfono ya tiene una plaza. Usa tu enlace original — o cancela tu plaza abajo y únete de nuevo.", "Ce téléphone a déjà une place. Utilise ton lien d'origine — ou annule ta place ci-dessous et rejoins à nouveau."));
       } else {
         toast.error(m || tr("Could not join", "No pudimos unirte", "Impossible de rejoindre"));
       }
@@ -283,18 +285,22 @@ function GuestMatchRoom() {
             </div>
           </form>
 
-          {/* One simple way back in: phone number → your match (chat + leave button) */}
+          {/* Lost your link? Cancel your spot with your phone number, then join again fresh. */}
           <div className="mt-8 pt-6 border-t border-[var(--ink)]/10">
             <div className="text-center text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
               {tr("Already joined?", "¿Ya te uniste?", "Déjà inscrit·e ?")}
             </div>
             <p className="mt-1 text-center text-xs text-[var(--ink)]/50">
-              {tr("Enter your phone to open the chat or cancel your spot.", "Escribe tu teléfono para abrir el chat o cancelar tu plaza.", "Entre ton téléphone pour ouvrir le chat ou annuler ta place.")}
+              {tr(
+                "Open the chat with the link you received when you joined. Lost it? Cancel your spot with your phone number and join again.",
+                "Abre el chat con el enlace que recibiste al unirte. ¿Lo perdiste? Cancela tu plaza con tu teléfono y únete de nuevo.",
+                "Ouvre le chat avec le lien reçu en t'inscrivant. Tu l'as perdu ? Annule ta place avec ton téléphone et rejoins à nouveau."
+              )}
             </p>
             <div className="mt-3 flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
               <input
-                value={recoverPhone}
-                onChange={(e) => setRecoverPhone(e.target.value)}
+                value={cancelPhone}
+                onChange={(e) => setCancelPhone(e.target.value)}
                 inputMode="tel"
                 maxLength={32}
                 placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
@@ -302,29 +308,26 @@ function GuestMatchRoom() {
               />
               <button
                 type="button"
-                disabled={recoverBusy || recoverPhone.trim().length < 4}
+                disabled={cancelBusy || cancelPhone.trim().length < 4}
                 onClick={async () => {
-                  setRecoverBusy(true);
+                  setCancelBusy(true);
                   try {
-                    const res = await recover({ data: { eventId, phone: recoverPhone.trim() } });
-                    if (res.token) {
-                      saveToken(eventId, res.token);
-                      putTokenInUrl(res.token);
-                      setToken(res.token);
-                      setRecoverPhone("");
-                      toast.success(tr("Welcome back 👋", "¡Bienvenido de nuevo 👋", "Content de te revoir 👋"));
+                    const res = await cancelSpot({ data: { eventId, phone: cancelPhone.trim() } });
+                    if (res.ok) {
+                      setCancelPhone("");
+                      toast.success(tr("Spot cancelled — you can join again below.", "Plaza cancelada — puedes unirte de nuevo abajo.", "Place annulée — tu peux rejoindre à nouveau ci-dessous."));
                     } else {
                       toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
                     }
                   } catch (err) {
-                    toast.error(err instanceof Error ? err.message : tr("Could not open", "No se pudo abrir", "Impossible d'ouvrir"));
+                    toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
                   } finally {
-                    setRecoverBusy(false);
+                    setCancelBusy(false);
                   }
                 }}
                 className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
               >
-                {recoverBusy ? "…" : tr("Open my match", "Abrir mi partido", "Ouvrir mon match")}
+                {cancelBusy ? "…" : tr("Cancel my spot", "Cancelar mi plaza", "Annuler ma place")}
               </button>
             </div>
           </div>
@@ -364,9 +367,9 @@ function GuestMatchRoom() {
         </div>
         <p className="text-xs text-[var(--ink)]/55 -mt-2">
           {tr(
-            "Come back anytime with this link — or just your phone number on the match page.",
-            "Vuelve cuando quieras con este enlace — o con tu teléfono en la página del partido.",
-            "Reviens quand tu veux avec ce lien — ou avec ton téléphone sur la page du match.",
+            "Come back anytime with this link — save it or send it to yourself below.",
+            "Vuelve cuando quieras con este enlace — guárdalo o envíatelo abajo.",
+            "Reviens quand tu veux avec ce lien — garde-le ou envoie-le-toi ci-dessous.",
           )}
         </p>
 

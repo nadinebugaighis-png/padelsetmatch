@@ -603,8 +603,9 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
           if (a.near_me !== b.near_me) return a.near_me ? -1 : 1;
           return b.score - a.score;
         });
-
+      }
     }
+
 
     return { me, candidates: scored };
   });

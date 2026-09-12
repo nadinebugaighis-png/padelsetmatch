@@ -165,6 +165,8 @@ function GuestMatchRoom() {
             `Ce match est listé en ${range}. Ton niveau (${guest}) ne correspond pas.`
           )
         );
+      } else if (m === "ALREADY_JOINED") {
+        toast.error(tr("This phone already has a spot. Use your original link — or cancel your spot below and join again.", "Este teléfono ya tiene una plaza. Usa tu enlace original — o cancela tu plaza abajo y únete de nuevo.", "Ce téléphone a déjà une place. Utilise ton lien d'origine — ou annule ta place ci-dessous et rejoins à nouveau."));
       } else {
         toast.error(m || tr("Could not join", "No pudimos unirte", "Impossible de rejoindre"));
       }
@@ -365,9 +367,9 @@ function GuestMatchRoom() {
         </div>
         <p className="text-xs text-[var(--ink)]/55 -mt-2">
           {tr(
-            "Come back anytime with this link — or just your phone number on the match page.",
-            "Vuelve cuando quieras con este enlace — o con tu teléfono en la página del partido.",
-            "Reviens quand tu veux avec ce lien — ou avec ton téléphone sur la page du match.",
+            "Come back anytime with this link — save it or send it to yourself below.",
+            "Vuelve cuando quieras con este enlace — guárdalo o envíatelo abajo.",
+            "Reviens quand tu veux avec ce lien — garde-le ou envoie-le-toi ci-dessous.",
           )}
         </p>
 

@@ -45,7 +45,6 @@ import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
@@ -231,12 +230,6 @@ const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
   path: '/events/$eventId',
   getParentRoute: () => AppRoute,
 } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
   id: '/lovable/email/auth/webhook',
   path: '/lovable/email/auth/webhook',
@@ -293,7 +286,6 @@ export interface FileRoutesByFullPath {
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -334,7 +326,6 @@ export interface FileRoutesByTo {
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -377,7 +368,6 @@ export interface FileRoutesById {
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
-  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -421,7 +411,6 @@ export interface FileRouteTypes {
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -462,7 +451,6 @@ export interface FileRouteTypes {
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -504,7 +492,6 @@ export interface FileRouteTypes {
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
-    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -531,7 +518,6 @@ export interface RootRouteChildren {
   PlayIndexRoute: typeof PlayIndexRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
-  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -788,13 +774,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsEventIdRouteImport
       parentRoute: typeof AppRoute
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lovable/email/auth/webhook': {
       id: '/lovable/email/auth/webhook'
       path: '/lovable/email/auth/webhook'
@@ -903,7 +882,6 @@ const rootRouteChildren: RootRouteChildren = {
   PlayIndexRoute: PlayIndexRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
-  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

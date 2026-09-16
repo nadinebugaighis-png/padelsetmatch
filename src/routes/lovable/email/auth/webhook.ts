@@ -9,7 +9,7 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "Matchapp"
+const SITE_NAME = "PadelSetMatch"
 const SENDER_DOMAIN = "notify.padelsetmatch.com"
 const ROOT_DOMAIN = "padelsetmatch.com"
 const FROM_DOMAIN = "padelsetmatch.com"

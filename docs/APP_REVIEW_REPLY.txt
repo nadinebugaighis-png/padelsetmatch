@@ -1,6 +1,6 @@
-We are resubmitting Build 16, which addresses all three issues from your review of September 2, 2026.
+Dear App Review Team,
 
-Thank you for the detailed feedback on Version 1.0 (Build 13). We have fixed all three items and are resubmitting Build 16.
+Thank you for the detailed feedback on Version 1.0 (Build 13). We have fixed all three issues and are resubmitting with Build 16.
 
 1. Guideline 2.1(a) — Sign in with Apple unresponsive
 Root cause found and fixed. The third-party Capacitor plugin we used was built for an older Capacitor version and was silently excluded from the build, so the button had no native implementation behind it. We removed that dependency and implemented Sign in with Apple natively in the app with ASAuthorizationController, added the Sign in with Apple entitlement to the app target, and set an explicit presentation anchor so the sheet appears correctly on iPad. Tested on iPad and iPhone.

@@ -1,4 +1,4 @@
-# Build 15 — Step-by-Step Walkthrough
+# Build 16 — Step-by-Step Walkthrough
 
 ## 1. Pull the latest code
 
@@ -30,9 +30,9 @@ This opens the `App.xcodeproj` in Xcode.
 In Xcode, click the **App** target at the top of the left sidebar, then choose the **General** tab.
 
 - **Version**: 1.0
-- **Build**: 15
+- **Build**: 16
 
-If Build is not 15, type `15` in the Build field.
+If Build is not 16, type `16` in the Build field.
 
 ## 5. Confirm Sign in with Apple capability is added
 
@@ -74,7 +74,7 @@ Wait for the archive to finish. This may take a few minutes.
 
 When the archive finishes, the **Organizer** window opens automatically.
 
-1. Select the new archive (Build 15).
+1. Select the new archive (Build 16).
 2. Click **Distribute App**.
 3. Choose **App Store Connect**.
 4. Choose **Upload**.
@@ -89,11 +89,11 @@ After upload, go to:
 App Store Connect → My Apps → Padel Set Match → TestFlight
 ```
 
-Build 15 will appear with a blue processing spinner. Wait until it says **Ready to Submit**.
+Build 16 will appear with a blue processing spinner. Wait until it says **Ready to Submit**.
 
 ## 11. Record the required videos on a real device
 
-Install Build 15 from TestFlight on a real iPhone or iPad and record:
+Install Build 16 from TestFlight on a real iPhone or iPad and record:
 
 1. **Sign in with Apple** — open the app, tap Sign in with Apple, complete login.
 2. **EULA / Terms acceptance** — show the Create account screen and the terms checkbox blocking signup until accepted.
@@ -115,7 +115,7 @@ Paste all video links and the review notes text.
 
 ## 13. Submit for review
 
-In App Store Connect, select Build 15, then click **Submit for Review**.
+In App Store Connect, select Build 16, then click **Submit for Review**.
 
 ---
 

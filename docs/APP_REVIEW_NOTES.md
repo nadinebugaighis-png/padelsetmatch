@@ -1,11 +1,11 @@
-# App Review reply — Build 15
+# App Review reply — Build 16
 
 Paste the block below into **App Store Connect → App Review Information → Notes**,
 then also send it via **Reply to App Review**. Attach/record the screen recording first.
 
 ---
 
-## What's new in Build 15 (addresses the Sep 2, 2026 review)
+## What's new in Build 16 (addresses the Sep 2, 2026 review)
 - **Sign in with Apple (Guideline 2.1a):** the third-party Capacitor plugin was incompatible with our
   Capacitor version and was silently dropped from the build, so the button did nothing. We replaced it
   with a native ASAuthorizationController implementation inside the app, added the Sign in with Apple

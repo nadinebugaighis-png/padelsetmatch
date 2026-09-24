@@ -1857,21 +1857,12 @@ export type Database = {
       }
       clear_my_compat_scores: { Args: never; Returns: undefined }
       current_user_is_adult: { Args: never; Returns: boolean }
-      delete_email: {
-        Args: { message_id: number; queue_name: string }
-        Returns: boolean
-      }
       delete_expired_push_subs: {
         Args: { _endpoints: string[] }
         Returns: undefined
       }
       delete_match_thread: { Args: { _match_id: string }; Returns: undefined }
       delete_my_account_data: { Args: never; Returns: undefined }
-      email_queue_dispatch: { Args: never; Returns: undefined }
-      enqueue_email: {
-        Args: { payload: Json; queue_name: string }
-        Returns: number
-      }
       enqueue_notification: {
         Args: {
           _body: string
@@ -1946,15 +1937,6 @@ export type Database = {
       is_current_user_admin: { Args: never; Returns: boolean }
       list_my_favorite_ids: { Args: never; Returns: string[] }
       list_public_upcoming_matches: { Args: { _limit?: number }; Returns: Json }
-      move_to_dlq: {
-        Args: {
-          dlq_name: string
-          message_id: number
-          payload: Json
-          source_queue: string
-        }
-        Returns: number
-      }
       my_profile_id: { Args: never; Returns: string }
       open_intro_chat: {
         Args: {
@@ -1985,14 +1967,6 @@ export type Database = {
           _title: string
         }
         Returns: boolean
-      }
-      read_email_batch: {
-        Args: { batch_size: number; queue_name: string; vt: number }
-        Returns: {
-          message: Json
-          msg_id: number
-          read_ct: number
-        }[]
       }
       resolve_short_link: { Args: { _code: string }; Returns: string }
       respond_to_intro: {

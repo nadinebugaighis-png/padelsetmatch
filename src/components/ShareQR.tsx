@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import QRCode from "qrcode";
 import { Share2, X, Copy, Check } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 
@@ -12,9 +11,13 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
 
   useEffect(() => {
     if (!open) return;
-    QRCode.toDataURL(url, { width: 280, margin: 2, color: { dark: "#0d2929", light: "#f5f0e8" } })
-      .then(setDataUrl)
-      .catch(() => setDataUrl(""));
+    let cancelled = false;
+    // Load qrcode lazily: its Node build breaks server-side rendering.
+    import("qrcode")
+      .then((mod) => mod.default.toDataURL(url, { width: 280, margin: 2, color: { dark: "#0d2929", light: "#f5f0e8" } }))
+      .then((d) => { if (!cancelled) setDataUrl(d); })
+      .catch(() => { if (!cancelled) setDataUrl(""); });
+    return () => { cancelled = true; };
   }, [open, url]);
 
   const copy = async () => {

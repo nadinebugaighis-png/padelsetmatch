@@ -1,9 +1,9 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
-import { ExternalLink, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ExternalLink, GripVertical, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import {
   DndContext,
   PointerSensor,
@@ -130,7 +130,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const tr = useTr();
   const qc = useQueryClient();
   const q = useGear(profileId);
-  const items = q.data ?? [];
+  const items = useMemo(() => q.data ?? [], [q.data]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [kind, setKind] = useState<string>("racket");
@@ -144,7 +144,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
   useEffect(() => { setOrder(items); }, [items]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 6 } }),
   );
 
   const reset = () => {
@@ -285,6 +285,13 @@ export function GearEditor({ profileId }: { profileId: string }) {
               </div>
             </SortableContext>
           </DndContext>
+          <p className="text-[11px] text-[var(--ink)]/50">
+            {tr(
+              "Swipe to browse · hold the grip to reorder",
+              "Desliza para ver · mantén el agarre para reordenar",
+              "Glisse pour parcourir · maintiens la poignée pour réordonner",
+            )}
+          </p>
         </>
       )}
 
@@ -438,13 +445,20 @@ function SortableGearCard({
   return (
     <div
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       style={{ transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 30 : undefined }}
-      className={`relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] cursor-grab active:cursor-grabbing touch-none ${
+      className={`relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] ${
         editing ? "border-[var(--ink)]" : "border-[var(--ink)]/10"
       } ${isDragging ? "opacity-90 scale-[1.03]" : ""}`}
     >
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        aria-label="Reorder"
+        className="absolute -top-2.5 -left-2 w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)]/70 flex items-center justify-center shadow cursor-grab active:cursor-grabbing touch-none"
+      >
+        <GripVertical className="w-3 h-3" />
+      </button>
       <button
         type="button"
         onClick={onEdit}

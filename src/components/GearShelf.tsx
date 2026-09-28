@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -130,7 +130,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const tr = useTr();
   const qc = useQueryClient();
   const q = useGear(profileId);
-  const items = q.data ?? [];
+  const items = useMemo(() => q.data ?? [], [q.data]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [kind, setKind] = useState<string>("racket");

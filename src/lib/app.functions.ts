@@ -565,7 +565,8 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
       // Never drop someone who plays in my own city, even if the heuristic
       // score lands at zero — they must stay visible in both modes.
-      .filter((c) => c.score > 0 || c.near_me)
+      // World mode lists everyone; otherwise drop zero-score non-neighbours.
+      .filter((c) => world || c.score > 0 || c.near_me)
       .sort((a, b) => {
         const today = new Date().toISOString().slice(0, 10);
         const aAway = (a as any).away_until && (a as any).away_until >= today ? 1 : 0;

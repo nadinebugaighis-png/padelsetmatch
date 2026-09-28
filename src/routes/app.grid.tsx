@@ -108,7 +108,9 @@ function Discover() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [shown]);
+    // Re-attach whenever the list or mode changes — the sentinel can remount
+    // (e.g. after toggling World), leaving the observer on a stale node.
+  }, [shown, world, feedQ.data, levelFilter, zoneFilter, searchQuery]);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };

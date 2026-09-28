@@ -144,7 +144,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
   useEffect(() => { setOrder(items); }, [items]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 6 } }),
   );
 
   const reset = () => {
@@ -285,6 +285,13 @@ export function GearEditor({ profileId }: { profileId: string }) {
               </div>
             </SortableContext>
           </DndContext>
+          <p className="text-[11px] text-[var(--ink)]/50">
+            {tr(
+              "Swipe to browse · hold the grip to reorder",
+              "Desliza para ver · mantén el agarre para reordenar",
+              "Glisse pour parcourir · maintiens la poignée pour réordonner",
+            )}
+          </p>
         </>
       )}
 

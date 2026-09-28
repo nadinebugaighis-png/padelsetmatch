@@ -110,7 +110,7 @@ function Discover() {
     return () => io.disconnect();
     // Re-attach whenever the list or mode changes — the sentinel can remount
     // (e.g. after toggling World), leaving the observer on a stale node.
-  }, [shown, world, feedQ.data, levelFilter, zoneFilter, searchQuery]);
+  }, [shown, world, levelFilter, zoneFilter, searchQuery]);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
   const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
@@ -119,6 +119,8 @@ function Discover() {
 
 
   const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }), staleTime: 60_000, placeholderData: keepPreviousData });
+  const feedLen = (feedQ.data?.candidates?.length ?? 0);
+  useEffect(() => { setShown(PAGE); }, [feedLen]);
   const getAnswers = useServerFn(getMyQaAnswers);
   const qaQ = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), enabled: !!feedQ.data?.me, staleTime: 5 * 60_000 });
   const getMatches = useServerFn(getMyMatches);

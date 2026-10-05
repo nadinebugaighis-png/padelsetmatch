@@ -54,11 +54,11 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   const es = readLang() === "es";
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportLovableError(err, { boundary: "tanstack_root_error_component" });
     void import("@/lib/telemetry").then((m) =>
-      m.reportError(error, { fatal: true, props: { boundary: "root_error_component" } }),
+      m.reportError(err, { fatal: true, props: { boundary: "root_error_component" } }),
     ).catch(() => {});
-  }, [error]);
+  }, [err]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">

@@ -35,7 +35,8 @@ Open Terminal, in the project folder:
 ```bash
 git pull
 npm install
-npx cap add android      # first time only — creates the android/ folder
+# The android/ folder already exists in the project (icons + splash are
+# generated), so you only need the sync step:
 npx cap sync android
 ```
 

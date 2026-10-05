@@ -34,7 +34,7 @@ export const Route = createFileRoute("/app/events/$eventId")({
     i: typeof s.i === "string" ? s.i : undefined,
   }),
   component: EventRoute,
-  errorComponent: ({ error }) => <div className="p-6 text-[var(--ink)]/70">{error.message}</div>,
+  errorComponent: ({ error }) => <div className="p-6 text-[var(--ink)]/70">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <NotFoundBlock />,
 });
 

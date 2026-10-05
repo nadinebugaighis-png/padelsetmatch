@@ -9,99 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppRouteImport } from './routes/app'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as DemoRouteImport } from './routes/demo'
-import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as PadelCercaDeMiRouteImport } from './routes/padel-cerca-de-mi'
-import { Route as PistasDePadelGratisRouteImport } from './routes/pistas-de-padel-gratis'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SupportRouteImport } from './routes/support'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './routes/[.]well-known.apple-app-site-association'
-import { Route as AppIndexRouteImport } from './routes/app.index'
-import { Route as AppAdminRouteImport } from './routes/app.admin'
-import { Route as AppConnectRouteImport } from './routes/app.connect'
-import { Route as AppGridRouteImport } from './routes/app.grid'
-import { Route as AppHiddenRouteImport } from './routes/app.hidden'
-import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
-import { Route as AppMatchesRouteImport } from './routes/app.matches'
-import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
-import { Route as AppProfileRouteImport } from './routes/app.profile'
-import { Route as AppQuestionsRouteImport } from './routes/app.questions'
-import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
-import { Route as GEventIdRouteImport } from './routes/g.$eventId'
-import { Route as MEventIdRouteImport } from './routes/m.$eventId'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PistasDePadelGratisRouteImport } from './routes/pistas-de-padel-gratis'
+import { Route as PadelCercaDeMiRouteImport } from './routes/padel-cerca-de-mi'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlayIndexRouteImport } from './routes/play.index'
-import { Route as PlayMadridRouteImport } from './routes/play.madrid'
-import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
-import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
+import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as SCodeRouteImport } from './routes/s.$code'
+import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
+import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
+import { Route as PlayMadridRouteImport } from './routes/play.madrid'
+import { Route as MEventIdRouteImport } from './routes/m.$eventId'
+import { Route as GEventIdRouteImport } from './routes/g.$eventId'
+import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
+import { Route as AppQuestionsRouteImport } from './routes/app.questions'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
+import { Route as AppHiddenRouteImport } from './routes/app.hidden'
+import { Route as AppGridRouteImport } from './routes/app.grid'
+import { Route as AppConnectRouteImport } from './routes/app.connect'
+import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './routes/[.]well-known.apple-app-site-association'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
-import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
-import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
-import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
+import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoRoute = DemoRouteImport.update({
-  id: '/demo',
-  path: '/demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FreePadelCourtsRoute = FreePadelCourtsRouteImport.update({
-  id: '/free-padel-courts',
-  path: '/free-padel-courts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PadelCercaDeMiRoute = PadelCercaDeMiRouteImport.update({
-  id: '/padel-cerca-de-mi',
-  path: '/padel-cerca-de-mi',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PistasDePadelGratisRoute = PistasDePadelGratisRouteImport.update({
-  id: '/pistas-de-padel-gratis',
-  path: '/pistas-de-padel-gratis',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SupportRoute = SupportRouteImport.update({
@@ -109,80 +59,59 @@ const SupportRoute = SupportRouteImport.update({
   path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotwellKnownAppleAppSiteAssociationRoute =
-  DotwellKnownAppleAppSiteAssociationRouteImport.update({
-    id: '/.well-known/apple-app-site-association',
-    path: '/.well-known/apple-app-site-association',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PistasDePadelGratisRoute = PistasDePadelGratisRouteImport.update({
+  id: '/pistas-de-padel-gratis',
+  path: '/pistas-de-padel-gratis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PadelCercaDeMiRoute = PadelCercaDeMiRouteImport.update({
+  id: '/padel-cerca-de-mi',
+  path: '/padel-cerca-de-mi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreePadelCourtsRoute = FreePadelCourtsRouteImport.update({
+  id: '/free-padel-courts',
+  path: '/free-padel-courts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminRoute = AppAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppConnectRoute = AppConnectRouteImport.update({
-  id: '/connect',
-  path: '/connect',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGridRoute = AppGridRouteImport.update({
-  id: '/grid',
-  path: '/grid',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppHiddenRoute = AppHiddenRouteImport.update({
-  id: '/hidden',
-  path: '/hidden',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppJoinSetupRoute = AppJoinSetupRouteImport.update({
-  id: '/join-setup',
-  path: '/join-setup',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppMatchesRoute = AppMatchesRouteImport.update({
-  id: '/matches',
-  path: '/matches',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppOnboardingRoute = AppOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppProfileRoute = AppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppQuestionsRoute = AppQuestionsRouteImport.update({
-  id: '/questions',
-  path: '/questions',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppQuickStartRoute = AppQuickStartRouteImport.update({
-  id: '/quick-start',
-  path: '/quick-start',
-  getParentRoute: () => AppRoute,
-} as any)
-const GEventIdRoute = GEventIdRouteImport.update({
-  id: '/g/$eventId',
-  path: '/g/$eventId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MEventIdRoute = MEventIdRouteImport.update({
-  id: '/m/$eventId',
-  path: '/m/$eventId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayIndexRoute = PlayIndexRouteImport.update({
@@ -190,14 +119,14 @@ const PlayIndexRoute = PlayIndexRouteImport.update({
   path: '/play/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlayMadridRoute = PlayMadridRouteImport.update({
-  id: '/play/madrid',
-  path: '/play/madrid',
-  getParentRoute: () => rootRouteImport,
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
 } as any)
-const PreviewPlayerCardRoute = PreviewPlayerCardRouteImport.update({
-  id: '/preview/player-card',
-  path: '/preview/player-card',
+const SCodeRoute = SCodeRouteImport.update({
+  id: '/s/$code',
+  path: '/s/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviewPlayerCardV2Route = PreviewPlayerCardV2RouteImport.update({
@@ -205,24 +134,85 @@ const PreviewPlayerCardV2Route = PreviewPlayerCardV2RouteImport.update({
   path: '/preview/player-card-v2',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SCodeRoute = SCodeRouteImport.update({
-  id: '/s/$code',
-  path: '/s/$code',
+const PreviewPlayerCardRoute = PreviewPlayerCardRouteImport.update({
+  id: '/preview/player-card',
+  path: '/preview/player-card',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayMadridRoute = PlayMadridRouteImport.update({
+  id: '/play/madrid',
+  path: '/play/madrid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MEventIdRoute = MEventIdRouteImport.update({
+  id: '/m/$eventId',
+  path: '/m/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GEventIdRoute = GEventIdRouteImport.update({
+  id: '/g/$eventId',
+  path: '/g/$eventId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppQuickStartRoute = AppQuickStartRouteImport.update({
+  id: '/quick-start',
+  path: '/quick-start',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuestionsRoute = AppQuestionsRouteImport.update({
+  id: '/questions',
+  path: '/questions',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOnboardingRoute = AppOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMatchesRoute = AppMatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppJoinSetupRoute = AppJoinSetupRouteImport.update({
+  id: '/join-setup',
+  path: '/join-setup',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHiddenRoute = AppHiddenRouteImport.update({
+  id: '/hidden',
+  path: '/hidden',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGridRoute = AppGridRouteImport.update({
+  id: '/grid',
+  path: '/grid',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConnectRoute = AppConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const DotwellKnownAppleAppSiteAssociationRoute =
+  DotwellKnownAppleAppSiteAssociationRouteImport.update({
+    id: '/.well-known/apple-app-site-association',
+    path: '/.well-known/apple-app-site-association',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppEventsIndexRoute = AppEventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
-  id: '/events/$eventId',
-  path: '/events/$eventId',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEventsNewRoute = AppEventsNewRouteImport.update({
-  id: '/events/new',
-  path: '/events/new',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMatchesMatchIdRoute = AppMatchesMatchIdRouteImport.update({
@@ -230,20 +220,30 @@ const AppMatchesMatchIdRoute = AppMatchesMatchIdRouteImport.update({
   path: '/$matchId',
   getParentRoute: () => AppMatchesRoute,
 } as any)
-const AppEventsEventIdEditRoute = AppEventsEventIdEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => AppEventsEventIdRoute,
+const AppEventsNewRoute = AppEventsNewRouteImport.update({
+  id: '/events/new',
+  path: '/events/new',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEventsEventIdRoute = AppEventsEventIdRouteImport.update({
+  id: '/events/$eventId',
+  path: '/events/$eventId',
+  getParentRoute: () => AppRoute,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
   id: '/lovable/email/auth/preview',
   path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
-  getParentRoute: () => rootRouteImport,
+const AppEventsEventIdEditRoute = AppEventsEventIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AppEventsEventIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -522,81 +522,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo': {
-      id: '/demo'
-      path: '/demo'
-      fullPath: '/demo'
-      preLoaderRoute: typeof DemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/free-padel-courts': {
-      id: '/free-padel-courts'
-      path: '/free-padel-courts'
-      fullPath: '/free-padel-courts'
-      preLoaderRoute: typeof FreePadelCourtsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/padel-cerca-de-mi': {
-      id: '/padel-cerca-de-mi'
-      path: '/padel-cerca-de-mi'
-      fullPath: '/padel-cerca-de-mi'
-      preLoaderRoute: typeof PadelCercaDeMiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pistas-de-padel-gratis': {
-      id: '/pistas-de-padel-gratis'
-      path: '/pistas-de-padel-gratis'
-      fullPath: '/pistas-de-padel-gratis'
-      preLoaderRoute: typeof PistasDePadelGratisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/support': {
@@ -606,109 +536,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/apple-app-site-association': {
-      id: '/.well-known/apple-app-site-association'
-      path: '/.well-known/apple-app-site-association'
-      fullPath: '/.well-known/apple-app-site-association'
-      preLoaderRoute: typeof DotwellKnownAppleAppSiteAssociationRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/': {
-      id: '/app/'
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pistas-de-padel-gratis': {
+      id: '/pistas-de-padel-gratis'
+      path: '/pistas-de-padel-gratis'
+      fullPath: '/pistas-de-padel-gratis'
+      preLoaderRoute: typeof PistasDePadelGratisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/padel-cerca-de-mi': {
+      id: '/padel-cerca-de-mi'
+      path: '/padel-cerca-de-mi'
+      fullPath: '/padel-cerca-de-mi'
+      preLoaderRoute: typeof PadelCercaDeMiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free-padel-courts': {
+      id: '/free-padel-courts'
+      path: '/free-padel-courts'
+      fullPath: '/free-padel-courts'
+      preLoaderRoute: typeof FreePadelCourtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
       path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin': {
-      id: '/app/admin'
-      path: '/admin'
-      fullPath: '/app/admin'
-      preLoaderRoute: typeof AppAdminRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/connect': {
-      id: '/app/connect'
-      path: '/connect'
-      fullPath: '/app/connect'
-      preLoaderRoute: typeof AppConnectRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/grid': {
-      id: '/app/grid'
-      path: '/grid'
-      fullPath: '/app/grid'
-      preLoaderRoute: typeof AppGridRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/hidden': {
-      id: '/app/hidden'
-      path: '/hidden'
-      fullPath: '/app/hidden'
-      preLoaderRoute: typeof AppHiddenRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/join-setup': {
-      id: '/app/join-setup'
-      path: '/join-setup'
-      fullPath: '/app/join-setup'
-      preLoaderRoute: typeof AppJoinSetupRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/matches': {
-      id: '/app/matches'
-      path: '/matches'
-      fullPath: '/app/matches'
-      preLoaderRoute: typeof AppMatchesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/onboarding': {
-      id: '/app/onboarding'
-      path: '/onboarding'
-      fullPath: '/app/onboarding'
-      preLoaderRoute: typeof AppOnboardingRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/profile': {
-      id: '/app/profile'
-      path: '/profile'
-      fullPath: '/app/profile'
-      preLoaderRoute: typeof AppProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/questions': {
-      id: '/app/questions'
-      path: '/questions'
-      fullPath: '/app/questions'
-      preLoaderRoute: typeof AppQuestionsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/quick-start': {
-      id: '/app/quick-start'
-      path: '/quick-start'
-      fullPath: '/app/quick-start'
-      preLoaderRoute: typeof AppQuickStartRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/g/$eventId': {
-      id: '/g/$eventId'
-      path: '/g/$eventId'
-      fullPath: '/g/$eventId'
-      preLoaderRoute: typeof GEventIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/m/$eventId': {
-      id: '/m/$eventId'
-      path: '/m/$eventId'
-      fullPath: '/m/$eventId'
-      preLoaderRoute: typeof MEventIdRouteImport
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/play/': {
@@ -718,18 +620,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/play/madrid': {
-      id: '/play/madrid'
-      path: '/play/madrid'
-      fullPath: '/play/madrid'
-      preLoaderRoute: typeof PlayMadridRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/preview/player-card': {
-      id: '/preview/player-card'
-      path: '/preview/player-card'
-      fullPath: '/preview/player-card'
-      preLoaderRoute: typeof PreviewPlayerCardRouteImport
+    '/s/$code': {
+      id: '/s/$code'
+      path: '/s/$code'
+      fullPath: '/s/$code'
+      preLoaderRoute: typeof SCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview/player-card-v2': {
@@ -739,11 +641,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreviewPlayerCardV2RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/s/$code': {
-      id: '/s/$code'
-      path: '/s/$code'
-      fullPath: '/s/$code'
-      preLoaderRoute: typeof SCodeRouteImport
+    '/preview/player-card': {
+      id: '/preview/player-card'
+      path: '/preview/player-card'
+      fullPath: '/preview/player-card'
+      preLoaderRoute: typeof PreviewPlayerCardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play/madrid': {
+      id: '/play/madrid'
+      path: '/play/madrid'
+      fullPath: '/play/madrid'
+      preLoaderRoute: typeof PlayMadridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/m/$eventId': {
+      id: '/m/$eventId'
+      path: '/m/$eventId'
+      fullPath: '/m/$eventId'
+      preLoaderRoute: typeof MEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/g/$eventId': {
+      id: '/g/$eventId'
+      path: '/g/$eventId'
+      fullPath: '/g/$eventId'
+      preLoaderRoute: typeof GEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/quick-start': {
+      id: '/app/quick-start'
+      path: '/quick-start'
+      fullPath: '/app/quick-start'
+      preLoaderRoute: typeof AppQuickStartRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/questions': {
+      id: '/app/questions'
+      path: '/questions'
+      fullPath: '/app/questions'
+      preLoaderRoute: typeof AppQuestionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/onboarding': {
+      id: '/app/onboarding'
+      path: '/onboarding'
+      fullPath: '/app/onboarding'
+      preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/matches': {
+      id: '/app/matches'
+      path: '/matches'
+      fullPath: '/app/matches'
+      preLoaderRoute: typeof AppMatchesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/join-setup': {
+      id: '/app/join-setup'
+      path: '/join-setup'
+      fullPath: '/app/join-setup'
+      preLoaderRoute: typeof AppJoinSetupRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/hidden': {
+      id: '/app/hidden'
+      path: '/hidden'
+      fullPath: '/app/hidden'
+      preLoaderRoute: typeof AppHiddenRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/grid': {
+      id: '/app/grid'
+      path: '/grid'
+      fullPath: '/app/grid'
+      preLoaderRoute: typeof AppGridRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/connect': {
+      id: '/app/connect'
+      path: '/connect'
+      fullPath: '/app/connect'
+      preLoaderRoute: typeof AppConnectRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/.well-known/apple-app-site-association': {
+      id: '/.well-known/apple-app-site-association'
+      path: '/.well-known/apple-app-site-association'
+      fullPath: '/.well-known/apple-app-site-association'
+      preLoaderRoute: typeof DotwellKnownAppleAppSiteAssociationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/events/': {
@@ -753,12 +753,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/events/$eventId': {
-      id: '/app/events/$eventId'
-      path: '/events/$eventId'
-      fullPath: '/app/events/$eventId'
-      preLoaderRoute: typeof AppEventsEventIdRouteImport
-      parentRoute: typeof AppRoute
+    '/app/matches/$matchId': {
+      id: '/app/matches/$matchId'
+      path: '/$matchId'
+      fullPath: '/app/matches/$matchId'
+      preLoaderRoute: typeof AppMatchesMatchIdRouteImport
+      parentRoute: typeof AppMatchesRoute
     }
     '/app/events/new': {
       id: '/app/events/new'
@@ -767,19 +767,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEventsNewRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/matches/$matchId': {
-      id: '/app/matches/$matchId'
-      path: '/$matchId'
-      fullPath: '/app/matches/$matchId'
-      preLoaderRoute: typeof AppMatchesMatchIdRouteImport
-      parentRoute: typeof AppMatchesRoute
+    '/app/events/$eventId': {
+      id: '/app/events/$eventId'
+      path: '/events/$eventId'
+      fullPath: '/app/events/$eventId'
+      preLoaderRoute: typeof AppEventsEventIdRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/app/events/$eventId/edit': {
-      id: '/app/events/$eventId/edit'
-      path: '/edit'
-      fullPath: '/app/events/$eventId/edit'
-      preLoaderRoute: typeof AppEventsEventIdEditRouteImport
-      parentRoute: typeof AppEventsEventIdRoute
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/preview': {
       id: '/lovable/email/auth/preview'
@@ -788,12 +788,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/webhook': {
-      id: '/lovable/email/auth/webhook'
-      path: '/lovable/email/auth/webhook'
-      fullPath: '/lovable/email/auth/webhook'
-      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/events/$eventId/edit': {
+      id: '/app/events/$eventId/edit'
+      path: '/edit'
+      fullPath: '/app/events/$eventId/edit'
+      preLoaderRoute: typeof AppEventsEventIdEditRouteImport
+      parentRoute: typeof AppEventsEventIdRoute
     }
   }
 }

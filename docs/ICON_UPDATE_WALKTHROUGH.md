@@ -2,7 +2,7 @@
 
 The corrected icon has no white outer frame. The App Store version already installed on phones will keep its old icon until Apple approves and releases this update.
 
-1. Get the latest project code onto your Mac using your connected GitHub repository.
+1. Get the latest project code onto your Mac: in Terminal inside the project folder run `git pull` (if Terminal says files would be overwritten, run `git checkout -- .` first, then `git pull`). The icon was last corrected on 21 Oct 2026 — the old icon file will keep showing until you pull.
 2. In Terminal inside the project folder, run `npm install`, then `npx cap sync ios`, then `npx cap open ios`.
 3. In Xcode, open **App → Assets → AppIcon**. Confirm the green artwork reaches all four edges, with no white outer border.
 4. Open the **App** target → **General**. Set **Version** to **1.0.1**. Set **Build** to a number higher than every build already uploaded to App Store Connect (use **17** if **16** is still your highest).

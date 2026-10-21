@@ -21,10 +21,14 @@ npx cap sync ios
 npx cap open ios       # opens Xcode
 ```
 
-App icons and splash screens from `public/`:
+App icons use `resources/icon.png`, an opaque full-bleed source. The corrected
+iOS icon is already committed in `Assets.xcassets/AppIcon.appiconset`.
+Do not regenerate it with default padding: that can restore an outer frame.
+If generating splash screens or other assets, restore the iOS icon afterward:
 
 ```bash
 npx capacitor-assets generate --ios
+cp resources/icon.png ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
 ```
 
 ## Privacy manifest (required)
@@ -70,3 +74,5 @@ status bar theming, splash screen, and hardware back handling.
 
 Web-only changes ship instantly (the shell loads the live site). Rebuild and
 re-upload in Xcode only when native code, plugins, or icons change.
+
+For the white-frame correction on the live app, follow `docs/ICON_UPDATE_WALKTHROUGH.md`.

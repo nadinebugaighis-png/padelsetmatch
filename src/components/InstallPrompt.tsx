@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Download, X, Smartphone, Share, PlusSquare, ArrowUpFromLine, CheckCircle2, Copy, Send } from "lucide-react";
 import { useTr } from "@/lib/i18n";
+import { AppStoreBadge } from "@/components/AppStoreBadge";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -101,7 +102,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
         <div className="flex items-start justify-between gap-3 mb-6">
           <div>
             <h3 className="text-display text-3xl text-[var(--cream)] leading-none">{tr("Put it on your phone", "Instálala en tu móvil", "Installe-la sur ton téléphone")}</h3>
-            <p className="mt-2 text-sm text-[var(--cream)]/70">{tr("Not in the App Store — install it straight from here in 10 seconds.", "No está en la App Store — instálala directamente desde aquí en 10 segundos.", "Pas sur l'App Store — installe-la directement d'ici en 10 secondes.")}</p>
+            <p className="mt-2 text-sm text-[var(--cream)]/70">{tr("It's on the App Store — or add it to your home screen straight from here in 10 seconds.", "Ya está en la App Store — o añádela a tu pantalla de inicio directamente desde aquí en 10 segundos.", "Elle est sur l’App Store — ou ajoute-la à ton écran d’accueil directement d’ici en 10 secondes.")}</p>
           </div>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-[var(--cream)]/10 text-[var(--cream)]/60" aria-label="Close">
             <X className="w-5 h-5" />
@@ -110,6 +111,17 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
 
         {ios && (
           <div className="space-y-5">
+            <div className="rounded-2xl border border-[var(--cream)]/15 bg-[var(--cream)]/8 p-4 text-center">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--cream)]/70">
+                {tr("Get the app", "Consigue la app", "Récupère l’app")}
+              </p>
+              <div className="mt-3 flex justify-center rounded-xl bg-[var(--paper)] p-2">
+                <AppStoreBadge />
+              </div>
+              <p className="mt-2 text-xs text-[var(--cream)]/60">
+                {tr("The app is on the App Store for iPhone and iPad.", "La app está en la App Store para iPhone y iPad.", "L’app est sur l’App Store pour iPhone et iPad.")}
+              </p>
+            </div>
             {!safari && (
               <div className="rounded-2xl border border-[var(--cream)]/40 bg-[var(--cream)]/10 p-4">
                 <p className="text-sm font-bold text-[var(--cream)]">{tr("First open this page in Safari", "Primero abre esta página en Safari", "Ouvre d'abord cette page dans Safari")}</p>

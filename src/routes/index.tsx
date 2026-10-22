@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
+import { AppStoreBadge } from "@/components/AppStoreBadge";
 import { ArrowRight } from "lucide-react";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
@@ -151,9 +152,12 @@ function Landing() {
 
 
 
-          <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">
-            &nbsp;
-          </p>
+          <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-x-4 gap-y-3">
+            <AppStoreBadge />
+            <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/50">
+              {tr("Free · iPhone & iPad", "Gratis · iPhone y iPad", "Gratuit · iPhone et iPad")}
+            </span>
+          </div>
 
           <Link
             to="/demo"
@@ -229,8 +233,11 @@ function Landing() {
       <footer className="relative z-10 bg-[var(--ink)] text-[var(--paper)]">
         <div className="h-1.5 bg-[var(--plum)]" aria-hidden />
         <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4 flex-wrap">
             <span className="text-sm tracking-wide">padelsetmatch.com</span>
+            <span className="inline-flex items-center rounded-xl bg-[var(--paper)] p-1.5">
+              <AppStoreBadge />
+            </span>
           </div>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70 flex-wrap">
             <Link to="/padel-cerca-de-mi" className="hover:text-[var(--paper)]">Pádel cerca de mí</Link>

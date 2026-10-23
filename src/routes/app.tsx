@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyMatches, getMyProfile, getDiscoverFeed } from "@/lib/app.functions";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { listMyPendingInvites, listOpenEvents } from "@/lib/match-events.functions";
+import { saveMyDeviceToken } from "@/lib/notifications.functions";
 import { getConnectLatest, markConnectSeen, listConnectPosts } from "@/lib/connect.functions";
 import { Home, MessageCircle, User, Mail, X, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -245,6 +246,21 @@ function AuthShell() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", search: { redirect: undefined, join: undefined }, replace: true });
   };
+
+  // Register this iPhone/Android for native push once the profile is loaded.
+  const saveDeviceToken = useServerFn(saveMyDeviceToken);
+  const pushRegisteredRef = useRef(false);
+  useEffect(() => {
+    if (!profileQ.data || pushRegisteredRef.current) return;
+    pushRegisteredRef.current = true;
+    void import("@/lib/native")
+      .then(async ({ isNative, nativePlatform, registerNativePush }) => {
+        if (!isNative()) return;
+        const token = await registerNativePush();
+        if (token) await saveDeviceToken({ data: { token, platform: nativePlatform() === "ios" ? "ios" : "android" } });
+      })
+      .catch(() => { /* push unavailable — ignore */ });
+  }, [profileQ.data, saveDeviceToken]);
 
   const hasProfile = !!profileQ.data;
   const onOnboarding = path.startsWith("/app/onboarding");

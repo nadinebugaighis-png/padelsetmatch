@@ -76,3 +76,9 @@ Web-only changes ship instantly (the shell loads the live site). Rebuild and
 re-upload in Xcode only when native code, plugins, or icons change.
 
 For the white-frame correction on the live app, follow `docs/ICON_UPDATE_WALKTHROUGH.md`.
+
+## Native push notifications (build 18+)
+
+- After pulling these changes on the Mac, run `npx cap sync ios` once so the Push Notifications plugin is added to the Xcode project, then open Xcode and archive as usual.
+- Delivery requires three project secrets: `APNS_TEAM_ID` (Apple Developer account, top right), `APNS_KEY_ID` and `APNS_AUTH_KEY` (create an "Apple Push Notifications service (APNs)" key under developer.apple.com → Certificates, Identifiers & Profiles → Keys; download the .p8 once and paste its full contents).
+- The APNs capability (`aps-environment`) is already in `App.entitlements`; no Xcode capability changes are needed.

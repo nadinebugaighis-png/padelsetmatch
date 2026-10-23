@@ -43,6 +43,36 @@ export const removeMyPushSubscription = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const deviceTokenSchema = z.object({
+  token: z.string().min(16).max(512),
+  platform: z.enum(["ios", "android"]),
+});
+
+export const saveMyDeviceToken = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => deviceTokenSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: profile } = await context.supabase.from("profiles").select("id").eq("user_id", context.userId).maybeSingle();
+    if (!profile) throw new Error("No profile");
+    await context.supabase
+      .from("device_tokens")
+      .upsert(
+        { profile_id: profile.id, platform: data.platform, token: data.token, last_used_at: new Date().toISOString() },
+        { onConflict: "token" },
+      );
+    return { ok: true };
+  });
+
+export const removeMyDeviceToken = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ token: z.string().min(16).max(512) }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: profile } = await context.supabase.from("profiles").select("id").eq("user_id", context.userId).maybeSingle();
+    if (!profile) return { ok: true };
+    await context.supabase.from("device_tokens").delete().eq("token", data.token).eq("profile_id", profile.id);
+    return { ok: true };
+  });
+
 export const getMyNotificationPrefs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -109,11 +139,16 @@ export const drainPushOutbox = createServerFn({ method: "POST" })
     const { sendWebPush } = await import("./push.server");
     const { data: claimed, error } = await context.supabase.rpc("claim_push_outbox" as never, { _limit: 50 } as never);
     if (error) throw new Error(error.message);
-    type Item = { id: string; profile_id: string; title: string; body: string | null; url: string | null; type: string; subs: Array<{ endpoint: string; p256dh: string; auth: string }> };
+    type Item = {
+      id: string; profile_id: string; title: string; body: string | null; url: string | null; type: string;
+      subs: Array<{ endpoint: string; p256dh: string; auth: string }>;
+      devices?: Array<{ token: string; platform: string }>;
+    };
     const items = ((claimed as { items?: Item[] } | null)?.items ?? []) as Item[];
     if (items.length === 0) return { sent: 0 };
     let sent = 0;
     const expiredEndpoints: string[] = [];
+    const invalidTokens: string[] = [];
     for (const item of items) {
       for (const sub of item.subs) {
         try {
@@ -124,9 +159,22 @@ export const drainPushOutbox = createServerFn({ method: "POST" })
           console.warn("push send failed", e);
         }
       }
+      const iosDevices = (item.devices ?? []).filter((d) => d.platform === "ios");
+      if (iosDevices.length > 0) {
+        const { sendNativePush } = await import("./apns.server");
+        for (const device of iosDevices) {
+          const r = await sendNativePush(device.token, { title: item.title, body: item.body ?? undefined, url: item.url ?? undefined, type: item.type });
+          if (r.invalidToken) invalidTokens.push(device.token);
+          if (r.ok) sent += 1;
+        }
+      }
     }
     if (expiredEndpoints.length > 0) {
       await context.supabase.rpc("delete_expired_push_subs" as never, { _endpoints: expiredEndpoints } as never);
+    }
+    if (invalidTokens.length > 0) {
+      const { data: profile } = await context.supabase.from("profiles").select("id").eq("user_id", context.userId).maybeSingle();
+      if (profile) await context.supabase.from("device_tokens").delete().eq("profile_id", profile.id).in("token", invalidTokens);
     }
     return { sent };
   });

@@ -18,22 +18,32 @@ import { reportLovableError } from "@/lib/lovable-error-reporting";
 export const Route = createFileRoute("/app")({
   ssr: false,
   beforeLoad: async () => {
+    // Read the stored session first — it lives on the device and works offline.
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData.session) {
+      throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+    }
+    // Verify the session with the server, but only sign out on a definitive
+    // "session invalid" answer (401/403). A dropped connection must never
+    // destroy the stored login, or users get signed out on patchy signal.
     try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData.session) {
-        try { await supabase.auth.signOut(); } catch { /* ignore */ }
-        throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
-      }
       const { data, error } = await supabase.auth.getUser();
       if (error || !data.user) {
-        try { await supabase.auth.signOut(); } catch { /* ignore */ }
-        throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+        const status = error && typeof error === "object" && "status" in error
+          ? (error as { status?: number }).status
+          : undefined;
+        if (status === 401 || status === 403) {
+          try { await supabase.auth.signOut(); } catch { /* ignore */ }
+          throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+        }
+        // Network hiccup: trust the stored session and let the app load.
+        return { user: sessionData.session.user };
       }
       return { user: data.user };
     } catch (err) {
       if (isRedirect(err)) throw err;
-      try { await supabase.auth.signOut(); } catch { /* ignore */ }
-      throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+      // getUser() itself threw (offline, DNS failure, ...) — same rule: stay signed in.
+      return { user: sessionData.session.user };
     }
   },
   component: AuthShell,

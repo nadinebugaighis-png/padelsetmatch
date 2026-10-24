@@ -2,7 +2,7 @@
 
 ## Google Play deletion page
 - [x] Add public account and individual-data deletion instructions with links to existing controls.
-- [ ] Verify the public page and sign-in links.
+- [x] Verify the public page and profile sign-in link; preview build passes.
 - [ ] Publish the deletion page (requires Nadine to publish the website).
 
 - [x] Finish saved sign-in protection; browser reopen/connection checks and native script tests pass (real iPhone check pending).

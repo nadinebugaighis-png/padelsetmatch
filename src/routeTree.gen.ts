@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as FreePadelCourtsRouteImport } from './routes/free-padel-courts'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
@@ -62,6 +63,11 @@ const AppRoute = AppRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeleteAccountRoute = DeleteAccountRouteImport.update({
+  id: '/delete-account',
+  path: '/delete-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoRoute = DemoRouteImport.update({
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/demo': typeof DemoRoute
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -290,6 +297,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/demo': typeof DemoRoute
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -332,6 +340,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/demo': typeof DemoRoute
   '/free-padel-courts': typeof FreePadelCourtsRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -375,6 +384,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/delete-account'
     | '/demo'
     | '/free-padel-courts'
     | '/how-it-works'
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/delete-account'
     | '/demo'
     | '/free-padel-courts'
     | '/how-it-works'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/delete-account'
     | '/demo'
     | '/free-padel-courts'
     | '/how-it-works'
@@ -498,6 +510,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  DeleteAccountRoute: typeof DeleteAccountRoute
   DemoRoute: typeof DemoRoute
   FreePadelCourtsRoute: typeof FreePadelCourtsRoute
   HowItWorksRoute: typeof HowItWorksRoute
@@ -541,6 +554,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delete-account': {
+      id: '/delete-account'
+      path: '/delete-account'
+      fullPath: '/delete-account'
+      preLoaderRoute: typeof DeleteAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo': {
@@ -861,6 +881,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  DeleteAccountRoute: DeleteAccountRoute,
   DemoRoute: DemoRoute,
   FreePadelCourtsRoute: FreePadelCourtsRoute,
   HowItWorksRoute: HowItWorksRoute,

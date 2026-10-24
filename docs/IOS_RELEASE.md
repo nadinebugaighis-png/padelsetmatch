@@ -82,3 +82,16 @@ For the white-frame correction on the live app, follow `docs/ICON_UPDATE_WALKTHR
 - After pulling these changes on the Mac, run `npx cap sync ios` once so the Push Notifications plugin is added to the Xcode project, then open Xcode and archive as usual.
 - Delivery requires three project secrets: `APNS_TEAM_ID` (Apple Developer account, top right), `APNS_KEY_ID` and `APNS_AUTH_KEY` (create an "Apple Push Notifications service (APNs)" key under developer.apple.com → Certificates, Identifiers & Profiles → Keys; download the .p8 once and paste its full contents).
 - The APNs capability (`aps-environment`) is already in `App.entitlements`; no Xcode capability changes are needed.
+
+## Version 1.0.2 / build 18
+
+Version 1.0.1 is approved, so submit these fixes as 1.0.2, not another 1.0.1 build.
+This release adds Keychain-backed saved sign-in, APNs delegate callbacks,
+registration retries, and opening the relevant page when an alert is tapped.
+Publish the website changes before testing the native build, then pull on the
+Mac, run `npx cap sync ios`, and archive/upload 1.0.2 (18).
+Apple push credentials are still required before delivery can succeed.
+
+Test on TestFlight: sign in, fully close and reopen, switch Wi-Fi/mobile signal,
+allow notifications, close the app, have another account send a message/invite,
+and tap the lock-screen alert. Explicit sign-out must not restore the old account.

@@ -22,7 +22,18 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   }
 });
 
+const pushDeliveryMiddleware = createMiddleware().server(async ({ next }) => {
+  const result = await next();
+  try {
+    // Every completed app action can deliver queued alerts to recipients whose
+    // phones are closed. No private payload is exposed to the caller.
+    const { deliverPendingPushes } = await import("./lib/push-delivery.server");
+    await deliverPendingPushes();
+  } catch { /* durable queue remains available for retry */ }
+  return result;
+});
+
 export const startInstance = createStart(() => ({
-  functionMiddleware: [attachSupabaseAuth],
+  functionMiddleware: [attachSupabaseAuth, pushDeliveryMiddleware],
   requestMiddleware: [errorMiddleware],
 }));

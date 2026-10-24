@@ -22,7 +22,7 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   }
 });
 
-const pushDeliveryMiddleware = createMiddleware().server(async ({ next }) => {
+const pushDeliveryMiddleware = createMiddleware({ type: "function" }).server(async ({ next }) => {
   const result = await next();
   try {
     // Every completed app action can deliver queued alerts to recipients whose

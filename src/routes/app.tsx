@@ -252,14 +252,30 @@ function AuthShell() {
   const pushRegisteredRef = useRef(false);
   useEffect(() => {
     if (!profileQ.data || pushRegisteredRef.current) return;
-    pushRegisteredRef.current = true;
-    void import("@/lib/native")
-      .then(async ({ isNative, nativePlatform, registerNativePush }) => {
-        if (!isNative()) return;
+    let cancelled = false;
+    let registering = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const register = async () => {
+      if (cancelled || registering || pushRegisteredRef.current) return;
+      registering = true;
+      try {
+        const { isNative, nativePlatform, registerNativePush } = await import("@/lib/native");
+        if (!isNative() || nativePlatform() !== "ios") return;
         const token = await registerNativePush();
-        if (token) await saveDeviceToken({ data: { token, platform: nativePlatform() === "ios" ? "ios" : "android" } });
-      })
-      .catch(() => { /* push unavailable — ignore */ });
+        if (token && !cancelled) {
+          await saveDeviceToken({ data: { token, platform: "ios" } });
+          pushRegisteredRef.current = true;
+        }
+      } catch { /* retry when connectivity returns */ }
+      finally {
+        registering = false;
+        if (!cancelled && !pushRegisteredRef.current) timer = setTimeout(() => { void register(); }, 60000);
+      }
+    };
+    void register();
+    const online = () => { void register(); };
+    window.addEventListener("online", online);
+    return () => { cancelled = true; clearTimeout(timer); window.removeEventListener("online", online); };
   }, [profileQ.data, saveDeviceToken]);
 
   const hasProfile = !!profileQ.data;

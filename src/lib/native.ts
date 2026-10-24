@@ -27,18 +27,29 @@ export async function registerNativePush(): Promise<string | null> {
   const { PushNotifications } = await import("@capacitor/push-notifications");
   const perm = await PushNotifications.requestPermissions();
   if (perm.receive !== "granted") return null;
-  return await new Promise<string | null>((resolve) => {
-    const timeout = setTimeout(() => resolve(null), 10000);
-    PushNotifications.addListener("registration", (token) => {
-      clearTimeout(timeout);
-      resolve(token.value);
-    });
-    PushNotifications.addListener("registrationError", () => {
-      clearTimeout(timeout);
-      resolve(null);
-    });
-    void PushNotifications.register();
+  let finish: (value: string | null) => void = () => {};
+  const result = new Promise<string | null>((resolve) => { finish = resolve; });
+  const registration = await PushNotifications.addListener("registration", (token) => finish(token.value));
+  const failure = await PushNotifications.addListener("registrationError", () => finish(null));
+  const timeout = setTimeout(() => finish(null), 15000);
+  try {
+    await PushNotifications.register();
+    return await result;
+  } finally {
+    clearTimeout(timeout);
+    await Promise.all([registration.remove(), failure.remove()]);
+  }
+}
+
+export async function listenForNativeNotificationTap(onTap: (path: string) => void) {
+  if (!isNative()) return () => {};
+  const { PushNotifications } = await import("@capacitor/push-notifications");
+  const { notificationPath } = await import("./notification-path");
+  const handle = await PushNotifications.addListener("pushNotificationActionPerformed", ({ notification }) => {
+    const path = notificationPath(notification.data?.url);
+    if (path) onTap(path);
   });
+  return () => { void handle.remove(); };
 }
 
 /** Status bar, splash screen and hardware back button. Safe no-op on the web. */

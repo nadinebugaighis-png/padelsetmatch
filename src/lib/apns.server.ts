@@ -67,11 +67,12 @@ export async function sendNativePush(
       }),
     });
     // 400 BadDeviceToken / 410 Unregistered mean the token will never work again.
-    const invalidToken = res.status === 400 || res.status === 410;
+    const result = res.ok ? null : await res.json().catch(() => null) as { reason?: string } | null;
+    const invalidToken = res.status === 410 || (res.status === 400 && result?.reason === "BadDeviceToken");
     return { ok: res.ok, status: res.status, invalidToken };
-  } catch (e) {
+  } catch {
     // Local dev cannot open an HTTP/2 connection to APNs — expected there.
-    console.warn("apns send failed", e);
+    console.warn("Apple notification delivery unavailable");
     return { ok: false, status: 0, invalidToken: false };
   }
 }

@@ -1580,7 +1580,9 @@ export type Database = {
       push_outbox: {
         Row: {
           body: string | null
+          claimed_at: string | null
           created_at: string
+          delivery_attempts: number
           id: number
           profile_id: string
           sent_at: string | null
@@ -1590,7 +1592,9 @@ export type Database = {
         }
         Insert: {
           body?: string | null
+          claimed_at?: string | null
           created_at?: string
+          delivery_attempts?: number
           id?: number
           profile_id: string
           sent_at?: string | null
@@ -1600,7 +1604,9 @@ export type Database = {
         }
         Update: {
           body?: string | null
+          claimed_at?: string | null
           created_at?: string
+          delivery_attempts?: number
           id?: number
           profile_id?: string
           sent_at?: string | null
@@ -1885,6 +1891,7 @@ export type Database = {
         Returns: Json
       }
       check_app_health_alerts: { Args: never; Returns: Json }
+      claim_pending_push_delivery: { Args: { _limit?: number }; Returns: Json }
       claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
       cleanup_relationship_with: {
         Args: { _other: string }

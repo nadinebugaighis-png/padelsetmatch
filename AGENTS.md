@@ -12,3 +12,4 @@
 - Keep `resources/icon.png` and the iOS AppIcon asset identical opaque, full-bleed 1024px squares; iOS applies the corner mask, and generator padding must not reintroduce an outer frame.
 - Native iOS push and web push share push_outbox; service-role-only claim_pending_push_delivery leases rows and the server delivery helper acknowledges completed sends. Server-function completion triggers draining so recipients need not keep the app open.
 - iOS restores and mirrors only the production-origin auth storage key through Keychain in PersistentBridgeViewController before page scripts start; generated auth clients remain untouched and explicit sign-out clears the native copy.
+- Keep the public deletion page accessible without signing in; link to existing authenticated deletion controls and privacy-request channels rather than duplicating destructive logic, so store visitors can find deletion steps safely.

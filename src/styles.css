@@ -13,6 +13,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Native bridge exists before hydration: keep the public welcome page out of
+   the first paint until the saved-account check has finished. Web is unchanged. */
+.native-entry-cover { display: none; }
+html.native-app [data-native-entry="pending"] { visibility: hidden; }
+html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+}
+
 /*
  * "Court at Dusk" — Madrid padel-dating, anonymous-first.
  * Deep court teal, warm Madrid clay, cream paper, padel-ball glow.

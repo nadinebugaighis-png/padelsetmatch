@@ -1,6 +1,8 @@
 # iPhone sign-in and notifications
 
 ## iPhone force-close reopening
+- [x] Hide welcome and sign-in while native restoration resolves; eight tests pass and signed-in browser checks reach grid with zero visible welcome/login frames. Signed-out form remains available.
+- [ ] Publish the flash-prevention change and verify a cold launch on Nadine's iPhone (requires publication and device check).
 - [x] Route saved-in native app launches from the welcome page to the player grid; seven tests and authenticated browser reopening checks pass.
 - [ ] Confirm reopening on Nadine's iPhone after the website correction is published (requires device check).
 

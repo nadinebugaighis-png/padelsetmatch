@@ -5,12 +5,16 @@ export async function resumeNativeEntry(
   native: boolean,
   getSession: () => Promise<{ data: { session: unknown | null }; error?: unknown }>,
   enterApp: () => void | Promise<unknown>,
-): Promise<void> {
-  if (!native) return;
+): Promise<boolean> {
+  if (!native) return false;
   try {
     const { data, error } = await getSession();
-    if (!error && data.session) await enterApp();
+    if (!error && data.session) {
+      await enterApp();
+      return true;
+    }
   } catch {
     // Do not erase saved credentials on a failed connection or navigation.
   }
+  return false;
 }

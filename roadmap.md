@@ -1,7 +1,7 @@
 # iPhone sign-in and notifications
 
 ## iPhone force-close reopening
-- [ ] Route saved-in native app launches from the welcome page to the player grid; verify navigation and regression tests.
+- [x] Route saved-in native app launches from the welcome page to the player grid; seven tests and authenticated browser reopening checks pass.
 - [ ] Confirm reopening on Nadine's iPhone after the website correction is published (requires device check).
 
 ## Google Play deletion page

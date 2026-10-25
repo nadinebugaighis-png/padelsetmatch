@@ -10,12 +10,20 @@ import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 import { isNative, nativeAppleSignIn } from "@/lib/native";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { SessionLoading } from "@/components/SessionLoading";
 
 export const Route = createFileRoute("/auth")({
   // Client-only: this page is reached via the /app guard's client redirect,
   // so server-rendering it buys nothing and only risks a hydration mismatch.
   ssr: false,
-  head: () => ({ meta: [{ title: "Sign in — PadelSetMatch" }] }),
+  head: () => ({ meta: [
+    { title: "Sign in — PadelSetMatch" },
+    { name: "description", content: "Sign in or create your PadelSetMatch account to meet players and join padel matches." },
+    { property: "og:title", content: "Sign in — PadelSetMatch" },
+    { property: "og:description", content: "Join your local padel community with PadelSetMatch." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: (
     s: Record<string, unknown>,
   ): { redirect?: string; join?: string; i?: string; mode?: "signin" | "signup" } => ({
@@ -39,6 +47,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const hydrated = useHydrated();
 
   // App Store guideline 1.2: users must explicitly accept the EULA / terms
@@ -88,9 +97,13 @@ function AuthPage() {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate(afterAuthTarget() as never);
-    });
+    let cancelled = false;
+    void supabase.auth.getSession().then(async ({ data, error }) => {
+      if (cancelled) return;
+      if (!error && data.session) await navigate(afterAuthTarget() as never);
+      else setCheckingSession(false);
+    }).catch(() => { if (!cancelled) setCheckingSession(false); });
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -375,6 +388,8 @@ function AuthPage() {
 
 
 
+
+  if (checkingSession) return <SessionLoading />;
 
   return (
     <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">

@@ -108,6 +108,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        children: `(() => {
+          const native = window.Capacitor?.isNativePlatform?.() || window.webkit?.messageHandlers?.bridge || window.androidBridge;
+          if (native) document.documentElement.classList.add('native-app');
+        })();`,
+      },
+      {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -140,6 +146,9 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head><HeadContent /></head>
       <body>
+        <div className="native-entry-cover" aria-hidden="true">
+          <span className="h-7 w-7 rounded-full border-2 border-ink/20 border-t-ink motion-safe:animate-spin" />
+        </div>
         {children}
         <Scripts />
       </body>

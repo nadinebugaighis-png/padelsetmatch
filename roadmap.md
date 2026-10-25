@@ -1,6 +1,7 @@
 # iPhone sign-in and notifications
 
 ## iPhone force-close reopening
+- [ ] Prevent welcome and sign-in flashes while a saved native session is restored; verify returning-player and signed-out flows.
 - [x] Route saved-in native app launches from the welcome page to the player grid; seven tests and authenticated browser reopening checks pass.
 - [ ] Confirm reopening on Nadine's iPhone after the website correction is published (requires device check).
 

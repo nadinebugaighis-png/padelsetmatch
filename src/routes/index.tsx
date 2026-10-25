@@ -67,13 +67,17 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const navigate = useNavigate();
+  const [entryPending, setEntryPending] = useState(true);
   useEffect(() => {
     let cancelled = false;
-    void import("@/lib/native").then(({ isNative }) =>
-      resumeNativeEntry(isNative(), () => supabase.auth.getSession(), () => {
+    void import("@/lib/native").then(async ({ isNative }) => {
+      const native = isNative();
+      if (native) document.documentElement.classList.add("native-app");
+      const entered = await resumeNativeEntry(native, () => supabase.auth.getSession(), () => {
         if (!cancelled) return navigate({ to: "/app", replace: true });
-      }),
-    );
+      });
+      if (!entered && !cancelled) setEntryPending(false);
+    }).catch(() => { if (!cancelled) setEntryPending(false); });
     return () => { cancelled = true; };
   }, [navigate]);
   const t = useT();
@@ -89,7 +93,7 @@ function Landing() {
   const count = countQ.data?.count ?? 0;
 
   return (
-    <main className="programme-page min-h-screen flex flex-col relative overflow-hidden">
+    <main data-native-entry={entryPending ? "pending" : "ready"} className="programme-page min-h-screen flex flex-col relative overflow-hidden">
       {/* Court image bleeds from right, softly fading into paper */}
       <div className="pointer-events-none absolute inset-y-0 right-0 w-[62%] sm:w-[52%] lg:w-[46%] z-0">
         <img

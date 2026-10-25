@@ -1,5 +1,9 @@
 # iPhone sign-in and notifications
 
+## iPhone force-close reopening
+- [x] Route saved-in native app launches from the welcome page to the player grid; seven tests and authenticated browser reopening checks pass.
+- [ ] Confirm reopening on Nadine's iPhone after the website correction is published (requires device check).
+
 ## Google Play deletion page
 - [x] Add public account and individual-data deletion instructions with links to existing controls.
 - [x] Verify the public page and profile sign-in link; preview build passes.

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { AppStoreBadge } from "@/components/AppStoreBadge";
@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPlayerCount } from "@/lib/stats.functions";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { resumeNativeEntry } from "@/lib/native-entry";
 
 function useIsStandalone() {
   const [standalone, setStandalone] = useState(false);
@@ -64,6 +66,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    let cancelled = false;
+    void import("@/lib/native").then(({ isNative }) =>
+      resumeNativeEntry(isNative(), () => supabase.auth.getSession(), () => {
+        if (!cancelled) return navigate({ to: "/app", replace: true });
+      }),
+    );
+    return () => { cancelled = true; };
+  }, [navigate]);
   const t = useT();
   const tr = useTr();
   const fetchCount = useServerFn(getPlayerCount);

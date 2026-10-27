@@ -1,7 +1,7 @@
 # iPhone sign-in and notifications
 
 ## Notification response delay
-- [ ] Verify and remove notification delivery from the response-critical path; retain reliable background delivery and test nonblocking responses.
+- [x] Remove notification delivery from the response-critical path using Worker waitUntil and request deduplication; 16 tests pass, signed-in grid requests return successfully, and preview build passes. Published/iPhone delivery check still requires publication and a device.
 
 ## iPhone force-close reopening
 - [x] Hide welcome and sign-in while native restoration resolves; eight tests pass and signed-in browser checks reach grid with zero visible welcome/login frames. Signed-out form remains available.

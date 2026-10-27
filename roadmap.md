@@ -1,5 +1,8 @@
 # iPhone sign-in and notifications
 
+## Notification response delay
+- [ ] Verify and remove notification delivery from the response-critical path; retain reliable background delivery and test nonblocking responses.
+
 ## iPhone force-close reopening
 - [x] Hide welcome and sign-in while native restoration resolves; eight tests pass and signed-in browser checks reach grid with zero visible welcome/login frames. Signed-out form remains available.
 - [ ] Publish the flash-prevention change and verify a cold launch on Nadine's iPhone (requires publication and device check).

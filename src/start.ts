@@ -1,4 +1,5 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
@@ -25,10 +26,9 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
 const pushDeliveryMiddleware = createMiddleware({ type: "function" }).server(async ({ next }) => {
   const result = await next();
   try {
-    // Every completed app action can deliver queued alerts to recipients whose
-    // phones are closed. No private payload is exposed to the caller.
-    const { deliverPendingPushes } = await import("./lib/push-delivery.server");
-    await deliverPendingPushes();
+    // Extend the Worker lifetime without holding the action's response open.
+    const { schedulePushDelivery } = await import("./lib/push-background.server");
+    schedulePushDelivery(getRequest());
   } catch { /* durable queue remains available for retry */ }
   return result;
 });

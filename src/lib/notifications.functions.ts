@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
@@ -132,13 +133,13 @@ export const markNotificationsRead = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-// Drain pending pushes. Idempotent, safe to call opportunistically.
-// Uses a SECURITY DEFINER RPC to atomically claim rows (no service key needed).
+// Schedule pending pushes without waiting for network delivery.
 export const drainPushOutbox = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async () => {
     // This authenticated caller triggers delivery but cannot choose recipients
-    // or read them; the privileged helper returns aggregate counts only.
-    const { deliverPendingPushes } = await import("./push-delivery.server");
-    return deliverPendingPushes();
+    // or read them. Global middleware deduplicates this request's schedule.
+    const { schedulePushDelivery } = await import("./push-background.server");
+    schedulePushDelivery(getRequest());
+    return { scheduled: true };
   });

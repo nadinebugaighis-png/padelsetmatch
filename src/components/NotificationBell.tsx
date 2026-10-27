@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { Bell, Check, X } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -8,6 +8,10 @@ import { listMyNotifications, markNotificationsRead, drainPushOutbox } from "@/l
 import { listMyPendingInvites, respondToMatchInvite } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useTr } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { createViewedNotificationTracker } from "@/lib/viewed-notifications";
+
+type NotificationItem = Awaited<ReturnType<typeof listMyNotifications>>["items"][number];
 
 export function NotificationBell() {
   const tr = useTr();
@@ -21,6 +25,8 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [busyInvite, setBusyInvite] = useState<string | null>(null);
   const boxRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [viewedList, setViewedList] = useState<NotificationItem[]>([]);
   // These server fns require auth — never call them while signed out.
   const [signedIn, setSignedIn] = useState(false);
 
@@ -91,16 +97,55 @@ export function NotificationBell() {
   const activeInvites = invites.filter((i) => i.event && i.event.status === "open");
   const unread = (q.data?.unread ?? 0) + activeInvites.length;
 
+  const acknowledgeView = useMemo(() => createViewedNotificationTracker(
+    (ids) => markRead({ data: { ids } }),
+    (id) => {
+      setViewedList((current) => current.map((item) => item.id === id ? { ...item, read_at: new Date().toISOString() } : item));
+      void qc.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  ), [markRead, qc, signedIn]);
+
+  useEffect(() => {
+    if (!open) {
+      setViewedList([]);
+      return;
+    }
+    setViewedList((current) => {
+      const ids = new Set(current.map((item) => item.id));
+      return [...current, ...(q.data?.items ?? []).filter((item) => !ids.has(item.id))];
+    });
+  }, [open, q.data?.items]);
+
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!open || !signedIn || !root) return;
+    const timers = new Map<Element, ReturnType<typeof setTimeout>>();
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          if (timers.has(entry.target)) continue;
+          const id = entry.target.getAttribute("data-notification-id");
+          if (!id) continue;
+          timers.set(entry.target, setTimeout(() => { void acknowledgeView(id); }, 800));
+        } else {
+          const timer = timers.get(entry.target);
+          if (timer) clearTimeout(timer);
+          timers.delete(entry.target);
+        }
+      }
+    }, { root, threshold: 0.6 });
+    root.querySelectorAll("[data-notification-id]").forEach((element) => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      timers.forEach((timer) => clearTimeout(timer));
+    };
+  }, [open, signedIn, viewedList, acknowledgeView]);
+
   const openItem = async (id: string, url: string | null) => {
     await markRead({ data: { ids: [id] } });
     qc.invalidateQueries({ queryKey: ["notifications"] });
     setOpen(false);
     if (url) navigate({ to: url as string });
-  };
-
-  const markAll = async () => {
-    await markRead({ data: {} });
-    qc.invalidateQueries({ queryKey: ["notifications"] });
   };
 
   const decideInvite = async (inviteId: string, accept: boolean) => {
@@ -123,7 +168,7 @@ export function NotificationBell() {
 
   return (
     <div className="relative" ref={boxRef}>
-      <button
+      <Button variant="ghost" size="icon"
         onClick={() => setOpen((v) => !v)}
         aria-label={tr("Notifications", "Notificaciones", "Notifications")}
         className="relative w-8 h-8 flex items-center justify-center text-[var(--ink)]/70 hover:text-[var(--ink)]"
@@ -134,27 +179,23 @@ export function NotificationBell() {
             {unread > 9 ? "9+" : unread}
           </span>
         )}
-      </button>
+      </Button>
       {open && (
         <div className="fixed left-3 right-3 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[340px] bg-[var(--paper)] border border-[var(--ink)]/15 rounded-xl shadow-xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--ink)]/10">
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold">
               {tr("Notifications", "Notificaciones", "Notifications")}
             </span>
-            {items.length > 0 && (
-              <button onClick={markAll} className="text-[11px] text-[var(--plum)] hover:underline flex items-center gap-1">
-                <Check className="w-3 h-3" /> {tr("Mark all read", "Marcar todo leído", "Tout marquer lu")}
-              </button>
-            )}
           </div>
-          <div className="max-h-[60vh] overflow-y-auto">
+          <div ref={scrollRef} className="max-h-[60vh] overflow-y-auto">
             {activeInvites.length > 0 && (
               <div className="border-b border-[var(--ink)]/10 bg-[var(--plum)]/5">
                 <div className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-[var(--plum)] font-semibold">
                   {tr("Match invites", "Invitaciones", "Invitations")}
                 </div>
                 {activeInvites.map((inv) => {
-                  const ev = inv.event!;
+                  const ev = inv.event;
+                  if (!ev) return null;
                   const host = ev.host?.first_name ?? tr("Someone", "Alguien", "Quelqu'un");
                   const place = ev.club_name ?? ev.city ?? "";
                   const busy = busyInvite === inv.id;
@@ -193,16 +234,17 @@ export function NotificationBell() {
                 })}
               </div>
             )}
-            {items.length === 0 && activeInvites.length === 0 ? (
+            {viewedList.length === 0 && items.length === 0 && activeInvites.length === 0 ? (
               <div className="px-4 py-8 text-center text-sm text-[var(--ink)]/60">
                 {tr("You're all caught up.", "Estás al día.", "Tu es à jour.")}
               </div>
             ) : (
-              items.map((n) => (
-                <button
+              viewedList.map((n) => (
+                <Button variant="ghost"
                   key={n.id}
+                  data-notification-id={n.read_at ? undefined : n.id}
                   onClick={() => openItem(n.id, n.url)}
-                  className={`w-full text-left px-4 py-3 border-b border-[var(--ink)]/5 hover:bg-[var(--paper-2)] transition ${!n.read_at ? "bg-[var(--plum)]/5" : ""}`}
+                  className={`block h-auto rounded-none whitespace-normal w-full text-left px-4 py-3 border-b border-[var(--ink)]/5 hover:bg-[var(--paper-2)] transition ${!n.read_at ? "bg-[var(--plum)]/5" : ""}`}
                 >
                   <div className="flex items-start gap-2">
                     {!n.read_at && <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--plum)] shrink-0" />}
@@ -214,7 +256,7 @@ export function NotificationBell() {
                       </div>
                     </div>
                   </div>
-                </button>
+                </Button>
               ))
             )}
           </div>

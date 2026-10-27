@@ -14,3 +14,4 @@
 - iOS restores and mirrors only the production-origin auth storage key through Keychain in PersistentBridgeViewController before page scripts start; generated auth clients remain untouched and explicit sign-out clears the native copy.
 - Native launches at the public home resume saved sessions through /app after hydration; hide the welcome page before native first paint and keep sign-in controls hidden until session resolution, while retaining the web landing and existing access gate.
 - Keep the public deletion page accessible without signing in; link to existing authenticated deletion controls and privacy-request channels rather than duplicating destructive logic, so store visitors can find deletion steps safely.
+- Acknowledge notifications through the existing owner-scoped mark-read action only after their rows are visible; retain a list-open snapshot so reading does not remove the link before it can be tapped, and never auto-answer pending match invitations.

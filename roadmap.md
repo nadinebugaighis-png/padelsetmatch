@@ -3,6 +3,10 @@
 ## Notification response delay
 - [x] Remove notification delivery from the response-critical path using Worker waitUntil and request deduplication; 16 tests pass, signed-in grid requests return successfully, and preview build passes. Published/iPhone delivery check still requires publication and a device.
 
+## Viewed notifications
+- [x] Automatically acknowledge visible alerts and remove the manual button; keep links usable while open and invitations until answered. Seven focused tests and preview build pass; signed-in empty-list check passes.
+- [ ] Verify automatic clearing with a real unread notification after publication (Nadine's tested inbox had no unread alerts).
+
 ## iPhone force-close reopening
 - [x] Hide welcome and sign-in while native restoration resolves; eight tests pass and signed-in browser checks reach grid with zero visible welcome/login frames. Signed-out form remains available.
 - [ ] Publish the flash-prevention change and verify a cold launch on Nadine's iPhone (requires publication and device check).

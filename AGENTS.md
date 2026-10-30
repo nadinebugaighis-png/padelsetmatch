@@ -16,3 +16,4 @@
 - Keep the public deletion page accessible without signing in; link to existing authenticated deletion controls and privacy-request channels rather than duplicating destructive logic, so store visitors can find deletion steps safely.
 - Acknowledge notifications through the existing owner-scoped mark-read action only after their rows are visible; retain a list-open snapshot so reading does not remove the link before it can be tapped, and never auto-answer pending match invitations.
 - Derive match-card colour cycles from the viewer-local calendar date using UTC-normalized date components, not time of day or list position, so filtering and daylight-saving changes do not alter a day's colour; define palette values in global semantic tokens.
+- Keep Matches page controls compact with scoped light-theme tokens and date-selection logic separate from the feed; this preserves existing match actions and avoids treating all dates as individually highlighted choices.

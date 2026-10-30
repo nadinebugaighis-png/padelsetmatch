@@ -1,5 +1,8 @@
 # iPhone sign-in and notifications
 
+## Matches page clarity
+- [ ] Simplify the header, move Start a match into it, calm date selection and tuck level/time choices behind Filters; verify signed-in mobile and desktop flows.
+
 ## Match card colours
 - [x] Alternate the demo's lavender, green and amber date blocks by calendar day; date filters unchanged. Signed-in mobile/desktop checks show November 3 lavender and November 11 gold, no page errors, and build OK.
 

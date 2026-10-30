@@ -1,5 +1,8 @@
 # iPhone sign-in and notifications
 
+## Club search clarity and speed
+- [ ] Lighten location choices and suggestion list; show matching previously fetched clubs immediately, cache repeat searches, shorten typing delay, and verify selection without changing match rules or store uploads.
+
 ## Matches page clarity
 - [x] Simplify the header, move Start a match into it, calm date selection and tuck level/time choices behind Filters; three date tests pass and signed-in phone/desktop checks verify search, dates, filters, My matches and new-match navigation with no page errors. Live rollout requires website publication.
 

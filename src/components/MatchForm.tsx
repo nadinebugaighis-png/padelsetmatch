@@ -257,6 +257,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             </div>
           </div>
         )}
+      </section>
         <div className={rowDivider} />
         <MatchDateTimePicker value={when} onChange={setWhen} bare />
       </div>

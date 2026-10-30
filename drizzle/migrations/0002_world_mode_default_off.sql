@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ALTER COLUMN world_mode SET DEFAULT false;

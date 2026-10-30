@@ -306,7 +306,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       <div className={cardCls}>
         <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
-          <Switch checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
+          <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
         </div>
         <div className={rowDivider} />
         <input

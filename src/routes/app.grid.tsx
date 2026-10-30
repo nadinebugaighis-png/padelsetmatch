@@ -965,78 +965,51 @@ function Discover() {
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
-                  {/* Hero photo — Polaroid-style white frame on desktop and mobile */}
-                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 sm:p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
-                    <div className="relative bg-white p-2 sm:p-2.5 pb-3 lg:p-3 lg:pb-3 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.28)] lg:shadow-[0_22px_54px_-14px_rgba(31,58,46,0.38)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto">
-
-                      <div className="relative overflow-hidden">
-                        {preview.photo_url ? (
-                          <img src={preview.photo_url} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] object-cover" />
-                        ) : (
-                          <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] bg-[var(--paper-2)]" />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[var(--court-deep)]/45 to-transparent pointer-events-none hidden lg:block" />
-                      </div>
-
-
-                      {/* Top controls — mobile only */}
+                  {/* Programme photo — full bleed, thin gold rule beneath */}
+                  <div className="relative lg:w-[42%] lg:shrink-0 lg:h-full">
+                    <div
+                      className="relative w-full aspect-[4/5] max-h-[52vh] lg:max-h-none lg:aspect-auto lg:h-full bg-[var(--paper-2)] bg-cover bg-center"
+                      style={preview.photo_url ? { backgroundImage: `url("${photoSrc(preview.photo_url, 480)}")` } : undefined}
+                    >
+                      {preview.photo_url ? (
+                        <img src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="absolute inset-0 w-full h-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-serif text-7xl text-[var(--ink)]/15">{preview.first_name.charAt(0)}</div>
+                      )}
                       <button
                         type="button"
                         onClick={closePreview}
-                        className="absolute -top-1 -left-1 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
+                        className="absolute top-3 left-3 w-8 h-8 rounded-full bg-[var(--court-deep)]/45 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] lg:hidden"
                         aria-label="Back"
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
                     </div>
-
-                    {/* Mobile identity — below the smaller polaroid */}
-                    <div className="mt-3 text-center lg:hidden">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-extrabold tracking-widest uppercase">
-                        {preview.score}% {tr("Match", "Match", "Match")}
-                      </div>
-                      <div className="text-display text-[32px] leading-[0.95] text-[var(--ink)] uppercase tracking-tight mt-1.5">{preview.first_name}</div>
-                      <div className="text-[13px] text-[var(--ink)]/70 mt-0.5">{preview.zone} · {label(preview.level)}</div>
-                      {typeof (preview as any).founding_number === "number" && (preview as any).founding_number > 0 && (
-                        <div
-                          className={`mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                            (preview as any).founding_number <= 100
-                              ? "bg-[var(--ball)] text-[var(--court-deep)]"
-                              : "bg-[var(--paper-2)] border border-[var(--ink)]/20 text-[var(--ink)]/75"
-                          }`}
-                        >
-                          {(preview as any).founding_number <= 100 ? "★ " : "🎾 "}
-                          {(preview as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
-                        </div>
-                      )}
-                    </div>
+                    <div className="h-[2px] bg-[var(--gold)] lg:hidden" />
+                    <div className="hidden lg:block absolute top-0 right-0 h-full w-[2px] bg-[var(--gold)]" />
                   </div>
 
-
                   {/* Body — scrollable on desktop */}
-                  <div className="lg:w-[60%] lg:overflow-y-auto">
-                    <div className="px-5 pt-4 pb-28 lg:px-6 lg:pt-6 lg:pb-24 space-y-4">
-                      {/* Desktop header */}
-                      <div className="hidden lg:flex lg:items-start lg:justify-between lg:gap-4">
-                        <div>
-                          <div className="text-display text-3xl xl:text-4xl leading-[0.95] text-[var(--ink)] uppercase tracking-tight">{preview.first_name}</div>
-                          <div className="text-sm text-[var(--ink)]/70 mt-1">{preview.zone} · {label(preview.level)}</div>
+                  <div className="lg:w-[58%] lg:overflow-y-auto">
+                    <div className="px-5 pt-5 pb-28 lg:px-8 lg:pt-8 lg:pb-24 space-y-4">
+                      {/* Programme header */}
+                      <div className="text-center lg:text-left">
+                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/55">{preview.zone} · {label(preview.level)}</div>
+                        <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
+                        <div className="mt-2 flex items-center justify-center lg:justify-start gap-3 text-[11px] uppercase tracking-[0.2em]">
+                          <span className="text-[var(--ink)] font-semibold">{preview.score}% {tr("match", "afinidad", "affinité")}</span>
                           {typeof (preview as any).founding_number === "number" && (preview as any).founding_number > 0 && (
-                            <div
-                              className={`mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                                (preview as any).founding_number <= 100
-                                  ? "bg-[var(--ball)] text-[var(--court-deep)]"
-                                  : "bg-[var(--paper-2)] border border-[var(--ink)]/20 text-[var(--ink)]/75"
-                              }`}
-                            >
-                              {(preview as any).founding_number <= 100 ? "★ " : "🎾 "}
-                              {(preview as any).founding_number <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{(preview as any).founding_number}
-                            </div>
+                            <>
+                              <span className="w-6 h-px bg-[var(--gold)]" />
+                              <span className={(preview as any).founding_number <= 100 ? "text-[var(--gold)] font-semibold" : "text-[var(--ink)]/60"}>
+                                {(preview as any).founding_number <= 100
+                                  ? tr("Founding Member", "Miembro fundador", "Membre fondateur")
+                                  : tr("Member", "Miembro", "Membre")} · No. {(preview as any).founding_number}
+                              </span>
+                            </>
                           )}
                         </div>
-                        <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-sm font-extrabold tracking-widest uppercase">
-                          {preview.score}% {tr("Match", "Match", "Match")}
-                        </div>
+                        <div className="mt-4 h-px bg-[var(--ink)]/10" />
                       </div>
 
 

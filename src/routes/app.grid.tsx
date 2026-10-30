@@ -998,8 +998,8 @@ function Discover() {
                           <span className="text-[var(--ink)] font-semibold">{preview.score}% {tr("match", "afinidad", "affinité")}</span>
                           {typeof (preview as any).founding_number === "number" && (preview as any).founding_number > 0 && (
                             <>
-                              <span className="w-6 h-px bg-[var(--gold)]" />
-                              <span className={(preview as any).founding_number <= 100 ? "text-[var(--gold)] font-semibold" : "text-[var(--ink)]/60"}>
+                              <span className="w-6 h-px bg-[var(--ink)]/20" />
+                              <span className="text-[var(--ink)]/60">
                                 {(preview as any).founding_number <= 100
                                   ? tr("Founding Member", "Miembro fundador", "Membre fondateur")
                                   : tr("Member", "Miembro", "Membre")} · No. {(preview as any).founding_number}

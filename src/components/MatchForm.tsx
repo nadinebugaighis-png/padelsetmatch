@@ -49,7 +49,7 @@ function toLocalDatetime(iso?: string | null) {
 }
 
 // Shared field styles
-const labelCls = "text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60 block mb-1.5";
+const labelCls = "text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60 block mb-1";
 const inputCls = "w-full bg-white border border-[var(--ink)]/15 rounded-lg px-3 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/35 outline-none focus:border-[var(--ink)]/40 transition";
 const helperCls = "text-[11px] text-[var(--ink)]/50 mt-1.5 leading-relaxed";
 
@@ -182,7 +182,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   };
 
   return (
-    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-5 py-4 pb-32 space-y-4">
+    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-5 py-4 pb-32 space-y-3.5">
       <Link
         to="/app/events"
         className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition"

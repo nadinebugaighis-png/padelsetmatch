@@ -8,6 +8,14 @@ import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId/edit")({
+  head: () => ({ meta: [
+    { title: "Edit Your Padel Match | PadelSetMatch" },
+    { name: "description", content: "Update the club, time and player details for your PadelSetMatch game." },
+    { property: "og:title", content: "Edit Your Padel Match | PadelSetMatch" },
+    { property: "og:description", content: "Update the club, time and player details for your PadelSetMatch game." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: EditEvent,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">—</div>,

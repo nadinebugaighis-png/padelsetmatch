@@ -13,6 +13,14 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/app/events/new")({
+  head: () => ({ meta: [
+    { title: "Call a Padel Match | PadelSetMatch" },
+    { name: "description", content: "Choose your club and time to arrange a neighbourhood padel match with PadelSetMatch." },
+    { property: "og:title", content: "Call a Padel Match | PadelSetMatch" },
+    { property: "og:description", content: "Choose your club and time to arrange a neighbourhood padel match with PadelSetMatch." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   validateSearch: (s) => searchSchema.parse(s),
   component: NewEvent,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error instanceof Error ? error.message : String(error)}</div>,

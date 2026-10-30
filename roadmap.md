@@ -1,7 +1,7 @@
 # iPhone sign-in and notifications
 
 ## Match date and time clarity
-- [ ] Replace the combined date/time field with a light calendar and readable hour/minute choices; verify selection in the signed-in form.
+- [x] Replace the combined date/time field with a light calendar and readable hour/minute choices; signed-in phone/desktop checks selected 31 October at 18:30 with no overflow or page errors, and build passes. Publication and real-device check remain with Nadine.
 
 ## Club search clarity and speed
 - [x] Lighten location choices and suggestion list; reuse matching fetched clubs immediately, cache repeat searches and use an 80ms typing delay. Seven tests and app checks pass; signed-in phone/desktop checks confirm the form and manual-location path, with no overflow or page errors. No match rules or store uploads changed.

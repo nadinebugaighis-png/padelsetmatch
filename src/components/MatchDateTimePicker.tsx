@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTr } from "@/lib/i18n";
 
-const fieldClass = "h-11 rounded-lg border border-[var(--ink)]/15 bg-white px-3 text-sm font-medium text-[var(--ink)] shadow-none hover:border-[var(--ink)]/35 focus:ring-[var(--ink)]";
+const fieldClass = "h-9 rounded-lg border border-[var(--ink)]/15 bg-white px-3 text-sm font-medium text-[var(--ink)] shadow-none hover:border-[var(--ink)]/35 focus:ring-[var(--ink)]";
 const sheetClass = "match-date-time border border-[var(--ink)]/15 bg-white text-[var(--ink)]";
 
 export function MatchDateTimePicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {

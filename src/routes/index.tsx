@@ -173,7 +173,7 @@ function Landing() {
             <AppStoreBadge />
             <GooglePlayBadge />
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/50">
-              {tr("Free · iPhone, iPad & Android", "Gratis · iPhone, iPad y Android", "Gratuit · iPhone, iPad et Android")}
+              {tr("Free", "Gratis", "Gratuit")}
             </span>
           </div>
 

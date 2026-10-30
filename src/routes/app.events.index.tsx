@@ -303,21 +303,21 @@ function EventsPage() {
 
   return (
     <div className="programme-page match-feed-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 pb-28">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-3 sm:pt-4 pb-24">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-serif text-2xl sm:text-4xl leading-tight tracking-normal text-foreground">
+          <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
             {tr("MATCHES", "PARTIDOS", "MATCHES")}
           </h1>
-          <Button onClick={() => navigate({ to: "/app/events/new" })} className="h-10 px-3 sm:px-4 shrink-0 shadow-none">
+          <Button onClick={() => navigate({ to: "/app/events/new" })} className="h-9 px-3 sm:px-4 shrink-0 shadow-none">
             <Plus />{tr("Start a match", "Convocar partido", "Lancer un match")}
           </Button>
         </div>
 
-        <div className="mt-3 mb-3 flex items-center justify-between gap-2 border-b border-border">
+        <div className="mt-2 mb-2 flex items-center justify-between gap-2 border-b border-border">
           <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-3 sm:gap-5">
             {(["find", "mine"] as const).map((value) => (
               <Button key={value} role="tab" aria-selected={mode === value} variant="ghost" onClick={() => setMode(value)}
-                className={`h-10 rounded-none px-0 text-sm shadow-none border-b-2 hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
+                className={`h-9 rounded-none px-0 text-sm shadow-none border-b-2 hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
                 {value === "find" ? tr("Find a match", "Buscar partido", "Trouver un match") : tr("My matches", "Mis partidos", "Mes matchs")}
                 {value === "mine" && mineCount > 0 && <span className="text-xs text-muted-foreground">({mineCount})</span>}
               </Button>

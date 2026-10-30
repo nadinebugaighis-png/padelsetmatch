@@ -303,21 +303,21 @@ function EventsPage() {
 
   return (
     <div className="programme-page match-feed-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 pb-28">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-3 sm:pt-4 pb-24">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-serif text-2xl sm:text-4xl leading-tight tracking-normal text-foreground">
+          <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
             {tr("MATCHES", "PARTIDOS", "MATCHES")}
           </h1>
-          <Button onClick={() => navigate({ to: "/app/events/new" })} className="h-10 px-3 sm:px-4 shrink-0 shadow-none">
+          <Button onClick={() => navigate({ to: "/app/events/new" })} className="h-9 px-3 sm:px-4 shrink-0 shadow-none">
             <Plus />{tr("Start a match", "Convocar partido", "Lancer un match")}
           </Button>
         </div>
 
-        <div className="mt-3 mb-3 flex items-center justify-between gap-2 border-b border-border">
+        <div className="mt-2 mb-2 flex items-center justify-between gap-2 border-b border-border">
           <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-3 sm:gap-5">
             {(["find", "mine"] as const).map((value) => (
               <Button key={value} role="tab" aria-selected={mode === value} variant="ghost" onClick={() => setMode(value)}
-                className={`h-10 rounded-none px-0 text-sm shadow-none border-b-2 hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
+                className={`h-9 rounded-none px-0 text-sm shadow-none border-b-2 hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
                 {value === "find" ? tr("Find a match", "Buscar partido", "Trouver un match") : tr("My matches", "Mis partidos", "Mes matchs")}
                 {value === "mine" && mineCount > 0 && <span className="text-xs text-muted-foreground">({mineCount})</span>}
               </Button>
@@ -332,10 +332,10 @@ function EventsPage() {
         </div>
 
         {mode === "find" && (
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2" aria-label={tr("Match dates", "Fechas de partidos", "Dates des matchs")}>
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1.5" aria-label={tr("Match dates", "Fechas de partidos", "Dates des matchs")}>
             <Button variant={allDates ? "default" : "ghost"} aria-pressed={allDates}
               onClick={() => setSelectedDays(new Set(days.map(dayKey)))}
-              className="shrink-0 h-14 min-w-14 px-2 shadow-none flex-col gap-0.5">
+              className="shrink-0 h-11 min-w-11 px-2 shadow-none flex-col gap-0">
               <span className="text-xs">{tr("All", "Todas", "Toutes")}</span>
               <span className="text-xs">{tr("dates", "fechas", "dates")}</span>
             </Button>
@@ -346,9 +346,9 @@ function EventsPage() {
               return (
                 <Button key={k} variant="ghost" aria-pressed={active} aria-label={d.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })}
                   onClick={() => toggleDay(k)}
-                  className={`shrink-0 h-14 min-w-14 px-2 flex-col gap-0.5 border ${active ? "bg-accent border-primary/40 text-primary" : "border-transparent text-muted-foreground"}`}>
-                  <span className="text-xs font-normal">{i === 0 ? tr("Today", "Hoy", "Auj.") : i === 1 ? tr("Tomorrow", "Mañana", "Demain") : weekday}</span>
-                  <span className="text-serif text-lg leading-none tracking-normal text-foreground">{d.getDate()}</span>
+                  className={`shrink-0 h-11 min-w-11 px-2 flex-col gap-0 border ${active ? "bg-accent border-primary/40 text-primary" : "border-transparent text-muted-foreground"}`}>
+                  <span className="text-[11px] font-normal leading-tight">{i === 0 ? tr("Today", "Hoy", "Auj.") : i === 1 ? tr("Tomorrow", "Mañana", "Demain") : weekday}</span>
+                  <span className="text-serif text-base leading-tight tracking-normal text-foreground">{d.getDate()}</span>
                 </Button>
               );
             })}
@@ -361,13 +361,13 @@ function EventsPage() {
             <input type="search" value={search} onChange={(e) => setSearch(e.target.value)}
               aria-label={tr("Search matches", "Buscar partidos", "Rechercher des matchs")}
               placeholder={tr("Club, city or player", "Club, ciudad o jugador", "Club, ville ou joueur")}
-              className="h-10 w-full rounded-md bg-accent border border-input pl-9 pr-9 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" />
+              className="h-9 w-full rounded-md bg-accent border border-input pl-9 pr-9 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" />
             {search && <Button variant="ghost" size="icon" aria-label={tr("Clear search", "Borrar búsqueda", "Effacer la recherche")}
               onClick={() => setSearch("")} className="absolute right-0.5 top-0.5 size-9"><X /></Button>}
           </div>
           {mode === "find" && (
             <>
-              <Button variant="outline" aria-expanded={filtersOpen} aria-controls="match-filters" onClick={() => setFiltersOpen((v) => !v)} className="h-10 px-3 shadow-none gap-1.5">
+              <Button variant="outline" aria-expanded={filtersOpen} aria-controls="match-filters" onClick={() => setFiltersOpen((v) => !v)} className="h-9 px-3 shadow-none gap-1.5">
                 <SlidersHorizontal />{tr("Filters", "Filtros", "Filtres")}
                 {activeFilterCount > 0 && <span className="text-xs">({activeFilterCount})</span>}
               </Button>
@@ -421,7 +421,7 @@ function EventsPage() {
                 onCreate={() => navigate({ to: "/app/events/new" })}
               />
             ) : (
-              <div className="mt-5 space-y-6">
+              <div className="mt-3 space-y-4">
                 {filtered.length > 0 && (
                   <FeedSection
                     title={tr("Open matches", "Partidos abiertos", "Matches ouverts")}
@@ -496,11 +496,11 @@ function FeedSection({
     <section>
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-serif text-2xl leading-tight text-[var(--ink)]">{title}</h2>
+          <h2 className="text-serif text-lg leading-tight text-[var(--ink)]">{title}</h2>
           {subtitle && <p className="text-xs text-[var(--ink)]/55 mt-1">{subtitle}</p>}
         </div>
       </div>
-      <ul className="mt-3 space-y-3">
+      <ul className="mt-2 space-y-2">
         {events.map((e) => (
           <li key={e.id} className="lazy-row">
             <MatchCard
@@ -600,24 +600,24 @@ function MatchCard({
         <button
           type="button"
           onClick={() => onOpen(e.id)}
-          className={`w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center ${toneClass}`}
+          className={`w-[76px] sm:w-[88px] shrink-0 flex flex-col items-center justify-center py-2.5 text-center ${toneClass}`}
         >
-          <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{time}</div>
-          <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
+          <div className="text-serif text-[21px] sm:text-[23px] leading-none text-[var(--ink)]">{time}</div>
+          <div className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
             {whenLabel}
           </div>
           {!dateBadge && (
-            <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
+            <div className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
               {dayNum} <span className="capitalize">{monthShort}</span>
             </div>
           )}
         </button>
 
         {/* Body */}
-        <div className="flex-1 min-w-0 p-3.5 sm:p-4">
+        <div className="flex-1 min-w-0 p-3">
           <div className="flex items-start justify-between gap-2">
             <button type="button" onClick={() => onOpen(e.id)} className="min-w-0 text-left">
-              <div className="text-[15px] font-semibold text-[var(--ink)] truncate">
+              <div className="text-[14px] font-semibold text-[var(--ink)] truncate">
                 {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
               </div>
               <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60 min-w-0">
@@ -626,7 +626,7 @@ function MatchCard({
               </div>
             </button>
             <span
-              className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
+              className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-0.5 font-semibold whitespace-nowrap ${
                 full
                   ? "bg-[var(--ink)]/8 text-[var(--ink)]/55"
                   : "bg-[var(--plum)]/12 text-[var(--plum)]"
@@ -639,7 +639,7 @@ function MatchCard({
           </div>
 
           {/* Meta row */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+          <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
             {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
             {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
             <span>{genderLabel}</span>
@@ -670,7 +670,7 @@ function MatchCard({
           </div>
 
           {/* Players + action */}
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-2 flex items-center gap-2">
             {slots.map((s, i) => (
               <SlotAvatar
                 key={i}
@@ -690,7 +690,7 @@ function MatchCard({
                 else onJoin(e);
               }}
               disabled={isPending}
-              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2 disabled:opacity-50"
+              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 disabled:opacity-50"
             >
               {e.iAmHost
                 ? tr("Manage", "Gestionar", "Gérer")
@@ -732,13 +732,13 @@ function SlotAvatar({
         disabled={!canJoin || isPending}
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         aria-label={tr("Open slot", "Plaza libre", "Place libre")}
-        className={`w-9 h-9 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
+        className={`w-7 h-7 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
           canJoin
             ? "border-[var(--plum)]/45 text-[var(--plum)] hover:bg-[var(--plum)]/8"
             : "border-[var(--ink)]/25 text-[var(--ink)]/35"
         } ${isPending ? "opacity-50" : ""}`}
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="w-3.5 h-3.5" />
       </button>
     );
   }
@@ -746,7 +746,7 @@ function SlotAvatar({
   return (
     <div
       title={name ?? ""}
-      className="w-9 h-9 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
+      className="w-7 h-7 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
     >
       {photo ? (
         <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
@@ -877,12 +877,12 @@ function MyMatchesList({
                 const filled = e.filled ?? 0;
                 const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
-                  <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3 cursor-pointer hover:bg-[var(--paper-2)]/40 transition">
+                  <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-2.5 flex items-center gap-3 cursor-pointer hover:bg-[var(--paper-2)]/40 transition">
                     <div className="flex flex-col items-center justify-center w-14 shrink-0">
                       <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
                         <Clock className="w-3 h-3 inline mb-0.5" />
                       </span>
-                      <span className="text-lg font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
+                      <span className="text-base font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">

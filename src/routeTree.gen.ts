@@ -42,6 +42,7 @@ import { Route as PlayMadridRouteImport } from './routes/play.madrid'
 import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-card'
 import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
 import { Route as SCodeRouteImport } from './routes/s.$code'
+import { Route as ApiPublicPhotoRouteImport } from './routes/api/public/photo'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
@@ -216,6 +217,11 @@ const SCodeRoute = SCodeRouteImport.update({
   path: '/s/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPhotoRoute = ApiPublicPhotoRouteImport.update({
+  id: '/api/public/photo',
+  path: '/api/public/photo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppEventsIndexRoute = AppEventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
@@ -286,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
   '/play/': typeof PlayIndexRoute
+  '/api/public/photo': typeof ApiPublicPhotoRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/s/$code': typeof SCodeRoute
   '/app': typeof AppIndexRoute
   '/play': typeof PlayIndexRoute
+  '/api/public/photo': typeof ApiPublicPhotoRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/s/$code': typeof SCodeRoute
   '/app/': typeof AppIndexRoute
   '/play/': typeof PlayIndexRoute
+  '/api/public/photo': typeof ApiPublicPhotoRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
@@ -414,6 +423,7 @@ export interface FileRouteTypes {
     | '/s/$code'
     | '/app/'
     | '/play/'
+    | '/api/public/photo'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -455,6 +465,7 @@ export interface FileRouteTypes {
     | '/s/$code'
     | '/app'
     | '/play'
+    | '/api/public/photo'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -497,6 +508,7 @@ export interface FileRouteTypes {
     | '/s/$code'
     | '/app/'
     | '/play/'
+    | '/api/public/photo'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
@@ -529,6 +541,7 @@ export interface RootRouteChildren {
   PreviewPlayerCardV2Route: typeof PreviewPlayerCardV2Route
   SCodeRoute: typeof SCodeRoute
   PlayIndexRoute: typeof PlayIndexRoute
+  ApiPublicPhotoRoute: typeof ApiPublicPhotoRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -766,6 +779,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/photo': {
+      id: '/api/public/photo'
+      path: '/api/public/photo'
+      fullPath: '/api/public/photo'
+      preLoaderRoute: typeof ApiPublicPhotoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/events/': {
       id: '/app/events/'
       path: '/events'
@@ -901,6 +921,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewPlayerCardV2Route: PreviewPlayerCardV2Route,
   SCodeRoute: SCodeRoute,
   PlayIndexRoute: PlayIndexRoute,
+  ApiPublicPhotoRoute: ApiPublicPhotoRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }

@@ -229,7 +229,7 @@ function ProfilePage() {
                     )}
                   >
                     {ordinalQ.data <= 100 ? "★ " : "🎾 "}
-                    {ordinalQ.data <= 100 ? tr("Founder", "Fundador", "Fondateur") : tr("Player", "Jugador", "Joueur")} #{ordinalQ.data}
+                    {ordinalQ.data <= 100 ? tr("Founding Member", "Miembro fundador", "Membre fondateur") : tr("Member", "Miembro", "Membre")} · No. {ordinalQ.data}
                   </span>
                 )}
               </div>

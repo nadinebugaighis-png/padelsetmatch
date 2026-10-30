@@ -1520,7 +1520,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v11-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionKey = `v12-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
       return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
@@ -1594,13 +1594,20 @@ RESPECT & TONE RULES (very important):
 - BANNED words and phrasings: "friction", "clash", "clashing", "conflict", "mismatch" (as a label), "incompatible", "problem", "issue", "red flag", "warning", "sadly", "unfortunately", "shame", "wasted", "behind", "missing out". Use gentle phrasing like "worth being aware of", "something to check together", "differs from yours", "keep in mind".
 - Also avoid empty praise: "wonderful", "amazing", "great connection", "click", "beautiful".
 
+VOICE — FUN, PUNCHY, DISTINCTIVE (very important):
+- Write like a witty padel commentator or a sharp club captain, not a therapist or a dating app. Short, vivid, a little playful.
+- Use padel imagery: the glass, the bandeja, the vibora, lobs, the net, deuce, golden point, the post-match caña, tapas, early courts, floodlights.
+- Give the pair a quick on-court identity when the data supports it, e.g. "The Wall and the Hammer", "Sunrise Grinders", "Tapas-First Tacticians". Vary it every time — never reuse stock phrases.
+- NEVER use romantic or dating language: no "chemistry", "click", "spark", "match made", "soulmate", "perfect pair", "connection", "love".
+- Every message must feel different from other pairs: lead with the most specific, surprising shared detail, not the generic one.
+
 Return ONLY valid JSON with this exact shape:
 {
   "sub_scores": {
     "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
     "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
-  "headline": "<ONE short, specific sentence addressed to 'you two'. Max 90 chars. Names the core reason this pairing works (or is mixed). No filler, no empty praise.>",
+  "headline": "<ONE punchy line addressed to 'you two'. Max 80 chars. Ideally opens with a playful duo nickname grounded in the data, then the core reason. Example tone: 'Sunrise grinders: both on court by 8 and allergic to giving up a point.' No filler.>",
   "highlights": [
     "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). Start with an emoji that fits: 🎾 for on-court, ✨ for personality/values, 🕒 for schedule, 📍 for place, 💬 for communication, 🎯 for goals.>",
     "<second bullet, different angle, same rules>",

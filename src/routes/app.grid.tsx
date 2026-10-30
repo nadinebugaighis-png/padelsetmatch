@@ -12,6 +12,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
 import { CourtIcon } from "@/components/CourtIcon";
 import { GearShelf } from "@/components/GearShelf";
+import { DailyQuestionCard, UnlockMatchQuestions } from "@/components/PadelQuestions";
+import { UNLOCK_MIN_ANSWERS } from "@/lib/daily-questions";
 
 import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venues.functions";
 import { MapPin } from "lucide-react";
@@ -160,10 +162,11 @@ function Discover() {
 
 
   const compatFn = useServerFn(getAiCompatibility);
+  const needsUnlock = !!qaQ.data && qaQ.data.length < UNLOCK_MIN_ANSWERS;
   const compatQ = useQuery({
     queryKey: ["ai-compat", preview?.id, lang],
     queryFn: () => compatFn({ data: { otherProfileId: preview!.id, lang } }),
-    enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id,
+    enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id && !!qaQ.data && !needsUnlock,
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
@@ -588,18 +591,7 @@ function Discover() {
 
         <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
 
-        {(qaQ.data?.length ?? 0) === 0 && (
-          <Link to="/app/profile" className="mt-4 block programme-card p-4">
-            <div className="flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-[var(--ink)] shrink-0 mt-0.5" />
-              <div>
-                <div className="text-serif text-base text-[var(--ink)]">{t("disc.qaBannerTitle")}</div>
-                <div className="text-xs text-[var(--ink)]/70 mt-1">{t("disc.qaBannerSub")}</div>
-                <div className="mt-2 text-[11px] text-[var(--plum)] font-bold uppercase tracking-widest">{t("disc.qaBannerCta")} →</div>
-              </div>
-            </div>
-          </Link>
-        )}
+        <DailyQuestionCard answered={qaQ.data?.map((a) => a.question)} />
 
         {list.length === 0 ? (
           (() => {
@@ -1086,10 +1078,12 @@ function Discover() {
                       {!isSelf && (
                       <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
                         <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2.5">
-                          <Sparkles className="w-3 h-3" /> {tr("Why you two could click", "Por qué podríais conectar", "Pourquoi vous pourriez matcher")}
+                          <Sparkles className="w-3 h-3" /> {tr("You two on court", "Vosotros dos en pista", "Vous deux sur le court")}
                         </div>
-                        {compatQ.isLoading ? (
-                          <p className="text-sm text-[var(--ink)]/55 italic">{tr("Analyzing your vibe…", "Analizando vuestra vibra…", "On analyse votre vibe…")}</p>
+                        {needsUnlock ? (
+                          <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} />
+                        ) : compatQ.isLoading ? (
+                          <p className="text-sm text-[var(--ink)]/55 italic">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
                         ) : compatQ.data ? (
                           <>
                             {/* Headline — one grounded sentence */}

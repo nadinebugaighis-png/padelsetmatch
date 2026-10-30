@@ -329,17 +329,53 @@ function EventDetail() {
   return (
     <div className="mx-auto w-full max-w-md sm:max-w-2xl lg:max-w-3xl max-w-[100dvw] overflow-x-hidden px-5 sm:px-6 py-4 sm:py-6 pb-32">
 
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> {tr("All matches", "Todos los partidos", "Tous les matches")}
+      <div className="flex items-center justify-between mb-3">
+        <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[13px] text-[var(--ink)]/70 hover:text-[var(--ink)] transition-colors">
+          <ArrowLeft className="w-4 h-4" /> {tr("Matches", "Partidos", "Matches")}
         </Link>
-        <button
-          type="button"
-          onClick={() => setShareOpen(true)}
-          className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)] border border-[var(--ink)]/20 hover:border-[var(--ink)]/40 rounded-full px-3.5 py-1.5 transition-colors"
-        >
-          <Share2 className="w-3.5 h-3.5" /> {tr("Share", "Compartir", "Partager")}
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setShareOpen(true)}
+            aria-label={tr("Share", "Compartir", "Partager")}
+            className="h-9 w-9 grid place-items-center rounded-full text-[var(--ink)] hover:bg-[var(--ink)]/5"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+          {me?.iAmHost && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" aria-label={tr("Match options", "Opciones", "Options")} className="h-9 w-9 grid place-items-center rounded-full text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white text-[var(--ink)]">
+                {event.status !== "cancelled" && (
+                  <>
+                    <DropdownMenuItem onSelect={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}>
+                      <Pencil className="w-4 h-4" /> {tr("Edit match", "Editar partido", "Modifier")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => void onToggleBooked()}>
+                      <Check className="w-4 h-4" /> {event.court_booked ? tr("Mark court not booked", "Marcar sin reservar", "Marquer non réservée") : tr("Mark court booked", "Marcar pista reservada", "Marquer réservée")}
+                    </DropdownMenuItem>
+                    {(event.participants?.length ?? 0) > 0 && (
+                      <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
+                        <UserPlus className="w-4 h-4" /> {tr("Pass hosting", "Pasar organización", "Transférer")}
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={() => void onCancel()}>
+                      <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
+                    </DropdownMenuItem>
+                  </>
+                )}
+                <DropdownMenuItem onSelect={() => void onDelete()} className="text-red-600 focus:text-red-600">
+                  <Trash2 className="w-4 h-4" /> {tr("Delete match", "Eliminar partido", "Supprimer")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       </div>
 
       {shareOpen && (

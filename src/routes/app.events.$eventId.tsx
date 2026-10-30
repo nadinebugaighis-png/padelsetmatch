@@ -26,7 +26,8 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MoreHorizontal } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
@@ -612,7 +613,7 @@ function EventDetail() {
       )}
 
       {/* Actions */}
-      <div className="mt-6 space-y-2">
+      <div className="mt-4 space-y-2">
         {canJoin && (
           <button
             onClick={onJoin}
@@ -646,14 +647,6 @@ function EventDetail() {
               <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter")}
             </button>
           </div>
-        )}
-        {me?.iAmHost && event.status === "cancelled" && (
-          <button
-            onClick={onDelete}
-            className="w-full py-2.5 rounded-full border border-red-400/50 text-[11px] uppercase tracking-[0.22em] text-red-500 hover:bg-red-500/5 transition-colors inline-flex items-center justify-center gap-1.5"
-          >
-            <Trash2 className="w-3.5 h-3.5" /> {tr("Delete match", "Eliminar partido", "Supprimer le match")}
-          </button>
         )}
         {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
           <p className="text-[11px] text-[var(--ink)]/50 text-center italic pt-1">

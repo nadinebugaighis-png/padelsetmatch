@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { ClubPicker } from "@/components/ClubPicker";
+import { Button } from "@/components/ui/button";
 import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
@@ -55,23 +56,31 @@ function SegButton({
   active,
   onClick,
   children,
+  light = false,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  light?: boolean;
 }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`py-2.5 rounded-full border text-xs font-medium uppercase tracking-widest transition ${
-        active
+        light
+          ? active
+            ? "border-club-border bg-club-soft text-ink hover:bg-club-hover"
+            : "border-club-border/60 bg-club-surface text-ink/70 hover:bg-club-soft"
+          : active
           ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
           : "border-[var(--ink)]/15 bg-white text-[var(--ink)]/70 hover:border-[var(--ink)]/35"
       }`}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -195,7 +204,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             { v: "club" as const, l: tr("Padel club", "Club de pádel", "Club de padel") },
             { v: "address" as const, l: tr("Type it in", "Escríbelo yo", "Saisir moi-même") },
           ].map((o) => (
-            <SegButton key={o.v} active={locMode === o.v} onClick={() => setLocMode(o.v)}>
+            <SegButton key={o.v} light active={locMode === o.v} onClick={() => setLocMode(o.v)}>
               {o.l}
             </SegButton>
           ))}

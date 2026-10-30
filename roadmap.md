@@ -1,5 +1,9 @@
 # iPhone sign-in and notifications
 
+## Club search clarity and speed
+- [x] Lighten location choices and suggestion list; reuse matching fetched clubs immediately, cache repeat searches and use an 80ms typing delay. Seven tests and app checks pass; signed-in phone/desktop checks confirm the form and manual-location path, with no overflow or page errors. No match rules or store uploads changed.
+- [ ] Verify live Google club results and selection on the published website (Maps-dependent checks are unavailable in the sandbox; requires publication and Nadine's check).
+
 ## Matches page clarity
 - [x] Simplify the header, move Start a match into it, calm date selection and tuck level/time choices behind Filters; three date tests pass and signed-in phone/desktop checks verify search, dates, filters, My matches and new-match navigation with no page errors. Live rollout requires website publication.
 

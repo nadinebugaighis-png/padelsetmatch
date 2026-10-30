@@ -70,6 +70,10 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --color-match-lavender: var(--match-lavender);
   --color-match-green: var(--match-green);
   --color-match-gold: var(--match-gold);
+  --color-club-soft: var(--club-soft);
+  --color-club-border: var(--club-border);
+  --color-club-hover: var(--club-hover);
+  --color-club-surface: var(--club-surface);
   --font-display: "Bebas Neue", "Impact", sans-serif;
   --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Barlow", system-ui, sans-serif;
@@ -99,6 +103,10 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --match-green: color-mix(in oklab, var(--grass) 26%, transparent);
   --match-gold: color-mix(in oklab, var(--match-amber) 30%, transparent);
   --match-control: color-mix(in oklab, var(--grass) 12%, var(--paper));
+  --club-soft: color-mix(in oklab, var(--grass) 16%, var(--paper));
+  --club-border: color-mix(in oklab, var(--ink) 22%, var(--paper));
+  --club-hover: color-mix(in oklab, var(--grass) 24%, var(--paper));
+  --club-surface: var(--cream);
 
   --background: var(--court-deep);
   --foreground: var(--cream);

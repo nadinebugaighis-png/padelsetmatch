@@ -20,6 +20,16 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
 
 export const Route = createFileRoute("/app/events/")({
+  head: () => ({
+    meta: [
+      { title: "Find a Padel Match | PadelSetMatch" },
+      { name: "description", content: "Find local padel matches, meet neighbourhood players and join a game with PadelSetMatch." },
+      { property: "og:title", content: "Find a Padel Match | PadelSetMatch" },
+      { property: "og:description", content: "Find local padel matches, meet neighbourhood players and join a game with PadelSetMatch." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: EventsPage,
   errorComponent: ({ error }) => (
     <div className="p-6 text-center text-[var(--cream)]/70">{error instanceof Error ? error.message : String(error)}</div>
@@ -652,12 +662,11 @@ function MatchCard({
   const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
 
   const whenLabel = dateBadge ?? weekday;
-  const toneBg =
-    timeOfDay === "morning"
-      ? "color-mix(in oklab, var(--grass) 26%, transparent)"
-      : timeOfDay === "afternoon"
-        ? "color-mix(in oklab, #E8B84B 30%, transparent)"
-        : "color-mix(in oklab, var(--plum) 20%, transparent)";
+  // Use local calendar components, not elapsed local hours, so DST cannot
+  // change a day's colour. The fixed cycle also survives filtering/reordering.
+  const calendarDay = Math.floor(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()) / 86_400_000);
+  const dayTone = ((calendarDay % 3) + 3) % 3;
+  const toneClass = ["bg-match-lavender", "bg-match-green", "bg-match-gold"][dayTone];
 
   return (
     <div
@@ -670,8 +679,7 @@ function MatchCard({
         <button
           type="button"
           onClick={() => onOpen(e.id)}
-          className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
-          style={{ background: toneBg }}
+          className={`w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center ${toneClass}`}
         >
           <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{time}</div>
           <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">

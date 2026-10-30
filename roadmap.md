@@ -1,5 +1,8 @@
 # iPhone sign-in and notifications
 
+## Match card colours
+- [x] Alternate the demo's lavender, green and amber date blocks by calendar day; date filters unchanged. Signed-in mobile/desktop checks show November 3 lavender and November 11 gold, no page errors, and build OK.
+
 ## Notification response delay
 - [x] Remove notification delivery from the response-critical path using Worker waitUntil and request deduplication; 16 tests pass, signed-in grid requests return successfully, and preview build passes. Published/iPhone delivery check still requires publication and a device.
 

@@ -600,24 +600,24 @@ function MatchCard({
         <button
           type="button"
           onClick={() => onOpen(e.id)}
-          className={`w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center ${toneClass}`}
+          className={`w-[76px] sm:w-[88px] shrink-0 flex flex-col items-center justify-center py-2.5 text-center ${toneClass}`}
         >
-          <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{time}</div>
-          <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
+          <div className="text-serif text-[21px] sm:text-[23px] leading-none text-[var(--ink)]">{time}</div>
+          <div className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
             {whenLabel}
           </div>
           {!dateBadge && (
-            <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
+            <div className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
               {dayNum} <span className="capitalize">{monthShort}</span>
             </div>
           )}
         </button>
 
         {/* Body */}
-        <div className="flex-1 min-w-0 p-3.5 sm:p-4">
+        <div className="flex-1 min-w-0 p-3">
           <div className="flex items-start justify-between gap-2">
             <button type="button" onClick={() => onOpen(e.id)} className="min-w-0 text-left">
-              <div className="text-[15px] font-semibold text-[var(--ink)] truncate">
+              <div className="text-[14px] font-semibold text-[var(--ink)] truncate">
                 {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
               </div>
               <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60 min-w-0">
@@ -626,7 +626,7 @@ function MatchCard({
               </div>
             </button>
             <span
-              className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
+              className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-0.5 font-semibold whitespace-nowrap ${
                 full
                   ? "bg-[var(--ink)]/8 text-[var(--ink)]/55"
                   : "bg-[var(--plum)]/12 text-[var(--plum)]"
@@ -639,7 +639,7 @@ function MatchCard({
           </div>
 
           {/* Meta row */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+          <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
             {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
             {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
             <span>{genderLabel}</span>
@@ -670,7 +670,7 @@ function MatchCard({
           </div>
 
           {/* Players + action */}
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-2 flex items-center gap-2">
             {slots.map((s, i) => (
               <SlotAvatar
                 key={i}
@@ -690,7 +690,7 @@ function MatchCard({
                 else onJoin(e);
               }}
               disabled={isPending}
-              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2 disabled:opacity-50"
+              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 disabled:opacity-50"
             >
               {e.iAmHost
                 ? tr("Manage", "Gestionar", "Gérer")

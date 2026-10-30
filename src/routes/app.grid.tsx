@@ -968,28 +968,23 @@ function Discover() {
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
-                  {/* Programme photo — full bleed, thin gold rule beneath */}
-                  <div className="relative lg:w-[42%] lg:shrink-0 lg:min-h-[560px]">
-                    <div
-                      className="relative w-full aspect-[4/5] max-h-[52vh] lg:max-h-none lg:aspect-auto lg:absolute lg:inset-0 bg-[var(--paper-2)] bg-cover bg-[center_20%]"
-                      style={preview.photo_url ? { backgroundImage: `url("${photoSrc(preview.photo_url, 480)}")` } : undefined}
-                    >
+                  {/* Photo — polaroid-style white frame, previous size, no gold */}
+                  <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
+                    <div className="relative bg-white p-2 sm:p-2.5 pb-3 lg:p-3 lg:pb-3 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.22)] lg:shadow-[0_18px_48px_-12px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto">
                       {preview.photo_url ? (
-                        <img src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="absolute inset-0 w-full h-full object-cover object-[center_20%]" />
+                        <img src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] object-cover" />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-serif text-7xl text-[var(--ink)]/15">{preview.first_name.charAt(0)}</div>
+                        <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] bg-[var(--paper-2)] flex items-center justify-center text-serif text-7xl text-[var(--ink)]/15">{preview.first_name.charAt(0)}</div>
                       )}
                       <button
                         type="button"
                         onClick={closePreview}
-                        className="absolute top-3 left-3 w-8 h-8 rounded-full bg-[var(--court-deep)]/45 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] lg:hidden"
+                        className="absolute -top-1 -left-1 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-[var(--cream)] hover:bg-black/55 lg:hidden"
                         aria-label="Back"
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="h-[2px] bg-[var(--gold)] lg:hidden" />
-                    <div className="hidden lg:block absolute top-0 right-0 h-full w-[2px] bg-[var(--gold)]" />
                   </div>
 
                   {/* Body — scrollable on desktop */}

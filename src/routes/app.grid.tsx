@@ -73,17 +73,13 @@ function Discover() {
   const report = useServerFn(reportProfile);
   const reportPhotoFn = useServerFn(reportPhoto);
   const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
-  const [world, setWorld] = useState<boolean>(true);
-  // Force World mode ON by default until 2027-01-18 (3 months from launch push).
-  // During this window we ignore any cached "false" preference so new & returning
-  // users see players from everywhere immediately. They can still toggle it off
-  // per session; the override just prevents a stale OFF state from sticking.
-  const FORCE_WORLD_ON_UNTIL = new Date("2027-01-18T00:00:00Z").getTime();
+  // World mode is OFF by default; each user's choice is saved to their profile
+  // (and cached locally) so it stays exactly as they left it.
+  const [world, setWorld] = useState<boolean>(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (Date.now() < FORCE_WORLD_ON_UNTIL) return;
     const cached = window.localStorage.getItem("world-mode");
-    if (cached === "false") setWorld(false);
+    if (cached === "true") setWorld(true);
   }, []);
 
   const [levelFilter, setLevelFilter] = useState<string>("all");
@@ -218,9 +214,6 @@ function Discover() {
 
   useEffect(() => {
     if (feedQ.data?.me && typeof feedQ.data.me.world_mode === "boolean") {
-      // Within the force-on window, keep the UI in World mode even if the
-      // server-stored preference is false.
-      if (Date.now() < FORCE_WORLD_ON_UNTIL && feedQ.data.me.world_mode === false) return;
       setWorld(feedQ.data.me.world_mode);
       if (typeof window !== "undefined") {
         window.localStorage.setItem("world-mode", feedQ.data.me.world_mode ? "true" : "false");

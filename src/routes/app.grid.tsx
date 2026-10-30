@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { photoSrc, prefetchPhoto } from "@/lib/photo-src";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
@@ -768,7 +769,7 @@ function Discover() {
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {me.photo_url ? (
-                        <img src={me.photo_url} alt={me.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
+                        <img src={photoSrc(me.photo_url, 480)} alt={me.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
                           {(me.first_name ?? "?").charAt(0)}
@@ -806,13 +807,15 @@ function Discover() {
               return (
                 <div
                   key={c.id}
+                  onPointerEnter={() => prefetchPhoto(c.photo_url, 800)}
+                  onTouchStart={() => prefetchPhoto(c.photo_url, 800)}
                   className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md lazy-card"
                 >
                   {/* Polaroid-style photo frame */}
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
-                        <img src={c.photo_url} alt={c.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
+                        <img src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       )}
                       {!c.photo_url && (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
@@ -1067,7 +1070,7 @@ function Discover() {
                             disabled={toggleFavM.isPending}
                             aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
                             title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
-                            className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--plum)] border-[var(--plum)] text-white shadow-[0_8px_24px_-6px_rgba(72,46,146,0.45)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--plum)]/60 hover:text-[var(--plum)]"}`}
+                            className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--ink)] border-[var(--ink)] text-[var(--gold)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
                           >
                             <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
                           </button>

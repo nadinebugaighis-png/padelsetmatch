@@ -112,12 +112,9 @@ export function ClubPicker({ value, onChange }: Props) {
         onBlur={() => setTimeout(() => setOpen(false), 200)}
         onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
         placeholder={tr("Search any club or city (e.g. La Moraleja, Marbella)", "Busca cualquier club o ciudad (p. ej. La Moraleja, Marbella)", "Cherche n'importe quel club ou ville (p. ex. La Moraleja, Marbella)")}
-        className="w-full bg-white border border-[var(--ink)]/15 rounded-lg pl-3.5 pr-10 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 transition"
+        className="w-full bg-white border border-[var(--ink)]/15 rounded-lg pl-3 pr-10 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 transition"
       />
-      <p className="mt-1 text-[11px] text-ink/55">
-        {tr("Anywhere in the world — add the city to narrow it down.", "En cualquier parte del mundo: añade la ciudad para afinar.", "Partout dans le monde — ajoute la ville pour affiner.")}
-      </p>
-      {loading && <Loader2 aria-label={tr("Searching", "Buscando", "Recherche")} className="w-4 h-4 animate-spin motion-reduce:animate-none absolute right-3 top-3 text-ink/60" />}
+      {loading && <Loader2 aria-label={tr("Searching", "Buscando", "Recherche")} className="w-4 h-4 animate-spin motion-reduce:animate-none absolute right-3 top-2.5 text-ink/60" />}
       {open && query.length >= 2 && (
         <div id="club-suggestions" className="absolute z-50 mt-1 left-0 right-0 bg-white border border-[var(--ink)]/15 rounded-lg overflow-hidden shadow-[var(--shadow-elevated)] max-h-72 overflow-y-auto">
           {results.map((club) => (

@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BrandMark } from "@/components/BrandMark";
 import { ShareQR } from "@/components/ShareQR";
 import { AppStoreBadge } from "@/components/AppStoreBadge";
+import { GooglePlayBadge } from "@/components/GooglePlayBadge";
 import { ArrowRight } from "lucide-react";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
@@ -170,8 +171,9 @@ function Landing() {
 
           <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-x-4 gap-y-3">
             <AppStoreBadge />
+            <GooglePlayBadge />
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/50">
-              {tr("Free · iPhone & iPad", "Gratis · iPhone y iPad", "Gratuit · iPhone et iPad")}
+              {tr("Free · iPhone, iPad & Android", "Gratis · iPhone, iPad y Android", "Gratuit · iPhone, iPad et Android")}
             </span>
           </div>
 
@@ -251,8 +253,9 @@ function Landing() {
         <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4 flex-wrap">
             <span className="text-sm tracking-wide">padelsetmatch.com</span>
-            <span className="inline-flex items-center rounded-xl bg-[var(--paper)] p-1.5">
+            <span className="inline-flex items-center gap-2 rounded-xl bg-[var(--paper)] p-1.5">
               <AppStoreBadge />
+              <GooglePlayBadge />
             </span>
           </div>
           <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70 flex-wrap">

@@ -24,7 +24,7 @@ export const Route = createFileRoute("/api/public/photo")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin.storage
           .from("padel-photos")
-          .createSignedUrl(path, 60 * 60 * 24 * 7, { transform: { width: w, quality: 72 } });
+          .createSignedUrl(path, 60 * 60 * 24 * 7, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
         if (error || !data?.signedUrl) return Response.redirect(src.toString(), 302);
         return new Response(null, {
           status: 302,

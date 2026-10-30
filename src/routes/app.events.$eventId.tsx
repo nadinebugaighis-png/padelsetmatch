@@ -657,54 +657,22 @@ function EventDetail() {
           </button>
         )}
         {me?.iAmHost && event.status !== "cancelled" && (
-          <>
+          <div className="grid grid-cols-2 gap-2">
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-11 rounded-xl bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold inline-flex items-center justify-center gap-2 active:scale-[0.99] transition-transform"
+            >
+              <Share2 className="w-4 h-4" /> {tr("Share on WhatsApp", "Compartir en WhatsApp", "Partager sur WhatsApp")}
+            </a>
             <button
               onClick={() => setInviteOpen(true)}
-              className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.22em] font-semibold shadow-[0_10px_24px_-14px_rgba(15,62,46,0.6)] active:scale-[0.99] transition-transform inline-flex items-center justify-center gap-2"
+              className="h-11 rounded-xl border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-[var(--ink)]/5"
             >
-              <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
+              <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter")}
             </button>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-                className="py-2.5 rounded-full border border-[var(--ink)]/25 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)] hover:bg-[var(--ink)]/5 transition-colors inline-flex items-center justify-center gap-1.5"
-              >
-                <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Modifier")}
-              </button>
-              <button
-                onClick={onToggleBooked}
-                className={`py-2.5 rounded-full text-[11px] uppercase tracking-[0.22em] transition-colors inline-flex items-center justify-center gap-1.5 ${
-                  event.court_booked
-                    ? "bg-[var(--grass)]/30 text-[var(--ink)] border border-[var(--ink)]/15 hover:bg-[var(--grass)]/40"
-                    : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
-                }`}
-              >
-                {event.court_booked ? <><Check className="w-3.5 h-3.5" /> {tr("Booked", "Reservada", "Réservée")}</> : tr("Mark booked", "Marcar reservada", "Marquer réservée")}
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={onCancel}
-                className="py-2.5 rounded-full border border-[var(--ink)]/25 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors inline-flex items-center justify-center gap-1.5"
-              >
-                <X className="w-3.5 h-3.5" /> {tr("Cancel match", "Cancelar partido", "Annuler")}
-              </button>
-              <button
-                onClick={onDelete}
-                className="py-2.5 rounded-full border border-red-400/50 text-[11px] uppercase tracking-[0.22em] text-red-500 hover:bg-red-500/5 transition-colors inline-flex items-center justify-center gap-1.5"
-              >
-                <Trash2 className="w-3.5 h-3.5" /> {tr("Delete", "Eliminar", "Supprimer")}
-              </button>
-            </div>
-            {(event.participants?.length ?? 0) > 0 && (
-              <button
-                onClick={() => setTransferOpen(true)}
-                className="w-full py-2.5 rounded-full border border-[var(--ink)]/25 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors inline-flex items-center justify-center gap-1.5"
-              >
-                <UserPlus className="w-3.5 h-3.5" /> {tr("Pass hosting to a player", "Pasar la organización a un jugador", "Transférer l'organisation à un joueur")}
-              </button>
-            )}
-          </>
+          </div>
         )}
         {me?.iAmHost && event.status === "cancelled" && (
           <button

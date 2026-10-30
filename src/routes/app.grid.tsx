@@ -994,15 +994,14 @@ function Discover() {
                       <div className="text-center lg:text-left">
                         <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/55">{preview.zone} · {label(preview.level)}</div>
                         <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
-                        <div className="mt-2 flex items-center justify-center lg:justify-start gap-3 text-[11px] uppercase tracking-[0.2em]">
+                        <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-1 text-[11px] uppercase tracking-normal">
                           <span className="text-[var(--ink)] font-semibold">{preview.score}% {tr("match", "afinidad", "affinité")}</span>
                           {typeof (preview as any).founding_number === "number" && (preview as any).founding_number > 0 && (
                             <>
-                              <span className="w-6 h-px bg-[var(--ink)]/20" />
                               <span className="text-[var(--ink)]/60">
                                 {(preview as any).founding_number <= 100
                                   ? tr("Founding Member", "Miembro fundador", "Membre fondateur")
-                                  : tr("Member", "Miembro", "Membre")} · No. {(preview as any).founding_number}
+                                  : tr("Member", "Miembro", "Membre")} {(preview as any).founding_number}
                               </span>
                             </>
                           )}

@@ -224,7 +224,7 @@ function ProfilePage() {
                       "Ton numéro d'inscription sur PadelSetMatch",
                     )}
                   >
-                    {ordinalQ.data <= 100 ? tr("Founding Member", "Miembro fundador", "Membre fondateur") : tr("Member", "Miembro", "Membre")} · No. {ordinalQ.data}
+                    {ordinalQ.data <= 100 ? tr("Founding Member", "Miembro fundador", "Membre fondateur") : tr("Member", "Miembro", "Membre")} {ordinalQ.data}
                   </span>
                 )}
               </div>

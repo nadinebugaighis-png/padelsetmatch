@@ -25,7 +25,7 @@ export function MatchDateTimePicker({ value, onChange }: { value: string; onChan
 
   return (
     <section className="match-date-time">
-      <label htmlFor="match-date" className="mb-2 block text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60">
+      <label htmlFor="match-date" className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60">
         {tr("Date & time", "Fecha y hora", "Date et heure")}
       </label>
       <div className="flex items-stretch gap-2">

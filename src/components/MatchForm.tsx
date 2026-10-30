@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { ClubPicker } from "@/components/ClubPicker";
 import { Button } from "@/components/ui/button";
+import { MatchDateTimePicker } from "@/components/MatchDateTimePicker";
 import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
@@ -253,16 +254,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         )}
       </section>
 
-      {/* Date & time */}
-      <section>
-        <label className={labelCls}>{tr("Date & time", "Fecha y hora", "Date et heure")}</label>
-        <input
-          type="datetime-local"
-          value={when}
-          onChange={(e) => setWhen(e.target.value)}
-          className={inputCls}
-        />
-      </section>
+      <MatchDateTimePicker value={when} onChange={setWhen} />
 
       {/* Players needed */}
       <section>

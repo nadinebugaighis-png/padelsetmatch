@@ -18,3 +18,4 @@
 - Derive match-card colour cycles from the viewer-local calendar date using UTC-normalized date components, not time of day or list position, so filtering and daylight-saving changes do not alter a day's colour; define palette values in global semantic tokens.
 - Keep Matches page controls compact with scoped light-theme tokens and date-selection logic separate from the feed; this preserves existing match actions and avoids treating all dates as individually highlighted choices.
 - Keep club suggestion caching instance-scoped, bounded and browser-safe; reuse fetched clubs while waiting for authenticated search and reject stale responses so typing stays quick without sharing search history across users.
+- Use a shared Shadcn calendar and separate hour/minute selectors for match scheduling, with scoped light tokens; this avoids platform-dependent datetime fields while preserving local-time submission and edit values.

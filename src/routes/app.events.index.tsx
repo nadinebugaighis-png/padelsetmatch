@@ -732,13 +732,13 @@ function SlotAvatar({
         disabled={!canJoin || isPending}
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         aria-label={tr("Open slot", "Plaza libre", "Place libre")}
-        className={`w-9 h-9 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
+        className={`w-7 h-7 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
           canJoin
             ? "border-[var(--plum)]/45 text-[var(--plum)] hover:bg-[var(--plum)]/8"
             : "border-[var(--ink)]/25 text-[var(--ink)]/35"
         } ${isPending ? "opacity-50" : ""}`}
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="w-3.5 h-3.5" />
       </button>
     );
   }
@@ -746,7 +746,7 @@ function SlotAvatar({
   return (
     <div
       title={name ?? ""}
-      className="w-9 h-9 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
+      className="w-7 h-7 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
     >
       {photo ? (
         <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
@@ -877,12 +877,12 @@ function MyMatchesList({
                 const filled = e.filled ?? 0;
                 const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
-                  <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-3.5 flex items-center gap-3 cursor-pointer hover:bg-[var(--paper-2)]/40 transition">
+                  <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-2.5 flex items-center gap-3 cursor-pointer hover:bg-[var(--paper-2)]/40 transition">
                     <div className="flex flex-col items-center justify-center w-14 shrink-0">
                       <span className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 leading-none">
                         <Clock className="w-3 h-3 inline mb-0.5" />
                       </span>
-                      <span className="text-lg font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
+                      <span className="text-base font-bold text-[var(--ink)] leading-none mt-1">{time}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">

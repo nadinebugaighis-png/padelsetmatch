@@ -98,6 +98,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --match-lavender: color-mix(in oklab, var(--plum) 20%, transparent);
   --match-green: color-mix(in oklab, var(--grass) 26%, transparent);
   --match-gold: color-mix(in oklab, var(--match-amber) 30%, transparent);
+  --match-control: color-mix(in oklab, var(--grass) 12%, var(--paper));
 
   --background: var(--court-deep);
   --foreground: var(--cream);
@@ -252,6 +253,11 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 @utility lazy-card {
   content-visibility: auto;
   contain-intrinsic-size: auto 320px;
+}
+.match-feed-page {
+  --accent: var(--match-control);
+  --accent-foreground: var(--ink);
+  --ring: var(--ink);
 }
 @utility lazy-row {
   content-visibility: auto;

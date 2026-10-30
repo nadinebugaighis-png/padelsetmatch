@@ -29,7 +29,7 @@ export function GooglePlayBadge({ className = "" }: { className?: string }) {
         alt=""
         width={135}
         height={40}
-        className="h-10 w-auto sm:h-11"
+        className="h-11 w-auto sm:h-12"
         loading="lazy"
       />
     </a>

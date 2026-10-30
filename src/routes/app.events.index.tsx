@@ -332,10 +332,10 @@ function EventsPage() {
         </div>
 
         {mode === "find" && (
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2" aria-label={tr("Match dates", "Fechas de partidos", "Dates des matchs")}>
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1.5" aria-label={tr("Match dates", "Fechas de partidos", "Dates des matchs")}>
             <Button variant={allDates ? "default" : "ghost"} aria-pressed={allDates}
               onClick={() => setSelectedDays(new Set(days.map(dayKey)))}
-              className="shrink-0 h-14 min-w-14 px-2 shadow-none flex-col gap-0.5">
+              className="shrink-0 h-11 min-w-11 px-2 shadow-none flex-col gap-0">
               <span className="text-xs">{tr("All", "Todas", "Toutes")}</span>
               <span className="text-xs">{tr("dates", "fechas", "dates")}</span>
             </Button>
@@ -346,9 +346,9 @@ function EventsPage() {
               return (
                 <Button key={k} variant="ghost" aria-pressed={active} aria-label={d.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })}
                   onClick={() => toggleDay(k)}
-                  className={`shrink-0 h-14 min-w-14 px-2 flex-col gap-0.5 border ${active ? "bg-accent border-primary/40 text-primary" : "border-transparent text-muted-foreground"}`}>
-                  <span className="text-xs font-normal">{i === 0 ? tr("Today", "Hoy", "Auj.") : i === 1 ? tr("Tomorrow", "Mañana", "Demain") : weekday}</span>
-                  <span className="text-serif text-lg leading-none tracking-normal text-foreground">{d.getDate()}</span>
+                  className={`shrink-0 h-11 min-w-11 px-2 flex-col gap-0 border ${active ? "bg-accent border-primary/40 text-primary" : "border-transparent text-muted-foreground"}`}>
+                  <span className="text-[11px] font-normal leading-tight">{i === 0 ? tr("Today", "Hoy", "Auj.") : i === 1 ? tr("Tomorrow", "Mañana", "Demain") : weekday}</span>
+                  <span className="text-serif text-base leading-tight tracking-normal text-foreground">{d.getDate()}</span>
                 </Button>
               );
             })}

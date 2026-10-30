@@ -405,121 +405,58 @@ function EventDetail() {
 
       {(() => {
         const d = new Date(event.starts_at);
-        const weekday = d.toLocaleDateString(undefined, { weekday: "long" });
-        const day = d.toLocaleDateString(undefined, { day: "numeric" });
-        const monthYear = d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+        const dateLabel = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
         const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
-        const statusChip =
+        const status =
           event.status === "cancelled"
-            ? { cls: "bg-red-500/20 text-red-100 border-red-400/30", label: tr("Cancelled", "Cancelado", "Annulé") }
+            ? { cls: "bg-red-50 text-red-700", label: tr("Cancelled", "Cancelado", "Annulé") }
             : event.needs === 0
-            ? { cls: "bg-[var(--paper)]/15 text-[var(--paper)] border-[var(--paper)]/30", label: tr("Full", "Completo", "Complet") }
-            : { cls: "bg-[var(--grass)] text-[var(--ink)] border-[var(--grass)]", label: tr(`Needs ${event.needs}`, `Faltan ${event.needs}`) };
+            ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70", label: tr("Full", "Completo", "Complet") }
+            : { cls: "bg-[var(--grass)]/40 text-[var(--ink)]", label: tr(`${event.needs} spot${event.needs > 1 ? "s" : ""} left`, `Faltan ${event.needs}`, `${event.needs} place(s)`) };
+        const safePlaytomic = event.playtomic_link ? normalizePlaytomicLink(event.playtomic_link).url : null;
         return (
-          <section className="rounded-2xl border border-[var(--ink)]/15 bg-white shadow-[0_1px_0_rgba(15,62,46,0.04),0_10px_30px_-18px_rgba(15,62,46,0.25)] overflow-hidden">
-            {/* Date banner — ink background for strong contrast */}
-            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch border-b border-[var(--ink)]/15 bg-[var(--ink)]">
-              <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-3 sm:py-4 border-r border-[var(--paper)]/15 min-w-[92px] sm:min-w-[120px] shrink-0">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--paper)]/70">{weekday}</div>
-                <div className="text-serif text-4xl sm:text-5xl leading-none text-[var(--paper)] mt-0.5">{day}</div>
-                <div className="text-[10px] uppercase tracking-widest text-[var(--paper)]/70 mt-1">{monthYear}</div>
+          <section className="rounded-2xl border border-[var(--ink)]/10 bg-white overflow-hidden">
+            <div className="px-4 pt-4 pb-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-[13px] font-semibold text-[var(--ink)] capitalize">{dateLabel} · {time}</div>
+                <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${status.cls}`}>{status.label}</span>
               </div>
-              <div className="min-w-0 flex flex-col justify-between px-4 sm:px-6 py-3 sm:py-4 gap-1">
-                <div className="flex items-start justify-between gap-2 min-w-0">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--paper)]/70 truncate">{tr("Match at", "Partido en", "Match à")}</div>
-                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${statusChip.cls}`}>
-                    {statusChip.label}
-                  </span>
-                </div>
-                <h1 className="text-serif text-xl sm:text-2xl leading-tight text-[var(--paper)] truncate mt-1">{event.club_name}</h1>
-                <div className="text-[11px] sm:text-xs text-[var(--paper)]/70 truncate">{event.club_address ?? event.city ?? ""}</div>
+              <h1 className="text-serif text-2xl leading-tight text-[var(--ink)] mt-1 truncate">{event.club_name}</h1>
+              {(event.club_address || event.city) && (
+                <div className="text-xs text-[var(--ink)]/60 truncate">{event.club_address ?? event.city}</div>
+              )}
+              <div className="mt-2 text-[12px] text-[var(--ink)]/75">
+                {genderLabel} · {label(event.level_min)} · {event.court_booked ? tr("Court booked ✓", "Pista reservada ✓", "Pista réservée ✓") : tr("Court to book", "Falta pista", "Pista à réserver")}
               </div>
             </div>
-
-            {/* Meta strip */}
-            <div className="grid grid-cols-3 divide-x divide-[var(--ink)]/10 border-b border-[var(--ink)]/10 text-center bg-[var(--paper-2)]/40">
-              <div className="px-2 py-3 sm:py-4 min-w-0">
-                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Time", "Hora", "Heure")}</div>
-                <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5 truncate">{time}</div>
-              </div>
-              <div className="px-2 py-3 sm:py-4 min-w-0">
-                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Players", "Jugadores", "Joueurs")}</div>
-                <div className="text-sm sm:text-base font-semibold text-[var(--ink)] mt-0.5">{event.filled}<span className="text-[var(--ink)]/50">/4</span></div>
-              </div>
-              <div className="px-2 py-3 sm:py-4 min-w-0 flex flex-col justify-center">
-                <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/70">{tr("Level", "Nivel", "Niveau")}</div>
-                <div className="text-xs sm:text-sm font-semibold text-[var(--ink)] mt-0.5 leading-tight whitespace-normal break-words">
-                  {label(event.level_min)}
-                </div>
-              </div>
-            </div>
-
-            {/* Details */}
-            <div className="px-4 py-3 space-y-2.5">
-              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />
-                {genderLabel}
-                <span className="text-[var(--ink)]/40">·</span>
-                <span className={event.court_booked ? "text-[var(--ink)] font-semibold" : "text-[var(--ink)]/80"}>
-                  {event.court_booked ? tr("Court booked", "Pista reservada", "Pista réservée") : tr("Court to book", "Falta pista", "Pista à réserver")}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[var(--ink)] hover:text-[var(--plum)] transition-colors font-medium"
-                >
-                  <MapPin className="w-3.5 h-3.5" /> {tr("Google Maps", "Google Maps", "Google Maps")}
-                  <ExternalLink className="w-3 h-3 opacity-80" />
+            <div className="flex divide-x divide-[var(--ink)]/10 border-t border-[var(--ink)]/10 text-[13px]">
+              <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                <MapPin className="w-3.5 h-3.5" /> {tr("Directions", "Cómo llegar", "Itinéraire")}
+              </a>
+              {safePlaytomic && (
+                <a href={safePlaytomic} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                  Playtomic <ExternalLink className="w-3 h-3" />
                 </a>
-                {event.playtomic_link && (() => {
-                  const safe = normalizePlaytomicLink(event.playtomic_link).url;
-                  if (!safe) return null;
-                  return (
-                    <a href={safe} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[var(--ink)] hover:text-[var(--plum)] transition-colors font-medium">
-                      Playtomic <ExternalLink className="w-3 h-3 opacity-80" />
-                    </a>
-                  );
-                })()}
-              </div>
-
-              {event.note && (
-                <p className="text-sm text-[var(--ink)] whitespace-pre-wrap pt-1 border-t border-[var(--ink)]/10">
-                  {event.note}
-                </p>
               )}
             </div>
-
+            {event.note && (
+              <p className="border-t border-[var(--ink)]/10 px-4 py-2.5 text-sm text-[var(--ink)] whitespace-pre-wrap">{event.note}</p>
+            )}
             {event.is_private_court && me?.id !== event.host_profile_id && (
-              <div className="flex items-start gap-2 border-t border-[var(--ink)]/15 bg-amber-50 px-4 py-3 text-xs text-amber-950">
-                <span aria-hidden className="mt-0.5 text-sm leading-none">⚠️</span>
-                <div>
-                  <div className="uppercase tracking-[0.2em] text-[10px] font-semibold text-amber-900">
-                    {tr("Private court", "Pista privada", "Terrain privé")}
-                  </div>
-                  <div className="mt-0.5 leading-relaxed">
-                    {tr(
-                      "This match is at a private residence. Confirm the host in chat before heading over, share your location with a friend, and meet in daylight when possible.",
-                      "Este partido es en un domicilio privado. Confirma con el organizador por chat antes de ir, comparte tu ubicación con alguien de confianza y, si puedes, queda con luz de día.",
-                      "Ce match a lieu dans une résidence privée. Confirme avec l'hôte par chat avant de t'y rendre, partage ta position avec un proche et privilégie la lumière du jour.",
-                    )}
-                  </div>
-                </div>
+              <div className="border-t border-[var(--ink)]/10 bg-amber-50 px-4 py-2.5 text-xs text-amber-950 leading-relaxed">
+                ⚠️ {tr(
+                  "Private residence — confirm with the host in chat before heading over and share your location with a friend.",
+                  "Domicilio privado — confirma con el organizador por chat antes de ir y comparte tu ubicación con alguien de confianza.",
+                  "Résidence privée — confirme avec l'hôte par chat avant d'y aller et partage ta position avec un proche.",
+                )}
               </div>
             )}
-
-
-
           </section>
         );
       })()}
 
-
       {/* Players */}
-      <div className="mt-6">
+      <div className="mt-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/60">{tr("Lineup", "Alineación", "Composition")}</div>
           <div className="flex-1 h-px bg-[var(--ink)]/10" />

@@ -77,7 +77,7 @@ export function ClubPicker({ value, onChange }: Props) {
 
   if (value) {
     return (
-      <div className="rounded-lg border border-club-border bg-club-soft p-3 flex items-start justify-between gap-3">
+      <div className="rounded-lg border border-[var(--ink)]/15 bg-white p-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-sm text-ink">
             <MapPin className="w-4 h-4 shrink-0 text-ink/70" />
@@ -89,7 +89,7 @@ export function ClubPicker({ value, onChange }: Props) {
           selection.current++;
           onChange(null);
           setQ("");
-        }} className="text-xs text-ink/70 hover:bg-club-hover hover:text-ink shrink-0">
+        }} className="text-xs text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 hover:text-[var(--ink)] shrink-0">
           {tr("Change", "Cambiar", "Modifier")}
         </Button>
       </div>
@@ -112,18 +112,18 @@ export function ClubPicker({ value, onChange }: Props) {
         onBlur={() => setTimeout(() => setOpen(false), 200)}
         onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
         placeholder={tr("Search any club or city (e.g. La Moraleja, Marbella)", "Busca cualquier club o ciudad (p. ej. La Moraleja, Marbella)", "Cherche n'importe quel club ou ville (p. ex. La Moraleja, Marbella)")}
-        className="w-full bg-club-soft border border-club-border rounded-lg pl-3.5 pr-10 py-2.5 text-sm text-ink placeholder:text-ink/50 focus:outline-none focus:ring-1 focus:ring-club-border transition"
+        className="w-full bg-white border border-[var(--ink)]/15 rounded-lg pl-3.5 pr-10 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 transition"
       />
       <p className="mt-1 text-[11px] text-ink/55">
         {tr("Anywhere in the world — add the city to narrow it down.", "En cualquier parte del mundo: añade la ciudad para afinar.", "Partout dans le monde — ajoute la ville pour affiner.")}
       </p>
       {loading && <Loader2 aria-label={tr("Searching", "Buscando", "Recherche")} className="w-4 h-4 animate-spin motion-reduce:animate-none absolute right-3 top-3 text-ink/60" />}
       {open && query.length >= 2 && (
-        <div id="club-suggestions" className="absolute z-50 mt-1 left-0 right-0 bg-club-surface border border-club-border rounded-lg overflow-hidden shadow-[var(--shadow-elevated)] max-h-72 overflow-y-auto">
+        <div id="club-suggestions" className="absolute z-50 mt-1 left-0 right-0 bg-white border border-[var(--ink)]/15 rounded-lg overflow-hidden shadow-[var(--shadow-elevated)] max-h-72 overflow-y-auto">
           {results.map((club) => (
             <Button variant="ghost" key={club.place_id || `${club.name}|${club.address}`} type="button"
               onMouseDown={(e) => e.preventDefault()} onClick={() => void selectClub(club)}
-              className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2 hover:bg-club-hover border-b border-club-border/30 text-ink">
+              className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2 hover:bg-[var(--ink)]/5 border-b border-[var(--ink)]/10 text-[var(--ink)]">
               <MapPin className="shrink-0 text-ink/55" />
               <span className="min-w-0">
                 <span className="block text-sm font-medium break-words">{club.name}</span>
@@ -138,7 +138,7 @@ export function ClubPicker({ value, onChange }: Props) {
           )}
           <Button variant="ghost" type="button" onMouseDown={(e) => e.preventDefault()}
             onClick={() => void selectClub({ place_id: "", name: query, address: "", lat: null, lng: null, city: "", country: "" })}
-            className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2.5 hover:bg-club-hover text-ink">
+            className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2.5 hover:bg-[var(--ink)]/5 text-[var(--ink)]">
             <span className="min-w-0">
               <span className="block text-sm break-words">{tr(`Use "${query}"`, `Usar "${query}"`, `Utiliser « ${query} »`)}</span>
               <span className="block text-xs font-normal text-ink/60">{tr("Keep the club name as you typed it", "Mantener el nombre del club tal como lo escribiste", "Garder le nom du club tel que saisi")}</span>

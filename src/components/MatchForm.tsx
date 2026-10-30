@@ -73,8 +73,8 @@ function SegButton({
       className={`py-2.5 rounded-full border text-xs font-medium uppercase tracking-widest transition ${
         light
           ? active
-            ? "border-club-border bg-club-soft text-ink hover:bg-club-hover"
-            : "border-club-border/60 bg-club-surface text-ink/70 hover:bg-club-soft"
+            ? "border-[var(--ink)] bg-white text-[var(--ink)] font-semibold shadow-[0_1px_0_0_var(--ink)]"
+            : "border-[var(--ink)]/15 bg-white text-[var(--ink)]/55 hover:border-[var(--ink)]/35 hover:text-[var(--ink)]/80"
           : active
           ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
           : "border-[var(--ink)]/15 bg-white text-[var(--ink)]/70 hover:border-[var(--ink)]/35"

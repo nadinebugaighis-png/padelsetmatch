@@ -269,11 +269,11 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 .match-date-time {
   color-scheme: light;
-  --background: var(--club-surface);
+  --background: #ffffff;
   --foreground: var(--ink);
   --primary: var(--ink);
   --primary-foreground: var(--paper);
-  --accent: var(--club-hover);
+  --accent: color-mix(in oklab, var(--ink) 8%, #ffffff);
   --accent-foreground: var(--ink);
   --muted-foreground: color-mix(in oklab, var(--ink) 70%, var(--paper));
   --ring: var(--ink);

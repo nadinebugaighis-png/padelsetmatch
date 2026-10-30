@@ -89,7 +89,7 @@ export function ClubPicker({ value, onChange }: Props) {
           selection.current++;
           onChange(null);
           setQ("");
-        }} className="text-xs text-ink/70 hover:bg-club-hover hover:text-ink shrink-0">
+        }} className="text-xs text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 hover:text-[var(--ink)] shrink-0">
           {tr("Change", "Cambiar", "Modifier")}
         </Button>
       </div>
@@ -119,11 +119,11 @@ export function ClubPicker({ value, onChange }: Props) {
       </p>
       {loading && <Loader2 aria-label={tr("Searching", "Buscando", "Recherche")} className="w-4 h-4 animate-spin motion-reduce:animate-none absolute right-3 top-3 text-ink/60" />}
       {open && query.length >= 2 && (
-        <div id="club-suggestions" className="absolute z-50 mt-1 left-0 right-0 bg-club-surface border border-club-border rounded-lg overflow-hidden shadow-[var(--shadow-elevated)] max-h-72 overflow-y-auto">
+        <div id="club-suggestions" className="absolute z-50 mt-1 left-0 right-0 bg-white border border-[var(--ink)]/15 rounded-lg overflow-hidden shadow-[var(--shadow-elevated)] max-h-72 overflow-y-auto">
           {results.map((club) => (
             <Button variant="ghost" key={club.place_id || `${club.name}|${club.address}`} type="button"
               onMouseDown={(e) => e.preventDefault()} onClick={() => void selectClub(club)}
-              className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2 hover:bg-club-hover border-b border-club-border/30 text-ink">
+              className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2 hover:bg-[var(--ink)]/5 border-b border-[var(--ink)]/10 text-[var(--ink)]">
               <MapPin className="shrink-0 text-ink/55" />
               <span className="min-w-0">
                 <span className="block text-sm font-medium break-words">{club.name}</span>
@@ -138,7 +138,7 @@ export function ClubPicker({ value, onChange }: Props) {
           )}
           <Button variant="ghost" type="button" onMouseDown={(e) => e.preventDefault()}
             onClick={() => void selectClub({ place_id: "", name: query, address: "", lat: null, lng: null, city: "", country: "" })}
-            className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2.5 hover:bg-club-hover text-ink">
+            className="w-full h-auto min-h-12 justify-start rounded-none text-left whitespace-normal px-3 py-2.5 hover:bg-[var(--ink)]/5 text-[var(--ink)]">
             <span className="min-w-0">
               <span className="block text-sm break-words">{tr(`Use "${query}"`, `Usar "${query}"`, `Utiliser « ${query} »`)}</span>
               <span className="block text-xs font-normal text-ink/60">{tr("Keep the club name as you typed it", "Mantener el nombre del club tal como lo escribiste", "Garder le nom du club tel que saisi")}</span>

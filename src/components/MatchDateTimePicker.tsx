@@ -11,7 +11,7 @@ import { useTr } from "@/lib/i18n";
 const fieldClass = "h-9 rounded-lg border border-[var(--ink)]/15 bg-white px-3 text-sm font-medium text-[var(--ink)] shadow-none hover:border-[var(--ink)]/35 focus:ring-[var(--ink)]";
 const sheetClass = "match-date-time border border-[var(--ink)]/15 bg-white text-[var(--ink)]";
 
-export function MatchDateTimePicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+export function MatchDateTimePicker({ value, onChange, bare = false }: { value: string; onChange: (value: string) => void; bare?: boolean }) {
   const tr = useTr();
   const [date, setDate] = useState<Date | undefined>(() => value ? new Date(value) : undefined);
   const [hour, setHour] = useState(value.slice(11, 13));
@@ -24,8 +24,8 @@ export function MatchDateTimePicker({ value, onChange }: { value: string; onChan
   };
 
   return (
-    <section className="match-date-time">
-      <label htmlFor="match-date" className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60">
+    <section className={bare ? "match-date-time py-2.5" : "match-date-time"}>
+      <label hidden={bare} htmlFor="match-date" className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60">
         {tr("Date & time", "Fecha y hora", "Date et heure")}
       </label>
       <div className="flex items-stretch gap-2">

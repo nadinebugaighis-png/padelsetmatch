@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { ClubPicker } from "@/components/ClubPicker";
 import { Button } from "@/components/ui/button";
 import { MatchDateTimePicker } from "@/components/MatchDateTimePicker";
@@ -51,6 +52,13 @@ function toLocalDatetime(iso?: string | null) {
 // Shared field styles
 const labelCls = "text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60 block mb-1";
 const inputCls = "w-full bg-white border border-[var(--ink)]/15 rounded-lg px-3 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/35 outline-none focus:border-[var(--ink)]/40 transition";
+const cardCls = "rounded-2xl bg-white border border-[var(--ink)]/10 px-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]";
+const rowCls = "flex items-center justify-between gap-3 min-h-11 py-1.5";
+const rowLabel = "text-sm text-[var(--ink)]";
+const rowDivider = "h-px bg-[var(--ink)]/[0.08]";
+const stepBtn = "size-8 grid place-items-center rounded-full border border-[var(--ink)]/15 text-[var(--ink)] disabled:opacity-30";
+const selectCls = "bg-transparent text-sm font-medium text-[var(--ink)] outline-none capitalize text-right";
+const bareInput = "w-full bg-transparent py-3 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none";
 const helperCls = "text-[11px] text-[var(--ink)]/50 mt-1.5 leading-relaxed";
 
 function SegButton({
@@ -182,7 +190,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   };
 
   return (
-    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-5 py-4 pb-32 space-y-3.5">
+    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 py-3 pb-32 space-y-3">
       <Link
         to="/app/events"
         className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition"
@@ -194,9 +202,9 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <h1 className="font-serif text-2xl sm:text-3xl leading-tight text-[var(--ink)]">{title}</h1>
       </header>
 
-      {/* Where */}
-      <section>
-        <label className={labelCls}>{tr("Where", "Dónde", "Où")}</label>
+      {/* Card 1 — Where & when */}
+      <div className={cardCls}>
+      <section className="py-2.5">
         <div className="grid grid-cols-2 gap-2 mb-2">
           {[
             { v: "club" as const, l: tr("Padel club", "Club de pádel", "Club de padel") },
@@ -249,119 +257,72 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             </div>
           </div>
         )}
-      </section>
+        <div className={rowDivider} />
+        <MatchDateTimePicker value={when} onChange={setWhen} bare />
+      </div>
 
-      <MatchDateTimePicker value={when} onChange={setWhen} />
-
-      {/* Players needed */}
-      <section>
-        <label className={labelCls}>{tr("Players needed", "Jugadores que faltan", "Joueurs recherchés")}</label>
-        <div className="grid grid-cols-4 gap-2">
-          {Array.from({ length: maxNeeded + 1 }, (_, i) => maxNeeded - i).map((n) => (
-            <SegButton key={n} active={playersNeeded === n} onClick={() => setPlayersNeeded(n)}>
-              {n}
-            </SegButton>
-          ))}
+      {/* Card 2 — The match */}
+      <div className={cardCls}>
+        <div className={rowCls}>
+          <span className={rowLabel}>{tr("Players needed", "Jugadores que faltan", "Joueurs recherchés")}</span>
+          <div className="flex items-center gap-1">
+            <button type="button" aria-label="−" disabled={playersNeeded <= 0} onClick={() => setPlayersNeeded(Math.max(0, playersNeeded - 1))} className={stepBtn}><Minus className="size-3.5" /></button>
+            <span className="w-7 text-center text-sm font-semibold text-[var(--ink)] tabular-nums">{playersNeeded}</span>
+            <button type="button" aria-label="+" disabled={playersNeeded >= maxNeeded} onClick={() => setPlayersNeeded(Math.min(maxNeeded, playersNeeded + 1))} className={stepBtn}><Plus className="size-3.5" /></button>
+          </div>
         </div>
-        <p className={helperCls}>
-          {playersNeeded === 0
-            ? tr("This match is full.", "Este partido está completo.", "Ce match est complet.")
-            : tr(
-                `Needs ${playersNeeded} more player${playersNeeded === 1 ? "" : "s"}.`,
-                `Faltan ${playersNeeded} ${playersNeeded === 1 ? "jugador" : "jugadores"}.`,
-              )}{" "}
-          {tr("App players", "Jugadores en la app", "Joueurs de l'app")}: {appPlayersCount}. {tr("Outside-app players", "Jugadores fuera de la app", "Joueurs hors app")}: {Math.max(0, 4 - appPlayersCount - playersNeeded)}.
-        </p>
-      </section>
-
-      {/* Open to */}
-      <section>
-        <label className={labelCls}>{tr("Open to", "Abierto a", "Ouvert à")}</label>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { v: "mixed" as const, l: tr("Mixed", "Mixto", "Mixte") },
-            { v: "men_only" as const, l: tr("Men only", "Solo hombres", "Hommes uniquement") },
-            { v: "women_only" as const, l: tr("Women only", "Solo mujeres", "Femmes uniquement") },
-          ].map((o) => (
-            <SegButton key={o.v} active={genderRule === o.v} onClick={() => setGenderRule(o.v)}>
-              {o.l}
-            </SegButton>
-          ))}
-        </div>
-      </section>
-
-      {/* Levels */}
-      <section className="grid grid-cols-2 gap-3">
-        <div>
-          <label className={labelCls}>{tr("Level min", "Nivel mín.", "Niveau min.")}</label>
-          <select
-            value={levelMin}
-            onChange={(e) => setLevelMin(e.target.value as any)}
-            className={inputCls}
-          >
-            {PADEL_LEVELS.map((l) => (
-              <option key={l} value={l}>{l}</option>
+        <div className={rowDivider} />
+        <div className="py-2.5">
+          <div className="grid grid-cols-3 rounded-lg bg-[var(--ink)]/[0.06] p-0.5">
+            {[
+              { v: "mixed" as const, l: tr("Mixed", "Mixto", "Mixte") },
+              { v: "men_only" as const, l: tr("Men", "Hombres", "Hommes") },
+              { v: "women_only" as const, l: tr("Women", "Mujeres", "Femmes") },
+            ].map((o) => (
+              <button key={o.v} type="button" aria-pressed={genderRule === o.v} onClick={() => setGenderRule(o.v)}
+                className={`h-8 rounded-md text-xs font-medium transition ${genderRule === o.v ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/55"}`}>
+                {o.l}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
-        <div>
-          <label className={labelCls}>{tr("Level max", "Nivel máx.", "Niveau max.")}</label>
-          <select
-            value={levelMax}
-            onChange={(e) => setLevelMax(e.target.value as any)}
-            className={inputCls}
-          >
-            {PADEL_LEVELS.map((l) => (
-              <option key={l} value={l}>{l}</option>
-            ))}
-          </select>
+        <div className={rowDivider} />
+        <div className={rowCls}>
+          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}</span>
+          <div className="flex items-center gap-1 text-sm text-[var(--ink)]">
+            <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <span className="text-[var(--ink)]/40">–</span>
+            <select aria-label={tr("Level max", "Nivel máx.", "Niveau max.")} value={levelMax} onChange={(e) => setLevelMax(e.target.value as any)} className={selectCls}>
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </div>
         </div>
-      </section>
+      </div>
 
-      {/* Court */}
-      <section>
-        <label className={labelCls}>{tr("Court", "Pista", "Pista")}</label>
-        <label className="flex items-center gap-3 text-sm text-[var(--ink)]/80 rounded-lg border border-[var(--ink)]/15 bg-white px-3 py-2">
-          <input
-            type="checkbox"
-            checked={courtBooked}
-            onChange={(e) => setCourtBooked(e.target.checked)}
-            className="h-4 w-4 accent-[var(--ink)]"
-          />
-          {tr("I've booked the court ✅", "Ya reservé la pista ✅", "J'ai réservé la pista ✅")}
+      {/* Card 3 — The court */}
+      <div className={cardCls}>
+        <label className={`${rowCls} cursor-pointer`}>
+          <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
+          <Switch checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
         </label>
+        <div className={rowDivider} />
         <input
-          type="url"
-          inputMode="url"
-          autoCapitalize="off"
-          autoCorrect="off"
-          spellCheck={false}
+          type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={playtomicLink}
-          onChange={(e) => {
-            setPlaytomicLink(e.target.value);
-            if (playtomicError) setPlaytomicError(null);
-          }}
-          placeholder={tr("Playtomic booking link (optional)", "Enlace de reserva en Playtomic (opcional)", "Lien de réservation Playtomic (optionnel)")}
-          className={`${inputCls} mt-2 ${playtomicError ? "border-red-400" : ""}`}
+          onChange={(e) => { setPlaytomicLink(e.target.value); if (playtomicError) setPlaytomicError(null); }}
+          placeholder={tr("Playtomic link (optional)", "Enlace de Playtomic (opcional)", "Lien Playtomic (optionnel)")}
+          className={bareInput}
         />
-        {playtomicError && (
-          <p className="mt-1 text-[11px] text-red-500">{playtomicError}</p>
-        )}
-      </section>
-
-      {/* Note */}
-      <section>
-        <label className={labelCls}>{tr("Note (optional)", "Nota (opcional)", "Note (optionnel)")}</label>
+        {playtomicError && <p className="pb-2 text-[11px] text-red-500">{playtomicError}</p>}
+        <div className={rowDivider} />
         <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          maxLength={500}
-          rows={2}
-          placeholder={tr("Bring extra balls, etc.", "Traed pelotas de sobra, etc.", "Apporter des balles en plus, etc.")}
-          className={inputCls}
+          value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={1}
+          placeholder={tr("Note (optional)", "Nota (opcional)", "Note (optionnel)")}
+          className={`${bareInput} resize-none`}
         />
-      </section>
-
+      </div>
       {/* Sticky submit */}
       <div className="fixed left-0 right-0 px-5 z-30 pointer-events-none" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 5.5rem)" }}>
         <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto pointer-events-auto">

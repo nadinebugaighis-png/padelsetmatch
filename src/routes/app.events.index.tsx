@@ -361,13 +361,13 @@ function EventsPage() {
             <input type="search" value={search} onChange={(e) => setSearch(e.target.value)}
               aria-label={tr("Search matches", "Buscar partidos", "Rechercher des matchs")}
               placeholder={tr("Club, city or player", "Club, ciudad o jugador", "Club, ville ou joueur")}
-              className="h-10 w-full rounded-md bg-accent border border-input pl-9 pr-9 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" />
+              className="h-9 w-full rounded-md bg-accent border border-input pl-9 pr-9 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" />
             {search && <Button variant="ghost" size="icon" aria-label={tr("Clear search", "Borrar búsqueda", "Effacer la recherche")}
               onClick={() => setSearch("")} className="absolute right-0.5 top-0.5 size-9"><X /></Button>}
           </div>
           {mode === "find" && (
             <>
-              <Button variant="outline" aria-expanded={filtersOpen} aria-controls="match-filters" onClick={() => setFiltersOpen((v) => !v)} className="h-10 px-3 shadow-none gap-1.5">
+              <Button variant="outline" aria-expanded={filtersOpen} aria-controls="match-filters" onClick={() => setFiltersOpen((v) => !v)} className="h-9 px-3 shadow-none gap-1.5">
                 <SlidersHorizontal />{tr("Filters", "Filtros", "Filtres")}
                 {activeFilterCount > 0 && <span className="text-xs">({activeFilterCount})</span>}
               </Button>
@@ -421,7 +421,7 @@ function EventsPage() {
                 onCreate={() => navigate({ to: "/app/events/new" })}
               />
             ) : (
-              <div className="mt-5 space-y-6">
+              <div className="mt-3 space-y-4">
                 {filtered.length > 0 && (
                   <FeedSection
                     title={tr("Open matches", "Partidos abiertos", "Matches ouverts")}
@@ -496,11 +496,11 @@ function FeedSection({
     <section>
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-serif text-2xl leading-tight text-[var(--ink)]">{title}</h2>
+          <h2 className="text-serif text-lg leading-tight text-[var(--ink)]">{title}</h2>
           {subtitle && <p className="text-xs text-[var(--ink)]/55 mt-1">{subtitle}</p>}
         </div>
       </div>
-      <ul className="mt-3 space-y-3">
+      <ul className="mt-2 space-y-2">
         {events.map((e) => (
           <li key={e.id} className="lazy-row">
             <MatchCard

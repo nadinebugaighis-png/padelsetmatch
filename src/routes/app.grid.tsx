@@ -969,13 +969,13 @@ function Discover() {
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
                   {/* Programme photo — full bleed, thin gold rule beneath */}
-                  <div className="relative lg:w-[42%] lg:shrink-0 lg:h-full">
+                  <div className="relative lg:w-[42%] lg:shrink-0 lg:min-h-[560px]">
                     <div
-                      className="relative w-full aspect-[4/5] max-h-[52vh] lg:max-h-none lg:aspect-auto lg:h-full bg-[var(--paper-2)] bg-cover bg-center"
+                      className="relative w-full aspect-[4/5] max-h-[52vh] lg:max-h-none lg:aspect-auto lg:absolute lg:inset-0 bg-[var(--paper-2)] bg-cover bg-[center_20%]"
                       style={preview.photo_url ? { backgroundImage: `url("${photoSrc(preview.photo_url, 480)}")` } : undefined}
                     >
                       {preview.photo_url ? (
-                        <img src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="absolute inset-0 w-full h-full object-cover" />
+                        <img src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="absolute inset-0 w-full h-full object-cover object-[center_20%]" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-7xl text-[var(--ink)]/15">{preview.first_name.charAt(0)}</div>
                       )}

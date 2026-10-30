@@ -67,6 +67,9 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --color-ink: var(--ink);
   --color-plum: var(--plum);
   --color-grass: var(--grass);
+  --color-match-lavender: var(--match-lavender);
+  --color-match-green: var(--match-green);
+  --color-match-gold: var(--match-gold);
   --font-display: "Bebas Neue", "Impact", sans-serif;
   --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Barlow", system-ui, sans-serif;
@@ -91,6 +94,10 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --plum: #482E92;
   --grass: #A5E358;
   --gold: #C9A84C;
+  --match-amber: #E8B84B;
+  --match-lavender: color-mix(in oklab, var(--plum) 20%, transparent);
+  --match-green: color-mix(in oklab, var(--grass) 26%, transparent);
+  --match-gold: color-mix(in oklab, var(--match-amber) 30%, transparent);
 
   --background: var(--court-deep);
   --foreground: var(--cream);

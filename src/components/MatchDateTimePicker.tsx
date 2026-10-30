@@ -53,7 +53,7 @@ export function MatchDateTimePicker({ value, onChange, bare = false }: { value: 
           </PopoverContent>
         </Popover>
         <Select value={hour} onValueChange={(next) => { setHour(next); update(date, next, minute); }}>
-          <SelectTrigger aria-label={tr("Hour", "Hora", "Heure")} className={`${fieldClass} w-[4rem] shrink-0`}>
+          <SelectTrigger aria-label={tr("Hour", "Hora", "Heure")} className={`${fieldClass} w-[4.5rem] shrink-0`}>
             <SelectValue placeholder={tr("Hour", "Hora", "Heure")} />
           </SelectTrigger>
           <SelectContent className={`${sheetClass} max-h-64`}>
@@ -62,7 +62,7 @@ export function MatchDateTimePicker({ value, onChange, bare = false }: { value: 
         </Select>
         <span className="self-center text-sm font-medium text-[var(--ink)]/50" aria-hidden="true">:</span>
         <Select value={minute} onValueChange={(next) => { setMinute(next); update(date, hour, next); }}>
-          <SelectTrigger aria-label={tr("Minutes", "Minutos", "Minutes")} className={`${fieldClass} w-[3.5rem] shrink-0`}>
+          <SelectTrigger aria-label={tr("Minutes", "Minutos", "Minutes")} className={`${fieldClass} w-[4.25rem] shrink-0`}>
             <SelectValue placeholder={tr("Min", "Min", "Min")} />
           </SelectTrigger>
           <SelectContent className={`${sheetClass} max-h-64`}>

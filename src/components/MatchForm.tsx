@@ -304,10 +304,10 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
       {/* Card 3 — The court */}
       <div className={cardCls}>
-        <label className={`${rowCls} cursor-pointer`}>
+        <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
           <Switch checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
-        </label>
+        </div>
         <div className={rowDivider} />
         <input
           type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}

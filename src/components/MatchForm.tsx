@@ -49,8 +49,8 @@ function toLocalDatetime(iso?: string | null) {
 }
 
 // Shared field styles
-const labelCls = "text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 block mb-2";
-const inputCls = "w-full bg-white border border-[var(--ink)]/15 rounded-xl px-3.5 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/35 outline-none focus:border-[var(--ink)]/40 transition";
+const labelCls = "text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60 block mb-1.5";
+const inputCls = "w-full bg-white border border-[var(--ink)]/15 rounded-lg px-3 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/35 outline-none focus:border-[var(--ink)]/40 transition";
 const helperCls = "text-[11px] text-[var(--ink)]/50 mt-1.5 leading-relaxed";
 
 function SegButton({
@@ -70,7 +70,7 @@ function SegButton({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`py-2.5 rounded-full border text-xs font-medium uppercase tracking-widest transition ${
+      className={`h-9 py-1.5 rounded-full border text-[11px] font-medium uppercase tracking-widest transition ${
         light
           ? active
             ? "border-[var(--ink)] bg-white text-[var(--ink)] font-semibold shadow-[0_1px_0_0_var(--ink)]"
@@ -182,7 +182,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   };
 
   return (
-    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-5 py-6 pb-36 space-y-6">
+    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-5 py-4 pb-32 space-y-4">
       <Link
         to="/app/events"
         className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition"
@@ -191,16 +191,13 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       </Link>
 
       <header>
-        <h1 className="font-serif text-3xl sm:text-4xl leading-tight text-[var(--ink)]">{title}</h1>
-        <p className="mt-1.5 text-xs text-[var(--ink)]/55">
-          {tr("Fill in a few details and call your match.", "Rellena unos detalles y convoca tu partido.", "Remplis quelques détails et lance ton match.")}
-        </p>
+        <h1 className="font-serif text-2xl sm:text-3xl leading-tight text-[var(--ink)]">{title}</h1>
       </header>
 
       {/* Where */}
       <section>
         <label className={labelCls}>{tr("Where", "Dónde", "Où")}</label>
-        <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="grid grid-cols-2 gap-2 mb-2">
           {[
             { v: "club" as const, l: tr("Padel club", "Club de pádel", "Club de padel") },
             { v: "address" as const, l: tr("Type it in", "Escríbelo yo", "Saisir moi-même") },
@@ -324,7 +321,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       {/* Court */}
       <section>
         <label className={labelCls}>{tr("Court", "Pista", "Pista")}</label>
-        <label className="flex items-center gap-3 text-sm text-[var(--ink)]/80 rounded-xl border border-[var(--ink)]/15 bg-white px-3.5 py-2.5">
+        <label className="flex items-center gap-3 text-sm text-[var(--ink)]/80 rounded-lg border border-[var(--ink)]/15 bg-white px-3 py-2">
           <input
             type="checkbox"
             checked={courtBooked}
@@ -350,9 +347,6 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         {playtomicError && (
           <p className="mt-1 text-[11px] text-red-500">{playtomicError}</p>
         )}
-        <p className={helperCls}>
-          {tr("Paste the full playtomic.io booking link so players can open it directly.", "Pega el enlace completo de playtomic.io para que los jugadores puedan abrirlo directamente.", "Colle le lien complet de réservation playtomic.io pour que les joueurs puissent l'ouvrir directement.")}
-        </p>
       </section>
 
       {/* Note */}
@@ -374,7 +368,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
           <button
             onClick={handleSubmit}
             disabled={!canSave}
-            className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.2em] font-semibold shadow-lg hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.2em] font-semibold shadow-lg hover:brightness-110 transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : submitLabel}
           </button>

@@ -267,6 +267,17 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --accent-foreground: var(--ink);
   --ring: var(--ink);
 }
+.match-date-time {
+  color-scheme: light;
+  --background: var(--club-surface);
+  --foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --accent: var(--club-hover);
+  --accent-foreground: var(--ink);
+  --muted-foreground: color-mix(in oklab, var(--ink) 70%, var(--paper));
+  --ring: var(--ink);
+}
 @utility lazy-row {
   content-visibility: auto;
   contain-intrinsic-size: auto 180px;

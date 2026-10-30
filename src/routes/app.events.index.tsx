@@ -14,10 +14,12 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus } from "lucide-react";
+import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
+import { Button } from "@/components/ui/button";
+import { toggleMatchDay } from "@/lib/match-date-selection";
 
 export const Route = createFileRoute("/app/events/")({
   head: () => ({
@@ -154,15 +156,12 @@ function EventsPage() {
   });
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("all");
   const [levelOnly, setLevelOnly] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const allDates = selectedDays.size === days.length;
+  const activeFilterCount = Number(levelOnly) + Number(timeOfDay !== "all");
 
   function toggleDay(k: string) {
-    setSelectedDays((prev) => {
-      const next = new Set(prev);
-      if (next.has(k)) next.delete(k);
-      else next.add(k);
-      if (next.size === 0) next.add(k); // never leave empty
-      return next;
-    });
+    setSelectedDays((prev) => toggleMatchDay(prev, k, days.map(dayKey)));
   }
 
   const searchLower = search.trim().toLowerCase();
@@ -303,167 +302,104 @@ function EventsPage() {
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : undefined;
 
   return (
-    <div className="programme-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-5 sm:px-6 lg:px-10 py-6 sm:py-8 pb-32">
-        {/* Title row */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-serif text-2xl sm:text-4xl lg:text-5xl tracking-tight leading-none text-[var(--ink)]">
-              {tr("MATCHES", "PARTIDOS", "MATCHES")}
-            </h1>
-          </div>
-          <button
-            type="button"
-            onClick={() => setWorldwide((v) => !v)}
-            className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-widest ${
-              !worldwide
-                ? "border-[var(--plum)] text-[var(--plum)]"
-                : "border-[var(--ink)]/25 text-[var(--ink)]/80"
-            }`}
-          >
-            <MapPin className="w-3 h-3" />
-            {!worldwide ? tr("My areas", "Mis zonas", "Mes zones") : tr("All matches", "Todos los partidos", "Tous les matchs")}
-          </button>
+    <div className="programme-page match-feed-page min-h-[calc(100vh-4rem)]">
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 pb-28">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-serif text-2xl sm:text-4xl leading-tight tracking-normal text-foreground">
+            {tr("MATCHES", "PARTIDOS", "MATCHES")}
+          </h1>
+          <Button onClick={() => navigate({ to: "/app/events/new" })} className="h-10 px-3 sm:px-4 shrink-0 shadow-none">
+            <Plus />{tr("Start a match", "Convocar partido", "Lancer un match")}
+          </Button>
         </div>
 
-        {/* Mode switch */}
-        <div className="mt-4 mb-3 inline-flex items-center rounded-full border border-[var(--ink)]/15 bg-[var(--ink)]/[0.03] p-1 text-[11px] uppercase tracking-widest">
-          <button
-            type="button"
-            onClick={() => setMode("find")}
-            className={`px-3.5 py-1.5 rounded-full transition-colors ${
-              mode === "find" ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/70"
-            }`}
-          >
-            {tr("Find a match", "Buscar partido", "Trouver un match")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("mine")}
-            className={`px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors ${
-              mode === "mine" ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/70"
-            }`}
-          >
-            {tr("My matches", "Mis partidos", "Mes matchs")}
-            {mineCount > 0 && (
-              <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${
-                mode === "mine" ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--plum)] text-[var(--paper)]"
-              }`}>{mineCount}</span>
-            )}
-          </button>
+        <div className="mt-3 mb-3 flex items-center justify-between gap-2 border-b border-border">
+          <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-3 sm:gap-5">
+            {(["find", "mine"] as const).map((value) => (
+              <Button key={value} role="tab" aria-selected={mode === value} variant="ghost" onClick={() => setMode(value)}
+                className={`h-10 rounded-none px-0 text-sm shadow-none border-b-2 hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
+                {value === "find" ? tr("Find a match", "Buscar partido", "Trouver un match") : tr("My matches", "Mis partidos", "Mes matchs")}
+                {value === "mine" && mineCount > 0 && <span className="text-xs text-muted-foreground">({mineCount})</span>}
+              </Button>
+            ))}
+          </div>
+          <Button variant="ghost" size="sm" aria-pressed={worldwide} onClick={() => setWorldwide((v) => !v)}
+            className="shrink-0 gap-1 px-1 text-xs text-muted-foreground">
+            <MapPin className="size-3.5" />
+            {!worldwide ? tr("My areas", "Mis zonas", "Mes zones") : tr("All matches", "Todos", "Partout")}
+            <ChevronDown className="size-3" />
+          </Button>
         </div>
 
-        {/* Search */}
-        <div className="relative mb-3">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 pointer-events-none">
-            <Search className="w-4 h-4" />
+        {mode === "find" && (
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2" aria-label={tr("Match dates", "Fechas de partidos", "Dates des matchs")}>
+            <Button variant={allDates ? "default" : "ghost"} aria-pressed={allDates}
+              onClick={() => setSelectedDays(new Set(days.map(dayKey)))}
+              className="shrink-0 h-14 min-w-14 px-2 shadow-none flex-col gap-0.5">
+              <span className="text-xs">{tr("All", "Todas", "Toutes")}</span>
+              <span className="text-xs">{tr("dates", "fechas", "dates")}</span>
+            </Button>
+            {days.map((d, i) => {
+              const k = dayKey(d);
+              const active = !allDates && selectedDays.has(k);
+              const weekday = d.toLocaleDateString(locale, { weekday: "short" });
+              return (
+                <Button key={k} variant="ghost" aria-pressed={active} aria-label={d.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })}
+                  onClick={() => toggleDay(k)}
+                  className={`shrink-0 h-14 min-w-14 px-2 flex-col gap-0.5 border ${active ? "bg-accent border-primary/40 text-primary" : "border-transparent text-muted-foreground"}`}>
+                  <span className="text-xs font-normal">{i === 0 ? tr("Today", "Hoy", "Auj.") : i === 1 ? tr("Tomorrow", "Mañana", "Demain") : weekday}</span>
+                  <span className="text-serif text-lg leading-none tracking-normal text-foreground">{d.getDate()}</span>
+                </Button>
+              );
+            })}
           </div>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={tr("Search club, address, city, name…", "Buscar club, dirección, ciudad, nombre…", "Rechercher club, adresse, ville, nom…")}
-            className="w-full rounded-full bg-[var(--ink)]/[0.04] border border-[var(--ink)]/15 pl-9 pr-9 py-2.5 text-sm text-[var(--ink)] placeholder:italic placeholder:text-[var(--ink)]/40 focus:outline-none focus:border-[var(--ink)]/40 focus:ring-1 focus:ring-[var(--ink)]/10"
-          />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 hover:text-[var(--ink)]"
-            >
-              <X className="w-4 h-4" />
-            </button>
+        )}
+
+        <div className="flex items-center gap-2 mt-1">
+          <div className="relative flex-1 min-w-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+            <input type="search" value={search} onChange={(e) => setSearch(e.target.value)}
+              aria-label={tr("Search matches", "Buscar partidos", "Rechercher des matchs")}
+              placeholder={tr("Club, city or player", "Club, ciudad o jugador", "Club, ville ou joueur")}
+              className="h-10 w-full rounded-md bg-accent border border-input pl-9 pr-9 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" />
+            {search && <Button variant="ghost" size="icon" aria-label={tr("Clear search", "Borrar búsqueda", "Effacer la recherche")}
+              onClick={() => setSearch("")} className="absolute right-0.5 top-0.5 size-9"><X /></Button>}
+          </div>
+          {mode === "find" && (
+            <>
+              <Button variant="outline" aria-expanded={filtersOpen} aria-controls="match-filters" onClick={() => setFiltersOpen((v) => !v)} className="h-10 px-3 shadow-none gap-1.5">
+                <SlidersHorizontal />{tr("Filters", "Filtros", "Filtres")}
+                {activeFilterCount > 0 && <span className="text-xs">({activeFilterCount})</span>}
+              </Button>
+              <AlertsButton />
+            </>
           )}
         </div>
 
         {mode === "find" ? (
           <>
-            {/* Filter chip row */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 pb-1">
-              <AlertsButton />
-              <button
-                type="button"
-                onClick={() => setLevelOnly((v) => !v)}
-                disabled={!myLevel}
-                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-widest font-semibold whitespace-nowrap transition ${
-                  levelOnly
-                    ? "bg-[var(--ink)] text-[var(--paper)]"
-                    : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
-                } disabled:opacity-40`}
-              >
-                {tr("For my level", "Para mi nivel", "Pour mon niveau")}
-                {myLevel && <span className="opacity-70 normal-case tracking-normal">· {label(myLevel as any)}</span>}
-              </button>
-              {(["all", "morning", "afternoon", "evening"] as const).map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => setTimeOfDay(v)}
-                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] uppercase tracking-widest font-semibold whitespace-nowrap transition ${
-                    timeOfDay === v
-                      ? "bg-[var(--ink)] text-[var(--paper)]"
-                      : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
-                  }`}
-                >
-                  {v === "all" && tr("All day", "Todo el día", "Toute la journée")}
-                  {v === "morning" && tr("Morning", "Mañana", "Matin")}
-                  {v === "afternoon" && tr("Afternoon", "Tarde", "Après-midi")}
-                  {v === "evening" && tr("Evening", "Noche", "Soir")}
-                </button>
-              ))}
-            </div>
-
-            {/* Day chip row */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 mt-2 pb-2">
-              {(() => {
-                const allActive = selectedDays.size === days.length;
-                return (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setSelectedDays(
-                        allActive
-                          ? new Set([dayKey(days[0])])
-                          : new Set(days.map((d) => dayKey(d))),
-                      )
-                    }
-                    className={`shrink-0 rounded-2xl px-3 py-2 min-w-[54px] text-center transition ${
-                      allActive
-                        ? "bg-[var(--plum)] text-white shadow-sm"
-                        : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
-                    }`}
-                  >
-                    <div className={`text-[9px] uppercase tracking-widest font-bold leading-none ${allActive ? "text-white/80" : "text-[var(--ink)]/55"}`}>
-                      {tr("View", "Ver", "Voir")}
-                    </div>
-                    <div className="text-serif text-lg leading-none mt-1">{tr("All", "Todo", "Tout")}</div>
-                  </button>
-                );
-              })()}
-              {days.map((d, i) => {
-                const k = dayKey(d);
-                const active = selectedDays.has(k);
-                const weekday = d.toLocaleDateString(locale, { weekday: "short" });
-                const dayNum = d.getDate();
-                return (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => toggleDay(k)}
-                    className={`shrink-0 rounded-2xl px-3 py-2 min-w-[54px] text-center transition ${
-                      active
-                        ? "bg-[var(--plum)] text-white shadow-sm"
-                        : "bg-white border border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/35"
-                    }`}
-                  >
-                    <div className={`text-[9px] uppercase tracking-widest font-bold leading-none ${active ? "text-white/80" : "text-[var(--ink)]/55"}`}>
-                      {i === 0 ? tr("Today", "Hoy", "Auj.") : weekday}
-                    </div>
-                    <div className="text-serif text-lg leading-none mt-1">{dayNum}</div>
-                  </button>
-                );
-              })}
-            </div>
+            {filtersOpen && (
+              <div id="match-filters" className="mt-3 pb-3 border-b border-border flex flex-wrap items-center gap-2">
+                <Button variant="outline" size="sm" disabled={!myLevel} aria-pressed={levelOnly} onClick={() => setLevelOnly((v) => !v)}
+                  className={`shadow-none ${levelOnly ? "bg-accent border-primary/40" : ""}`}>
+                  {tr("For my level", "Para mi nivel", "Pour mon niveau")}
+                  {myLevel && <span className="text-muted-foreground">· {label(myLevel as any)}</span>}
+                </Button>
+                <div className="relative">
+                  <select aria-label={tr("Time of day", "Hora del día", "Moment de la journée")} value={timeOfDay} onChange={(e) => setTimeOfDay(e.target.value as TimeOfDay)}
+                    className="h-9 rounded-md border border-input bg-background text-foreground pl-3 pr-8 appearance-none">
+                    <option value="all">{tr("All day", "Todo el día", "Toute la journée")}</option>
+                    <option value="morning">{tr("Morning", "Mañana", "Matin")}</option>
+                    <option value="afternoon">{tr("Afternoon", "Tarde", "Après-midi")}</option>
+                    <option value="evening">{tr("Evening", "Noche", "Soir")}</option>
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-4 pointer-events-none text-muted-foreground" />
+                </div>
+                {activeFilterCount > 0 && <Button variant="ghost" size="sm" onClick={() => { setTimeOfDay("all"); setLevelOnly(false); }}>
+                  <X />{tr("Reset", "Restablecer", "Réinitialiser")}
+                </Button>}
+              </div>
+            )}
 
             {eventsQ.isLoading && !eventsQ.data ? (
               <div className="mt-6 space-y-3">
@@ -525,22 +461,7 @@ function EventsPage() {
           />
         )}
 
-        {/* Sticky Start-a-match pill */}
-        <div
-          className="fixed left-0 right-0 px-5 z-30 pointer-events-none"
-          style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 104px)" }}
-        >
-          <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pointer-events-auto flex justify-center">
-            <button
-              type="button"
-              onClick={() => navigate({ to: "/app/events/new" })}
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--plum)] text-white text-xs uppercase tracking-widest font-bold px-5 py-3 shadow-lg hover:brightness-110 transition"
-            >
-              <Plus className="w-4 h-4" />
-              {tr("Start a match", "Convocar partido", "Lancer un match")}
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );

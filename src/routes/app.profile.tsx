@@ -26,7 +26,7 @@ const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
 async function preparePhotoFile(file: File): Promise<File> {
   if (!file.type.startsWith("image/")) throw new Error("Please choose a photo file.");
 
-  const shouldCompress = file.size > 2.5 * 1024 * 1024 || /heic|heif|png/i.test(file.type);
+  const shouldCompress = file.size > 400 * 1024 || /heic|heif|png/i.test(file.type);
   if (!shouldCompress && file.size <= MAX_UPLOAD_BYTES) return file;
 
   const objectUrl = URL.createObjectURL(file);
@@ -39,7 +39,7 @@ async function preparePhotoFile(file: File): Promise<File> {
       img.src = objectUrl;
     });
 
-    const maxSide = 1800;
+    const maxSide = 1200;
     const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
     const width = Math.max(1, Math.round(img.naturalWidth * scale));
     const height = Math.max(1, Math.round(img.naturalHeight * scale));

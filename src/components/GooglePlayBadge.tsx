@@ -8,10 +8,10 @@ export const GOOGLE_PLAY_URL =
 
 /**
  * Until Google Play approves the release, the badge is shown as a
- * non-clickable "coming soon" chip instead of a dead storefront link.
- * Flip this to false once the listing is publicly visible.
+  * non-clickable "coming soon" chip instead of a dead storefront link.
+ * Flip this to true once the listing is publicly visible.
  */
-export const GOOGLE_PLAY_LIVE = false;
+export const GOOGLE_PLAY_LIVE = true;
 
 export function GooglePlayBadge({ className = "" }: { className?: string }) {
   const tr = useTr();

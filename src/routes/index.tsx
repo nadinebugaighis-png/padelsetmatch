@@ -82,7 +82,7 @@ function Landing() {
     void import("@/lib/native").then(async ({ isNative }) => {
       const native = isNative();
       if (native) document.documentElement.classList.add("native-app");
-      const entered = await resumeNativeEntry(native, () => supabase.auth.getSession(), () => {
+      await resumeNativeEntry(native, () => supabase.auth.getSession(), () => {
         if (!cancelled) return navigate({ to: "/app", replace: true });
       });
       if (!cancelled) {

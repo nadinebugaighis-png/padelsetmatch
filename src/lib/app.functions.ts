@@ -1526,7 +1526,10 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const { data: otherRow } = await context.supabase
       .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
     const other = otherRow as Profile | null;
-    if (!other) throw new Error("Profile not found");
+    if (!other || other.suspended_at) throw new Error("Profile not found");
+    const { data: pairBlocks, error: blockError } = await context.supabase.from("blocks")
+      .select("id").or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${other.id}),and(blocker_profile_id.eq.${other.id},blocked_profile_id.eq.${me.id})`).limit(1);
+    if (blockError || pairBlocks?.length) throw new Error("Profile unavailable");
 
     // Raw answers stay server-only. The caller and target were authenticated
     // and checked through user-scoped profile access above.

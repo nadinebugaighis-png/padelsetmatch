@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles DROP CONSTRAINT profiles_gender_check;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_gender_check CHECK (gender = ANY (ARRAY['woman'::text, 'man'::text, 'non-binary'::text, 'self-describe'::text]));

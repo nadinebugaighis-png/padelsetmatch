@@ -4,21 +4,22 @@ import { z } from "zod";
 import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from "./affinity";
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
+import { completeAccountDeletion, isOrderedAgeRange } from "./qa-safety";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
 const ProfileInput = z.object({
   first_name: z.string().min(1).max(40),
-  age: z.number().int().min(18).max(120),
+  age: z.number().int().min(18).max(99),
   gender: z.enum(GENDERS),
   interested_in: z.array(z.enum(GENDERS)).default([]),
   friend_interested_in: z.array(z.string()).default([]),
   partner_interested_in: z.array(z.string()).default([]),
-  age_min: z.number().int().min(18).max(120),
-  age_max: z.number().int().min(18).max(120),
+  age_min: z.number().int().min(18).max(99),
+  age_max: z.number().int().min(18).max(99),
   nationality: z.string().max(40).default(""),
   zone: z.string().min(1).max(60),
-  locations: z.array(z.string().min(1).max(120)).max(8).default([]),
+  locations: z.array(z.string().min(1).max(240)).max(15).default([]),
   languages: z.array(z.string().min(1).max(30)).max(10).default([]),
   level: z.enum(PADEL_LEVELS),
   priorities: z.array(z.string().min(1).max(40)).max(8).default([]),
@@ -36,7 +37,7 @@ const ProfileInput = z.object({
   personal_traits: z.array(z.string().min(1).max(40)).max(10).default([]),
   padel_style: z.array(z.string().min(1).max(40)).max(3).default([]),
   world_mode: z.boolean().default(false).optional(),
-});
+}).refine((p) => isOrderedAgeRange(p.age_min, p.age_max), { message: "Choose a valid age range", path: ["age_max"] });
 
 function audienceAcceptsGender(audience: string[], gender: string): boolean {
   if (!audience || audience.length === 0) return true;
@@ -901,17 +902,37 @@ export const deleteMessage = createServerFn({ method: "POST" })
 export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { error } = await context.supabase.rpc("delete_my_account_data" as never, {} as never);
-    if (error) throw new Error(error.message);
-    // Fully delete the auth user so the email can be reused for a fresh signup.
-    try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { error: authErr } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
-      if (authErr) console.error("[deleteMyAccount] auth delete failed:", authErr.message);
-    } catch (e) {
-      console.error("[deleteMyAccount] admin import failed:", e);
-    }
-    return { ok: true };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    return completeAccountDeletion({
+      removePhotos: async () => {
+        const bucket = supabaseAdmin.storage.from("padel-photos");
+        // Photos and gear uploads belong to the authenticated user's folder.
+        const removeFolder = async (folder: string): Promise<void> => {
+          while (true) {
+            const { data: files, error } = await bucket.list(folder, { limit: 100 });
+            if (error) throw new Error("Couldn't remove your photos. Please retry deletion.");
+            if (!files?.length) return;
+            const paths: string[] = [];
+            for (const file of files) {
+              if (!file.id) await removeFolder(`${folder}/${file.name}`);
+              else paths.push(`${folder}/${file.name}`);
+            }
+            if (!paths.length) return;
+            const { error: removeError } = await bucket.remove(paths);
+            if (removeError) throw new Error("Couldn't remove your photos. Please retry deletion.");
+          }
+        };
+        await removeFolder(context.userId);
+      },
+      removeProfile: async () => {
+        const { error } = await context.supabase.rpc("delete_my_account_data" as never, {} as never);
+        if (error) throw new Error("Couldn't delete your profile. Please retry deletion.");
+      },
+      removeIdentity: async () => {
+        const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
+        if (error) throw new Error("Your profile was removed, but account deletion is not complete. Please retry deletion or contact us from Support.");
+      },
+    });
   });
 
 export const blockProfile = createServerFn({ method: "POST" })
@@ -1142,6 +1163,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       question: z.string().trim().min(3).max(400),
       category: z.string().trim().min(1).max(40).default("general"),
       answer: z.string().trim().min(1).max(400),
+      dailyDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -1149,30 +1171,12 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const myId = (me as { id: string } | null)?.id;
     if (!myId) throw new Error("Create your profile first");
-    // Best-effort semantic embedding — run in parallel with the delete,
-    // with a short timeout so onboarding never stalls on a slow provider.
-    const { embedText, toPgVector } = await import("./embeddings.server");
-    const embeddingPromise = Promise.race<number[] | null>([
-      embedText(`${data.question}\n${data.answer}`).catch(() => null),
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500)),
-    ]);
-    const deletePromise = context.supabase
-      .from("qa_answers" as never)
-      .delete()
-      .eq("profile_id", myId)
-      .eq("question", data.question);
-    const [embedding] = await Promise.all([embeddingPromise, deletePromise]);
-    const row: Record<string, unknown> = {
-      profile_id: myId,
-      question: data.question,
-      category: data.category,
-      answer: data.answer,
-      answer_norm: normalizeAnswer(data.answer),
-    };
-    if (embedding) row.answer_embedding = toPgVector(embedding);
-    const { error } = await context.supabase
-      .from("qa_answers" as never)
-      .insert(row as never);
+    // Save atomically: failed updates never destroy the previous answer.
+    // Fast tap answers do not wait for optional embedding generation.
+    const { error } = await context.supabase.rpc("save_my_qa_answer", {
+      _question: data.question, _category: data.category, _answer: data.answer,
+      _daily_date: data.dailyDate ?? null,
+    });
     if (error) throw new Error(error.message);
     // Any cached AI compatibility involving me is stale — clear it.
     await context.supabase.rpc("clear_my_compat_scores" as never, {} as never);
@@ -1505,13 +1509,14 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const other = otherRow as Profile | null;
     if (!other) throw new Error("Profile not found");
 
-    const { data: pairQaRaw } = await context.supabase.rpc("get_pair_qa" as never, { _other: other.id } as never);
-    const pairQa = (pairQaRaw ?? { rows: [], their_count: 0 }) as {
-      rows: Array<{ profile_id: string; question: string; answer: string }>;
-      their_count: number;
-    };
-    const theirQaCount = pairQa.their_count;
-    const qa = pairQa.rows ?? [];
+    // Raw answers stay server-only. The caller and target were authenticated
+    // and checked through user-scoped profile access above.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: qaRows, error: qaError } = await supabaseAdmin.from("qa_answers")
+      .select("profile_id, question, answer").in("profile_id", [me.id, other.id]).limit(200);
+    if (qaError) throw new Error("Couldn't load compatibility. Please retry.");
+    const qa = qaRows ?? [];
+    const theirQaCount = qa.filter((r) => r.profile_id === other.id).length;
     const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
     const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
 
@@ -1520,7 +1525,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v12-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionKey = `v13-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
       return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };

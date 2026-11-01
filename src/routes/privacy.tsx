@@ -24,7 +24,7 @@ function Privacy() {
       <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← {tr("Home", "Inicio", "Accueil")}</Link>
       <h1 className="text-display text-4xl">{tr("Privacy Policy", "Política de Privacidad", "Politique de confidentialité")}</h1>
       <p className="text-sm text-[var(--ink)]/60">
-        {tr("Last updated:", "Última actualización:", "Dernière mise à jour :")} {new Date().toLocaleDateString()}
+        {tr("Last updated:", "Última actualización:", "Dernière mise à jour :")} 1 November 2026
       </p>
 
       <p>
@@ -72,9 +72,9 @@ function Privacy() {
       <h2 className="text-display text-2xl mt-6">5. {tr("Your messages and personality answers", "Tus mensajes y respuestas de personalidad", "Vos messages et réponses de personnalité")}</h2>
       <p>
         <b>{tr(
-          "We do not read your private messages or your personality Q&A answers.",
-          "No leemos tus mensajes privados ni tus respuestas del cuestionario de personalidad.",
-          "Nous ne lisons pas vos messages privés ni vos réponses au questionnaire de personnalité.",
+          "Your answers are processed automatically for compatibility. Private chats are reviewed only when needed for safety or legal requests.",
+          "Tus respuestas se procesan automáticamente para la compatibilidad. Los chats privados solo se revisan por seguridad o requerimientos legales.",
+          "Vos réponses sont traitées automatiquement pour la compatibilité. Les chats privés ne sont examinés que pour la sécurité ou des demandes légales.",
         )}</b>{" "}
         {tr(
           "We are not interested in the content of your conversations — it's yours.",
@@ -95,9 +95,9 @@ function Privacy() {
       </ul>
       <p>
         {tr(
-          "We never use your messages or Q&A answers to train AI models, to build advertising profiles, or to share with third parties.",
-          "Nunca usamos tus mensajes ni tus respuestas para entrenar modelos de IA, crear perfiles publicitarios o compartirlos con terceros.",
-          "Nous n'utilisons jamais vos messages ou réponses pour entraîner des modèles d'IA, créer des profils publicitaires ou les partager avec des tiers.",
+          "Compatibility uses your answers and relevant profile details for automated matching, including AI processing through Lovable AI and its model providers. Your answers are not posted or shown to other players. Private chat messages are not sent for compatibility processing. We do not use this data for advertising profiles.",
+          "La compatibilidad utiliza tus respuestas y los datos pertinentes de tu perfil para encontrar compañeros, incluido el procesamiento de IA mediante Lovable AI y sus proveedores de modelos. Tus respuestas no se publican ni se muestran a otros jugadores. Los mensajes privados no se envían para calcular la compatibilidad. No usamos estos datos para perfiles publicitarios.",
+          "La compatibilité utilise vos réponses et les informations pertinentes de votre profil pour trouver des partenaires, notamment via Lovable AI et ses fournisseurs de modèles. Vos réponses ne sont pas publiées ni montrées aux autres joueurs. Les messages privés ne sont pas transmis pour calculer la compatibilité. Ces données ne servent pas à créer des profils publicitaires.",
         )}
       </p>
 

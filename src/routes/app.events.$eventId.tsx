@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { useServerFn } from "@tanstack/react-start";
@@ -277,9 +278,9 @@ function EventDetail() {
   const onSend = async () => {
     const body = text.trim();
     if (!body) return;
-    setText("");
     try {
       await sendMsg({ data: { id: eventId, body } });
+      setText((current) => draftAfterSuccessfulSend(current, body));
       qc.invalidateQueries({ queryKey: ["event-msgs", eventId] });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Send failed", "No se pudo enviar", "Échec de l'envoi"));

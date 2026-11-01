@@ -11,7 +11,7 @@ describe("daily padel question", () => {
     const d = new Date(2026, 9, 30);
     const today = questionForDay(d);
     expect(dailyQuestionFor(new Set([today.q.en]), d)).not.toBe(today);
-    expect(dailyQuestionFor(new Set(CURATED_QUESTIONS.map((q) => q.q.en)), d)).toBeNull();
+    expect(dailyQuestionFor(new Set(CURATED_QUESTIONS.map((q) => q.q.en)), d)).toBe(today);
   });
   it("unlock offers unanswered questions only", () => {
     const qs = unlockQuestions(new Set(["Your ideal weekend match is…"]), 3);

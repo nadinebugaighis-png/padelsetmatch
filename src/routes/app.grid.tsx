@@ -591,7 +591,7 @@ function Discover() {
 
         <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
 
-        <DailyQuestionCard answered={qaQ.data?.map((a) => a.question)} />
+        <DailyQuestionCard profileId={feedQ.data.me.id} answered={qaQ.data?.map((a) => a.question)} />
 
         {list.length === 0 ? (
           (() => {

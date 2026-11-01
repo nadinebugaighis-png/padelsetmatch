@@ -47,20 +47,23 @@ export function questionForDay(d = new Date()): CuratedQuestion {
   return CURATED_QUESTIONS[days % CURATED_QUESTIONS.length];
 }
 
-/** Today's question, skipping ones already answered; null if all answered. */
+/** Skip previous answers; revisit a daily question once the pool is complete. */
 export function dailyQuestionFor(answered: Set<string>, d = new Date()): CuratedQuestion | null {
   const start = CURATED_QUESTIONS.indexOf(questionForDay(d));
   for (let i = 0; i < CURATED_QUESTIONS.length; i++) {
     const q = CURATED_QUESTIONS[(start + i) % CURATED_QUESTIONS.length];
     if (!answered.has(q.q.en)) return q;
   }
-  return null;
+  return questionForDay(d);
 }
 
 /** Up to `n` unanswered questions for the player-card unlock. */
 export function unlockQuestions(answered: Set<string>, n: number): CuratedQuestion[] {
   const order = [...UNLOCK_IDS, ...CURATED_QUESTIONS.map((q) => q.id).filter((id) => !UNLOCK_IDS.includes(id))];
-  return order.map((id) => CURATED_QUESTIONS.find((q) => q.id === id)!).filter((q) => !answered.has(q.q.en)).slice(0, n);
+  return order.flatMap((id) => {
+    const q = CURATED_QUESTIONS.find((q) => q.id === id);
+    return q && !answered.has(q.q.en) ? [q] : [];
+  }).slice(0, n);
 }
 
 export const UNLOCK_MIN_ANSWERS = 3;

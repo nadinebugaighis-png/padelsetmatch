@@ -1141,6 +1141,15 @@ function normalizeAnswer(s: string): string {
   return s.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 200);
 }
 
+export const getMyDailyQuestionDate = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase.from("profiles")
+      .select("daily_question_answered_on").eq("user_id", context.userId).maybeSingle();
+    if (error) throw new Error("Couldn't load today's answer status");
+    return data?.daily_question_answered_on ?? null;
+  });
+
 export const getMyQaAnswers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

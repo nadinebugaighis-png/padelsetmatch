@@ -187,11 +187,18 @@ export const adminDeleteContent = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
+    const { data: photo } = data.kind === "photo"
+      ? await context.supabase.from("profiles").select("photo_url, user_id").eq("id", data.contentId).maybeSingle()
+      : { data: null };
     const { error } = await (context.supabase as any).rpc("admin_delete_content", {
       _kind: data.kind,
       _id: data.contentId,
     });
     if (error) throw new Error(error.message);
+    if (photo) {
+      const { removeWithdrawnPhoto } = await import("./photo-cleanup.server");
+      await removeWithdrawnPhoto(photo.photo_url, photo.user_id);
+    }
     return { ok: true };
   });
 

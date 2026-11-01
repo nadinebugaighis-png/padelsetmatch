@@ -77,12 +77,12 @@ function AuthPage() {
 
   const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
-    if (redirect) return { to: redirect };
+    if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
     return { to: "/app" };
   };
   const signupTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
-    if (redirect) return { to: redirect };
+    if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
     return { to: "/app/onboarding" };
   };
   const oauthRedirectUri = () => {

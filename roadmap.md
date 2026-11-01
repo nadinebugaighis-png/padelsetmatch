@@ -3,7 +3,9 @@
 ## Thorough app QA
 - [x] Review signup, profiles, player grid, compatibility, matches, notifications, privacy and unused controls; 30 tests pass, signed-in phone/desktop browsing and 40 images checked; findings and unverified flows recorded in the QA report dated 1 November 2026. Audit only; no app/data fixes performed.
 - [x] Review the completed deep security scan: guest removal, withdrawn photos and unsafe short links need fixes; the shared club directory remains intentionally visible.
-- [ ] Fix QA privacy, deletion, signup, messaging, daily-question and metadata issues; verify focused tests and signed-in flows. Physical-phone and hosted external-provider checks require Nadine's devices.
+- [x] Fix raw-answer privacy, host-only guest cancellation, unsafe sharing, withdrawn-photo signing/storage access, truthful deletion and retry, adult age/range validation, form limits, chat draft retention/update refresh, nonblocking notification taps, Google failure handling, invite redirect preservation, account-wide daily answers, translations and missing page metadata. 35 automated checks passed; disposable players verified daily-save/read-back/cross-device dismissal, private-answer denial, guest token join/room/leave, unsafe link rejection, withdrawn-photo denial and permanent profile/identity deletion.
+- [ ] Verify native cold launch, push delivery, hosted Google/Apple sign-in and live club suggestions after publication (requires Nadine's physical devices and hosted external services).
+- [ ] Verify two-person chat edits/deletes and unread-notification failure navigation after publication (requires live realtime delivery and notification states; code and focused checks pass, not a full device end-to-end claim).
 
 ## Match date and time clarity
 - [x] Replace the combined date/time field with a light calendar and readable hour/minute choices; signed-in phone/desktop checks selected 31 October at 18:30 with no overflow or page errors, and build passes. Publication and real-device check remain with Nadine.

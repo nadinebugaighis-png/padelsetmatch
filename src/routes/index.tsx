@@ -11,6 +11,7 @@ import { getPlayerCount } from "@/lib/stats.functions";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { resumeNativeEntry } from "@/lib/native-entry";
+import { Button } from "@/components/ui/button";
 
 function useIsStandalone() {
   const [standalone, setStandalone] = useState(false);
@@ -69,17 +70,33 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const navigate = useNavigate();
   const [entryPending, setEntryPending] = useState(true);
+  const [entryFailed, setEntryFailed] = useState(false);
   useEffect(() => {
     let cancelled = false;
+    const watchdog = window.setTimeout(() => {
+      if (!cancelled && document.documentElement.classList.contains("native-app")) {
+        setEntryFailed(true);
+        setEntryPending(false);
+      }
+    }, 12_000);
     void import("@/lib/native").then(async ({ isNative }) => {
       const native = isNative();
       if (native) document.documentElement.classList.add("native-app");
-      const entered = await resumeNativeEntry(native, () => supabase.auth.getSession(), () => {
+      await resumeNativeEntry(native, () => supabase.auth.getSession(), () => {
         if (!cancelled) return navigate({ to: "/app", replace: true });
       });
-      if (!entered && !cancelled) setEntryPending(false);
-    }).catch(() => { if (!cancelled) setEntryPending(false); });
-    return () => { cancelled = true; };
+      if (!cancelled) {
+        window.clearTimeout(watchdog);
+        setEntryPending(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        window.clearTimeout(watchdog);
+        setEntryFailed(document.documentElement.classList.contains("native-app"));
+        setEntryPending(false);
+      }
+    });
+    return () => { cancelled = true; window.clearTimeout(watchdog); };
   }, [navigate]);
   const t = useT();
   const tr = useTr();
@@ -92,6 +109,14 @@ function Landing() {
     retry: false,
   });
   const count = countQ.data?.count ?? 0;
+
+  if (entryFailed) return (
+    <main data-native-entry="ready" className="min-h-screen flex flex-col items-center justify-center gap-4 bg-paper text-ink px-6 text-center">
+      <BrandMark />
+      <p>{tr("Taking longer to open. Please try again.", "Está tardando en abrirse. Vuelve a intentarlo.", "L’ouverture prend plus de temps. Réessaie.")}</p>
+      <Button onClick={() => window.location.reload()}>{tr("Try again", "Reintentar", "Réessayer")}</Button>
+    </main>
+  );
 
   return (
     <main data-native-entry={entryPending ? "pending" : "ready"} className="programme-page min-h-screen flex flex-col relative overflow-hidden">

@@ -1175,7 +1175,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
     // Fast tap answers do not wait for optional embedding generation.
     const { error } = await context.supabase.rpc("save_my_qa_answer", {
       _question: data.question, _category: data.category, _answer: data.answer,
-      _daily_date: data.dailyDate ?? null,
+      _daily_date: data.dailyDate,
     });
     if (error) throw new Error(error.message);
     // Any cached AI compatibility involving me is stale — clear it.

@@ -141,9 +141,8 @@ export function NotificationBell() {
     };
   }, [open, signedIn, viewedList, acknowledgeView]);
 
-  const openItem = async (id: string, url: string | null) => {
-    await markRead({ data: { ids: [id] } });
-    qc.invalidateQueries({ queryKey: ["notifications"] });
+  const openItem = (id: string, url: string | null) => {
+    void acknowledgeView(id);
     setOpen(false);
     if (url) navigate({ to: url as string });
   };

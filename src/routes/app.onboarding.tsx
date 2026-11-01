@@ -25,6 +25,7 @@ import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
 import { QASection } from "@/components/QASection";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
+import { parseAdultAge } from "@/lib/qa-safety";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
@@ -42,15 +43,8 @@ export const Route = createFileRoute("/app/onboarding")({
   component: Onboarding,
 });
 
-function normalizeAge(raw: string, fallback: number): number {
-  const n = parseInt(raw, 10);
-  if (!Number.isFinite(n)) return fallback;
-  const currentYear = new Date().getFullYear();
-  if (n > 1900 && n <= currentYear) return Math.min(99, Math.max(18, currentYear - n));
-  return Math.min(99, Math.max(18, n));
-}
-
 function AgeInput({ value, onCommit, placeholder }: { value: number | null; onCommit: (n: number | null) => void; placeholder?: string }) {
+  const tr = useTr();
   const [text, setText] = useState(value === null ? "" : String(value));
   useEffect(() => { setText(value === null ? "" : String(value)); }, [value]);
   return (
@@ -64,7 +58,9 @@ function AgeInput({ value, onCommit, placeholder }: { value: number | null; onCo
       onChange={(e) => setText(e.target.value.replace(/[^0-9]/g, ""))}
       onBlur={() => {
         if (text.trim() === "") { onCommit(null); return; }
-        onCommit(normalizeAge(text, value ?? 18));
+        const age = parseAdultAge(text);
+        if (age === null) toast.error(tr("Enter an age from 18 to 99.", "Introduce una edad de 18 a 99 años.", "Saisis un âge entre 18 et 99 ans."));
+        onCommit(age);
       }}
     />
   );
@@ -289,7 +285,10 @@ function Onboarding() {
     return areas.map((a) => encodeLocation({ country: b.country.trim(), city: b.city.trim(), area: a }));
   });
 
-  const toggleLanguage = (l: string) => setLanguages((cur) => cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l]);
+  const toggleLanguage = (l: string) => {
+    if (!languages.includes(l) && languages.length >= 10) { toast.error(tr("Up to 10 languages", "Hasta 10 idiomas", "Jusqu’à 10 langues")); return; }
+    setLanguages((cur) => cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l]);
+  };
 
   const audToGenders = (aud: string[]): Gender[] => {
     if (!aud.length || aud.includes("everyone") || aud.includes("bisexual") || aud.includes("queer")) return ["woman", "man", "non-binary"];
@@ -686,7 +685,7 @@ function Onboarding() {
                     ) : null}
                     {(cities.length === 0 || !cityInList) && isReal(b.country) && (
                       <Input
-                        maxLength={80}
+                        maxLength={60}
                         value={b.city === CUSTOM ? "" : b.city}
                         onChange={(e) => updateBlock(i, { city: e.target.value })}
                         placeholder={tr("Type city name", "Escribe la ciudad", "Saisis le nom de la ville")}
@@ -776,6 +775,7 @@ function Onboarding() {
                 const addCustom = () => {
                   const name = trimmed.replace(/\s+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
                   if (!name) return;
+                  if (name.length > 30 || languages.length >= 10) { toast.error(tr("Up to 10 languages, 30 characters each", "Hasta 10 idiomas, 30 caracteres cada uno", "Jusqu’à 10 langues, 30 caractères chacune")); return; }
                   if (!languages.some((l) => l.toLowerCase() === name.toLowerCase())) {
                     setLanguages((cur) => [...cur, name]);
                   }

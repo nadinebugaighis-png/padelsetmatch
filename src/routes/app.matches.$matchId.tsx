@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Check, Send, Flag, Shield, UserX, Pencil, Trash2, X, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
+import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
 
 
 export const Route = createFileRoute("/app/matches/$matchId")({
@@ -50,7 +51,7 @@ function ChatRoom() {
   useEffect(() => {
     const ch = supabase
       .channel(`match-${matchId}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` }, () => {
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages", filter: `match_id=eq.${matchId}` }, () => {
         qc.invalidateQueries({ queryKey: ["match", matchId] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "played_confirmations", filter: `match_id=eq.${matchId}` }, () => {
@@ -72,8 +73,10 @@ function ChatRoom() {
 
   const sendM = useMutation({
     mutationFn: (body: string) => send({ data: { matchId, body } }),
-    onMutate: () => setText(""),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["match", matchId] }),
+    onSuccess: (_result, body) => {
+      setText((current) => draftAfterSuccessfulSend(current, body));
+      return qc.invalidateQueries({ queryKey: ["match", matchId] });
+    },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("chat.sendFail")),
   });
 

@@ -15,6 +15,7 @@ import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
 import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app")({
   ssr: false,
@@ -150,7 +151,7 @@ function AuthShell() {
       return null;
     }
   };
-  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => safe(() => getProfile()), retry: false });
+  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile(), retry: 2 });
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => safe(() => getMatches()), enabled: !!profileQ.data, retry: false });
   const adminQ = useQuery({
     queryKey: ["is-admin"],
@@ -359,7 +360,11 @@ function AuthShell() {
         </div>
       )}
 
-      <Outlet />
+      {profileQ.isError ? <div className="px-5 py-8 text-center space-y-3">
+        <p>{tr("Could not load your profile. Please retry.", "No se pudo cargar tu perfil. Reintenta.", "Impossible de charger ton profil. Réessaie.")}</p>
+        <Button onClick={() => void profileQ.refetch()}>{tr("Try again", "Reintentar", "Réessayer")}</Button>
+        <Link to="/support" className="block underline">{tr("Support", "Ayuda", "Assistance")}</Link>
+      </div> : <Outlet />}
 
       {hasProfile && !onOnboarding && (
         <nav

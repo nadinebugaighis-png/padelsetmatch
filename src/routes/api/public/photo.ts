@@ -18,17 +18,27 @@ export const Route = createFileRoute("/api/public/photo")({
         if (!WIDTHS.has(w) || !base || src.origin !== new URL(base).origin || !src.pathname.startsWith(PREFIX)) {
           return new Response("Forbidden", { status: 403 });
         }
+        const path = decodeURIComponent(src.pathname.slice(PREFIX.length));
+        if (path.includes("..") || path.includes("\\") || !src.searchParams.get("token")) return new Response("Forbidden", { status: 403 });
         const check = await fetch(src.toString(), { headers: { Range: "bytes=0-0" } });
         if (!check.ok) return new Response("Not found", { status: 404 });
-        const path = decodeURIComponent(src.pathname.slice(PREFIX.length));
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        // A valid old signed URL is not enough: withdrawn/replaced photos
+        // must never receive a new transformed URL.
+        const { data: profiles, error: profileError } = await supabaseAdmin.from("profiles")
+          .select("photo_url").is("suspended_at", null).neq("photo_moderation_status", "rejected").not("photo_url", "is", null);
+        const current = profiles?.some((p) => {
+          try { return decodeURIComponent(new URL(p.photo_url ?? "").pathname) === `${PREFIX}${path}`; }
+          catch { return false; }
+        });
+        if (profileError || !current) return new Response("Photo unavailable", { status: 404, headers: { "Cache-Control": "no-store" } });
         const { data, error } = await supabaseAdmin.storage
           .from("padel-photos")
-          .createSignedUrl(path, 60 * 60 * 24 * 7, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
-        if (error || !data?.signedUrl) return Response.redirect(src.toString(), 302);
+          .createSignedUrl(path, 60 * 5, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
+        const destination = error || !data?.signedUrl ? src.toString() : data.signedUrl;
         return new Response(null, {
           status: 302,
-          headers: { Location: data.signedUrl, "Cache-Control": "public, max-age=86400" },
+          headers: { Location: destination, "Cache-Control": "private, no-store" },
         });
       },
     },

@@ -62,10 +62,10 @@ function fmtWhen(iso: string) {
 }
 
 function shareOrigin() {
-  if (typeof window === "undefined") return "https://padelmatchapp.lovable.app";
+  if (typeof window === "undefined") return "https://padelsetmatch.com";
   const { hostname, origin } = window.location;
   if (hostname === "localhost" || hostname.includes("preview--") || hostname.includes("id-preview--")) {
-    return "https://padelmatchapp.lovable.app";
+    return "https://padelsetmatch.com";
   }
   return origin;
 }

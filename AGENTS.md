@@ -19,3 +19,8 @@
 - Keep Matches page controls compact with scoped light-theme tokens and date-selection logic separate from the feed; this preserves existing match actions and avoids treating all dates as individually highlighted choices.
 - Keep club suggestion caching instance-scoped, bounded and browser-safe; reuse fetched clubs while waiting for authenticated search and reject stale responses so typing stays quick without sharing search history across users.
 - Use a shared Shadcn calendar and separate hour/minute selectors for match scheduling, with scoped light tokens; this avoids platform-dependent datetime fields while preserving local-time submission and edit values.
+- Keep raw compatibility answers owner-only; authorized server scoring may read a verified pair but returns only derived results, never answer rows.
+- Save quick answers atomically and store daily completion on the profile so dismissal follows the account across devices.
+- Restrict shared redirects at both insertion and resolution to exact app hosts and match paths; hosting-domain wildcards are not trusted destinations.
+- Withdraw photo access before cleanup and delete replaced/removed owned objects; the resize endpoint may re-sign only current eligible photos, never withdrawn ones.
+- Report account deletion as complete only after owned-file, profile and identity deletion all succeed; preserve a retry control without a profile.

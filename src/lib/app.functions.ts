@@ -89,7 +89,7 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
     const row = { ...data, user_id: context.userId, is_seed: false };
     const { data: existing } = await context.supabase
       .from("profiles" as never)
-      .select("id")
+      .select("id, photo_url")
       .eq("user_id", context.userId)
       .maybeSingle();
     if (existing) {
@@ -100,6 +100,11 @@ export const upsertMyProfile = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
+      const previous = existing as { photo_url?: string | null };
+      if (previous.photo_url && previous.photo_url !== data.photo_url) {
+        const { removeWithdrawnPhoto } = await import("./photo-cleanup.server");
+        await removeWithdrawnPhoto(previous.photo_url, context.userId);
+      }
       return updated as Profile;
     }
     const { data: inserted, error } = await context.supabase
@@ -204,6 +209,7 @@ export const updateMyPhoto = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ photo_url: z.string().min(1).max(2000) }).parse(d))
   .handler(async ({ data, context }) => {
     const moderation = await moderatePhotoWithAi(data.photo_url);
+    const { data: previous } = await context.supabase.from("profiles").select("photo_url").eq("user_id", context.userId).maybeSingle();
     if (moderation.verdict === "rejected") {
       throw new Error(
         `Photo rejected by automated review: ${moderation.reason}. Please choose a different photo. If you believe this is a mistake, contact support.`,
@@ -218,6 +224,10 @@ export const updateMyPhoto = createServerFn({ method: "POST" })
       } as never)
       .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
+    if (previous?.photo_url && previous.photo_url !== data.photo_url) {
+      const { removeWithdrawnPhoto } = await import("./photo-cleanup.server");
+      await removeWithdrawnPhoto(previous.photo_url, context.userId);
+    }
     return { ok: true };
   });
 

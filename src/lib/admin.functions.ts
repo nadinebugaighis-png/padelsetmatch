@@ -60,10 +60,13 @@ export const adminClearProfilePhoto = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ profileId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
+    const { data: photo } = await context.supabase.from("profiles").select("photo_url, user_id").eq("id", data.profileId).maybeSingle();
     const { error } = await (context.supabase as any).rpc("admin_clear_profile_photo", {
       _profile_id: data.profileId,
     });
     if (error) throw new Error(error.message);
+    const { removeWithdrawnPhoto } = await import("./photo-cleanup.server");
+    await removeWithdrawnPhoto(photo?.photo_url, photo?.user_id);
     return { ok: true };
   });
 

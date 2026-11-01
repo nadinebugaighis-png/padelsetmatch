@@ -1,6 +1,7 @@
 # iPhone sign-in and notifications
 
 ## Thorough app QA
+- [ ] Investigate installed-iPhone blank opening; add bounded startup recovery without clearing saved login, verify simulated delays and normal opening. Actual iPhone confirmation requires Nadine's device after publication.
 - [x] Review signup, profiles, player grid, compatibility, matches, notifications, privacy and unused controls; 30 tests pass, signed-in phone/desktop browsing and 40 images checked; findings and unverified flows recorded in the QA report dated 1 November 2026. Audit only; no app/data fixes performed.
 - [x] Review the completed deep security scan: guest removal, withdrawn photos and unsafe short links need fixes; the shared club directory remains intentionally visible.
 - [x] Fix raw-answer privacy, host-only guest cancellation, unsafe sharing, withdrawn-photo signing/storage access, truthful deletion and retry, adult age/range validation, form limits, chat draft retention/update refresh, nonblocking notification taps, Google failure handling, invite redirect preservation, account-wide daily answers, translations and missing page metadata. 35 automated checks passed; disposable players verified daily-save/read-back/cross-device dismissal, private-answer denial, guest token join/room/leave, unsafe link rejection, withdrawn-photo denial and permanent profile/identity deletion.

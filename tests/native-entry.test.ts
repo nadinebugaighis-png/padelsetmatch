@@ -2,6 +2,28 @@ import { describe, expect, it, vi } from "vitest";
 import { resumeNativeEntry } from "../src/lib/native-entry";
 
 describe("native app reopening", () => {
+  it("releases a stalled session read and ignores its late result", async () => {
+    vi.useFakeTimers();
+    try {
+      let finish: (value: { data: { session: unknown } }) => void = () => {};
+      const session = new Promise<{ data: { session: unknown } }>((resolve) => { finish = resolve; });
+      const enter = vi.fn();
+      const result = resumeNativeEntry(true, () => session, enter);
+      await vi.advanceTimersByTimeAsync(12_000);
+      expect(await result).toBe(false);
+      finish({ data: { session: {} } });
+      await Promise.resolve();
+      expect(enter).not.toHaveBeenCalled();
+    } finally { vi.useRealTimers(); }
+  });
+  it("releases stalled protected navigation after twelve seconds", async () => {
+    vi.useFakeTimers();
+    try {
+      const result = resumeNativeEntry(true, async () => ({ data: { session: {} } }), () => new Promise(() => {}));
+      await vi.advanceTimersByTimeAsync(12_000);
+      expect(await result).toBe(false);
+    } finally { vi.useRealTimers(); }
+  });
   it("enters the protected app when a saved session is restored", async () => {
     const enter = vi.fn();
     expect(await resumeNativeEntry(true, async () => ({ data: { session: { user: { id: "returning-player" } } } }), enter)).toBe(true);

@@ -1526,7 +1526,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const { data: otherRow } = await context.supabase
       .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
     const other = otherRow as Profile | null;
-    if (!other || (otherRow as { suspended_at?: string | null }).suspended_at) throw new Error("Profile not found");
+    if (!other || (other as Profile & { suspended_at?: string | null }).suspended_at) throw new Error("Profile not found");
     const { data: pairBlocks, error: blockError } = await context.supabase.from("blocks")
       .select("id").or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${other.id}),and(blocker_profile_id.eq.${other.id},blocked_profile_id.eq.${me.id})`).limit(1);
     if (blockError || pairBlocks?.length) throw new Error("Profile unavailable");

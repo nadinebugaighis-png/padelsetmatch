@@ -6,9 +6,10 @@ import { MapPin, Send, LogOut, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { PADEL_LEVELS } from "@/lib/types";
-import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch, guestLeaveByPhone } from "@/lib/guest.functions";
+import { guestJoinMatch, guestGetRoom, guestSendMessage, guestLeaveMatch } from "@/lib/guest.functions";
 import { getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
 import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 
 export const Route = createFileRoute("/g/$eventId")({
@@ -59,10 +60,6 @@ function GuestMatchRoom() {
   const getRoom = useServerFn(guestGetRoom);
   const send = useServerFn(guestSendMessage);
   const leave = useServerFn(guestLeaveMatch);
-  const cancelSpot = useServerFn(guestLeaveByPhone);
-
-  const [cancelPhone, setCancelPhone] = useState("");
-  const [cancelBusy, setCancelBusy] = useState(false);
 
 
   const [token, setToken] = useState<string | null>(null);
@@ -89,7 +86,7 @@ function GuestMatchRoom() {
 
   const roomQ = useQuery({
     queryKey: ["guest-room", eventId, token],
-    queryFn: () => getRoom({ data: { eventId, token: token! } }),
+    queryFn: () => { if (!token) throw new Error("Missing guest session"); return getRoom({ data: { eventId, token } }); },
     enabled: !!token,
     refetchInterval: 5000,
   });
@@ -166,7 +163,7 @@ function GuestMatchRoom() {
           )
         );
       } else if (m === "ALREADY_JOINED") {
-        toast.error(tr("This phone already has a spot. Use your original link — or cancel your spot below and join again.", "Este teléfono ya tiene una plaza. Usa tu enlace original — o cancela tu plaza abajo y únete de nuevo.", "Ce téléphone a déjà une place. Utilise ton lien d'origine — ou annule ta place ci-dessous et rejoins à nouveau."));
+        toast.error(tr("This phone already has a spot. Use your original guest link, or contact the host if you lost it.", "Este teléfono ya tiene una plaza. Usa tu enlace de invitado original o contacta con el anfitrión si lo has perdido.", "Ce téléphone a déjà une place. Utilise ton lien invité d’origine ou contacte l’hôte si tu l’as perdu."));
       } else {
         toast.error(m || tr("Could not join", "No pudimos unirte", "Impossible de rejoindre"));
       }
@@ -178,13 +175,12 @@ function GuestMatchRoom() {
   const sendMsg = async () => {
     const body = msg.trim();
     if (!body || !token) return;
-    setMsg("");
     try {
       await send({ data: { eventId, token, body } });
+      setMsg((current) => draftAfterSuccessfulSend(current, body));
       roomQ.refetch();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tr("Could not send", "No se pudo enviar", "Envoi impossible"));
-      setMsg(body);
     }
   };
 
@@ -193,7 +189,7 @@ function GuestMatchRoom() {
     if (!confirm(tr("Leave this match?", "¿Salir del partido?", "Quitter ce match ?"))) return;
     try {
       await leave({ data: { eventId, token } });
-    } catch { /* ignore */ }
+    } catch { toast.error(tr("Could not leave. Please retry.", "No se pudo salir. Reintenta.", "Impossible de quitter. Réessaie.")); return; }
     clearToken(eventId);
     stripTokenFromUrl();
     setToken(null);
@@ -285,52 +281,7 @@ function GuestMatchRoom() {
             </div>
           </form>
 
-          {/* Lost your link? Cancel your spot with your phone number, then join again fresh. */}
-          <div className="mt-8 pt-6 border-t border-[var(--ink)]/10">
-            <div className="text-center text-[11px] uppercase tracking-widest text-[var(--ink)]/60">
-              {tr("Already joined?", "¿Ya te uniste?", "Déjà inscrit·e ?")}
-            </div>
-            <p className="mt-1 text-center text-xs text-[var(--ink)]/50">
-              {tr(
-                "Open the chat with the link you received when you joined. Lost it? Cancel your spot with your phone number and join again.",
-                "Abre el chat con el enlace que recibiste al unirte. ¿Lo perdiste? Cancela tu plaza con tu teléfono y únete de nuevo.",
-                "Ouvre le chat avec le lien reçu en t'inscrivant. Tu l'as perdu ? Annule ta place avec ton téléphone et rejoins à nouveau."
-              )}
-            </p>
-            <div className="mt-3 flex items-center gap-2 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full pl-4 pr-1 py-1">
-              <input
-                value={cancelPhone}
-                onChange={(e) => setCancelPhone(e.target.value)}
-                inputMode="tel"
-                maxLength={32}
-                placeholder={tr("Phone you used", "Tu teléfono", "Ton téléphone")}
-                className="flex-1 min-w-0 bg-transparent text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none py-2"
-              />
-              <button
-                type="button"
-                disabled={cancelBusy || cancelPhone.trim().length < 4}
-                onClick={async () => {
-                  setCancelBusy(true);
-                  try {
-                    const res = await cancelSpot({ data: { eventId, phone: cancelPhone.trim() } });
-                    if (res.ok) {
-                      setCancelPhone("");
-                      toast.success(tr("Spot cancelled — you can join again below.", "Plaza cancelada — puedes unirte de nuevo abajo.", "Place annulée — tu peux rejoindre à nouveau ci-dessous."));
-                    } else {
-                      toast.error(tr("We couldn't find a spot with that phone number.", "No encontramos una plaza con ese teléfono.", "Nous n'avons pas trouvé de place avec ce numéro."));
-                    }
-                  } catch (err) {
-                    toast.error(err instanceof Error ? err.message : tr("Could not cancel", "No se pudo cancelar", "Impossible d'annuler"));
-                  } finally {
-                    setCancelBusy(false);
-                  }
-                }}
-                className="shrink-0 h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-widest font-semibold disabled:opacity-40"
-              >
-                {cancelBusy ? "…" : tr("Cancel my spot", "Cancelar mi plaza", "Annuler ma place")}
-              </button>
-            </div>
-          </div>
+          <p className="mt-6 text-center text-xs text-[var(--ink)]/60">{tr("Already joined? Use your original guest link. If you lost it, contact the host.", "¿Ya te uniste? Usa tu enlace original de invitado. Si lo has perdido, contacta con el anfitrión.", "Déjà inscrit ? Utilise ton lien invité d’origine. Si tu l’as perdu, contacte l’hôte.")}</p>
 
         </div>
       </main>

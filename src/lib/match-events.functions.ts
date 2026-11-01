@@ -1,3 +1,4 @@
+import { isAllowedShortLinkTarget } from "./qa-safety";
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
@@ -1108,28 +1109,6 @@ function makeShortCode(length = 8): string {
   return Array.from(bytes)
     .map((b) => SHORT_ALPHABET[b % SHORT_ALPHABET.length])
     .join("");
-}
-
-// Hosts of allow-listed domains that short links may point at.
-const SHORT_LINK_ALLOWED_HOSTS = [
-  "padelsetmatch.com",
-  "padelmatchdoce.com",
-  "lovable.app",
-  "lovableproject.com",
-  "localhost",
-];
-
-function isAllowedShortLinkTarget(raw: string): boolean {
-  let u: URL;
-  try {
-    u = new URL(raw);
-  } catch {
-    return false;
-  }
-  const host = u.hostname.toLowerCase();
-  const isLocal = host === "localhost" || host === "127.0.0.1";
-  if (u.protocol !== "https:" && !(isLocal && u.protocol === "http:")) return false;
-  return SHORT_LINK_ALLOWED_HOSTS.some((d) => host === d || host.endsWith(`.${d}`));
 }
 
 // Create a short redirect link for our own URLs (used for match invites / shares)

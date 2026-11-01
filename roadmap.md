@@ -1,5 +1,8 @@
 # iPhone sign-in and notifications
 
+## Thorough app QA
+- [ ] Review signup, profiles, player grid, compatibility, matches, notifications, privacy and unused controls; run existing tests and signed-in browser checks, then report verified findings and real-device limitations.
+
 ## Match date and time clarity
 - [x] Replace the combined date/time field with a light calendar and readable hour/minute choices; signed-in phone/desktop checks selected 31 October at 18:30 with no overflow or page errors, and build passes. Publication and real-device check remain with Nadine.
 

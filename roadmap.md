@@ -1,5 +1,9 @@
 # iPhone sign-in and notifications
 
+## Thorough app QA
+- [x] Review signup, profiles, player grid, compatibility, matches, notifications, privacy and unused controls; 30 tests pass, signed-in phone/desktop browsing and 40 images checked; findings and unverified flows recorded in the QA report dated 1 November 2026. Audit only; no app/data fixes performed.
+- [ ] Review the asynchronous deep security scan when its completion arrives (waiting for scan service).
+
 ## Match date and time clarity
 - [x] Replace the combined date/time field with a light calendar and readable hour/minute choices; signed-in phone/desktop checks selected 31 October at 18:30 with no overflow or page errors, and build passes. Publication and real-device check remain with Nadine.
 

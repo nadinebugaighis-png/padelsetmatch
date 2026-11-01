@@ -24,6 +24,11 @@ import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/li
 export const Route = createFileRoute("/app/grid")({
   head: () => ({
     meta: [
+      { name: "description", content: "Find padel players and discover your on-court compatibility." },
+      { property: "og:title", content: "Player directory \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Find padel players and discover your on-court compatibility." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Home · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
@@ -75,7 +80,6 @@ function Discover() {
   const hide = useServerFn(hideProfile);
   const report = useServerFn(reportProfile);
   const reportPhotoFn = useServerFn(reportPhoto);
-  const [filter, setFilter] = useState<"all" | "padel" | "friend" | "relationship">("all");
   // World mode is OFF by default; each user's choice is saved to their profile
   // (and cached locally) so it stays exactly as they left it.
   const [world, setWorld] = useState<boolean>(false);
@@ -339,12 +343,8 @@ function Discover() {
     reportM.mutate({ id, reason: reason.trim() });
   }
   function handleHide(id: string, name: string) {
-    const scope: "padel" | "friend" | "relationship" | "all" = filter === "all" ? "all" : filter;
-    const scopeLabel =
-      scope === "all" ? "everywhere" :
-      scope === "padel" ? "from Padel partners" :
-      scope === "friend" ? "from Friends" : "from Relationships";
-    if (!window.confirm(`Hide ${name} ${scopeLabel}? You can unhide them anytime from Profile → Hidden & blocked.`)) return;
+    const scope = "all";
+    if (!window.confirm(tr(`Hide ${name}? You can restore them from Hidden & blocked.`, `¿Ocultar a ${name}? Puedes recuperarlo desde Ocultos y bloqueados.`, `Masquer ${name} ? Tu peux le rétablir dans Masqué et bloqué.`))) return;
     hideM.mutate({ id, category: scope });
   }
   function handleBlock(id: string, name: string) {
@@ -355,15 +355,6 @@ function Discover() {
   if (!feedQ.data?.me) return <GridSkeleton />;
 
   const all = feedQ.data.candidates;
-  const activeCat = filter === "all" ? null : filter;
-  const deriveIntents = (c: { intents?: string[] | null; looking_for?: string | null }): string[] => {
-    if (c.intents && c.intents.length > 0) return c.intents;
-    if (c.looking_for === "partner") return ["relationship", "padel"];
-    if (c.looking_for === "friend") return ["friend", "padel"];
-    if (c.looking_for === "both") return ["relationship", "friend", "padel"];
-    return ["padel"];
-  };
-
   // Collect the zones/areas actually present in the current feed (smart options).
   const zonesInFeed = (() => {
     const set = new Set<string>();
@@ -386,28 +377,7 @@ function Discover() {
     return (c.locations ?? []).some((loc: string) => loc.toLowerCase().includes(target));
   };
 
-  const genderMatches = (c: typeof all[number], g: string) => {
-    if (g === "all") return true;
-    if (g === "mixed") {
-      // "mixed" = show both men and women (exclude non-binary/other filters aside)
-      return c.gender === "woman" || c.gender === "man";
-    }
-    return c.gender === g;
-  };
-
-  // Intent-tab rule: viewer must have the intent AND the candidate must have it.
-  // If the viewer hasn't opted into that intent, the tab is empty (no accidental
-  // romantic exposure). "all" shows everyone regardless.
-  const myIntentsList = deriveIntents((feedQ.data.me ?? {}) as { intents?: string[] | null; looking_for?: string | null });
-  const viewerHasIntent = filter === "all" ? true : myIntentsList.includes(filter);
-  const list = (filter === "all"
-    ? all
-    : (viewerHasIntent
-        ? all.filter((c) => deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter))
-        : []))
-    .filter((c) => {
-      const hc = (c as unknown as { hidden_categories?: string[] }).hidden_categories ?? [];
-      if (activeCat && hc.includes(activeCat)) return false;
+  const list = all.filter((c) => {
       if (levelFilter !== "all" && c.level !== levelFilter) return false;
       if (zoneFilter !== "all" && zoneFilter.trim() && !zoneMatches(c, zoneFilter.trim())) return false;
       if (searchQuery.trim()) {
@@ -591,7 +561,7 @@ function Discover() {
 
         <PhotoReminderBanner me={feedQ.data.me as { photo_url: string | null; created_at?: string | null }} />
 
-        <DailyQuestionCard answered={qaQ.data?.map((a) => a.question)} />
+        <DailyQuestionCard profileId={feedQ.data.me.id} answered={qaQ.data?.map((a) => a.question)} />
 
         {list.length === 0 ? (
           (() => {
@@ -599,14 +569,6 @@ function Discover() {
             const totalInFeed = all.length;
             const hasSearch = !!searchQuery.trim();
             const hasSideFilters = activeFilterCount > 0;
-            const intentBlocked = filter !== "all" && !viewerHasIntent;
-            const intentEmpty =
-              filter !== "all" &&
-              viewerHasIntent &&
-              all.filter((c) =>
-                deriveIntents(c as unknown as { intents?: string[]; looking_for?: string }).includes(filter),
-              ).length === 0;
-
             let title = tr("No one matches yet", "Aún no hay coincidencias", "Personne ne correspond pour l'instant");
             let hint = tr(
               "Try widening your filters or invite a friend to join.",
@@ -623,40 +585,6 @@ function Discover() {
                 onClick: () => setSearchQuery(""),
                 primary: true,
               });
-            } else if (intentBlocked) {
-              title = tr("Opt in to see this circle", "Activa este círculo para verlo", "Active ce cercle pour le voir");
-              hint = tr(
-                "This tab only shows people once you also opt into it in your profile — it's how we keep things intentional and private.",
-                "Esta pestaña sólo muestra personas si tú también lo activas en tu perfil — así mantenemos todo intencional y privado.",
-                "Cet onglet n'affiche des personnes que si tu l'actives aussi dans ton profil — c'est notre façon de garder tout intentionnel et privé.",
-              );
-              actions.push({
-                label: tr("Edit your profile", "Editar tu perfil", "Modifier ton profil"),
-                onClick: () => navigate({ to: "/app/profile" }),
-                primary: true,
-              });
-              actions.push({
-                label: tr("Show everyone", "Ver a todos", "Voir tout le monde"),
-                onClick: () => setFilter("all"),
-              });
-            } else if (intentEmpty) {
-              title = tr("No one in this circle yet", "Aún no hay nadie en este círculo", "Personne dans ce cercle pour l'instant");
-              hint = tr(
-                "Nobody nearby has opted into this yet. Widen your reach or check back soon.",
-                "Nadie cerca lo ha activado todavía. Amplía tu alcance o vuelve pronto.",
-                "Personne près de toi ne l'a activé pour l'instant. Élargis ta portée ou reviens bientôt.",
-              );
-              actions.push({
-                label: tr("Show everyone", "Ver a todos", "Voir tout le monde"),
-                onClick: () => setFilter("all"),
-                primary: true,
-              });
-              if (!world) {
-                actions.push({
-                  label: tr("Turn on World mode", "Activar modo Mundo", "Activer le mode Monde"),
-                  onClick: () => { setWorld(true); setWorldM.mutate(true); },
-                });
-              }
             } else if (hasSideFilters) {
               title = tr("No matches with these filters", "Sin resultados con estos filtros", "Aucun résultat avec ces filtres");
               hint = tr(

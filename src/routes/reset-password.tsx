@@ -7,7 +7,12 @@ import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Reset password — PadelSetMatch" }] }),
+  head: () => ({ meta: [
+      { name: "description", content: "Set a new password for your PadelSetMatch account." },
+      { property: "og:title", content: "Reset your password \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Set a new password for your PadelSetMatch account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },{ title: "Reset password — PadelSetMatch" }] }),
   component: ResetPasswordPage,
 });
 

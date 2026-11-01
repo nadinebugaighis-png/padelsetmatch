@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Terms of Service · PadelSetMatch" },
       { name: "description", content: "Terms of Service for PadelSetMatch — the padel player directory." },
       { property: "og:title", content: "Terms of Service · PadelSetMatch" },

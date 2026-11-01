@@ -15,8 +15,10 @@ import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
 import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app")({
+  head: () => ({ meta: [{ title: "Padel community hub \u00b7 PadelSetMatch" }, { name: "description", content: "Find players, matches and community conversations." }, { property: "og:title", content: "Padel community hub \u00b7 PadelSetMatch" }, { property: "og:description", content: "Find players, matches and community conversations." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   ssr: false,
   beforeLoad: async () => {
     // Read the stored session first — it lives on the device and works offline.
@@ -150,7 +152,7 @@ function AuthShell() {
       return null;
     }
   };
-  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => safe(() => getProfile()), retry: false });
+  const profileQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile(), retry: 2 });
   const matchesQ = useQuery({ queryKey: ["my-matches"], queryFn: () => safe(() => getMatches()), enabled: !!profileQ.data, retry: false });
   const adminQ = useQuery({
     queryKey: ["is-admin"],
@@ -359,7 +361,11 @@ function AuthShell() {
         </div>
       )}
 
-      <Outlet />
+      {profileQ.isError ? <div className="px-5 py-8 text-center space-y-3">
+        <p>{tr("Could not load your profile. Please retry.", "No se pudo cargar tu perfil. Reintenta.", "Impossible de charger ton profil. Réessaie.")}</p>
+        <Button onClick={() => void profileQ.refetch()}>{tr("Try again", "Reintentar", "Réessayer")}</Button>
+        <Link to="/support" className="block underline">{tr("Support", "Ayuda", "Assistance")}</Link>
+      </div> : <Outlet />}
 
       {hasProfile && !onOnboarding && (
         <nav

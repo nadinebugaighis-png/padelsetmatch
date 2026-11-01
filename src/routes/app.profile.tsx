@@ -67,6 +67,11 @@ function isTransientUploadError(message: string) {
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
     meta: [
+      { name: "description", content: "Update your padel details, availability and private answers." },
+      { property: "og:title", content: "Your player profile \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Update your padel details, availability and private answers." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Your profile · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
@@ -155,6 +160,7 @@ function ProfilePage() {
       <main className="programme-page px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center min-h-screen">
         <p className="text-[var(--ink)]/70">{t("prof.noProfile")}</p>
         <Link to="/app/onboarding" className="mt-4 inline-block underline text-[var(--plum)]">{t("prof.createLink")}</Link>
+        <Button variant="outline" className="mt-5" onClick={onDelete}>{t("prof.delete")}</Button>
       </main>
     );
   }

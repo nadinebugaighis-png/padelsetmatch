@@ -77,23 +77,21 @@ function AuthPage() {
 
   const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
-    if (redirect) return { to: redirect };
+    if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
     return { to: "/app" };
   };
   const signupTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
-    if (redirect) return { to: redirect };
+    if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
     return { to: "/app/onboarding" };
   };
   const oauthRedirectUri = () => {
     const base = window.location.origin;
-    if (join) {
-      const q = new URLSearchParams({ join });
-      if (i) q.set("i", i);
-      return `${base}/app/join-setup?${q.toString()}`;
-    }
-    if (redirect) return `${base}${redirect}`;
-    return `${base}/app`;
+    const q = new URLSearchParams({ mode: "signin" });
+    if (join) q.set("join", join);
+    if (i) q.set("i", i);
+    if (redirect?.startsWith("/") && !redirect.startsWith("//")) q.set("redirect", redirect);
+    return `${base}/auth?${q.toString()}`;
   };
 
   useEffect(() => {
@@ -180,7 +178,8 @@ function AuthPage() {
           const target = signupTarget();
           window.setTimeout(() => {
             if (window.location.pathname.startsWith("/auth")) {
-              window.location.assign(target.to);
+              const q = new URLSearchParams(target.search);
+              window.location.assign(`${target.to}${q.size ? `?${q}` : ""}`);
             }
           }, 2500);
 
@@ -340,14 +339,16 @@ function AuthPage() {
   const google = async () => {
     if (!requireAgreement()) return;
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
-    if (result.error) {
-      toast.error(result.error.message);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
+      if (result.error) throw new Error(result.error.message);
+      if (result.redirected) return;
+      await navigate(afterAuthTarget() as never);
+    } catch {
+      toast.error(tr("Google sign-in could not finish. Please try again.", "No se pudo completar el acceso con Google. Reintenta.", "La connexion Google n’a pas abouti. Réessaie."));
+    } finally {
       setLoading(false);
-      return;
     }
-    if (result.redirected) return;
-    navigate(afterAuthTarget() as never);
   };
 
   // Native iOS/iPadOS: Sign in with Apple via the system sheet — never leaves

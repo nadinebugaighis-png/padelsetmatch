@@ -22,7 +22,12 @@ export const Route = createFileRoute("/preview/player-card")({
   component: PlayerCardPreview,
   head: () => ({
     meta: [
-      { title: "Player card preview" },
+      { name: "description", content: "Preview the original PadelSetMatch sample player card." },
+      { property: "og:title", content: "Original player card preview \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Preview the original PadelSetMatch sample player card." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Original player card preview \u00b7 PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],
   }),

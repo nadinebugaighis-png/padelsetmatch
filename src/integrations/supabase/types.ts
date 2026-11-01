@@ -1420,6 +1420,7 @@ export type Database = {
           connect_seen_at: string
           court_side: string | null
           created_at: string
+          daily_question_answered_on: string | null
           favorite_clubs: string[]
           first_name: string
           founding_number: number | null
@@ -1475,6 +1476,7 @@ export type Database = {
           connect_seen_at?: string
           court_side?: string | null
           created_at?: string
+          daily_question_answered_on?: string | null
           favorite_clubs?: string[]
           first_name: string
           founding_number?: number | null
@@ -1530,6 +1532,7 @@ export type Database = {
           connect_seen_at?: string
           court_side?: string | null
           created_at?: string
+          daily_question_answered_on?: string | null
           favorite_clubs?: string[]
           first_name?: string
           founding_number?: number | null
@@ -1890,6 +1893,7 @@ export type Database = {
         Args: { _profile_id: string; _suspend: boolean }
         Returns: Json
       }
+      can_read_current_photo: { Args: { _path: string }; Returns: boolean }
       check_app_health_alerts: { Args: never; Returns: Json }
       claim_pending_push_delivery: { Args: { _limit?: number }; Returns: Json }
       claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
@@ -1977,6 +1981,7 @@ export type Database = {
         Returns: undefined
       }
       is_current_user_admin: { Args: never; Returns: boolean }
+      is_safe_match_link: { Args: { _url: string }; Returns: boolean }
       list_my_favorite_ids: { Args: never; Returns: string[] }
       list_public_upcoming_matches: { Args: { _limit?: number }; Returns: Json }
       my_profile_id: { Args: never; Returns: string }
@@ -2014,6 +2019,15 @@ export type Database = {
       respond_to_intro: {
         Args: { _accept: boolean; _match_id: string }
         Returns: undefined
+      }
+      save_my_qa_answer: {
+        Args: {
+          _answer: string
+          _category: string
+          _daily_date?: string
+          _question: string
+        }
+        Returns: string
       }
       send_intro_message: {
         Args: { _body: string; _target_profile_id: string }

@@ -6,6 +6,7 @@ import { ArrowLeft, EyeOff, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/hidden")({
+  head: () => ({ meta: [{ title: "Hidden and blocked players \u00b7 PadelSetMatch" }, { name: "description", content: "Manage hidden and blocked players on PadelSetMatch." }, { property: "og:title", content: "Hidden and blocked players \u00b7 PadelSetMatch" }, { property: "og:description", content: "Manage hidden and blocked players on PadelSetMatch." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   component: HiddenBlockedPage,
 });
 

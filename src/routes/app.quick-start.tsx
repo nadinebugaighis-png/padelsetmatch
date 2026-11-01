@@ -13,6 +13,11 @@ import { BrandMark } from "@/components/BrandMark";
 export const Route = createFileRoute("/app/quick-start")({
   head: () => ({
     meta: [
+      { name: "description", content: "Complete the essentials of your PadelSetMatch profile." },
+      { property: "og:title", content: "Quick player setup \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Complete the essentials of your PadelSetMatch profile." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Quick start · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],

@@ -18,6 +18,7 @@ import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app")({
+  head: () => ({ meta: [{ title: "Padel community hub \u00b7 PadelSetMatch" }, { name: "description", content: "Find players, matches and community conversations." }, { property: "og:title", content: "Padel community hub \u00b7 PadelSetMatch" }, { property: "og:description", content: "Find players, matches and community conversations." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   ssr: false,
   beforeLoad: async () => {
     // Read the stored session first — it lives on the device and works offline.

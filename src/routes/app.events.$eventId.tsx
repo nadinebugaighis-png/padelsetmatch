@@ -32,6 +32,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
+  head: () => ({ meta: [{ title: "Match hub \u00b7 PadelSetMatch" }, { name: "description", content: "View your padel match, player lineup and match conversation." }, { property: "og:title", content: "Match hub \u00b7 PadelSetMatch" }, { property: "og:description", content: "View your padel match, player lineup and match conversation." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   validateSearch: (s: Record<string, unknown>): { i?: string } => ({
     i: typeof s.i === "string" ? s.i : undefined,
   }),

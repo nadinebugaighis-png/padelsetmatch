@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 export const Route = createFileRoute("/app/admin")({
+  head: () => ({ meta: [{ title: "Community administration \u00b7 PadelSetMatch" }, { name: "description", content: "Manage PadelSetMatch members, reports and community safety." }, { property: "og:title", content: "Community administration \u00b7 PadelSetMatch" }, { property: "og:description", content: "Manage PadelSetMatch members, reports and community safety." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   beforeLoad: async () => {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });

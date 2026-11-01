@@ -7,6 +7,11 @@ import { getMyProfile } from "@/lib/app.functions";
 export const Route = createFileRoute("/app/")({
   head: () => ({
     meta: [
+      { name: "description", content: "Open your local padel player community." },
+      { property: "og:title", content: "Your padel community \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Open your local padel player community." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],

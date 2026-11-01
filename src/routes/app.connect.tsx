@@ -25,7 +25,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/app/connect")({
-  head: () => ({ meta: [{ title: "Connect · PadelSetMatch" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+      { name: "description", content: "Padel news, local players and community conversations." },
+      { property: "og:title", content: "Connect \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Padel news, local players and community conversations." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },{ title: "Connect · PadelSetMatch" }, { name: "robots", content: "noindex" }] }),
   component: ConnectPage,
 });
 

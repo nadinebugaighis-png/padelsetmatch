@@ -30,6 +30,11 @@ import { parseAdultAge } from "@/lib/qa-safety";
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
     meta: [
+      { name: "description", content: "Set your padel level, locations and player preferences." },
+      { property: "og:title", content: "Create your player profile \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Set your padel level, locations and player preferences." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Create your profile · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],

@@ -9,7 +9,12 @@ import { claimMatchInviteByToken, joinMatchEvent, saveLiteProfile } from "@/lib/
 import { useTr } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/join-setup")({
-  head: () => ({ meta: [{ title: "Quick setup — PadelSetMatch" }] }),
+  head: () => ({ meta: [
+      { name: "description", content: "Complete your player details to join a padel invitation." },
+      { property: "og:title", content: "Invitation setup \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Complete your player details to join a padel invitation." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },{ title: "Quick setup — PadelSetMatch" }] }),
   validateSearch: (s: Record<string, unknown>) => ({
     join: typeof s.join === "string" ? s.join : undefined,
     i: typeof s.i === "string" ? s.i : undefined,

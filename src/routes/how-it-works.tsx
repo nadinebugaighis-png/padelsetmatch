@@ -6,6 +6,8 @@ import { BrandMark } from "@/components/BrandMark";
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "How it works — PadelSetMatch" },
       { name: "description", content: "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time." },
       { property: "og:title", content: "How PadelSetMatch works" },

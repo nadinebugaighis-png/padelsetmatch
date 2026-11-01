@@ -24,6 +24,11 @@ import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/li
 export const Route = createFileRoute("/app/grid")({
   head: () => ({
     meta: [
+      { name: "description", content: "Find padel players and discover your on-court compatibility." },
+      { property: "og:title", content: "Player directory \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "Find padel players and discover your on-court compatibility." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Home · PadelSetMatch" },
       { name: "robots", content: "noindex" },
     ],

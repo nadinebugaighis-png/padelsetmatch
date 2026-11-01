@@ -14,6 +14,7 @@ import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
 
 
 export const Route = createFileRoute("/app/matches/$matchId")({
+  head: () => ({ meta: [{ title: "Player conversation \u00b7 PadelSetMatch" }, { name: "description", content: "Coordinate your next padel game in your private player conversation." }, { property: "og:title", content: "Player conversation \u00b7 PadelSetMatch" }, { property: "og:description", content: "Coordinate your next padel game in your private player conversation." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   component: ChatRoom,
 });
 

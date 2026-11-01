@@ -9,6 +9,7 @@ import { useI18n, useTr } from "@/lib/i18n";
 
 
 export const Route = createFileRoute("/app/matches")({
+  head: () => ({ meta: [{ title: "Your conversations \u00b7 PadelSetMatch" }, { name: "description", content: "See your padel connections and continue your conversations." }, { property: "og:title", content: "Your conversations \u00b7 PadelSetMatch" }, { property: "og:description", content: "See your padel connections and continue your conversations." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   component: Matches,
 });
 

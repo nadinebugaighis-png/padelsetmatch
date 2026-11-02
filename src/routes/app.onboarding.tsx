@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { AGE_BRACKETS, bracketForMidpoint, bracketMidpoint, type AgeBracket } from "@/lib/age-bracket";
+import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, type AgeBracket } from "@/lib/age-bracket";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   PADEL_STYLES, PERSONAL_STRENGTHS,
@@ -582,7 +582,7 @@ function Onboarding() {
                 {AGE_BRACKETS.map((b, idx) => {
                   const mid = bracketMidpoint(b);
                   const selected = bracket !== null && bracket[0] === b[0] && bracket[1] === b[1];
-                  const labelTxt = bracketLabelFor(b);
+                  const labelTxt = bracketLabel(b);
                   return (
                     <button
                       key={labelTxt}

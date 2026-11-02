@@ -5,6 +5,7 @@ import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 import { completeAccountDeletion, isOrderedAgeRange } from "./qa-safety";
+import { ageMatchesPreference, bracketForMidpoint } from "./age-bracket";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 

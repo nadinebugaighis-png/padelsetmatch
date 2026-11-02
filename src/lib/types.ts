@@ -213,6 +213,8 @@ export type Profile = {
   partner_interested_in: string[];
   age_min: number;
   age_max: number;
+  age_bracket_lo?: number | null;
+  age_bracket_hi?: number | null;
   nationality: string;
   zone: string;
   locations: string[];

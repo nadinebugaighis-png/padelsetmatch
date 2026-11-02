@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
+import { AGE_BRACKETS, bracketForMidpoint, bracketMidpoint, type AgeBracket } from "@/lib/age-bracket";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   PADEL_STYLES, PERSONAL_STRENGTHS,
@@ -84,6 +85,7 @@ function Onboarding() {
   const [step, setStep] = useState(search.step ?? 0);
   const [first_name, setFirstName] = useState("");
   const [age, setAge] = useState<number | null>(null);
+  const [bracket, setBracket] = useState<AgeBracket | null>(null);
   const [gender, setGender] = useState<Gender | "">("");
   const [genderCustom, setGenderCustom] = useState("");
   const [interested_in, setInterested] = useState<Gender[]>([]);
@@ -145,6 +147,7 @@ function Onboarding() {
     if (p) {
       setFirstName(p.first_name ?? "");
       setAge(p.age ?? null);
+      setBracket(p.age_bracket_lo != null && p.age_bracket_hi != null ? [p.age_bracket_lo, p.age_bracket_hi] as AgeBracket : bracketForMidpoint(p.age));
       setGender((p.gender ?? "") as Gender | "");
       setGenderCustom(p.gender_custom ?? "");
       setInterested(Array.isArray(p.interested_in) ? p.interested_in : []);

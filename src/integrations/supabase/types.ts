@@ -1412,6 +1412,8 @@ export type Database = {
       profiles: {
         Row: {
           age: number | null
+          age_bracket_hi: number | null
+          age_bracket_lo: number | null
           age_max: number
           age_min: number
           availability: string[] | null
@@ -1468,6 +1470,8 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          age_bracket_hi?: number | null
+          age_bracket_lo?: number | null
           age_max?: number
           age_min?: number
           availability?: string[] | null
@@ -1524,6 +1528,8 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          age_bracket_hi?: number | null
+          age_bracket_lo?: number | null
           age_max?: number
           age_min?: number
           availability?: string[] | null

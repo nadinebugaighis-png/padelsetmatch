@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
+import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, type AgeBracket } from "@/lib/age-bracket";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   PADEL_STYLES, PERSONAL_STRENGTHS,
@@ -84,6 +85,7 @@ function Onboarding() {
   const [step, setStep] = useState(search.step ?? 0);
   const [first_name, setFirstName] = useState("");
   const [age, setAge] = useState<number | null>(null);
+  const [bracket, setBracket] = useState<AgeBracket | null>(null);
   const [gender, setGender] = useState<Gender | "">("");
   const [genderCustom, setGenderCustom] = useState("");
   const [interested_in, setInterested] = useState<Gender[]>([]);
@@ -145,6 +147,7 @@ function Onboarding() {
     if (p) {
       setFirstName(p.first_name ?? "");
       setAge(p.age ?? null);
+      setBracket(p.age_bracket_lo != null && p.age_bracket_hi != null ? [p.age_bracket_lo, p.age_bracket_hi] as AgeBracket : bracketForMidpoint(p.age));
       setGender((p.gender ?? "") as Gender | "");
       setGenderCustom(p.gender_custom ?? "");
       setInterested(Array.isArray(p.interested_in) ? p.interested_in : []);
@@ -371,6 +374,8 @@ function Onboarding() {
       data: {
         first_name, age, gender, interested_in: legacy,
         friend_interested_in: friendAud, partner_interested_in: partnerAud,
+        age_bracket_lo: (bracket ?? bracketForMidpoint(age))?.[0] ?? null,
+        age_bracket_hi: (bracket ?? bracketForMidpoint(age))?.[1] ?? null,
         age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
         zone: first ? first.city : "",
         locations: encodedLocations, languages,
@@ -574,14 +579,14 @@ function Onboarding() {
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Age bracket", "Rango de edad", "Tranche d'âge")}</label>
               <p className="text-[11px] text-[var(--ink)]/55 mt-1">{tr("Never shown on your profile — used only to find good matches.", "Nunca se muestra en tu perfil — solo se usa para encontrar buenos matches.", "Jamais affiché sur ton profil — sert uniquement à trouver de bons matchs.")}</p>
               <div className="mt-3 flex w-full overflow-hidden rounded-full border border-[var(--ink)]/20 bg-[var(--paper,#fdfaf3)] shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
-                {([[18,24],[25,34],[35,45],[46,55],[56,99]] as const).map(([lo, hi], idx) => {
-                  const mid = Math.round((lo + hi) / 2);
-                  const selected = age === mid;
-                  const labelTxt = hi >= 99 ? "56+" : `${lo}–${hi}`;
+                {AGE_BRACKETS.map((b, idx) => {
+                  const mid = bracketMidpoint(b);
+                  const selected = bracket !== null && bracket[0] === b[0] && bracket[1] === b[1];
+                  const labelTxt = bracketLabel(b);
                   return (
                     <button
                       key={labelTxt}
-                      onClick={() => setAge(mid)}
+                      onClick={() => { setBracket(b); setAge(mid); }}
                       className={`flex-1 py-2.5 text-[13px] font-medium tracking-tight transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/15" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper,#fdfaf3)]" : "text-[var(--ink)]/75 hover:bg-[var(--ink)]/5"}`}
                     >
                       {labelTxt}

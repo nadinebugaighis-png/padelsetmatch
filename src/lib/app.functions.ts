@@ -5,6 +5,7 @@ import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 import { completeAccountDeletion, isOrderedAgeRange } from "./qa-safety";
+import { ageMatchesPreference, bracketForMidpoint } from "./age-bracket";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
@@ -17,6 +18,8 @@ const ProfileInput = z.object({
   partner_interested_in: z.array(z.string()).default([]),
   age_min: z.number().int().min(18).max(99),
   age_max: z.number().int().min(18).max(99),
+  age_bracket_lo: z.number().int().min(18).max(99).nullable().optional(),
+  age_bracket_hi: z.number().int().min(18).max(99).nullable().optional(),
   nationality: z.string().max(40).default(""),
   zone: z.string().min(1).max(60),
   locations: z.array(z.string().min(1).max(240)).max(15).default([]),
@@ -268,8 +271,10 @@ function scoreCandidate(me: Profile, c: Profile) {
 
   score += 6;
 
-  const meLikesAge = c.age >= me.age_min && c.age <= me.age_max;
-  const theyLikeAge = me.age >= c.age_min && me.age <= c.age_max;
+  // Bracket-based: a saved age is only the midpoint of the chosen bracket
+  // (56+ → 78), so compare spans, never raw numbers.
+  const meLikesAge = ageMatchesPreference(me, c);
+  const theyLikeAge = ageMatchesPreference(c, me);
   // Hard filter: only show people inside the user's chosen age range.
   if (!meLikesAge) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
   if (theyLikeAge) { score += 22; }
@@ -553,7 +558,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
 
     const scored = candidates
-      .filter((c) => world || (c.age >= me.age_min && c.age <= me.age_max))
+      .filter((c) => world || ageMatchesPreference(me, c))
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
         const qa = qaScoreByProfile.get(c.id);

@@ -32,6 +32,15 @@ Notes:
 - The shell loads `https://padelsetmatch.com` (see `capacitor.config.ts`), so web fixes ship instantly without a new .aab.
 - Set `versionCode` / `versionName` in `android/app/build.gradle` for every upload.
 
+## Shared links update — 1.0.1 / versionCode 2
+
+Android App Links let shared `/s/…`, `/m/…`, `/g/…` and `/app/events/…` links
+open the installed app. Before publishing this update, copy the **SHA-256
+certificate fingerprint** from Play Console → Setup → App integrity →
+**App signing key certificate** (not the upload key) into the project setting
+`ANDROID_APP_SIGNING_SHA256`, then publish the website so
+`/.well-known/assetlinks.json` serves it. Build and upload versionCode 2.
+
 ## 2. Store listing assets (already generated)
 - App icon 512×512 → `public/icon-512.png`
 - Feature graphic 1024×500 → `/mnt/documents/play-store/feature-graphic-1024x500.png`

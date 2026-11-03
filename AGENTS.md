@@ -26,3 +26,4 @@
 - Withdraw photo access before cleanup and delete replaced/removed owned objects; the resize endpoint may re-sign only current eligible photos, never withdrawn ones.
 - Report account deletion as complete only after owned-file, profile and identity deletion all succeed; preserve a retry control without a profile.
 - Match ages as bracket spans via src/lib/age-bracket.ts, never raw numbers: signup stores only the bracket midpoint (56+ → 78), so exact-age comparisons hide every 56+ player from ranges ending below 78; onboarding persists age_bracket_lo/hi and legacy rows fall back to exact age.
+- Shared match links use exact-host Universal Links/App Links for /s, /m, /g and /app/events only; native warm opens resolve short links as JSON and never follow arbitrary redirects, while the Android association stays empty until the Play app-signing SHA-256 is configured.

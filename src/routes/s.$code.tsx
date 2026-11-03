@@ -5,7 +5,7 @@ import { isAllowedShortLinkTarget } from "@/lib/qa-safety";
 export const Route = createFileRoute("/s/$code")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
         const supabase = createClient(
           process.env.SUPABASE_URL!,
           process.env.SUPABASE_PUBLISHABLE_KEY!,
@@ -31,6 +31,12 @@ export const Route = createFileRoute("/s/$code")({
 
         if (!targetUrl || !isAllowedShortLinkTarget(targetUrl)) {
           return new Response("Short link not found", { status: 404 });
+        }
+        if ((request.headers.get("accept") ?? "").includes("application/json")) {
+          return Response.json(
+            { url: targetUrl },
+            { headers: { "Cache-Control": "no-store" } },
+          );
         }
         return new Response(null, { status: 302, headers: { Location: targetUrl, "Cache-Control": "no-store" } });
       },

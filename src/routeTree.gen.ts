@@ -24,6 +24,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './routes/[.]well-known.apple-app-site-association'
+import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known.assetlinks[.]json'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppConnectRouteImport } from './routes/app.connect'
@@ -125,6 +126,12 @@ const DotwellKnownAppleAppSiteAssociationRoute =
   DotwellKnownAppleAppSiteAssociationRouteImport.update({
     id: '/.well-known/apple-app-site-association',
     path: '/.well-known/apple-app-site-association',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotwellKnownAssetlinksDotjsonRoute =
+  DotwellKnownAssetlinksDotjsonRouteImport.update({
+    id: '/.well-known/assetlinks.json',
+    path: '/.well-known/assetlinks.json',
     getParentRoute: () => rootRouteImport,
   } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -274,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
@@ -316,6 +324,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
@@ -360,6 +369,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
@@ -405,6 +415,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/.well-known/apple-app-site-association'
+    | '/.well-known/assetlinks.json'
     | '/app/admin'
     | '/app/connect'
     | '/app/grid'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/.well-known/apple-app-site-association'
+    | '/.well-known/assetlinks.json'
     | '/app/admin'
     | '/app/connect'
     | '/app/grid'
@@ -490,6 +502,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/.well-known/apple-app-site-association'
+    | '/.well-known/assetlinks.json'
     | '/app/admin'
     | '/app/connect'
     | '/app/grid'
@@ -534,6 +547,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   DotwellKnownAppleAppSiteAssociationRoute: typeof DotwellKnownAppleAppSiteAssociationRoute
+  DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
   GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
   PlayMadridRoute: typeof PlayMadridRoute
@@ -651,6 +665,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/apple-app-site-association'
       fullPath: '/.well-known/apple-app-site-association'
       preLoaderRoute: typeof DotwellKnownAppleAppSiteAssociationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/assetlinks.json': {
+      id: '/.well-known/assetlinks.json'
+      path: '/.well-known/assetlinks.json'
+      fullPath: '/.well-known/assetlinks.json'
+      preLoaderRoute: typeof DotwellKnownAssetlinksDotjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -914,6 +935,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   DotwellKnownAppleAppSiteAssociationRoute:
     DotwellKnownAppleAppSiteAssociationRoute,
+  DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
   GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
   PlayMadridRoute: PlayMadridRoute,

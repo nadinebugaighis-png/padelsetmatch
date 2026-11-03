@@ -52,6 +52,19 @@ export async function listenForNativeNotificationTap(onTap: (path: string) => vo
   return () => { void handle.remove(); };
 }
 
+/** Open trusted shared match links inside the already-running native shell. */
+export async function listenForNativeMatchLink(onPath: (path: string) => void) {
+  if (!isNative()) return () => {};
+  const { App } = await import("@capacitor/app");
+  const { resolveNativeMatchPath } = await import("./native-match-links");
+  const handle = await App.addListener("appUrlOpen", ({ url }) => {
+    void resolveNativeMatchPath(url).then((path) => {
+      if (path) onPath(path);
+    }).catch(() => {});
+  });
+  return () => { void handle.remove(); };
+}
+
 /** Status bar, splash screen and hardware back button. Safe no-op on the web. */
 export async function initNativeShell() {
   if (!isNative()) return;

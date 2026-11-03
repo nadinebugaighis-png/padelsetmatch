@@ -86,6 +86,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
+        if !connectionOptions.urlContexts.isEmpty {
+            SceneDelegateProxy.shared.scene(scene, openURLContexts: connectionOptions.urlContexts)
+        }
+        for userActivity in connectionOptions.userActivities {
+            SceneDelegateProxy.shared.scene(scene, continue: userActivity)
+        }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

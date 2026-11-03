@@ -6,6 +6,11 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:padelsetmatch.com</string>
+		<string>applinks:www.padelsetmatch.com</string>
+	</array>
 	<key>aps-environment</key>
 	<string>production</string>
 </dict>

@@ -95,3 +95,12 @@ Apple push credentials are still required before delivery can succeed.
 Test on TestFlight: sign in, fully close and reopen, switch Wi-Fi/mobile signal,
 allow notifications, close the app, have another account send a message/invite,
 and tap the lock-screen alert. Explicit sign-out must not restore the old account.
+
+## Version 1.0.3 / build 19
+
+This release adds Universal Links so shared `/s/…`, `/m/…`, `/g/…` and
+`/app/events/…` links open the installed iPhone app. Publish the website first
+so `/.well-known/apple-app-site-association` is live, then pull on the Mac,
+run `npx cap sync ios`, archive and upload 1.0.3 (19). The Associated Domains
+entries are already in `App.entitlements`; no manual Xcode capability edit is
+needed unless Xcode asks you to refresh signing.

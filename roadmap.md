@@ -1,7 +1,7 @@
 # iPhone sign-in and notifications
 
 ## Shared matches open in the installed app
-- [ ] Prepare iOS Universal Links, Android App Links, safe cold/warm link handling and new release versions.
+- [x] Prepare iOS Universal Links, Android App Links, safe cold/warm link handling and new release versions; 15 focused checks, typecheck and preview build pass.
 - [ ] Add the Google Play app-signing SHA-256 fingerprint (requires Nadine's Play Console certificate details).
 - [ ] Publish website association files, upload both signed builds and verify WhatsApp links on physical iPhone/Android devices (requires Nadine's Mac and store access).
 

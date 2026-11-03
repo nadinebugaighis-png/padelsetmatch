@@ -176,10 +176,14 @@ function RootComponent() {
     // Native shell (iOS/Android via Capacitor) — no-op on the web
     void import("@/lib/native").then((m) => m.initNativeShell()).catch(() => {});
     let removeTap: (() => void) | undefined;
+    let removeMatchLink: (() => void) | undefined;
     let disposed = false;
     void import("@/lib/native").then((m) => m.listenForNativeNotificationTap((path) => {
       void router.navigate({ to: path });
     })).then((remove) => { if (disposed) remove(); else removeTap = remove; }).catch(() => {});
+    void import("@/lib/native").then((m) => m.listenForNativeMatchLink((path) => {
+      void router.navigate({ to: path });
+    })).then((remove) => { if (disposed) remove(); else removeMatchLink = remove; }).catch(() => {});
 
     // Register the service worker for push notifications (production only)
 
@@ -193,7 +197,7 @@ function RootComponent() {
         });
       }
     }
-    return () => { disposed = true; removeTap?.(); sub.subscription.unsubscribe(); unsubNav(); };
+    return () => { disposed = true; removeTap?.(); removeMatchLink?.(); sub.subscription.unsubscribe(); unsubNav(); };
   }, [router, queryClient]);
   return (
     <QueryClientProvider client={queryClient}>

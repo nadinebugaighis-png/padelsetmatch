@@ -37,9 +37,9 @@ Notes:
 Android App Links let shared `/s/…`, `/m/…`, `/g/…` and `/app/events/…` links
 open the installed app. Before publishing this update, copy the **SHA-256
 certificate fingerprint** from Play Console → Setup → App integrity →
-**App signing key certificate** (not the upload key) into the project setting
-`ANDROID_APP_SIGNING_SHA256`, then publish the website so
-`/.well-known/assetlinks.json` serves it. Build and upload versionCode 2.
+**App signing key certificate** (not the upload key) and send it to Lovable so
+it can be added to `/.well-known/assetlinks.json`. Publish the website after
+that value is in place, then build and upload versionCode 2.
 
 ## 2. Store listing assets (already generated)
 - App icon 512×512 → `public/icon-512.png`

@@ -5,7 +5,7 @@ import { isAllowedShortLinkTarget } from "@/lib/qa-safety";
 export const Route = createFileRoute("/s/$code")({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
         const supabase = createClient(
           process.env.SUPABASE_URL!,
           process.env.SUPABASE_PUBLISHABLE_KEY!,

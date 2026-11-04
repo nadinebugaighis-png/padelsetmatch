@@ -43,8 +43,8 @@ function EditEvent() {
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
   if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
-  if (!me?.iAmHost) {
-    return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Only the host can edit this match.", "Solo el organizador puede editar este partido.", "Seul l'hôte peut modifier ce match.")}</div>;
+  if (!me?.iAmHost && !me?.iAmParticipant) {
+    return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Join this match to edit it.", "Únete al partido para editarlo.", "Rejoins ce match pour le modifier.")}</div>;
   }
 
   const onSubmit = async (v: MatchFormValues) => {
@@ -123,6 +123,7 @@ function EditEvent() {
         }}
       />
 
+      {me?.iAmHost && (
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 pb-32 -mt-4 space-y-2">
         <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 pt-4">{tr("Danger zone", "Zona de peligro", "Zone sensible")}</div>
         {event.status !== "cancelled" && (

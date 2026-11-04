@@ -345,6 +345,16 @@ function EventDetail() {
           >
             <Share2 className="w-4 h-4" />
           </button>
+          {!me?.iAmHost && me?.iAmParticipant && event.status !== "cancelled" && (
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
+              aria-label={tr("Edit match", "Editar partido", "Modifier")}
+              className="h-9 w-9 grid place-items-center rounded-full text-[var(--ink)] hover:bg-[var(--ink)]/5"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          )}
           {me?.iAmHost && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -713,7 +723,7 @@ function EventDetail() {
 
 
       {/* Chat — auto-opens for participants once at least 2 players joined */}
-      {me?.iAmParticipant && (event.participants?.length ?? 0) >= 2 && (
+      {me?.iAmParticipant && (
 
         <div id="event-chat" className="mt-6 scroll-mt-6">
           <div className="text-xs uppercase tracking-widest text-[var(--ink)]/60 mb-2">{tr("Group chat", "Chat del grupo", "Chat de groupe")}</div>

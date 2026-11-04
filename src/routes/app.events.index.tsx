@@ -523,21 +523,32 @@ function FeedSection({
         </div>
       </div>
       <ul className="mt-2 space-y-2">
-        {events.map((e) => (
-          <li key={e.id} className="lazy-row">
-            <MatchCard
-              e={e}
-              locale={locale}
-              daySlot={daySlots.get(e.id) ?? 0}
-              pending={pending}
-              onOpen={onOpen}
-              onJoin={onJoin}
-              onManage={onManage}
-              tr={tr}
-              highlight={highlight}
-            />
-          </li>
-        ))}
+        {events.map((e, i) => {
+          const slotStart = new Date(e.starts_at).getHours();
+          const prev = i > 0 ? events[i - 1] : null;
+          const prevStart = prev ? new Date(prev.starts_at) : null;
+          const dayChanged =
+            prevStart !== null &&
+            (prevStart.getFullYear() !== new Date(e.starts_at).getFullYear() ||
+              prevStart.getMonth() !== new Date(e.starts_at).getMonth() ||
+              prevStart.getDate() !== new Date(e.starts_at).getDate());
+          const slotChanged = prevStart !== null && !dayChanged && Math.floor(prevStart.getHours() / 12) !== Math.floor(slotStart / 12);
+          return (
+            <li key={e.id} className={`lazy-row ${slotChanged || dayChanged ? "pt-4" : ""}`}>
+              <MatchCard
+                e={e}
+                locale={locale}
+                daySlot={daySlots.get(e.id) ?? 0}
+                pending={pending}
+                onOpen={onOpen}
+                onJoin={onJoin}
+                onManage={onManage}
+                tr={tr}
+                highlight={highlight}
+              />
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

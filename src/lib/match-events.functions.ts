@@ -678,7 +678,7 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
       if (current.status === "cancelled") throw new Error("Match was cancelled");
       const allowed = pickPlayerEditable(rawPatch);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { error } = await supabaseAdmin.from("match_events").update(allowed).eq("id", id);
+      const { error } = await supabaseAdmin.from("match_events").update(allowed as never).eq("id", id);
       if (error) throw new Error(error.message);
       return { ok: true };
     }

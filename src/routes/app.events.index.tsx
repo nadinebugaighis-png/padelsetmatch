@@ -528,6 +528,7 @@ function FeedSection({
             <MatchCard
               e={e}
               locale={locale}
+              daySlot={daySlots.get(e.id) ?? 0}
               pending={pending}
               onOpen={onOpen}
               onJoin={onJoin}
@@ -548,6 +549,7 @@ function FeedSection({
 function MatchCard({
   e,
   locale,
+  daySlot,
   pending,
   onOpen,
   onJoin,
@@ -557,6 +559,7 @@ function MatchCard({
 }: {
   e: EventLite;
   locale: string | undefined;
+  daySlot: number;
   pending: string | null;
   onOpen: (id: string) => void;
   onJoin: (e: EventLite) => void;

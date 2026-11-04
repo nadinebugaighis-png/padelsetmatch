@@ -598,8 +598,20 @@ function MatchCard({
     e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte")
     : e.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement")
     : tr("Women only", "Solo mujeres", "Femmes uniquement");
+  const lvlName = (l: string) => ({
+    "just starting": tr("Beginner", "Iniciación", "Débutant"),
+    casual: tr("Casual", "Casual", "Loisir"),
+    intermediate: tr("Intermediate", "Intermedio", "Intermédiaire"),
+    advanced: tr("Advanced", "Avanzado", "Avancé"),
+    competitive: tr("Competitive", "Competición", "Compétition"),
+  } as Record<string, string>)[l] ?? l;
+  const lvlLo = LEVEL_INDEX[e.level_min ?? ""];
+  const levelWord = e.level_min == null || lvlLo == null ? null
+    : lvlLo <= 1 ? tr("Casual", "Iniciación", "Loisir")
+    : lvlLo === 2 ? tr("Inter.", "Intermedio", "Inter.")
+    : lvlName(e.level_min);
   const levelLabel = e.level_min
-    ? e.level_min === e.level_max ? e.level_min : `${e.level_min}–${e.level_max}`
+    ? e.level_min === e.level_max ? lvlName(e.level_min) : `${lvlName(e.level_min)} – ${lvlName(e.level_max ?? e.level_min)}`
     : "";
   const mine = e.iAmHost || e.iAmParticipant;
   const full = e.filled >= 4;
@@ -647,6 +659,11 @@ function MatchCard({
           {!dateBadge && (
             <div className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
               {dayNum} <span className="capitalize">{monthShort}</span>
+            </div>
+          )}
+          {levelWord && (
+            <div className="mt-1.5 rounded-full bg-white/70 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.1em] font-bold text-[var(--ink)] leading-none max-w-[70px] truncate">
+              {levelWord}
             </div>
           )}
         </button>

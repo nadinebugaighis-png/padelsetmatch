@@ -143,6 +143,7 @@ function EditEvent() {
           {tr("Delete match", "Eliminar partido", "Supprimer le match")}
         </button>
       </div>
+      )}
     </div>
   );
 }

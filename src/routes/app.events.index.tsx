@@ -732,7 +732,10 @@ function MatchCard({
                 slot={s}
                 tr={tr}
                 onJoin={() => onJoin(e)}
-                canJoin={!mine && !full}
+                // One tap on an open spot joins instantly — hosts included, so
+                // the host can take spot 1 themselves. The server function
+                // already permits the host to join their own match.
+                canJoin={!full}
                 isPending={isPending}
               />
             ))}

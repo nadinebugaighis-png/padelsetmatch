@@ -16,13 +16,22 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
+import { SessionLoading } from "@/components/SessionLoading";
+
+/** Never let a stalled session check leave the app on a blank screen. */
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("Session check timed out")), ms);
+    p.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+  });
+}
 
 export const Route = createFileRoute("/app")({
   head: () => ({ meta: [{ title: "Padel community hub \u00b7 PadelSetMatch" }, { name: "description", content: "Find players, matches and community conversations." }, { property: "og:title", content: "Padel community hub \u00b7 PadelSetMatch" }, { property: "og:description", content: "Find players, matches and community conversations." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   ssr: false,
   beforeLoad: async () => {
     // Read the stored session first — it lives on the device and works offline.
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    const { data: sessionData, error: sessionError } = await withTimeout(supabase.auth.getSession(), 8000);
     if (sessionError || !sessionData.session) {
       throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
     }
@@ -30,7 +39,7 @@ export const Route = createFileRoute("/app")({
     // "session invalid" answer (401/403). A dropped connection must never
     // destroy the stored login, or users get signed out on patchy signal.
     try {
-      const { data, error } = await supabase.auth.getUser();
+      const { data, error } = await withTimeout(supabase.auth.getUser(), 5000);
       if (error || !data.user) {
         const status = error && typeof error === "object" && "status" in error
           ? (error as { status?: number }).status
@@ -49,6 +58,8 @@ export const Route = createFileRoute("/app")({
       return { user: sessionData.session.user };
     }
   },
+  pendingComponent: SessionLoading,
+  pendingMs: 300,
   component: AuthShell,
   errorComponent: ({ error, reset }) => {
     // eslint-disable-next-line no-console

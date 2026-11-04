@@ -608,10 +608,12 @@ function MatchCard({
   const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
 
   const whenLabel = dateBadge ?? weekday;
-  // Use local calendar components, not elapsed local hours, so DST cannot
-  // change a day's colour. The fixed cycle also survives filtering/reordering.
+  // Day base colour + rotation within the day, so same-day matches alternate
+  // lavender / green / gold instead of all sharing one tone. Local calendar
+  // components and start-time order (not list position) keep colours stable
+  // across DST changes, filtering and reordering.
   const calendarDay = Math.floor(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()) / 86_400_000);
-  const dayTone = ((calendarDay % 3) + 3) % 3;
+  const dayTone = (((calendarDay % 3) + (daySlot % 3)) % 3 + 3) % 3;
   const toneClass = ["bg-match-lavender", "bg-match-green", "bg-match-gold"][dayTone];
 
   return (

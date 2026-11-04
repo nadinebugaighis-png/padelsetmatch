@@ -719,7 +719,7 @@ function Discover() {
                 </div>
               );
             })()}
-            {list.slice(0, shown).map((c) => {
+            {list.slice(0, shown).map((c, idx) => {
               const away = (() => {
                 const au = (c as unknown as { away_until?: string | null }).away_until;
                 return !!(au && au >= new Date().toISOString().slice(0, 10));
@@ -735,7 +735,7 @@ function Discover() {
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
-                        <img src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
+                        <img src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading={idx < 6 ? "eager" : "lazy"} fetchPriority={idx < 4 ? "high" : "auto"} decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       )}
                       {!c.photo_url && (
                         <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">

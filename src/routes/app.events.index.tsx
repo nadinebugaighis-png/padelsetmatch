@@ -445,6 +445,7 @@ function EventsPage() {
                   <FeedSection
                     title={tr("Open matches", "Partidos abiertos", "Matches ouverts")}
                     events={filtered}
+                    daySlots={dayToneSlots}
                     locale={locale}
                     pending={pending}
                     onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
@@ -492,6 +493,7 @@ function FeedSection({
   title,
   subtitle,
   events,
+  daySlots,
   locale,
   pending,
   onOpen,
@@ -503,6 +505,7 @@ function FeedSection({
   title: string;
   subtitle?: string;
   events: EventLite[];
+  daySlots: Map<string, number>;
   locale: string | undefined;
   pending: string | null;
   onOpen: (id: string) => void;

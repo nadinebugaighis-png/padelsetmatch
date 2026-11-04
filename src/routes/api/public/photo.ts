@@ -20,13 +20,16 @@ export const Route = createFileRoute("/api/public/photo")({
         }
         const path = decodeURIComponent(src.pathname.slice(PREFIX.length));
         if (path.includes("..") || path.includes("\\") || !src.searchParams.get("token")) return new Response("Forbidden", { status: 403 });
-        const check = await fetch(src.toString(), { headers: { Range: "bytes=0-0" } });
-        if (!check.ok) return new Response("Not found", { status: 404 });
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        // Run the signed-URL check and the current-photo check in parallel.
         // A valid old signed URL is not enough: withdrawn/replaced photos
         // must never receive a new transformed URL.
-        const { data: profiles, error: profileError } = await supabaseAdmin.from("profiles")
-          .select("photo_url").is("suspended_at", null).neq("photo_moderation_status", "rejected").not("photo_url", "is", null);
+        const [check, { data: profiles, error: profileError }] = await Promise.all([
+          fetch(src.toString(), { headers: { Range: "bytes=0-0" } }),
+          supabaseAdmin.from("profiles")
+            .select("photo_url").is("suspended_at", null).neq("photo_moderation_status", "rejected").not("photo_url", "is", null),
+        ]);
+        if (!check.ok) return new Response("Not found", { status: 404 });
         const current = profiles?.some((p) => {
           try { return decodeURIComponent(new URL(p.photo_url ?? "").pathname) === `${PREFIX}${path}`; }
           catch { return false; }
@@ -34,11 +37,11 @@ export const Route = createFileRoute("/api/public/photo")({
         if (profileError || !current) return new Response("Photo unavailable", { status: 404, headers: { "Cache-Control": "no-store" } });
         const { data, error } = await supabaseAdmin.storage
           .from("padel-photos")
-          .createSignedUrl(path, 60 * 5, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
+          .createSignedUrl(path, 60 * 60, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
         const destination = error || !data?.signedUrl ? src.toString() : data.signedUrl;
         return new Response(null, {
           status: 302,
-          headers: { Location: destination, "Cache-Control": "private, no-store" },
+          headers: { Location: destination, "Cache-Control": "private, max-age=600" },
         });
       },
     },

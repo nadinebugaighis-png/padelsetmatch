@@ -212,6 +212,25 @@ function EventsPage() {
   );
   const mineCount = useMemo(() => all.filter((e) => e.iAmHost || e.iAmParticipant).length, [all]);
 
+  // Within one calendar day, rotate card colours by the match's start-time order
+  // (computed from the unfiltered feed so filtering/reordering cannot shift a
+  // card's colour). Each day still anchors on its own base colour.
+  const dayToneSlots = useMemo(() => {
+    const byDay = new Map<string, EventLite[]>();
+    for (const e of all) {
+      const key = dayKey(new Date(e.starts_at));
+      const list = byDay.get(key);
+      if (list) list.push(e);
+      else byDay.set(key, [e]);
+    }
+    const slots = new Map<string, number>();
+    for (const list of byDay.values()) {
+      list.sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+      list.forEach((e, i) => slots.set(e.id, i));
+    }
+    return slots;
+  }, [all]);
+
   const [pending, setPending] = useState<string | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
 
@@ -426,6 +445,7 @@ function EventsPage() {
                   <FeedSection
                     title={tr("Open matches", "Partidos abiertos", "Matches ouverts")}
                     events={filtered}
+                    daySlots={dayToneSlots}
                     locale={locale}
                     pending={pending}
                     onOpen={(id) => navigate({ to: "/app/events/$eventId", params: { eventId: id } })}
@@ -473,6 +493,7 @@ function FeedSection({
   title,
   subtitle,
   events,
+  daySlots,
   locale,
   pending,
   onOpen,
@@ -484,6 +505,7 @@ function FeedSection({
   title: string;
   subtitle?: string;
   events: EventLite[];
+  daySlots: Map<string, number>;
   locale: string | undefined;
   pending: string | null;
   onOpen: (id: string) => void;
@@ -506,6 +528,7 @@ function FeedSection({
             <MatchCard
               e={e}
               locale={locale}
+              daySlot={daySlots.get(e.id) ?? 0}
               pending={pending}
               onOpen={onOpen}
               onJoin={onJoin}
@@ -526,6 +549,7 @@ function FeedSection({
 function MatchCard({
   e,
   locale,
+  daySlot,
   pending,
   onOpen,
   onJoin,
@@ -535,6 +559,7 @@ function MatchCard({
 }: {
   e: EventLite;
   locale: string | undefined;
+  daySlot: number;
   pending: string | null;
   onOpen: (id: string) => void;
   onJoin: (e: EventLite) => void;
@@ -583,10 +608,12 @@ function MatchCard({
   const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
 
   const whenLabel = dateBadge ?? weekday;
-  // Use local calendar components, not elapsed local hours, so DST cannot
-  // change a day's colour. The fixed cycle also survives filtering/reordering.
+  // Day base colour + rotation within the day, so same-day matches alternate
+  // lavender / green / gold instead of all sharing one tone. Local calendar
+  // components and start-time order (not list position) keep colours stable
+  // across DST changes, filtering and reordering.
   const calendarDay = Math.floor(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()) / 86_400_000);
-  const dayTone = ((calendarDay % 3) + 3) % 3;
+  const dayTone = (((calendarDay % 3) + (daySlot % 3)) % 3 + 3) % 3;
   const toneClass = ["bg-match-lavender", "bg-match-green", "bg-match-gold"][dayTone];
 
   return (

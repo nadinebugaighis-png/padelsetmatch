@@ -650,6 +650,7 @@ const UpdateInput = z.object({
   is_private_court: z.boolean().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });
+import { pickPlayerEditable } from "./match-player-edit";
 export const updateMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: z.infer<typeof UpdateInput>) => UpdateInput.parse(d))
@@ -657,14 +658,31 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    const { id, ...inputPatch } = data;
+    const { id, ...rawPatch } = data;
     const { data: current } = await supabase
       .from("match_events")
-      .select("extra_confirmed")
+      .select("extra_confirmed, host_profile_id, status")
       .eq("id", id)
-      .eq("host_profile_id", profile.id)
       .maybeSingle();
     if (!current) throw new Error("Match not found");
+    const isHost = current.host_profile_id === profile.id;
+    if (!isHost) {
+      // Joined players may edit where/when/level/note only.
+      const { data: part } = await supabase
+        .from("match_event_participants")
+        .select("id")
+        .eq("match_event_id", id)
+        .eq("profile_id", profile.id)
+        .maybeSingle();
+      if (!part) throw new Error("Only players in this match can edit it");
+      if (current.status === "cancelled") throw new Error("Match was cancelled");
+      const allowed = pickPlayerEditable(rawPatch);
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { error } = await supabaseAdmin.from("match_events").update(allowed as never).eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+    const inputPatch = rawPatch;
     const { count } = await supabase
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })

@@ -212,6 +212,25 @@ function EventsPage() {
   );
   const mineCount = useMemo(() => all.filter((e) => e.iAmHost || e.iAmParticipant).length, [all]);
 
+  // Within one calendar day, rotate card colours by the match's start-time order
+  // (computed from the unfiltered feed so filtering/reordering cannot shift a
+  // card's colour). Each day still anchors on its own base colour.
+  const dayToneSlots = useMemo(() => {
+    const byDay = new Map<string, EventLite[]>();
+    for (const e of all) {
+      const key = dayKey(new Date(e.starts_at));
+      const list = byDay.get(key);
+      if (list) list.push(e);
+      else byDay.set(key, [e]);
+    }
+    const slots = new Map<string, number>();
+    for (const list of byDay.values()) {
+      list.sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+      list.forEach((e, i) => slots.set(e.id, i));
+    }
+    return slots;
+  }, [all]);
+
   const [pending, setPending] = useState<string | null>(null);
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
 

@@ -24,6 +24,7 @@
 - Save quick answers atomically and store daily completion on the profile so dismissal follows the account across devices.
 - Restrict shared redirects at both insertion and resolution to exact app hosts and match paths; hosting-domain wildcards are not trusted destinations.
 - Withdraw photo access before cleanup and delete replaced/removed owned objects; the resize endpoint may re-sign only current eligible photos, never withdrawn ones.
+- Grid and player-preview photos use PlayerPhoto with two bounded cache-bypassing proxy retries and an initial fallback; never bypass withdrawal checks by retrying the original storage URL.
 - Report account deletion as complete only after owned-file, profile and identity deletion all succeed; preserve a retry control without a profile.
 - Match ages as bracket spans via src/lib/age-bracket.ts, never raw numbers: signup stores only the bracket midpoint (56+ → 78), so exact-age comparisons hide every 56+ player from ranges ending below 78; onboarding persists age_bracket_lo/hi and legacy rows fall back to exact age.
 - Shared match links use exact-host Universal Links/App Links for /s, /m, /g and /app/events only; native warm opens resolve short links as JSON and never follow arbitrary redirects, while the Android association stays empty until the Play app-signing SHA-256 is configured.

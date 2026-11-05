@@ -8,6 +8,13 @@ export function photoSrc(url: string | null | undefined, w: PhotoWidth): string 
   return `/api/public/photo?w=${w}&u=${encodeURIComponent(url)}`;
 }
 
+// Retry only through the same privacy-checking endpoint, bypassing a cached
+// failed redirect. Never fall back to an unchecked original storage URL.
+export function photoRetrySrc(src: string, attempt: number): string | undefined {
+  if (!src.startsWith("/api/public/photo?") || attempt < 1 || attempt > 2) return undefined;
+  return `${src}&retry=${attempt}`;
+}
+
 const warmed = new Set<string>();
 export function prefetchPhoto(url: string | null | undefined, w: PhotoWidth) {
   const src = photoSrc(url, w);

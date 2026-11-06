@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { PADEL_LEVELS } from "@/lib/types";
 import { getMyProfile } from "@/lib/app.functions";
@@ -37,6 +37,8 @@ function JoinSetupPage() {
   const [level, setLevel] = useState<(typeof PADEL_LEVELS)[number] | "">("");
   const [city, setCity] = useState("");
   const [busy, setBusy] = useState(false);
+  const autoStarted = useRef(false);
+  const [autoJoining, setAutoJoining] = useState(false);
 
   useEffect(() => {
     const me = meQ.data as { first_name?: string | null; level?: string | null; locations?: string[] | null } | null;
@@ -54,6 +56,15 @@ function JoinSetupPage() {
     setBusy(true);
     try {
       await saveLite({ data: { first_name: firstName.trim(), level, city: city.trim() || null } });
+      await joinAndGo();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Impossible d'enregistrer"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  async function joinAndGo() {
       if (join) {
         try {
           if (inviteToken) {
@@ -74,12 +85,27 @@ function JoinSetupPage() {
       } else {
         navigate({ to: "/app" });
       }
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Impossible d'enregistrer"));
-    } finally {
-      setBusy(false);
-    }
-  };
+  }
+
+  // Players who already have a name and level skip this form and join straight away.
+  useEffect(() => {
+    const me = meQ.data as { first_name?: string | null; level?: string | null } | null | undefined;
+    if (autoStarted.current || !me?.first_name?.trim() || !me?.level) return;
+    autoStarted.current = true;
+    setAutoJoining(true);
+    void joinAndGo().catch(() => setAutoJoining(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meQ.data]);
+
+  if (meQ.isLoading || autoJoining) {
+    return (
+      <main className="min-h-screen bg-[var(--court-deep)] flex items-center justify-center">
+        <p className="text-sm uppercase tracking-widest text-[var(--cream)]/80">
+          {join ? tr("Joining the match…", "Uniéndote al partido…", "Inscription au match…") : tr("Loading…", "Cargando…", "Chargement…")}
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[var(--court-deep)]">

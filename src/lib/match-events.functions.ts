@@ -241,12 +241,13 @@ const CreateInput = z.object({
   country: z.string().max(120).nullable().optional(),
   level_min: z.enum(PADEL_LEVELS),
   level_max: z.enum(PADEL_LEVELS),
-  gender_rule: z.enum(["mixed", "men_only", "women_only"]),
+  gender_rule: z.enum(GENDER_RULES),
   extra_confirmed: z.number().int().min(0).max(3),
   note: z.string().max(500).nullable().optional(),
   playtomic_link: z.string().max(500).nullable().optional(),
   court_booked: z.boolean(),
   is_private_court: z.boolean().optional(),
+  free_court: z.boolean().optional(),
 });
 
 export const createMatchEvent = createServerFn({ method: "POST" })
@@ -303,7 +304,7 @@ export const quickCreateMatchEvent = createServerFn({ method: "POST" })
         country: null,
         level_min: level,
         level_max: level,
-        gender_rule: "mixed",
+        gender_rule: DEFAULT_GENDER_RULE,
         extra_confirmed: 0,
         note: null,
         playtomic_link: null,
@@ -608,6 +609,7 @@ export const duplicateMatchEvent = createServerFn({ method: "POST" })
         level_min: src.level_min,
         level_max: src.level_max,
         gender_rule: src.gender_rule,
+        free_court: src.free_court ?? false,
         extra_confirmed: src.extra_confirmed ?? 0,
         note: src.note,
         playtomic_link: src.playtomic_link,
@@ -642,12 +644,13 @@ const UpdateInput = z.object({
   country: z.string().max(120).nullable().optional(),
   level_min: z.enum(PADEL_LEVELS).optional(),
   level_max: z.enum(PADEL_LEVELS).optional(),
-  gender_rule: z.enum(["mixed", "men_only", "women_only"]).optional(),
+  gender_rule: z.enum(GENDER_RULES).optional(),
   extra_confirmed: z.number().int().min(0).max(3).optional(),
   note: z.string().max(500).nullable().optional(),
   playtomic_link: z.string().max(500).nullable().optional(),
   court_booked: z.boolean().optional(),
   is_private_court: z.boolean().optional(),
+  free_court: z.boolean().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });
 import { pickPlayerEditable } from "./match-player-edit";
@@ -806,11 +809,12 @@ export type PublicMatchView = {
   club_address: string | null;
   city: string | null;
   country: string | null;
-  gender_rule: "mixed" | "men_only" | "women_only";
+  gender_rule: GenderRule;
   level_min: string;
   level_max: string;
   note: string | null;
   court_booked: boolean;
+  free_court?: boolean;
   status: string;
   extra_confirmed: number;
   filled: number;

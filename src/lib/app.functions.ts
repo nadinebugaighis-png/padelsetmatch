@@ -1155,13 +1155,14 @@ function normalizeAnswer(s: string): string {
   return s.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 200);
 }
 
-export const getMyDailyQuestionDate = createServerFn({ method: "GET" })
+/** Last morning/evening question slot the player answered, e.g. "2026-11-07-am". */
+export const getMyQuestionSlot = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.from("profiles")
-      .select("daily_question_answered_on").eq("user_id", context.userId).maybeSingle();
+      .select("daily_question_slot").eq("user_id", context.userId).maybeSingle();
     if (error) throw new Error("Couldn't load today's answer status");
-    return data?.daily_question_answered_on ?? null;
+    return data?.daily_question_slot ?? null;
   });
 
 export const getMyQaAnswers = createServerFn({ method: "GET" })
@@ -1186,7 +1187,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       question: z.string().trim().min(3).max(400),
       category: z.string().trim().min(1).max(40).default("general"),
       answer: z.string().trim().min(1).max(400),
-      dailyDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+      slot: z.string().regex(/^\d{4}-\d{2}-\d{2}-(am|pm)$/).optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -1196,10 +1197,10 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
     if (!myId) throw new Error("Create your profile first");
     // Save atomically: failed updates never destroy the previous answer.
     // Fast tap answers do not wait for optional embedding generation.
-    const { error } = await context.supabase.rpc("save_my_qa_answer", {
+    const { error } = await context.supabase.rpc("save_my_qa_answer_slot", {
       _question: data.question, _category: data.category, _answer: data.answer,
-      _daily_date: data.dailyDate,
-    });
+      _slot: data.slot ?? null,
+    } as never);
     if (error) throw new Error(error.message);
     // Any cached AI compatibility involving me is stale — clear it.
     await context.supabase.rpc("clear_my_compat_scores" as never, {} as never);

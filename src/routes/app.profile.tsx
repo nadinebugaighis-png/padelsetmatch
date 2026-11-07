@@ -6,7 +6,9 @@ import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvaila
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, ShieldCheck, Sparkles, Star, User } from "lucide-react";
+import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
+import { nativeShare } from "@/lib/native";
+import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
@@ -351,6 +353,8 @@ function ProfilePage() {
         </CollapsibleRow>
 
 
+        <InviteFriendsRow />
+
         <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
 
         <button
@@ -693,6 +697,42 @@ function AnalyticsConsent() {
         <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${enabled ? "translate-x-5" : ""}`} />
       </button>
     </div>
+  );
+}
+
+function InviteFriendsRow() {
+  const tr = useTr();
+  const { lang } = useI18n();
+  const onShare = async () => {
+    const text = shareAppText(lang);
+    try {
+      const shared = await nativeShare({ title: "PadelSetMatch", text, url: DOWNLOAD_URL });
+      if (!shared) toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
+    } catch {
+      // share sheet dismissed
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={onShare}
+      className="w-full flex items-center justify-between gap-3 rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper)] px-4 py-3.5 text-left hover:bg-[var(--paper-2)] transition-colors"
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--grass)]/30 text-[var(--ink)] shrink-0">
+          <UserPlus className="w-4 h-4" />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight truncate">
+            {tr("Invite friends", "Invitar amigos", "Inviter des amis")}
+          </div>
+          <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">
+            {tr("Share the app on WhatsApp", "Comparte la app por WhatsApp", "Partage l’app sur WhatsApp")}
+          </div>
+        </div>
+      </div>
+      <Share2 className="w-4 h-4 text-[var(--ink)]/50 shrink-0" />
+    </button>
   );
 }
 

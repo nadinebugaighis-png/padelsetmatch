@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Camera, Crop, Plus, Trash2, X } from "lucide-react";
+import { ArrowUp, Camera, Crop, Plus, Trash2, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/app/onboarding")({
   validateSearch: (search: Record<string, unknown>): { step?: number } => {
     const raw = Number(search.step);
     if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(1, Math.floor(raw)));
+    const clamped = Math.max(0, Math.min(0, Math.floor(raw)));
     return { step: clamped };
   },
   component: Onboarding,
@@ -99,7 +99,6 @@ function Onboarding() {
   const [langQuery, setLangQuery] = useState("");
   const [level, setLevel] = useState<PadelLevel | "">("");
   const [priorities, setPriorities] = useState<string[]>([]);
-  const [customTrait, setCustomTrait] = useState("");
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
   const [goals, setGoals] = useState<string[]>(["padel"]);
   const [meetPref, setMeetPref] = useState<"men" | "women" | "everyone" | "">("");
@@ -115,24 +114,9 @@ function Onboarding() {
   const [freeCourtNote, setFreeCourtNote] = useState("");
   const [sexualOrientation, setSexualOrientation] = useState("");
   const [personalTraits, setPersonalTraits] = useState<string[]>([]);
-  const [customBank, setCustomBank] = useState<string[]>([]);
   const [padelStyle, setPadelStyle] = useState<string[]>([]);
   const [showStepHelp, setShowStepHelp] = useState(false);
 
-  // Any custom (non-preset) trait ever added stays in the bank so it can be re-added with one tap
-  useEffect(() => {
-    const customs = personalTraits.filter(
-      (p) =>
-        !(PERSONAL_STRENGTHS as readonly string[]).includes(p) &&
-        !(HONEST_EDGES as readonly string[]).includes(p)
-    );
-    if (customs.length) {
-      setCustomBank((cur) => {
-        const missing = customs.filter((c) => !cur.some((x) => x.toLowerCase() === c.toLowerCase()));
-        return missing.length ? [...cur, ...missing] : cur;
-      });
-    }
-  }, [personalTraits]);
 
   // Hydrate the form from the saved profile exactly ONCE. Without this guard a
   // background refetch (reconnect, cache invalidation, remount) re-runs the
@@ -251,29 +235,6 @@ function Onboarding() {
 
   const toggleAvail = (s: string) => setAvailability((cur) => cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]);
 
-  const togglePriority = (t: string) => {
-    setPriorities((cur) => cur.includes(t) ? cur.filter((x) => x !== t) : cur.length >= 8 ? cur : [...cur, t]);
-  };
-  const movePriority = (i: number, dir: -1 | 1) => {
-    setPriorities((cur) => {
-      const j = i + dir;
-      if (j < 0 || j >= cur.length) return cur;
-      const next = [...cur];
-      [next[i], next[j]] = [next[j], next[i]];
-      return next;
-    });
-  };
-  const removePriority = (t: string) => setPriorities((cur) => cur.filter((x) => x !== t));
-  const addCustom = () => {
-    const v = customTrait.trim().toLowerCase();
-    if (!v) return;
-    const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
-    if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
-    if (priorities.includes(v)) { toast.error(t("ob.errDup")); return; }
-    if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
-    setPriorities((cur) => [...cur, v]);
-    setCustomTrait("");
-  };
   const updateBlock = (i: number, patch: Partial<LocBlock>) =>
     setLocBlocks((cur) => cur.map((b, j) => (j === i ? { ...b, ...patch } : b)));
   const updateArea = (i: number, ai: number, val: string) =>
@@ -483,9 +444,10 @@ function Onboarding() {
     setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30);
   };
 
+  // Personality/values used to be a second page; those insights now come
+  // from the quick questions on the Grid, so signup is a single page.
   const steps = [
     tr("Registration", "Registro", "Inscription"),
-    tr("Personality", "Personalidad", "Personnalité"),
   ];
 
   if (profileQ.isLoading) {
@@ -521,7 +483,7 @@ function Onboarding() {
               <ArrowUp className="w-4 h-4 -rotate-90" />
             </button>
           ) : <span className="w-8" />}
-          <span className="flex-1 text-center">{t("ob.step")} {step + 1} {t("ob.of")} {steps.length} · {steps[step]}</span>
+          <span className="flex-1 text-center">{steps[step]}</span>
           <button
             type="button"
             onClick={requestExit}
@@ -530,9 +492,6 @@ function Onboarding() {
           >
             {tr("Exit", "Salir", "Sortir")}
           </button>
-        </div>
-        <div className="h-1 mt-2 rounded-full bg-[var(--ink)]/10 overflow-hidden">
-          <div className="h-full bg-[var(--ball)]" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
         </div>
       </div>
 
@@ -931,187 +890,6 @@ function Onboarding() {
             )}
           </>
         )}
-        {step === 1 && (
-          <div className="space-y-8">
-            <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
-                {tr("Optional — for fun", "Opcional — por diversión", "Optionnel — pour le fun")}
-              </p>
-              <h2 className="text-display text-2xl mt-1">
-                {tr("Unlock compatibility with other padel players ✨", "Desbloquea la compatibilidad con otros jugadores de pádel ✨", "Débloque la compatibilité avec d'autres joueurs de padel ✨")}
-              </h2>
-              <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Nothing shared, nothing on your profile — only the AI uses it to match you.", "Nada se comparte ni aparece en tu perfil — solo la IA lo usa para emparejarte.", "Rien n'est partagé ni affiché sur ton profil — seule l'IA l'utilise pour t'associer.")}</p>
-
-            </div>
-
-            {/* SECTION 1 — Priorities */}
-            <section data-field="priorities" className={`space-y-3 ${fieldCls("priorities")}`}>
-              <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-serif text-lg flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">1</span>
-                  {tr("Your top values", "Tus valores principales", "Tes valeurs principales")}
-                </h3>
-                <span className="text-[11px] font-medium text-[var(--ink)]/55">
-                  {priorities.length} {tr("picked", "elegidos", "choisis")}
-                </span>
-              </div>
-              <p className="text-[12px] text-[var(--ink)]/60">{tr("Pick as many as you like. Order matters — top = most important.", "Elige los que quieras. El orden cuenta — arriba = más importante.", "Choisis-en autant que tu veux. L'ordre compte — haut = plus important.")}</p>
-
-              <SearchableChips
-                options={PRIORITY_TRAITS as readonly string[]}
-                selected={priorities}
-                onToggle={togglePriority}
-                onAddCustom={(v) => {
-                  const customCount = priorities.filter((p) => !(PRIORITY_TRAITS as readonly string[]).includes(p)).length;
-                  if (customCount >= 3) { toast.error(t("ob.errMax3")); return; }
-                  if (priorities.length >= 8) { toast.error(t("ob.errMaxTraits")); return; }
-                  if (priorities.some((p) => p.toLowerCase() === v.toLowerCase())) { toast.error(t("ob.errDup")); return; }
-                  setPriorities((cur) => [...cur, v.toLowerCase()]);
-                }}
-                labelFn={label}
-                placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
-                addWord={tr("Add", "Añadir", "Ajouter")}
-                moreWord={tr("more", "más", "plus")}
-                lessWord={tr("Show less", "Ver menos", "Voir moins")}
-                initialVisible={14}
-              />
-
-              {priorities.length > 0 && (
-                <div className="mt-2 rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper-2)] p-3">
-                  <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/55 mb-2">{tr("Your order", "Tu orden", "Ton ordre")}</p>
-                  <ul className="space-y-1.5">
-                    {priorities.map((tr, i) => (
-                      <li key={tr} className="flex items-center gap-2 bg-[var(--paper)] rounded-lg px-3 py-2 border border-[var(--ink)]/10">
-                        <span className="text-[var(--ink)] font-bold w-5 text-sm">{i + 1}</span>
-                        <span className="flex-1 capitalize text-sm">{label(tr)}</span>
-                        <button onClick={() => movePriority(i, -1)} disabled={i === 0} aria-label="Move up" className="p-1 disabled:opacity-25"><ArrowUp className="w-4 h-4" /></button>
-                        <button onClick={() => movePriority(i, 1)} disabled={i === priorities.length - 1} aria-label="Move down" className="p-1 disabled:opacity-25"><ArrowDown className="w-4 h-4" /></button>
-                        <button onClick={() => removePriority(tr)} aria-label="Remove" className="p-1 text-[var(--ink)]/50 hover:text-[var(--clay)]"><X className="w-4 h-4" /></button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </section>
-
-            {/* SECTION 2 — Personal traits */}
-            <section className="space-y-3">
-              <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-serif text-lg flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-bold">2</span>
-                  {tr("How would you describe yourself", "Cómo te describirías", "Comment tu te décrirais")}
-                </h3>
-                <span className="text-[11px] font-medium text-[var(--ink)]/55">{personalTraits.length}/10</span>
-              </div>
-              <p className="text-[12px] text-[var(--ink)]/60">{tr("Optional — pick a mix of strengths and a couple of honest edges.", "Opcional — elige una mezcla: fortalezas y un par de aristas honestas.", "Optionnel — mélange forces et petits défauts assumés.")}</p>
-
-              <div className="space-y-3">
-                <div>
-                  <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">✨ {tr("Strengths", "Fortalezas", "Forces")}</p>
-                  <SearchableChips
-                    options={PERSONAL_STRENGTHS as readonly string[]}
-                    selected={personalTraits.filter((p) => (PERSONAL_STRENGTHS as readonly string[]).includes(p))}
-                    onToggle={(pt) =>
-                      setPersonalTraits((cur) =>
-                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                      )
-                    }
-                    onAddCustom={(v) => {
-                      setPersonalTraits((cur) => {
-                        if (cur.length >= 10) { toast.error(t("ob.errMaxTraits")); return cur; }
-                        if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
-                        return [...cur, v];
-                      });
-                    }}
-                    hideCustom
-                    labelFn={label}
-                    placeholder={tr("Search or add your own…", "Busca o añade el tuyo…", "Cherche ou ajoute le tien…")}
-                    addWord={tr("Add", "Añadir", "Ajouter")}
-                    moreWord={tr("more", "más", "plus")}
-                    lessWord={tr("Show less", "Ver menos", "Voir moins")}
-                    initialVisible={12}
-                  />
-                </div>
-
-                <div>
-                  <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">🔥 {tr("Honest edges", "Aristas honestas", "Défauts assumés")}</p>
-                  <SearchableChips
-                    options={HONEST_EDGES as readonly string[]}
-                    selected={personalTraits.filter((p) => (HONEST_EDGES as readonly string[]).includes(p))}
-                    onToggle={(pt) =>
-                      setPersonalTraits((cur) =>
-                        cur.includes(pt) ? cur.filter((x) => x !== pt) : cur.length >= 10 ? cur : [...cur, pt]
-                      )
-                    }
-                    onAddCustom={(v) => {
-                      setPersonalTraits((cur) => {
-                        if (cur.length >= 10) { toast.error(t("ob.errMaxTraits")); return cur; }
-                        if (cur.some((x) => x.toLowerCase() === v.toLowerCase())) return cur;
-                        return [...cur, v];
-                      });
-                    }}
-                    hideCustom
-                    labelFn={label}
-                    placeholder={tr("Search an edge…", "Busca una arista…", "Cherche un défaut…")}
-                    addWord={tr("Add", "Añadir", "Ajouter")}
-                    moreWord={tr("more", "más", "plus")}
-                    lessWord={tr("Show less", "Ver menos", "Voir moins")}
-                  />
-                </div>
-
-                {customBank.length > 0 && (
-                  <div>
-                    <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-1">
-                      ✍️ {tr("Your own words", "Tus propias palabras", "Tes propres mots")}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {customBank.map((p) => {
-                        const on = personalTraits.some((x) => x.toLowerCase() === p.toLowerCase());
-                        return (
-                          <span
-                            key={p}
-                            className={`chip-paper inline-flex items-center gap-1 pr-1 ${on ? "chip-paper-selected" : "opacity-60"}`}
-                          >
-                            <button
-                              type="button"
-                              aria-pressed={on}
-                              onClick={() =>
-                                setPersonalTraits((cur) => {
-                                  if (on) return cur.filter((x) => x.toLowerCase() !== p.toLowerCase());
-                                  if (cur.length >= 10) {
-                                    toast.error(t("ob.errMaxTraits"));
-                                    return cur;
-                                  }
-                                  return [...cur, p];
-                                })
-                              }
-                              className="inline-flex items-center gap-1"
-                            >
-                              {on ? "✓" : "+"} {p}
-                            </button>
-                            <button
-                              type="button"
-                              aria-label={tr("Delete", "Eliminar", "Supprimer")}
-                              onClick={() => {
-                                setCustomBank((cur) => cur.filter((x) => x !== p));
-                                setPersonalTraits((cur) => cur.filter((x) => x.toLowerCase() !== p.toLowerCase()));
-                              }}
-                              className="p-0.5 rounded-full text-current/60 hover:text-[var(--clay)]"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-              </div>
-            </section>
-
-          </div>
-        )}
       </div>
 
 
@@ -1128,21 +906,12 @@ function Onboarding() {
               ) : <div />}
               <div className="flex items-center gap-2 ml-auto">
                 <Button
-                  variant="outline"
                   size="sm"
                   onClick={() => requestSave("grid")}
                   disabled={save.isPending || uploading}
                 >
                   {save.isPending ? t("ob.saving") : tr("Save", "Guardar", "Enregistrer")}
                 </Button>
-                {step === 0 && (
-                  <Button size="sm" onClick={goNext}>{t("ob.next")}</Button>
-                )}
-                {step === 1 && (
-                  <Button size="sm" onClick={() => requestSave("grid")} disabled={save.isPending}>
-                    {save.isPending ? t("ob.saving") : t("ob.start")}
-                  </Button>
-                )}
               </div>
             </div>
           </div>

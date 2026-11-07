@@ -37,6 +37,21 @@ describe("padel question card", () => {
     expect(shouldShowQuestion({ answeredCount: 1, lastSlot: "2026-11-07-am", lastAnsweredAt: justAnswered, now })).toBe(false);
     expect(shouldShowQuestion({ answeredCount: 2, lastSlot: "2026-11-07-am", lastAnsweredAt: lastVisit, now })).toBe(true);
   });
+  it("bank has 35 questions: 15 padel, 11 personality, 9 lifestyle", () => {
+    expect(CURATED_QUESTIONS).toHaveLength(35);
+    const count = (c: string) => CURATED_QUESTIONS.filter((q) => q.category === c).length;
+    expect([count("padel"), count("personality"), count("lifestyle")]).toEqual([15, 11, 9]);
+    expect(new Set(CURATED_QUESTIONS.map((q) => q.q.en)).size).toBe(35);
+    expect(CURATED_QUESTIONS.every((q) => q.options.length === 3)).toBe(true);
+  });
+  it("two weeks of morning/evening questions never repeat", () => {
+    const seen = new Set<string>();
+    for (let day = 1; day <= 14; day++) {
+      seen.add(questionForSlot(new Date(2026, 10, day, 9)).id);
+      seen.add(questionForSlot(new Date(2026, 10, day, 20)).id);
+    }
+    expect(seen.size).toBe(28);
+  });
   it("unlock offers unanswered questions only", () => {
     const qs = unlockQuestions(new Set(["Your ideal weekend match is…"]), 3);
     expect(qs).toHaveLength(3);

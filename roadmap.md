@@ -49,3 +49,5 @@
 - [x] Prepare version 1.0.2 / build 18 and release instructions.
 - [ ] Configure Apple push credentials (waiting for Nadine's Apple key).
 - [ ] Verify delivery and reopening on a real iPhone (requires new Apple build and credentials).
+## Grid questions replace the personality page
+- [x] Expand grid question bank to 35 (pádel 15, personality 11, lifestyle 9) and remove the signup Personality page; 8 question checks pass.

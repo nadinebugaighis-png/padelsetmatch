@@ -6,7 +6,7 @@ import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvaila
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
+import { Camera, ChevronDown, GraduationCap, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
 import { nativeShare } from "@/lib/native";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 import { supabase } from "@/integrations/supabase/client";

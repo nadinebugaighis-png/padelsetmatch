@@ -504,7 +504,7 @@ function Onboarding() {
         )}
         {step === 0 && (
           <>
-            <h2 className="text-display text-3xl">{t("ob.h0")}</h2>
+            <h2 className="text-display text-[1.375rem] sm:text-3xl leading-tight">{t("ob.h0")}</h2>
             <div data-field="first_name" className={fieldCls("first_name")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
               <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
@@ -546,7 +546,7 @@ function Onboarding() {
         )}
         {step === 0 && (
           <>
-            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
+            <h2 className="text-display text-[1.375rem] sm:text-3xl leading-tight pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
 
 
 
@@ -563,7 +563,7 @@ function Onboarding() {
         )}
         {step === 0 && (
           <>
-            <h2 className="text-display text-3xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h2")}</h2>
+            <h2 className="text-display text-[1.375rem] sm:text-3xl leading-tight pt-4 border-t border-[var(--ink)]/10">{t("ob.h2")}</h2>
 
             <div data-field="locations" className={fieldCls("locations")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>

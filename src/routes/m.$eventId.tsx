@@ -7,6 +7,7 @@ import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.func
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
+import { genderRuleLabel, matchPreviewMeta } from "@/lib/match-rules";
 
 
 const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/dbc7c0f5-88b1-4692-9b4e-c13975074410/padel-share-logo.jpg";
@@ -15,9 +16,17 @@ export const Route = createFileRoute("/m/$eventId")({
   validateSearch: (s: Record<string, unknown>) => ({
     i: typeof s.i === "string" ? s.i : undefined,
   }),
-  head: () => {
-    const title = "Join my padel match — PadelSetMatch";
-    const description = "You're invited to a padel match on PadelSetMatch. Tap to grab an open spot.";
+  // Only used to tailor the link preview (e.g. WhatsApp card) for free-court matches.
+  loader: async ({ params }) => {
+    try {
+      const res = await getPublicMatch({ data: { id: params.eventId } });
+      return { freeCourt: !!res.match?.free_court };
+    } catch {
+      return { freeCourt: false };
+    }
+  },
+  head: ({ loaderData }) => {
+    const { title, description } = matchPreviewMeta(loaderData?.freeCourt);
     return {
       meta: [
         { title },
@@ -138,7 +147,8 @@ function PublicMatchPage() {
   });
 
   const match = q.data?.match;
-  const genderLabel = !match ? "" : match.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : match.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement") : tr("Women only", "Solo mujeres", "Femmes uniquement");
+  const genderLabel = !match ? "" : genderRuleLabel(match.gender_rule, tr);
+  const freeCourt = !!match?.free_court;
   const totalSpots = 4;
   const openSpots = match ? Math.max(0, totalSpots - (match.filled ?? 0)) : 0;
   const shareUrl = `${shareOrigin()}/m/${eventId}`;
@@ -195,6 +205,16 @@ function PublicMatchPage() {
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
               </div>
+              {freeCourt && (
+                <div className="mt-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--court-deep)] px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--paper)]">
+                    🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}
+                  </span>
+                  <p className="mt-2 text-xs text-[var(--ink)]/70">
+                    {tr("Joining costs nothing — just bring your racket and play.", "Sin coste alguno — solo ven con tu pala y a jugar.", "Aucun frais — viens avec ta raquette et joue.")}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Match card — same style as Play page */}
@@ -282,7 +302,7 @@ function PublicMatchPage() {
                       disabled={openSpots === 0}
                       className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2 disabled:opacity-50"
                     >
-                      {openSpots === 0 ? tr("Full", "Completo", "Complet") : tr("Join", "Unirme", "Rejoindre")}
+                      {openSpots === 0 ? tr("Full", "Completo", "Complet") : freeCourt ? tr("Join free", "Unirme gratis", "Rejoindre") : tr("Join", "Unirme", "Rejoindre")}
                     </button>
                   </div>
                 </div>
@@ -308,7 +328,15 @@ function PublicMatchPage() {
                 disabled={openSpots === 0}
                 className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-40 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]"
               >
-                {openSpots === 0 ? tr("Match is full", "Partido completo", "Match complet") : hasSession ? tr("Join this match", "Unirme al partido", "Rejoindre ce match") : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
+                {openSpots === 0
+                  ? tr("Match is full", "Partido completo", "Match complet")
+                  : freeCourt
+                    ? hasSession
+                      ? tr("Join this match free", "Unirme gratis al partido", "Rejoindre gratuitement")
+                      : tr("Sign up & join free", "Regístrate y únete gratis", "S'inscrire et rejoindre gratuitement")
+                    : hasSession
+                      ? tr("Join this match", "Unirme al partido", "Rejoindre ce match")
+                      : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
               {!hasSession && openSpots > 0 && (
                 <Link

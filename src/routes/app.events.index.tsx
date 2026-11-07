@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { genderRuleLabel } from "@/lib/match-rules";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
@@ -69,12 +70,13 @@ type EventLite = {
   club_name: string;
   city?: string | null;
   club_address?: string | null;
-  gender_rule: "mixed" | "men_only" | "women_only";
+  gender_rule: string;
   level_min?: string;
   level_max?: string;
   note?: string | null;
   court_booked?: boolean;
   is_private_court?: boolean;
+  free_court?: boolean;
   host?: { first_name?: string } | null;
   participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
   guests?: Array<{ id: string; display_name: string; level?: string | null }>;
@@ -594,10 +596,8 @@ function MatchCard({
         ? { bar: "bg-[var(--clay)]", chip: "bg-[var(--clay)]/25 text-[var(--ink)]", label: tr("Afternoon", "Tarde", "Après-midi") }
         : { bar: "bg-[var(--plum)]", chip: "bg-[var(--plum)]/15 text-[var(--plum)]", label: tr("Evening", "Noche", "Soir") };
 
-  const genderLabel =
-    e.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte")
-    : e.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement")
-    : tr("Women only", "Solo mujeres", "Femmes uniquement");
+  // Open matches carry no gender tag on the card; only deliberate restrictions show.
+  const genderLabel = e.gender_rule === "open" ? null : genderRuleLabel(e.gender_rule, tr);
   const lvlName = (l: string) => ({
     "just starting": tr("Beginner", "Iniciación", "Débutant"),
     casual: tr("Casual", "Casual", "Loisir"),
@@ -697,9 +697,15 @@ function MatchCard({
           <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
             {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
             {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
-            <span>{genderLabel}</span>
-            <span className="text-[var(--ink)]/25">·</span>
+            {genderLabel && <span>{genderLabel}</span>}
+            {genderLabel && <span className="text-[var(--ink)]/25">·</span>}
             <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> 90 min</span>
+            {e.free_court && (
+              <>
+                <span className="text-[var(--ink)]/25">·</span>
+                <span className="font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
+              </>
+            )}
             {e.court_booked && (
               <>
                 <span className="text-[var(--ink)]/25">·</span>

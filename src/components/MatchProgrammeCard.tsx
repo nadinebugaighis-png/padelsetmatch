@@ -1,5 +1,6 @@
 import { MapPin, Clock, Plus } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
+import { genderRuleLabel } from "@/lib/match-rules";
 
 export type ProgrammeMatch = {
   starts_at: string;
@@ -10,6 +11,7 @@ export type ProgrammeMatch = {
   level_max?: string | null;
   gender_rule?: string | null;
   court_booked?: boolean | null;
+  free_court?: boolean | null;
   note?: string | null;
   filled?: number | null;
   participant_names?: string[] | null;
@@ -66,14 +68,7 @@ export function MatchProgrammeCard({
 
   const names = match.participant_names ?? [];
   const openSpots = Math.max(0, 4 - (match.filled ?? names.length));
-  const genderLabel =
-    match.gender_rule === "mixed"
-      ? tr("Mixed", "Mixto", "Mixte")
-      : match.gender_rule === "men_only"
-        ? tr("Men only", "Solo hombres", "Hommes")
-        : match.gender_rule === "women_only"
-          ? tr("Women only", "Solo mujeres", "Femmes")
-          : null;
+  const genderLabel = match.gender_rule && match.gender_rule !== "open" ? genderRuleLabel(match.gender_rule, tr) : null;
 
   return (
     <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/10">
@@ -141,6 +136,14 @@ export function MatchProgrammeCard({
                 <span className="text-[var(--ink)]/25">·</span>
                 <span className="font-semibold text-[var(--court-deep)]">
                   {tr("Court booked", "Pista reservada", "Court réservé")}
+                </span>
+              </>
+            )}
+            {match.free_court && (
+              <>
+                <span className="text-[var(--ink)]/25">·</span>
+                <span className="font-semibold text-[var(--court-deep)]">
+                  🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}
                 </span>
               </>
             )}

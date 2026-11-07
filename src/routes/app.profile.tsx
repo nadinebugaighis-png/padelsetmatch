@@ -6,7 +6,7 @@ import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvaila
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
-import { Camera, ChevronDown, GraduationCap, HelpCircle, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
+import { Camera, ChevronDown, GraduationCap, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
 import { nativeShare } from "@/lib/native";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
-import { QASection } from "@/components/QASection";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
 import { GearEditor } from "@/components/GearShelf";
@@ -329,14 +328,6 @@ function ProfilePage() {
         </CollapsibleRow>
 
         <CollapsibleRow
-          icon={<HelpCircle className="w-4 h-4" />}
-          title={tr("Questions & answers", "Preguntas y respuestas", "Questions et réponses")}
-          subtitle={tr("Shape your compatibility", "Afina tu compatibilidad", "Affine ta compatibilité")}
-        >
-          <QASection />
-        </CollapsibleRow>
-
-        <CollapsibleRow
           icon={<MessageSquare className="w-4 h-4" />}
           title={tr("Send feedback", "Enviar comentarios", "Envoyer un avis")}
           subtitle={tr("Anonymous — help us improve", "Anónimo — ayúdanos a mejorar", "Anonyme — aide-nous à améliorer")}
@@ -406,7 +397,6 @@ function EditSectionsStrip() {
     { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
     { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
     { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
-    { step: 4, label: tr("Compatibility ✨", "Compatibilidad ✨", "Compatibilité ✨") },
   ];
   return (
     <div className="mt-3">

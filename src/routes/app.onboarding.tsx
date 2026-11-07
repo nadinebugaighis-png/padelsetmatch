@@ -24,7 +24,6 @@ import { ArrowDown, ArrowUp, Camera, Crop, Plus, Trash2, X } from "lucide-react"
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
-import { QASection } from "@/components/QASection";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { parseAdultAge } from "@/lib/qa-safety";
 
@@ -43,7 +42,7 @@ export const Route = createFileRoute("/app/onboarding")({
   validateSearch: (search: Record<string, unknown>): { step?: number } => {
     const raw = Number(search.step);
     if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(2, Math.floor(raw)));
+    const clamped = Math.max(0, Math.min(1, Math.floor(raw)));
     return { step: clamped };
   },
   component: Onboarding,
@@ -423,7 +422,6 @@ function Onboarding() {
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
     [],
-    [],
   ];
 
   const missingByStep = missingByStepDetailed.map((arr) => arr.map((x) => x.label));
@@ -446,28 +444,6 @@ function Onboarding() {
     }
     save.mutate({ destination });
   };
-
-  // The compatibility questions need a saved profile. Instead of showing a red
-  // error, silently save what the user has so far (or send them back to the
-  // missing fields with a gentle hint).
-  const ensureProfileSaved = async () => {
-    const missing = missingByStepDetailed[0] ?? [];
-    if (missing.length > 0) {
-      setStep(0);
-      setShowStepHelp(true);
-      toast.message(
-        `${tr("Save your info first", "Guarda tus datos primero", "Enregistre tes infos d'abord")} — ${missing.map((x) => x.label).join(", ")}.`,
-      );
-      setTimeout(() => {
-        const el = document.querySelector<HTMLElement>(`[data-field="${missing[0].key}"]`);
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 80);
-      throw new Error("PROFILE_INCOMPLETE");
-    }
-    await persistProfile();
-    qc.invalidateQueries({ queryKey: ["my-profile"] });
-  };
-
 
   // Exit: save when the profile is valid, otherwise confirm before discarding.
   const requestExit = () => {
@@ -510,7 +486,6 @@ function Onboarding() {
   const steps = [
     tr("Registration", "Registro", "Inscription"),
     tr("Personality", "Personalidad", "Personnalité"),
-    tr("Q&A", "Preguntas", "Q&R"),
   ];
 
   if (profileQ.isLoading) {
@@ -1137,27 +1112,6 @@ function Onboarding() {
 
           </div>
         )}
-        {step === 2 && (
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-[var(--ball)]/40 bg-[var(--ball)]/10 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 font-semibold">
-                {tr("Optional — for fun", "Opcional — por diversión", "Optionnel — pour le fun")}
-              </p>
-              <h2 className="text-display text-2xl mt-1">
-                {tr("Answer a few questions ✨", "Responde unas preguntas ✨", "Réponds à quelques questions ✨")}
-              </h2>
-              <p className="text-sm text-[var(--ink)]/75 mt-1">
-                {tr(
-                  "Tap Generate to get fresh AI questions. Answer as many as you like — you can always come back later.",
-                  "Toca Generar para obtener preguntas de IA. Responde las que quieras — puedes volver cuando quieras.",
-                  "Appuie sur Générer pour de nouvelles questions IA. Réponds à celles que tu veux — tu peux revenir plus tard.",
-                )}
-              </p>
-              <p className="text-[12px] text-[var(--ink)]/60 italic mt-2">🔒 {tr("Only used to improve your matches.", "Solo se usa para mejorar tus matches.", "Sert seulement à améliorer tes matches.")}</p>
-            </div>
-            <QASection ensureProfile={ensureProfileSaved} />
-          </div>
-        )}
       </div>
 
 
@@ -1185,11 +1139,6 @@ function Onboarding() {
                   <Button size="sm" onClick={goNext}>{t("ob.next")}</Button>
                 )}
                 {step === 1 && (
-                  <Button size="sm" onClick={() => { setStep(2); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>
-                    {tr("Continue", "Continuar", "Continuer")}
-                  </Button>
-                )}
-                {step === 2 && (
                   <Button size="sm" onClick={() => requestSave("grid")} disabled={save.isPending}>
                     {save.isPending ? t("ob.saving") : t("ob.start")}
                   </Button>

@@ -1,4 +1,4 @@
-// Curated padel questions used by the Grid "Question of the day" and the
+// Curated padel questions used by the Grid morning/evening question and the
 // 3-question unlock on player cards. The English text is the canonical value
 // stored in qa_answers so answers compare across languages.
 
@@ -47,14 +47,50 @@ export function questionForDay(d = new Date()): CuratedQuestion {
   return CURATED_QUESTIONS[days % CURATED_QUESTIONS.length];
 }
 
-/** Skip previous answers; revisit a daily question once the pool is complete. */
+/** Local hour at which the morning question gives way to the evening one. */
+export const EVENING_FROM_HOUR = 15;
+
+/** Morning or evening question slot for a local time, e.g. "2026-11-07-am". */
+export function slotKey(d = new Date()): string {
+  return `${todayKey(d)}-${d.getHours() < EVENING_FROM_HOUR ? "am" : "pm"}`;
+}
+
+/** Same question for everyone in a given morning/evening slot. */
+export function questionForSlot(d = new Date()): CuratedQuestion {
+  const days = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86_400_000);
+  const idx = days * 2 + (d.getHours() < EVENING_FROM_HOUR ? 0 : 1);
+  return CURATED_QUESTIONS[idx % CURATED_QUESTIONS.length];
+}
+
+/** After answering, a new player's next question waits this long (one app visit). */
+export const NEW_PLAYER_PAUSE_MS = 30 * 60_000;
+
+/**
+ * Whether the Grid question card should show.
+ * New players (under UNLOCK_MIN_ANSWERS answers) get one on every visit;
+ * regular players get two a day — one in the morning, one in the evening.
+ */
+export function shouldShowQuestion(opts: {
+  answeredCount: number;
+  lastSlot: string | null;
+  lastAnsweredAt: number | null;
+  now?: Date;
+}): boolean {
+  const now = opts.now ?? new Date();
+  if (opts.answeredCount < UNLOCK_MIN_ANSWERS) {
+    return opts.lastAnsweredAt === null || now.getTime() - opts.lastAnsweredAt >= NEW_PLAYER_PAUSE_MS;
+  }
+  return opts.lastSlot !== slotKey(now);
+}
+
+/** Skip previous answers; revisit a slot question once the pool is complete. */
 export function dailyQuestionFor(answered: Set<string>, d = new Date()): CuratedQuestion | null {
-  const start = CURATED_QUESTIONS.indexOf(questionForDay(d));
+  const start = CURATED_QUESTIONS.indexOf(questionForSlot(d));
   for (let i = 0; i < CURATED_QUESTIONS.length; i++) {
     const q = CURATED_QUESTIONS[(start + i) % CURATED_QUESTIONS.length];
     if (!answered.has(q.q.en)) return q;
   }
-  return questionForDay(d);
+  return questionForSlot(d);
 }
 
 /** Up to `n` unanswered questions for the player-card unlock. */

@@ -3,18 +3,18 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
-import { submitQaAnswer, getMyDailyQuestionDate } from "@/lib/app.functions";
+import { submitQaAnswer, getMyQuestionSlot } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
 import { useI18n, useTr } from "@/lib/i18n";
-import { dailyQuestionFor, todayKey, unlockQuestions, UNLOCK_MIN_ANSWERS, type CuratedQuestion } from "@/lib/daily-questions";
+import { dailyQuestionFor, slotKey, shouldShowQuestion, unlockQuestions, UNLOCK_MIN_ANSWERS, type CuratedQuestion } from "@/lib/daily-questions";
 
 function useSaveAnswer() {
   const tr = useTr();
   const qc = useQueryClient();
   const submit = useServerFn(submitQaAnswer);
   return useMutation({
-    mutationFn: (v: { q: CuratedQuestion; answer: string; dailyDate?: string }) =>
-      submit({ data: { question: v.q.q.en, category: v.q.category, answer: v.answer, dailyDate: v.dailyDate } }),
+    mutationFn: (v: { q: CuratedQuestion; answer: string; slot?: string }) =>
+      submit({ data: { question: v.q.q.en, category: v.q.category, answer: v.answer, slot: v.slot } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["qa-answers"] });
       qc.invalidateQueries({ queryKey: ["ai-compat"] });
@@ -44,31 +44,54 @@ function Chips({ q, onPick, disabled }: { q: CuratedQuestion; onPick: (en: strin
   );
 }
 
-/** One question at the top of the Grid; gone for the rest of the day once answered. */
+const LAST_ANSWER_KEY = "psm-question-last-answered";
+
+/**
+ * One question at the top of the Grid. New players get one on every visit
+ * until they have 3 answers; regular players get a morning and an evening one.
+ */
 export function DailyQuestionCard({ answered, profileId }: { answered: string[] | undefined; profileId: string }) {
   const tr = useTr();
   const { lang } = useI18n();
   const save = useSaveAnswer();
-  const getDate = useServerFn(getMyDailyQuestionDate);
-  const dateQ = useQuery({ queryKey: ["daily-answer-date", profileId], queryFn: () => getDate(), refetchOnWindowFocus: true });
-  const [day, setDay] = useState(todayKey());
-  const [answeredDay, setAnsweredDay] = useState<string | null>(null);
+  const getSlot = useServerFn(getMyQuestionSlot);
+  const slotQ = useQuery({ queryKey: ["daily-answer-date", profileId], queryFn: () => getSlot(), refetchOnWindowFocus: true });
+  const [now, setNow] = useState(() => new Date());
+  const [lastAnsweredAt, setLastAnsweredAt] = useState<number | null>(null);
+  const [answeredSlot, setAnsweredSlot] = useState<string | null>(null);
   useEffect(() => {
-    const check = () => setDay(todayKey());
-    const timer = setInterval(check, 15_000);
-    window.addEventListener("focus", check);
-    return () => { clearInterval(timer); window.removeEventListener("focus", check); };
-  }, []);
-  if (!answered || dateQ.isPending || dateQ.isError || dateQ.data === day || answeredDay === day) return null;
-  const q = dailyQuestionFor(new Set(answered));
+    try {
+      const raw = Number(window.localStorage.getItem(`${LAST_ANSWER_KEY}:${profileId}`));
+      if (raw > 0) setLastAnsweredAt(raw);
+    } catch { /* storage unavailable */ }
+    const tick = () => setNow(new Date());
+    const timer = setInterval(tick, 15_000);
+    window.addEventListener("focus", tick);
+    document.addEventListener("visibilitychange", tick);
+    return () => { clearInterval(timer); window.removeEventListener("focus", tick); document.removeEventListener("visibilitychange", tick); };
+  }, [profileId]);
+  if (!answered || slotQ.isPending || slotQ.isError) return null;
+  const slot = slotKey(now);
+  if (answeredSlot === slot && answered.length >= UNLOCK_MIN_ANSWERS) return null;
+  if (!shouldShowQuestion({ answeredCount: answered.length, lastSlot: slotQ.data, lastAnsweredAt, now })) return null;
+  const q = dailyQuestionFor(new Set(answered), now);
   if (!q) return null;
+  const evening = slot.endsWith("-pm");
+  const title = answered.length < UNLOCK_MIN_ANSWERS
+    ? tr("Quick question", "Pregunta rápida", "Question rapide")
+    : evening
+      ? tr("Evening question", "Pregunta de la tarde", "Question du soir")
+      : tr("Morning question", "Pregunta de la mañana", "Question du matin");
   return (
     <div className="mt-4 rounded-xl border border-[var(--ink)]/10 bg-white px-4 py-3">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55">{tr("Question of the day", "Pregunta del día", "Question du jour")}</div>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55">{title}</div>
       <div className="mt-1 text-[15px] font-medium text-[var(--ink)] leading-snug">{q.q[lang] ?? q.q.en}</div>
-      <Chips q={q} disabled={save.isPending} onPick={(answer) => save.mutate({ q, answer, dailyDate: day }, {
+      <Chips q={q} disabled={save.isPending} onPick={(answer) => save.mutate({ q, answer, slot }, {
         onSuccess: () => {
-          setAnsweredDay(day);
+          const at = Date.now();
+          setAnsweredSlot(slot);
+          setLastAnsweredAt(at);
+          try { window.localStorage.setItem(`${LAST_ANSWER_KEY}:${profileId}`, String(at)); } catch { /* storage unavailable */ }
         },
       })} />
       <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/45">

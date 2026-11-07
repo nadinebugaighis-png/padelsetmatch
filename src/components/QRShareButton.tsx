@@ -1,19 +1,36 @@
 import { useState } from "react";
-import { QrCode, X, Copy, Check } from "lucide-react";
+import { QrCode, X, Copy, Check, Share2 } from "lucide-react";
+import { useI18n, useTr } from "@/lib/i18n";
+import { nativeShare } from "@/lib/native";
+import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 
+// Printed QR codes point at the home page; the copy/share link is the smart
+// download link that opens the right store and shows a branded preview.
 const SHARE_URL = "https://padelsetmatch.com/";
 const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=8&data=${encodeURIComponent(SHARE_URL)}`;
 
 export function QRShareButton() {
+  const tr = useTr();
+  const { lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(SHARE_URL);
+      await navigator.clipboard.writeText(DOWNLOAD_URL);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch { /* ignore */ }
+  };
+
+  const shareApp = async () => {
+    try {
+      const shared = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang), url: DOWNLOAD_URL });
+      if (!shared) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }
+    } catch { /* share sheet dismissed */ }
   };
 
   return (
@@ -58,11 +75,19 @@ export function QRShareButton() {
                 className="h-56 w-56 rounded-lg border border-neutral-200"
               />
             </div>
-            <p className="mt-4 break-all text-center text-xs text-neutral-600">{SHARE_URL}</p>
+            <p className="mt-4 break-all text-center text-xs text-neutral-600">{DOWNLOAD_URL}</p>
+            <button
+              type="button"
+              onClick={shareApp}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--ink)] px-4 py-2 text-sm font-semibold text-[var(--paper)] hover:opacity-90"
+            >
+              <Share2 className="h-4 w-4" />
+              {tr("Share app", "Compartir app", "Partager l’app")}
+            </button>
             <button
               type="button"
               onClick={copyLink}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-[var(--ink)]/20 bg-white px-4 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-[var(--ink)]/20 bg-white px-4 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5"
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copied ? "Copied" : "Copy link"}

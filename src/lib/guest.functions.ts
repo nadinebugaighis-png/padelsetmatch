@@ -139,6 +139,7 @@ export const listPublicUpcomingMatches = createServerFn({ method: "GET" })
       gender_rule: string;
       status: string;
       court_booked: boolean | null;
+      free_court?: boolean | null;
       note: string | null;
       filled: number;
       participant_names: string[];

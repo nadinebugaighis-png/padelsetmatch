@@ -27,6 +27,7 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
+import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MoreHorizontal } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTr, useI18n } from "@/lib/i18n";
@@ -204,10 +205,7 @@ function EventDetail() {
   const mapsUrl = event.club_place_id
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name + " " + (event.city ?? ""))}`;
-  const shareText = tr(
-    `Join my padel match on PadelSetMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
-    `Únete a mi partido de pádel en PadelSetMatch — ${event.club_name} · ${fmtWhen(event.starts_at)}`,
-  );
+  const shareText = matchShareText({ clubName: event.club_name, when: fmtWhen(event.starts_at), freeCourt: !!event.free_court }, tr);
 
   const displayShareUrl = shortShareUrl || shareUrl;
 
@@ -228,12 +226,10 @@ function EventDetail() {
     }
   };
 
-  const genderLabel = event.gender_rule === "mixed" ? tr("Mixed", "Mixto", "Mixte") : event.gender_rule === "men_only" ? tr("Men only", "Solo hombres", "Hommes uniquement") : tr("Women only", "Solo mujeres", "Femmes uniquement");
+  const genderLabel = genderRuleLabel(event.gender_rule, tr);
   const canJoin =
     !me?.iAmParticipant && event.status === "open" && event.needs > 0 &&
-    (event.gender_rule === "mixed"
-      || (event.gender_rule === "men_only" && me?.gender === "man")
-      || (event.gender_rule === "women_only" && me?.gender === "woman"));
+    genderRuleAllows(event.gender_rule, me?.gender);
 
   const onJoin = async () => {
     try {
@@ -476,6 +472,9 @@ function EventDetail() {
               )}
               <div className="mt-2 text-[12px] text-[var(--ink)]/75">
                 {genderLabel} · {label(event.level_min)} · {event.court_booked ? tr("Court booked ✓", "Pista reservada ✓", "Pista réservée ✓") : tr("Court to book", "Falta pista", "Pista à réserver")}
+                {event.free_court && (
+                  <span className="ml-1.5 inline-flex items-center rounded-full bg-[var(--court-deep)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
+                )}
               </div>
             </div>
             <div className="flex divide-x divide-[var(--ink)]/10 border-t border-[var(--ink)]/10 text-[13px]">

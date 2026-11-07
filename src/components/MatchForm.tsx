@@ -9,6 +9,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
+import { DEFAULT_GENDER_RULE, type GenderRule } from "@/lib/match-rules";
 
 export type MatchFormValues = {
   starts_at: string;
@@ -21,12 +22,13 @@ export type MatchFormValues = {
   country: string | null;
   level_min: (typeof PADEL_LEVELS)[number];
   level_max: (typeof PADEL_LEVELS)[number];
-  gender_rule: "mixed" | "men_only" | "women_only";
+  gender_rule: GenderRule;
   extra_confirmed: number;
   note: string | null;
   playtomic_link: string | null;
   court_booked: boolean;
   is_private_court: boolean;
+  free_court: boolean;
 };
 
 export type MatchFormInitial = Partial<MatchFormValues> & {
@@ -123,9 +125,10 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   );
   const [customCity, setCustomCity] = useState(!isClub ? initial?.city ?? "" : "");
   const [when, setWhen] = useState(initial?.when_local ?? toLocalDatetime(initial?.starts_at));
-  const [genderRule, setGenderRule] = useState<"mixed" | "men_only" | "women_only">(
-    initial?.gender_rule ?? "mixed",
+  const [genderRule, setGenderRule] = useState<GenderRule>(
+    initial?.gender_rule ?? DEFAULT_GENDER_RULE,
   );
+  const [freeCourt, setFreeCourt] = useState<boolean>(initial?.free_court ?? false);
   const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
@@ -167,6 +170,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             playtomic_link: normalized.url,
             court_booked: courtBooked,
             is_private_court: false,
+            free_court: freeCourt,
           }
         : {
             starts_at: new Date(when).toISOString(),
@@ -185,6 +189,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             playtomic_link: normalized.url,
             court_booked: courtBooked,
             is_private_court: isPrivateCourt,
+            free_court: freeCourt,
           };
     await onSubmit(values);
   };
@@ -274,8 +279,9 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         </div>
         <div className={rowDivider} />
         <div className="py-2.5">
-          <div className="grid grid-cols-3 rounded-lg bg-[var(--ink)]/[0.06] p-0.5">
+          <div className="grid grid-cols-4 rounded-lg bg-[var(--ink)]/[0.06] p-0.5">
             {[
+              { v: "open" as const, l: tr("Open", "Abierto", "Ouvert") },
               { v: "mixed" as const, l: tr("Mixed", "Mixto", "Mixte") },
               { v: "men_only" as const, l: tr("Men", "Hombres", "Hommes") },
               { v: "women_only" as const, l: tr("Women", "Mujeres", "Femmes") },
@@ -286,6 +292,13 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               </button>
             ))}
           </div>
+          <p className={helperCls}>
+            {genderRule === "open"
+              ? tr("Anyone can join. Restrict it only if you need to.", "Cualquiera puede unirse. Restríngelo solo si lo necesitas.", "Tout le monde peut rejoindre. Restreins seulement si besoin.")
+              : genderRule === "mixed"
+                ? tr("You're looking for a mixed game.", "Buscas un partido mixto.", "Tu cherches un match mixte.")
+                : tr("Only players of this gender can join.", "Solo pueden unirse jugadores de este género.", "Seuls les joueurs de ce genre peuvent rejoindre.")}
+          </p>
         </div>
         <div className={rowDivider} />
         <div className={rowCls}>
@@ -304,6 +317,20 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
       {/* Card 3 — The court */}
       <div className={cardCls}>
+        <div className={rowCls}>
+          <div className="min-w-0">
+            <span className={rowLabel}>🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
+            <p className="text-[11px] text-[var(--ink)]/50 leading-snug">
+              {tr(
+                "Players joining don't pay (e.g. urbanization court, or you're covering it). Your shared link will say it's free.",
+                "Quien se una no paga (p. ej. pista de urbanización o la pagas tú). Tu enlace dirá que es gratis.",
+                "Les joueurs ne paient pas (ex. terrain de résidence, ou tu l'offres). Ton lien indiquera que c'est gratuit.",
+              )}
+            </p>
+          </div>
+          <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={freeCourt} onCheckedChange={setFreeCourt} aria-label={tr("Free court", "Pista gratis", "Terrain gratuit")} />
+        </div>
+        <div className={rowDivider} />
         <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
           <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />

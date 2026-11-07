@@ -900,6 +900,7 @@ export type Database = {
           court_booked: boolean
           created_at: string
           extra_confirmed: number
+          free_court: boolean
           gender_rule: Database["public"]["Enums"]["match_gender_rule"]
           host_profile_id: string
           id: string
@@ -924,6 +925,7 @@ export type Database = {
           court_booked?: boolean
           created_at?: string
           extra_confirmed?: number
+          free_court?: boolean
           gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
           host_profile_id: string
           id?: string
@@ -948,6 +950,7 @@ export type Database = {
           court_booked?: boolean
           created_at?: string
           extra_confirmed?: number
+          free_court?: boolean
           gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
           host_profile_id?: string
           id?: string
@@ -2070,7 +2073,7 @@ export type Database = {
         | "looking_for_coach"
       friendship_status: "pending" | "accepted"
       match_event_status: "open" | "full" | "cancelled" | "played"
-      match_gender_rule: "mixed" | "men_only" | "women_only"
+      match_gender_rule: "mixed" | "men_only" | "women_only" | "open"
       match_invite_status: "pending" | "accepted" | "declined" | "revoked"
       venue_type: "club" | "compound" | "public_court" | "other"
     }
@@ -2212,7 +2215,7 @@ export const Constants = {
       ],
       friendship_status: ["pending", "accepted"],
       match_event_status: ["open", "full", "cancelled", "played"],
-      match_gender_rule: ["mixed", "men_only", "women_only"],
+      match_gender_rule: ["mixed", "men_only", "women_only", "open"],
       match_invite_status: ["pending", "accepted", "declined", "revoked"],
       venue_type: ["club", "compound", "public_court", "other"],
     },

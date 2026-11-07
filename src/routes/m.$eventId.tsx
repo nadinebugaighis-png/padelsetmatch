@@ -302,7 +302,7 @@ function PublicMatchPage() {
                       disabled={openSpots === 0}
                       className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.14em] px-3.5 py-2 disabled:opacity-50"
                     >
-                      {openSpots === 0 ? tr("Full", "Completo", "Complet") : freeCourt ? tr("Join free", "Unirme gratis", "Rejoindre") : tr("Join", "Unirme", "Rejoindre")}
+                      {openSpots === 0 ? tr("Full", "Completo", "Complet") : tr("Join", "Unirme", "Rejoindre")}
                     </button>
                   </div>
                 </div>

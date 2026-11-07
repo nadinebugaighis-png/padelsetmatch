@@ -1426,6 +1426,7 @@ export type Database = {
           court_side: string | null
           created_at: string
           daily_question_answered_on: string | null
+          daily_question_slot: string | null
           favorite_clubs: string[]
           first_name: string
           founding_number: number | null
@@ -1484,6 +1485,7 @@ export type Database = {
           court_side?: string | null
           created_at?: string
           daily_question_answered_on?: string | null
+          daily_question_slot?: string | null
           favorite_clubs?: string[]
           first_name: string
           founding_number?: number | null
@@ -1542,6 +1544,7 @@ export type Database = {
           court_side?: string | null
           created_at?: string
           daily_question_answered_on?: string | null
+          daily_question_slot?: string | null
           favorite_clubs?: string[]
           first_name?: string
           founding_number?: number | null
@@ -2035,6 +2038,15 @@ export type Database = {
           _category: string
           _daily_date?: string
           _question: string
+        }
+        Returns: string
+      }
+      save_my_qa_answer_slot: {
+        Args: {
+          _answer: string
+          _category: string
+          _question: string
+          _slot: string
         }
         Returns: string
       }

@@ -35,7 +35,6 @@ import { Route as AppJoinSetupRouteImport } from './routes/app.join-setup'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
-import { Route as AppQuestionsRouteImport } from './routes/app.questions'
 import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
@@ -185,11 +184,6 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
-const AppQuestionsRoute = AppQuestionsRouteImport.update({
-  id: '/questions',
-  path: '/questions',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppQuickStartRoute = AppQuickStartRouteImport.update({
   id: '/quick-start',
   path: '/quick-start',
@@ -297,7 +291,6 @@ export interface FileRoutesByFullPath {
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
-  '/app/questions': typeof AppQuestionsRoute
   '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
@@ -341,7 +334,6 @@ export interface FileRoutesByTo {
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
-  '/app/questions': typeof AppQuestionsRoute
   '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
@@ -387,7 +379,6 @@ export interface FileRoutesById {
   '/app/matches': typeof AppMatchesRouteWithChildren
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
-  '/app/questions': typeof AppQuestionsRoute
   '/app/quick-start': typeof AppQuickStartRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
@@ -434,7 +425,6 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
-    | '/app/questions'
     | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
@@ -478,7 +468,6 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
-    | '/app/questions'
     | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
@@ -523,7 +512,6 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/onboarding'
     | '/app/profile'
-    | '/app/questions'
     | '/app/quick-start'
     | '/g/$eventId'
     | '/m/$eventId'
@@ -757,13 +745,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/questions': {
-      id: '/app/questions'
-      path: '/questions'
-      fullPath: '/app/questions'
-      preLoaderRoute: typeof AppQuestionsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/quick-start': {
       id: '/app/quick-start'
       path: '/quick-start'
@@ -911,7 +892,6 @@ interface AppRouteChildren {
   AppMatchesRoute: typeof AppMatchesRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
-  AppQuestionsRoute: typeof AppQuestionsRoute
   AppQuickStartRoute: typeof AppQuickStartRoute
   AppIndexRoute: typeof AppIndexRoute
   AppEventsEventIdRoute: typeof AppEventsEventIdRouteWithChildren
@@ -928,7 +908,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppMatchesRoute: AppMatchesRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
-  AppQuestionsRoute: AppQuestionsRoute,
   AppQuickStartRoute: AppQuickStartRoute,
   AppIndexRoute: AppIndexRoute,
   AppEventsEventIdRoute: AppEventsEventIdRouteWithChildren,

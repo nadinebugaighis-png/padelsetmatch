@@ -119,6 +119,7 @@ function EditEvent() {
           playtomic_link: event.playtomic_link,
           court_booked: event.court_booked,
           is_private_court: event.is_private_court,
+          free_court: event.free_court ?? false,
           app_players_count: event.participants?.length ?? 1,
         }}
       />

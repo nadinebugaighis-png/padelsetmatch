@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
+import { DEFAULT_GENDER_RULE, GENDER_RULES, type GenderRule } from "./match-rules";
 import { locationMatchKeywords } from "./location-matching";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";

@@ -158,15 +158,15 @@ function Landing() {
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined, mode: undefined }}
-              className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] px-8 py-3.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
+              className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[11.5px] px-6 py-2.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
             >
               {t("land.cta")}
             </Link>
           </div>
 
           <div className="mt-5 lg:mt-4 flex flex-wrap items-center gap-3">
-            <AppStoreBadge />
-            <GooglePlayBadge />
+            <AppStoreBadge className="[&_img]:!h-8" />
+            <GooglePlayBadge className="[&_img]:!h-8" />
           </div>
         </div>
       </section>

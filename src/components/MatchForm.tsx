@@ -345,6 +345,14 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
                 href={formBooking.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() =>
+                  window.__lovableEvents?.track?.("project.book_court_clicked", {
+                    club: formBooking.club,
+                    source: formBooking.source,
+                    placement: "match_form",
+                    court_booked: false,
+                  })
+                }
                 className="inline-flex items-center gap-1 text-[12px] font-medium text-[var(--ink)] underline underline-offset-2"
               >
                 {tr("Book court", "Reservar pista", "Réserver")} <ExternalLink className="w-3 h-3" />

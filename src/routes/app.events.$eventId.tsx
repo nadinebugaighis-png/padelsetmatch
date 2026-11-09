@@ -483,7 +483,19 @@ function EventDetail() {
                 <MapPin className="w-3.5 h-3.5" /> {tr("Directions", "Cómo llegar", "Itinéraire")}
               </a>
               {showBooking && booking && (
-                <a href={booking.url} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                <a
+                  href={booking.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    window.__lovableEvents?.track?.("project.book_court_clicked", {
+                      club: booking.club,
+                      source: booking.source,
+                      placement: "match_page",
+                      court_booked: !!event.court_booked,
+                    })
+                  }
+                  className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
                   {event.court_booked ? "Playtomic" : tr("Book court", "Reservar pista", "Réserver")} <ExternalLink className="w-3 h-3" />
                 </a>
               )}

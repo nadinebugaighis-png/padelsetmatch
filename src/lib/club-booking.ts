@@ -23,6 +23,7 @@ const KNOWN_CLUBS: KnownClub[] = [
   { url: "https://playtomic.com/tenant/4fb9cb56-8fe7-46f9-9b57-c83cf1da18f8", words: [["calido", "alcobendas"]] },
   { url: "https://playtomic.com/tenant/da765f8e-43b3-11e8-8674-52540049669c", words: [["liceo", "europeo"]] },
   { url: "https://playtomic.com/tenant/da7887db-43b3-11e8-8674-52540049669c", words: [["golf", "park"]] },
+  { url: "https://playtomic.com/tenant/da79175c-43b3-11e8-8674-52540049669c", words: [["tablas", "sports"]] },
   { url: "https://playtomic.com/es/clubs/la-vida-padel-alcobendas", words: [["vida", "padel", "alcobendas"]] },
   { url: "https://playtomic.com/es/clubs/ciudad-deportiva-jarama", words: [["ciudad", "deportiva", "jarama"]] },
   { url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },

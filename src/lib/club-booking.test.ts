@@ -34,6 +34,11 @@ describe("clubBookingLink", () => {
       .toBe("https://playtomic.com/tenant/da7887db-43b3-11e8-8674-52540049669c");
   });
 
+  it("sends Las Tablas Sports Club to its Playtomic app link", () => {
+    expect(clubBookingLink({ club_name: "Las Tablas Sports Club", club_place_id: "abc" })?.url)
+      .toBe("https://playtomic.com/tenant/da79175c-43b3-11e8-8674-52540049669c");
+  });
+
   it("prefers the host's own Playtomic link", () => {
     expect(
       clubBookingLink({ club_name: "Club de Pádel La Moraleja", playtomic_link: "playtomic.com/clubs/my-club" }),

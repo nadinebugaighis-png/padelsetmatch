@@ -3,6 +3,7 @@ import { useLocation } from "@tanstack/react-router";
 import { QrCode, X, Copy, Check, Share2 } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { nativeShare } from "@/lib/native";
+import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 
 // Printed QR codes point at the home page; the copy/share link is the smart

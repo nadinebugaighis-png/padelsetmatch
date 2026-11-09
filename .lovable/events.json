@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "events": {
+    "project.book_court_clicked": {
+      "event_schema_version": 1,
+      "description": "A player tapped Book court (or Playtomic) to open a club's booking page from a match or the match form.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "club",
+          "source",
+          "placement",
+          "court_booked"
+        ],
+        "properties": {
+          "club": {
+            "type": "string",
+            "description": "Curated club key, or 'other' for unlisted clubs"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "host",
+              "club",
+              "search"
+            ]
+          },
+          "placement": {
+            "type": "string",
+            "enum": [
+              "match_page",
+              "match_form"
+            ]
+          },
+          "court_booked": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

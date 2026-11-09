@@ -7,9 +7,31 @@ import { normalizePlaytomicLink } from "@/lib/affinity";
  *   2. a curated Playtomic club page for known clubs,
  *   3. a web search for "Playtomic <club>" when the host picked a real club.
  * Private / free courts and undecided clubs never show a booking link.
+ *
+ * Every Playtomic link we send out carries UTM tags so Playtomic and the clubs
+ * can see the visit came from PadelSetMatch; Google searches are left untagged.
  */
 
-type KnownClub = { url: string; words: string[][] };
+export const BOOKING_UTM = {
+  utm_source: "padelsetmatch",
+  utm_medium: "app",
+  utm_campaign: "book_court",
+} as const;
+
+/** Adds PadelSetMatch UTM tags, replacing any existing utm_* values (e.g. Playtomic's own share tags). */
+export function tagBookingUrl(url: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return url;
+  }
+  for (const k of [...parsed.searchParams.keys()]) if (k.startsWith("utm_")) parsed.searchParams.delete(k);
+  for (const [k, v] of Object.entries(BOOKING_UTM)) parsed.searchParams.set(k, v);
+  return parsed.toString();
+}
+
+type KnownClub = { key: string; url: string; words: string[][] };
 
 // Each entry matches when ALL words of ANY word-set appear in the club name
 // (accents stripped, lowercase). Keep words specific so similar names don't collide.
@@ -17,18 +39,18 @@ const KNOWN_CLUBS: KnownClub[] = [
   // playtomic.com/tenant/<id> is an app link: it opens the Playtomic app on the club
   // (falls back to the website when the app isn't installed). /clubs/<slug> only opens the website.
   // Riber must come before La Moraleja: "Riber Pádel Moraleja Club" would also match La Moraleja's words.
-  { url: "https://playtomic.com/tenant/a788ca6f-847a-4745-8d31-cab2e332c17b", words: [["riber"]] },
-  { url: "https://playtomic.com/tenant/e0448759-a18b-4b53-a3d5-b8cb7333c7d7", words: [["moraleja", "club", "padel"]] },
-  { url: "https://playtomic.com/tenant/c4204b18-1228-466a-89f8-a94f181f37c3", words: [["irlandesas"]] },
-  { url: "https://playtomic.com/tenant/4fb9cb56-8fe7-46f9-9b57-c83cf1da18f8", words: [["calido", "alcobendas"]] },
-  { url: "https://playtomic.com/tenant/da765f8e-43b3-11e8-8674-52540049669c", words: [["liceo", "europeo"]] },
-  { url: "https://playtomic.com/tenant/da7887db-43b3-11e8-8674-52540049669c", words: [["golf", "park"]] },
-  { url: "https://playtomic.com/tenant/da79175c-43b3-11e8-8674-52540049669c", words: [["tablas", "sports"]] },
-  { url: "https://playtomic.com/es/clubs/la-vida-padel-alcobendas", words: [["vida", "padel", "alcobendas"]] },
-  { url: "https://playtomic.com/es/clubs/ciudad-deportiva-jarama", words: [["ciudad", "deportiva", "jarama"]] },
-  { url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },
-  { url: "https://playtomic.com/es/clubs/campus-23-club-de-tenis-y-padel", words: [["campus", "23"]] },
-  { url: "https://playtomic.com/es/clubs/norte-real-sport-club", words: [["norte", "real", "sport"]] },
+  { key: "riber_padel_moraleja", url: "https://playtomic.com/tenant/a788ca6f-847a-4745-8d31-cab2e332c17b", words: [["riber"]] },
+  { key: "club_padel_la_moraleja", url: "https://playtomic.com/tenant/e0448759-a18b-4b53-a3d5-b8cb7333c7d7", words: [["moraleja", "club", "padel"]] },
+  { key: "club_irlandesas", url: "https://playtomic.com/tenant/c4204b18-1228-466a-89f8-a94f181f37c3", words: [["irlandesas"]] },
+  { key: "calido_alcobendas", url: "https://playtomic.com/tenant/4fb9cb56-8fe7-46f9-9b57-c83cf1da18f8", words: [["calido", "alcobendas"]] },
+  { key: "liceo_europeo", url: "https://playtomic.com/tenant/da765f8e-43b3-11e8-8674-52540049669c", words: [["liceo", "europeo"]] },
+  { key: "golf_park", url: "https://playtomic.com/tenant/da7887db-43b3-11e8-8674-52540049669c", words: [["golf", "park"]] },
+  { key: "las_tablas_sports_club", url: "https://playtomic.com/tenant/da79175c-43b3-11e8-8674-52540049669c", words: [["tablas", "sports"]] },
+  { key: "la_vida_padel_alcobendas", url: "https://playtomic.com/es/clubs/la-vida-padel-alcobendas", words: [["vida", "padel", "alcobendas"]] },
+  { key: "ciudad_deportiva_jarama", url: "https://playtomic.com/es/clubs/ciudad-deportiva-jarama", words: [["ciudad", "deportiva", "jarama"]] },
+  { key: "dreamfit_sanse", url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },
+  { key: "campus_23", url: "https://playtomic.com/es/clubs/campus-23-club-de-tenis-y-padel", words: [["campus", "23"]] },
+  { key: "norte_real_sport_club", url: "https://playtomic.com/es/clubs/norte-real-sport-club", words: [["norte", "real", "sport"]] },
 ];
 
 const PLACEHOLDER_WORDS = ["tbd", "por decidir", "to be decided", "a decider", "club por definir"];
@@ -51,29 +73,38 @@ export type BookingInput = {
   free_court?: boolean | null;
 };
 
-export type BookingLink = { url: string; source: "host" | "club" | "search" };
+export type BookingLink = {
+  url: string;
+  source: "host" | "club" | "search";
+  /** Low-cardinality club id for analytics: curated key, or "other" for any other club. */
+  club: string;
+};
 
-export function knownClubBookingUrl(clubName: string | null | undefined): string | null {
+function knownClub(clubName: string | null | undefined): KnownClub | null {
   const name = norm(clubName);
   if (!name) return null;
   const tokens = new Set(name.split(" "));
-  const hit = KNOWN_CLUBS.find((c) => c.words.some((set) => set.every((w) => tokens.has(w))));
-  return hit?.url ?? null;
+  return KNOWN_CLUBS.find((c) => c.words.some((set) => set.every((w) => tokens.has(w)))) ?? null;
+}
+
+export function knownClubBookingUrl(clubName: string | null | undefined): string | null {
+  return knownClub(clubName)?.url ?? null;
 }
 
 export function clubBookingLink(m: BookingInput): BookingLink | null {
+  const known = knownClub(m.club_name);
+  const club = known?.key ?? "other";
   const host = m.playtomic_link ? normalizePlaytomicLink(m.playtomic_link).url : null;
-  if (host) return { url: host, source: "host" };
+  if (host) return { url: tagBookingUrl(host), source: "host", club };
   if (m.is_private_court || m.free_court) return null;
 
   const name = norm(m.club_name);
   if (!name || PLACEHOLDER_WORDS.some((p) => name === p || name.includes(p))) return null;
 
-  const known = knownClubBookingUrl(m.club_name);
-  if (known) return { url: known, source: "club" };
+  if (known) return { url: tagBookingUrl(known.url), source: "club", club };
 
   // Only search when the host picked a real club from the list, not a typed address.
   if (!m.club_place_id) return null;
   const q = `Playtomic ${m.club_name ?? ""} ${m.city ?? ""}`.replace(/\s+/g, " ").trim();
-  return { url: `https://www.google.com/search?q=${encodeURIComponent(q)}`, source: "search" };
+  return { url: `https://www.google.com/search?q=${encodeURIComponent(q)}`, source: "search", club };
 }

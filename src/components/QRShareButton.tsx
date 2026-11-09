@@ -27,13 +27,12 @@ export function QRShareButton() {
   };
 
   const shareApp = async () => {
-    try {
-      const shared = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang), url: DOWNLOAD_URL });
-      if (!shared) {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }
-    } catch { /* share sheet dismissed */ }
+    const outcome = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang), url: DOWNLOAD_URL });
+    if (outcome === "shared" || outcome === "copied") recordAppShare(outcome === "shared" ? "share_sheet" : "copy_link");
+    if (outcome === "copied") {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
   };
 
   if (pathname === "/") return null;

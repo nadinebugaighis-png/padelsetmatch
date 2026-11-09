@@ -14,7 +14,9 @@ type KnownClub = { url: string; words: string[][] };
 // Each entry matches when ALL words of ANY word-set appear in the club name
 // (accents stripped, lowercase). Keep words specific so similar names don't collide.
 const KNOWN_CLUBS: KnownClub[] = [
-  { url: "https://playtomic.com/es/clubs/la-moraleja-club-de-padel", words: [["moraleja", "club", "padel"]] },
+  // playtomic.com/tenant/<id> is an app link: it opens the Playtomic app on the club
+  // (falls back to the website when the app isn't installed). /clubs/<slug> only opens the website.
+  { url: "https://playtomic.com/tenant/e0448759-a18b-4b53-a3d5-b8cb7333c7d7", words: [["moraleja", "club", "padel"]] },
   { url: "https://playtomic.com/es/clubs/la-vida-padel-alcobendas", words: [["vida", "padel", "alcobendas"]] },
   { url: "https://playtomic.com/es/clubs/ciudad-deportiva-jarama", words: [["ciudad", "deportiva", "jarama"]] },
   { url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },

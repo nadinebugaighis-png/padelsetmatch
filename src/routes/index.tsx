@@ -231,24 +231,15 @@ function Landing() {
       {/* Dark green footer bar */}
       <footer className="relative z-10 bg-[var(--ink)] text-[var(--paper)]">
         <div className="h-1.5 bg-[var(--plum)]" aria-hidden />
-        <div className="px-5 sm:px-8 lg:px-16 py-5 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-sm tracking-wide">padelsetmatch.com</span>
-            <span className="inline-flex items-center gap-2 rounded-xl bg-[var(--paper)] p-1.5">
-              <AppStoreBadge />
-              <GooglePlayBadge />
-            </span>
-          </div>
-          <div className="flex items-center gap-5 text-xs text-[var(--paper)]/70 flex-wrap">
-            <Link to="/padel-cerca-de-mi" className="hover:text-[var(--paper)]">Pádel cerca de mí</Link>
-            <Link to="/free-padel-courts" className="hover:text-[var(--paper)]">Free padel courts</Link>
-            <Link to="/pistas-de-padel-gratis" className="hover:text-[var(--paper)]">Pistas de pádel gratis</Link>
-
-            <Link to="/how-it-works" className="hover:text-[var(--paper)]">How it works</Link>
-            <Link to="/terms" className="hover:text-[var(--paper)]">Terms</Link>
-            <Link to="/privacy" className="hover:text-[var(--paper)]">Privacy</Link>
-            <span>v0.1</span>
-          </div>
+        <div className="px-5 sm:px-8 lg:px-16 py-8 flex items-center justify-between gap-x-6 gap-y-4 flex-wrap text-xs tracking-wide text-[var(--paper)]/70">
+          <span>© PadelSetMatch</span>
+          <nav className="flex items-center gap-3">
+            <Link to="/how-it-works" className="hover:text-[var(--paper)] transition">How it works</Link>
+            <span aria-hidden>·</span>
+            <Link to="/terms" className="hover:text-[var(--paper)] transition">Terms</Link>
+            <span aria-hidden>·</span>
+            <Link to="/privacy" className="hover:text-[var(--paper)] transition">Privacy</Link>
+          </nav>
         </div>
       </footer>
     </main>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { clubBookingLink } from "./club-booking";
 
-const MORALEJA = "https://playtomic.com/es/clubs/la-moraleja-club-de-padel";
+const MORALEJA = "https://playtomic.com/tenant/e0448759-a18b-4b53-a3d5-b8cb7333c7d7";
 
 describe("clubBookingLink", () => {
   it("sends Club de Pádel La Moraleja to its Playtomic page", () => {

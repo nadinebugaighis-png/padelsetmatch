@@ -9,6 +9,11 @@ describe("clubBookingLink", () => {
     expect(clubBookingLink({ club_name: "La Moraleja Club de Pádel", club_place_id: "abc" })?.url).toBe(MORALEJA);
   });
 
+  it("sends Club Irlandesas to its Playtomic app link", () => {
+    expect(clubBookingLink({ club_name: "Club Irlandesas", club_place_id: "abc" })?.url)
+      .toBe("https://playtomic.com/tenant/c4204b18-1228-466a-89f8-a94f181f37c3");
+  });
+
   it("prefers the host's own Playtomic link", () => {
     expect(
       clubBookingLink({ club_name: "Club de Pádel La Moraleja", playtomic_link: "playtomic.com/clubs/my-club" }),

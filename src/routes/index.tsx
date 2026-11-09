@@ -154,7 +154,7 @@ function Landing() {
             {t("land.lede")}
           </p>
 
-          <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-3">
+          <div className="mt-9 lg:mt-7 flex flex-wrap items-center gap-3">
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined, mode: undefined }}

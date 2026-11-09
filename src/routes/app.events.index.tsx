@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
 import { Button } from "@/components/ui/button";
-import { toggleMatchDay } from "@/lib/match-date-selection";
+import { defaultMatchDays, groupByDay, toggleMatchDay } from "@/lib/match-date-selection";
 
 export const Route = createFileRoute("/app/events/")({
   head: () => ({
@@ -148,13 +148,13 @@ function EventsPage() {
 
   // Filters
   const [selectedDays, setSelectedDays] = useState<Set<string>>(() => {
-    const s = new Set<string>();
+    const keys: string[] = [];
     for (let i = 0; i < DAY_COUNT; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
-      s.add(dayKey(d));
+      keys.push(dayKey(d));
     }
-    return s;
+    return defaultMatchDays(keys);
   });
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("all");
   const [levelOnly, setLevelOnly] = useState(false);
@@ -516,42 +516,57 @@ function FeedSection({
   tr: ReturnType<typeof useTr>;
   highlight?: boolean;
 }) {
+  const groups = groupByDay(events, (e) => dayKey(new Date(e.starts_at)));
+  const todayKey = dayKey(new Date());
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowKey = dayKey(tomorrow);
+
+  function dayHeading(d: Date, key: string) {
+    const date = d.toLocaleDateString(locale, { day: "numeric", month: "long" });
+    if (key === todayKey) return `${tr("Today", "Hoy", "Aujourd'hui")} · ${date}`;
+    if (key === tomorrowKey) return `${tr("Tomorrow", "Mañana", "Demain")} · ${date}`;
+    const weekday = d.toLocaleDateString(locale, { weekday: "long" });
+    return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} · ${date}`;
+  }
+
   return (
-    <section>
-      <div className="flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <h2 className="text-serif text-lg leading-tight text-[var(--ink)]">{title}</h2>
-          {subtitle && <p className="text-xs text-[var(--ink)]/55 mt-1">{subtitle}</p>}
-        </div>
-      </div>
-      <ul className="mt-2 space-y-2">
-        {events.map((e, i) => {
-          const slotStart = new Date(e.starts_at).getHours();
-          const prev = i > 0 ? events[i - 1] : null;
-          const prevStart = prev ? new Date(prev.starts_at) : null;
-          const dayChanged =
-            prevStart !== null &&
-            (prevStart.getFullYear() !== new Date(e.starts_at).getFullYear() ||
-              prevStart.getMonth() !== new Date(e.starts_at).getMonth() ||
-              prevStart.getDate() !== new Date(e.starts_at).getDate());
-          const slotChanged = prevStart !== null && !dayChanged && Math.floor(prevStart.getHours() / 12) !== Math.floor(slotStart / 12);
+    <section aria-label={title}>
+      {subtitle && <p className="text-xs text-[var(--ink)]/55 mt-1">{subtitle}</p>}
+      <div className="space-y-6">
+        {groups.map((group) => {
+          const first = new Date(group.items[0].starts_at);
           return (
-            <li key={e.id} className={`lazy-row ${slotChanged || dayChanged ? "pt-4" : ""}`}>
-              <MatchCard
-                e={e}
-                locale={locale}
-                daySlot={daySlots.get(e.id) ?? 0}
-                pending={pending}
-                onOpen={onOpen}
-                onJoin={onJoin}
-                onManage={onManage}
-                tr={tr}
-                highlight={highlight}
-              />
-            </li>
+            <div key={group.key}>
+              <h2 className="text-serif text-lg leading-tight text-[var(--ink)] pb-1.5 border-b border-border">
+                {dayHeading(first, group.key)}
+              </h2>
+              <ul className="mt-2 space-y-2">
+                {group.items.map((e, i) => {
+                  const prev = i > 0 ? group.items[i - 1] : null;
+                  const slotChanged = prev !== null &&
+                    Math.floor(new Date(prev.starts_at).getHours() / 12) !== Math.floor(new Date(e.starts_at).getHours() / 12);
+                  return (
+                    <li key={e.id} className={`lazy-row ${slotChanged ? "pt-4" : ""}`}>
+                      <MatchCard
+                        e={e}
+                        locale={locale}
+                        daySlot={daySlots.get(e.id) ?? 0}
+                        pending={pending}
+                        onOpen={onOpen}
+                        onJoin={onJoin}
+                        onManage={onManage}
+                        tr={tr}
+                        highlight={highlight}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           );
         })}
-      </ul>
+      </div>
     </section>
   );
 }

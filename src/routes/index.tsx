@@ -100,15 +100,6 @@ function Landing() {
   }, [navigate]);
   const t = useT();
   const tr = useTr();
-  const fetchCount = useServerFn(getPlayerCount);
-  const countQ = useQuery({
-    queryKey: ["player-count"],
-    queryFn: async () => {
-      try { return await fetchCount(); } catch { return { count: 0 }; }
-    },
-    retry: false,
-  });
-  const count = countQ.data?.count ?? 0;
 
   if (entryFailed) return (
     <main data-native-entry="ready" className="min-h-screen flex flex-col items-center justify-center gap-4 bg-paper text-ink px-6 text-center">

@@ -95,6 +95,35 @@ export type Database = {
         }
         Relationships: []
       }
+      app_shares: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          channel?: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_shares_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blocks: {
         Row: {
           blocked_profile_id: string
@@ -1905,6 +1934,7 @@ export type Database = {
         Args: { _profile_id: string; _suspend: boolean }
         Returns: Json
       }
+      admin_top_sharers: { Args: never; Returns: Json }
       can_read_current_photo: { Args: { _path: string }; Returns: boolean }
       check_app_health_alerts: { Args: never; Returns: Json }
       claim_pending_push_delivery: { Args: { _limit?: number }; Returns: Json }
@@ -2027,6 +2057,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_app_share: { Args: { _channel: string }; Returns: undefined }
       resolve_short_link: { Args: { _code: string }; Returns: string }
       respond_to_intro: {
         Args: { _accept: boolean; _match_id: string }

@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
 import { Camera, ChevronDown, GraduationCap, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
 import { nativeShare } from "@/lib/native";
+import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -695,11 +696,15 @@ function InviteFriendsRow() {
   const { lang } = useI18n();
   const onShare = async () => {
     const text = shareAppText(lang);
-    try {
-      const shared = await nativeShare({ title: "PadelSetMatch", text, url: DOWNLOAD_URL });
-      if (!shared) toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
-    } catch {
-      // share sheet dismissed
+    const outcome = await nativeShare({ title: "PadelSetMatch", text, url: DOWNLOAD_URL });
+    if (outcome === "shared") {
+      recordAppShare("share_sheet");
+    } else if (outcome === "copied") {
+      recordAppShare("copy_link");
+      toast.success(tr("Link copied — paste it in WhatsApp", "Enlace copiado — pégalo en WhatsApp", "Lien copié — colle-le dans WhatsApp"));
+    } else if (outcome === "unavailable") {
+      recordAppShare("whatsapp");
+      window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${DOWNLOAD_URL}`)}`, "_blank", "noopener");
     }
   };
   return (

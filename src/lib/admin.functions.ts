@@ -36,6 +36,15 @@ export const getAdminStats = createServerFn({ method: "GET" })
     };
   });
 
+export const getAdminTopSharers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data, error } = await (context.supabase as any).rpc("admin_top_sharers");
+    if (error) throw new Error(error.message);
+    return (data ?? []) as Array<{ profile_id: string; first_name: string | null; photo_url: string | null; shares: number; last_shared_at: string }>;
+  });
+
 export const adminResolveReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>

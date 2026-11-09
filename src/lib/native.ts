@@ -3,22 +3,46 @@ import { Capacitor } from "@capacitor/core";
 export const isNative = () => Capacitor.isNativePlatform();
 export const nativePlatform = () => Capacitor.getPlatform();
 
-/** Native share sheet on iOS/Android, Web Share API / clipboard elsewhere. */
-export async function nativeShare(opts: { title?: string; text?: string; url: string }) {
-  if (isNative()) {
-    const { Share } = await import("@capacitor/share");
-    await Share.share({ title: opts.title, text: opts.text, url: opts.url, dialogTitle: opts.title });
-    return true;
+export type ShareOutcome = "shared" | "copied" | "cancelled" | "unavailable";
+
+function isShareCancel(e: unknown) {
+  const name = (e as { name?: string } | null)?.name ?? "";
+  const msg = (e instanceof Error ? e.message : String(e ?? "")).toLowerCase();
+  return name === "AbortError" || msg.includes("cancel") || msg.includes("abort");
+}
+
+/**
+ * Native share sheet on iOS/Android, Web Share API, then clipboard. Never fails
+ * silently: a missing plugin or a blocked browser share falls through to the
+ * next option, and only a user cancel stops the chain.
+ */
+export async function nativeShare(opts: { title?: string; text?: string; url: string }): Promise<ShareOutcome> {
+  if (isNative() && Capacitor.isPluginAvailable("Share")) {
+    try {
+      const { Share } = await import("@capacitor/share");
+      await Share.share({ title: opts.title, text: opts.text, url: opts.url, dialogTitle: opts.title });
+      return "shared";
+    } catch (e) {
+      if (isShareCancel(e)) return "cancelled";
+    }
   }
-  if (typeof navigator !== "undefined" && navigator.share) {
-    await navigator.share({ title: opts.title, text: opts.text, url: opts.url });
-    return true;
+  if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    try {
+      await navigator.share({ title: opts.title, text: opts.text, url: opts.url });
+      return "shared";
+    } catch (e) {
+      if ((e as { name?: string } | null)?.name === "AbortError") return "cancelled";
+    }
   }
   if (typeof navigator !== "undefined" && navigator.clipboard) {
-    await navigator.clipboard.writeText(opts.url);
-    return false;
+    try {
+      await navigator.clipboard.writeText(opts.text ? `${opts.text} ${opts.url}` : opts.url);
+      return "copied";
+    } catch {
+      /* clipboard blocked */
+    }
   }
-  return false;
+  return "unavailable";
 }
 
 /** Ask iOS for push permission and return the APNs token (null if declined). */

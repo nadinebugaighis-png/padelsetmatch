@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminStats, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert, adminGetReportedContent, adminDeleteContent, adminModerationFeed } from "@/lib/admin.functions";
+import { getAdminStats, getAdminTopSharers, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert, adminGetReportedContent, adminDeleteContent, adminModerationFeed } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -126,6 +126,7 @@ function AdminPage() {
               <li>· <b>{recentFeedback.length}</b> recent feedback messages</li>
             </ul>
           </Card>
+          <TopSharersCard />
           {pendingReports.length > 0 && (
             <Card title="Needs attention" tone="danger">
               <p className="text-sm text-[var(--ink)]/80 mb-2">You have {pendingReports.length} pending report{pendingReports.length === 1 ? "" : "s"} to review.</p>
@@ -603,6 +604,46 @@ function TallyList({ rows }: { rows: Array<{ name: string; count: number }> }) {
   );
 }
 
+
+function TopSharersCard() {
+  const fetchSharers = useServerFn(getAdminTopSharers);
+  const q = useQuery({ queryKey: ["admin-top-sharers"], queryFn: () => fetchSharers() });
+  const rows = q.data ?? [];
+  return (
+    <Card title="Players who shared the app">
+      {q.isLoading ? (
+        <p className="text-sm text-[var(--ink)]/60">Loading…</p>
+      ) : rows.length === 0 ? (
+        <p className="text-sm text-[var(--ink)]/60">No shares yet. Players appear here after they use "Invite friends".</p>
+      ) : (
+        <ul className="divide-y divide-[var(--ink)]/10">
+          {rows.map((r) => (
+            <li key={r.profile_id} className="flex items-center justify-between gap-3 py-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                {r.photo_url ? (
+                  <img src={r.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                ) : (
+                  <span className="w-8 h-8 rounded-full bg-[var(--ink)]/10 inline-flex items-center justify-center text-xs font-semibold shrink-0">
+                    {(r.first_name ?? "?").slice(0, 1).toUpperCase()}
+                  </span>
+                )}
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-[var(--ink)] truncate">{r.first_name ?? "Player"}</div>
+                  <div className="text-[11px] text-[var(--ink)]/60">
+                    Last shared {new Date(r.last_shared_at).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+                  </div>
+                </div>
+              </div>
+              <span className="text-sm font-semibold text-[var(--ink)] shrink-0">
+                {r.shares} {r.shares === 1 ? "share" : "shares"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
+  );
+}
 
 function Card({ title, children, tone = "default" }: { title: string; children: React.ReactNode; tone?: "default" | "danger" | "warn" }) {
   const border =

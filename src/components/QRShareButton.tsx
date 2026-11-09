@@ -3,6 +3,7 @@ import { useLocation } from "@tanstack/react-router";
 import { QrCode, X, Copy, Check, Share2 } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { nativeShare } from "@/lib/native";
+import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 
 // Printed QR codes point at the home page; the copy/share link is the smart
@@ -27,13 +28,12 @@ export function QRShareButton() {
   };
 
   const shareApp = async () => {
-    try {
-      const shared = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang), url: DOWNLOAD_URL });
-      if (!shared) {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }
-    } catch { /* share sheet dismissed */ }
+    const outcome = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang), url: DOWNLOAD_URL });
+    if (outcome === "shared" || outcome === "copied") recordAppShare(outcome === "shared" ? "share_sheet" : "copy_link");
+    if (outcome === "copied") {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
   };
 
   if (pathname === "/") return null;

@@ -14,6 +14,11 @@ describe("clubBookingLink", () => {
       .toBe("https://playtomic.com/tenant/c4204b18-1228-466a-89f8-a94f181f37c3");
   });
 
+  it("sends Cálido Alcobendas to its Playtomic app link", () => {
+    expect(clubBookingLink({ club_name: "Cálido Alcobendas", club_place_id: "abc" })?.url)
+      .toBe("https://playtomic.com/tenant/4fb9cb56-8fe7-46f9-9b57-c83cf1da18f8");
+  });
+
   it("prefers the host's own Playtomic link", () => {
     expect(
       clubBookingLink({ club_name: "Club de Pádel La Moraleja", playtomic_link: "playtomic.com/clubs/my-club" }),

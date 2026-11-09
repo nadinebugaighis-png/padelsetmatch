@@ -313,7 +313,7 @@ function ProfilePage() {
 
         <CollapsibleRow
           icon={<MapPin className="w-4 h-4" />}
-          title={tr("Where you play", "Dónde juegas", "Où tu joues")}
+          title={tr("Your clubs", "Tus clubes", "Tes clubs")}
           subtitle={tr("Clubs & compounds for smarter matches", "Clubes y urbanizaciones para mejor match", "Clubs et résidences pour de meilleurs matchs")}
         >
           <VenuesSection />

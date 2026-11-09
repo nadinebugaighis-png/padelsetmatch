@@ -99,7 +99,7 @@ export function VenuesSection() {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-widest text-[var(--ink)]">
-            {tr("Where you play", "Dónde juegas", "Où tu joues")}
+            {tr("Your clubs", "Tus clubes", "Tes clubs")}
           </h3>
           <p className="text-xs text-[var(--ink)]/60 mt-1">
             {tr(

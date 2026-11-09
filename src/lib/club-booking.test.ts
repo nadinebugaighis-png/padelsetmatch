@@ -24,6 +24,11 @@ describe("clubBookingLink", () => {
       .toBe("https://playtomic.com/tenant/a788ca6f-847a-4745-8d31-cab2e332c17b");
   });
 
+  it("sends Liceo Europeo to its Playtomic app link", () => {
+    expect(clubBookingLink({ club_name: "Liceo Europeo - Pádel y Fútbol", club_place_id: "abc" })?.url)
+      .toBe("https://playtomic.com/tenant/da765f8e-43b3-11e8-8674-52540049669c");
+  });
+
   it("prefers the host's own Playtomic link", () => {
     expect(
       clubBookingLink({ club_name: "Club de Pádel La Moraleja", playtomic_link: "playtomic.com/clubs/my-club" }),

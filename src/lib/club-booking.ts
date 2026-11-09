@@ -17,6 +17,7 @@ const KNOWN_CLUBS: KnownClub[] = [
   // playtomic.com/tenant/<id> is an app link: it opens the Playtomic app on the club
   // (falls back to the website when the app isn't installed). /clubs/<slug> only opens the website.
   { url: "https://playtomic.com/tenant/e0448759-a18b-4b53-a3d5-b8cb7333c7d7", words: [["moraleja", "club", "padel"]] },
+  { url: "https://playtomic.com/tenant/c4204b18-1228-466a-89f8-a94f181f37c3", words: [["irlandesas"]] },
   { url: "https://playtomic.com/es/clubs/la-vida-padel-alcobendas", words: [["vida", "padel", "alcobendas"]] },
   { url: "https://playtomic.com/es/clubs/ciudad-deportiva-jarama", words: [["ciudad", "deportiva", "jarama"]] },
   { url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },

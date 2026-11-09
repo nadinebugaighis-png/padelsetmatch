@@ -16,6 +16,8 @@ type KnownClub = { url: string; words: string[][] };
 const KNOWN_CLUBS: KnownClub[] = [
   // playtomic.com/tenant/<id> is an app link: it opens the Playtomic app on the club
   // (falls back to the website when the app isn't installed). /clubs/<slug> only opens the website.
+  // Riber must come before La Moraleja: "Riber Pádel Moraleja Club" would also match La Moraleja's words.
+  { url: "https://playtomic.com/tenant/a788ca6f-847a-4745-8d31-cab2e332c17b", words: [["riber"]] },
   { url: "https://playtomic.com/tenant/e0448759-a18b-4b53-a3d5-b8cb7333c7d7", words: [["moraleja", "club", "padel"]] },
   { url: "https://playtomic.com/tenant/c4204b18-1228-466a-89f8-a94f181f37c3", words: [["irlandesas"]] },
   { url: "https://playtomic.com/tenant/4fb9cb56-8fe7-46f9-9b57-c83cf1da18f8", words: [["calido", "alcobendas"]] },

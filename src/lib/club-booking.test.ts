@@ -19,6 +19,11 @@ describe("clubBookingLink", () => {
       .toBe("https://playtomic.com/tenant/4fb9cb56-8fe7-46f9-9b57-c83cf1da18f8");
   });
 
+  it("sends Riber Pádel Moraleja to its own link, not La Moraleja's", () => {
+    expect(clubBookingLink({ club_name: "Riber Pádel Moraleja Club", club_place_id: "abc" })?.url)
+      .toBe("https://playtomic.com/tenant/a788ca6f-847a-4745-8d31-cab2e332c17b");
+  });
+
   it("prefers the host's own Playtomic link", () => {
     expect(
       clubBookingLink({ club_name: "Club de Pádel La Moraleja", playtomic_link: "playtomic.com/clubs/my-club" }),

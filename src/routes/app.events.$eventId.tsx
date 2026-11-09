@@ -5,7 +5,7 @@ import { getIsAdmin } from "@/lib/admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { normalizePlaytomicLink } from "@/lib/affinity";
+import { clubBookingLink } from "@/lib/club-booking";
 import {
   cancelMatchEvent,
   claimMatchInviteByToken,
@@ -458,7 +458,8 @@ function EventDetail() {
             : event.needs === 0
             ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70", label: tr("Full", "Completo", "Complet") }
             : { cls: "bg-[var(--grass)]/40 text-[var(--ink)]", label: tr(`${event.needs} spot${event.needs > 1 ? "s" : ""} left`, `Faltan ${event.needs}`, `${event.needs} place(s)`) };
-        const safePlaytomic = event.playtomic_link ? normalizePlaytomicLink(event.playtomic_link).url : null;
+        const booking = clubBookingLink(event);
+        const showBooking = !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled";
         return (
           <section className="rounded-2xl border border-[var(--ink)]/10 bg-white overflow-hidden">
             <div className="px-4 pt-4 pb-3">
@@ -481,9 +482,9 @@ function EventDetail() {
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
                 <MapPin className="w-3.5 h-3.5" /> {tr("Directions", "Cómo llegar", "Itinéraire")}
               </a>
-              {safePlaytomic && (
-                <a href={safePlaytomic} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
-                  Playtomic <ExternalLink className="w-3 h-3" />
+              {showBooking && booking && (
+                <a href={booking.url} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                  {event.court_booked ? "Playtomic" : tr("Book court", "Reservar pista", "Réserver")} <ExternalLink className="w-3 h-3" />
                 </a>
               )}
             </div>

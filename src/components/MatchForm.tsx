@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Minus, Plus } from "lucide-react";
+import { ArrowLeft, ExternalLink, Minus, Plus } from "lucide-react";
+import { clubBookingLink } from "@/lib/club-booking";
 import { Switch } from "@/components/ui/switch";
 import { ClubPicker } from "@/components/ClubPicker";
 import { Button } from "@/components/ui/button";
@@ -137,6 +138,11 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [playtomicLink, setPlaytomicLink] = useState(initial?.playtomic_link ?? "");
   const [playtomicError, setPlaytomicError] = useState<string | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
+
+  const formBooking =
+    locMode === "club" && club
+      ? clubBookingLink({ club_name: club.name, city: club.city, club_place_id: club.place_id, playtomic_link: playtomicLink, free_court: freeCourt })
+      : null;
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
   const canSave = locationReady && !!when && !saving;
@@ -333,7 +339,19 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <div className={rowDivider} />
         <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
-          <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
+          <div className="flex items-center gap-3">
+            {!courtBooked && formBooking && (
+              <a
+                href={formBooking.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[12px] font-medium text-[var(--ink)] underline underline-offset-2"
+              >
+                {tr("Book court", "Reservar pista", "Réserver")} <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+            <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
+          </div>
         </div>
         <div className={rowDivider} />
         <input

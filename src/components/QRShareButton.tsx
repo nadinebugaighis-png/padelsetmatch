@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "@tanstack/react-router";
 import { QrCode, X, Copy, Check, Share2 } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { nativeShare } from "@/lib/native";
@@ -14,6 +15,8 @@ export function QRShareButton() {
   const { lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  // Keep the public welcome page uncluttered.
+  const pathname = useLocation({ select: (l) => l.pathname });
 
   const copyLink = async () => {
     try {
@@ -32,6 +35,8 @@ export function QRShareButton() {
       }
     } catch { /* share sheet dismissed */ }
   };
+
+  if (pathname === "/") return null;
 
   return (
     <>

@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BrandMark } from "@/components/BrandMark";
 import { AppStoreBadge } from "@/components/AppStoreBadge";
 import { GooglePlayBadge } from "@/components/GooglePlayBadge";
-import { ArrowRight } from "lucide-react";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -139,16 +138,7 @@ function Landing() {
       {/* Header */}
       <header className="relative z-30 px-5 sm:px-8 lg:px-16 pt-3 lg:pt-4 pb-2 lg:pb-3 flex items-center justify-between">
         <BrandMark />
-        <div className="flex items-center gap-2.5">
-          <LangSwitch />
-          <Link
-            to="/auth"
-            search={{ redirect: undefined, join: undefined, mode: "signin" }}
-            className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.18em] px-4 py-2.5 hover:brightness-110 transition"
-          >
-            {t("land.signin")}
-          </Link>
-        </div>
+        <LangSwitch />
       </header>
 
       {/* Hero — full viewport on mobile, compact viewport-fit on desktop */}
@@ -167,13 +157,10 @@ function Landing() {
           <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-3">
             <Link
               to="/auth"
-              search={{ redirect: undefined, join: undefined, mode: "signup" }}
-              className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
+              search={{ redirect: undefined, join: undefined, mode: undefined }}
+              className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] px-8 py-3.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
             >
               {t("land.cta")}
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[var(--paper)]/15 group-hover:translate-x-0.5 transition">
-                <ArrowRight className="w-4 h-4" />
-              </span>
             </Link>
           </div>
 

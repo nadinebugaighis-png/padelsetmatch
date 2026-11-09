@@ -188,43 +188,12 @@ function Landing() {
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
-            <ShareQR url="https://padelsetmatch.com" label="Join me on PadelSetMatch" />
           </div>
 
-
-
-
-          <div className="mt-4 lg:mt-3 flex flex-wrap items-center gap-x-4 gap-y-3">
+          <div className="mt-5 lg:mt-4 flex flex-wrap items-center gap-3">
             <AppStoreBadge />
             <GooglePlayBadge />
-            <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/50">
-              {tr("Free", "Gratis", "Gratuit")}
-            </span>
           </div>
-
-          <Link
-            to="/demo"
-            className="mt-3 lg:mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-[var(--plum)] underline underline-offset-[6px] decoration-2 decoration-[var(--plum)]/60 hover:decoration-[var(--plum)]"
-          >
-            Peek inside <ArrowRight className="w-4 h-4" />
-          </Link>
-
-          <p aria-hidden="true" className="mt-3 lg:mt-2 text-[15px] sm:text-base leading-[1.55] max-w-md invisible">
-            &nbsp;
-          </p>
-
-
-
-
-        </div>
-
-        {/* Stats row */}
-        <div className="mt-5 lg:mt-4 max-w-xl">
-          <div>
-            <div className="text-serif text-3xl lg:text-4xl leading-none text-[var(--ink)]">{count.toLocaleString()}</div>
-            <div className="mt-1 text-xs text-[var(--ink)]/60">{t("land.statUsers")}</div>
-          </div>
-
         </div>
       </section>
 

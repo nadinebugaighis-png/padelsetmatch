@@ -30,11 +30,11 @@ export function GooglePlayBadge({ className = "" }: { className?: string }) {
         )}
       >
         <img
-          src="/google-play-badge.png"
+          src="/google-play-badge-trim.png"
           alt=""
-          width={135}
+          width={134}
           height={40}
-          className="h-11 w-auto sm:h-12"
+          className="h-10 w-auto sm:h-11"
           style={{ filter: "grayscale(0.35) brightness(0.92)" }}
           loading="lazy"
         />
@@ -63,11 +63,11 @@ export function GooglePlayBadge({ className = "" }: { className?: string }) {
       }
     >
       <img
-        src="/google-play-badge.png"
+        src="/google-play-badge-trim.png"
         alt=""
-        width={135}
+        width={134}
         height={40}
-        className="h-11 w-auto sm:h-12"
+        className="h-10 w-auto sm:h-11"
         loading="lazy"
       />
     </a>

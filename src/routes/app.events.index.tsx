@@ -256,7 +256,7 @@ function EventsPage() {
           },
         },
         cancel: {
-          label: tr("Open", "Abrir", "Ouvrir"),
+          label: tr("View", "Ver", "Voir"),
           onClick: () => navigate({ to: "/app/events/$eventId", params: { eventId: e.id } }),
         },
       });
@@ -312,7 +312,7 @@ function EventsPage() {
       toast.success(tr(`Copied to +${hoursAhead}h`, `Copiado a +${hoursAhead}h`, `Copié à +${hoursAhead}h`), {
         duration: 10000,
         action: {
-          label: tr("Open", "Abrir", "Ouvrir"),
+          label: tr("View", "Ver", "Voir"),
           onClick: () => navigate({ to: "/app/events/$eventId", params: { eventId: id } }),
         },
       });
@@ -779,9 +779,11 @@ function MatchCard({
             >
               {e.iAmHost
                 ? tr("Manage", "Gestionar", "Gérer")
-                : mine || full
-                  ? tr("Open", "Abrir", "Ouvrir")
-                  : tr("Join", "Unirme", "Rejoindre")}
+                : mine
+                  ? tr("Chat", "Chat", "Chat")
+                  : full
+                    ? tr("View", "Ver", "Voir")
+                    : tr("Join", "Unirme", "Rejoindre")}
             </button>
           </div>
         </div>
@@ -995,7 +997,7 @@ function MyMatchesList({
                         </button>
                       ) : (
                         <button type="button" onClick={() => onOpen(e.id)} className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5">
-                          {tr("Open", "Abrir", "Ouvrir")}
+                          {tr("Chat", "Chat", "Chat")}
                         </button>
                       )}
                       {!e.iAmHost && (

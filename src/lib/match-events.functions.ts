@@ -517,11 +517,12 @@ export const leaveMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
-    await supabase
+    const { error: leaveError } = await supabase
       .from("match_event_participants")
       .delete()
       .eq("match_event_id", data.id)
       .eq("profile_id", profile.id);
+    if (leaveError) throw new Error(leaveError.message);
     // If it was full, re-open
     await supabase.from("match_events").update({ status: "open" }).eq("id", data.id).eq("status", "full");
     return { ok: true };

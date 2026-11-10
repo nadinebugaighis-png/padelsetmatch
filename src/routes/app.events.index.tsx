@@ -238,7 +238,23 @@ function EventsPage() {
   const [myMatchSheet, setMyMatchSheet] = useState<EventLite | null>(null);
 
   function refetch() {
-    qc.invalidateQueries({ queryKey: ["open-events"] });
+    return qc.invalidateQueries({ queryKey: ["open-events"] });
+  }
+
+  // Reflect a leave on screen immediately so the card doesn't linger (and
+  // invite repeat taps) while the server and feed refresh catch up.
+  function markLeftLocally(id: string) {
+    qc.setQueriesData({ queryKey: ["open-events"] }, (old: any) => {
+      if (!old?.events) return old;
+      return {
+        ...old,
+        events: old.events.map((ev: EventLite) =>
+          ev.id === id && ev.iAmParticipant
+            ? { ...ev, iAmParticipant: false, filled: Math.max(0, (ev.filled ?? 1) - 1), needs: (ev.needs ?? 0) + 1 }
+            : ev,
+        ),
+      };
+    });
   }
 
   async function instantJoin(e: EventLite) {
@@ -252,7 +268,7 @@ function EventsPage() {
         action: {
           label: tr("Leave", "Salir", "Quitter"),
           onClick: async () => {
-            try { await leave({ data: { id: e.id } }); refetch(); } catch { /* ignore */ }
+            try { await leave({ data: { id: e.id } }); markLeftLocally(e.id); void refetch(); } catch { /* ignore */ }
           },
         },
         cancel: {
@@ -268,10 +284,13 @@ function EventsPage() {
   }
 
   async function instantLeave(e: EventLite) {
+    if (pending === e.id) return;
     setPending(e.id);
     try {
+      await qc.cancelQueries({ queryKey: ["open-events"] });
       await leave({ data: { id: e.id } });
-      await refetch();
+      markLeftLocally(e.id);
+      void refetch();
       toast(tr("You left the match", "Has salido del partido", "Tu as quitté le match"), {
         duration: 8000,
         action: {
@@ -996,12 +1015,12 @@ function MyMatchesList({
                           {tr("Manage", "Gestionar", "Gérer")}
                         </button>
                       ) : (
-                        <button type="button" onClick={() => onOpen(e.id)} className="rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-1.5">
+                        <button type="button" onClick={() => onOpen(e.id)} className="min-h-9 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-2">
                           {tr("Chat", "Chat", "Chat")}
                         </button>
                       )}
                       {!e.iAmHost && (
-                        <button type="button" disabled={isPending} onClick={() => onLeave(e)} className="rounded-full border border-red-400/50 text-red-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 disabled:opacity-50">
+                        <button type="button" disabled={isPending} onClick={() => onLeave(e)} className="min-h-9 rounded-full border border-red-400/50 text-red-500 text-[10px] uppercase tracking-widest font-bold px-3 py-2 disabled:opacity-50">
                           {isPending ? "…" : tr("Leave", "Salir", "Quitter")}
                         </button>
                       )}

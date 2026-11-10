@@ -74,6 +74,7 @@ type EventLite = {
   level_min?: string;
   level_max?: string;
   note?: string | null;
+  tag?: string | null;
   court_booked?: boolean;
   is_private_court?: boolean;
   free_court?: boolean;
@@ -687,6 +688,11 @@ function MatchCard({
         <div className="flex-1 min-w-0 p-3">
           <div className="flex items-start justify-between gap-2">
             <button type="button" onClick={() => onOpen(e.id)} className="min-w-0 text-left">
+              {e.tag && (
+                <div className="mb-1 inline-block -rotate-2 rounded-sm bg-[var(--gold)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink)] shadow-sm">
+                  {e.tag}
+                </div>
+              )}
               <div className="text-[14px] font-semibold text-[var(--ink)] truncate">
                 {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
               </div>

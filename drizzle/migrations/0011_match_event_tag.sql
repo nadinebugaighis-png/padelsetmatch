@@ -1,0 +1,1 @@
+ALTER TABLE public.match_events ADD COLUMN IF NOT EXISTS tag text CHECK (tag IS NULL OR char_length(tag) <= 40);

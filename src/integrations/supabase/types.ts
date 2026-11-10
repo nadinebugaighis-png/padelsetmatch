@@ -941,6 +941,7 @@ export type Database = {
           playtomic_link: string | null
           starts_at: string
           status: Database["public"]["Enums"]["match_event_status"]
+          tag: string | null
           updated_at: string
         }
         Insert: {
@@ -966,6 +967,7 @@ export type Database = {
           playtomic_link?: string | null
           starts_at: string
           status?: Database["public"]["Enums"]["match_event_status"]
+          tag?: string | null
           updated_at?: string
         }
         Update: {
@@ -991,6 +993,7 @@ export type Database = {
           playtomic_link?: string | null
           starts_at?: string
           status?: Database["public"]["Enums"]["match_event_status"]
+          tag?: string | null
           updated_at?: string
         }
         Relationships: [

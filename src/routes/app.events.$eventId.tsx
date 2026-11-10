@@ -245,7 +245,10 @@ function EventDetail() {
   };
 
   const onLeave = async () => {
-    if (!confirm(tr("Leave this match? Your spot will open up for someone else.", "¿Salir de este partido? Tu plaza quedará libre para otro jugador.", "Quitter ce match ? Ta place sera libérée pour un autre joueur."))) return;
+    const leaveMsg = me?.iAmHost
+      ? tr("Stop playing in this match? Your spot opens up and you stay as organiser.", "¿Dejar de jugar en este partido? Tu plaza quedará libre y seguirás como organizadora.", "Ne plus jouer dans ce match ? Ta place se libère et tu restes organisateur·rice.")
+      : tr("Leave this match? Your spot will open up for someone else.", "¿Salir de este partido? Tu plaza quedará libre para otro jugador.", "Quitter ce match ? Ta place sera libérée pour un autre joueur.");
+    if (!confirm(leaveMsg)) return;
     try {
       await leave({ data: { id: eventId } });
       toast.success(tr("You left the match. Thanks for letting the group know.", "Has salido del partido. Gracias por avisar al grupo.", "Tu as quitté le match. Merci d'avoir prévenu le groupe."));
@@ -531,11 +534,11 @@ function EventDetail() {
               <button
                 key={p.profile_id}
                 type="button"
-                onClick={() => { if (isMe && !isHost) onLeave(); }}
-                disabled={!isMe || isHost}
-                title={isMe && !isHost ? tr("Tap to leave the match", "Pulsa para salir del partido", "Appuie pour quitter le match") : ""}
+                onClick={() => { if (isMe) onLeave(); }}
+                disabled={!isMe}
+                title={isMe ? tr("Tap to leave the match", "Pulsa para salir del partido", "Appuie pour quitter le match") : ""}
                 className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
-                  isMe && !isHost
+                  isMe
                     ? "bg-[var(--ink)]/5 border-[var(--ink)]/25 hover:bg-[var(--ink)]/10 cursor-pointer"
                     : "bg-white border-[var(--ink)]/10 cursor-default"
                 }`}
@@ -646,12 +649,14 @@ function EventDetail() {
             {tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
         )}
-        {me?.iAmParticipant && !me?.iAmHost && (
+        {me?.iAmParticipant && (!me?.iAmHost || (event.participants ?? []).some((p: any) => p.profile_id === me?.id)) && event.status !== "cancelled" && (
           <button
             onClick={onLeave}
             className="w-full py-2.5 rounded-full border border-[var(--ink)]/15 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors"
           >
-            {tr("Leave match", "Salir del partido", "Quitter le match")}
+            {me?.iAmHost
+              ? tr("Leave line-up (stay organiser)", "Salir de la alineación (sigues organizando)", "Quitter la composition (rester organisateur)")
+              : tr("Leave match", "Salir del partido", "Quitter le match")}
           </button>
         )}
         {me?.iAmHost && event.status !== "cancelled" && (

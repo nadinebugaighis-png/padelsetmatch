@@ -71,6 +71,13 @@
       "when": 1794258966073,
       "tag": "0009_app_shares",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794302766545,
+      "tag": "0010_notify_match_chat_messages",
+      "breakpoints": true
     }
   ]
 }

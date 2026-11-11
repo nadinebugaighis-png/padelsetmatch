@@ -361,15 +361,6 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
           </div>
         </div>
-        {!courtBooked && formBooking && (
-          <p className="pb-2 text-[11px] leading-snug text-[var(--ink)]/50">
-            💡 {tr(
-              "Book it as a private court, not an open match, so strangers can't take a spot. Then share Playtomic's pay-your-share link in the chat.",
-              "Resérvala como pista privada, no como partido abierto, para que nadie de fuera ocupe una plaza. Luego comparte en el chat el enlace de Playtomic para que cada uno pague su parte.",
-              "Réserve en privé, pas en match ouvert, pour qu'aucun inconnu ne prenne une place. Puis partage dans le chat le lien Playtomic pour que chacun paie sa part.",
-            )}
-          </p>
-        )}
         <div className={rowDivider} />
         <input
           type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}

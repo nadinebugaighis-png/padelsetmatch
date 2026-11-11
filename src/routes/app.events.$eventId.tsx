@@ -503,6 +503,15 @@ function EventDetail() {
                 </a>
               )}
             </div>
+            {showBooking && !event.court_booked && (
+              <p className="border-t border-[var(--ink)]/10 px-4 py-2 text-[11px] leading-snug text-[var(--ink)]/60">
+                💡 {tr(
+                  "Book it as a private court, not an open match, so strangers can't take a spot. Then share Playtomic's pay-your-share link in the chat.",
+                  "Resérvala como pista privada, no como partido abierto, para que nadie de fuera ocupe una plaza. Luego comparte en el chat el enlace de Playtomic para que cada uno pague su parte.",
+                  "Réserve en privé, pas en match ouvert, pour qu'aucun inconnu ne prenne une place. Puis partage dans le chat le lien Playtomic pour que chacun paie sa part.",
+                )}
+              </p>
+            )}
             {event.note && (
               <p className="border-t border-[var(--ink)]/10 px-4 py-2.5 text-sm text-[var(--ink)] whitespace-pre-wrap">{event.note}</p>
             )}

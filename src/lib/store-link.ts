@@ -5,6 +5,12 @@
  */
 export const DOWNLOAD_URL = "https://padelsetmatch.com/download";
 
+/**
+ * What printed and in-app QR codes must encode. The download link opens each
+ * phone's own store straight away, so a scan never stops at the website.
+ */
+export const QR_TARGET_URL = DOWNLOAD_URL;
+
 export type StorePlatform = "ios" | "android" | null;
 
 /** Link-preview bots must get the page (with its banner), never a redirect. */

@@ -4,12 +4,11 @@ import { QrCode, X, Copy, Check, Share2 } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { nativeShare } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
-import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
+import { DOWNLOAD_URL, QR_TARGET_URL, shareAppText } from "@/lib/store-link";
 
-// Printed QR codes point at the home page; the copy/share link is the smart
-// download link that opens the right store and shows a branded preview.
-const SHARE_URL = "https://padelsetmatch.com/";
-const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=8&data=${encodeURIComponent(SHARE_URL)}`;
+// Printed and in-app QR codes both point at the smart download link, so a scan
+// opens the phone's own store instead of stopping at the website home page.
+const QR_SRC = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=8&data=${encodeURIComponent(QR_TARGET_URL)}`;
 
 export function QRShareButton() {
   const tr = useTr();

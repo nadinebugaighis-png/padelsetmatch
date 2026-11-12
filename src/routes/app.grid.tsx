@@ -9,11 +9,12 @@ import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile,
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
+import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Star, Check, UserPlus } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
 import { CourtIcon } from "@/components/CourtIcon";
+import { MemberGuide } from "@/components/MemberGuide";
 import { GearShelf } from "@/components/GearShelf";
 import { DailyQuestionCard, UnlockMatchQuestions } from "@/components/PadelQuestions";
 import { UNLOCK_MIN_ANSWERS } from "@/lib/daily-questions";
@@ -407,6 +408,7 @@ function Discover() {
 
   return (
     <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
+      <MemberGuide />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
         <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
 
@@ -792,14 +794,10 @@ function Discover() {
                           else likeSilentM.mutate(c.id);
                         }}
                         className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/10 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
-                        aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Thumbs up ${c.first_name}`, `Pulsa para conectar con ${c.first_name}`, `Pouce pour connecter avec ${c.first_name}`)}
-                        title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Thumbs up to connect", "Pulsa para conectar", "Pouce pour connecter")}
+                        aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Connect with ${c.first_name}`, `Conectar con ${c.first_name}`, `Connecter avec ${c.first_name}`)}
+                        title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Connect", "Conectar", "Connecter")}
                       >
-                        <ThumbsUp
-                          className={`w-2.5 h-2.5 transition ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/70"}`}
-                          fill={c.liked ? "currentColor" : "none"}
-                          strokeWidth={1.6}
-                        />
+                        {c.liked ? <Check className="w-2.5 h-2.5 text-[var(--ink)]" strokeWidth={2.5} /> : <UserPlus className="w-2.5 h-2.5 text-[var(--ink)]/70" strokeWidth={1.8} />}
                       </button>
 
 
@@ -990,7 +988,7 @@ function Discover() {
                             className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
                           >
                             <MessageCircle className="w-4 h-4" />
-                            {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Waiting for match…", "Esperando match…", "En attente du match…") : tr("Like to connect", "Pulsa para conectar", "Like pour connecter")}
+                            {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Request sent", "Solicitud enviada", "Demande envoyée") : tr("Connect", "Conectar", "Connecter")}
                           </button>
                           <button
                             type="button"
@@ -1004,6 +1002,11 @@ function Discover() {
                           </button>
                         </div>
                       )}
+                      {!isSelf && (
+                        <p className="-mt-2 text-right text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/50">
+                          {tr("Star: notify me when they play", "Estrella: avisarme cuando juegue", "Étoile : m'alerter quand il/elle joue")}
+                        </p>
+                      )}
 
                       {!isSelf && !match && (
                         <button
@@ -1011,7 +1014,7 @@ function Discover() {
                           onClick={() => { setIntroText(""); setIntroOpen(true); }}
                           className="w-full text-[12px] text-[var(--ink)]/70 hover:text-[var(--plum)] underline underline-offset-4 decoration-[var(--ink)]/25 hover:decoration-[var(--plum)] transition"
                         >
-                          {tr("Send a one-time message", "Envía un mensaje único", "Envoyer un message unique")}
+                          {tr("Send a direct intro message", "Enviar un mensaje de presentación", "Envoyer un message de présentation")}
                         </button>
                       )}
 

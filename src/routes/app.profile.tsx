@@ -18,6 +18,7 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
 import { GearEditor } from "@/components/GearShelf";
+import { MemberGuide, openMemberGuide } from "@/components/MemberGuide";
 import { QaAnswers, QA_TOTAL, useQaAnswers } from "@/components/QaAnswers";
 import { isTelemetryEnabled, setTelemetryEnabled } from "@/lib/telemetry";
 
@@ -275,6 +276,11 @@ function ProfilePage() {
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} slots={((p as any).availability ?? []) as string[]} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
         <QaRow />
+
+        <MemberGuide />
+        <button type="button" onClick={openMemberGuide} className="w-full text-center text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--gold)]/60">
+          {tr("How the app works", "Cómo funciona la app", "Comment fonctionne l'app")}
+        </button>
 
         {hasDetails && (
           <CollapsibleRow

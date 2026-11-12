@@ -4,6 +4,7 @@ import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { CURATED_QUESTIONS } from "@/lib/daily-questions";
+import { pairLabel } from "@/lib/pair-label";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
@@ -1015,7 +1016,7 @@ function Discover() {
                       )}
 
 
-                      {/* You two on court — one glanceable card: fit, headline, shared answers, pairings; full AI read behind a tap */}
+                      {/* You two — on-court and off-court scores, a pair label, headline, shared answers, pairings; full AI read behind a tap */}
                       {!isSelf && (() => {
                         const all = cardsQ.data?.cards ?? [];
                         const complements = (cardsQ.data?.complements ?? []).slice(0, 2);
@@ -1030,7 +1031,13 @@ function Discover() {
                         const data = compatQ.data;
                         const noEmoji = (t: string) => t.replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{1F3FB}-\u{1F3FF}]/gu, "").replace(/\s{2,}/g, " ").trim();
                         const bullets = (data ? (data.sub_scores?.highlights?.length ? data.sub_scores.highlights : data.reasons) ?? [] : []).map(noEmoji).filter(Boolean);
-                        const hasMore = !!data && (bullets.length > 0 || data.sub_scores?.personality != null || !!data.friction || character.length > 0);
+                        const hasMore = !!data && (bullets.length > 0 || !!data.friction || character.length > 0);
+                        const offCourt = data?.sub_scores?.personality ?? null;
+                        const pairKind = pairLabel(preview.score, offCourt);
+                        const pairTag = pairKind === "full_set" ? tr("The full set", "El set completo", "Le set complet")
+                          : pairKind === "kindred" ? tr("Kindred spirits", "Almas afines", "Esprits complices")
+                          : pairKind === "court" ? tr("Court partners", "Pareja de pista", "Partenaires de court")
+                          : null;
                         const heading = (children: string) => (
                           <div className="flex items-center gap-3 mb-2">
                             <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55 whitespace-nowrap">{children}</span>
@@ -1039,14 +1046,25 @@ function Discover() {
                         );
                         return (
                           <div className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5">
-                            <div className="flex items-baseline justify-between gap-3">
-                              <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/60">{tr("You two on court", "Vosotros dos en pista", "Vous deux sur le court")}</span>
-                              {!needsUnlock && (
-                                <span className="text-serif text-[20px] leading-none text-[var(--ink)] tabular-nums">
-                                  {preview.score}%<span className="ml-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50 font-sans">{tr("fit", "encaje", "accord")}</span>
-                                </span>
-                              )}
-                            </div>
+                            <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/60">{tr("You two", "Vosotros dos", "Vous deux")}</span>
+                            {!needsUnlock && (
+                              <div className="mt-3 grid grid-cols-2">
+                                {[
+                                  { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
+                                  { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
+                                ].map((s, i) => (
+                                  <div key={s.key} className={i === 1 ? "pl-4 border-l border-[var(--gold)]/50" : "pr-4"}>
+                                    <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{s.label}</div>
+                                    <div className="text-serif text-[26px] leading-tight text-[var(--ink)] tabular-nums mt-0.5">
+                                      {s.value != null ? <>{s.value}<span className="text-[15px] text-[var(--ink)]/60">%</span></> : <span className="text-[var(--ink)]/30">—</span>}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {!needsUnlock && pairTag && (
+                              <div className="mt-3 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/75">{pairTag}</div>
+                            )}
                             <span className="block h-px w-10 bg-[var(--gold)] mt-3 mb-3.5" />
 
                             {needsUnlock ? (
@@ -1105,12 +1123,6 @@ function Discover() {
                                           </li>
                                         ))}
                                       </ul>
-                                    )}
-                                    {data.sub_scores?.personality != null && (
-                                      <div className="flex items-center justify-between text-[12px] text-[var(--ink)]/75">
-                                        <span>{tr("Fit off court", "Encaje fuera de pista", "Accord hors court")}</span>
-                                        <span className="tabular-nums font-semibold text-[var(--ink)]">{data.sub_scores.personality}%</span>
-                                      </div>
                                     )}
                                     {data.friction && (
                                       <p className="text-[12px] text-[var(--ink)]/75 leading-snug">

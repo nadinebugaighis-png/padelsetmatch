@@ -1287,15 +1287,15 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     if (qaError) throw new Error("Couldn't load compatibility. Please retry.");
     const qa = qaRows ?? [];
     const theirQaCount = qa.filter((r) => r.profile_id === other.id).length;
-    const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 20);
-    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 20);
+    const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 40);
+    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 40);
 
     // Version key incorporates intents + QA volume so the cache invalidates
     // when either person changes what they're looking for or answers more Qs.
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v13-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionKey = `v14-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
 
     if (cached && (cached as { model_version?: string }).model_version === versionKey) {
       return cached as unknown as { score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
@@ -1357,6 +1357,8 @@ Rules for judgment:
 - Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 good with a couple of things to be aware of, 40-54 mixed, 0-39 poor fit.
 - CRITICAL — the two sub-scores MUST match the tone of their analysis paragraphs. A 90+ score requires a genuinely enthusiastic paragraph; a 60 score requires a paragraph that explicitly names what's mixed. The blurb, reasons, and both analyses must all point at the same overall picture. Do not write a warm paragraph and then a low score, or a lukewarm paragraph and then a high score.
 - The overall picture is a blend of on-court fit (padel) and off-court fit (personality). Weight them roughly equally.
+- OFF-COURT DEPTH: answers to "An unexpected free afternoon…", "Over a caña after the match, you love talking about…" and "What draws you to someone in conversation?" show curiosity and conversational taste. When both lean the same way — e.g. both choose a gallery or bookshop, big ideas and debate, or being challenged in how they think — weigh it strongly in "personality": two curious minds can reach 90+ off court even when on-court fit is moderate. Shared light-hearted or lively answers are also a genuine off-court fit. Never describe either person as more or less intelligent, deep or shallow; name it as a shared taste (e.g. "both happiest debating big ideas over a caña").
+- Score "padel" and "personality" independently. A pair can be excellent company and casual on court, or fierce partners who keep socialising light — let each score show that honestly.
 - The "watch_out" field is OPTIONAL and should usually be null. Only fill it when there is a concrete, evidence-based thing to gently be aware of. Never fill it for lifestyle / life-stage / personality differences alone.
 - Blurb should be warm, grounded, diplomatic and accurate — no flattery, no empty praise, no verdicts about their lives.
 

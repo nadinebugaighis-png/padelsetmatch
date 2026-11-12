@@ -8,7 +8,7 @@ export type CuratedQuestion = { id: string; category: string; q: L; options: L[]
 
 const o = (en: string, es: string, fr: string): L => ({ en, es, fr });
 
-// 35 questions mixing pádel (15), personality on court (11) and lifestyle (9).
+// 38 questions mixing pádel (15), personality on court (11) and lifestyle (12).
 // Never reword an existing English question: saved answers are matched by it.
 export const CURATED_QUESTIONS: CuratedQuestion[] = [
   { id: "deuce", category: "padel", q: o("40-40, match point. You…", "40-40, punto de partido. Tú…", "40-40, balle de match. Toi…"),
@@ -23,6 +23,13 @@ export const CURATED_QUESTIONS: CuratedQuestion[] = [
     options: [o("The smash", "El remate", "Le smash"), o("The bandeja", "La bandeja", "La bandeja"), o("Patient wall play", "Paciencia y pared", "Jeu patient avec les vitres")] },
   { id: "talk", category: "personality", q: o("On court, you're the one who…", "En pista, tú eres quien…", "Sur le court, tu es celui/celle qui…"),
     options: [o("Talks tactics nonstop", "Habla de táctica sin parar", "Parle tactique sans arrêt"), o("Hypes the partner", "Anima al compañero", "Motive son partenaire"), o("Stays quiet, focused", "Calla y se concentra", "Reste calme et concentré")] },
+  // Off-court depth: shared tastes in culture and conversation feed the off-court score.
+  { id: "afternoon", category: "lifestyle", q: o("An unexpected free afternoon…", "Una tarde libre inesperada…", "Un après-midi libre imprévu…"),
+    options: [o("A gallery, exhibition or bookshop", "Una galería, una exposición o una librería", "Une galerie, une expo ou une librairie"), o("A buzzing terrace with friends", "Una terraza animada con amigos", "Une terrasse animée entre amis"), o("A long walk or more sport", "Un paseo largo o más deporte", "Une longue balade ou encore du sport")] },
+  { id: "talkabout", category: "lifestyle", q: o("Over a caña after the match, you love talking about…", "Con una caña después del partido, te encanta hablar de…", "Autour d'un verre après le match, tu adores parler de…"),
+    options: [o("Big ideas, culture and debate", "Grandes ideas, cultura y debate", "Grandes idées, culture et débats"), o("Travel, food and plans", "Viajes, comida y planes", "Voyages, cuisine et projets"), o("Padel and easy laughs", "Pádel y risas sin más", "Padel et rires faciles")] },
+  { id: "drawn", category: "lifestyle", q: o("What draws you to someone in conversation?", "¿Qué te atrae de alguien en una conversación?", "Qu'est-ce qui t'attire chez quelqu'un en conversation ?"),
+    options: [o("They challenge how I think", "Que me haga pensar distinto", "Qu'on bouscule ma façon de penser"), o("Quick wit and humour", "Ingenio rápido y humor", "De l'esprit et de l'humour"), o("Easy warmth, nothing heavy", "Cercanía, sin nada pesado", "De la chaleur, rien de lourd")] },
   { id: "sitter", category: "padel", q: o("Your partner misses an easy ball. You…", "Tu compañero falla una bola fácil. Tú…", "Ton partenaire rate une balle facile. Toi…"),
     options: [o("Say “next one!”", "Le dices “¡la siguiente!”", "Tu dis « la prochaine ! »"), o("Give a quick tip", "Le das un consejo rápido", "Tu donnes un petit conseil"), o("Act like nothing happened", "Haces como si nada", "Tu fais comme si de rien n'était")] },
   { id: "time", category: "lifestyle", q: o("Best time to play?", "¿Mejor hora para jugar?", "Meilleur moment pour jouer ?"),

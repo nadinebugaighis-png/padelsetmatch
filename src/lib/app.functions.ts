@@ -432,17 +432,9 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     });
     if (me.zone) myCities.add(me.zone.trim().toLowerCase());
 
-    const sharesMyCity = (c: Profile) => {
-      if (myCities.size === 0) return false;
-      const theirCities = new Set<string>();
-      (c.locations ?? []).forEach((l) => {
-        const d = decodeLocation(l);
-        if (d.city) theirCities.add(d.city.trim().toLowerCase());
-      });
-      if (c.zone) theirCities.add(c.zone.trim().toLowerCase());
-      for (const city of theirCities) if (myCities.has(city)) return true;
-      return false;
-    };
+    const { sharesMyArea } = await import("./area-match");
+    // Area gate: La Moraleja players see only La Moraleja players (World shows all).
+    const sharesMyCity = (c: Profile) => sharesMyArea(me, c);
 
     const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
       if (blockedSet.has(c.id)) return false;

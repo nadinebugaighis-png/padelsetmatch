@@ -83,7 +83,7 @@ function AuthPage() {
   const signupTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
     if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
-    return { to: "/app/onboarding" };
+    return { to: "/app/choose-location" };
   };
   const oauthRedirectUri = () => {
     const base = window.location.origin;

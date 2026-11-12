@@ -26,7 +26,7 @@ function AppIndexRedirect() {
 
   useEffect(() => {
     if (!profileQ.isSuccess || profileQ.isFetching) return;
-    if (!profileQ.data) navigate({ to: "/app/onboarding", replace: true });
+    if (!profileQ.data) navigate({ to: "/app/choose-location", replace: true });
     else navigate({ to: "/app/grid", replace: true });
   }, [profileQ.isSuccess, profileQ.isFetching, profileQ.data, navigate]);
 

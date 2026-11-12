@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { presetByKey } from "@/lib/location-presets";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
 import { ArrowUp, Camera, Crop, Plus, Trash2, X } from "lucide-react";
@@ -39,11 +40,12 @@ export const Route = createFileRoute("/app/onboarding")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  validateSearch: (search: Record<string, unknown>): { step?: number } => {
+  validateSearch: (search: Record<string, unknown>): { step?: number; loc?: string } => {
+    const out: { step?: number; loc?: string } = {};
     const raw = Number(search.step);
-    if (!Number.isFinite(raw)) return {};
-    const clamped = Math.max(0, Math.min(0, Math.floor(raw)));
-    return { step: clamped };
+    if (Number.isFinite(raw)) out.step = Math.max(0, Math.min(0, Math.floor(raw)));
+    if (typeof search.loc === "string") out.loc = search.loc;
+    return out;
   },
   component: Onboarding,
 });
@@ -195,6 +197,11 @@ function Onboarding() {
         clearGuestDraft();
         toast.success("We pre-filled your answers from the preview.");
       }
+    }
+    // Brand-new player: pre-fill from the "Choose your location" page.
+    if (!p || (!p.locations?.length && !p.zone)) {
+      const preset = presetByKey(search.loc);
+      if (preset) setLocBlocks([{ country: preset.country, city: preset.city, areas: [preset.area ?? "", "", ""] }]);
     }
   }, [profileQ.data]);
 

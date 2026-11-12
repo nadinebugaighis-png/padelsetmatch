@@ -28,6 +28,7 @@ import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './route
 import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known.assetlinks[.]json'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AppChooseLocationRouteImport } from './routes/app.choose-location'
 import { Route as AppConnectRouteImport } from './routes/app.connect'
 import { Route as AppGridRouteImport } from './routes/app.grid'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
@@ -147,6 +148,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppAdminRoute = AppAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChooseLocationRoute = AppChooseLocationRouteImport.update({
+  id: '/choose-location',
+  path: '/choose-location',
   getParentRoute: () => AppRoute,
 } as any)
 const AppConnectRoute = AppConnectRouteImport.update({
@@ -284,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/choose-location': typeof AppChooseLocationRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/choose-location': typeof AppChooseLocationRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/choose-location': typeof AppChooseLocationRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/.well-known/apple-app-site-association'
     | '/.well-known/assetlinks.json'
     | '/app/admin'
+    | '/app/choose-location'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/.well-known/apple-app-site-association'
     | '/.well-known/assetlinks.json'
     | '/app/admin'
+    | '/app/choose-location'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -505,6 +516,7 @@ export interface FileRouteTypes {
     | '/.well-known/apple-app-site-association'
     | '/.well-known/assetlinks.json'
     | '/app/admin'
+    | '/app/choose-location'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -696,6 +708,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/choose-location': {
+      id: '/app/choose-location'
+      path: '/choose-location'
+      fullPath: '/app/choose-location'
+      preLoaderRoute: typeof AppChooseLocationRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/connect': {
       id: '/app/connect'
       path: '/connect'
@@ -885,6 +904,7 @@ const AppEventsEventIdRouteWithChildren =
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppChooseLocationRoute: typeof AppChooseLocationRoute
   AppConnectRoute: typeof AppConnectRoute
   AppGridRoute: typeof AppGridRoute
   AppHiddenRoute: typeof AppHiddenRoute
@@ -901,6 +921,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppChooseLocationRoute: AppChooseLocationRoute,
   AppConnectRoute: AppConnectRoute,
   AppGridRoute: AppGridRoute,
   AppHiddenRoute: AppHiddenRoute,

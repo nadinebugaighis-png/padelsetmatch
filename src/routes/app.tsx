@@ -292,7 +292,7 @@ function AuthShell() {
   }, [profileQ.data, saveDeviceToken]);
 
   const hasProfile = !!profileQ.data;
-  const onOnboarding = path.startsWith("/app/onboarding");
+  const onOnboarding = path.startsWith("/app/onboarding") || path.startsWith("/app/choose-location");
   const isAdmin = adminQ.data === true;
 
   return (

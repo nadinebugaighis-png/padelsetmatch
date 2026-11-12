@@ -87,7 +87,7 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
     return (
       <div className="mt-4 rounded-2xl border border-[var(--gold)]/50 bg-[var(--paper)] px-5 py-5 text-center">
         <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/55">{tr("Complete", "Completado", "Terminé")}</div>
-        <div className="mt-2 text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("Your chemistry is revealed", "Tu química ya es visible", "Ta chimie est révélée")}</div>
+        <div className="mt-2 text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("Your compatibility is revealed", "Tu compatibilidad ya es visible", "Ta compatibilité est révélée")}</div>
         <p className="mt-2 text-[13px] text-[var(--ink)]/65 leading-snug">
           {tr("Open any player to see how you would play together.", "Abre cualquier jugador para ver cómo jugaríais juntos.", "Ouvre un profil pour voir comment vous joueriez ensemble.")}
         </p>
@@ -121,7 +121,7 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
     return (
       <div className="mt-4 rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5">
         <div className="flex items-baseline justify-between gap-3">
-          <div className="text-serif text-[20px] leading-tight text-[var(--ink)]">{tr("Reveal your chemistry", "Descubre tu química", "Révèle ta chimie")}</div>
+          <div className="text-serif text-[20px] leading-tight text-[var(--ink)]">{tr("Reveal your compatibility", "Descubre tu compatibilidad", "Révèle ta compatibilité")}</div>
           <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 whitespace-nowrap tabular-nums">
             {tr(`${step} of ${UNLOCK_MIN_ANSWERS}`, `${step} de ${UNLOCK_MIN_ANSWERS}`, `${step} sur ${UNLOCK_MIN_ANSWERS}`)}
           </div>
@@ -175,9 +175,9 @@ export function UnlockMatchQuestions({ answered, name }: { answered: string[]; n
     <div>
       <p className="text-serif text-[17px] text-[var(--ink)] leading-snug">
         {name
-          ? tr(`Answer ${remaining} quick question${remaining === 1 ? "" : "s"} to reveal your chemistry with ${name}.`,
-            `Responde ${remaining} pregunta${remaining === 1 ? "" : "s"} rápida${remaining === 1 ? "" : "s"} y descubre tu química con ${name}.`,
-            `Réponds à ${remaining} question${remaining === 1 ? "" : "s"} rapide${remaining === 1 ? "" : "s"} pour révéler ta chimie avec ${name}.`)
+          ? tr(`Answer ${remaining} quick question${remaining === 1 ? "" : "s"} to see your compatibility with ${name}.`,
+            `Responde ${remaining} pregunta${remaining === 1 ? "" : "s"} rápida${remaining === 1 ? "" : "s"} y descubre tu compatibilidad con ${name}.`,
+            `Réponds à ${remaining} question${remaining === 1 ? "" : "s"} rapide${remaining === 1 ? "" : "s"} pour connaître ta compatibilité avec ${name}.`)
           : tr(`Answer ${remaining} quick question${remaining === 1 ? "" : "s"} to see how you two would play together.`,
             `Responde ${remaining} pregunta${remaining === 1 ? "" : "s"} rápida${remaining === 1 ? "" : "s"} y verás cómo jugaríais juntos.`,
             `Réponds à ${remaining} question${remaining === 1 ? "" : "s"} rapide${remaining === 1 ? "" : "s"} pour voir comment vous joueriez ensemble.`)}

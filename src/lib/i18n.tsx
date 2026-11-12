@@ -104,7 +104,7 @@ const en: Dict = {
   "disc.h1": "Tap who you'd play.",
   "disc.sub": "Mutual taps open a chat.",
   "disc.scoreA": "The",
-  "disc.scoreB": "badge shows how well you click —",
+  "disc.scoreB": "badge shows how well you pair up —",
   "disc.scoreBold": "match score",
   "disc.scoreC": "age, level, zone, values. Higher = stronger fit.",
   "disc.filter.all": "Everyone",
@@ -131,12 +131,12 @@ const en: Dict = {
   "disc.loading": "Loading the courts…",
   "disc.blockTitle": "Block — hide from each other",
   "disc.reportTitle": "Report — sent to staff for review",
-  "disc.scoreTooltip": "Match score (0–100): how well you click",
+  "disc.scoreTooltip": "Match score (0–100): how well you pair up",
   "disc.reportPrompt": "Report {name}?\n\nDescribe what happened (harassment, fake photo, abuse, threats…). The account is suspended immediately and reviewed by our team.",
   "disc.reportConfirm": "Send report? {name}'s account will be suspended pending staff review.",
   "disc.blockConfirm": "Block {name}? You won't see each other anywhere in the app.",
   "disc.qaBannerTitle": "Unlock your Matching code",
-  "disc.qaBannerSub": "Answer a few questions so the AI can find your best court matches — personality, values and what you click on.",
+  "disc.qaBannerSub": "Answer a few questions so the AI can find your best court matches — personality, values and playing style.",
   "disc.qaBannerCta": "Start matching →",
 
   // Matches list

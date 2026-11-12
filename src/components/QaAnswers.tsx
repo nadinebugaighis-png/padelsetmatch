@@ -7,10 +7,10 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { CURATED_QUESTIONS, curatedAnswerMap, type CuratedQuestion } from "@/lib/daily-questions";
 import { useSaveAnswer } from "@/components/PadelQuestions";
 
-export const CHEMISTRY_TOTAL = CURATED_QUESTIONS.length;
+export const QA_TOTAL = CURATED_QUESTIONS.length;
 
 /** Saved curated answers plus answers given in this visit, keyed by English question. */
-export function useChemistryAnswers() {
+export function useQaAnswers() {
   const getAnswers = useServerFn(getMyQaAnswers);
   const q = useQuery({ queryKey: ["qa-answers"], queryFn: () => getAnswers(), staleTime: 5 * 60_000 });
   return { query: q, saved: curatedAnswerMap(q.data ?? []) };
@@ -46,15 +46,15 @@ function OptionChips({ q, selected, disabled, onPick }: {
 }
 
 /**
- * Self-paced chemistry questions on the Me page: the next unanswered question
+ * Self-paced Q&A on the Me page: the next unanswered question
  * first, then every past answer, which can be changed with one tap.
  * Answers save without a daily slot, so the Grid's morning/evening card is unaffected.
  */
-export function ChemistryAnswers() {
+export function QaAnswers() {
   const tr = useTr();
   const { lang } = useI18n();
   const save = useSaveAnswer();
-  const { query, saved } = useChemistryAnswers();
+  const { query, saved } = useQaAnswers();
   const [local, setLocal] = useState<Record<string, string>>({});
   const [editing, setEditing] = useState<string | null>(null);
 
@@ -89,11 +89,11 @@ export function ChemistryAnswers() {
             "Réponds comme tu aimerais jouer, pas seulement comme tu joues aujourd'hui. Plus tu réponds, plus tes duos sont justes.")}
         </p>
         <span className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 whitespace-nowrap tabular-nums">
-          {count} / {CHEMISTRY_TOTAL}
+          {count} / {QA_TOTAL}
         </span>
       </div>
       <div className="mt-3 h-px w-full bg-[var(--ink)]/10">
-        <div className="h-px bg-[var(--gold)] transition-all" style={{ width: `${(count / CHEMISTRY_TOTAL) * 100}%` }} />
+        <div className="h-px bg-[var(--gold)] transition-all" style={{ width: `${(count / QA_TOTAL) * 100}%` }} />
       </div>
 
       {next ? (

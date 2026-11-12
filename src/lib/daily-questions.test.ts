@@ -66,7 +66,7 @@ describe("padel question card", () => {
 
 import { curatedAnswerMap, CURATED_QUESTIONS as BANK } from "./daily-questions";
 
-describe("Me page chemistry answers", () => {
+describe("Me page Q&A answers", () => {
   it("counts only questions from the curated bank", () => {
     const m = curatedAnswerMap([
       { question: BANK[0].q.en, answer: BANK[0].options[0].en },

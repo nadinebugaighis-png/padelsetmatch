@@ -55,6 +55,13 @@ function ChooseLocation() {
             {p.area ? `${p.city} (${p.area})` : p.city}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/app/onboarding", search: {} })}
+          className="w-full rounded-2xl bg-[var(--paper)] px-6 py-4 text-left border border-[var(--ink)]/15 font-serif text-lg active:scale-[0.99] transition"
+        >
+          {tr("World", "Mundo", "Monde")}
+        </button>
       </div>
     </div>
   );

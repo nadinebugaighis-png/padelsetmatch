@@ -10,13 +10,15 @@ describe("personality cards", () => {
   it("shows on-court answers to anyone", () => {
     expect(buildPersonalityCards([deuce], [])).toEqual([{ id: "deuce", option: 0, shared: false }]);
   });
-  it("hides after-match answers when the viewer answered differently", () => {
-    expect(buildPersonalityCards([afterBeer], [afterHome])).toEqual([]);
+  it("shows the after-match plan to anyone", () => {
+    expect(buildPersonalityCards([afterBeer], [afterHome])).toEqual([{ id: "after", option: 1, shared: false }]);
+    expect(buildPersonalityCards([afterBeer], [])).toEqual([{ id: "after", option: 1, shared: false }]);
   });
-  it("hides after-match answers when the viewer never answered", () => {
-    expect(buildPersonalityCards([afterBeer], [])).toEqual([]);
+  it("hides private answers when the viewer answered differently", () => {
+    const late = row("Running 10 minutes late, you…", "x");
+    expect(buildPersonalityCards([late], [])).toEqual([]);
   });
-  it("shows after-match answers only when both picked the same", () => {
+  it("marks the after-match plan as shared when both picked the same", () => {
     expect(buildPersonalityCards([afterBeer], [afterBeer])).toEqual([{ id: "after", option: 1, shared: true }]);
   });
   it("shows at most 3 on-court cards", () => {

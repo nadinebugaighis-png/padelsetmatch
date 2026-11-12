@@ -1,7 +1,7 @@
 import { CURATED_QUESTIONS } from "./daily-questions";
 
-// Fun, flattering on-court answers that are safe to show anyone.
-export const PUBLIC_CARD_IDS = ["deuce", "talk", "side", "shot", "weapon", "tiebreak", "comeback", "voice"] as const;
+// After-match plans plus fun, flattering on-court answers that are safe to show anyone.
+export const PUBLIC_CARD_IDS = ["after", "deuce", "talk", "side", "shot", "weapon", "tiebreak", "comeback", "voice"] as const;
 
 export type PersonalityCard = { id: string; option: number; shared: boolean };
 type Row = { question: string; answer: string };

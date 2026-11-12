@@ -8,7 +8,7 @@ import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile,
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, ThumbsDown, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
@@ -935,6 +935,9 @@ function Discover() {
                             </>
                           )}
                         </div>
+                        {preview.bio && (
+                          <blockquote className="mt-4 text-serif italic text-[19px] leading-snug text-[var(--ink)]/85 whitespace-pre-wrap">“{preview.bio.trim()}”</blockquote>
+                        )}
                         <div className="mt-4 h-px bg-[var(--ink)]/10" />
                       </div>
 
@@ -1084,48 +1087,6 @@ function Discover() {
                               </div>
                             )}
 
-                            <div className="mt-3 flex items-center gap-2 pt-2 border-t border-[var(--ink)]/8">
-                              <span className="text-[11px] text-[var(--ink)]/55 mr-1">{tr("Was this useful?", "¿Fue útil?", "Utile ?")}</span>
-                              <button
-                                type="button"
-                                disabled={rateCompatM.isPending}
-                                onClick={() => rateCompatM.mutate({ thumbs: 1 })}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === 1 ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
-                                aria-label="Helpful"
-                              >
-                                <ThumbsUp className="w-4 h-4" />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={rateCompatM.isPending}
-                                onClick={() => rateCompatM.mutate({ thumbs: -1 })}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center transition ${compatFbQ.data?.thumbs === -1 ? "bg-[var(--ink)]/70 text-[var(--paper)]" : "bg-[var(--ink)]/8 text-[var(--ink)]/70 hover:bg-[var(--ink)]/12"}`}
-                                aria-label="Not useful"
-                              >
-                                <ThumbsDown className="w-4 h-4" />
-                              </button>
-                            </div>
-
-                            {compatFbQ.data?.thumbs === -1 && (
-                              <div className="mt-2 flex flex-wrap gap-1.5">
-                                {[
-                                  { key: "harsh", label: tr("Too harsh", "Demasiado duro", "Trop dur") },
-                                  { key: "generic", label: tr("Too generic", "Demasiado genérico", "Trop générique") },
-                                  { key: "missed", label: tr("Missed the point", "No dio en el clavo", "À côté de la plaque") },
-                                  { key: "wrong", label: tr("Just wrong", "Directamente mal", "Complètement faux") },
-                                ].map(({ key, label: reason }) => (
-                                  <button
-                                    key={key}
-                                    type="button"
-                                    disabled={rateCompatM.isPending}
-                                    onClick={() => rateCompatM.mutate({ thumbs: -1, reason })}
-                                    className="px-2.5 py-1 rounded-full text-[11px] bg-[var(--ink)]/[0.04] border border-[var(--ink)]/10 text-[var(--ink)]/75 hover:bg-[var(--ink)]/[0.08]"
-                                  >
-                                    {reason}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
 
                           </>
                         ) : (
@@ -1157,49 +1118,29 @@ function Discover() {
                         </div>
                       )}
 
-                      {/* Me-style profile card (age intentionally omitted for privacy) */}
-
-                      <div className="rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">
-                        <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
-                          <Info label={tr("LEVEL", "NIVEL", "NIVEAU")} v={label(preview.level)} />
-                          {preview.gender && (
-                            <Info label={tr("GENDER", "GÉNERO", "GENRE")} v={preview.gender === "self-describe" ? (preview.gender_custom || label("self-describe")) : label(preview.gender)} />
-                          )}
-                          {preview.nationality && (
-                            <Info label={tr("NATIONALITY", "NACIONALIDAD", "NATIONALITÉ")} v={preview.nationality} />
-                          )}
-                        </div>
-
-                        {(() => {
-                          const locs = (preview.locations ?? []).map((l) => formatLocation(decodeLocation(l)));
-                          if (locs.length === 0) return null;
-                          return (
-                            <div>
-                              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Plays in", "Juega en", "Joue à")}</div>
-                              <div className="flex flex-wrap gap-2">
-                                {locs.map((l) => <span key={l} className="chip-paper">{l}</span>)}
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {(preview.languages?.length ?? 0) > 0 && (
-                          <div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("Languages", "Idiomas", "Langues")}</div>
-                            <div className="flex flex-wrap gap-2">
-                              {preview.languages!.map((l) => <span key={l} className="chip-paper">{label(l)}</span>)}
-                            </div>
+                      {/* Lifestyle chips (age intentionally omitted for privacy) */}
+                      {(() => {
+                        const areas: string[] = [];
+                        for (const l of preview.locations ?? []) {
+                          const d = decodeLocation(l);
+                          const name = d?.area || d?.city || formatLocation(d);
+                          if (name && !areas.includes(name)) areas.push(name);
+                        }
+                        const chips: Array<{ icon: string; text: string }> = [];
+                        chips.push({ icon: "🎾", text: label(preview.level) });
+                        if (areas.length) chips.push({ icon: "📍", text: areas.join(" · ") });
+                        if (preview.languages?.length) chips.push({ icon: "🗣️", text: preview.languages.map((l) => label(l)).join(" · ") });
+                        if (preview.nationality) chips.push({ icon: "🌍", text: preview.nationality });
+                        return (
+                          <div className="flex flex-wrap gap-2">
+                            {chips.map((c) => (
+                              <span key={c.icon} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/12 bg-white px-3 py-1.5 text-[13px] text-[var(--ink)]">
+                                <span aria-hidden>{c.icon}</span>{c.text}
+                              </span>
+                            ))}
                           </div>
-                        )}
-
-
-                        {preview.bio && (
-                          <div>
-                            <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr(`About ${preview.first_name}`, `Sobre ${preview.first_name}`, `À propos de ${preview.first_name}`)}</div>
-                            <p className="text-sm text-[var(--ink)]/85 leading-relaxed whitespace-pre-wrap">{preview.bio}</p>
-                          </div>
-                        )}
-                      </div>
+                        );
+                      })()}
 
 
                       {!isSelf && (

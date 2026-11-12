@@ -1,51 +1,44 @@
-# La Moraleja first: "Where do you live" + neighbour/club badges
+# "Where do you live" + neighbour and club badges (open to everyone)
 
 ## The idea in one line
-PadelSetMatch becomes a private La Moraleja & North Madrid community for now. Everyone else can join a priority waitlist for their city.
+The app stays open to everyone, everywhere. It asks clearly where you **live** now, then shows who your neighbours are and who plays at your club. La Moraleja players will naturally see each other first.
 
-## What a new player sees (step by step)
-1. Opens the app → the same clean welcome page → taps GET STARTED → creates an account (Google, Apple or email), as today.
-2. First question on the registration page: **"Where do you live?"** with a short note: *"The area you live in now — not where you're from."*
-   - **La Moraleja & surroundings** (La Moraleja, El Soto, El Encinar, Alcobendas, Las Tablas, Sanchinarro…) → **Active now**
-   - **Somewhere else** (Madrid Centro, rest of Spain, London, Dubai, other) → **"Coming soon"**
-3. If La Moraleja area: they pick their exact neighbourhood, then the rest of registration continues as today (level, age, languages…), plus a new optional **"Clubs you play at"** step using the same club list as Profile.
-4. If somewhere else: a polished "You're on the priority list for London" screen. They keep their account, can't see the grid or games, and you get a list of who's waiting per city in Admin.
+## What a new player sees
+1. Opens the app: same clean welcome page, taps GET STARTED, creates an account, same as today.
+2. On the registration page, the location question changes to **"Where do you live?"**: city + neighbourhood, with a short note: *"Where you live now, not where you're from."*
+3. A new optional **"Clubs you play at"** question, using the same club list as Profile.
+4. Then the app opens normally. Everyone can use it, there's no waitlist and no locked screen.
 
 ## What changes in the profile questions
-- **"Where do you play?"** (home, work, summer house, travelling) is replaced by **"Where do you live?"** → city + neighbourhood (one place, not three).
-- **"Nationality / origin"** stays, moved lower with the clearer label **"Where are you from?"** so it's not confused with where you live.
-- **"Your clubs"** becomes an optional question during registration (today it's only in Profile).
-- Everything can still be changed later in Profile.
+- **"Where do you play?"** (home, work, summer house, travelling) becomes **"Where do you live?"**: one city + one neighbourhood.
+- **"Nationality / origin"** stays, moved lower and renamed **"Where are you from?"** so people stop mixing the two up.
+- **"Your clubs"** can also be answered during registration (today it's only in Profile).
+- All of it can still be changed in Profile.
 
 ## What players see on player cards
-Small, friendly lines on the grid card and player page, only when true:
+Short, friendly lines, shown only when true:
 - **Neighbour · La Moraleja** (same neighbourhood)
-- **Nearby · Alcobendas** (same zone, different neighbourhood)
+- **Nearby · Alcobendas** (same city, different neighbourhood)
 - **Plays at Club de Pádel La Moraleja** (shared club)
-The grid gently ranks neighbours and same-club players a bit higher, on top of level and compatibility. Work/company is left out for now, as agreed.
+
+Neighbours and same-club players get a small boost on the grid, on top of level and compatibility. So a La Moraleja player sees La Moraleja players first, and a London player sees London players first.
 
 ## Your current 80 players
-- **Nobody gets locked out.** Existing players keep full access.
-- Next time they open the app they get one quick card: *"Confirm where you live"* (pre-filled from what they wrote before). One tap and done. It doesn't block them.
-- Players whose old answer is outside the area keep access; you can decide later.
+- Nothing changes for them and nobody gets a pop-up.
+- What they already entered is reused automatically, so most badges work straight away.
+- They can update "Where do you live?" in Profile whenever they want.
 
 ## "Will it remember me?"
-Yes. Signed-in players stay signed in on phone and web, as today. The neighbourhood question is asked once and saved to their account; it never repeats unless they change it in Profile.
+Yes. Players stay signed in as today, and their answers are saved to their account. Nothing gets asked twice.
 
 ## "Do I need new App Store / Google Play builds?"
-No. The phone apps load the live app, so everything arrives with a normal **Publish**. No store review needed.
-
-## Admin
-- New "Waitlist" list: city + count + names, so you know when London or Dubai is worth opening.
-- One switch per zone to open it later (e.g. open "Madrid Centro" when it has enough players).
+No. The phone apps load the live app, so a normal **Publish** brings everything to phones. You don't need a store review.
 
 ---
 
 ## Technical details
-- DB migration (additive): `profiles.home_city`, `profiles.home_area`, `profiles.home_zone_status` ('active' | 'waitlist'), `profiles.home_confirmed_at`; new `launch_zones` table (key, name, areas[], is_open) with grants + RLS (read for authenticated, write admin via `has_role`). Seed La Moraleja zone in the migration. Backfill `home_city/home_area` from existing `zone`/encoded locations; existing users default to `active`.
-- Zone rules in `src/lib/launch-zones.ts` (area → zone, isActive), with vitest tests: La Moraleja/El Soto/Alcobendas/Las Tablas → active; London/Madrid Centro → waitlist; existing users never waitlisted.
-- `app.onboarding.tsx`: replace multi-block "Where do you play?" with single live-in picker; relabel nationality; add optional VenuesSection. Keep sending the legacy `zone`/locations fields so older scoring keeps working.
-- Gate in `app.tsx` layout: waitlisted users routed to a new `app.waitlist.tsx`; public pages, deletion page and sign-out unaffected.
-- Badges computed in the grid server function from viewer vs player `home_area`/zone and shared venues; rendered on grid card + player preview. Small ranking boost in existing scoring.
-- One-time non-blocking "Confirm where you live" card on grid when `home_confirmed_at` is null.
-- Admin: waitlist counts by city + zone open toggle in `app.admin.tsx`.
+- Additive migration: `profiles.home_city`, `profiles.home_area` (nullable). Backfill from existing `zone` and the first encoded location. No new tables, no gating.
+- `src/lib/neighbour-badges.ts`: pure function that compares viewer and player (same area / same city / shared venue) and returns badges plus a small score boost. It gets vitest tests (same area means Neighbour, same city with a different area means Nearby, a shared venue means club badge, no data means no badge).
+- `app.onboarding.tsx`: swap the multi-block "Where do you play?" for a single live-in picker (existing `locations` lists), relabel nationality, and add an optional VenuesSection. Keep writing the legacy `zone`/locations fields so older scoring isn't wiped.
+- Profile: the same "Where do you live?" field.
+- Grid server function: add badges and the boost. Render them on the grid card and player preview.

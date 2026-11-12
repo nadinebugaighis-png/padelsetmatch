@@ -1,44 +1,44 @@
-# "Where do you live" + neighbour and club badges (open to everyone)
+# "Choose your city" welcome screen (marketing only)
 
-## The idea in one line
-The app stays open to everyone, everywhere. It asks clearly where you **live** now, then shows who your neighbours are and who plays at your club. La Moraleja players will naturally see each other first.
+## What it is
+A short, elegant screen shown when someone new enters the app:
+
+**Choose your city**
+- **Madrid · La Moraleja**, the big featured card in deep green and gold, marked "Now playing"
+- **London**
+- **Dubai**
+- **Miami**
+
+It's for marketing, so the app feels made for La Moraleja first. It changes nothing else: everyone keeps full access, the grid and games work the same, and Profile stays as it is.
 
 ## What a new player sees
-1. Opens the app: same clean welcome page, taps GET STARTED, creates an account, same as today.
-2. On the registration page, the location question changes to **"Where do you live?"**: city + neighbourhood, with a short note: *"Where you live now, not where you're from."*
-3. A new optional **"Clubs you play at"** question, using the same club list as Profile.
-4. Then the app opens normally. Everyone can use it, there's no waitlist and no locked screen.
+1. They open the app or website and tap **GET STARTED**.
+2. They see **Choose your city**, the four cards above, and tap one.
+3. They go straight to Create account / Sign in, the same as today.
 
-## What changes in the profile questions
-- **"Where do you play?"** (home, work, summer house, travelling) becomes **"Where do you live?"**: one city + one neighbourhood.
-- **"Nationality / origin"** stays, moved lower and renamed **"Where are you from?"** so people stop mixing the two up.
-- **"Your clubs"** can also be answered during registration (today it's only in Profile).
-- All of it can still be changed in Profile.
+Whichever city they tap, they continue into the app normally. London, Dubai and Miami cards don't block anyone.
 
-## What players see on player cards
-Short, friendly lines, shown only when true:
-- **Neighbour · La Moraleja** (same neighbourhood)
-- **Nearby · Alcobendas** (same city, different neighbourhood)
-- **Plays at Club de Pádel La Moraleja** (shared club)
-
-Neighbours and same-club players get a small boost on the grid, on top of level and compatibility. So a La Moraleja player sees La Moraleja players first, and a London player sees London players first.
-
-## Your current 80 players
-- Nothing changes for them and nobody gets a pop-up.
-- What they already entered is reused automatically, so most badges work straight away.
-- They can update "Where do you live?" in Profile whenever they want.
+## Your current players
+- **Nobody already signed in sees it.** No pop-up and no extra step for your 80 players.
+- They go straight to their grid as today.
 
 ## "Will it remember me?"
-Yes. Players stay signed in as today, and their answers are saved to their account. Nothing gets asked twice.
+Yes. The phone remembers the choice, so the screen appears once and never again on that phone. Players stay signed in as today.
+
+## Bonus for you (no extra effort for players)
+Each tap is counted, so you can see in Admin how many people chose La Moraleja, London, Dubai or Miami. That's useful proof for the club and for deciding the next city.
 
 ## "Do I need new App Store / Google Play builds?"
-No. The phone apps load the live app, so a normal **Publish** brings everything to phones. You don't need a store review.
+No. A normal **Publish** brings it to phones. You don't need a store review.
+
+## Not included
+- No changes to Profile questions.
+- No filtering of Alcobendas or Las Tablas players on the grid. The screen is marketing only, as you asked.
 
 ---
 
 ## Technical details
-- Additive migration: `profiles.home_city`, `profiles.home_area` (nullable). Backfill from existing `zone` and the first encoded location. No new tables, no gating.
-- `src/lib/neighbour-badges.ts`: pure function that compares viewer and player (same area / same city / shared venue) and returns badges plus a small score boost. It gets vitest tests (same area means Neighbour, same city with a different area means Nearby, a shared venue means club badge, no data means no badge).
-- `app.onboarding.tsx`: swap the multi-block "Where do you play?" for a single live-in picker (existing `locations` lists), relabel nationality, and add an optional VenuesSection. Keep writing the legacy `zone`/locations fields so older scoring isn't wiped.
-- Profile: the same "Where do you live?" field.
-- Grid server function: add badges and the boost. Render them on the grid card and player preview.
+- New `src/components/CityPicker.tsx`, light/brand tokens and Spanish/English/French copy. It opens from the landing GET STARTED button before navigating to `/auth`.
+- The choice is stored in localStorage (`psm_city`) and read in an effect, so there's no hydration mismatch. If a choice is already set, GET STARTED goes straight to `/auth`. Signed-in users skip it entirely.
+- Each tap emits analytics event `project.city_chosen` with a fixed key (`madrid_la_moraleja` | `london` | `dubai` | `miami`). Admin shows counts from that event.
+- Small vitest test for the city key list and the "already chosen means skip" rule.

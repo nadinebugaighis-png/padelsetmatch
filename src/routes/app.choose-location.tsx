@@ -37,8 +37,7 @@ function ChooseLocation() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col items-center px-6 py-14">
-      <p className="text-[10px] tracking-[0.3em] text-[var(--gold)]">PADELSETMATCH</p>
-      <h1 className="mt-3 font-serif text-[1.75rem] leading-tight text-center">
+      <h1 className="font-serif text-[1.75rem] leading-tight text-center">
         {tr("Choose your location", "Elige tu zona", "Choisis ton lieu")}
       </h1>
       <p className="mt-2 text-sm text-[var(--ink)]/60 text-center">

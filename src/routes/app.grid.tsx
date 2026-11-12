@@ -1173,7 +1173,7 @@ function Discover() {
                           if (name && !areas.includes(name)) areas.push(name);
                         }
                         const chips: Array<{ key: string; text: string }> = [];
-                        chips.push({ key: "level", text: label(preview.level) });
+                        { const lv = label(preview.level); chips.push({ key: "level", text: lv.charAt(0).toUpperCase() + lv.slice(1) }); }
                         if (areas.length) chips.push({ key: "areas", text: areas.join(" · ") });
                         if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · ") });
                         if (preview.nationality) chips.push({ key: "nat", text: preview.nationality });

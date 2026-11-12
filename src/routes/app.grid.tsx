@@ -178,6 +178,19 @@ function Discover() {
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
+  // Saved read shows instantly; if answers changed since, refresh quietly and swap in.
+  const compatStale = !!(compatQ.data as { stale?: boolean } | undefined)?.stale;
+  useQuery({
+    queryKey: ["ai-compat-refresh", preview?.id, lang],
+    queryFn: async () => {
+      const fresh = await compatFn({ data: { otherProfileId: preview!.id, lang, refresh: true } });
+      qc.setQueryData(["ai-compat", preview?.id, lang], fresh);
+      return true;
+    },
+    enabled: !!preview?.id && compatStale,
+    staleTime: 1000 * 60 * 60,
+    retry: false,
+  });
   const cardsFn = useServerFn(getPersonalityCards);
   const cardsQ = useQuery({
     queryKey: ["personality-cards-v2", preview?.id],

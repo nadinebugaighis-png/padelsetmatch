@@ -1244,7 +1244,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
 // Cached in compatibility_scores to keep it cheap and stable.
 export const getAiCompatibility = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid(), lang: z.enum(["en", "es", "fr"]).optional().default("en") }).parse(d))
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid(), lang: z.enum(["en", "es", "fr"]).optional().default("en"), refresh: z.boolean().optional().default(false) }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: meRow } = await context.supabase
       .from("profiles" as never).select("*").eq("user_id", context.userId).maybeSingle();
@@ -1253,39 +1253,28 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     if (me.id === data.otherProfileId) throw new Error("Cannot compare to yourself");
 
     const [a, b] = me.id < data.otherProfileId ? [me.id, data.otherProfileId] : [data.otherProfileId, me.id];
+    const otherId = data.otherProfileId;
 
-    // Content-aware cache key: prompt version + shared intent shape + QA volume.
-    // Regenerates when either person's intents change or they answer more Qs.
-    const { count: myQaCount } = await context.supabase
-      .from("qa_answers" as never).select("*", { count: "exact", head: true }).eq("profile_id", me.id);
-
-    // 1. Cache hit? (we build the full version key after loading the other profile below)
-
-    const { data: cached } = await context.supabase
-      .from("compatibility_scores" as never)
-      .select("score, blurb, reasons, friction, sub_scores, model_version, created_at")
-      .eq("profile_a", a)
-      .eq("profile_b", b)
-      .maybeSingle();
-
-
-    // 2. Gather both profiles + Q&A. Profiles are readable to authenticated users;
-    // pair QA goes through a SECURITY DEFINER RPC so we don't need service role.
-    const { data: otherRow } = await context.supabase
-      .from("profiles" as never).select("*").eq("id", data.otherProfileId).maybeSingle();
-    const other = otherRow as Profile | null;
-    if (!other || (other as Profile & { suspended_at?: string | null }).suspended_at) throw new Error("Profile not found");
-    const { data: pairBlocks, error: blockError } = await context.supabase.from("blocks")
-      .select("id").or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${other.id}),and(blocker_profile_id.eq.${other.id},blocked_profile_id.eq.${me.id})`).limit(1);
-    if (blockError || pairBlocks?.length) throw new Error("Profile unavailable");
-
-    // Raw answers stay server-only. The caller and target were authenticated
-    // and checked through user-scoped profile access above.
+    // Load everything in parallel — this card opens on every profile tap.
+    // Raw answers stay server-only; caller is authenticated and the target is
+    // checked through user-scoped profile access + block check below.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: qaRows, error: qaError } = await supabaseAdmin.from("qa_answers")
-      .select("profile_id, question, answer").in("profile_id", [me.id, other.id]).limit(200);
-    if (qaError) throw new Error("Couldn't load compatibility. Please retry.");
-    const qa = qaRows ?? [];
+    const [cachedRes, otherRes, blocksRes, qaRes] = await Promise.all([
+      context.supabase.from("compatibility_scores" as never)
+        .select("score, blurb, reasons, friction, sub_scores, model_version, created_at")
+        .eq("profile_a", a).eq("profile_b", b).maybeSingle(),
+      context.supabase.from("profiles" as never).select("*").eq("id", otherId).maybeSingle(),
+      context.supabase.from("blocks").select("id")
+        .or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${otherId}),and(blocker_profile_id.eq.${otherId},blocked_profile_id.eq.${me.id})`).limit(1),
+      supabaseAdmin.from("qa_answers").select("profile_id, question, answer").in("profile_id", [me.id, otherId]).limit(400),
+    ]);
+    const cached = cachedRes.data;
+    const other = otherRes.data as Profile | null;
+    if (!other || (other as Profile & { suspended_at?: string | null }).suspended_at) throw new Error("Profile not found");
+    if (blocksRes.error || blocksRes.data?.length) throw new Error("Profile unavailable");
+    if (qaRes.error) throw new Error("Couldn't load compatibility. Please retry.");
+    const qa = qaRes.data ?? [];
+    const myQaCount = qa.filter((r) => r.profile_id === me.id).length;
     const theirQaCount = qa.filter((r) => r.profile_id === other.id).length;
     const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 60);
     const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 60);
@@ -1295,10 +1284,14 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionKey = `v14-${lang}-${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount ?? 0}x${theirQaCount ?? 0}`;
+    const versionPrefix = `v14-${lang}-`;
+    const versionKey = `${versionPrefix}${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount}x${theirQaCount}`;
 
-    if (cached && (cached as { model_version?: string }).model_version === versionKey) {
-      return { ...(cached as object), their_answers: theirQaCount } as unknown as { their_answers: number; score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
+    // Stale-while-revalidate: any same-version, same-language read is shown
+    // instantly; the client asks for a background refresh when it is stale.
+    const cachedVersion = (cached as { model_version?: string } | null)?.model_version ?? "";
+    if (cached && (cachedVersion === versionKey || (!data.refresh && cachedVersion.startsWith(versionPrefix)))) {
+      return { ...(cached as object), their_answers: theirQaCount, stale: cachedVersion !== versionKey } as unknown as { stale: boolean; their_answers: number; score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
     }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
@@ -1464,7 +1457,7 @@ ${qaBlock(theirQA)}`;
     }
 
     const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores, model_version: versionKey };
-    await context.supabase.rpc("upsert_compat_score" as never, {
+    const { error: saveErr } = await context.supabase.rpc("upsert_compat_score" as never, {
       _other: other.id,
       _score: score,
       _blurb: blurb,
@@ -1473,7 +1466,8 @@ ${qaBlock(theirQA)}`;
       _sub: subScores,
       _version: versionKey,
     } as never);
-    return { ...insertRow, their_answers: theirQaCount, created_at: new Date().toISOString() };
+    if (saveErr) console.error("[compat] save failed", saveErr.message);
+    return { ...insertRow, their_answers: theirQaCount, stale: false, created_at: new Date().toISOString() };
   });
 
 

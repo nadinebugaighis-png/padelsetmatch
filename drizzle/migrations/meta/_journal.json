@@ -85,6 +85,13 @@
       "when": 1794340051675,
       "tag": "0011_match_event_tag",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794512555642,
+      "tag": "0012_migration",
+      "breakpoints": true
     }
   ]
 }

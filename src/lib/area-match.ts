@@ -4,13 +4,24 @@ type Loc = { locations?: string[] | null; zone?: string | null };
 const norm = (s: string) => s.trim().toLowerCase();
 
 /**
- * Greater La Moraleja: El Soto de La Moraleja and El Encinar de los Reyes
- * (officially Hortaleza, by the airport) count as one community. Hortaleza as
- * a whole is NOT included.
+ * Greater La Moraleja: the surrounding communities count as one — El Soto,
+ * El Encinar (officially Hortaleza, by the airport), Arroyo de la Vega,
+ * La Solana and the Diversia / Brains school side. Hortaleza and Alcobendas
+ * as wholes are NOT included.
  */
+const GREATER_MORALEJA = [
+  "moraleja",
+  "encinar",
+  "arroyo de la vega",
+  "solana",
+  "diversia",
+  "brains",
+];
+
 export function canonicalArea(area: string): string {
   const a = norm(area).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  if (a.includes("moraleja") || a.includes("encinar") || a === "el soto" || a === "soto") return "la moraleja";
+  if (a === "el soto" || a === "soto") return "la moraleja";
+  if (GREATER_MORALEJA.some((p) => a.includes(p))) return "la moraleja";
   return a;
 }
 

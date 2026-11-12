@@ -1287,8 +1287,8 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     if (qaError) throw new Error("Couldn't load compatibility. Please retry.");
     const qa = qaRows ?? [];
     const theirQaCount = qa.filter((r) => r.profile_id === other.id).length;
-    const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 40);
-    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 40);
+    const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 60);
+    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 60);
 
     // Version key incorporates intents + QA volume so the cache invalidates
     // when either person changes what they're looking for or answers more Qs.

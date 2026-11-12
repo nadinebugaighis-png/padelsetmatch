@@ -37,11 +37,11 @@ describe("padel question card", () => {
     expect(shouldShowQuestion({ answeredCount: 1, lastSlot: "2026-11-07-am", lastAnsweredAt: justAnswered, now })).toBe(false);
     expect(shouldShowQuestion({ answeredCount: 2, lastSlot: "2026-11-07-am", lastAnsweredAt: lastVisit, now })).toBe(true);
   });
-  it("bank has 38 questions: 15 padel, 11 personality, 12 lifestyle", () => {
-    expect(CURATED_QUESTIONS).toHaveLength(38);
+  it("bank has 58 questions: 22 padel, 17 personality, 19 lifestyle", () => {
+    expect(CURATED_QUESTIONS).toHaveLength(58);
     const count = (c: string) => CURATED_QUESTIONS.filter((q) => q.category === c).length;
-    expect([count("padel"), count("personality"), count("lifestyle")]).toEqual([15, 11, 12]);
-    expect(new Set(CURATED_QUESTIONS.map((q) => q.q.en)).size).toBe(38);
+    expect([count("padel"), count("personality"), count("lifestyle")]).toEqual([22, 17, 19]);
+    expect(new Set(CURATED_QUESTIONS.map((q) => q.q.en)).size).toBe(58);
     expect(CURATED_QUESTIONS.every((q) => q.options.length === 3)).toBe(true);
   });
   it("two weeks of morning/evening questions never repeat", () => {

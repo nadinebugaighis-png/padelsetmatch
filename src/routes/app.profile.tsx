@@ -775,7 +775,7 @@ function QaRow() {
   return (
     <CollapsibleRow
       icon={<Sparkles className="w-4 h-4" />}
-      title={tr("Q&A", "Preguntas", "Questions")}
+      title={tr("Compatibility", "Compatibilidad", "Compatibilité")}
       subtitle={query.isSuccess
         ? tr(`${n} of ${QA_TOTAL} answered`, `${n} de ${QA_TOTAL} respondidas`, `${n} sur ${QA_TOTAL} répondues`)
         : tr("Quick questions for better pairings", "Preguntas rápidas para mejores parejas", "Questions rapides pour de meilleurs duos")}

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useI18n, useTr } from "@/lib/i18n";
 import { dailyQuestionFor, slotKey, shouldShowQuestion, unlockQuestions, UNLOCK_MIN_ANSWERS, type CuratedQuestion } from "@/lib/daily-questions";
 
-function useSaveAnswer() {
+export function useSaveAnswer() {
   const tr = useTr();
   const qc = useQueryClient();
   const submit = useServerFn(submitQaAnswer);

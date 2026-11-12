@@ -18,6 +18,7 @@ import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { VenuesSection } from "@/components/VenuesSection";
 import { GearEditor } from "@/components/GearShelf";
+import { ChemistryAnswers, CHEMISTRY_TOTAL, useChemistryAnswers } from "@/components/ChemistryAnswers";
 import { isTelemetryEnabled, setTelemetryEnabled } from "@/lib/telemetry";
 
 
@@ -272,6 +273,8 @@ function ProfilePage() {
 
       <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} slots={((p as any).availability ?? []) as string[]} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
+
+        <ChemistryRow />
 
         {hasDetails && (
           <CollapsibleRow
@@ -764,3 +767,20 @@ function MessagesRow() {
 }
 
 
+
+function ChemistryRow() {
+  const tr = useTr();
+  const { saved, query } = useChemistryAnswers();
+  const n = saved.size;
+  return (
+    <CollapsibleRow
+      icon={<Sparkles className="w-4 h-4" />}
+      title={tr("Court & social chemistry", "Química en pista y fuera", "Chimie sur le court et en dehors")}
+      subtitle={query.isSuccess
+        ? tr(`${n} of ${CHEMISTRY_TOTAL} answered`, `${n} de ${CHEMISTRY_TOTAL} respondidas`, `${n} sur ${CHEMISTRY_TOTAL} répondues`)
+        : tr("Quick questions for better pairings", "Preguntas rápidas para mejores parejas", "Questions rapides pour de meilleurs duos")}
+    >
+      <ChemistryAnswers />
+    </CollapsibleRow>
+  );
+}

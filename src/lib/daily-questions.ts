@@ -158,3 +158,15 @@ export function unlockQuestions(answered: Set<string>, n: number): CuratedQuesti
 }
 
 export const UNLOCK_MIN_ANSWERS = 3;
+
+/**
+ * Saved answers for the curated bank only, keyed by English question text.
+ * Older free-text or AI questions are ignored so the Me page progress
+ * ("12 of 38") only counts questions the player can still see and change.
+ */
+export function curatedAnswerMap(rows: Array<{ question: string; answer: string }>): Map<string, string> {
+  const bank = new Set(CURATED_QUESTIONS.map((q) => q.q.en));
+  const out = new Map<string, string>();
+  for (const r of rows) if (bank.has(r.question) && !out.has(r.question)) out.set(r.question, r.answer);
+  return out;
+}

@@ -63,3 +63,23 @@ describe("padel question card", () => {
     expect(questionForSlot(new Date(2026, 10, 14, 9)).id).toBe("drawn");
   });
 });
+
+import { curatedAnswerMap, CURATED_QUESTIONS as BANK } from "./daily-questions";
+
+describe("Me page chemistry answers", () => {
+  it("counts only questions from the curated bank", () => {
+    const m = curatedAnswerMap([
+      { question: BANK[0].q.en, answer: BANK[0].options[0].en },
+      { question: "An old AI question?", answer: "Yes" },
+    ]);
+    expect(m.size).toBe(1);
+    expect(m.get(BANK[0].q.en)).toBe(BANK[0].options[0].en);
+  });
+  it("keeps the newest answer when a question appears twice (rows arrive newest first)", () => {
+    const m = curatedAnswerMap([
+      { question: BANK[1].q.en, answer: "new" },
+      { question: BANK[1].q.en, answer: "old" },
+    ]);
+    expect(m.get(BANK[1].q.en)).toBe("new");
+  });
+});

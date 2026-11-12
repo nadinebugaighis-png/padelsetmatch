@@ -4,7 +4,7 @@ import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { CURATED_QUESTIONS } from "@/lib/daily-questions";
-import { pairLabel } from "@/lib/pair-label";
+import { offCourtScore, pairLabel } from "@/lib/pair-label";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
@@ -1032,7 +1032,9 @@ function Discover() {
                         const noEmoji = (t: string) => t.replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{1F3FB}-\u{1F3FF}]/gu, "").replace(/\s{2,}/g, " ").trim();
                         const bullets = (data ? (data.sub_scores?.highlights?.length ? data.sub_scores.highlights : data.reasons) ?? [] : []).map(noEmoji).filter(Boolean);
                         const hasMore = !!data && (bullets.length > 0 || !!data.friction || character.length > 0);
-                        const offCourt = data?.sub_scores?.personality ?? null;
+                        const offCourtRaw = data?.sub_scores?.personality ?? null;
+                        const offCourt = offCourtScore(offCourtRaw, (data as { their_answers?: number } | undefined)?.their_answers);
+                        const offCourtWaiting = !!data && offCourtRaw != null && offCourt == null;
                         const pairKind = pairLabel(preview.score, offCourt);
                         const pairTag = pairKind === "full_set" ? tr("The full set", "El set completo", "Le set complet")
                           : pairKind === "kindred" ? tr("Kindred spirits", "Almas afines", "Esprits complices")
@@ -1058,6 +1060,9 @@ function Discover() {
                                     <div className="text-serif text-[26px] leading-tight text-[var(--ink)] tabular-nums mt-0.5">
                                       {s.value != null ? <>{s.value}<span className="text-[15px] text-[var(--ink)]/60">%</span></> : <span className="text-[var(--ink)]/30">—</span>}
                                     </div>
+                                    {s.key === "off" && offCourtWaiting && (
+                                      <div className="text-[11px] italic text-[var(--ink)]/55 leading-snug mt-0.5">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
+                                    )}
                                   </div>
                                 ))}
                               </div>

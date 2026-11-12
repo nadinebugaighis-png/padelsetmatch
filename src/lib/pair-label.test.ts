@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pairLabel } from "./pair-label";
+import { offCourtScore, pairLabel } from "./pair-label";
 
 describe("pairLabel", () => {
   it("strong on court, lighter socially is Court partners", () => {
@@ -16,5 +16,10 @@ describe("pairLabel", () => {
   });
   it("no off-court score yet means no label", () => {
     expect(pairLabel(88, null)).toBeNull();
+  });
+  it("off-court score is hidden until the other player has answered 3 questions", () => {
+    expect(offCourtScore(65, 0)).toBeNull();
+    expect(offCourtScore(65, 2)).toBeNull();
+    expect(offCourtScore(90, 3)).toBe(90);
   });
 });

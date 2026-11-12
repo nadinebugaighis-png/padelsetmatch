@@ -178,6 +178,27 @@ function Discover() {
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
+  // Warm the court reads for the top players in the background, two at a time,
+  // so tapping a card shows the read instantly instead of waiting on the AI.
+  const warmIds = (feedQ.data?.candidates ?? []).slice(0, 8).map((c) => c.id).join(",");
+  useEffect(() => {
+    if (!warmIds || !qaQ.data || needsUnlock) return;
+    let cancelled = false;
+    const ids = warmIds.split(",");
+    const run = async () => {
+      for (let i = 0; i < ids.length && !cancelled; i += 2) {
+        await Promise.allSettled(ids.slice(i, i + 2).map((id) =>
+          qc.prefetchQuery({
+            queryKey: ["ai-compat", id, lang],
+            queryFn: () => compatFn({ data: { otherProfileId: id, lang } }),
+            staleTime: 1000 * 60 * 60,
+          })));
+      }
+    };
+    const t = setTimeout(run, 1200);
+    return () => { cancelled = true; clearTimeout(t); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [warmIds, lang, !!qaQ.data, needsUnlock]);
   // Saved read shows instantly; if answers changed since, refresh quietly and swap in.
   const compatStale = !!(compatQ.data as { stale?: boolean } | undefined)?.stale;
   useQuery({

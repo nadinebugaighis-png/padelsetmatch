@@ -8,7 +8,7 @@ import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile,
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
+import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
@@ -278,6 +278,7 @@ function Discover() {
   });
   const sendIntro = useServerFn(sendIntroMessage);
   const [introOpen, setIntroOpen] = useState(false);
+  const [fullReadFor, setFullReadFor] = useState<string | null>(null);
   const [introText, setIntroText] = useState("");
   const introM = useMutation({
     mutationFn: (args: { targetProfileId: string; body: string }) => sendIntro({ data: args }),
@@ -1014,151 +1015,124 @@ function Discover() {
                       )}
 
 
-                      {/* AI compatibility — punchy: headline + specific bullets + sub-score bars */}
-                      {!isSelf && (
-                      <div className="rounded-2xl border border-[var(--ink)]/12 bg-white p-4">
-                        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)] mb-2.5">
-                          <Sparkles className="w-3 h-3" /> {tr("You two on court", "Vosotros dos en pista", "Vous deux sur le court")}
-                        </div>
-                        {needsUnlock ? (
-                          <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
-                        ) : compatQ.isLoading ? (
-                          <p className="text-sm text-[var(--ink)]/55 italic">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
-                        ) : compatQ.data ? (
-                          <>
-                            {/* Headline — one grounded sentence */}
-                            <p className="text-[15px] font-medium text-[var(--ink)] leading-snug">
-                              {compatQ.data.sub_scores?.headline || compatQ.data.blurb}
-                            </p>
-
-                            {/* Specific bullets — each references a real detail */}
-                            {(() => {
-                              const bullets = compatQ.data.sub_scores?.highlights?.length
-                                ? compatQ.data.sub_scores.highlights
-                                : compatQ.data.reasons;
-                              if (!bullets || bullets.length === 0) return null;
-                              return (
-                                <ul className="mt-3 space-y-1.5">
-                                  {bullets.slice(0, 3).map((b, i) => (
-                                    <li key={i} className="text-[13px] text-[var(--ink)]/80 leading-snug flex gap-2">
-                                      <span className="text-[var(--ink)]/40 shrink-0">•</span>
-                                      <span>{b}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              );
-                            })()}
-
-                            {/* Two plain-language bars: on-court = the same algorithm score as the badge, off-court = AI vibe read */}
-                            <div className="mt-3.5 pt-3 border-t border-[var(--ink)]/8 space-y-3">
-                              <div>
-                                <div className="flex items-center justify-between text-[12px] text-[var(--ink)] mb-1">
-                                  <span>{tr("Fit on court", "Encaje en pista", "Compatibilité sur le court")}</span>
-                                  <span className="tabular-nums font-semibold">{preview.score}%</span>
-                                </div>
-                                <div className="h-1.5 rounded-full bg-[var(--ink)]/8 overflow-hidden">
-                                  <div className="h-full bg-[var(--ink)]" style={{ width: `${preview.score}%` }} />
-                                </div>
-                                <p className="mt-1 text-[11px] text-[var(--ink)]/50 leading-snug">
-                                  {tr("Level, side, schedule and clubs", "Nivel, lado, horarios y clubes", "Niveau, côté, horaires et clubs")}
-                                </p>
-                              </div>
-                              {compatQ.data.sub_scores?.personality != null && (
-                                <div>
-                                  <div className="flex items-center justify-between text-[12px] text-[var(--ink)] mb-1">
-                                    <span>{tr("Fit off court", "Encaje fuera de pista", "Compatibilité hors court")}</span>
-                                    <span className="tabular-nums font-semibold">{compatQ.data.sub_scores.personality}%</span>
-                                  </div>
-                                  <div className="h-1.5 rounded-full bg-[var(--ink)]/8 overflow-hidden">
-                                    <div className="h-full bg-[#a37a4a]" style={{ width: `${compatQ.data.sub_scores.personality}%` }} />
-                                  </div>
-                                  <p className="mt-1 text-[11px] text-[var(--ink)]/50 leading-snug">
-                                    {tr("Personality, style and interests", "Personalidad, estilo e intereses", "Personnalité, style et intérêts")}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-
-
-                            {/* Watch-out — only when the AI flagged something concrete */}
-                            {compatQ.data.friction && (
-                              <div className="mt-3 rounded-lg bg-[var(--ink)]/[0.04] px-3 py-2 text-[12px] text-[var(--ink)]/75 leading-snug">
-                                <span className="font-medium">{tr("Worth knowing:", "A tener en cuenta:", "À savoir :")}</span> {compatQ.data.friction}
-                              </div>
-                            )}
-
-
-                          </>
-                        ) : (
-                          <p className="text-sm text-[var(--ink)]/50 italic">{tr("Couldn't load AI analysis right now.", "No se pudo cargar el análisis de IA ahora mismo.", "Impossible de charger l'analyse IA pour le moment.")}</p>
-                        )}
-                      </div>
-                      )}
-
-
-                      {/* Chemistry — where you click, how you complement, and their on-court character */}
-                      {(() => {
+                      {/* You two on court — one glanceable card: fit, headline, shared answers, pairings; full AI read behind a tap */}
+                      {!isSelf && (() => {
                         const all = cardsQ.data?.cards ?? [];
-                        const complements = cardsQ.data?.complements ?? [];
+                        const complements = (cardsQ.data?.complements ?? []).slice(0, 2);
                         const resolve = (c: { id: string; option: number }) => {
                           const q = CURATED_QUESTIONS.find((x) => x.id === c.id);
                           const opt = q?.options[c.option];
                           return q && opt ? { q, opt } : null;
                         };
-                        const click = all.filter((c) => c.shared);
-                        const character = all.filter((c) => !c.shared);
-                        if (!click.length && !complements.length && !character.length) return null;
+                        const shared = all.filter((c) => c.shared).map(resolve).filter((r): r is NonNullable<typeof r> => !!r).slice(0, 2);
+                        const character = all.filter((c) => !c.shared).map(resolve).filter((r): r is NonNullable<typeof r> => !!r);
+                        const showFull = fullReadFor === preview.id;
+                        const data = compatQ.data;
+                        const noEmoji = (t: string) => t.replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{1F3FB}-\u{1F3FF}]/gu, "").replace(/\s{2,}/g, " ").trim();
+                        const bullets = (data ? (data.sub_scores?.highlights?.length ? data.sub_scores.highlights : data.reasons) ?? [] : []).map(noEmoji).filter(Boolean);
+                        const hasMore = !!data && (bullets.length > 0 || data.sub_scores?.personality != null || !!data.friction || character.length > 0);
                         const heading = (children: string) => (
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/60 whitespace-nowrap">{children}</span>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55 whitespace-nowrap">{children}</span>
                             <span className="h-px flex-1 bg-[var(--gold)]/40" />
                           </div>
                         );
                         return (
-                          <div className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5 space-y-6">
-                            {click.length > 0 && (
-                              <div>
-                                {heading(tr("Where you click", "Donde conectáis", "Là où ça colle"))}
-                                <ul className="space-y-3">
-                                  {click.map((c) => {
-                                    const r = resolve(c);
-                                    if (!r) return null;
-                                    return (
-                                      <li key={c.id}>
-                                        <div className="text-[11px] text-[var(--ink)]/50 leading-snug">{r.q.q[lang]}</div>
-                                        <div className="text-serif text-[17px] text-[var(--ink)] leading-snug mt-0.5">{tr("You both:", "Los dos:", "Vous deux :")} <span className="italic">{r.opt[lang]}</span></div>
-                                      </li>
-                                    );
-                                  })}
-                                </ul>
-                              </div>
+                          <div className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5">
+                            <div className="flex items-baseline justify-between gap-3">
+                              <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/60">{tr("You two on court", "Vosotros dos en pista", "Vous deux sur le court")}</span>
+                              {!needsUnlock && (
+                                <span className="text-serif text-[20px] leading-none text-[var(--ink)] tabular-nums">
+                                  {preview.score}%<span className="ml-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50 font-sans">{tr("fit", "encaje", "accord")}</span>
+                                </span>
+                              )}
+                            </div>
+                            <span className="block h-px w-10 bg-[var(--gold)] mt-3 mb-3.5" />
+
+                            {needsUnlock ? (
+                              <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
+                            ) : compatQ.isLoading ? (
+                              <p className="text-serif italic text-[17px] text-[var(--ink)]/55">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
+                            ) : data ? (
+                              <p className="text-serif text-[19px] text-[var(--ink)] leading-snug">{noEmoji(data.sub_scores?.headline || data.blurb)}</p>
+                            ) : (
+                              <p className="text-sm text-[var(--ink)]/50 italic">{tr("The court read isn't available right now.", "La lectura de pista no está disponible ahora.", "La lecture du court n'est pas disponible pour le moment.")}</p>
                             )}
-                            {complements.length > 0 && (
-                              <div>
-                                {heading(tr("How you complement each other", "Cómo os complementáis", "Comment vous vous complétez"))}
+
+                            {shared.length > 0 && (
+                              <div className="mt-5">
+                                {heading(tr("What you share", "Lo que compartís", "Ce que vous partagez"))}
                                 <ul className="space-y-2.5">
-                                  {complements.map((c) => (
-                                    <li key={c.key} className="text-serif text-[17px] text-[var(--ink)] leading-snug">{c.text[lang]}</li>
+                                  {shared.map((r) => (
+                                    <li key={r.q.id}>
+                                      <div className="text-[11px] text-[var(--ink)]/50 leading-snug">{r.q.q[lang]}</div>
+                                      <div className="text-serif text-[16px] text-[var(--ink)] leading-snug mt-0.5">{tr("You both:", "Los dos:", "Vous deux :")} <span className="italic">{r.opt[lang]}</span></div>
+                                    </li>
                                   ))}
                                 </ul>
                               </div>
                             )}
-                            {character.length > 0 && (
-                              <div>
-                                {heading(tr(`${preview.first_name} on court`, `${preview.first_name} en pista`, `${preview.first_name} sur le court`))}
-                                <ul className="divide-y divide-[var(--ink)]/8">
-                                  {character.map((c) => {
-                                    const r = resolve(c);
-                                    if (!r) return null;
-                                    return (
-                                      <li key={c.id} className="py-2.5 first:pt-0 last:pb-0">
-                                        <div className="text-[11px] text-[var(--ink)]/50 leading-snug">{r.q.q[lang]}</div>
-                                        <div className="text-serif italic text-[17px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
-                                      </li>
-                                    );
-                                  })}
+
+                            {complements.length > 0 && (
+                              <div className="mt-5">
+                                {heading(tr("How you pair up", "Cómo os complementáis", "Comment vous vous complétez"))}
+                                <ul className="space-y-1.5">
+                                  {complements.map((c) => (
+                                    <li key={c.key} className="text-serif text-[16px] text-[var(--ink)] leading-snug">{c.text[lang]}</li>
+                                  ))}
                                 </ul>
                               </div>
+                            )}
+
+                            {hasMore && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => setFullReadFor(showFull ? null : preview.id)}
+                                  aria-expanded={showFull}
+                                  className="mt-5 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--gold)]/60 transition"
+                                >
+                                  {showFull ? tr("Hide full read", "Ocultar lectura completa", "Masquer la lecture complète") : tr("Read the full court read", "Leer el análisis completo", "Lire l'analyse complète")}
+                                </button>
+                                {showFull && data && (
+                                  <div className="mt-4 pt-4 border-t border-[var(--ink)]/8 space-y-4">
+                                    {bullets.length > 0 && (
+                                      <ul className="space-y-1.5">
+                                        {bullets.slice(0, 3).map((b, i) => (
+                                          <li key={i} className="text-[13px] text-[var(--ink)]/80 leading-snug flex gap-2">
+                                            <span className="text-[var(--gold)] shrink-0">—</span>
+                                            <span>{b}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    )}
+                                    {data.sub_scores?.personality != null && (
+                                      <div className="flex items-center justify-between text-[12px] text-[var(--ink)]/75">
+                                        <span>{tr("Fit off court", "Encaje fuera de pista", "Accord hors court")}</span>
+                                        <span className="tabular-nums font-semibold text-[var(--ink)]">{data.sub_scores.personality}%</span>
+                                      </div>
+                                    )}
+                                    {data.friction && (
+                                      <p className="text-[12px] text-[var(--ink)]/75 leading-snug">
+                                        <span className="font-medium">{tr("Worth knowing:", "A tener en cuenta:", "À savoir :")}</span> {noEmoji(data.friction)}
+                                      </p>
+                                    )}
+                                    {character.length > 0 && (
+                                      <div>
+                                        {heading(tr(`${preview.first_name} on court`, `${preview.first_name} en pista`, `${preview.first_name} sur le court`))}
+                                        <ul className="space-y-2">
+                                          {character.map((r) => (
+                                            <li key={r.q.id}>
+                                              <div className="text-[11px] text-[var(--ink)]/50 leading-snug">{r.q.q[lang]}</div>
+                                              <div className="text-serif italic text-[15px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         );

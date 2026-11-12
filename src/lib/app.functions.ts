@@ -1384,7 +1384,7 @@ Return ONLY valid JSON with this exact shape:
   },
   "headline": "<ONE punchy line addressed to 'you two'. Max 80 chars. Ideally opens with a playful duo nickname grounded in the data, then the core reason. Example tone: 'Sunrise grinders: both on court by 8 and allergic to giving up a point.' No filler.>",
   "highlights": [
-    "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). Start with an emoji that fits: 🎾 for on-court, ✨ for personality/values, 🕒 for schedule, 📍 for place, 💬 for communication, 🎯 for goals.>",
+    "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). No emojis — plain, refined wording.>",
     "<second bullet, different angle, same rules>",
     "<third bullet, different angle, same rules>"
   ],

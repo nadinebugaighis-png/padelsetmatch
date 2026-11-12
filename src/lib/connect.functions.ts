@@ -1,6 +1,29 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { sharesMyArea } from "./area-match";
+
+type AuthorLoc = { id: string; first_name: string | null; photo_url: string | null; locations: string[] | null; zone: string | null };
+
+/**
+ * Connect is the neighbourhood board: like the grid (World off), a player
+ * only sees posts from authors who share one of their city+area pairs
+ * (La Moraleja players see only Greater La Moraleja). Players with no
+ * areas fall back to shared city; with no location at all they see all.
+ * Own posts are always visible.
+ */
+export function visibleToMe(
+  me: { locations: string[] | null; zone: string | null } | null,
+  myPid: string | null,
+  authorId: string | null,
+  authorMap: Map<string, AuthorLoc>,
+): boolean {
+  if (!authorId || authorId === myPid) return true;
+  if (!me || (me.locations ?? []).length === 0) return true;
+  const author = authorMap.get(authorId);
+  if (!author) return false;
+  return sharesMyArea(me, author);
+}
 
 const CATEGORIES = ["traveling", "selling", "looking_to_play", "looking_for_coach", "question", "news", "other"] as const;
 
@@ -55,9 +78,10 @@ export const listConnectPosts = createServerFn({ method: "GET" })
     const authorIds = Array.from(new Set(posts.map((p) => p.author_profile_id).filter(Boolean))) as string[];
     const postIds = posts.map((p) => p.id);
 
-    const [{ data: authors }, { data: comments }] = await Promise.all([
+    const [{ data: meRow }, { data: authors }, { data: comments }] = await Promise.all([
+      context.supabase.from("profiles").select("id, locations, zone").eq("user_id", context.userId).maybeSingle(),
       authorIds.length
-        ? context.supabase.from("profiles").select("id, first_name, photo_url").in("id", authorIds)
+        ? context.supabase.from("profiles").select("id, first_name, photo_url, locations, zone").in("id", authorIds)
         : Promise.resolve({ data: [] as any[] }),
       postIds.length
         ? context.supabase
@@ -68,9 +92,9 @@ export const listConnectPosts = createServerFn({ method: "GET" })
             .limit(300)
         : Promise.resolve({ data: [] as any[] }),
     ]);
-    const authorMap = new Map(
-      ((authors ?? []) as Array<{ id: string; first_name: string | null; photo_url: string | null }>).map((a) => [a.id, a]),
-    );
+    const authorMap = new Map(((authors ?? []) as AuthorLoc[]).map((a) => [a.id, a]));
+    const me = (meRow as { id: string; locations: string[] | null; zone: string | null } | null) ?? null;
+    const myPid = me?.id ?? null;
     const countMap = new Map<string, number>();
     const latestMap = new Map<string, ConnectComment[]>();
     ((comments ?? []) as Array<Omit<ConnectComment, "author">>).forEach((c) => {
@@ -84,7 +108,7 @@ export const listConnectPosts = createServerFn({ method: "GET" })
         ]);
       }
     });
-    return posts.map<ConnectPost>((p) => {
+    return posts.filter((p) => visibleToMe(me, myPid, p.author_profile_id, authorMap)).map<ConnectPost>((p) => {
       const author = p.author_profile_id ? authorMap.get(p.author_profile_id) ?? null : null;
       return {
         ...p,
@@ -230,10 +254,20 @@ export const getConnectLatest = createServerFn({ method: "GET" })
         .select("created_at,author_profile_id")
         .order("created_at", { ascending: false })
         .limit(5),
-      context.supabase.from("profiles").select("connect_seen_at").eq("user_id", context.userId).maybeSingle(),
+      context.supabase.from("profiles").select("connect_seen_at, locations, zone").eq("user_id", context.userId).maybeSingle(),
     ]);
+    const authorIds = Array.from(new Set(
+      [...(posts ?? []), ...(comments ?? [])]
+        .map((r: { author_profile_id: string | null }) => r.author_profile_id)
+        .filter(Boolean),
+    )) as string[];
+    const { data: authorRows } = authorIds.length
+      ? await context.supabase.from("profiles").select("id, first_name, photo_url, locations, zone").in("id", authorIds)
+      : { data: [] as any[] };
+    const authorMap = new Map(((authorRows ?? []) as AuthorLoc[]).map((a) => [a.id, a]));
+    const meLoc = (me as { locations: string[] | null; zone: string | null } | null) ?? null;
     const notMine = <T extends { author_profile_id: string | null }>(rows: T[]) =>
-      rows.filter((r) => !myPid || r.author_profile_id !== myPid);
+      rows.filter((r) => (!myPid || r.author_profile_id !== myPid) && visibleToMe(meLoc, myPid, r.author_profile_id, authorMap));
     const latestPost = notMine(((posts ?? []) as Array<{ created_at: string; author_profile_id: string }>))[0]?.created_at ?? null;
     const latestComment = notMine(((comments ?? []) as Array<{ created_at: string; author_profile_id: string }>))[0]?.created_at ?? null;
     const latest = [latestPost, latestComment].filter(Boolean).sort().slice(-1)[0] ?? null;

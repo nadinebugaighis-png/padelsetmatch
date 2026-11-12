@@ -278,9 +278,6 @@ function ProfilePage() {
         <QaRow />
 
         <MemberGuide />
-        <button type="button" onClick={openMemberGuide} className="w-full text-center text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--gold)]/60">
-          {tr("How the app works", "Cómo funciona la app", "Comment fonctionne l'app")}
-        </button>
 
         {hasDetails && (
           <CollapsibleRow
@@ -339,9 +336,12 @@ function ProfilePage() {
 
         <CollapsibleRow
           icon={<MessageSquare className="w-4 h-4" />}
-          title={tr("Send feedback", "Enviar comentarios", "Envoyer un avis")}
-          subtitle={tr("Anonymous — help us improve", "Anónimo — ayúdanos a mejorar", "Anonyme — aide-nous à améliorer")}
+          title={tr("Help & feedback", "Ayuda y comentarios", "Aide et avis")}
+          subtitle={tr("How PadelSetMatch works · Send feedback", "Cómo funciona PadelSetMatch · Comentarios", "Comment fonctionne PadelSetMatch · Avis")}
         >
+          <button type="button" onClick={openMemberGuide} className="mb-4 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
+            {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
+          </button>
           <FeedbackBox />
         </CollapsibleRow>
 

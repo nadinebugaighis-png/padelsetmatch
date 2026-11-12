@@ -178,7 +178,7 @@ function Discover() {
   });
   const cardsFn = useServerFn(getPersonalityCards);
   const cardsQ = useQuery({
-    queryKey: ["personality-cards", preview?.id],
+    queryKey: ["personality-cards-v2", preview?.id],
     queryFn: () => cardsFn({ data: { otherProfileId: preview!.id } }),
     enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id,
     staleTime: 1000 * 60 * 10,
@@ -254,7 +254,7 @@ function Discover() {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
       if (res?.matchId) {
-        toast.success("🎾 It's a match! Opening chat…", { duration: 2500 });
+        toast.success("It's a match. Opening chat…", { duration: 2500 });
         setTimeout(() => navigate({ to: "/app/matches/$matchId", params: { matchId: res.matchId! } }), 600);
       } else {
         toast.success(t("disc.likeSent"), { duration: 2200 });
@@ -269,7 +269,7 @@ function Discover() {
       qc.invalidateQueries({ queryKey: ["discover"] });
       qc.invalidateQueries({ queryKey: ["my-matches"] });
       if (res?.matchId) {
-        toast.success("🎾 It's a match!", { duration: 2000 });
+        toast.success("It's a match.", { duration: 2000 });
       } else {
         toast.success("👍 Sent", { duration: 1600 });
       }
@@ -1021,7 +1021,7 @@ function Discover() {
                           <Sparkles className="w-3 h-3" /> {tr("You two on court", "Vosotros dos en pista", "Vous deux sur le court")}
                         </div>
                         {needsUnlock ? (
-                          <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} />
+                          <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
                         ) : compatQ.isLoading ? (
                           <p className="text-sm text-[var(--ink)]/55 italic">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
                         ) : compatQ.data ? (
@@ -1053,7 +1053,7 @@ function Discover() {
                             <div className="mt-3.5 pt-3 border-t border-[var(--ink)]/8 space-y-3">
                               <div>
                                 <div className="flex items-center justify-between text-[12px] text-[var(--ink)] mb-1">
-                                  <span>🎾 {tr("Fit on court", "Encaje en pista", "Compatibilité sur le court")}</span>
+                                  <span>{tr("Fit on court", "Encaje en pista", "Compatibilité sur le court")}</span>
                                   <span className="tabular-nums font-semibold">{preview.score}%</span>
                                 </div>
                                 <div className="h-1.5 rounded-full bg-[var(--ink)]/8 overflow-hidden">
@@ -1066,7 +1066,7 @@ function Discover() {
                               {compatQ.data.sub_scores?.personality != null && (
                                 <div>
                                   <div className="flex items-center justify-between text-[12px] text-[var(--ink)] mb-1">
-                                    <span>✨ {tr("Fit off court", "Encaje fuera de pista", "Compatibilité hors court")}</span>
+                                    <span>{tr("Fit off court", "Encaje fuera de pista", "Compatibilité hors court")}</span>
                                     <span className="tabular-nums font-semibold">{compatQ.data.sub_scores.personality}%</span>
                                   </div>
                                   <div className="h-1.5 rounded-full bg-[var(--ink)]/8 overflow-hidden">
@@ -1096,27 +1096,73 @@ function Discover() {
                       )}
 
 
-                      {(cardsQ.data?.length ?? 0) > 0 && (
-                        <div>
-                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("On court personality", "Personalidad en pista", "Personnalité sur le court")}</div>
-                          <div className="grid gap-2">
-                            {cardsQ.data!.map((c) => {
-                              const q = CURATED_QUESTIONS.find((x) => x.id === c.id);
-                              const opt = q?.options[c.option];
-                              if (!q || !opt) return null;
-                              return (
-                                <div key={c.id} className="rounded-2xl border border-[var(--ink)]/10 bg-white px-4 py-3">
-                                  <div className="text-[11px] text-[var(--ink)]/55 leading-snug">{q.q[lang]}</div>
-                                  <div className="text-serif text-lg text-[var(--ink)] leading-snug mt-0.5">“{opt[lang]}”</div>
-                                  {c.shared && (
-                                    <div className="mt-1 text-[11px] font-medium text-[var(--ink)]/70">✦ {tr("You both said this", "Los dos dijisteis esto", "Vous avez répondu pareil")}</div>
-                                  )}
-                                </div>
-                              );
-                            })}
+                      {/* Chemistry — where you click, how you complement, and their on-court character */}
+                      {(() => {
+                        const all = cardsQ.data?.cards ?? [];
+                        const complements = cardsQ.data?.complements ?? [];
+                        const resolve = (c: { id: string; option: number }) => {
+                          const q = CURATED_QUESTIONS.find((x) => x.id === c.id);
+                          const opt = q?.options[c.option];
+                          return q && opt ? { q, opt } : null;
+                        };
+                        const click = all.filter((c) => c.shared);
+                        const character = all.filter((c) => !c.shared);
+                        if (!click.length && !complements.length && !character.length) return null;
+                        const heading = (children: string) => (
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/60 whitespace-nowrap">{children}</span>
+                            <span className="h-px flex-1 bg-[var(--gold)]/40" />
                           </div>
-                        </div>
-                      )}
+                        );
+                        return (
+                          <div className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5 space-y-6">
+                            {click.length > 0 && (
+                              <div>
+                                {heading(tr("Where you click", "Donde conectáis", "Là où ça colle"))}
+                                <ul className="space-y-3">
+                                  {click.map((c) => {
+                                    const r = resolve(c);
+                                    if (!r) return null;
+                                    return (
+                                      <li key={c.id}>
+                                        <div className="text-[11px] text-[var(--ink)]/50 leading-snug">{r.q.q[lang]}</div>
+                                        <div className="text-serif text-[17px] text-[var(--ink)] leading-snug mt-0.5">{tr("You both:", "Los dos:", "Vous deux :")} <span className="italic">{r.opt[lang]}</span></div>
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
+                            )}
+                            {complements.length > 0 && (
+                              <div>
+                                {heading(tr("How you complement each other", "Cómo os complementáis", "Comment vous vous complétez"))}
+                                <ul className="space-y-2.5">
+                                  {complements.map((c) => (
+                                    <li key={c.key} className="text-serif text-[17px] text-[var(--ink)] leading-snug">{c.text[lang]}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {character.length > 0 && (
+                              <div>
+                                {heading(tr(`${preview.first_name} on court`, `${preview.first_name} en pista`, `${preview.first_name} sur le court`))}
+                                <ul className="divide-y divide-[var(--ink)]/8">
+                                  {character.map((c) => {
+                                    const r = resolve(c);
+                                    if (!r) return null;
+                                    return (
+                                      <li key={c.id} className="py-2.5 first:pt-0 last:pb-0">
+                                        <div className="text-[11px] text-[var(--ink)]/50 leading-snug">{r.q.q[lang]}</div>
+                                        <div className="text-serif italic text-[17px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
 
                       {/* Lifestyle chips (age intentionally omitted for privacy) */}
                       {(() => {
@@ -1126,16 +1172,16 @@ function Discover() {
                           const name = d?.area || d?.city || formatLocation(d);
                           if (name && !areas.includes(name)) areas.push(name);
                         }
-                        const chips: Array<{ icon: string; text: string }> = [];
-                        chips.push({ icon: "🎾", text: label(preview.level) });
-                        if (areas.length) chips.push({ icon: "📍", text: areas.join(" · ") });
-                        if (preview.languages?.length) chips.push({ icon: "🗣️", text: preview.languages.map((l) => label(l)).join(" · ") });
-                        if (preview.nationality) chips.push({ icon: "🌍", text: preview.nationality });
+                        const chips: Array<{ key: string; text: string }> = [];
+                        chips.push({ key: "level", text: label(preview.level) });
+                        if (areas.length) chips.push({ key: "areas", text: areas.join(" · ") });
+                        if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · ") });
+                        if (preview.nationality) chips.push({ key: "nat", text: preview.nationality });
                         return (
                           <div className="flex flex-wrap gap-2">
                             {chips.map((c) => (
-                              <span key={c.icon} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/12 bg-white px-3 py-1.5 text-[13px] text-[var(--ink)]">
-                                <span aria-hidden>{c.icon}</span>{c.text}
+                              <span key={c.key} className="inline-flex items-center rounded-full border border-[var(--ink)]/15 bg-white px-3.5 py-1.5 text-[12.5px] tracking-[0.02em] text-[var(--ink)]">
+                                {c.text}
                               </span>
                             ))}
                           </div>
@@ -1279,7 +1325,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
         <div className="text-serif text-[15px] text-[var(--ink)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
-        <div className="text-xs text-[var(--ink)]/65">{tr("Tip: a photo with your racket 🎾 works best.", "Consejo: una foto con tu pala 🎾 funciona mejor.", "Astuce : une photo avec ta raquette 🎾 marche le mieux.")}</div>
+        <div className="text-xs text-[var(--ink)]/65">{tr("Tip: a photo with your racket works best.", "Consejo: una foto con tu pala funciona mejor.", "Astuce : une photo avec ta raquette marche le mieux.")}</div>
       </div>
       <button
         type="button"

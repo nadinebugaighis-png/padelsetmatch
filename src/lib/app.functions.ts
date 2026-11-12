@@ -1625,19 +1625,22 @@ export const getPersonalityCards = createServerFn({ method: "POST" })
     const { data: meRow } = await context.supabase
       .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
     const me = meRow as { id: string } | null;
-    if (!me || me.id === data.otherProfileId) return [];
+    const empty = { cards: [] as import("./personality-cards").PersonalityCard[], complements: [] as import("./personality-cards").Complement[] };
+    if (!me || me.id === data.otherProfileId) return empty;
     const { data: otherRow } = await context.supabase
       .from("profiles" as never).select("id, suspended_at").eq("id", data.otherProfileId).maybeSingle();
     const other = otherRow as { id: string; suspended_at: string | null } | null;
-    if (!other || other.suspended_at) return [];
+    if (!other || other.suspended_at) return empty;
     const { data: blocks } = await context.supabase.from("blocks")
       .select("id").or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${other.id}),and(blocker_profile_id.eq.${other.id},blocked_profile_id.eq.${me.id})`).limit(1);
-    if (blocks?.length) return [];
+    if (blocks?.length) return empty;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows } = await supabaseAdmin.from("qa_answers")
       .select("profile_id, question, answer").in("profile_id", [me.id, other.id])
       .order("created_at", { ascending: false }).limit(200);
-    const { buildPersonalityCards } = await import("./personality-cards");
+    const { buildPersonalityCards, buildComplements } = await import("./personality-cards");
     const all = rows ?? [];
-    return buildPersonalityCards(all.filter((r) => r.profile_id === other.id), all.filter((r) => r.profile_id === me.id));
+    const theirs = all.filter((r) => r.profile_id === other.id);
+    const mine = all.filter((r) => r.profile_id === me.id);
+    return { cards: buildPersonalityCards(theirs, mine), complements: buildComplements(theirs, mine) };
   });

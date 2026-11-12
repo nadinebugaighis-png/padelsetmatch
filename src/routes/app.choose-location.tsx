@@ -35,9 +35,6 @@ function ChooseLocation() {
 
   const pick = (preset: LocationPreset) => navigate({ to: "/app/onboarding", search: { loc: preset.key } });
 
-  const featured = LOCATION_PRESETS.find((p) => p.featured)!;
-  const others = LOCATION_PRESETS.filter((p) => !p.featured);
-
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col items-center px-6 py-14">
       <p className="text-[10px] tracking-[0.3em] text-[var(--gold)]">PADELSETMATCH</p>
@@ -49,22 +46,14 @@ function ChooseLocation() {
       </p>
 
       <div className="mt-8 w-full max-w-sm space-y-3">
-        <button
-          type="button"
-          onClick={() => pick(featured)}
-          className="w-full rounded-2xl bg-[var(--ink)] px-6 py-6 text-left border border-[var(--gold)]/60 shadow-md active:scale-[0.99] transition"
-        >
-          <span className="block text-[10px] tracking-[0.25em] text-[var(--gold)]">MADRID</span>
-          <span className="block mt-1 font-serif text-2xl text-[var(--paper)]">La Moraleja</span>
-        </button>
-        {others.map((p) => (
+        {LOCATION_PRESETS.map((p) => (
           <button
             key={p.key}
             type="button"
             onClick={() => pick(p)}
             className="w-full rounded-2xl bg-[var(--paper)] px-6 py-4 text-left border border-[var(--ink)]/15 font-serif text-lg active:scale-[0.99] transition"
           >
-            {p.city}
+            {p.area ? `${p.city} (${p.area})` : p.city}
           </button>
         ))}
       </div>

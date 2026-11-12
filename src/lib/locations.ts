@@ -9,7 +9,7 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "Spain",
     cities: [
-      { name: "Madrid", areas: ["Centro", "Salamanca", "Chamberí", "Chamartín", "Retiro", "Moncloa-Aravaca", "Aravaca", "Mirasierra", "Tetuán", "Arganzuela", "Latina", "Carabanchel", "Ciudad Lineal", "Arturo Soria", "Conde Orgaz", "Hortaleza", "San Blas-Canillejas", "Barajas", "La Moraleja", "Alcobendas", "San Sebastián de los Reyes", "Tres Cantos", "Las Rozas", "Majadahonda", "Pozuelo de Alarcón", "Boadilla del Monte", "Villanueva de la Cañada", "Villaviciosa de Odón"] },
+      { name: "Madrid", areas: ["Centro", "Salamanca", "Chamberí", "Chamartín", "Retiro", "Moncloa-Aravaca", "Aravaca", "Mirasierra", "Tetuán", "Arganzuela", "Latina", "Carabanchel", "Ciudad Lineal", "Arturo Soria", "Conde Orgaz", "Hortaleza", "San Blas-Canillejas", "Barajas", "La Moraleja", "El Soto de La Moraleja", "El Encinar de los Reyes", "Alcobendas", "San Sebastián de los Reyes", "Tres Cantos", "Las Rozas", "Majadahonda", "Pozuelo de Alarcón", "Boadilla del Monte", "Villanueva de la Cañada", "Villaviciosa de Odón"] },
       { name: "Barcelona", areas: ["Eixample", "Gràcia", "Sarrià-Sant Gervasi", "Les Corts", "Sant Martí", "Ciutat Vella", "Pedralbes", "Sant Cugat", "Castelldefels", "Sitges"] },
       { name: "Valencia", areas: ["Centro", "L'Eixample", "Campanar", "Benimaclet", "El Pla del Real", "Algirós", "Patacona"] },
       { name: "Málaga", areas: ["Centro", "Pedregalejo", "El Limonar", "Teatinos", "Churriana", "Marbella", "Estepona"] },

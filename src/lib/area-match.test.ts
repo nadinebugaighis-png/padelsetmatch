@@ -19,6 +19,13 @@ describe("sharesMyArea", () => {
   it("shows players from any of my areas", () => {
     expect(sharesMyArea(loc("Madrid", "La Moraleja", "Las Tablas"), loc("Madrid", "Las Tablas"))).toBe(true);
   });
+  it("El Soto and El Encinar count as La Moraleja", () => {
+    expect(sharesMyArea(loc("Madrid", "La Moraleja"), loc("Madrid", "El Soto de La Moraleja"))).toBe(true);
+    expect(sharesMyArea(loc("Madrid", "El Encinar de los Reyes"), loc("Madrid", "La Moraleja"))).toBe(true);
+  });
+  it("Hortaleza as a whole is not La Moraleja", () => {
+    expect(sharesMyArea(loc("Madrid", "La Moraleja"), loc("Madrid", "Hortaleza"))).toBe(false);
+  });
   it("city-only players see their whole city", () => {
     expect(sharesMyArea(loc("Madrid"), loc("Madrid", "Alcobendas"))).toBe(true);
   });

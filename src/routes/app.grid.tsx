@@ -3,7 +3,8 @@ import { photoSrc, prefetchPhoto } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
+import { CURATED_QUESTIONS } from "@/lib/daily-questions";
+import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -174,6 +175,13 @@ function Discover() {
     enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id && !!qaQ.data && !needsUnlock,
     staleTime: 1000 * 60 * 60,
     retry: false,
+  });
+  const cardsFn = useServerFn(getPersonalityCards);
+  const cardsQ = useQuery({
+    queryKey: ["personality-cards", preview?.id],
+    queryFn: () => cardsFn({ data: { otherProfileId: preview!.id } }),
+    enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id,
+    staleTime: 1000 * 60 * 10,
   });
   const getCompatFb = useServerFn(getMyAiCompatibilityFeedback);
   const compatFbQ = useQuery({
@@ -1126,6 +1134,28 @@ function Discover() {
                       </div>
                       )}
 
+
+                      {(cardsQ.data?.length ?? 0) > 0 && (
+                        <div>
+                          <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55 mb-2">{tr("On court personality", "Personalidad en pista", "Personnalité sur le court")}</div>
+                          <div className="grid gap-2">
+                            {cardsQ.data!.map((c) => {
+                              const q = CURATED_QUESTIONS.find((x) => x.id === c.id);
+                              const opt = q?.options[c.option];
+                              if (!q || !opt) return null;
+                              return (
+                                <div key={c.id} className="rounded-2xl border border-[var(--ink)]/10 bg-white px-4 py-3">
+                                  <div className="text-[11px] text-[var(--ink)]/55 leading-snug">{q.q[lang]}</div>
+                                  <div className="text-serif text-lg text-[var(--ink)] leading-snug mt-0.5">“{opt[lang]}”</div>
+                                  {c.shared && (
+                                    <div className="mt-1 text-[11px] font-medium text-[var(--ink)]/70">✦ {tr("You both said this", "Los dos dijisteis esto", "Vous avez répondu pareil")}</div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Me-style profile card (age intentionally omitted for privacy) */}
 

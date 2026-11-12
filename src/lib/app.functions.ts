@@ -1615,3 +1615,29 @@ export const reportContent = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// On-court personality cards for a player's profile. Returns only derived
+// cards (question id + option); private answers appear only when shared.
+export const getPersonalityCards = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ otherProfileId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: meRow } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const me = meRow as { id: string } | null;
+    if (!me || me.id === data.otherProfileId) return [];
+    const { data: otherRow } = await context.supabase
+      .from("profiles" as never).select("id, suspended_at").eq("id", data.otherProfileId).maybeSingle();
+    const other = otherRow as { id: string; suspended_at: string | null } | null;
+    if (!other || other.suspended_at) return [];
+    const { data: blocks } = await context.supabase.from("blocks")
+      .select("id").or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${other.id}),and(blocker_profile_id.eq.${other.id},blocked_profile_id.eq.${me.id})`).limit(1);
+    if (blocks?.length) return [];
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows } = await supabaseAdmin.from("qa_answers")
+      .select("profile_id, question, answer").in("profile_id", [me.id, other.id])
+      .order("created_at", { ascending: false }).limit(200);
+    const { buildPersonalityCards } = await import("./personality-cards");
+    const all = rows ?? [];
+    return buildPersonalityCards(all.filter((r) => r.profile_id === other.id), all.filter((r) => r.profile_id === me.id));
+  });

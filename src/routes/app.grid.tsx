@@ -6,9 +6,9 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import { CURATED_QUESTIONS } from "@/lib/daily-questions";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, Search, Zap, Globe, GraduationCap, Star } from "lucide-react";
+import { X, Flag, Shield, Sparkles, MessageCircle, ArrowLeft, EyeOff, ThumbsUp, Search, Zap, Globe, GraduationCap, Star, Languages } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
@@ -1172,15 +1172,16 @@ function Discover() {
                           const name = d?.area || d?.city || formatLocation(d);
                           if (name && !areas.includes(name)) areas.push(name);
                         }
-                        const chips: Array<{ key: string; text: string }> = [];
-                        { const lv = label(preview.level); chips.push({ key: "level", text: lv.charAt(0).toUpperCase() + lv.slice(1) }); }
-                        if (areas.length) chips.push({ key: "areas", text: areas.join(" · ") });
-                        if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · ") });
-                        if (preview.nationality) chips.push({ key: "nat", text: preview.nationality });
+                        const chips: Array<{ key: string; text: string; icon: ReactNode }> = [];
+                        { const lv = label(preview.level); chips.push({ key: "level", text: lv.charAt(0).toUpperCase() + lv.slice(1), icon: <GraduationCap className="w-[13px] h-[13px] shrink-0" aria-hidden /> }); }
+                        if (areas.length) chips.push({ key: "areas", text: areas.join(" · "), icon: <MapPin className="w-[13px] h-[13px] shrink-0" aria-hidden /> });
+                        if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · "), icon: <Languages className="w-[13px] h-[13px] shrink-0" aria-hidden /> });
+                        if (preview.nationality) chips.push({ key: "nat", text: preview.nationality, icon: <Globe className="w-[13px] h-[13px] shrink-0" aria-hidden /> });
                         return (
                           <div className="flex flex-wrap gap-2">
                             {chips.map((c) => (
-                              <span key={c.key} className="inline-flex items-center rounded-full border border-[var(--ink)]/15 bg-white px-3.5 py-1.5 text-[12.5px] tracking-[0.02em] text-[var(--ink)]">
+                              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white px-3 py-1.5 text-[12.5px] tracking-[0.02em] text-[var(--ink)]">
+                                <span className="text-[var(--gold)]">{c.icon}</span>
                                 {c.text}
                               </span>
                             ))}

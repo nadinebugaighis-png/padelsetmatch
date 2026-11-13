@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { photoSrc, prefetchPhoto } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
+import { CourtViewCard } from "@/components/CourtViewCard";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { CURATED_QUESTIONS } from "@/lib/daily-questions";
@@ -736,11 +737,9 @@ function Discover() {
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {me.photo_url ? (
-                        <PlayerPhoto src={photoSrc(me.photo_url, 480)} alt={me.first_name} loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
+                        <PlayerPhoto seed={me.id} src={photoSrc(me.photo_url, 480)} alt={me.first_name} loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
-                          {(me.first_name ?? "?").charAt(0)}
-                        </div>
+                        <CourtViewCard seed={me.id} name={me.first_name} className="absolute inset-0" />
                       )}
                       <button
                         type="button"
@@ -782,12 +781,10 @@ function Discover() {
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
-                        <PlayerPhoto src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading={idx < 6 ? "eager" : "lazy"} fetchPriority={idx < 4 ? "high" : "auto"} decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
+                        <PlayerPhoto seed={c.id} src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading={idx < 6 ? "eager" : "lazy"} fetchPriority={idx < 4 ? "high" : "auto"} decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       )}
                       {!c.photo_url && (
-                        <div className="absolute inset-0 flex items-center justify-center text-serif text-6xl text-[var(--ink)]/15">
-                          {c.first_name.charAt(0)}
-                        </div>
+                        <CourtViewCard seed={c.id} name={c.first_name} className="absolute inset-0" />
                       )}
 
                       <div className="absolute top-2 left-2 z-10 flex gap-1.5">
@@ -935,9 +932,9 @@ function Discover() {
                   <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
                     <div className="relative bg-white p-2 sm:p-2.5 pb-3 lg:p-3 lg:pb-3 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.22)] lg:shadow-[0_18px_48px_-12px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto">
                       {preview.photo_url ? (
-                        <PlayerPhoto src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] object-cover" />
+                        <PlayerPhoto seed={preview.id} src={photoSrc(preview.photo_url, 800)} alt={preview.first_name} decoding="async" fetchPriority="high" className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] object-cover" />
                       ) : (
-                        <div className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px] bg-[var(--paper-2)] flex items-center justify-center text-serif text-7xl text-[var(--ink)]/15">{preview.first_name.charAt(0)}</div>
+                        <CourtViewCard seed={preview.id} name={preview.first_name} className="w-full aspect-[3/4] lg:aspect-auto lg:h-[330px] xl:h-[370px]" letterClassName="text-7xl" />
                       )}
                       <button
                         type="button"

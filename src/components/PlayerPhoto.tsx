@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { photoRetrySrc } from "@/lib/photo-src";
+import { CourtViewCard } from "@/components/CourtViewCard";
 
-type Props = Omit<ComponentProps<"img">, "onError">;
+type Props = Omit<ComponentProps<"img">, "onError"> & {
+  /** Player id; picks the fixed court drawing if the photo cannot load. */
+  seed?: string | null;
+};
 
 // Each new source gets its own bounded retry lifecycle, including cleanup
 // when a card closes or the player changes their photo.
@@ -9,7 +13,7 @@ export function PlayerPhoto(props: Props) {
   return <RetryingPhoto key={props.src} {...props} />;
 }
 
-function RetryingPhoto({ src, alt, ...props }: Props) {
+function RetryingPhoto({ src, alt, seed, ...props }: Props) {
   const [current, setCurrent] = useState(src);
   const [failed, setFailed] = useState(false);
   const attempts = useRef(0);
@@ -17,9 +21,7 @@ function RetryingPhoto({ src, alt, ...props }: Props) {
   useEffect(() => () => { clearTimeout(timer.current); }, []);
 
   if (failed || !current) {
-    return <div role="img" aria-label={alt} className={`${props.className ?? ""} flex items-center justify-center bg-[var(--paper-2)] text-serif text-6xl text-[var(--ink)]/15`}>
-      {(alt ?? "?").charAt(0)}
-    </div>;
+    return <CourtViewCard role="img" seed={seed ?? alt} name={alt} className={props.className ?? ""} />;
   }
 
   return <img {...props} src={current} alt={alt} onError={() => {

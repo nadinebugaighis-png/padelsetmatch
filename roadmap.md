@@ -54,3 +54,6 @@
 
 ## Neighbour areas
 - [x] Add La Moraleja to the 16 neighbours Nadine listed (Madrid-only or empty locations).
+
+## No-photo card artwork
+- [ ] Show Nadine court-view line-art mockup for empty player cards; build chosen design as inline SVG variants behind the initial in PlayerPhoto fallback (awaiting her pick).

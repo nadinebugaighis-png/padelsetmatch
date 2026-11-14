@@ -4,7 +4,8 @@ import { normalizePlaytomicLink } from "@/lib/affinity";
  * Where to send a player to book the court for a match.
  * Playtomic has no public booking API, so we deep-link out:
  *   1. the host's own pasted Playtomic link,
- *   2. a curated Playtomic club page for known clubs,
+ *   2. a curated club booking page for known clubs (Playtomic, or the club's own
+ *      booking site when it isn't on Playtomic),
  *   3. a web search for "Playtomic <club>" when the host picked a real club.
  * Private / free courts and undecided clubs never show a booking link.
  *
@@ -52,6 +53,9 @@ const KNOWN_CLUBS: KnownClub[] = [
   { key: "campus_23", url: "https://playtomic.com/es/clubs/campus-23-club-de-tenis-y-padel", words: [["campus", "23"]] },
   { key: "norte_real_sport_club", url: "https://playtomic.com/es/clubs/norte-real-sport-club", words: [["norte", "real", "sport"]] },
   { key: "club_el_estudiante", url: "https://playtomic.com/tenant/4739d8b8-41e0-499a-9eda-b7d6e658e29b", words: [["estudiante"]] },
+  // Chamberí. FMP books on Playtomic; Parque de Santander (Canal Ocio y Deporte) only on its own site, after signing in.
+  { key: "fmp_canal_isabel_ii", url: "https://playtomic.com/clubs/fmp-canal-de-isabel-ii", words: [["fmp", "canal"], ["fmp", "isabel"], ["federacion", "padel", "canal"]] },
+  { key: "parque_santander", url: "https://www.ocioydeportecanal.es/es/signin", words: [["parque", "santander"], ["canal", "ocio", "deporte"], ["tercer", "deposito"]] },
 ];
 
 const PLACEHOLDER_WORDS = ["tbd", "por decidir", "to be decided", "a decider", "club por definir"];

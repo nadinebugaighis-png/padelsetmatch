@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clubBookingMessage, clubWhatsappBooking, clubWhatsappBookingUrl } from "./club-booking";
+import { clubBookingLink, clubBookingMessage, clubWhatsappBooking, clubWhatsappBookingUrl } from "./club-booking";
 
 // Sat 21 Nov 2026, 09:30 Madrid (UTC+1)
 const START = "2026-11-21T08:30:00.000Z";
@@ -24,6 +24,11 @@ describe("club WhatsApp booking", () => {
   it("is not offered for clubs without WhatsApp booking", () => {
     expect(clubWhatsappBooking("Club Irlandesas")).toBeNull();
     expect(clubWhatsappBooking("Riber Pádel Moraleja Club")).toBeNull();
+  });
+
+  it("clubs without WhatsApp booking get their Playtomic link instead", () => {
+    expect(clubWhatsappBooking("FMP Canal De Isabel II")).toBeNull();
+    expect(clubBookingLink({ club_name: "FMP Canal De Isabel II", club_place_id: "abc" })?.url).toContain("playtomic.com/clubs/fmp-canal-de-isabel-ii");
   });
 
   it("writes the day and a 90-minute slot in Madrid time", () => {

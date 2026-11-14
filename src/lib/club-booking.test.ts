@@ -40,6 +40,22 @@ describe("clubBookingLink", () => {
       .toBe(`https://playtomic.com/tenant/da79175c-43b3-11e8-8674-52540049669c?${UTM}`);
   });
 
+  it("sends FMP Canal de Isabel II (Chamberí) to its Playtomic page", () => {
+    expect(clubBookingLink({ club_name: "FMP Canal De Isabel II", club_place_id: "abc" })).toEqual({
+      url: `https://playtomic.com/clubs/fmp-canal-de-isabel-ii?${UTM}`, source: "club", club: "fmp_canal_isabel_ii",
+    });
+  });
+
+  it("sends Parque de Santander (Chamberí, not on Playtomic) to its own booking site", () => {
+    expect(clubBookingLink({ club_name: "Parque Deportivo Santander", club_place_id: "abc" })?.url)
+      .toBe(`https://www.ocioydeportecanal.es/es/signin?${UTM}`);
+    expect(clubBookingLink({ club_name: "Canal Ocio y Deporte", club_place_id: "abc" })?.club).toBe("parque_santander");
+  });
+
+  it("FMP Puerta de Hierro is not mistaken for FMP Canal", () => {
+    expect(clubBookingLink({ club_name: "FMP Parque Deportivo Puerta De Hierro", club_place_id: "abc" })?.club).toBe("other");
+  });
+
   it("prefers the host's own Playtomic link", () => {
     expect(
       clubBookingLink({ club_name: "Club de Pádel La Moraleja", playtomic_link: "playtomic.com/clubs/my-club" }),

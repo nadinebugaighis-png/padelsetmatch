@@ -51,6 +51,7 @@ const KNOWN_CLUBS: KnownClub[] = [
   { key: "dreamfit_sanse", url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },
   { key: "campus_23", url: "https://playtomic.com/es/clubs/campus-23-club-de-tenis-y-padel", words: [["campus", "23"]] },
   { key: "norte_real_sport_club", url: "https://playtomic.com/es/clubs/norte-real-sport-club", words: [["norte", "real", "sport"]] },
+  { key: "club_el_estudiante", url: "https://playtomic.com/tenant/4739d8b8-41e0-499a-9eda-b7d6e658e29b", words: [["estudiante"]] },
 ];
 
 const PLACEHOLDER_WORDS = ["tbd", "por decidir", "to be decided", "a decider", "club por definir"];
@@ -114,17 +115,29 @@ export function clubBookingLink(m: BookingInput): BookingLink | null {
 /* ------------------------------------------------------------------ */
 // Clubs that take bookings by WhatsApp. Only the match host sees this, so one
 // person stays in charge of the reservation. Numbers are digits only (wa.me format).
-const CLUB_WHATSAPP: Record<string, { number: string; displayName: string }> = {
-  club_padel_la_moraleja: { number: "34647103375", displayName: "Club de Pádel La Moraleja" },
-};
-
 export const COURT_TYPES = [
   { key: "glass_outdoor", es: "Cristal exterior", en: "Outdoor glass", fr: "Vitrée extérieure" },
+  { key: "glass_covered", es: "Cristal cubierta", en: "Covered glass", fr: "Vitrée couverte" },
   { key: "wall_outdoor", es: "Muro exterior", en: "Outdoor wall", fr: "Mur extérieur" },
   { key: "wall_covered", es: "Cubierta de muro", en: "Covered wall", fr: "Mur couvert" },
   { key: "any", es: "Cualquiera disponible", en: "Any available", fr: "Peu importe" },
 ] as const;
 export type CourtTypeKey = (typeof COURT_TYPES)[number]["key"];
+
+// Each club lists only the court types it actually has ("any" is always offered last).
+const CLUB_WHATSAPP: Record<string, { number: string; displayName: string; courts: CourtTypeKey[] }> = {
+  club_padel_la_moraleja: {
+    number: "34647103375",
+    displayName: "Club de Pádel La Moraleja",
+    courts: ["glass_outdoor", "wall_outdoor", "wall_covered", "any"],
+  },
+  // Alcobendas, 40 glass courts (30 covered, 10 outdoor). Number from the club website's WhatsApp button.
+  club_el_estudiante: {
+    number: "34677212074",
+    displayName: "Club El Estudiante",
+    courts: ["glass_covered", "glass_outdoor", "any"],
+  },
+};
 
 /** Standard padel slot length used in the booking request. */
 export const BOOKING_SLOT_MINUTES = 90;

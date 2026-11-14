@@ -10,6 +10,17 @@ describe("club WhatsApp booking", () => {
     expect(url?.startsWith("https://wa.me/34647103375?text=")).toBe(true);
   });
 
+  it("sends Club El Estudiante requests to +34 677 21 20 74", () => {
+    const url = clubWhatsappBookingUrl({ clubName: "Club El Estudiante", startsAt: START, courtType: "glass_covered" });
+    expect(url?.startsWith("https://wa.me/34677212074?text=")).toBe(true);
+  });
+
+  it("offers each club only its own court types", () => {
+    expect(clubWhatsappBooking("Club El Estudiante")?.courts).toEqual(["glass_covered", "glass_outdoor", "any"]);
+    expect(clubWhatsappBooking("Club de Pádel La Moraleja")?.courts).toEqual(["glass_outdoor", "wall_outdoor", "wall_covered", "any"]);
+    expect(clubBookingMessage({ clubDisplayName: "X", startsAt: START, courtType: "glass_covered" })).toContain("Pista: Cristal cubierta");
+  });
+
   it("is not offered for clubs without WhatsApp booking", () => {
     expect(clubWhatsappBooking("Club Irlandesas")).toBeNull();
     expect(clubWhatsappBooking("Riber Pádel Moraleja Club")).toBeNull();

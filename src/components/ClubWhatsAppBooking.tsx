@@ -53,7 +53,7 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
 
             <div className="mt-5 h-px bg-[var(--ink)]/10" />
             <div role="radiogroup" aria-label={tr("Court type", "Tipo de pista", "Type de terrain")} className="divide-y divide-[var(--ink)]/10">
-              {COURT_TYPES.map((c) => {
+              {COURT_TYPES.filter((c) => club.courts.includes(c.key)).map((c) => {
                 const active = court === c.key;
                 return (
                   <button

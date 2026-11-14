@@ -41,6 +41,7 @@ function AuthPage() {
   const { redirect, join, i, mode: modeParam } = Route.useSearch();
   const t = useT();
   const tr = useTr();
+  const [resetSending, setResetSending] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">(modeParam ?? "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -612,12 +613,20 @@ function AuthPage() {
                 const cleanEmail = normalizeEmail(email);
                 if (!cleanEmail) { toast.info(t("auth.enterEmailFirst")); return; }
                 setEmail(cleanEmail);
-                const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-                  redirectTo: `${window.location.origin}/reset-password`,
-                });
-                if (error) toast.error(error.message);
-                else toast.success(t("auth.resetSent"));
+                // One email per tap: a second email makes the first link stop working.
+                if (resetSending) return;
+                setResetSending(true);
+                try {
+                  const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  });
+                  if (error) toast.error(error.message);
+                  else toast.success(t("auth.resetSent"));
+                } finally {
+                  setTimeout(() => setResetSending(false), 30_000);
+                }
               }}
+              disabled={resetSending}
               className="text-[var(--ink)]/60 hover:text-[var(--ink)]"
             >
               {t("auth.forgot")}

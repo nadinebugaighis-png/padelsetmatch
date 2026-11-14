@@ -108,3 +108,74 @@ export function clubBookingLink(m: BookingInput): BookingLink | null {
   const q = `Playtomic ${m.club_name ?? ""} ${m.city ?? ""}`.replace(/\s+/g, " ").trim();
   return { url: `https://www.google.com/search?q=${encodeURIComponent(q)}`, source: "search", club };
 }
+
+/* ------------------------------------------------------------------ */
+/* Direct WhatsApp booking (host only)                                 */
+/* ------------------------------------------------------------------ */
+// Clubs that take bookings by WhatsApp. Only the match host sees this, so one
+// person stays in charge of the reservation. Numbers are digits only (wa.me format).
+const CLUB_WHATSAPP: Record<string, { number: string; displayName: string }> = {
+  club_padel_la_moraleja: { number: "34647103375", displayName: "Club de Pádel La Moraleja" },
+};
+
+export const COURT_TYPES = [
+  { key: "glass_outdoor", es: "Cristal exterior", en: "Outdoor glass", fr: "Vitrée extérieure" },
+  { key: "wall_outdoor", es: "Muro exterior", en: "Outdoor wall", fr: "Mur extérieur" },
+  { key: "wall_covered", es: "Cubierta de muro", en: "Covered wall", fr: "Mur couvert" },
+  { key: "any", es: "Cualquiera disponible", en: "Any available", fr: "Peu importe" },
+] as const;
+export type CourtTypeKey = (typeof COURT_TYPES)[number]["key"];
+
+/** Standard padel slot length used in the booking request. */
+export const BOOKING_SLOT_MINUTES = 90;
+
+export function clubWhatsappBooking(clubName: string | null | undefined) {
+  const known = knownClub(clubName);
+  if (!known) return null;
+  const wa = CLUB_WHATSAPP[known.key];
+  return wa ? { club: known.key, ...wa } : null;
+}
+
+function madridParts(d: Date) {
+  const date = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", weekday: "long", day: "numeric", month: "long" }).format(d);
+  const time = (x: Date) =>
+    new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hour12: false }).format(x);
+  return { date, start: time(d), end: time(new Date(d.getTime() + BOOKING_SLOT_MINUTES * 60_000)) };
+}
+
+/** The Spanish message the host sends to the club (clubs in Spain read Spanish). */
+export function clubBookingMessage(input: {
+  clubDisplayName: string;
+  startsAt: Date | string;
+  courtType: CourtTypeKey;
+  hostName?: string | null;
+}): string {
+  const { date, start, end } = madridParts(new Date(input.startsAt));
+  const court = COURT_TYPES.find((c) => c.key === input.courtType)!.es;
+  const name = input.hostName?.trim();
+  return [
+    `Hola, ${input.clubDisplayName}. Me gustaría reservar una pista de pádel:`,
+    ``,
+    `Día: ${date}`,
+    `Hora: ${start}–${end}`,
+    `Pista: ${court}`,
+    ...(name ? [`Nombre: ${name}`] : []),
+    ``,
+    `¿Tenéis disponibilidad? Muchas gracias.`,
+    `(Partido organizado con PadelSetMatch)`,
+  ].join("\n");
+}
+
+/** wa.me link with the booking request pre-written, or null when the club doesn't book by WhatsApp. */
+export function clubWhatsappBookingUrl(input: {
+  clubName: string | null | undefined;
+  startsAt: Date | string;
+  courtType: CourtTypeKey;
+  hostName?: string | null;
+}): string | null {
+  const wa = clubWhatsappBooking(input.clubName);
+  if (!wa) return null;
+  if (Number.isNaN(new Date(input.startsAt).getTime())) return null;
+  const text = clubBookingMessage({ clubDisplayName: wa.displayName, startsAt: input.startsAt, courtType: input.courtType, hostName: input.hostName });
+  return `https://wa.me/${wa.number}?text=${encodeURIComponent(text)}`;
+}

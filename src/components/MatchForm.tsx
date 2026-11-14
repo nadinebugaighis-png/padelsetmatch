@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink, Minus, Plus } from "lucide-react";
-import { clubBookingLink } from "@/lib/club-booking";
+import { clubBookingLink, clubWhatsappBooking } from "@/lib/club-booking";
+import { ClubWhatsAppBooking } from "@/components/ClubWhatsAppBooking";
 import { Switch } from "@/components/ui/switch";
 import { ClubPicker } from "@/components/ClubPicker";
 import { Button } from "@/components/ui/button";
@@ -143,6 +144,9 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
     locMode === "club" && club
       ? clubBookingLink({ club_name: club.name, city: club.city, club_place_id: club.place_id, playtomic_link: playtomicLink, free_court: freeCourt })
       : null;
+
+  // Clubs that book by WhatsApp: the creator books directly instead of going to Playtomic.
+  const formWaClub = locMode === "club" && club && !freeCourt && !playtomicLink.trim() ? clubWhatsappBooking(club.name) : null;
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
   const canSave = locationReady && !!when && !saving;
@@ -340,7 +344,19 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
           <div className="flex items-center gap-3">
-            {!courtBooked && formBooking && (
+            {!courtBooked && formWaClub && club && when && (
+              <ClubWhatsAppBooking
+                clubName={club.name}
+                startsAt={new Date(when)}
+                placement="match_form"
+                trigger={(open, label) => (
+                  <button type="button" onClick={open} className="inline-flex items-center gap-1 text-[12px] font-medium text-[var(--ink)] underline underline-offset-2">
+                    {label}
+                  </button>
+                )}
+              />
+            )}
+            {!courtBooked && !formWaClub && formBooking && (
               <a
                 href={formBooking.url}
                 target="_blank"

@@ -5,7 +5,8 @@ import { getIsAdmin } from "@/lib/admin.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { clubBookingLink } from "@/lib/club-booking";
+import { clubBookingLink, clubWhatsappBooking } from "@/lib/club-booking";
+import { ClubWhatsAppBooking } from "@/components/ClubWhatsAppBooking";
 import {
   cancelMatchEvent,
   claimMatchInviteByToken,
@@ -28,7 +29,7 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MoreHorizontal } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MoreHorizontal, MessageCircle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useTr, useI18n } from "@/lib/i18n";
 
@@ -462,7 +463,12 @@ function EventDetail() {
             ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70", label: tr("Full", "Completo", "Complet") }
             : { cls: "bg-[var(--grass)]/40 text-[var(--ink)]", label: tr(`${event.needs} spot${event.needs > 1 ? "s" : ""} left`, `Faltan ${event.needs}`, `${event.needs} place(s)`) };
         const booking = clubBookingLink(event);
-        const showBooking = !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled";
+        const iHost = !!me?.id && me.id === event.host_profile_id;
+        // Clubs that book by WhatsApp: only the host books (WhatsApp sheet), so players don't double-book.
+        const waClub = !event.is_private_court && !event.free_court ? clubWhatsappBooking(event.club_name) : null;
+        const showWhatsappBooking = !!waClub && iHost && !event.court_booked && event.status !== "cancelled";
+        const showBooking = !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled"
+          && (!waClub || booking.source === "host");
         return (
           <section className="rounded-2xl border border-[var(--ink)]/10 bg-white overflow-hidden">
             <div className="px-4 pt-4 pb-3">
@@ -485,6 +491,20 @@ function EventDetail() {
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
                 <MapPin className="w-3.5 h-3.5" /> {tr("Directions", "Cómo llegar", "Itinéraire")}
               </a>
+              {showWhatsappBooking && (
+                <ClubWhatsAppBooking
+                  clubName={event.club_name}
+                  startsAt={event.starts_at}
+                  hostName={event.host?.first_name ?? null}
+                  placement="match_page"
+                  onConfirmed={onToggleBooked}
+                  trigger={(open, label) => (
+                    <button type="button" onClick={open} className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                      <MessageCircle className="w-3.5 h-3.5" /> {label}
+                    </button>
+                  )}
+                />
+              )}
               {showBooking && booking && (
                 <a
                   href={booking.url}

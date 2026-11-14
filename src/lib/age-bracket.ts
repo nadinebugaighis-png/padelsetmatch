@@ -46,9 +46,13 @@ export function bracketSpan(p: BracketedAge): AgeBracket | null {
 
 export type AgePreference = { age_min: number; age_max: number };
 
-/** True when the player's age span overlaps the given preferred range at all. */
+/**
+ * True when the player's age span overlaps the given preferred range at all.
+ * Players who never gave an age (quick sign-ups) are never hidden by age —
+ * otherwise they vanish from every grid, even in their own neighbourhood.
+ */
 export function ageMatchesPreference(preference: AgePreference, player: BracketedAge): boolean {
   const span = bracketSpan(player);
-  if (!span) return false;
+  if (!span) return true;
   return span[1] >= preference.age_min && span[0] <= preference.age_max;
 }

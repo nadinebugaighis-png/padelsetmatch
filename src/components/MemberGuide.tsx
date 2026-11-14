@@ -45,8 +45,8 @@ export function MemberGuide() {
             <li key={i} >
               <div>
                 <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
-                  {i === 2 && <CourtIcon className="w-5 h-3 shrink-0" strokeWidth={2} aria-hidden="true" />}
                   {title}
+                  {i === 2 && <CourtIcon className="w-5 h-3 shrink-0" strokeWidth={2} aria-hidden="true" />}
                 </div>
                 <p className="text-[13px] text-[var(--ink)]/75 leading-snug mt-0.5">{body}</p>
               </div>

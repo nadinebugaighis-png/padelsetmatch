@@ -2027,6 +2027,7 @@ export type Database = {
       }
       is_current_user_admin: { Args: never; Returns: boolean }
       is_safe_match_link: { Args: { _url: string }; Returns: boolean }
+      is_verified_pair: { Args: { _other: string }; Returns: boolean }
       list_my_favorite_ids: { Args: never; Returns: string[] }
       list_public_upcoming_matches: { Args: { _limit?: number }; Returns: Json }
       my_profile_id: { Args: never; Returns: string }

@@ -92,6 +92,13 @@
       "when": 1794512555642,
       "tag": "0012_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794668547102,
+      "tag": "0013_security_hardening_nov14",
+      "breakpoints": true
     }
   ]
 }

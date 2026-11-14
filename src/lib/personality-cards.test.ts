@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildPersonalityCards, buildComplements } from "./personality-cards";
+import { CURATED_QUESTIONS } from "./daily-questions";
+import { PUBLIC_CARD_IDS } from "./personality-cards";
+import { buildPersonalityCards, buildComplements, disclosableAnswers } from "./personality-cards";
 
 const row = (question: string, answer: string) => ({ question, answer });
 const deuce = row("40-40, match point. You…", "Go for the winner");
@@ -41,5 +43,31 @@ describe("complements", () => {
   });
   it("needs both players to have answered", () => {
     expect(buildComplements([left], [])).toEqual([]);
+  });
+});
+
+describe("private answers between strangers", () => {
+  // A real non-public question from the curated bank.
+  const priv = (() => {
+    const q = CURATED_QUESTIONS.find((c) => !(PUBLIC_CARD_IDS as readonly string[]).includes(c.id))!;
+    return { id: q.id, a: row(q.q.en, q.options[0].en), b: row(q.q.en, q.options[1].en) };
+  })();
+  it("a stranger who picked the same option sees nothing private", () => {
+    expect(buildPersonalityCards([priv.a], [priv.a], false)).toEqual([]);
+  });
+  it("a connected player who picked the same option sees it as shared", () => {
+    expect(buildPersonalityCards([priv.a], [priv.a], true)).toEqual([{ id: priv.id, option: 0, shared: true }]);
+  });
+  it("a connected player who picked differently sees nothing private", () => {
+    expect(buildPersonalityCards([priv.a], [priv.b], true)).toEqual([]);
+  });
+  it("the AI summary only gets public answers for a stranger", () => {
+    expect(disclosableAnswers([priv.a, deuce], [priv.a], false)).toEqual([deuce]);
+  });
+  it("the AI summary gets identical answers for a verified pair", () => {
+    expect(disclosableAnswers([priv.a, deuce], [priv.a], true)).toEqual([priv.a, deuce]);
+  });
+  it("the AI summary never gets a differing private answer", () => {
+    expect(disclosableAnswers([priv.a], [priv.b], true)).toEqual([]);
   });
 });

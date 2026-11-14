@@ -18,8 +18,10 @@ function index(rows: Row[]) {
 }
 
 // Every other answer (drinks, lunches, timing, temper…) appears only when
-// the viewer picked the exact same option, so nothing private is revealed.
-export function buildPersonalityCards(theirs: Row[], mine: Row[]): PersonalityCard[] {
+// the viewer picked the exact same option AND the two are a verified pair
+// (connected, or played a match together), so a stranger cannot flip their
+// own answers to discover someone's private ones.
+export function buildPersonalityCards(theirs: Row[], mine: Row[], verified = false): PersonalityCard[] {
   const t = index(theirs);
   const me = index(mine);
   const pub: PersonalityCard[] = [];
@@ -30,9 +32,31 @@ export function buildPersonalityCards(theirs: Row[], mine: Row[]): PersonalityCa
   const shared: PersonalityCard[] = [];
   for (const [id, opt] of t) {
     if ((PUBLIC_CARD_IDS as readonly string[]).includes(id)) continue;
-    if (me.get(id) === opt) shared.push({ id, option: opt, shared: true });
+    if (verified && me.get(id) === opt) shared.push({ id, option: opt, shared: true });
   }
   return [...pub.slice(0, 3), ...shared.slice(0, 2)];
+}
+
+/**
+ * The other player's answers the viewer is allowed to learn: whitelisted
+ * on-court answers, plus identical answers for a verified pair. Anything sent
+ * to the AI summary must pass through this, so its text never reveals more
+ * than the profile cards do.
+ */
+export function disclosableAnswers<T extends Row>(theirs: T[], mine: Row[], verified: boolean): T[] {
+  const me = index(mine);
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const r of theirs) {
+    const q = CURATED_QUESTIONS.find((c) => c.q.en === r.question);
+    if (!q || seen.has(q.id)) continue;
+    const i = q.options.findIndex((o) => o.en === r.answer);
+    if (i < 0) continue;
+    seen.add(q.id);
+    const isPublic = (PUBLIC_CARD_IDS as readonly string[]).includes(q.id);
+    if (isPublic || (verified && me.get(q.id) === i)) out.push(r);
+  }
+  return out;
 }
 
 type L = { en: string; es: string; fr: string };

@@ -1259,14 +1259,16 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     // Raw answers stay server-only; caller is authenticated and the target is
     // checked through user-scoped profile access + block check below.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [cachedRes, otherRes, blocksRes, qaRes] = await Promise.all([
+    const [cachedRes, otherRes, blocksRes, qaRes, verifiedRes] = await Promise.all([
       context.supabase.from("compatibility_scores" as never)
         .select("score, blurb, reasons, friction, sub_scores, model_version, created_at")
         .eq("profile_a", a).eq("profile_b", b).maybeSingle(),
       context.supabase.from("profiles" as never).select("*").eq("id", otherId).maybeSingle(),
       context.supabase.from("blocks").select("id")
         .or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${otherId}),and(blocker_profile_id.eq.${otherId},blocked_profile_id.eq.${me.id})`).limit(1),
-      supabaseAdmin.from("qa_answers").select("profile_id, question, answer").in("profile_id", [me.id, otherId]).limit(400),
+      supabaseAdmin.from("qa_answers").select("profile_id, question, answer").in("profile_id", [me.id, otherId])
+        .order("created_at", { ascending: false }).limit(400),
+      context.supabase.rpc("is_verified_pair" as never, { _other: otherId } as never),
     ]);
     const cached = cachedRes.data;
     const other = otherRes.data as Profile | null;
@@ -1275,23 +1277,31 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     if (qaRes.error) throw new Error("Couldn't load compatibility. Please retry.");
     const qa = qaRes.data ?? [];
     const myQaCount = qa.filter((r) => r.profile_id === me.id).length;
-    const theirQaCount = qa.filter((r) => r.profile_id === other.id).length;
     const myQA = qa.filter((r) => r.profile_id === me.id).slice(0, 60);
-    const theirQA = qa.filter((r) => r.profile_id === other.id).slice(0, 60);
+    // Only what the viewer may learn about the other player reaches the AI,
+    // so the summary can never reveal a private answer.
+    const { disclosableAnswers } = await import("./personality-cards");
+    const verified = (verifiedRes as { data: unknown }).data === true;
+    const theirQA = disclosableAnswers(qa.filter((r) => r.profile_id === other.id), myQA, verified).slice(0, 60);
+    const theirQaCount = theirQA.length;
+    // The client only needs to know whether there is enough to score; never
+    // expose how many questions someone else has answered.
+    const { OFF_COURT_MIN_ANSWERS } = await import("./pair-label");
+    const theirAnswersSignal = qa.filter((r) => r.profile_id === other.id).length >= OFF_COURT_MIN_ANSWERS ? OFF_COURT_MIN_ANSWERS : 0;
 
     // Version key incorporates intents + QA volume so the cache invalidates
     // when either person changes what they're looking for or answers more Qs.
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionPrefix = `v14-${lang}-`;
-    const versionKey = `${versionPrefix}${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount}x${theirQaCount}`;
+    const versionPrefix = `v15-${lang}-`;
+    const versionKey = `${versionPrefix}${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount}x${theirQaCount}${verified ? "v" : ""}`;
 
     // Stale-while-revalidate: any same-version, same-language read is shown
     // instantly; the client asks for a background refresh when it is stale.
     const cachedVersion = (cached as { model_version?: string } | null)?.model_version ?? "";
     if (cached && (cachedVersion === versionKey || (!data.refresh && cachedVersion.startsWith(versionPrefix)))) {
-      return { ...(cached as object), their_answers: theirQaCount, stale: cachedVersion !== versionKey } as unknown as { stale: boolean; their_answers: number; score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
+      return { ...(cached as object), their_answers: theirAnswersSignal, stale: cachedVersion !== versionKey } as unknown as { stale: boolean; their_answers: number; score: number; blurb: string; reasons: string[]; friction: string | null; sub_scores: { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string } | null; model_version: string; created_at: string };
     }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
@@ -1467,7 +1477,7 @@ ${qaBlock(theirQA)}`;
       _version: versionKey,
     } as never);
     if (saveErr) console.error("[compat] save failed", saveErr.message);
-    return { ...insertRow, their_answers: theirQaCount, stale: false, created_at: new Date().toISOString() };
+    return { ...insertRow, their_answers: theirAnswersSignal, stale: false, created_at: new Date().toISOString() };
   });
 
 
@@ -1630,6 +1640,8 @@ export const getPersonalityCards = createServerFn({ method: "POST" })
     const { data: blocks } = await context.supabase.from("blocks")
       .select("id").or(`and(blocker_profile_id.eq.${me.id},blocked_profile_id.eq.${other.id}),and(blocker_profile_id.eq.${other.id},blocked_profile_id.eq.${me.id})`).limit(1);
     if (blocks?.length) return empty;
+    const { data: verifiedData } = await context.supabase.rpc("is_verified_pair" as never, { _other: other.id } as never);
+    const verified = verifiedData === true;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows } = await supabaseAdmin.from("qa_answers")
       .select("profile_id, question, answer").in("profile_id", [me.id, other.id])
@@ -1638,5 +1650,5 @@ export const getPersonalityCards = createServerFn({ method: "POST" })
     const all = rows ?? [];
     const theirs = all.filter((r) => r.profile_id === other.id);
     const mine = all.filter((r) => r.profile_id === me.id);
-    return { cards: buildPersonalityCards(theirs, mine), complements: buildComplements(theirs, mine) };
+    return { cards: buildPersonalityCards(theirs, mine, verified), complements: buildComplements(theirs, mine) };
   });

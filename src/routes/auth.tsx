@@ -11,6 +11,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { isNative, nativeAppleSignIn } from "@/lib/native";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { SessionLoading } from "@/components/SessionLoading";
+import { AuthTimeoutError, normalizeEmail, withAuthTimeout } from "@/lib/auth-input";
 
 export const Route = createFileRoute("/auth")({
   // Client-only: this page is reached via the /app guard's client redirect,
@@ -126,14 +127,16 @@ function AuthPage() {
       );
       return;
     }
+    const cleanEmail = normalizeEmail(email);
+    if (cleanEmail !== email) setEmail(cleanEmail);
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
-          email,
+        const { data, error } = await withAuthTimeout(supabase.auth.signUp({
+          email: cleanEmail,
           password,
           options: { emailRedirectTo: oauthRedirectUri() },
-        });
+        }));
         if (error) throw error;
         if (data.session) {
           // Record the EULA acceptance against the new account (guideline 1.2).
@@ -191,7 +194,7 @@ function AuthPage() {
           setMode("signin");
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await withAuthTimeout(supabase.auth.signInWithPassword({ email: cleanEmail, password }));
         if (error) throw error;
         navigate(afterAuthTarget() as never);
       }
@@ -211,7 +214,23 @@ function AuthPage() {
         code === "user_already_exists" ||
         /already (registered|exists|been registered)|user.*exists/i.test(raw);
 
-      if (isRateLimit) {
+      if (err instanceof AuthTimeoutError) {
+        toast.warning(
+          tr(
+            "This is taking too long.",
+            "Esto está tardando demasiado.",
+            "Cela prend trop de temps.",
+          ),
+          {
+            description: tr(
+              "Check your connection and tap the button again.",
+              "Revisa tu conexión y vuelve a pulsar el botón.",
+              "Vérifie ta connexion et appuie de nouveau sur le bouton.",
+            ),
+            duration: 7000,
+          },
+        );
+      } else if (isRateLimit) {
         toast.info(
           tr(
             "Too many attempts. Please wait a moment and try again.",
@@ -270,7 +289,7 @@ function AuthPage() {
       } else if (isAlreadyRegistered && mode === "signup") {
         // The account already exists (often because a previous attempt actually
         // succeeded). Try to sign the user straight in with what they typed.
-        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        const { error: signInErr } = await withAuthTimeout(supabase.auth.signInWithPassword({ email: cleanEmail, password }));
         if (!signInErr) {
           toast.success(
             tr(
@@ -340,7 +359,7 @@ function AuthPage() {
     if (!requireAgreement()) return;
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() });
+      const result = await withAuthTimeout(lovable.auth.signInWithOAuth("google", { redirect_uri: oauthRedirectUri() }));
       if (result.error) throw new Error(result.error.message);
       if (result.redirected) return;
       await navigate(afterAuthTarget() as never);
@@ -361,17 +380,17 @@ function AuthPage() {
       const res = await nativeAppleSignIn();
       if (res.status === "cancelled") { setLoading(false); return; }
       if (res.status === "unavailable") {
-        const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
+        const result = await withAuthTimeout(lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() }));
         if (result.error) { toast.error(result.error.message); setLoading(false); return; }
         if (result.redirected) return;
         navigate(afterAuthTarget() as never);
         return;
       }
-      const { error } = await supabase.auth.signInWithIdToken({
+      const { error } = await withAuthTimeout(supabase.auth.signInWithIdToken({
         provider: "apple",
         token: res.identityToken,
         nonce: res.nonce,
-      });
+      }));
       if (error) {
         toast.error(error.message);
         setLoading(false);
@@ -379,10 +398,32 @@ function AuthPage() {
       }
       navigate(afterAuthTarget() as never);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("auth.fail"));
+      if (e instanceof AuthTimeoutError) {
+        toast.warning(tr("Apple sign-in is taking too long. Please try again.", "El acceso con Apple está tardando demasiado. Inténtalo de nuevo.", "La connexion Apple prend trop de temps. Réessaie."));
+      } else {
+        toast.error(e instanceof Error ? e.message : t("auth.fail"));
+      }
       setLoading(false);
     }
   };
+
+  // Safety net: the buttons must never stay greyed out. If a sign-in step
+  // stalls (Apple/Google sheet closed oddly, weak signal), unlock them.
+  useEffect(() => {
+    if (!loading) return;
+    const timer = window.setTimeout(() => setLoading(false), 25_000);
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      // Coming back from the Apple/Google sheet or another app: give a real
+      // sign-in a moment to navigate away, then unlock the page.
+      window.setTimeout(() => setLoading(false), 2_000);
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [loading]);
 
 
 
@@ -502,7 +543,14 @@ function AuthPage() {
               onClick={async () => {
                 if (!requireAgreement()) return;
                 setLoading(true);
-                const result = await lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() });
+                let result: Awaited<ReturnType<typeof lovable.auth.signInWithOAuth>>;
+                try {
+                  result = await withAuthTimeout(lovable.auth.signInWithOAuth("apple", { redirect_uri: oauthRedirectUri() }));
+                } catch {
+                  toast.error(tr("Apple sign-in could not finish. Please try again.", "No se pudo completar el acceso con Apple. Reintenta.", "La connexion Apple n’a pas abouti. Réessaie."));
+                  setLoading(false);
+                  return;
+                }
                 if (result.error) { toast.error(result.error.message); setLoading(false); return; }
                 if (result.redirected) return;
                 navigate(afterAuthTarget() as never);
@@ -521,7 +569,7 @@ function AuthPage() {
         )}
 
         <form onSubmit={submit} className="space-y-3">
-          <Input type="email" required placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input type="email" required autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} inputMode="email" placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setEmail((v) => normalizeEmail(v))} />
           <div className="relative">
             <Input type={showPassword ? "text" : "password"} required minLength={8} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-11" />
             <button
@@ -561,8 +609,10 @@ function AuthPage() {
             <button
               type="button"
               onClick={async () => {
-                if (!email) { toast.info(t("auth.enterEmailFirst")); return; }
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                const cleanEmail = normalizeEmail(email);
+                if (!cleanEmail) { toast.info(t("auth.enterEmailFirst")); return; }
+                setEmail(cleanEmail);
+                const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
                   redirectTo: `${window.location.origin}/reset-password`,
                 });
                 if (error) toast.error(error.message);

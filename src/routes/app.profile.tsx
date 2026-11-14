@@ -92,16 +92,6 @@ function ProfilePage() {
   const deleteAcct = useServerFn(deleteMyAccount);
   const updatePhoto = useServerFn(updateMyPhoto);
   const q = useQuery({ queryKey: ["my-profile"], queryFn: () => getProfile() });
-  const ordinalQ = useQuery({
-    queryKey: ["my-signup-ordinal", q.data?.user_id],
-    enabled: !!q.data?.user_id,
-    staleTime: 1000 * 60 * 60,
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_signup_ordinal", { _user_id: q.data!.user_id! });
-      if (error) return null;
-      return typeof data === "number" ? data : null;
-    },
-  });
   const photoInputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -225,18 +215,6 @@ function ProfilePage() {
                   {label(p.level)} · {p.nationality}
                 </p>
                 <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
-                {typeof ordinalQ.data === "number" && ordinalQ.data > 0 && (
-                  <span
-                    className="mt-1.5 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] border border-[var(--ink)]/20 bg-[var(--paper-2)] text-[var(--ink)]/75"
-                    title={tr(
-                      "Your signup number on PadelSetMatch",
-                      "Tu número de registro en PadelSetMatch",
-                      "Ton numéro d'inscription sur PadelSetMatch",
-                    )}
-                  >
-                    {ordinalQ.data <= 100 ? tr("Founding Member", "Miembro fundador", "Membre fondateur") : tr("Member", "Miembro", "Membre")} {ordinalQ.data}
-                  </span>
-                )}
               </div>
               <EditSectionsMenu />
 

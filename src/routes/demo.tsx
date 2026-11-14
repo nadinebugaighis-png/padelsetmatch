@@ -464,9 +464,6 @@ function DemoPage() {
                   <span className="inline-flex items-center gap-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[11px] font-semibold px-2.5 py-1">
                     <CourtIcon className="w-3.5 h-3" strokeWidth={2} /> Free court
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold px-2.5 py-1">
-                    <Trophy className="w-3 h-3" /> Founding Member 57
-                  </span>
                 </div>
               </div>
             </div>

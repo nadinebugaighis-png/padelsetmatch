@@ -78,4 +78,9 @@ describe("clubBookingLink", () => {
   it("reports unlisted clubs as 'other'", () => {
     expect(clubBookingLink({ club_name: "Ola Club", city: "Doral", club_place_id: "p1" })?.club).toBe("other");
   });
+
+  it("links FMP Canal de Isabel II (Chamberí) to its Playtomic page, but not Parque de Santander", () => {
+    expect(knownClubBookingUrl("FMP Canal De Isabel II")).toBe("https://playtomic.com/es/clubs/fmp-canal-de-isabel-ii");
+    expect(knownClubBookingUrl("Centro de Ocio y Deporte Tercer Depósito Canal de Isabel II")).toBeNull();
+  });
 });

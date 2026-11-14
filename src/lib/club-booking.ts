@@ -51,6 +51,8 @@ const KNOWN_CLUBS: KnownClub[] = [
   { key: "dreamfit_sanse", url: "https://playtomic.com/es/clubs/dreamfit-sanse", words: [["dreamfit", "sanse"], ["dreamfit", "san", "sebastian"]] },
   { key: "campus_23", url: "https://playtomic.com/es/clubs/campus-23-club-de-tenis-y-padel", words: [["campus", "23"]] },
   { key: "norte_real_sport_club", url: "https://playtomic.com/es/clubs/norte-real-sport-club", words: [["norte", "real", "sport"]] },
+  // Chamberí. Not Parque de Santander (also "Canal de Isabel II"), which books on its own site only.
+  { key: "fmp_canal_isabel_ii", url: "https://playtomic.com/es/clubs/fmp-canal-de-isabel-ii", words: [["fmp", "canal"], ["pistas", "padel", "canal", "isabel"]] },
   { key: "club_el_estudiante", url: "https://playtomic.com/tenant/4739d8b8-41e0-499a-9eda-b7d6e658e29b", words: [["estudiante"]] },
 ];
 

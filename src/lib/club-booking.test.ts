@@ -105,4 +105,9 @@ describe("clubBookingLink", () => {
     expect(clubBookingLink({ club_name: "Padel Social Club - Earl's Court", club_place_id: "abc" })?.club).toBe("padel_social_earls_court");
     expect(clubBookingLink({ club_name: "Padel Social Club The O2", club_place_id: "abc" })?.club).toBe("padel_social_o2");
   });
+  it("links London Padel Mates clubs", () => {
+    expect(clubBookingLink({ club_name: "Padium Canary Wharf", club_place_id: "abc" })?.url).toContain("padelmates.se/club/47d2eb0db7194a9dbd29783c3a2a82ad");
+    expect(clubBookingLink({ club_name: "Racketeer", club_place_id: "abc" })?.url).toContain("padelmates.se/club/");
+    expect(clubBookingLink({ club_name: "Rocket Padel Battersea Power Station", club_place_id: "abc" })?.club).toBe("rocket_padel_battersea");
+  });
 });

@@ -9,7 +9,7 @@ import { normalizePlaytomicLink } from "@/lib/affinity";
  *   3. a web search for "Playtomic <club>" when the host picked a real club.
  * Private / free courts and undecided clubs never show a booking link.
  *
- * Every Playtomic link we send out carries UTM tags so Playtomic and the clubs
+ * Every Playtomic / Padel Mates link we send out carries UTM tags so Playtomic and the clubs
  * can see the visit came from PadelSetMatch; Google searches are left untagged.
  */
 
@@ -55,7 +55,7 @@ const KNOWN_CLUBS: KnownClub[] = [
   { key: "club_el_estudiante", url: "https://playtomic.com/tenant/4739d8b8-41e0-499a-9eda-b7d6e658e29b", words: [["estudiante"]] },
   // Chamberí. FMP books on Playtomic; Parque de Santander (Canal Ocio y Deporte) only on its own site, after signing in.
   { key: "fmp_canal_isabel_ii", url: "https://playtomic.com/clubs/fmp-canal-de-isabel-ii", words: [["fmp", "canal"], ["fmp", "isabel"], ["federacion", "padel", "canal"]] },
-  // London clubs on Playtomic (Padium left Playtomic, so it isn't listed).
+  // London clubs on Playtomic .
   { key: "rocks_lane_chiswick", url: "https://playtomic.com/clubs/rocks-lane-chiswick", words: [["rocks", "lane", "chiswick"]] },
   { key: "rocks_lane_barnes", url: "https://playtomic.com/clubs/rocks-lane-barnes-london", words: [["rocks", "lane", "barnes"]] },
   { key: "barn_elms", url: "https://playtomic.com/clubs/barn-elms-sports-centre", words: [["barn", "elms"]] },
@@ -77,8 +77,16 @@ const KNOWN_CLUBS: KnownClub[] = [
   { key: "georgians_padel", url: "https://playtomic.com/clubs/georgians-padel", words: [["georgians", "padel"]] },
   { key: "padel_zest", url: "https://playtomic.com/clubs/padel-zest", words: [["padel", "zest"]] },
   { key: "padel_and_coffee", url: "https://playtomic.com/clubs/padel-and-coffee", words: [["padel", "coffee"]] },
-  { key: "racketeer", url: "https://playtomic.com/clubs/racketeer", words: [["racketeer"]] },
   { key: "the_108", url: "https://playtomic.com/clubs/the-108", words: [["108", "padel"]] },
+  // London clubs on Padel Mates (Padium, Racketeer and Rocket Padel moved there from Playtomic).
+  { key: "padium_canary_wharf", url: "https://padelmates.se/club/47d2eb0db7194a9dbd29783c3a2a82ad", words: [["padium"]] },
+  { key: "racketeer", url: "https://padelmates.se/club/5111764d9bb14be3adbdb8e133e8bd80", words: [["racketeer"]] },
+  { key: "rocket_padel_battersea", url: "https://padelmates.se/club/n8T0bz1PtMa1WhVElJ7Eclg0ooj2", words: [["rocket", "padel", "battersea"], ["rocket", "padel", "bps"], ["rocket", "padel", "cupra"]] },
+  { key: "rocket_padel_beckton", url: "https://padelmates.se/club/f953765495194a299e49f49674d69a41", words: [["rocket", "padel", "beckton"]] },
+  { key: "rocket_padel_ilford", url: "https://padelmates.se/club/788fa2c66535421aabc60fd27f941c42", words: [["rocket", "padel", "ilford"]] },
+  { key: "instantpadel_canada_water", url: "https://padelmates.se/club/10a9c13109b94d148565f4920c55dd62", words: [["instantpadel"], ["instant", "padel", "canada"]] },
+  { key: "house_of_racquet", url: "https://padelmates.se/club/d11965b0f8c24527bf36491e6c32a39f", words: [["house", "racquet"]] },
+  { key: "playtime_padel_kingston", url: "https://padelmates.se/club/playtimepadelclubkingstonlondon", words: [["playtime", "padel", "kingston"]] },
   // London. ParkSports sites aren't on Playtomic; the page opens on today's date.
   { key: "parksports_lammas", url: "https://lammas.parksports.co.uk/Booking/BookByDate#?role=guest&resource-group-id=2f693518-ea79-40ef-8f53-13cb83bf211f", words: [["lammas"]] },
   { key: "parque_santander", url: "https://www.ocioydeportecanal.es/es/signin", words: [["parque", "santander"], ["canal", "ocio", "deporte"], ["tercer", "deposito"]] },

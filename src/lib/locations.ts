@@ -51,7 +51,7 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "United Kingdom",
     cities: [
-      { name: "London", areas: ["Central", "Chelsea", "Kensington", "Notting Hill", "Hampstead", "Wimbledon", "Canary Wharf", "Shoreditch", "Battersea"] },
+      { name: "London", areas: ["Central", "Chelsea", "Kensington", "Notting Hill", "Hampstead", "Wimbledon", "Canary Wharf", "Shoreditch", "Battersea", "Ealing"] },
       { name: "Manchester", areas: ["City Centre", "Didsbury", "Salford"] },
     ],
   },

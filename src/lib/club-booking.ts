@@ -55,6 +55,8 @@ const KNOWN_CLUBS: KnownClub[] = [
   { key: "club_el_estudiante", url: "https://playtomic.com/tenant/4739d8b8-41e0-499a-9eda-b7d6e658e29b", words: [["estudiante"]] },
   // Chamberí. FMP books on Playtomic; Parque de Santander (Canal Ocio y Deporte) only on its own site, after signing in.
   { key: "fmp_canal_isabel_ii", url: "https://playtomic.com/clubs/fmp-canal-de-isabel-ii", words: [["fmp", "canal"], ["fmp", "isabel"], ["federacion", "padel", "canal"]] },
+  // London. ParkSports sites aren't on Playtomic; the page opens on today's date.
+  { key: "parksports_lammas", url: "https://lammas.parksports.co.uk/Booking/BookByDate#?role=guest&resource-group-id=2f693518-ea79-40ef-8f53-13cb83bf211f", words: [["lammas"]] },
   { key: "parque_santander", url: "https://www.ocioydeportecanal.es/es/signin", words: [["parque", "santander"], ["canal", "ocio", "deporte"], ["tercer", "deposito"]] },
 ];
 

@@ -94,4 +94,10 @@ describe("clubBookingLink", () => {
   it("reports unlisted clubs as 'other'", () => {
     expect(clubBookingLink({ club_name: "Ola Club", city: "Doral", club_place_id: "p1" })?.club).toBe("other");
   });
+  it("links Lammas Park (London) to its ParkSports booking page", () => {
+    const r = clubBookingLink({ club_name: "Lammas Park Tennis & Padel", club_place_id: "abc" });
+    expect(r?.club).toBe("parksports_lammas");
+    expect(r?.url).toContain("lammas.parksports.co.uk/Booking/BookByDate");
+    expect(r?.url).toContain("resource-group-id=2f693518-ea79-40ef-8f53-13cb83bf211f");
+  });
 });

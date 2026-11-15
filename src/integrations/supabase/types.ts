@@ -919,6 +919,7 @@ export type Database = {
       }
       match_events: {
         Row: {
+          auto_slot_id: string | null
           city: string | null
           club_address: string | null
           club_lat: number | null
@@ -945,6 +946,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_slot_id?: string | null
           city?: string | null
           club_address?: string | null
           club_lat?: number | null
@@ -971,6 +973,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_slot_id?: string | null
           city?: string | null
           club_address?: string | null
           club_lat?: number | null
@@ -997,6 +1000,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "match_events_auto_slot_id_fkey"
+            columns: ["auto_slot_id"]
+            isOneToOne: false
+            referencedRelation: "open_game_slots"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "match_events_host_profile_id_fkey"
             columns: ["host_profile_id"]
@@ -1316,6 +1326,88 @@ export type Database = {
           {
             foreignKeyName: "notifications_profile_id_fkey"
             columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      open_game_runs: {
+        Row: {
+          created_at: string
+          slot_id: string
+          starts_at: string
+        }
+        Insert: {
+          created_at?: string
+          slot_id: string
+          starts_at: string
+        }
+        Update: {
+          created_at?: string
+          slot_id?: string
+          starts_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "open_game_runs_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "open_game_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      open_game_slots: {
+        Row: {
+          active: boolean
+          city: string
+          club_name: string
+          country: string
+          created_at: string
+          host_profile_id: string
+          id: string
+          level_max: string
+          level_min: string
+          local_start: string
+          note: string | null
+          series: string
+          time_zone: string
+        }
+        Insert: {
+          active?: boolean
+          city: string
+          club_name: string
+          country: string
+          created_at?: string
+          host_profile_id: string
+          id?: string
+          level_max: string
+          level_min: string
+          local_start: string
+          note?: string | null
+          series: string
+          time_zone: string
+        }
+        Update: {
+          active?: boolean
+          city?: string
+          club_name?: string
+          country?: string
+          created_at?: string
+          host_profile_id?: string
+          id?: string
+          level_max?: string
+          level_min?: string
+          local_start?: string
+          note?: string | null
+          series?: string
+          time_zone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "open_game_slots_host_profile_id_fkey"
+            columns: ["host_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1965,6 +2057,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      ensure_open_games: { Args: { _days_ahead?: number }; Returns: number }
       fanout_match_alerts: {
         Args: { _match_id: string; _reason: string }
         Returns: undefined

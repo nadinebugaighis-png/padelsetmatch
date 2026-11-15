@@ -340,7 +340,9 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const involvedIds = new Set<string>();
     if (profile) {
       const [{ data: mine }, { data: parts }, { data: invs }] = await Promise.all([
-        supabase.from("match_events").select("id").eq("host_profile_id", profile.id).gte("starts_at", sinceIso),
+        // Ready-made open games (auto_slot_id) only follow the area filter, so the
+        // organiser does not see every city's daily games in their own feed.
+        supabase.from("match_events").select("id").eq("host_profile_id", profile.id).is("auto_slot_id", null).gte("starts_at", sinceIso),
         supabase.from("match_event_participants").select("match_event_id, match_events!inner(id, starts_at)").eq("profile_id", profile.id).gte("match_events.starts_at", sinceIso),
         supabase.from("match_event_invites").select("match_event_id, match_events!inner(id, starts_at)").eq("invitee_profile_id", profile.id).gte("match_events.starts_at", sinceIso),
       ]);

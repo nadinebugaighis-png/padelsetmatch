@@ -414,7 +414,10 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       const guests = guestsByEvent.get(e.id) ?? [];
       const filled = (e.participants?.length ?? 0) + guests.length + (e.extra_confirmed ?? 0);
       const iAmHost = !!profile && e.host_profile_id === profile.id;
-      const iAmParticipant = !!profile && ((e.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
+      const joined = !!profile && (e.participants ?? []).some((p: any) => p.profile_id === profile.id);
+      // Ready-made daily games (auto_slot_id) list the organiser as host for
+      // management only; they count as "my match" just once she actually joins.
+      const iAmParticipant = joined || (iAmHost && !e.auto_slot_id);
       return { ...e, guests, filled, needs: Math.max(0, 4 - filled), iAmHost, iAmParticipant };
     });
     return { events: data.needs ? list.filter((e) => e.needs === data.needs) : list };

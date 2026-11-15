@@ -208,12 +208,12 @@ function EventsPage() {
 
   const myEvents = useMemo(
     () => all
-      .filter((e) => e.iAmHost || e.iAmParticipant)
+      .filter((e) => e.iAmParticipant)
       .filter(eventMatchesName)
       .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
     [all, searchLower],
   );
-  const mineCount = useMemo(() => all.filter((e) => e.iAmHost || e.iAmParticipant).length, [all]);
+  const mineCount = useMemo(() => all.filter((e) => e.iAmParticipant).length, [all]);
 
   // Within one calendar day, rotate card colours by the match's start-time order
   // (computed from the unfiltered feed so filtering/reordering cannot shift a

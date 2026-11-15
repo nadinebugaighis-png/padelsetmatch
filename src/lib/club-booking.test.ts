@@ -100,4 +100,9 @@ describe("clubBookingLink", () => {
     expect(r?.url).toContain("lammas.parksports.co.uk/Booking/BookByDate");
     expect(r?.url).toContain("resource-group-id=2f693518-ea79-40ef-8f53-13cb83bf211f");
   });
+  it("links London Playtomic clubs", () => {
+    expect(clubBookingLink({ club_name: "Rocks Lane Chiswick", club_place_id: "abc" })?.url).toContain("playtomic.com/clubs/rocks-lane-chiswick");
+    expect(clubBookingLink({ club_name: "Padel Social Club - Earl's Court", club_place_id: "abc" })?.club).toBe("padel_social_earls_court");
+    expect(clubBookingLink({ club_name: "Padel Social Club The O2", club_place_id: "abc" })?.club).toBe("padel_social_o2");
+  });
 });

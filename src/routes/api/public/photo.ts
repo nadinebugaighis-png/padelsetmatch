@@ -37,8 +37,13 @@ export const Route = createFileRoute("/api/public/photo")({
           .from("padel-photos")
           .createSignedUrl(path, 60 * 10, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
         let upstream = data?.signedUrl ? await fetch(data.signedUrl) : null;
-        if (!upstream?.ok) upstream = await fetch(src.toString());
-        if (!upstream.ok || !upstream.body) return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
+        // If resizing is unavailable, serve the original through a fresh
+        // server-signed link, never by replaying the caller's saved link.
+        if (!upstream?.ok) {
+          const { data: plain } = await supabaseAdmin.storage.from("padel-photos").createSignedUrl(path, 60 * 10);
+          upstream = plain?.signedUrl ? await fetch(plain.signedUrl) : null;
+        }
+        if (!upstream?.ok || !upstream.body) return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
         const headers = new Headers({
           "Content-Type": upstream.headers.get("content-type") ?? "image/jpeg",
           "Cache-Control": DEVICE_CACHE,

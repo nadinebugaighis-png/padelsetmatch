@@ -20,7 +20,7 @@
 - Keep Matches page controls compact with scoped light-theme tokens and date-selection logic separate from the feed; this preserves existing match actions and avoids treating all dates as individually highlighted choices.
 - Keep club suggestion caching instance-scoped, bounded and browser-safe; reuse fetched clubs while waiting for authenticated search and reject stale responses so typing stays quick without sharing search history across users.
 - Use a shared Shadcn calendar and separate hour/minute selectors for match scheduling, with scoped light tokens; this avoids platform-dependent datetime fields while preserving local-time submission and edit values.
-- Raw compatibility answers stay owner-only; scoring returns derived results, and AI summaries get only disclosableAnswers().
+- Raw compatibility answers stay owner-only; scoring returns derived results, and AI summaries get only disclosableAnswers(); only the server saves scores (service-role save_compat_score).
 - Save quick answers atomically and store the answered question slot on the profile so dismissal follows the account across devices; question timing rules live in src/lib/daily-questions.ts and compatibility questions come only from its curated bank, never live AI generation, so they appear instantly. Never reword an existing bank question's English text, because saved answers are matched by it.
 - Signup/profile editing is a single page; values and personality are gathered only through the grid questions, while previously saved priorities/traits are hydrated and re-sent unchanged so older scoring data is not wiped.
 - Restrict shared redirects at both insertion and resolution to exact app hosts and match paths; hosting-domain wildcards are not trusted destinations.

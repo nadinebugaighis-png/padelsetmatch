@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { safeInternalPath } from "@/lib/safe-redirect";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { redirect, join, i, mode: modeParam } = Route.useSearch();
+  const safeRedirect = safeInternalPath(redirect);
   const t = useT();
   const tr = useTr();
   const [resetSending, setResetSending] = useState(false);
@@ -79,12 +81,12 @@ function AuthPage() {
 
   const afterAuthTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
-    if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
+    if (safeRedirect) return { to: safeRedirect };
     return { to: "/app" };
   };
   const signupTarget = (): { to: string; search?: Record<string, string> } => {
     if (join) return { to: "/app/join-setup", search: i ? { join, i } : { join } };
-    if (redirect?.startsWith("/") && !redirect.startsWith("//")) return { to: redirect };
+    if (safeRedirect) return { to: safeRedirect };
     return { to: "/app/choose-location" };
   };
   const oauthRedirectUri = () => {
@@ -92,7 +94,7 @@ function AuthPage() {
     const q = new URLSearchParams({ mode: "signin" });
     if (join) q.set("join", join);
     if (i) q.set("i", i);
-    if (redirect?.startsWith("/") && !redirect.startsWith("//")) q.set("redirect", redirect);
+    if (safeRedirect) q.set("redirect", safeRedirect);
     return `${base}/auth?${q.toString()}`;
   };
 

@@ -2160,6 +2160,19 @@ export type Database = {
         Args: { _accept: boolean; _match_id: string }
         Returns: undefined
       }
+      save_compat_score: {
+        Args: {
+          _blurb: string
+          _friction: string
+          _me: string
+          _other: string
+          _reasons: Json
+          _score: number
+          _sub: Json
+          _version: string
+        }
+        Returns: undefined
+      }
       save_my_qa_answer: {
         Args: {
           _answer: string
@@ -2185,18 +2198,6 @@ export type Database = {
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
       transfer_match_host: {
         Args: { _event: string; _new_host_profile_id: string }
-        Returns: undefined
-      }
-      upsert_compat_score: {
-        Args: {
-          _blurb: string
-          _friction: string
-          _other: string
-          _reasons: Json
-          _score: number
-          _sub: Json
-          _version: string
-        }
         Returns: undefined
       }
       venue_overlap_for_me: { Args: { _profile_ids: string[] }; Returns: Json }

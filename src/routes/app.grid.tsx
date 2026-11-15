@@ -181,14 +181,14 @@ function Discover() {
   });
   // Warm the court reads for the top players in the background, two at a time,
   // so tapping a card shows the read instantly instead of waiting on the AI.
-  const warmIds = (feedQ.data?.candidates ?? []).slice(0, 8).map((c) => c.id).join(",");
+  const warmIds = (feedQ.data?.candidates ?? []).slice(0, 12).map((c) => c.id).join(",");
   useEffect(() => {
     if (!warmIds || !qaQ.data || needsUnlock) return;
     let cancelled = false;
     const ids = warmIds.split(",");
     const run = async () => {
-      for (let i = 0; i < ids.length && !cancelled; i += 2) {
-        await Promise.allSettled(ids.slice(i, i + 2).map((id) =>
+      for (let i = 0; i < ids.length && !cancelled; i += 3) {
+        await Promise.allSettled(ids.slice(i, i + 3).map((id) =>
           qc.prefetchQuery({
             queryKey: ["ai-compat", id, lang],
             queryFn: () => compatFn({ data: { otherProfileId: id, lang } }),
@@ -241,6 +241,9 @@ function Discover() {
   const favsQ = useQuery({ queryKey: ["favorites"], queryFn: () => listFavs(), enabled: !!feedQ.data?.me, staleTime: 60_000 });
   const favSet = new Set(favsQ.data?.ids ?? []);
   const toggleFav = useServerFn(toggleFavorite);
+  const [favNote, setFavNote] = useState<{ id: string; on: boolean } | null>(null);
+  const favNoteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (favNoteTimer.current) clearTimeout(favNoteTimer.current); }, []);
   const toggleFavM = useMutation({
     mutationFn: (id: string) => toggleFav({ data: { favoriteProfileId: id } }),
     onMutate: async (id) => {
@@ -253,7 +256,12 @@ function Discover() {
       return { prev, wasFav };
     },
     onError: (_e, _id, ctx) => { if (ctx?.prev) qc.setQueryData(["favorites"], ctx.prev); toast.error("Couldn't update favorite"); },
-    onSuccess: (r) => { toast.success(r.favorited ? tr("Saved to favorites ⭐", "Guardado en favoritos ⭐", "Ajouté aux favoris ⭐") : tr("Removed from favorites", "Quitado de favoritos", "Retiré des favoris")); },
+    onSuccess: (r, id) => {
+      // A quiet note under the star replaces the always-on caption.
+      setFavNote({ id, on: r.favorited });
+      if (favNoteTimer.current) clearTimeout(favNoteTimer.current);
+      favNoteTimer.current = setTimeout(() => setFavNote(null), 4000);
+    },
     onSettled: () => qc.invalidateQueries({ queryKey: ["favorites"] }),
   });
 
@@ -1024,9 +1032,11 @@ function Discover() {
                           </button>
                         </div>
                       )}
-                      {!isSelf && (
-                        <p className="-mt-2 text-right text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/50">
-                          {tr("Star: notify me when they play", "Estrella: avisarme cuando juegue", "Étoile : m'alerter quand il/elle joue")}
+                      {!isSelf && favNote?.id === preview.id && (
+                        <p role="status" className="-mt-2 text-right text-serif italic text-[13px] text-[var(--ink)]/65 animate-in fade-in duration-300">
+                          {favNote.on
+                            ? tr(`You'll be told when ${preview.first_name} plays`, `Te avisaremos cuando ${preview.first_name} juegue`, `On te préviendra quand ${preview.first_name} joue`)
+                            : tr(`You'll no longer be told when ${preview.first_name} plays`, `Ya no te avisaremos cuando ${preview.first_name} juegue`, `On ne te préviendra plus quand ${preview.first_name} joue`)}
                         </p>
                       )}
 
@@ -1066,10 +1076,7 @@ function Discover() {
                           : pairKind === "court" ? tr("Court partners", "Pareja de pista", "Partenaires de court")
                           : null;
                         const heading = (children: string) => (
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55 whitespace-nowrap">{children}</span>
-                            <span className="h-px flex-1 bg-[var(--gold)]/40" />
-                          </div>
+                          <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{children}</div>
                         );
                         return (
                           <div className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5">
@@ -1082,11 +1089,13 @@ function Discover() {
                                 ].map((s, i) => (
                                   <div key={s.key} className={i === 1 ? "pl-4 border-l border-[var(--gold)]/50" : "pr-4"}>
                                     <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{s.label}</div>
-                                    <div className="text-serif text-[26px] leading-tight text-[var(--ink)] tabular-nums mt-0.5">
-                                      {s.value != null ? <>{s.value}<span className="text-[15px] text-[var(--ink)]/60">%</span></> : <span className="text-[var(--ink)]/30">—</span>}
-                                    </div>
+                                    {s.value != null && (
+                                      <div className="text-serif text-[26px] leading-tight text-[var(--ink)] tabular-nums mt-0.5">
+                                        {s.value}<span className="text-[15px] text-[var(--ink)]/60">%</span>
+                                      </div>
+                                    )}
                                     {s.key === "off" && offCourtWaiting && (
-                                      <div className="text-[11px] italic text-[var(--ink)]/55 leading-snug mt-0.5">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
+                                      <div className="text-[12px] italic text-[var(--ink)]/55 leading-snug mt-1.5">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
                                     )}
                                   </div>
                                 ))}
@@ -1095,7 +1104,7 @@ function Discover() {
                             {!needsUnlock && pairTag && (
                               <div className="mt-3 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/75">{pairTag}</div>
                             )}
-                            <span className="block h-px w-10 bg-[var(--gold)] mt-3 mb-3.5" />
+                            <div className="h-5" />
 
                             {needsUnlock ? (
                               <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
@@ -1138,12 +1147,12 @@ function Discover() {
                                   type="button"
                                   onClick={() => setFullReadFor(showFull ? null : preview.id)}
                                   aria-expanded={showFull}
-                                  className="mt-5 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] underline underline-offset-4 decoration-[var(--gold)]/60 transition"
+                                  className="mt-5 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/55 hover:text-[var(--ink)] transition"
                                 >
                                   {showFull ? tr("Hide full read", "Ocultar lectura completa", "Masquer la lecture complète") : tr("Read the full court read", "Leer el análisis completo", "Lire l'analyse complète")}
                                 </button>
                                 {showFull && data && (
-                                  <div className="mt-4 pt-4 border-t border-[var(--ink)]/8 space-y-4">
+                                  <div className="mt-4 space-y-4">
                                     {bullets.length > 0 && (
                                       <ul className="space-y-1.5">
                                         {bullets.slice(0, 3).map((b, i) => (

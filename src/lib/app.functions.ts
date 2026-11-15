@@ -174,7 +174,7 @@ async function moderatePhotoWithAi(photoUrl: string): Promise<{ verdict: "approv
         "Lovable-API-Key": apiKey,
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3.8-flash",
         messages: [
           {
             role: "system",
@@ -954,6 +954,14 @@ export const blockProfile = createServerFn({ method: "POST" })
       .from("blocks" as never)
       .insert({ blocker_profile_id: myId, blocked_profile_id: data.blockedProfileId } as never);
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    // Give the blocker's photos new private links so any link the blocked
+    // player saved stops working. Best effort: the block itself already holds.
+    try {
+      const { rotateOwnedPhotoLinks } = await import("./photo-cleanup.server");
+      await rotateOwnedPhotoLinks(context.userId, myId);
+    } catch (e) {
+      console.error("[block] photo link rotation failed", e instanceof Error ? e.message : e);
+    }
     return { ok: true };
   });
 
@@ -1327,7 +1335,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const { generateText } = await import("ai");
     const { createLovableAiGatewayProvider } = await import("./ai-gateway.server");
     const provider = createLovableAiGatewayProvider(apiKey);
-    const model = provider("google/gemini-2.5-flash");
+    const model = provider("google/gemini-3.8-flash");
 
     // App is a padel player directory only — always use teammate/friendship focus.
     void myIntentsArr; void theirIntentsArr;
@@ -1417,7 +1425,10 @@ ${qaBlock(theirQA)}`;
     let subScores: SubScoresShape | null = null;
     const allowedSubKeys = new Set(["padel", "personality", ...extraSubs]);
     try {
-      const res = await generateText({ model, prompt, temperature: 0.6 });
+      // Light thinking: the read is short JSON, and full thinking made it take
+      // 7–14 seconds instead of about 2–3. Keep this provider key: the
+      // camelCase key the SDK suggests is silently ignored by this provider.
+      const res = await generateText({ model, prompt, temperature: 0.6, providerOptions: { "lovable-ai-gateway": { reasoningEffort: "low" } } });
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
       const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; headline?: unknown; highlights?: unknown; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
@@ -1467,7 +1478,10 @@ ${qaBlock(theirQA)}`;
     }
 
     const insertRow = { profile_a: a, profile_b: b, score, blurb, reasons, friction, sub_scores: subScores, model_version: versionKey };
-    const { error: saveErr } = await context.supabase.rpc("upsert_compat_score" as never, {
+    // Only the server saves scores, after computing them; players cannot
+    // write their own (the save function is service-role only).
+    const { error: saveErr } = await supabaseAdmin.rpc("save_compat_score", {
+      _me: me.id,
       _other: other.id,
       _score: score,
       _blurb: blurb,

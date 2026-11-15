@@ -57,3 +57,8 @@
 
 ## No-photo card artwork
 - [ ] Show Nadine court-view line-art mockup for empty player cards; build chosen design as inline SVG variants behind the initial in PlayerPhoto fallback (awaiting her pick).
+
+## Deep scan fixes and profile drawer polish (15 Nov)
+- [x] Fix 4 deep-scan findings: no-show reports, player-written scores, blocked-player photo links, sign-up redirect.
+- [x] Remove fine lines in the "You two" section; show the star note only after tapping the star.
+- [x] Speed up compatibility reads (lighter AI thinking, warm more players).

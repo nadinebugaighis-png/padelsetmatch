@@ -106,6 +106,13 @@
       "when": 1794755954988,
       "tag": "0014_daily_open_games_london_dubai",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1794772571999,
+      "tag": "0015_security_fixes_nov15",
+      "breakpoints": true
     }
   ]
 }

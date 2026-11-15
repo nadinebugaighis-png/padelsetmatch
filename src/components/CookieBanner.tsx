@@ -21,7 +21,7 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="fixed bottom-3 left-3 right-3 z-50 max-w-xl mx-auto rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)]/95 backdrop-blur p-4 shadow-2xl">
+    <div className="fixed bottom-3 left-3 right-3 z-[60] max-w-xl mx-auto rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)]/95 backdrop-blur p-4 shadow-2xl">
       <p className="text-xs text-[var(--ink)]/85">
         {tr(
           "We use essential cookies to keep you signed in and remember your language. No tracking, no ads.",

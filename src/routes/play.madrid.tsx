@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { listPublicUpcomingMatches } from "@/lib/guest.functions";
-import { PublicPlayFeed } from "@/components/PublicPlayFeed";
+import { PublicPlayFeed, matchesPublicCity } from "@/components/PublicPlayFeed";
 
 const CITY = "madrid";
 const TITLE = "Partidos de pádel abiertos en Madrid — PadelSetMatch";
@@ -12,9 +12,7 @@ export const Route = createFileRoute("/play/madrid")({
   loader: async () => {
     try {
       const all = await listPublicUpcomingMatches({ data: { limit: 60 } });
-      const matches = all.filter((m) =>
-        `${m.city ?? ""} ${m.club_address ?? ""} ${m.club_name ?? ""}`.toLowerCase().includes(CITY),
-      );
+      const matches = all.filter((m) => matchesPublicCity(m, CITY));
       return { matches };
     } catch {
       return { matches: [] };

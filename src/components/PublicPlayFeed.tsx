@@ -7,14 +7,42 @@ import { listPublicUpcomingMatches } from "@/lib/guest.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useTr } from "@/lib/i18n";
 
-function fmtDay(iso: string) {
-  return new Date(iso).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short" });
-}
-function fmtTime(iso: string) {
-  return new Date(iso).toLocaleString(undefined, { hour: "2-digit", minute: "2-digit" });
+export type PublicMatch = Awaited<ReturnType<typeof listPublicUpcomingMatches>>[number];
+
+/** Places that count as each city page's area, so suburb games (La Moraleja) show on /play/madrid. */
+const CITY_ALIASES: Record<string, string[]> = {
+  madrid: ["madrid", "moraleja", "alcobendas", "pozuelo", "majadahonda", "las rozas", "boadilla", "sanchinarro"],
+};
+
+function placeText(m: PublicMatch) {
+  return `${m.city ?? ""} ${m.club_address ?? ""} ${m.club_name ?? ""}`.toLowerCase();
 }
 
-export type PublicMatch = Awaited<ReturnType<typeof listPublicUpcomingMatches>>[number];
+export function matchesPublicCity(m: PublicMatch, city: string) {
+  const c = city.toLowerCase();
+  const words = CITY_ALIASES[c] ?? [c];
+  const text = placeText(m);
+  return words.some((w) => text.includes(w));
+}
+
+/**
+ * Show each game in its own venue's local time, so the server render and the
+ * phone agree (no hydration mismatch) and a London game reads 19:30 for everyone.
+ */
+export function venueTimeZone(m: PublicMatch): string {
+  const t = placeText(m);
+  if (/london|ealing|chiswick|battersea|wimbledon|united kingdom/.test(t)) return "Europe/London";
+  if (/dubai|abu dhabi|united arab emirates/.test(t)) return "Asia/Dubai";
+  if (/miami|florida/.test(t)) return "America/New_York";
+  return "Europe/Madrid";
+}
+
+function fmtDay(m: PublicMatch) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: venueTimeZone(m), weekday: "short", day: "numeric", month: "short" }).format(new Date(m.starts_at));
+}
+function fmtTime(m: PublicMatch) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: venueTimeZone(m), hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(m.starts_at));
+}
 
 export function PublicPlayFeed({
   initialData,
@@ -58,9 +86,11 @@ export function PublicPlayFeed({
 
   const cityFiltered = useMemo(() => {
     const list = (q.data ?? []) as PublicMatch[];
-    if (!city) return list;
-    const c = city.toLowerCase();
-    return list.filter((m) => `${m.city ?? ""} ${m.club_address ?? ""} ${m.club_name ?? ""}`.toLowerCase().includes(c));
+    // Games that already started without a full four are no longer joinable; hide them.
+    const now = Date.now();
+    const live = list.filter((m) => new Date(m.starts_at).getTime() > now || (m.filled ?? 0) >= 4);
+    if (!city) return live;
+    return live.filter((m) => matchesPublicCity(m, city));
   }, [q.data, city]);
 
   const filtered = useMemo(() => {
@@ -74,7 +104,7 @@ export function PublicPlayFeed({
   const byDay = useMemo(() => {
     const map = new Map<string, PublicMatch[]>();
     filtered.forEach((m) => {
-      const key = new Date(m.starts_at).toDateString();
+      const key = fmtDay(m);
       const arr = map.get(key) ?? [];
       arr.push(m);
       map.set(key, arr);
@@ -124,7 +154,7 @@ export function PublicPlayFeed({
         <div className="mt-6 space-y-6 pb-16">
           {byDay.map(([day, list]) => (
             <section key={day}>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{fmtDay(list[0].starts_at)}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{day}</div>
               <div className="grid gap-2">
                 {list.map((m) => {
                   const open = Math.max(0, 4 - (m.filled ?? 0));
@@ -137,7 +167,7 @@ export function PublicPlayFeed({
                         <div className="min-w-0">
                           <div className="text-sm font-medium text-[var(--cream)] truncate">{m.club_name ?? tr("Padel match", "Partido de pádel", "Match de padel")}</div>
                           <div className="text-xs text-[var(--cream)]/60 mt-0.5 flex items-center gap-2 flex-wrap">
-                            <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtTime(m.starts_at)}</span>
+                            <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtTime(m)}</span>
                             {m.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" /> {m.city}</span>}
                             <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {m.filled}/4</span>
                           </div>

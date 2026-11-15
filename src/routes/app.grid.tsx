@@ -24,6 +24,7 @@ import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venue
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
+import { formatNationalities } from "@/lib/affinity";
 
 
 export const Route = createFileRoute("/app/grid")({
@@ -121,7 +122,7 @@ function Discover() {
     // (e.g. after toggling World), leaving the observer on a stale node.
   }, [shown, world, feedTick, levelFilter, zoneFilter, searchQuery]);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; nationality_2?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
 
 
@@ -154,13 +155,13 @@ function Discover() {
     if (closedIdRef.current === search.previewId) return;
     const c = candidates.find((x) => x.id === search.previewId);
     if (c) {
-      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
+      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, nationality_2: (c as any).nationality_2, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
     }
   }, [search.previewId, feedQ.data?.candidates]);
 
   const openPreview = (c: NonNullable<typeof feedQ.data>["candidates"][number]) => {
     closedIdRef.current = null;
-    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
+    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, nationality_2: (c as any).nationality_2, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
     navigate({ search: { previewId: c.id }, replace: true, resetScroll: false });
   };
   const closePreview = () => {
@@ -441,6 +442,7 @@ function Discover() {
           c.first_name,
           c.zone ?? "",
           (c as any).nationality ?? "",
+          (c as any).nationality_2 ?? "",
           ...((c.locations ?? []) as string[]),
         ].join(" ").toLowerCase();
         if (!hay.includes(q)) return false;
@@ -732,6 +734,7 @@ function Discover() {
                   padel_style: me.padel_style,
                   priorities: me.priorities,
                   nationality: me.nationality,
+                  nationality_2: me.nationality_2,
                   gender: me.gender,
                   gender_custom: me.gender_custom,
                   languages: me.languages,
@@ -1197,7 +1200,7 @@ function Discover() {
                         { const lv = label(preview.level); chips.push({ key: "level", text: lv.charAt(0).toUpperCase() + lv.slice(1), icon: "🎾" }); }
                         if (areas.length) chips.push({ key: "areas", text: areas.join(" · "), icon: "📍" });
                         if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · "), icon: "🗣️" });
-                        if (preview.nationality) chips.push({ key: "nat", text: preview.nationality, icon: "🌍" });
+                        { const nat = formatNationalities(preview); if (nat) chips.push({ key: "nat", text: nat, icon: "🌍" }); }
                         return (
                           <div className="flex flex-wrap gap-2">
                             {chips.map((c) => (

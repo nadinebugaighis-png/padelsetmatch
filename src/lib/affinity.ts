@@ -60,6 +60,36 @@ export function cultureAffinity(a: string, b: string): number {
   return 2;
 }
 
+/** A player's nationalities (up to two), skipping blanks and duplicates. */
+export function nationalityList(p: { nationality?: string | null; nationality_2?: string | null }): string[] {
+  const out: string[] = [];
+  for (const n of [p.nationality, p.nationality_2]) {
+    const v = (n ?? "").trim();
+    if (v && !out.includes(v)) out.push(v);
+  }
+  return out;
+}
+
+/** Display form, e.g. "Libyan British". */
+export function formatNationalities(p: { nationality?: string | null; nationality_2?: string | null }): string {
+  return nationalityList(p).join(" ");
+}
+
+/**
+ * Closest cultural link between two players across all their nationalities:
+ * 0 = shared nationality, 1 = neighbouring cultures, 2 = none (or unknown).
+ */
+export function bestCultureAffinity(a: string[], b: string[]): { level: number; a: string; b: string } {
+  let best = { level: 2, a: "", b: "" };
+  for (const x of a) for (const y of b) {
+    if ((x === "Other") || (y === "Other")) continue;
+    const level = cultureAffinity(x, y);
+    if (level < best.level) best = { level, a: x, b: y };
+    if (level === 0) return best;
+  }
+  return best;
+}
+
 export function playtomicLink(city: string) {
   return `https://playtomic.io/search?q=${encodeURIComponent(city)}`;
 }

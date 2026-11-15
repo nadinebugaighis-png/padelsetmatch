@@ -1573,6 +1573,7 @@ export type Database = {
           main_goal: string | null
           mixed_doubles: boolean | null
           nationality: string | null
+          nationality_2: string
           no_show_count: number
           onboarding_stage: string
           other_sports: string[]
@@ -1632,6 +1633,7 @@ export type Database = {
           main_goal?: string | null
           mixed_doubles?: boolean | null
           nationality?: string | null
+          nationality_2?: string
           no_show_count?: number
           onboarding_stage?: string
           other_sports?: string[]
@@ -1691,6 +1693,7 @@ export type Database = {
           main_goal?: string | null
           mixed_doubles?: boolean | null
           nationality?: string | null
+          nationality_2?: string
           no_show_count?: number
           onboarding_stage?: string
           other_sports?: string[]

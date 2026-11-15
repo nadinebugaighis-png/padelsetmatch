@@ -6,6 +6,7 @@ import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvaila
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
+import { formatNationalities } from "@/lib/affinity";
 import { Camera, ChevronDown, GraduationCap, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
 import { nativeShare } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
@@ -212,7 +213,7 @@ function ProfilePage() {
               <div className="min-w-0">
                 <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
                 <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
-                  {label(p.level)} · {p.nationality}
+                  {[label(p.level), formatNationalities(p)].filter(Boolean).join(" · ")}
                 </p>
                 <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
               </div>

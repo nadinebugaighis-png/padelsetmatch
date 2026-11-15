@@ -95,6 +95,7 @@ function Onboarding() {
   const [age_min, setAgeMin] = useState<number | null>(null);
   const [age_max, setAgeMax] = useState<number | null>(null);
   const [nationality, setNationality] = useState("__none__");
+  const [nationality2, setNationality2] = useState("");
   const [locBlocks, setLocBlocks] = useState<LocBlock[]>([emptyBlock()]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [showAllLangs, setShowAllLangs] = useState(false);
@@ -141,6 +142,7 @@ function Onboarding() {
       if (p.friend_interested_in?.length) setFriendAud(p.friend_interested_in);
       if (p.partner_interested_in?.length) setPartnerAud(p.partner_interested_in);
       setNationality(p.nationality ? p.nationality : "__none__");
+      setNationality2(p.nationality_2 ?? "");
       setLevel((p.level ?? "") as PadelLevel | "");
       setPriorities(Array.isArray(p.priorities) ? p.priorities : []);
       setLookingFor((p.looking_for ?? "both") as LookingFor);
@@ -344,6 +346,8 @@ function Onboarding() {
         age_bracket_lo: (bracket ?? bracketForMidpoint(age))?.[0] ?? null,
         age_bracket_hi: (bracket ?? bracketForMidpoint(age))?.[1] ?? null,
         age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
+        // A second nationality only counts alongside a real first one.
+        nationality_2: nationality !== "__none__" && nationality !== "" && nationality !== "Other" && nationality2 !== nationality ? nationality2 : "",
         zone: first ? first.city : "",
         locations: encodedLocations, languages,
         level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
@@ -703,6 +707,16 @@ function Onboarding() {
                 <option value="" className="bg-[var(--court-deep)]">{tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}</option>
               </select>
               <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional", "Opcional", "Optionnel")}</p>
+              {nationality !== "__none__" && nationality !== "" && nationality !== "Other" && (
+                <div className="mt-3">
+                  <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")}</label>
+                  <select aria-label={tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")} className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality2 === nationality ? "" : nationality2} onChange={(e) => setNationality2(e.target.value)}>
+                    <option value="" className="bg-[var(--court-deep)]">{tr("None", "Ninguna", "Aucune")}</option>
+                    {NATIONALITIES.filter((n) => n !== "Other" && n !== nationality).map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
+                  </select>
+                  <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional", "Opcional", "Optionnel")}</p>
+                </div>
+              )}
             </div>
 
             <div data-field="languages" className={fieldCls("languages")}>

@@ -62,3 +62,6 @@
 - [x] Fix 4 deep-scan findings: no-show reports, player-written scores, blocked-player photo links, sign-up redirect.
 - [x] Remove fine lines in the "You two" section; show the star note only after tapping the star.
 - [x] Speed up compatibility reads (lighter AI thinking, warm more players).
+
+## Second nationality (15 Nov)
+- [x] Optional second nationality on the profile form; cards show both with a plain space (e.g. "Libyan British"); matching checks both.

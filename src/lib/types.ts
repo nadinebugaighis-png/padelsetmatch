@@ -216,6 +216,7 @@ export type Profile = {
   age_bracket_lo?: number | null;
   age_bracket_hi?: number | null;
   nationality: string;
+  nationality_2?: string | null;
   zone: string;
   locations: string[];
   languages: string[];

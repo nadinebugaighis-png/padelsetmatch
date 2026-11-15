@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS nationality_2 text NOT NULL DEFAULT '';
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_nationality_2_len CHECK (char_length(nationality_2) <= 40);

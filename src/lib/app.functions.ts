@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { cultureAffinity, languageOverlap, locationAffinity, zoneAffinity } from "./affinity";
+import { bestCultureAffinity, formatNationalities, languageOverlap, locationAffinity, nationalityList, zoneAffinity } from "./affinity";
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 import { completeAccountDeletion, isOrderedAgeRange } from "./qa-safety";
 import { ageMatchesPreference, bracketForMidpoint } from "./age-bracket";
@@ -20,6 +20,7 @@ const ProfileInput = z.object({
   age_bracket_lo: z.number().int().min(18).max(99).nullable().optional(),
   age_bracket_hi: z.number().int().min(18).max(99).nullable().optional(),
   nationality: z.string().max(40).default(""),
+  nationality_2: z.string().max(40).default(""),
   zone: z.string().min(1).max(60),
   locations: z.array(z.string().min(1).max(240)).max(15).default([]),
   languages: z.array(z.string().min(1).max(30)).max(10).default([]),
@@ -309,9 +310,10 @@ function scoreCandidate(me: Profile, c: Profile) {
     lifestyle += Math.min(25, langs.length * 12);
   }
 
-  const ca = cultureAffinity(me.nationality, c.nationality);
-  if (ca === 0) { score += 10; reasons.push(`Both ${me.nationality}`); lifestyle += 20; }
-  else if (ca === 1) { score += 8; reasons.push(`${me.nationality} × ${c.nationality}, neighboring cultures`); lifestyle += 16; }
+  // Checks every nationality each player has (up to two each).
+  const ca = bestCultureAffinity(nationalityList(me), nationalityList(c));
+  if (ca.level === 0) { score += 10; reasons.push(`Both ${ca.a}`); lifestyle += 20; }
+  else if (ca.level === 1) { score += 8; reasons.push(`${ca.a} × ${ca.b}, neighboring cultures`); lifestyle += 16; }
 
   let priorityScore = 0;
   const shared: string[] = [];
@@ -1314,7 +1316,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
 - Padel level: ${p.level}
-- Nationality: ${p.nationality}
+- Nationality: ${formatNationalities(p) || "n/a"}
 - Languages: ${(p.languages ?? []).join(", ") || "n/a"}
 - Looking for: padel partners
 - Values (top): ${(p.priorities ?? []).slice(0, 5).join(", ") || "n/a"}

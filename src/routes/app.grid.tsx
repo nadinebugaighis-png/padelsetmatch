@@ -968,7 +968,6 @@ function Discover() {
                         {preview.bio && (
                           <blockquote className="mt-4 text-serif italic text-[19px] leading-snug text-[var(--ink)]/85 whitespace-pre-wrap">“{preview.bio.trim()}”</blockquote>
                         )}
-                        <div className="mt-4 h-px bg-[var(--ink)]/10" />
                       </div>
 
 
@@ -1087,7 +1086,7 @@ function Discover() {
                                   { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
                                   { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
                                 ].map((s, i) => (
-                                  <div key={s.key} className={i === 1 ? "pl-4 border-l border-[var(--gold)]/50" : "pr-4"}>
+                                  <div key={s.key} className={i === 1 ? "pl-4" : "pr-4"}>
                                     <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{s.label}</div>
                                     {s.value != null && (
                                       <div className="text-serif text-[26px] leading-tight text-[var(--ink)] tabular-nums mt-0.5">
@@ -1156,10 +1155,7 @@ function Discover() {
                                     {bullets.length > 0 && (
                                       <ul className="space-y-1.5">
                                         {bullets.slice(0, 3).map((b, i) => (
-                                          <li key={i} className="text-[13px] text-[var(--ink)]/80 leading-snug flex gap-2">
-                                            <span className="text-[var(--gold)] shrink-0">—</span>
-                                            <span>{b}</span>
-                                          </li>
+                                          <li key={i} className="text-[13px] text-[var(--ink)]/80 leading-snug">{b}</li>
                                         ))}
                                       </ul>
                                     )}

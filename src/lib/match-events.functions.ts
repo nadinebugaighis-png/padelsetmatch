@@ -443,7 +443,7 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     const { data: profile } = await supabase.from("profiles").select("id, gender").eq("user_id", userId).maybeSingle();
     const { data: event, error } = await supabase
       .from("match_events")
-      .select("*, host:profiles!match_events_host_profile_id_fkey(id, first_name, photo_url), participants:match_event_participants(profile_id, joined_at, profiles(id, first_name, photo_url, gender, level))")
+      .select("*, host:profiles!match_events_host_profile_id_fkey(id, first_name, photo_url), participants:match_event_participants(profile_id, joined_at, profiles(id, first_name, photo_url, gender, level, is_coach))")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);

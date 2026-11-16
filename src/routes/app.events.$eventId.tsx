@@ -355,39 +355,6 @@ function EventDetail() {
               <Pencil className="w-4 h-4" />
             </button>
           )}
-          {me?.iAmHost && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button type="button" aria-label={tr("Match options", "Opciones", "Options")} className="h-9 w-9 grid place-items-center rounded-full text-[var(--ink)] hover:bg-[var(--ink)]/5">
-                  <MoreHorizontal className="w-5 h-5" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white text-[var(--ink)]">
-                {event.status !== "cancelled" && (
-                  <>
-                    <DropdownMenuItem onSelect={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}>
-                      <Pencil className="w-4 h-4" /> {tr("Edit match", "Editar partido", "Modifier")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => void onToggleBooked()}>
-                      <Check className="w-4 h-4" /> {event.court_booked ? tr("Mark court not booked", "Marcar sin reservar", "Marquer non réservée") : tr("Mark court booked", "Marcar pista reservada", "Marquer réservée")}
-                    </DropdownMenuItem>
-                    {(event.participants?.length ?? 0) > 0 && (
-                      <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
-                        <UserPlus className="w-4 h-4" /> {tr("Pass hosting", "Pasar organización", "Transférer")}
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={() => void onCancel()}>
-                      <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
-                    </DropdownMenuItem>
-                  </>
-                )}
-                <DropdownMenuItem onSelect={() => void onDelete()} className="text-red-600 focus:text-red-600">
-                  <Trash2 className="w-4 h-4" /> {tr("Delete match", "Eliminar partido", "Supprimer")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
         </div>
       </div>
 
@@ -538,6 +505,65 @@ function EventDetail() {
           </section>
         );
       })()}
+
+      {/* Host controls: always visible so organisers never hunt for Edit */}
+      {me?.iAmHost && (
+        <section aria-label={tr("Hosting", "Organización", "Organisation")} className="mt-4">
+          <div className="mb-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/60">
+            {tr("You're hosting", "Organizas tú", "Tu organises")}
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {event.status !== "cancelled" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
+                  className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                >
+                  <Pencil className="w-4 h-4" /> {tr("Edit", "Editar", "Modifier")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void onToggleBooked()}
+                  aria-pressed={!!event.court_booked}
+                  className={`h-11 inline-flex items-center justify-center gap-1.5 rounded-full border text-[13px] font-medium transition-colors ${event.court_booked ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]" : "border-[var(--ink)]/15 bg-white text-[var(--ink)] hover:bg-[var(--ink)]/5"}`}
+                >
+                  <Check className="w-4 h-4" /> {event.court_booked ? tr("Booked", "Reservada", "Réservée") : tr("Mark booked", "Marcar reservada", "Marquer réservé")}
+                </button>
+              </>
+            ) : (
+              <div className="col-span-2 h-11 inline-flex items-center justify-center text-[13px] text-[var(--ink)]/60">
+                {tr("Match cancelled", "Partido cancelado", "Match annulé")}
+              </div>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button type="button" className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                  <MoreHorizontal className="w-4 h-4" /> {tr("More", "Más", "Plus")}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white text-[var(--ink)]">
+                {event.status !== "cancelled" && (
+                  <>
+                    {(event.participants?.length ?? 0) > 0 && (
+                      <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
+                        <UserPlus className="w-4 h-4" /> {tr("Pass hosting", "Pasar organización", "Transférer")}
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onSelect={() => void onCancel()}>
+                      <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem onSelect={() => void onDelete()} className="text-red-600 focus:text-red-600">
+                  <Trash2 className="w-4 h-4" /> {tr("Delete match", "Eliminar partido", "Supprimer")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </section>
+      )}
 
       {/* Players */}
       <div className="mt-4">

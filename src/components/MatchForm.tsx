@@ -11,7 +11,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
-import { CLASS_FEE_MAX, CLASS_STUDENT_OPTIONS, DEFAULT_CLASS_STUDENTS, DEFAULT_GENDER_RULE, type GenderRule } from "@/lib/match-rules";
+import { CLASS_STUDENT_OPTIONS, DEFAULT_CLASS_STUDENTS, DEFAULT_GENDER_RULE, type GenderRule } from "@/lib/match-rules";
 
 export type MatchFormValues = {
   starts_at: string;
@@ -137,7 +137,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
   const [isClass, setIsClass] = useState<boolean>(initial?.is_class ?? false);
   const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? DEFAULT_CLASS_STUDENTS);
-  const [classFee, setClassFee] = useState(initial?.class_fee ?? "");
+  const classFee = initial?.class_fee ?? "";
   // Students already in (everyone except the coach) — the class can't be made smaller than that.
   const minStudents = Math.max(1, appPlayersCount - 1);
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
@@ -305,7 +305,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               )}
             </p>
           </div>
-          <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={isClass} onCheckedChange={(v) => { setIsClass(v); if (v && classStudents < minStudents) setClassStudents(Math.min(3, minStudents)); }} aria-label={tr("Class", "Clase", "Cours")} />
+          <Switch className="data-[state=checked]:bg-[var(--plum)] shrink-0" checked={isClass} onCheckedChange={(v) => { setIsClass(v); if (v && classStudents < minStudents) setClassStudents(Math.min(3, minStudents)); }} aria-label={tr("Class", "Clase", "Cours")} />
         </div>
         <div className={rowDivider} />
         {isClass ? (
@@ -320,25 +320,6 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
                   </button>
                 ))}
               </div>
-            </div>
-            <div className={rowDivider} />
-            <div className="py-1">
-              <input
-                type="text"
-                value={classFee}
-                maxLength={CLASS_FEE_MAX}
-                onChange={(e) => setClassFee(e.target.value)}
-                placeholder={tr("Fee per student, e.g. €25 (optional)", "Precio por alumno, p. ej. 25 € (opcional)", "Tarif par élève, ex. 25 € (optionnel)")}
-                aria-label={tr("Fee per student", "Precio por alumno", "Tarif par élève")}
-                className={bareInput}
-              />
-              <p className="pb-2 -mt-1 text-[11px] text-[var(--ink)]/50 leading-snug">
-                {tr(
-                  "Students pay you directly, by Bizum or on court.",
-                  "Los alumnos te pagan directamente, por Bizum o en la pista.",
-                  "Les élèves te paient directement, par virement ou sur le terrain.",
-                )}
-              </p>
             </div>
           </>
         ) : (

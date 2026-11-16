@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
-import { DEFAULT_GENDER_RULE, GENDER_RULES, type GenderRule } from "./match-rules";
+import { DEFAULT_GENDER_RULE, GENDER_RULES, matchCapacity, type GenderRule } from "./match-rules";
 import { locationMatchKeywords } from "./location-matching";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
@@ -249,6 +249,9 @@ const CreateInput = z.object({
   court_booked: z.boolean(),
   is_private_court: z.boolean().optional(),
   free_court: z.boolean().optional(),
+  is_class: z.boolean().optional(),
+  class_students: z.number().int().min(1).max(3).nullable().optional(),
+  class_fee: z.string().trim().max(40).nullable().optional(),
 });
 
 export const createMatchEvent = createServerFn({ method: "POST" })
@@ -260,7 +263,13 @@ export const createMatchEvent = createServerFn({ method: "POST" })
     if (!profile) throw new Error("No profile");
     const { data: created, error } = await supabase
       .from("match_events")
-      .insert({ ...data, host_profile_id: profile.id })
+      .insert({
+        ...data,
+        ...(data.is_class
+          ? { extra_confirmed: 0, class_students: data.class_students ?? 3, class_fee: data.class_fee || null }
+          : { class_students: null, class_fee: null }),
+        host_profile_id: profile.id,
+      })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -418,7 +427,8 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       // Ready-made daily games (auto_slot_id) list the organiser as host for
       // management only; they count as "my match" just once she actually joins.
       const iAmParticipant = joined || (iAmHost && !e.auto_slot_id);
-      return { ...e, guests, filled, needs: Math.max(0, 4 - filled), iAmHost, iAmParticipant };
+      const capacity = matchCapacity(e);
+      return { ...e, guests, filled, capacity, needs: Math.max(0, capacity - filled), iAmHost, iAmParticipant };
     });
     return { events: data.needs ? list.filter((e) => e.needs === data.needs) : list };
   });
@@ -464,7 +474,7 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
 
     return {
-      event: { ...event, guests, filled, needs: Math.max(0, 4 - filled), invites, invite_lock_until: null, lock_active: false },
+      event: { ...event, guests, filled, capacity: matchCapacity(event), needs: Math.max(0, matchCapacity(event) - filled), invites, invite_lock_until: null, lock_active: false },
       me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
     };
 
@@ -482,7 +492,7 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
     if (!profile.first_name || !profile.level) throw new Error("Please add your name and padel level first.");
     const { data: event } = await supabase
       .from("match_events")
-      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id")
+      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id, is_class, class_students")
       .eq("id", data.id)
       .maybeSingle();
     if (!event) throw new Error("Match not found");
@@ -506,7 +516,7 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })
       .eq("match_event_id", data.id);
-    if ((count ?? 0) + (event.extra_confirmed ?? 0) >= 4) throw new Error("This match is full");
+    if ((count ?? 0) + (event.extra_confirmed ?? 0) >= matchCapacity(event)) throw new Error(event.is_class ? "This class is full" : "This match is full");
     const { error } = await supabase
       .from("match_event_participants")
       .insert({ match_event_id: data.id, profile_id: profile.id });
@@ -617,6 +627,9 @@ export const duplicateMatchEvent = createServerFn({ method: "POST" })
         level_max: src.level_max,
         gender_rule: src.gender_rule,
         free_court: src.free_court ?? false,
+        is_class: src.is_class ?? false,
+        class_students: src.class_students ?? null,
+        class_fee: src.class_fee ?? null,
         extra_confirmed: src.extra_confirmed ?? 0,
         note: src.note,
         playtomic_link: src.playtomic_link,
@@ -658,6 +671,9 @@ const UpdateInput = z.object({
   court_booked: z.boolean().optional(),
   is_private_court: z.boolean().optional(),
   free_court: z.boolean().optional(),
+  is_class: z.boolean().optional(),
+  class_students: z.number().int().min(1).max(3).nullable().optional(),
+  class_fee: z.string().trim().max(40).nullable().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });
 import { pickPlayerEditable } from "./match-player-edit";
@@ -671,7 +687,7 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     const { id, ...rawPatch } = data;
     const { data: current } = await supabase
       .from("match_events")
-      .select("extra_confirmed, host_profile_id, status")
+      .select("extra_confirmed, host_profile_id, status, is_class, class_students")
       .eq("id", id)
       .maybeSingle();
     if (!current) throw new Error("Match not found");
@@ -697,15 +713,29 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
       .from("match_event_participants")
       .select("id", { count: "exact", head: true })
       .eq("match_event_id", id);
+    const isClass = inputPatch.is_class ?? current.is_class ?? false;
+    const capacity = matchCapacity({
+      is_class: isClass,
+      class_students: inputPatch.class_students !== undefined ? inputPatch.class_students : current.class_students,
+    });
+    const { count: guestCount } = await supabase
+      .from("guest_participants")
+      .select("id", { count: "exact", head: true })
+      .eq("match_event_id", id);
+    const people = (count ?? 0) + (guestCount ?? 0);
+    if (people > capacity) {
+      throw new Error(`${people} players have already joined. Choose room for at least ${people - 1} student${people - 1 === 1 ? "" : "s"}.`);
+    }
     const extraConfirmed = Math.min(
-      inputPatch.extra_confirmed ?? current.extra_confirmed ?? 0,
-      Math.max(0, 4 - (count ?? 0)),
+      isClass ? 0 : inputPatch.extra_confirmed ?? current.extra_confirmed ?? 0,
+      Math.max(0, capacity - people),
     );
-    const filled = (count ?? 0) + extraConfirmed;
+    const filled = people + extraConfirmed;
     const patch = {
       ...inputPatch,
+      ...(isClass ? {} : { class_students: null, class_fee: null }),
       extra_confirmed: extraConfirmed,
-      status: inputPatch.status ?? (filled >= 4 ? "full" : "open"),
+      status: inputPatch.status ?? (filled >= capacity ? "full" : "open"),
     };
     const { error } = await supabase
       .from("match_events")
@@ -822,6 +852,10 @@ export type PublicMatchView = {
   note: string | null;
   court_booked: boolean;
   free_court?: boolean;
+  is_class?: boolean;
+  class_students?: number | null;
+  class_fee?: string | null;
+  capacity?: number;
   status: string;
   extra_confirmed: number;
   filled: number;
@@ -971,7 +1005,7 @@ export const respondToMatchInvite = createServerFn({ method: "POST" })
       }
       const { data: ev } = await supabase
         .from("match_events")
-        .select("gender_rule, status, extra_confirmed")
+        .select("gender_rule, status, extra_confirmed, is_class, class_students")
         .eq("id", invite.match_event_id)
         .maybeSingle();
       if (!ev) throw new Error("Match not found");
@@ -990,9 +1024,10 @@ export const respondToMatchInvite = createServerFn({ method: "POST" })
       // Allow accept even if event is 'full' as long as an actual slot exists
       // (accounting for extra_confirmed placeholders). This keeps invited
       // players prioritized when the host set extra_confirmed.
-      if ((count ?? 0) + (ev.extra_confirmed ?? 0) >= 4) {
+      const cap = matchCapacity(ev);
+      if ((count ?? 0) + (ev.extra_confirmed ?? 0) >= cap) {
         // Try to reclaim a placeholder slot for the invited player.
-        const canReclaim = (ev.extra_confirmed ?? 0) > 0 && (count ?? 0) < 4;
+        const canReclaim = (ev.extra_confirmed ?? 0) > 0 && (count ?? 0) < cap;
         if (canReclaim) {
           await supabase
             .from("match_events")

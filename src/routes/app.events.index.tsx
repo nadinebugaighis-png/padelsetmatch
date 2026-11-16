@@ -78,6 +78,10 @@ type EventLite = {
   court_booked?: boolean;
   is_private_court?: boolean;
   free_court?: boolean;
+  is_class?: boolean;
+  class_students?: number | null;
+  class_fee?: string | null;
+  capacity?: number;
   host?: { first_name?: string } | null;
   participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
   guests?: Array<{ id: string; display_name: string; level?: string | null }>;
@@ -649,13 +653,14 @@ function MatchCard({
     ? e.level_min === e.level_max ? lvlName(e.level_min) : `${lvlName(e.level_min)} – ${lvlName(e.level_max ?? e.level_min)}`
     : "";
   const mine = e.iAmHost || e.iAmParticipant;
-  const full = e.filled >= 4;
+  const capacity = e.capacity ?? 4;
+  const full = e.filled >= capacity;
 
   const playerSlots = [
     ...(e.participants ?? []).map((participant) => ({ participant })),
     ...(e.guests ?? []).map((guest) => ({ guest })),
   ];
-  const slots = Array.from({ length: 4 }, (_, i) => playerSlots[i] ?? null);
+  const slots = Array.from({ length: capacity }, (_, i) => playerSlots[i] ?? null);
 
   // Today / Tomorrow badge for the date block
   const today = startOfDay(new Date());
@@ -735,6 +740,15 @@ function MatchCard({
 
           {/* Meta row */}
           <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+            {e.is_class && (
+              <>
+                <span className="rounded-full border border-[var(--gold)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">
+                  {tr("Class", "Clase", "Cours")}
+                </span>
+                {e.class_fee && <span className="font-semibold text-[var(--ink)]/80">{e.class_fee}</span>}
+                <span className="text-[var(--ink)]/25">·</span>
+              </>
+            )}
             {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
             {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
             {genderLabel && <span>{genderLabel}</span>}

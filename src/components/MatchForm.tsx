@@ -11,7 +11,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
-import { DEFAULT_GENDER_RULE, type GenderRule } from "@/lib/match-rules";
+import { CLASS_FEE_MAX, CLASS_STUDENT_OPTIONS, DEFAULT_CLASS_STUDENTS, DEFAULT_GENDER_RULE, type GenderRule } from "@/lib/match-rules";
 
 export type MatchFormValues = {
   starts_at: string;
@@ -31,6 +31,9 @@ export type MatchFormValues = {
   court_booked: boolean;
   is_private_court: boolean;
   free_court: boolean;
+  is_class: boolean;
+  class_students: number | null;
+  class_fee: string | null;
 };
 
 export type MatchFormInitial = Partial<MatchFormValues> & {
@@ -132,6 +135,11 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   );
   const [freeCourt, setFreeCourt] = useState<boolean>(initial?.free_court ?? false);
   const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
+  const [isClass, setIsClass] = useState<boolean>(initial?.is_class ?? false);
+  const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? DEFAULT_CLASS_STUDENTS);
+  const [classFee, setClassFee] = useState(initial?.class_fee ?? "");
+  // Students already in (everyone except the coach) — the class can't be made smaller than that.
+  const minStudents = Math.max(1, appPlayersCount - 1);
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
   const [courtBooked, setCourtBooked] = useState<boolean>(initial?.court_booked ?? false);
@@ -160,7 +168,12 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
     }
     setPlaytomicError(null);
 
-    const extraConfirmed = Math.max(0, 4 - appPlayersCount - playersNeeded);
+    const extraConfirmed = isClass ? 0 : Math.max(0, 4 - appPlayersCount - playersNeeded);
+    const classValues = {
+      is_class: isClass,
+      class_students: isClass ? classStudents : null,
+      class_fee: isClass ? classFee.trim() || null : null,
+    };
     const values: MatchFormValues =
       locMode === "club" && club
         ? {
@@ -181,6 +194,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             court_booked: courtBooked,
             is_private_court: false,
             free_court: freeCourt,
+            ...classValues,
           }
         : {
             starts_at: new Date(when).toISOString(),
@@ -200,6 +214,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             court_booked: courtBooked,
             is_private_court: isPrivateCourt,
             free_court: freeCourt,
+            ...classValues,
           };
     await onSubmit(values);
   };
@@ -280,6 +295,54 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
       {/* Card 2 — The match */}
       <div className={cardCls}>
         <div className={rowCls}>
+          <div className="min-w-0">
+            <span className={rowLabel}>{tr("Class", "Clase", "Cours")}</span>
+            <p className="text-[11px] text-[var(--ink)]/50 leading-snug">
+              {tr(
+                "You're coaching. Players join as your students.",
+                "Tú das la clase. Los jugadores se unen como alumnos.",
+                "Tu donnes le cours. Les joueurs rejoignent comme élèves.",
+              )}
+            </p>
+          </div>
+          <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={isClass} onCheckedChange={(v) => { setIsClass(v); if (v && classStudents < minStudents) setClassStudents(Math.min(3, minStudents)); }} aria-label={tr("Class", "Clase", "Cours")} />
+        </div>
+        <div className={rowDivider} />
+        {isClass ? (
+          <>
+            <div className={rowCls}>
+              <span className={rowLabel}>{tr("Students", "Alumnos", "Élèves")}</span>
+              <div className="grid grid-cols-3 rounded-lg bg-[var(--ink)]/[0.06] p-0.5 w-44">
+                {CLASS_STUDENT_OPTIONS.map((n) => (
+                  <button key={n} type="button" aria-pressed={classStudents === n} disabled={n < minStudents} onClick={() => setClassStudents(n)}
+                    className={`h-8 rounded-md text-xs font-medium tabular-nums transition disabled:opacity-30 ${classStudents === n ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/55"}`}>
+                    {n}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className={rowDivider} />
+            <div className="py-1">
+              <input
+                type="text"
+                value={classFee}
+                maxLength={CLASS_FEE_MAX}
+                onChange={(e) => setClassFee(e.target.value)}
+                placeholder={tr("Fee per student, e.g. €25 (optional)", "Precio por alumno, p. ej. 25 € (opcional)", "Tarif par élève, ex. 25 € (optionnel)")}
+                aria-label={tr("Fee per student", "Precio por alumno", "Tarif par élève")}
+                className={bareInput}
+              />
+              <p className="pb-2 -mt-1 text-[11px] text-[var(--ink)]/50 leading-snug">
+                {tr(
+                  "Students pay you directly, by Bizum or on court.",
+                  "Los alumnos te pagan directamente, por Bizum o en la pista.",
+                  "Les élèves te paient directement, par virement ou sur le terrain.",
+                )}
+              </p>
+            </div>
+          </>
+        ) : (
+        <div className={rowCls}>
           <span className={rowLabel}>{tr("Players needed", "Jugadores que faltan", "Joueurs recherchés")}</span>
           <div className="flex items-center gap-1">
             <button type="button" aria-label="−" disabled={playersNeeded <= 0} onClick={() => setPlayersNeeded(Math.max(0, playersNeeded - 1))} className={stepBtn}><Minus className="size-3.5" /></button>
@@ -287,6 +350,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             <button type="button" aria-label="+" disabled={playersNeeded >= maxNeeded} onClick={() => setPlayersNeeded(Math.min(maxNeeded, playersNeeded + 1))} className={stepBtn}><Plus className="size-3.5" /></button>
           </div>
         </div>
+        )}
         <div className={rowDivider} />
         <div className="py-2.5">
           <div className="grid grid-cols-4 rounded-lg bg-[var(--ink)]/[0.06] p-0.5">

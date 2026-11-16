@@ -61,3 +61,18 @@ export function matchPreviewMeta(freeCourt: boolean | null | undefined): { title
     description: "You're invited to a padel match on PadelSetMatch. Tap to grab an open spot.",
   };
 }
+
+// ---------- Classes ----------
+/** A class is a coach (the host) plus 1–3 students. */
+export const CLASS_STUDENT_OPTIONS = [1, 2, 3] as const;
+export const DEFAULT_CLASS_STUDENTS = 3;
+export const CLASS_FEE_MAX = 40;
+
+type ClassLike = { is_class?: boolean | null; class_students?: number | null };
+
+/** Seats in a game, host included: 4 for a match, coach + students for a class. Mirrors public.match_event_capacity. */
+export function matchCapacity(e: ClassLike | null | undefined): number {
+  if (!e?.is_class) return 4;
+  const n = e.class_students ?? DEFAULT_CLASS_STUDENTS;
+  return 1 + Math.min(3, Math.max(1, n));
+}

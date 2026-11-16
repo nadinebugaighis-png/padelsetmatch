@@ -1,6 +1,6 @@
 import { MapPin, Clock, Plus } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
-import { genderRuleLabel } from "@/lib/match-rules";
+import { genderRuleLabel, matchCapacity } from "@/lib/match-rules";
 
 export type ProgrammeMatch = {
   starts_at: string;
@@ -12,6 +12,9 @@ export type ProgrammeMatch = {
   gender_rule?: string | null;
   court_booked?: boolean | null;
   free_court?: boolean | null;
+  is_class?: boolean | null;
+  class_students?: number | null;
+  class_fee?: string | null;
   note?: string | null;
   filled?: number | null;
   participant_names?: string[] | null;
@@ -67,7 +70,7 @@ export function MatchProgrammeCard({
   const dateBadge = isToday ? tr("Today", "Hoy", "Auj.") : isTomorrow ? tr("Tomorrow", "Mañana", "Demain") : null;
 
   const names = match.participant_names ?? [];
-  const openSpots = Math.max(0, 4 - (match.filled ?? names.length));
+  const openSpots = Math.max(0, matchCapacity(match) - (match.filled ?? names.length));
   const genderLabel = match.gender_rule && match.gender_rule !== "open" ? genderRuleLabel(match.gender_rule, tr) : null;
 
   return (
@@ -115,6 +118,15 @@ export function MatchProgrammeCard({
           </div>
 
           <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+            {match.is_class && (
+              <>
+                <span className="rounded-full border border-[var(--gold)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">
+                  {tr("Class", "Clase", "Cours")}
+                </span>
+                {match.class_fee && <span className="font-semibold text-[var(--ink)]/80">{match.class_fee}</span>}
+                <span className="text-[var(--ink)]/25">·</span>
+              </>
+            )}
             {match.level_min && (
               <span className="font-semibold text-[var(--ink)]/80">
                 {match.level_min}

@@ -149,7 +149,7 @@ function PublicMatchPage() {
   const match = q.data?.match;
   const genderLabel = !match ? "" : genderRuleLabel(match.gender_rule, tr);
   const freeCourt = !!match?.free_court;
-  const totalSpots = 4;
+  const totalSpots = match?.capacity ?? 4;
   const openSpots = match ? Math.max(0, totalSpots - (match.filled ?? 0)) : 0;
   const shareUrl = `${shareOrigin()}/m/${eventId}`;
 

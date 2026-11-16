@@ -448,6 +448,9 @@ function EventDetail() {
                 <div className="text-xs text-[var(--ink)]/60 truncate">{event.club_address ?? event.city}</div>
               )}
               <div className="mt-2 text-[12px] text-[var(--ink)]/75">
+                {event.is_class && (
+                  <span className="mr-1.5 inline-flex items-center rounded-full border border-[var(--gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">{tr("Class", "Clase", "Cours")}</span>
+                )}
                 {genderLabel} · {label(event.level_min)} · {event.court_booked ? tr("Court booked ✓", "Pista reservada ✓", "Pista réservée ✓") : tr("Court to book", "Falta pista", "Pista à réserver")}
                 {event.free_court && (
                   <span className="ml-1.5 inline-flex items-center rounded-full bg-[var(--court-deep)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
@@ -490,6 +493,26 @@ function EventDetail() {
                 </a>
               )}
             </div>
+            {event.is_class && (
+              <div className="border-t border-[var(--ink)]/10 px-4 py-2.5 text-[13px] text-[var(--ink)] leading-relaxed">
+                <span className="text-serif italic">
+                  {tr(`Coached by ${event.host?.first_name ?? "the host"}`, `Clase con ${event.host?.first_name ?? "el organizador"}`, `Cours avec ${event.host?.first_name ?? "l'hôte"}`)}
+                </span>
+                <span className="text-[var(--ink)]/50"> · </span>
+                {tr(
+                  `${event.class_students ?? 3} student${(event.class_students ?? 3) === 1 ? "" : "s"}`,
+                  `${event.class_students ?? 3} alumno${(event.class_students ?? 3) === 1 ? "" : "s"}`,
+                  `${event.class_students ?? 3} élève${(event.class_students ?? 3) === 1 ? "" : "s"}`,
+                )}
+                {event.class_fee && (
+                  <>
+                    <span className="text-[var(--ink)]/50"> · </span>
+                    <span className="font-semibold">{event.class_fee}</span>{" "}
+                    <span className="text-[var(--ink)]/60">{tr("per student, paid to the coach", "por alumno, se paga al profesor", "par élève, payé au coach")}</span>
+                  </>
+                )}
+              </div>
+            )}
             {event.note && (
               <p className="border-t border-[var(--ink)]/10 px-4 py-2.5 text-sm text-[var(--ink)] whitespace-pre-wrap">{event.note}</p>
             )}
@@ -570,7 +593,7 @@ function EventDetail() {
         <div className="flex items-center gap-3 mb-3">
           <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/60">{tr("Lineup", "Alineación", "Composition")}</div>
           <div className="flex-1 h-px bg-[var(--ink)]/10" />
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/4</div>
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/{event.capacity ?? 4}</div>
         </div>
         <div className="flex flex-wrap gap-2">
           {(event.participants ?? []).map((p: any) => {
@@ -597,6 +620,9 @@ function EventDetail() {
                 <span className="text-xs text-[var(--ink)]">
                   {p.profiles?.first_name}{isMe ? tr(" (you)", " (tú)", " (toi)") : ""}
                 </span>
+                {event.is_class && isHost && (
+                  <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/50">{tr("coach", "profesor", "coach")}</span>
+                )}
               </button>
             );
           })}
@@ -642,7 +668,9 @@ function EventDetail() {
               }`}
             >
               <span className="text-xs text-[var(--ink)]">
-                {canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
+                {event.is_class
+                  ? canJoin ? tr("Join as student", "Unirme como alumno", "Rejoindre comme élève") : tr("Student place", "Plaza de alumno", "Place d'élève")
+                  : canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
               </span>
             </button>
           ))}
@@ -692,7 +720,11 @@ function EventDetail() {
             onClick={onJoin}
             className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.22em] font-semibold shadow-[0_10px_24px_-14px_rgba(15,62,46,0.6)] active:scale-[0.99] transition-transform"
           >
-            {tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
+            {event.is_class
+              ? event.class_fee
+                ? tr(`Join this class · ${event.class_fee}`, `Unirme a la clase · ${event.class_fee}`, `Rejoindre ce cours · ${event.class_fee}`)
+                : tr("Join this class", "Unirme a la clase", "Rejoindre ce cours")
+              : tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
         )}
         {me?.iAmParticipant && (!me?.iAmHost || (event.participants ?? []).some((p: any) => p.profile_id === me?.id)) && event.status !== "cancelled" && (

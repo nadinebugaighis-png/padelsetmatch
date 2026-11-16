@@ -921,6 +921,8 @@ export type Database = {
         Row: {
           auto_slot_id: string | null
           city: string | null
+          class_fee: string | null
+          class_students: number | null
           club_address: string | null
           club_lat: number | null
           club_lng: number | null
@@ -935,6 +937,7 @@ export type Database = {
           host_profile_id: string
           id: string
           invite_lock_until: string | null
+          is_class: boolean
           is_private_court: boolean
           level_max: string
           level_min: string
@@ -948,6 +951,8 @@ export type Database = {
         Insert: {
           auto_slot_id?: string | null
           city?: string | null
+          class_fee?: string | null
+          class_students?: number | null
           club_address?: string | null
           club_lat?: number | null
           club_lng?: number | null
@@ -962,6 +967,7 @@ export type Database = {
           host_profile_id: string
           id?: string
           invite_lock_until?: string | null
+          is_class?: boolean
           is_private_court?: boolean
           level_max?: string
           level_min?: string
@@ -975,6 +981,8 @@ export type Database = {
         Update: {
           auto_slot_id?: string | null
           city?: string | null
+          class_fee?: string | null
+          class_students?: number | null
           club_address?: string | null
           club_lat?: number | null
           club_lng?: number | null
@@ -989,6 +997,7 @@ export type Database = {
           host_profile_id?: string
           id?: string
           invite_lock_until?: string | null
+          is_class?: boolean
           is_private_court?: boolean
           level_max?: string
           level_min?: string
@@ -2126,6 +2135,10 @@ export type Database = {
       is_verified_pair: { Args: { _other: string }; Returns: boolean }
       list_my_favorite_ids: { Args: never; Returns: string[] }
       list_public_upcoming_matches: { Args: { _limit?: number }; Returns: Json }
+      match_event_capacity: {
+        Args: { _class_students: number; _is_class: boolean }
+        Returns: number
+      }
       my_profile_id: { Args: never; Returns: string }
       open_intro_chat: {
         Args: {

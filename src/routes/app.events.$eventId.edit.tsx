@@ -120,6 +120,9 @@ function EditEvent() {
           court_booked: event.court_booked,
           is_private_court: event.is_private_court,
           free_court: event.free_court ?? false,
+          is_class: event.is_class ?? false,
+          class_students: event.class_students ?? null,
+          class_fee: event.class_fee ?? null,
           app_players_count: event.participants?.length ?? 1,
         }}
       />

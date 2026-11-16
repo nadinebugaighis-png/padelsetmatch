@@ -256,10 +256,10 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
               <label className={labelCls}>{tr("Is this a private court?", "¿Es una pista privada?", "Est-ce un terrain privé ?")}</label>
               <div className="grid grid-cols-2 gap-2">
                 <SegButton active={!isPrivateCourt} onClick={() => setIsPrivateCourt(false)}>
-                  {tr("No — club or residential", "No — club o urbanización", "Non — club ou résidence")}
+                  {tr("No (club or residential)", "No (club o urbanización)", "Non (club ou résidence)")}
                 </SegButton>
                 <SegButton active={isPrivateCourt} onClick={() => setIsPrivateCourt(true)}>
-                  {tr("Yes — private home", "Sí — casa privada", "Oui — domicile privé")}
+                  {tr("Yes (private home)", "Sí (casa privada)", "Oui (domicile privé)")}
                 </SegButton>
               </div>
               <p className={helperCls}>

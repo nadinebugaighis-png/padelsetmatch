@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sharesMyArea } from "./area-match";
+import { sharesMyArea, isMoralejaMember } from "./area-match";
 import { presetByKey } from "./location-presets";
 
 const loc = (city: string, ...areas: string[]) => ({
@@ -37,6 +37,20 @@ describe("sharesMyArea", () => {
   });
   it("city-only players see their whole city", () => {
     expect(sharesMyArea(loc("Madrid"), loc("Madrid", "Alcobendas"))).toBe(true);
+  });
+});
+
+describe("isMoralejaMember", () => {
+  it("is true for La Moraleja and its surrounding communities", () => {
+    expect(isMoralejaMember(loc("Madrid", "La Moraleja"))).toBe(true);
+    expect(isMoralejaMember(loc("Madrid", "El Soto"))).toBe(true);
+    expect(isMoralejaMember(loc("Madrid", "La Moraleja", "Salamanca"))).toBe(true);
+  });
+  it("is false for other areas, city-only players and other cities", () => {
+    expect(isMoralejaMember(loc("Madrid", "Salamanca"))).toBe(false);
+    expect(isMoralejaMember(loc("Madrid", "Hortaleza"))).toBe(false);
+    expect(isMoralejaMember(loc("Madrid"))).toBe(false);
+    expect(isMoralejaMember(loc("London", "Ealing"))).toBe(false);
   });
 });
 

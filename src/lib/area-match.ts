@@ -52,3 +52,14 @@ export function sharesMyArea(me: Loc, them: Loc): boolean {
   for (const c of mine.cities) if (theirs.cities.has(c)) return true;
   return false;
 }
+
+/**
+ * Roster heading: true when the viewer has chosen La Moraleja — or one of the
+ * surrounding communities that count as it — as one of their areas. Only
+ * La Moraleja gets its own heading for now; other places keep the plain one.
+ */
+export function isMoralejaMember(p: Loc): boolean {
+  return (p.locations ?? []).some(
+    (l) => canonicalArea(decodeLocation(l).area ?? "") === "la moraleja",
+  );
+}

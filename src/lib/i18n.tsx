@@ -102,6 +102,7 @@ const en: Dict = {
 
   // Discover
   "disc.h1": "Tap who you'd play.",
+  "disc.h1.sub": "Tap who you'd like to play",
   "disc.sub": "Mutual taps open a chat.",
   "disc.scoreA": "The",
   "disc.scoreB": "badge shows how well you pair up —",
@@ -383,6 +384,7 @@ const es: Dict = {
 
   // Discover
   "disc.h1": "Pulsa sobre quien te gustaría jugar.",
+  "disc.h1.sub": "Toca con quién te gustaría jugar",
   "disc.sub": "Si os pulsáis mutuamente, se abre el chat.",
   "disc.scoreA": "La",
   "disc.scoreB": "mide cuánto encajan —",
@@ -659,6 +661,7 @@ const fr: Dict = {
 
   // Discover
   "disc.h1": "Découvre Home.",
+  "disc.h1.sub": "Touchez avec qui vous aimeriez jouer",
   "disc.sub": "Les taps mutuels ouvrent un chat.",
   "disc.scoreA": "Le",
   "disc.scoreB": "mesure à quel point vos réponses s'alignent —",

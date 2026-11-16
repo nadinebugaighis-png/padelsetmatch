@@ -24,6 +24,7 @@ import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venue
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
+import { isMoralejaMember } from "@/lib/area-match";
 import { formatNationalities } from "@/lib/affinity";
 
 
@@ -411,6 +412,12 @@ function Discover() {
   if (!feedQ.data?.me) return <GridSkeleton />;
 
   const all = feedQ.data.candidates;
+  // La Moraleja members see their own roster heading (World off only — with
+  // World on the grid is worldwide, so the local name would be wrong).
+  const societyName =
+    !world && isMoralejaMember(feedQ.data.me as unknown as { locations?: string[] | null })
+      ? "La Moraleja"
+      : null;
   // Collect the zones/areas actually present in the current feed (smart options).
   const zonesInFeed = (() => {
     const set = new Set<string>();
@@ -455,7 +462,14 @@ function Discover() {
     <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
       <MemberGuide />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-        <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
+        {societyName ? (
+          <div>
+            <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[26px] sm:text-[30px] lg:text-[34px]">{societyName}</h1>
+            <p className="mt-2 text-serif italic text-[var(--ink)]/60 text-[14px] sm:text-[15px]">{t("disc.h1.sub")}</p>
+          </div>
+        ) : (
+          <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
+        )}
 
         {(() => {
           const me = feedQ.data.me as unknown as {

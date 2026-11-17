@@ -127,6 +127,20 @@
       "when": 1794861339296,
       "tag": "0017_match_classes",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794941579785,
+      "tag": "0018_notify_match_invites",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794941613986,
+      "tag": "0019_match_invite_local_time",
+      "breakpoints": true
     }
   ]
 }

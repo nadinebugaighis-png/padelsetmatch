@@ -42,6 +42,11 @@ describe("age bracket matching", () => {
     expect(bracketSpan(legacy)).toEqual([34, 34]);
     expect(ageMatchesPreference({ age_min: 30, age_max: 40 }, legacy)).toBe(true);
     expect(ageMatchesPreference({ age_min: 35, age_max: 45 }, legacy)).toBe(false);
-    expect(ageMatchesPreference({ age_min: 20, age_max: 60 }, { age: null })).toBe(false);
+  });
+
+  it("never hides players who gave no age, whatever the preferred range", () => {
+    // Quick sign-ups without an age must still appear on their area's grid.
+    expect(ageMatchesPreference({ age_min: 20, age_max: 60 }, { age: null })).toBe(true);
+    expect(ageMatchesPreference({ age_min: 18, age_max: 24 }, { age: null, age_bracket_lo: null, age_bracket_hi: null })).toBe(true);
   });
 });

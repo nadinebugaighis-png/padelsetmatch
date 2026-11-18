@@ -68,6 +68,7 @@ type EventLite = {
   extra_confirmed?: number | null;
   iAmHost: boolean;
   iAmParticipant: boolean;
+  iAmPlaying?: boolean;
   status: string;
   club_name: string;
   city?: string | null;
@@ -796,10 +797,10 @@ function MatchCard({
                 key={i}
                 slot={s}
                 tr={tr}
-                // One tap on an open spot joins instantly. If you're already
-                // playing (or it's full), the tap opens the match instead of
-                // failing silently.
-                onJoin={() => (mine || full ? onOpen(e.id) : onJoin(e))}
+                // One tap on an open spot joins instantly — a host who isn't in
+                // the lineup can take a place too. If you're already playing
+                // (or it's full), the tap opens the match instead.
+                onJoin={() => ((e.iAmPlaying ?? (mine && !e.iAmHost)) || full ? onOpen(e.id) : onJoin(e))}
                 canJoin={!full}
                 isPending={isPending}
               />

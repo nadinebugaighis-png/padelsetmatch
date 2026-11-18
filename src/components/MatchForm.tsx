@@ -103,7 +103,8 @@ function SegButton({
 
 export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId }: Props) {
   const tr = useTr();
-  const appPlayersCount = Math.min(4, Math.max(1, initial?.app_players_count ?? 1));
+  // People already in the lineup (0 when the host stepped out); a new match starts with the host.
+  const appPlayersCount = Math.min(4, Math.max(0, initial?.app_players_count ?? 1));
   const maxNeeded = Math.max(0, 4 - appPlayersCount);
   const initialNeeded = Math.min(
     maxNeeded,

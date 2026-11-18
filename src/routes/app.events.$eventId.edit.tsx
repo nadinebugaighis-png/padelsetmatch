@@ -124,7 +124,7 @@ function EditEvent() {
           is_class: event.is_class ?? false,
           class_students: event.class_students ?? null,
           class_fee: event.class_fee ?? null,
-          app_players_count: event.participants?.length ?? 1,
+          app_players_count: (event.participants?.length ?? 0) + (event.guests?.length ?? 0),
         }}
       />
 

@@ -436,7 +436,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       // management only; they count as "my match" just once she actually joins.
       const iAmParticipant = joined || (iAmHost && !e.auto_slot_id);
       const capacity = matchCapacity(e);
-      return { ...e, guests, filled, capacity, needs: Math.max(0, capacity - filled), iAmHost, iAmParticipant };
+      return { ...e, guests, filled, capacity, needs: Math.max(0, capacity - filled), iAmHost, iAmParticipant, iAmPlaying: joined };
     });
     return { events: data.needs ? list.filter((e) => e.needs === data.needs) : list };
   });
@@ -464,7 +464,10 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     let guests: any[] = guestsRaw ?? [];
     const filled = (event.participants?.length ?? 0) + guests.length + (event.extra_confirmed ?? 0);
     const iAmHost = !!profile && event.host_profile_id === profile.id;
-    const iAmParticipant = !!profile && ((event.participants ?? []).some((p: any) => p.profile_id === profile.id) || iAmHost);
+    // iAmPlaying = actually in the lineup. A host who stepped out still manages
+    // the match (iAmParticipant) but can take a free place again.
+    const iAmPlaying = !!profile && (event.participants ?? []).some((p: any) => p.profile_id === profile.id);
+    const iAmParticipant = iAmPlaying || iAmHost;
 
     // Only the current host can see guest phone numbers (works after host transfer too).
     if (iAmHost && guests.length > 0) {
@@ -483,7 +486,7 @@ export const getMatchEvent = createServerFn({ method: "POST" })
 
     return {
       event: { ...event, guests, filled, capacity: matchCapacity(event), needs: Math.max(0, matchCapacity(event) - filled), invites, invite_lock_until: null, lock_active: false },
-      me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmHost, myInvite } : null,
+      me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmPlaying, iAmHost, myInvite } : null,
     };
 
 

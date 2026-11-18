@@ -29,7 +29,8 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, UserCheck, Plus, Clock, MessageCircle } from "lucide-react";
+import { FriendSlot } from "@/components/FriendSlot";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
@@ -228,7 +229,7 @@ function EventDetail() {
 
   const genderLabel = genderRuleLabel(event.gender_rule, tr);
   const canJoin =
-    !me?.iAmParticipant && event.status === "open" && event.needs > 0 &&
+    !me?.iAmPlaying && event.status === "open" && event.needs > 0 &&
     genderRuleAllows(event.gender_rule, me?.gender);
 
   const onJoin = async () => {
@@ -608,7 +609,7 @@ function EventDetail() {
           <div className="flex-1 h-px bg-[var(--ink)]/10" />
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/{event.capacity ?? 4}</div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {(event.participants ?? []).map((p: any) => {
             const isMe = p.profile_id === me?.id;
             const isHost = p.profile_id === event.host_profile_id;
@@ -662,13 +663,7 @@ function EventDetail() {
             </div>
           ))}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
-
-            <div key={`x-${i}`} className="flex items-center gap-2 bg-white border border-[var(--ink)]/10 rounded-full pl-1 pr-3 py-1">
-              <div className="w-7 h-7 rounded-full bg-[var(--grass)]/45 text-[var(--ink)] grid place-items-center">
-                <UserCheck className="w-3.5 h-3.5" strokeWidth={2} />
-              </div>
-              <span className="text-xs text-[var(--ink)]">{tr("Friend coming", "Amigo confirmado", "Ami confirmé")}</span>
-            </div>
+            <FriendSlot key={`x-${i}`} size="md" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
           ))}
           {Array.from({ length: event.needs }).map((_, i) => (
             <button
@@ -676,19 +671,13 @@ function EventDetail() {
               type="button"
               onClick={() => { if (canJoin) onJoin(); }}
               disabled={!canJoin}
-              title={canJoin ? tr("Tap to join this spot", "Pulsa para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
-              className={`flex items-center gap-2 border-2 border-dashed rounded-full pl-1 pr-3 py-0.5 border-[var(--plum)]/45 text-[var(--plum)] ${
+              aria-label={canJoin ? tr("Join this place", "Ocupar esta plaza", "Prendre cette place") : tr("Player needed", "Falta jugador", "Joueur recherché")}
+              title={canJoin ? tr("Join this place", "Ocupar esta plaza", "Prendre cette place") : tr("Player needed", "Falta jugador", "Joueur recherché")}
+              className={`w-9 h-9 shrink-0 rounded-full border-2 border-dashed grid place-items-center border-[var(--plum)]/45 text-[var(--plum)] ${
                 canJoin ? "hover:bg-[var(--plum)]/8 cursor-pointer" : "cursor-default"
               }`}
             >
-              <span className="w-7 h-7 rounded-full grid place-items-center">
-                <Plus className="w-3.5 h-3.5" />
-              </span>
-              <span className="text-xs">
-                {event.is_class
-                  ? canJoin ? tr("Join as student", "Unirme como alumno", "Rejoindre comme élève") : tr("Student needed", "Falta alumno", "Élève recherché")
-                  : canJoin ? tr("Join this place", "Ocupar esta plaza", "Prendre cette place") : tr("Player needed", "Falta jugador", "Joueur recherché")}
-              </span>
+              <Plus className="w-4 h-4" />
             </button>
           ))}
         </div>
@@ -741,7 +730,9 @@ function EventDetail() {
               ? event.class_fee
                 ? tr(`Join this class · ${event.class_fee}`, `Unirme a la clase · ${event.class_fee}`, `Rejoindre ce cours · ${event.class_fee}`)
                 : tr("Join this class", "Unirme a la clase", "Rejoindre ce cours")
-              : tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
+              : me?.iAmHost
+                ? tr("Play in this match", "Jugar en este partido", "Jouer dans ce match")
+                : tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
         )}
         {me?.iAmParticipant && (!me?.iAmHost || (event.participants ?? []).some((p: any) => p.profile_id === me?.id)) && event.status !== "cancelled" && (

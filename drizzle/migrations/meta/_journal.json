@@ -141,6 +141,27 @@
       "when": 1794941613986,
       "tag": "0019_match_invite_local_time",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794987700394,
+      "tag": "0020_host_can_use_match_chat",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794987767429,
+      "tag": "0021_chat_alerts_include_host",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794987784317,
+      "tag": "0022_chat_alerts_skip_house_game_host",
+      "breakpoints": true
     }
   ]
 }

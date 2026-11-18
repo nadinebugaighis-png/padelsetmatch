@@ -576,6 +576,24 @@ export const deleteMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
+    // Like Playtomic: once another player has joined, an active match can only be
+    // cancelled (which notifies them), never silently deleted.
+    const { data: ev } = await supabase
+      .from("match_events")
+      .select("status")
+      .eq("id", data.id)
+      .eq("host_profile_id", profile.id)
+      .maybeSingle();
+    if (!ev) throw new Error("Match not found");
+    if (ev.status !== "cancelled") {
+      const [{ count: others }, { count: guests }] = await Promise.all([
+        supabase.from("match_event_participants").select("profile_id", { count: "exact", head: true }).eq("match_event_id", data.id).neq("profile_id", profile.id),
+        supabase.from("guest_participants").select("id", { count: "exact", head: true }).eq("match_event_id", data.id),
+      ]);
+      if ((others ?? 0) + (guests ?? 0) > 0) {
+        throw new Error("Players have joined — cancel the match instead so they're notified.");
+      }
+    }
     const { error } = await supabase
       .from("match_events")
       .delete()

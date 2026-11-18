@@ -261,8 +261,13 @@ function EventDetail() {
     }
   };
 
+  const othersJoined = !!event && (
+    (event.participants ?? []).some((p: any) => p.profile_id !== event.host_profile_id) ||
+    (event.guests?.length ?? 0) > 0
+  );
+
   const onCancel = async () => {
-    if (!confirm(tr("Cancel this match?", "¿Cancelar este partido?", "Annuler ce match ?"))) return;
+    if (!confirm(tr("Cancel this match? Everyone who joined will be notified.", "¿Cancelar este partido? Avisaremos a todos los que se apuntaron.", "Annuler ce match ? Tous les inscrits seront prévenus."))) return;
     await cancel({ data: { id: eventId } });
     toast.success(tr("Match cancelled", "Partido cancelado", "Match annulé"));
     navigate({ to: "/app/events" });
@@ -270,7 +275,13 @@ function EventDetail() {
 
   const onDelete = async () => {
     if (!confirm(tr("Delete this match permanently? This cannot be undone.", "¿Borrar este partido para siempre? No se puede deshacer.", "Supprimer ce match définitivement ? Irréversible."))) return;
-    await deleteEvent({ data: { id: eventId } });
+    try {
+      await deleteEvent({ data: { id: eventId } });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Couldn't delete", "No se pudo borrar", "Impossible de supprimer"));
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+      return;
+    }
     toast.success(tr("Match deleted", "Partido borrado", "Match supprimé"));
     qc.invalidateQueries({ queryKey: ["open-events"] });
     navigate({ to: "/app/events" });
@@ -567,22 +578,22 @@ function EventDetail() {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-white text-[var(--ink)]">
-                {event.status !== "cancelled" && (
-                  <>
-                    {(event.participants?.length ?? 0) > 0 && (
-                      <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
-                        <UserPlus className="w-4 h-4" /> {tr("Pass hosting", "Pasar organización", "Transférer")}
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem onSelect={() => void onCancel()}>
-                      <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
+                {event.status !== "cancelled" && (event.participants?.length ?? 0) > 0 && (
+                  <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
+                    <UserPlus className="w-4 h-4" /> {tr("Pass hosting", "Pasar organización", "Transférer")}
+                  </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onSelect={() => void onDelete()} className="text-red-600 focus:text-red-600">
-                  <Trash2 className="w-4 h-4" /> {tr("Delete match", "Eliminar partido", "Supprimer")}
-                </DropdownMenuItem>
+                {event.status !== "cancelled" && (event.participants?.length ?? 0) > 0 && <DropdownMenuSeparator />}
+                {/* One option, like Playtomic: Delete while nobody else has joined, Cancel (which notifies them) once someone has. */}
+                {event.status !== "cancelled" && othersJoined ? (
+                  <DropdownMenuItem onSelect={() => void onCancel()} className="text-red-600 focus:text-red-600">
+                    <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onSelect={() => void onDelete()} className="text-red-600 focus:text-red-600">
+                    <Trash2 className="w-4 h-4" /> {event.status === "cancelled" ? tr("Remove match", "Quitar partido", "Retirer le match") : tr("Delete match", "Eliminar partido", "Supprimer le match")}
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

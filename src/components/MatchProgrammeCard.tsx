@@ -1,4 +1,5 @@
 import { MapPin, Clock, Plus } from "lucide-react";
+import { FriendSlot } from "@/components/FriendSlot";
 import { useI18n, useTr } from "@/lib/i18n";
 import { genderRuleLabel, matchCapacity } from "@/lib/match-rules";
 
@@ -71,6 +72,8 @@ export function MatchProgrammeCard({
 
   const names = match.participant_names ?? [];
   const openSpots = Math.max(0, matchCapacity(match) - (match.filled ?? names.length));
+  // Places filled by the host's friends who aren't on the app.
+  const friendSpots = Math.max(0, Math.min(matchCapacity(match) - names.length, (match.filled ?? names.length) - names.length));
   const genderLabel = match.gender_rule && match.gender_rule !== "open" ? genderRuleLabel(match.gender_rule, tr) : null;
 
   return (
@@ -178,6 +181,9 @@ export function MatchProgrammeCard({
                   {name.trim().charAt(0).toUpperCase()}
                 </span>
               </div>
+            ))}
+            {Array.from({ length: friendSpots }).map((_, i) => (
+              <FriendSlot key={`f-${i}`} size="md" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
             ))}
             {Array.from({ length: openSpots }).map((_, i) => (
               <div

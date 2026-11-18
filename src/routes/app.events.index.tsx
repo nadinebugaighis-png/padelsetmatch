@@ -16,6 +16,7 @@ import {
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { FriendSlot } from "@/components/FriendSlot";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
@@ -64,6 +65,7 @@ type EventLite = {
   starts_at: string;
   filled: number;
   needs: number;
+  extra_confirmed?: number | null;
   iAmHost: boolean;
   iAmParticipant: boolean;
   status: string;
@@ -656,9 +658,12 @@ function MatchCard({
   const capacity = e.capacity ?? 4;
   const full = e.filled >= capacity;
 
-  const playerSlots = [
+  // Order: app players, link guests, then friends the host already has coming
+  // (extra_confirmed). Whatever is left is a place that still needs a player.
+  const playerSlots: SlotData[] = [
     ...(e.participants ?? []).map((participant) => ({ participant })),
     ...(e.guests ?? []).map((guest) => ({ guest })),
+    ...Array.from({ length: e.extra_confirmed ?? 0 }, () => ({ friend: true as const })),
   ];
   const slots = Array.from({ length: capacity }, (_, i) => playerSlots[i] ?? null);
 
@@ -734,7 +739,7 @@ function MatchCard({
             >
               {full
                 ? tr("Full", "Completo", "Complet")
-                : tr(`${e.needs} spot${e.needs > 1 ? "s" : ""}`, `${e.needs} plaza${e.needs > 1 ? "s" : ""}`, `${e.needs} place${e.needs > 1 ? "s" : ""}`)}
+                : tr(`Need ${e.needs}`, `Falta${e.needs > 1 ? "n" : ""} ${e.needs}`, `${e.needs} manquant${e.needs > 1 ? "s" : ""}`)}
             </span>
           </div>
 
@@ -791,10 +796,10 @@ function MatchCard({
                 key={i}
                 slot={s}
                 tr={tr}
-                onJoin={() => onJoin(e)}
-                // One tap on an open spot joins instantly — hosts included, so
-                // the host can take spot 1 themselves. The server function
-                // already permits the host to join their own match.
+                // One tap on an open spot joins instantly. If you're already
+                // playing (or it's full), the tap opens the match instead of
+                // failing silently.
+                onJoin={() => (mine || full ? onOpen(e.id) : onJoin(e))}
                 canJoin={!full}
                 isPending={isPending}
               />
@@ -826,6 +831,12 @@ function MatchCard({
 }
 
 
+type SlotData = {
+  participant?: NonNullable<EventLite["participants"]>[number];
+  guest?: NonNullable<EventLite["guests"]>[number];
+  friend?: true;
+};
+
 function SlotAvatar({
   slot,
   tr,
@@ -833,10 +844,7 @@ function SlotAvatar({
   canJoin,
   isPending,
 }: {
-  slot: {
-    participant?: NonNullable<EventLite["participants"]>[number];
-    guest?: NonNullable<EventLite["guests"]>[number];
-  } | null;
+  slot: SlotData | null;
   tr: ReturnType<typeof useTr>;
   onJoin: () => void;
   canJoin: boolean;
@@ -845,13 +853,18 @@ function SlotAvatar({
   const name = slot?.participant?.profiles?.first_name ?? slot?.guest?.display_name;
   const photo = slot?.participant?.profiles?.photo_url;
 
+  if (slot?.friend) {
+    return <FriendSlot label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />;
+  }
+
   if (!slot) {
     return (
       <button
         type="button"
-        disabled={!canJoin || isPending}
+        disabled={isPending}
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
-        aria-label={tr("Open slot", "Plaza libre", "Place libre")}
+        aria-label={tr("Player needed", "Falta jugador", "Joueur recherché")}
+        title={tr("Player needed", "Falta jugador", "Joueur recherché")}
         className={`w-7 h-7 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
           canJoin
             ? "border-[var(--plum)]/45 text-[var(--plum)] hover:bg-[var(--plum)]/8"

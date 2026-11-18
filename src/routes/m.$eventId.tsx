@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { MapPin, Users, Share2, Calendar, Clock, Plus } from "lucide-react";
+import { FriendSlot } from "@/components/FriendSlot";
 import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -151,6 +152,8 @@ function PublicMatchPage() {
   const freeCourt = !!match?.free_court;
   const totalSpots = match?.capacity ?? 4;
   const openSpots = match ? Math.max(0, totalSpots - (match.filled ?? 0)) : 0;
+  // Places filled by the host's friends who aren't on the app.
+  const friendSpots = match ? Math.max(0, totalSpots - openSpots - (match.participant_names?.length ?? 0)) : 0;
   const shareUrl = `${shareOrigin()}/m/${eventId}`;
 
   const copyShareLink = async () => {
@@ -283,6 +286,9 @@ function PublicMatchPage() {
                       >
                         <span className="text-[12px] font-bold text-[var(--ink)]/70">{name.trim().charAt(0).toUpperCase()}</span>
                       </div>
+                    ))}
+                    {Array.from({ length: friendSpots }).map((_, i) => (
+                      <FriendSlot key={`f-${i}`} size="md" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
                     ))}
                     {Array.from({ length: openSpots }).map((_, i) => (
                       <button

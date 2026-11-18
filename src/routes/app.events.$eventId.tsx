@@ -29,7 +29,7 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MessageCircle } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, UserCheck, Plus, Clock, MessageCircle } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
@@ -663,8 +663,11 @@ function EventDetail() {
           ))}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
 
-            <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/10 rounded-full px-3 py-1.5">
-              <span className="text-xs text-[var(--ink)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
+            <div key={`x-${i}`} className="flex items-center gap-2 bg-white border border-[var(--ink)]/10 rounded-full pl-1 pr-3 py-1">
+              <div className="w-7 h-7 rounded-full bg-[var(--grass)]/45 text-[var(--ink)] grid place-items-center">
+                <UserCheck className="w-3.5 h-3.5" strokeWidth={2} />
+              </div>
+              <span className="text-xs text-[var(--ink)]">{tr("Friend coming", "Amigo confirmado", "Ami confirmé")}</span>
             </div>
           ))}
           {Array.from({ length: event.needs }).map((_, i) => (
@@ -674,16 +677,17 @@ function EventDetail() {
               onClick={() => { if (canJoin) onJoin(); }}
               disabled={!canJoin}
               title={canJoin ? tr("Tap to join this spot", "Pulsa para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
-              className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
-                canJoin
-                  ? "border-[var(--ink)]/30 hover:bg-[var(--ink)]/5 cursor-pointer"
-                  : "border-[var(--ink)]/20 opacity-60 cursor-not-allowed"
+              className={`flex items-center gap-2 border-2 border-dashed rounded-full pl-1 pr-3 py-0.5 border-[var(--plum)]/45 text-[var(--plum)] ${
+                canJoin ? "hover:bg-[var(--plum)]/8 cursor-pointer" : "cursor-default"
               }`}
             >
-              <span className="text-xs text-[var(--ink)]">
+              <span className="w-7 h-7 rounded-full grid place-items-center">
+                <Plus className="w-3.5 h-3.5" />
+              </span>
+              <span className="text-xs">
                 {event.is_class
-                  ? canJoin ? tr("Join as student", "Unirme como alumno", "Rejoindre comme élève") : tr("Student place", "Plaza de alumno", "Place d'élève")
-                  : canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
+                  ? canJoin ? tr("Join as student", "Unirme como alumno", "Rejoindre comme élève") : tr("Student needed", "Falta alumno", "Élève recherché")
+                  : canJoin ? tr("Join this place", "Ocupar esta plaza", "Prendre cette place") : tr("Player needed", "Falta jugador", "Joueur recherché")}
               </span>
             </button>
           ))}

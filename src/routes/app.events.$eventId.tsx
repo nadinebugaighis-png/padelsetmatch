@@ -345,14 +345,14 @@ function EventDetail() {
           >
             <Share2 className="w-4 h-4" />
           </button>
-          {!me?.iAmHost && me?.iAmParticipant && event.status !== "cancelled" && (
+          {(me?.iAmHost || me?.iAmParticipant) && event.status !== "cancelled" && (
             <button
               type="button"
               onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-              aria-label={tr("Edit match", "Editar partido", "Modifier")}
-              className="h-9 w-9 grid place-items-center rounded-full text-[var(--ink)] hover:bg-[var(--ink)]/5"
+              aria-label={tr("Edit match", "Editar partido", "Modifier le match")}
+              className="h-9 px-3.5 inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5"
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil className="w-3.5 h-3.5" /> {tr("Edit", "Editar", "Modifier")}
             </button>
           )}
         </div>
@@ -537,22 +537,15 @@ function EventDetail() {
         );
       })()}
 
-      {/* Host controls: always visible so organisers never hunt for Edit */}
+      {/* Host controls: Edit lives in the top bar (like Playtomic); booking + more stay here */}
       {me?.iAmHost && (
         <section aria-label={tr("Hosting", "Organización", "Organisation")} className="mt-4">
           <div className="mb-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/60">
             {tr("You're hosting", "Organizas tú", "Tu organises")}
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {event.status !== "cancelled" ? (
               <>
-                <button
-                  type="button"
-                  onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
-                  className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5"
-                >
-                  <Pencil className="w-4 h-4" /> {tr("Edit", "Editar", "Modifier")}
-                </button>
                 <button
                   type="button"
                   onClick={() => void onToggleBooked()}
@@ -563,7 +556,7 @@ function EventDetail() {
                 </button>
               </>
             ) : (
-              <div className="col-span-2 h-11 inline-flex items-center justify-center text-[13px] text-[var(--ink)]/60">
+              <div className="h-11 inline-flex items-center justify-center text-[13px] text-[var(--ink)]/60">
                 {tr("Match cancelled", "Partido cancelado", "Match annulé")}
               </div>
             )}

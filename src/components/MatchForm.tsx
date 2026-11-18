@@ -47,6 +47,8 @@ type Props = {
   onSubmit: (values: MatchFormValues) => Promise<void> | void;
   saving?: boolean;
   title: string;
+  /** When editing, the back arrow returns to this match instead of the feed. */
+  backEventId?: string;
 };
 
 function toLocalDatetime(iso?: string | null) {
@@ -100,7 +102,7 @@ function SegButton({
   );
 }
 
-export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Props) {
+export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId }: Props) {
   const tr = useTr();
   const appPlayersCount = Math.min(4, Math.max(1, initial?.app_players_count ?? 1));
   const maxNeeded = Math.max(0, 4 - appPlayersCount);
@@ -227,12 +229,22 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
 
   return (
     <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 py-3 pb-32 space-y-3">
-      <Link
-        to="/app/events"
-        className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition"
-      >
-        <ArrowLeft className="w-4 h-4" /> {tr("Find matches", "Buscar partidos", "Trouver des matches")}
-      </Link>
+      {backEventId ? (
+        <Link
+          to="/app/events/$eventId"
+          params={{ eventId: backEventId }}
+          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition"
+        >
+          <ArrowLeft className="w-4 h-4" /> {tr("Back to match", "Volver al partido", "Retour au match")}
+        </Link>
+      ) : (
+        <Link
+          to="/app/events"
+          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition"
+        >
+          <ArrowLeft className="w-4 h-4" /> {tr("Find matches", "Buscar partidos", "Trouver des matches")}
+        </Link>
+      )}
 
       <header>
         <h1 className="font-serif text-2xl sm:text-3xl leading-tight text-[var(--ink)]">{title}</h1>

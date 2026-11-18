@@ -98,6 +98,7 @@ function EditEvent() {
     <div>
       <MatchForm
         title={tr("EDIT MATCH", "EDITAR PARTIDO", "MODIFIER LE MATCH")}
+        backEventId={eventId}
         submitLabel={tr("Save changes", "Guardar cambios", "Enregistrer")}
 
         saving={saving}

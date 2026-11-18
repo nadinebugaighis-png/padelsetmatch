@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ExternalLink, Minus, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, ExternalLink, Minus, Plus } from "lucide-react";
 import { clubBookingLink, clubWhatsappBooking } from "@/lib/club-booking";
 import { ClubWhatsAppBooking } from "@/components/ClubWhatsAppBooking";
 import { Switch } from "@/components/ui/switch";
@@ -147,6 +147,12 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
   const [playtomicLink, setPlaytomicLink] = useState(initial?.playtomic_link ?? "");
   const [playtomicError, setPlaytomicError] = useState<string | null>(null);
   const [note, setNote] = useState(initial?.note ?? "");
+  // Optional settings stay folded away unless an edited match already uses them.
+  const [showMore, setShowMore] = useState<boolean>(
+    !!(initial?.note || initial?.playtomic_link || initial?.free_court ||
+      (initial?.gender_rule && initial.gender_rule !== DEFAULT_GENDER_RULE) ||
+      (initial?.level_min && initial.level_min !== "casual") || (initial?.level_max && initial.level_max !== "advanced")),
+  );
 
   const formBooking =
     locMode === "club" && club
@@ -232,6 +238,19 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <h1 className="font-serif text-2xl sm:text-3xl leading-tight text-[var(--ink)]">{title}</h1>
       </header>
 
+      <div className="grid grid-cols-2 rounded-full bg-[var(--ink)]/[0.06] p-0.5">
+        {[
+          { v: false, l: tr("Match", "Partido", "Match") },
+          { v: true, l: tr("Class", "Clase", "Cours") },
+        ].map((o) => (
+          <button key={String(o.v)} type="button" aria-pressed={isClass === o.v}
+            onClick={() => { setIsClass(o.v); if (o.v && classStudents < minStudents) setClassStudents(Math.min(3, minStudents)); }}
+            className={`h-9 rounded-full text-[11px] uppercase tracking-[0.18em] font-medium transition ${isClass === o.v ? (o.v ? "bg-[var(--plum)] text-[var(--paper)]" : "bg-white text-[var(--ink)] shadow-sm") : "text-[var(--ink)]/55"}`}>
+            {o.l}
+          </button>
+        ))}
+      </div>
+
       {/* Card 1 — Where & when */}
       <div className={cardCls}>
       <section className="py-2.5">
@@ -292,22 +311,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
         <MatchDateTimePicker value={when} onChange={setWhen} bare />
       </div>
 
-      {/* Card 2 — The match */}
       <div className={cardCls}>
-        <div className={rowCls}>
-          <div className="min-w-0">
-            <span className={rowLabel}>{tr("Class", "Clase", "Cours")}</span>
-            <p className="text-[11px] text-[var(--ink)]/50 leading-snug">
-              {tr(
-                "You're coaching. Players join as your students.",
-                "Tú das la clase. Los jugadores se unen como alumnos.",
-                "Tu donnes le cours. Les joueurs rejoignent comme élèves.",
-              )}
-            </p>
-          </div>
-          <Switch className="data-[state=checked]:bg-[var(--plum)] shrink-0" checked={isClass} onCheckedChange={(v) => { setIsClass(v); if (v && classStudents < minStudents) setClassStudents(Math.min(3, minStudents)); }} aria-label={tr("Class", "Clase", "Cours")} />
-        </div>
-        <div className={rowDivider} />
         {isClass ? (
           <>
             <div className={rowCls}>
@@ -332,59 +336,6 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
           </div>
         </div>
         )}
-        <div className={rowDivider} />
-        <div className="py-2.5">
-          <div className="grid grid-cols-4 rounded-lg bg-[var(--ink)]/[0.06] p-0.5">
-            {[
-              { v: "open" as const, l: tr("Open", "Abierto", "Ouvert") },
-              { v: "mixed" as const, l: tr("Mixed", "Mixto", "Mixte") },
-              { v: "men_only" as const, l: tr("Men", "Hombres", "Hommes") },
-              { v: "women_only" as const, l: tr("Women", "Mujeres", "Femmes") },
-            ].map((o) => (
-              <button key={o.v} type="button" aria-pressed={genderRule === o.v} onClick={() => setGenderRule(o.v)}
-                className={`h-8 rounded-md text-xs font-medium transition ${genderRule === o.v ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/55"}`}>
-                {o.l}
-              </button>
-            ))}
-          </div>
-          <p className={helperCls}>
-            {genderRule === "open"
-              ? tr("Anyone can join. Restrict it only if you need to.", "Cualquiera puede unirse. Restríngelo solo si lo necesitas.", "Tout le monde peut rejoindre. Restreins seulement si besoin.")
-              : genderRule === "mixed"
-                ? tr("You're looking for a mixed game.", "Buscas un partido mixto.", "Tu cherches un match mixte.")
-                : tr("Only players of this gender can join.", "Solo pueden unirse jugadores de este género.", "Seuls les joueurs de ce genre peuvent rejoindre.")}
-          </p>
-        </div>
-        <div className={rowDivider} />
-        <div className={rowCls}>
-          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}</span>
-          <div className="flex items-center gap-1 text-sm text-[var(--ink)]">
-            <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
-              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
-            <span className="text-[var(--ink)]/40">–</span>
-            <select aria-label={tr("Level max", "Nivel máx.", "Niveau max.")} value={levelMax} onChange={(e) => setLevelMax(e.target.value as any)} className={selectCls}>
-              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Card 3 — The court */}
-      <div className={cardCls}>
-        <div className={rowCls}>
-          <div className="min-w-0">
-            <span className={rowLabel}>🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
-            <p className="text-[11px] text-[var(--ink)]/50 leading-snug">
-              {tr(
-                "Players joining don't pay (e.g. urbanization court, or you're covering it). Your shared link will say it's free.",
-                "Quien se una no paga (p. ej. pista de urbanización o la pagas tú). Tu enlace dirá que es gratis.",
-                "Les joueurs ne paient pas (ex. terrain de résidence, ou tu l'offres). Ton lien indiquera que c'est gratuit.",
-              )}
-            </p>
-          </div>
-          <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={freeCourt} onCheckedChange={setFreeCourt} aria-label={tr("Free court", "Pista gratis", "Terrain gratuit")} />
-        </div>
         <div className={rowDivider} />
         <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
@@ -422,6 +373,64 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
             <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
           </div>
         </div>
+      </div>
+
+      <button type="button" onClick={() => setShowMore((v) => !v)} aria-expanded={showMore}
+        className="w-full flex items-center justify-between px-1 py-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60 hover:text-[var(--ink)] transition">
+        <span>{tr("More preferences", "Más preferencias", "Plus de préférences")}</span>
+        <ChevronDown className={`w-4 h-4 transition ${showMore ? "rotate-180" : ""}`} />
+      </button>
+      {showMore && (
+      <div className={cardCls}>
+        <div className="py-2.5">
+          <div className="grid grid-cols-4 rounded-lg bg-[var(--ink)]/[0.06] p-0.5">
+            {[
+              { v: "open" as const, l: tr("Open", "Abierto", "Ouvert") },
+              { v: "mixed" as const, l: tr("Mixed", "Mixto", "Mixte") },
+              { v: "men_only" as const, l: tr("Men", "Hombres", "Hommes") },
+              { v: "women_only" as const, l: tr("Women", "Mujeres", "Femmes") },
+            ].map((o) => (
+              <button key={o.v} type="button" aria-pressed={genderRule === o.v} onClick={() => setGenderRule(o.v)}
+                className={`h-8 rounded-md text-xs font-medium transition ${genderRule === o.v ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/55"}`}>
+                {o.l}
+              </button>
+            ))}
+          </div>
+          <p className={helperCls}>
+            {genderRule === "open"
+              ? tr("Anyone can join. Restrict it only if you need to.", "Cualquiera puede unirse. Restríngelo solo si lo necesitas.", "Tout le monde peut rejoindre. Restreins seulement si besoin.")
+              : genderRule === "mixed"
+                ? tr("You're looking for a mixed game.", "Buscas un partido mixto.", "Tu cherches un match mixte.")
+                : tr("Only players of this gender can join.", "Solo pueden unirse jugadores de este género.", "Seuls les joueurs de ce genre peuvent rejoindre.")}
+          </p>
+        </div>
+        <div className={rowDivider} />
+        <div className={rowCls}>
+          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}</span>
+          <div className="flex items-center gap-1 text-sm text-[var(--ink)]">
+            <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <span className="text-[var(--ink)]/40">–</span>
+            <select aria-label={tr("Level max", "Nivel máx.", "Niveau max.")} value={levelMax} onChange={(e) => setLevelMax(e.target.value as any)} className={selectCls}>
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className={rowDivider} />
+        <div className={rowCls}>
+          <div className="min-w-0">
+            <span className={rowLabel}>{tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
+            <p className="text-[11px] text-[var(--ink)]/50 leading-snug">
+              {tr(
+                "Players joining don't pay (e.g. urbanization court, or you're covering it). Your shared link will say it's free.",
+                "Quien se una no paga (p. ej. pista de urbanización o la pagas tú). Tu enlace dirá que es gratis.",
+                "Les joueurs ne paient pas (ex. terrain de résidence, ou tu l'offres). Ton lien indiquera que c'est gratuit.",
+              )}
+            </p>
+          </div>
+          <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={freeCourt} onCheckedChange={setFreeCourt} aria-label={tr("Free court", "Pista gratis", "Terrain gratuit")} />
+        </div>
         <div className={rowDivider} />
         <input
           type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}
@@ -438,6 +447,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title }: Pro
           className={`${bareInput} resize-none`}
         />
       </div>
+      )}
       {/* Sticky submit */}
       <div className="fixed left-0 right-0 px-5 z-30 pointer-events-none" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 5.5rem)" }}>
         <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto pointer-events-auto">

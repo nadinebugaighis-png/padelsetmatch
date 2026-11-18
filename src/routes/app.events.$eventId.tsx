@@ -29,8 +29,7 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MoreHorizontal, MessageCircle } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Clock, MessageCircle } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
@@ -571,32 +570,34 @@ function EventDetail() {
                 {tr("Match cancelled", "Partido cancelado", "Match annulé")}
               </div>
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button type="button" className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5">
-                  <MoreHorizontal className="w-4 h-4" /> {tr("More", "Más", "Plus")}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white text-[var(--ink)]">
-                {event.status !== "cancelled" && (event.participants?.length ?? 0) > 0 && (
-                  <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
-                    <UserPlus className="w-4 h-4" /> {tr("Pass hosting", "Pasar organización", "Transférer")}
-                  </DropdownMenuItem>
-                )}
-                {event.status !== "cancelled" && (event.participants?.length ?? 0) > 0 && <DropdownMenuSeparator />}
-                {/* One option, like Playtomic: Delete while nobody else has joined, Cancel (which notifies them) once someone has. */}
-                {event.status !== "cancelled" && othersJoined ? (
-                  <DropdownMenuItem onSelect={() => void onCancel()} className="text-red-600 focus:text-red-600">
-                    <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem onSelect={() => void onDelete()} className="text-red-600 focus:text-red-600">
-                    <Trash2 className="w-4 h-4" /> {event.status === "cancelled" ? tr("Remove match", "Quitar partido", "Retirer le match") : tr("Delete match", "Eliminar partido", "Supprimer le match")}
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* One option, like Playtomic: Delete while nobody else has joined, Cancel (which notifies them) once someone has. */}
+            {event.status !== "cancelled" && othersJoined ? (
+              <button
+                type="button"
+                onClick={() => void onCancel()}
+                className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200 bg-white text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void onDelete()}
+                className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200 bg-white text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" /> {event.status === "cancelled" ? tr("Remove match", "Quitar partido", "Retirer le match") : tr("Delete match", "Eliminar partido", "Supprimer le match")}
+              </button>
+            )}
           </div>
+          {event.status !== "cancelled" && othersJoined && (
+            <button
+              type="button"
+              onClick={() => setTransferOpen(true)}
+              className="mt-2.5 inline-flex items-center gap-1 text-[12px] text-[var(--ink)]/55 underline underline-offset-2 hover:text-[var(--ink)]"
+            >
+              <UserPlus className="w-3.5 h-3.5" /> {tr("Pass hosting to another player", "Pasar la organización a otro jugador", "Transférer l'organisation à un autre joueur")}
+            </button>
+          )}
         </section>
       )}
 

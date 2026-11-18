@@ -59,7 +59,6 @@ function toLocalDatetime(iso?: string | null) {
 }
 
 // Shared field styles
-const labelCls = "text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60 block mb-1";
 const inputCls = "w-full bg-white border border-[var(--ink)]/15 rounded-lg px-3 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/35 outline-none focus:border-[var(--ink)]/40 transition";
 const cardCls = "rounded-2xl bg-white border border-[var(--ink)]/10 px-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]";
 const rowCls = "flex items-center justify-between gap-3 min-h-11 py-1.5";
@@ -130,7 +129,8 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const [customAddress, setCustomAddress] = useState(
     !isClub && initial?.club_address ? initial.club_address : !isClub ? initial?.club_name ?? "" : "",
   );
-  const [customCity, setCustomCity] = useState(!isClub ? initial?.city ?? "" : "");
+  // City is no longer typed: edits keep the saved one, new matches get it from the host's area on the server.
+  const customCity = !isClub ? initial?.city ?? "" : "";
   const [when, setWhen] = useState(initial?.when_local ?? toLocalDatetime(initial?.starts_at));
   const [genderRule, setGenderRule] = useState<GenderRule>(
     initial?.gender_rule ?? DEFAULT_GENDER_RULE,
@@ -151,7 +151,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const [note, setNote] = useState(initial?.note ?? "");
   // Optional settings stay folded away unless an edited match already uses them.
   const [showMore, setShowMore] = useState<boolean>(
-    !!(initial?.note || initial?.playtomic_link || initial?.free_court ||
+    !!(initial?.note || initial?.playtomic_link || initial?.free_court || initial?.is_private_court ||
       (initial?.gender_rule && initial.gender_rule !== DEFAULT_GENDER_RULE) ||
       (initial?.level_min && initial.level_min !== "casual") || (initial?.level_max && initial.level_max !== "advanced")),
   );
@@ -279,43 +279,14 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         {locMode === "club" ? (
           <ClubPicker value={club} onChange={setClub} />
         ) : (
-          <div className="space-y-2">
+          <div>
             <input
               type="text"
               value={customAddress}
               onChange={(e) => setCustomAddress(e.target.value)}
-              placeholder={tr("Court name or street address", "Nombre de la pista o dirección", "Nom du terrain ou adresse")}
+              placeholder={tr("Court name or address", "Nombre de la pista o dirección", "Nom du terrain ou adresse")}
               className={inputCls}
             />
-            <input
-              type="text"
-              value={customCity}
-              onChange={(e) => setCustomCity(e.target.value)}
-              placeholder={tr("City (e.g. Dubai, Madrid, Paris)", "Ciudad (ej. Dubái, Madrid, París)", "Ville (ex. Dubaï, Madrid, Paris)")}
-              className={inputCls}
-            />
-            <p className={helperCls}>
-              {tr("Use this if your club isn't on Google, or for private / residential courts.", "Úsalo si tu club no está en Google, o para pistas privadas o residenciales.", "À utiliser si ton club n'est pas sur Google, ou pour les terrains privés / résidentiels.")}
-            </p>
-
-            <div className="pt-2">
-              <label className={labelCls}>{tr("Is this a private court?", "¿Es una pista privada?", "Est-ce un terrain privé ?")}</label>
-              <div className="grid grid-cols-2 gap-2">
-                <SegButton active={!isPrivateCourt} onClick={() => setIsPrivateCourt(false)}>
-                  {tr("No (club or residential)", "No (club o urbanización)", "Non (club ou résidence)")}
-                </SegButton>
-                <SegButton active={isPrivateCourt} onClick={() => setIsPrivateCourt(true)}>
-                  {tr("Yes (private home)", "Sí (casa privada)", "Oui (domicile privé)")}
-                </SegButton>
-              </div>
-              <p className={helperCls}>
-                {tr(
-                  "Private = inside someone's home or property. A residential complex or urbanization court open to residents is not private. Guests will see a 'Private court' tag so they know what to expect.",
-                  "Privada = dentro de la casa o propiedad de alguien. Una pista de una urbanización o complejo residencial abierta a residentes no es privada. Los invitados verán una etiqueta 'Pista privada' para saber a qué atenerse.",
-                  "Privé = à l'intérieur du domicile ou de la propriété de quelqu'un. Un terrain de complexe résidentiel ouvert aux résidents n'est pas privé. Les invités verront une étiquette « Terrain privé » pour savoir à quoi s'attendre.",
-                )}
-              </p>
-            </div>
           </div>
         )}
       </section>
@@ -443,6 +414,15 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           </div>
           <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={freeCourt} onCheckedChange={setFreeCourt} aria-label={tr("Free court", "Pista gratis", "Terrain gratuit")} />
         </div>
+        {locMode === "address" && (
+          <>
+            <div className={rowDivider} />
+            <div className={rowCls}>
+              <span className={rowLabel}>{tr("Private home court", "Pista en casa privada", "Terrain privé à domicile")}</span>
+              <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={isPrivateCourt} onCheckedChange={setIsPrivateCourt} aria-label={tr("Private home court", "Pista en casa privada", "Terrain privé à domicile")} />
+            </div>
+          </>
+        )}
         <div className={rowDivider} />
         <input
           type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}

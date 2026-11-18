@@ -259,12 +259,20 @@ export const createMatchEvent = createServerFn({ method: "POST" })
   .inputValidator((d: z.infer<typeof CreateInput>) => CreateInput.parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
+    const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
+    // Typed-in courts no longer ask for a city: use the host's first saved area so area feeds still find the match.
+    let city = data.city?.trim() || null;
+    if (!city) {
+      const first = (profile.locations ?? []).find((l: unknown): l is string => typeof l === "string" && l.length > 0);
+      const parts = first ? first.split("|").map((s) => s.trim()).filter(Boolean) : [];
+      city = parts[parts.length - 1] || null;
+    }
     const { data: created, error } = await supabase
       .from("match_events")
       .insert({
         ...data,
+        city,
         ...(data.is_class
           ? { extra_confirmed: 0, class_students: data.class_students ?? 3, class_fee: data.class_fee || null }
           : { class_students: null, class_fee: null }),

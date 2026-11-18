@@ -656,6 +656,10 @@ function MatchCard({
     ? e.level_min === e.level_max ? lvlName(e.level_min) : `${lvlName(e.level_min)} – ${lvlName(e.level_max ?? e.level_min)}`
     : "";
   const mine = e.iAmHost || e.iAmParticipant;
+  // Your own matches are managed only from the Manage button, so a stray tap
+  // on the card never takes you somewhere you didn't mean to go.
+  const openFromCard = e.iAmHost ? undefined : () => onOpen(e.id);
+  const playing = e.iAmPlaying ?? (mine && !e.iAmHost);
   const capacity = e.capacity ?? 4;
   const full = e.filled >= capacity;
 
@@ -695,7 +699,7 @@ function MatchCard({
         {/* Date / time block */}
         <button
           type="button"
-          onClick={() => onOpen(e.id)}
+          onClick={openFromCard}
           className={`w-[76px] sm:w-[88px] shrink-0 flex flex-col items-center justify-center py-2.5 text-center ${toneClass}`}
         >
           <div className="text-serif text-[21px] sm:text-[23px] leading-none text-[var(--ink)]">{time}</div>
@@ -717,7 +721,7 @@ function MatchCard({
         {/* Body */}
         <div className="flex-1 min-w-0 p-3">
           <div className="flex items-start justify-between gap-2">
-            <button type="button" onClick={() => onOpen(e.id)} className="min-w-0 text-left">
+            <button type="button" onClick={openFromCard} className="min-w-0 text-left">
               {e.tag && (
                 <div className="mb-1 inline-block -rotate-2 rounded-sm bg-[var(--gold)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink)] shadow-sm">
                   {e.tag}
@@ -797,10 +801,11 @@ function MatchCard({
                 key={i}
                 slot={s}
                 tr={tr}
-                // One tap on an open spot joins instantly — a host who isn't in
-                // the lineup can take a place too. If you're already playing
-                // (or it's full), the tap opens the match instead.
-                onJoin={() => ((e.iAmPlaying ?? (mine && !e.iAmHost)) || full ? onOpen(e.id) : onJoin(e))}
+                // A "+" only ever joins — hosts who stepped out included.
+                onJoin={() => {
+                  if (playing) { toast(tr("You're already in this match", "Ya estás en este partido", "Tu es déjà dans ce match")); return; }
+                  if (!full) onJoin(e);
+                }}
                 canJoin={!full}
                 isPending={isPending}
               />

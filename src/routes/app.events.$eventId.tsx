@@ -29,7 +29,6 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
-import { FriendSlot } from "@/components/FriendSlot";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
@@ -609,7 +608,7 @@ function EventDetail() {
           <div className="flex-1 h-px bg-[var(--ink)]/10" />
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/{event.capacity ?? 4}</div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap gap-2">
           {(event.participants ?? []).map((p: any) => {
             const isMe = p.profile_id === me?.id;
             const isHost = p.profile_id === event.host_profile_id;
@@ -663,7 +662,10 @@ function EventDetail() {
             </div>
           ))}
           {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
-            <FriendSlot key={`x-${i}`} size="md" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
+
+            <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/10 rounded-full px-3 py-1.5">
+              <span className="text-xs text-[var(--ink)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
+            </div>
           ))}
           {Array.from({ length: event.needs }).map((_, i) => (
             <button
@@ -671,13 +673,18 @@ function EventDetail() {
               type="button"
               onClick={() => { if (canJoin) onJoin(); }}
               disabled={!canJoin}
-              aria-label={canJoin ? tr("Join this place", "Ocupar esta plaza", "Prendre cette place") : tr("Player needed", "Falta jugador", "Joueur recherché")}
-              title={canJoin ? tr("Join this place", "Ocupar esta plaza", "Prendre cette place") : tr("Player needed", "Falta jugador", "Joueur recherché")}
-              className={`w-9 h-9 shrink-0 rounded-full border-2 border-dashed grid place-items-center border-[var(--plum)]/45 text-[var(--plum)] ${
-                canJoin ? "hover:bg-[var(--plum)]/8 cursor-pointer" : "cursor-default"
+              title={canJoin ? tr("Tap to join this spot", "Pulsa para ocupar este hueco", "Appuie pour prendre cette place") : tr("This match doesn't match your profile", "Este partido no encaja con tu perfil", "Ce match ne correspond pas à ton profil")}
+              className={`flex items-center gap-2 border border-dashed rounded-full px-3 py-1.5 ${
+                canJoin
+                  ? "border-[var(--ink)]/30 hover:bg-[var(--ink)]/5 cursor-pointer"
+                  : "border-[var(--ink)]/20 opacity-60 cursor-not-allowed"
               }`}
             >
-              <Plus className="w-4 h-4" />
+              <span className="text-xs text-[var(--ink)]">
+                {event.is_class
+                  ? canJoin ? tr("Join as student", "Unirme como alumno", "Rejoindre comme élève") : tr("Student place", "Plaza de alumno", "Place d'élève")
+                  : canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
+              </span>
             </button>
           ))}
         </div>

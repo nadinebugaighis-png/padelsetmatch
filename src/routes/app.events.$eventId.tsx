@@ -355,7 +355,7 @@ function EventDetail() {
           >
             <Share2 className="w-4 h-4" />
           </button>
-          {(me?.iAmHost || me?.iAmParticipant) && event.status !== "cancelled" && (
+          {me && event.status !== "cancelled" && (
             <button
               type="button"
               onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}

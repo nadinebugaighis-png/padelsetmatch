@@ -43,8 +43,8 @@ function EditEvent() {
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
   if (!event) return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
-  if (!me?.iAmHost && !me?.iAmParticipant) {
-    return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Join this match to edit it.", "Únete al partido para editarlo.", "Rejoins ce match pour le modifier.")}</div>;
+  if (!me) {
+    return <div className="p-6 text-center text-[var(--cream)]/60">{tr("Sign in to edit this match.", "Inicia sesión para editar el partido.", "Connecte-toi pour modifier ce match.")}</div>;
   }
 
   const onSubmit = async (v: MatchFormValues) => {

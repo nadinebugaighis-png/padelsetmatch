@@ -814,20 +814,15 @@ function MatchCard({
               type="button"
               onClick={(ev) => {
                 ev.stopPropagation();
+                // Everyone manages from here: hosts and players alike open the
+                // match to join, leave, chat or edit. The "+" spots still join directly.
                 if (e.iAmHost) onManage(e);
-                else if (mine || full) onOpen(e.id);
-                else onJoin(e);
+                else onOpen(e.id);
               }}
               disabled={isPending}
               className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 disabled:opacity-50"
             >
-              {e.iAmHost
-                ? tr("Manage", "Gestionar", "Gérer")
-                : mine
-                  ? tr("Chat", "Chat", "Chat")
-                  : full
-                    ? tr("View", "Ver", "Voir")
-                    : tr("Join", "Unirme", "Rejoindre")}
+              {tr("Manage", "Gestionar", "Gérer")}
             </button>
           </div>
         </div>
@@ -1049,7 +1044,7 @@ function MyMatchesList({
                         </button>
                       ) : (
                         <button type="button" onClick={() => onOpen(e.id)} className="min-h-9 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-[10px] uppercase tracking-widest font-bold px-3 py-2">
-                          {tr("Chat", "Chat", "Chat")}
+                          {tr("Manage", "Gestionar", "Gérer")}
                         </button>
                       )}
                       {!e.iAmHost && (

@@ -1,4 +1,4 @@
-// Fields any joined player (not just the host) may change on a match.
+// Fields any player (not just the host) may change on a match listed on Play.
 export const PLAYER_EDITABLE_FIELDS = [
   "starts_at",
   "club_name",
@@ -17,4 +17,9 @@ export function pickPlayerEditable(patch: Record<string, unknown>): Record<strin
   const out: Record<string, unknown> = {};
   for (const k of PLAYER_EDITABLE_FIELDS) if (k in patch && patch[k] !== undefined) out[k] = patch[k];
   return out;
+}
+
+// Non-hosts may edit any match they can see, except a cancelled one.
+export function nonHostCanEdit(status: string | null | undefined): boolean {
+  return status !== "cancelled";
 }

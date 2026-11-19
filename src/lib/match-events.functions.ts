@@ -705,7 +705,7 @@ const UpdateInput = z.object({
   class_fee: z.string().trim().max(40).nullable().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });
-import { pickPlayerEditable } from "./match-player-edit";
+import { nonHostCanEdit, pickPlayerEditable } from "./match-player-edit";
 export const updateMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: z.infer<typeof UpdateInput>) => UpdateInput.parse(d))
@@ -722,15 +722,10 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     if (!current) throw new Error("Match not found");
     const isHost = current.host_profile_id === profile.id;
     if (!isHost) {
-      // Joined players may edit where/when/level/note only.
-      const { data: part } = await supabase
-        .from("match_event_participants")
-        .select("id")
-        .eq("match_event_id", id)
-        .eq("profile_id", profile.id)
-        .maybeSingle();
-      if (!part) throw new Error("Only players in this match can edit it");
-      if (current.status === "cancelled") throw new Error("Match was cancelled");
+      // Any signed-in player who can see the match (the read above runs under
+      // their own permissions) may edit where/when/level/note only. Cancel,
+      // delete, gender, booking and class settings stay with the host.
+      if (!nonHostCanEdit(current.status)) throw new Error("Match was cancelled");
       const allowed = pickPlayerEditable(rawPatch);
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { error } = await supabaseAdmin.from("match_events").update(allowed as never).eq("id", id);

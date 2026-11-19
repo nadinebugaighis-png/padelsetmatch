@@ -891,7 +891,8 @@ const LABELS: Record<Lang, Record<string, string>> = {
     // Availability slots
     "Weekday mornings": "Mañanas entre semana",
     "Weekday lunchtime": "Mediodías entre semana",
-    "Weekday evenings": "Tardes entre semana",
+    "Weekday afternoons": "Tardes entre semana",
+    "Weekday evenings": "Noches entre semana",
     "Weekend mornings": "Mañanas de fin de semana",
     "Weekend afternoons": "Tardes de fin de semana",
     "Weekend evenings": "Noches de fin de semana",
@@ -965,6 +966,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     // Availability slots
     "Weekday mornings": "Matins en semaine",
     "Weekday lunchtime": "Midis en semaine",
+    "Weekday afternoons": "Après-midis en semaine",
     "Weekday evenings": "Soirs en semaine",
     "Weekend mornings": "Matins le week-end",
     "Weekend afternoons": "Après-midis le week-end",

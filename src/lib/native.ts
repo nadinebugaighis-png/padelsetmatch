@@ -45,6 +45,28 @@ export async function nativeShare(opts: { title?: string; text?: string; url: st
   return "unavailable";
 }
 
+/**
+ * Contact-by-email helper. On the web it opens the mail composer via mailto:.
+ * In the native app the WebView swallows mailto: links, so instead it copies
+ * the address to the clipboard and returns "copied" so the caller can tell
+ * the user the address is ready to paste in their mail app.
+ */
+export async function openMailTo(email: string, subject?: string): Promise<"opened" | "copied"> {
+  if (!isNative() && typeof window !== "undefined") {
+    const url = `mailto:${email}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`;
+    window.location.href = url;
+    return "opened";
+  }
+  if (typeof navigator !== "undefined" && navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch {
+      /* clipboard blocked — the toast still shows the address */
+    }
+  }
+  return "copied";
+}
+
 /** Ask iOS for push permission and return the APNs token (null if declined). */
 export async function registerNativePush(): Promise<string | null> {
   if (!isNative()) return null;

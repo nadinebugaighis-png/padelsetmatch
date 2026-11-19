@@ -46,16 +46,27 @@ export async function nativeShare(opts: { title?: string; text?: string; url: st
 }
 
 /**
- * Contact-by-email helper. On the web it opens the mail composer via mailto:.
- * In the native app the WebView swallows mailto: links, so instead it copies
- * the address to the clipboard and returns "copied" so the caller can tell
- * the user the address is ready to paste in their mail app.
+ * Contact-by-email helper. Opens the phone's mail app with the address filled in:
+ * - native app: a top-level mailto: navigation is handed to the system by the
+ *   Capacitor shell (iOS Mail / default mail app, Android email chooser);
+ * - website in a normal tab: same-tab mailto: navigation;
+ * - website inside a frame (previews, embeds): frames can't navigate to mailto:,
+ *   so open it as a new window instead.
+ * The address is also copied so the caller can show it as a fallback.
  */
-export async function openMailTo(email: string, subject?: string): Promise<"opened" | "copied"> {
-  if (!isNative() && typeof window !== "undefined") {
-    const url = `mailto:${email}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`;
+export async function openMailTo(email: string, subject?: string): Promise<void> {
+  if (typeof window === "undefined") return;
+  const url = `mailto:${email}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`;
+  let inFrame = false;
+  try {
+    inFrame = window.self !== window.top;
+  } catch {
+    inFrame = true;
+  }
+  if (!isNative() && inFrame) {
+    window.open(url, "_blank");
+  } else {
     window.location.href = url;
-    return "opened";
   }
   if (typeof navigator !== "undefined" && navigator.clipboard) {
     try {
@@ -64,7 +75,6 @@ export async function openMailTo(email: string, subject?: string): Promise<"open
       /* clipboard blocked — the toast still shows the address */
     }
   }
-  return "copied";
 }
 
 /**

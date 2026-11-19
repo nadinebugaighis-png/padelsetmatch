@@ -328,17 +328,15 @@ function ProfilePage() {
             <button
               type="button"
               onClick={async () => {
-                const result = await openMailTo("nadine@padelsetmatch.com", "PadelSetMatch");
-                if (result === "copied") {
-                  toast.success(
-                    tr(
-                      "Our email is copied: nadine@padelsetmatch.com — paste it in your mail app",
-                      "Nuestro email está copiado: nadine@padelsetmatch.com — pégalo en tu app de correo",
-                      "Notre email est copié : nadine@padelsetmatch.com — collez-le dans votre app mail",
-                    ),
-                    { duration: 6000 },
-                  );
-                }
+                await openMailTo("nadine@padelsetmatch.com", "PadelSetMatch");
+                toast.success(
+                  tr(
+                    "Opening your email app… Our address is also copied: nadine@padelsetmatch.com",
+                    "Abriendo tu app de correo… También hemos copiado nuestro email: nadine@padelsetmatch.com",
+                    "Ouverture de votre app mail… Notre adresse est aussi copiée : nadine@padelsetmatch.com",
+                  ),
+                  { duration: 6000 },
+                );
               }}
               className="h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
             >

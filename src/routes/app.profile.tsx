@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
 import { formatNationalities } from "@/lib/affinity";
-import { Camera, ChevronDown, GraduationCap, Lock, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, Star, User, UserPlus } from "lucide-react";
+import { Camera, ChevronDown, GraduationCap, Lock, Mail, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, User, UserPlus } from "lucide-react";
 import { nativeShare } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
@@ -318,9 +318,13 @@ function ProfilePage() {
           title={tr("Help & feedback", "Ayuda y comentarios", "Aide et avis")}
           subtitle={tr("How PadelSetMatch works · Send feedback", "Cómo funciona PadelSetMatch · Comentarios", "Comment fonctionne PadelSetMatch · Avis")}
         >
-          <button type="button" onClick={openMemberGuide} className="mb-4 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
+          <button type="button" onClick={openMemberGuide} className="mb-3 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
             {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
           </button>
+          <a href="mailto:nadine@padelsetmatch.com" className="mb-4 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2">
+            <Mail className="w-3.5 h-3.5" />
+            {tr("Contact us", "Contáctanos", "Contactez-nous")}
+          </a>
           <FeedbackBox />
         </CollapsibleRow>
 
@@ -414,7 +418,6 @@ function FeedbackBox() {
   const { t } = useI18n();
   const send = useServerFn(submitFeedback);
   const [msg, setMsg] = useState("");
-  const [rating, setRating] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
   const onSubmit = async () => {
@@ -425,10 +428,9 @@ function FeedbackBox() {
     }
     setBusy(true);
     try {
-      await send({ data: { message: trimmed, rating } });
+      await send({ data: { message: trimmed, rating: null } });
       toast.success(t("fb.thanks"));
       setMsg("");
-      setRating(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("fb.fail"));
     } finally {
@@ -442,24 +444,6 @@ function FeedbackBox() {
         <Sparkles className="w-4 h-4 text-[var(--ink)]" />
         <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{t("fb.title")}</h2>
       </div>
-      <p className="text-xs text-[var(--ink)]/60 mt-1">{t("fb.anon")}</p>
-
-      <div className="flex items-center gap-1 mt-3">
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => setRating(rating === n ? null : n)}
-            aria-label={`${n} star${n > 1 ? "s" : ""}`}
-            className="p-1"
-          >
-            <Star
-              className={`w-5 h-5 ${rating && n <= rating ? "fill-[var(--ink)] text-[var(--ink)]" : "text-[var(--ink)]/40"}`}
-            />
-          </button>
-        ))}
-      </div>
-
       <Textarea
         value={msg}
         onChange={(e) => setMsg(e.target.value.slice(0, 2000))}

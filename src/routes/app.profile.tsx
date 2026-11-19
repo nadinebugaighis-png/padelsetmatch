@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
 import { formatNationalities } from "@/lib/affinity";
 import { Camera, ChevronDown, GraduationCap, Lock, Mail, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, User, UserPlus } from "lucide-react";
-import { nativeShare, openMailTo } from "@/lib/native";
+import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 import { supabase } from "@/integrations/supabase/client";
@@ -321,26 +321,39 @@ function ProfilePage() {
           <button type="button" onClick={openMemberGuide} className="mb-3 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
             {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
           </button>
-          <button
-            type="button"
-            onClick={async () => {
-              const result = await openMailTo("nadine@padelsetmatch.com", "PadelSetMatch");
-              if (result === "copied") {
-                toast.success(
-                  tr(
-                    "Our email is copied: nadine@padelsetmatch.com — paste it in your mail app",
-                    "Nuestro email está copiado: nadine@padelsetmatch.com — pégalo en tu app de correo",
-                    "Notre email est copié : nadine@padelsetmatch.com — collez-le dans votre app mail",
-                  ),
-                  { duration: 6000 },
-                );
-              }
-            }}
-            className="mb-4 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
-          >
-            <Mail className="w-3.5 h-3.5" />
+          <div className="mb-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 text-center">
             {tr("Contact us", "Contáctanos", "Contactez-nous")}
-          </button>
+          </div>
+          <div className="mb-4 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={async () => {
+                const result = await openMailTo("nadine@padelsetmatch.com", "PadelSetMatch");
+                if (result === "copied") {
+                  toast.success(
+                    tr(
+                      "Our email is copied: nadine@padelsetmatch.com — paste it in your mail app",
+                      "Nuestro email está copiado: nadine@padelsetmatch.com — pégalo en tu app de correo",
+                      "Notre email est copié : nadine@padelsetmatch.com — collez-le dans votre app mail",
+                    ),
+                    { duration: 6000 },
+                  );
+                }
+              }}
+              className="h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              {tr("Email", "Email", "Email")}
+            </button>
+            <button
+              type="button"
+              onClick={() => void openExternal("https://wa.me/34620296060?text=" + encodeURIComponent(tr("Hi! I play on PadelSetMatch —", "¡Hola! Juego en PadelSetMatch —", "Bonjour ! Je joue sur PadelSetMatch —")))}
+              className="h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              WhatsApp
+            </button>
+          </div>
           <FeedbackBox />
         </CollapsibleRow>
 

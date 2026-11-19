@@ -67,6 +67,24 @@ export async function openMailTo(email: string, subject?: string): Promise<"open
   return "copied";
 }
 
+/**
+ * Open an external https link (e.g. wa.me) outside the app. In the native
+ * WebView plain links are swallowed, so use the Capacitor Browser plugin;
+ * on the web a normal new tab works.
+ */
+export async function openExternal(url: string): Promise<void> {
+  if (isNative() && Capacitor.isPluginAvailable("Browser")) {
+    try {
+      const { Browser } = await import("@capacitor/browser");
+      await Browser.open({ url });
+      return;
+    } catch {
+      /* fall through to window.open */
+    }
+  }
+  if (typeof window !== "undefined") window.open(url, "_blank", "noopener");
+}
+
 /** Ask iOS for push permission and return the APNs token (null if declined). */
 export async function registerNativePush(): Promise<string | null> {
   if (!isNative()) return null;

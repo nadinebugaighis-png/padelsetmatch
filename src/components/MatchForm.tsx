@@ -163,7 +163,8 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       : null;
 
   // Clubs that book by WhatsApp: the creator books directly instead of going to Playtomic.
-  const formWaClub = locMode === "club" && club && !freeCourt && !playtomicLink.trim() ? clubWhatsappBooking(club.name) : null;
+  // Booking is via Playtomic only (WhatsApp booking paused).
+  const formWaClub = null as ReturnType<typeof clubWhatsappBooking>;
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
   const canSave = locationReady && !!when && !saving;
@@ -433,6 +434,13 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           className={bareInput}
         />
         {playtomicError && <p className="pb-2 text-[11px] text-red-500">{playtomicError}</p>}
+        {!playtomicLink.trim() && formBooking && (
+          <a href={formBooking.url} target="_blank" rel="noopener noreferrer"
+            onClick={() => window.__lovableEvents?.track?.("project.book_court_clicked", { club: formBooking.club, source: formBooking.source, placement: "match_form_more", court_booked: courtBooked })}
+            className="inline-flex items-center gap-1 pb-2 text-[12px] font-medium text-[var(--ink)] underline underline-offset-2">
+            {tr("Book on Playtomic", "Reservar en Playtomic", "Réserver sur Playtomic")} <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
         <div className={rowDivider} />
         <textarea
           value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={1}

@@ -442,7 +442,8 @@ function EventDetail() {
         const booking = clubBookingLink(event);
         const iHost = !!me?.id && me.id === event.host_profile_id;
         // Clubs that book by WhatsApp: only the host books (WhatsApp sheet), so players don't double-book.
-        const waClub = !event.is_private_court && !event.free_court ? clubWhatsappBooking(event.club_name) : null;
+        // Booking is via Playtomic only for now (WhatsApp booking paused).
+        const waClub = null as ReturnType<typeof clubWhatsappBooking>;
         const showWhatsappBooking = !!waClub && iHost && !event.court_booked && event.status !== "cancelled";
         const showBooking = !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled"
           && (!waClub || booking.source === "host");

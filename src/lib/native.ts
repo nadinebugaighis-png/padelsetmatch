@@ -140,8 +140,40 @@ export async function listenForNativeMatchLink(onPath: (path: string) => void) {
 }
 
 /** Status bar, splash screen and hardware back button. Safe no-op on the web. */
+/**
+ * In the phone apps, links that open another site (Playtomic, Maps, WhatsApp…)
+ * can be ignored by the app's web view, so players had to tap several times.
+ * Catch every such tap once, app-wide, and open it in the in-app browser.
+ */
+let externalLinksHooked = false;
+function hookExternalLinks() {
+  if (externalLinksHooked || typeof document === "undefined") return;
+  externalLinksHooked = true;
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (e.defaultPrevented || e.button !== 0) return;
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a) return;
+      let url: URL;
+      try {
+        url = new URL(a.href, window.location.href);
+      } catch {
+        return;
+      }
+      if (url.protocol !== "https:" && url.protocol !== "http:") return;
+      const external = url.host !== window.location.host;
+      if (!external && a.target !== "_blank") return;
+      e.preventDefault();
+      void openExternal(url.toString());
+    },
+    true,
+  );
+}
+
 export async function initNativeShell() {
   if (!isNative()) return;
+  hookExternalLinks();
   try {
     const [{ StatusBar, Style }, { SplashScreen }, { App }] = await Promise.all([
       import("@capacitor/status-bar"),

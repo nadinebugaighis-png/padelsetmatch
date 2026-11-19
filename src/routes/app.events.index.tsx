@@ -820,7 +820,7 @@ function MatchCard({
                 else onOpen(e.id);
               }}
               disabled={isPending}
-              className="ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 disabled:opacity-50"
+              className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 disabled:opacity-50"
             >
               {tr("Manage", "Gestionar", "Gérer")}
             </button>
@@ -866,7 +866,8 @@ function SlotAvatar({
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         aria-label={tr("Player needed", "Falta jugador", "Joueur recherché")}
         title={tr("Player needed", "Falta jugador", "Joueur recherché")}
-        className={`w-7 h-7 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
+        // Invisible larger touch area so a single tap on the small "+" always lands.
+        className={`relative before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] w-7 h-7 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
           canJoin
             ? "border-[var(--plum)]/45 text-[var(--plum)] hover:bg-[var(--plum)]/8"
             : "border-[var(--ink)]/25 text-[var(--ink)]/35"

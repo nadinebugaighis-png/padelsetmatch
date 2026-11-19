@@ -1,0 +1,1 @@
+- Any player may edit a visible match's where/when/level/note (match-player-edit.ts); cancel/delete/gender/booking/class stay host-only.

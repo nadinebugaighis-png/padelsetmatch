@@ -41,4 +41,3 @@
 - Players without a photo get a bundled court-view drawing chosen by a hash of their id (src/lib/court-view.ts, CourtViewCard); never generate card art at runtime, so each player keeps the same image and it loads from cache instantly.
 - Daily open games come only from open_game_slots via the hourly ensure_open_games job; open_game_runs stops cancelled/deleted games returning and app.house_games skips the host seat and alerts.
 - Game places come from matchCapacity (match-rules.ts), mirrored by public.match_event_capacity (4, or coach + class_students); a participant insert trigger enforces status, capacity and gender so direct inserts can't bypass them. Never hardcode 4.
-- Any player may edit a visible match's where/when/level/note (match-player-edit.ts); cancel/delete/gender/booking/class stay host-only.

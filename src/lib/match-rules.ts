@@ -63,8 +63,8 @@ export function matchPreviewMeta(freeCourt: boolean | null | undefined): { title
 }
 
 // ---------- Classes ----------
-/** A class is a coach (the host) plus 1–3 students. */
-export const CLASS_STUDENT_OPTIONS = [1, 2, 3] as const;
+/** A class is a coach plus 1–4 students. */
+export const CLASS_STUDENT_OPTIONS = [1, 2, 3, 4] as const;
 export const DEFAULT_CLASS_STUDENTS = 3;
 export const CLASS_FEE_MAX = 40;
 
@@ -74,5 +74,21 @@ type ClassLike = { is_class?: boolean | null; class_students?: number | null };
 export function matchCapacity(e: ClassLike | null | undefined): number {
   if (!e?.is_class) return 4;
   const n = e.class_students ?? DEFAULT_CLASS_STUDENTS;
-  return 1 + Math.min(3, Math.max(1, n));
+  return 1 + Math.min(4, Math.max(1, n));
+}
+
+// ---------- Length ----------
+/** Matches and classes last 60 or 90 minutes (mirrors the match_events check). */
+export const MATCH_DURATIONS = [60, 90] as const;
+export type MatchDuration = (typeof MATCH_DURATIONS)[number];
+export const DEFAULT_MATCH_DURATION: MatchDuration = 90;
+
+export function matchDuration(e: { duration_minutes?: number | null } | null | undefined): MatchDuration {
+  return e?.duration_minutes === 60 ? 60 : 90;
+}
+
+/** When the game finishes, from its start and saved length. */
+export function matchEndsAt(startsAt: string | Date, durationMinutes?: number | null): Date {
+  const start = typeof startsAt === "string" ? new Date(startsAt) : startsAt;
+  return new Date(start.getTime() + matchDuration({ duration_minutes: durationMinutes }) * 60_000);
 }

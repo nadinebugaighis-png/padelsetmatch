@@ -931,6 +931,7 @@ export type Database = {
           country: string | null
           court_booked: boolean
           created_at: string
+          duration_minutes: number
           extra_confirmed: number
           free_court: boolean
           gender_rule: Database["public"]["Enums"]["match_gender_rule"]
@@ -961,6 +962,7 @@ export type Database = {
           country?: string | null
           court_booked?: boolean
           created_at?: string
+          duration_minutes?: number
           extra_confirmed?: number
           free_court?: boolean
           gender_rule?: Database["public"]["Enums"]["match_gender_rule"]
@@ -991,6 +993,7 @@ export type Database = {
           country?: string | null
           court_booked?: boolean
           created_at?: string
+          duration_minutes?: number
           extra_confirmed?: number
           free_court?: boolean
           gender_rule?: Database["public"]["Enums"]["match_gender_rule"]

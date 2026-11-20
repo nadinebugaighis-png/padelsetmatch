@@ -11,7 +11,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
-import { CLASS_STUDENT_OPTIONS, DEFAULT_CLASS_STUDENTS, DEFAULT_GENDER_RULE, type GenderRule } from "@/lib/match-rules";
+import { CLASS_STUDENT_OPTIONS, DEFAULT_CLASS_STUDENTS, DEFAULT_GENDER_RULE, DEFAULT_MATCH_DURATION, MATCH_DURATIONS, matchEndsAt, type GenderRule, type MatchDuration } from "@/lib/match-rules";
 
 export type MatchFormValues = {
   starts_at: string;
@@ -34,6 +34,7 @@ export type MatchFormValues = {
   is_class: boolean;
   class_students: number | null;
   class_fee: string | null;
+  duration_minutes: MatchDuration;
 };
 
 export type MatchFormInitial = Partial<MatchFormValues> & {
@@ -104,7 +105,7 @@ function SegButton({
 export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId }: Props) {
   const tr = useTr();
   // People already in the lineup (0 when the host stepped out); a new match starts with the host.
-  const appPlayersCount = Math.min(4, Math.max(0, initial?.app_players_count ?? 1));
+  const appPlayersCount = Math.min(5, Math.max(0, initial?.app_players_count ?? 1));
   const maxNeeded = Math.max(0, 4 - appPlayersCount);
   const initialNeeded = Math.min(
     maxNeeded,
@@ -138,6 +139,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   );
   const [freeCourt, setFreeCourt] = useState<boolean>(initial?.free_court ?? false);
   const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
+  const [duration, setDuration] = useState<MatchDuration>(initial?.duration_minutes === 60 ? 60 : DEFAULT_MATCH_DURATION);
   const [isClass, setIsClass] = useState<boolean>(initial?.is_class ?? false);
   const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? DEFAULT_CLASS_STUDENTS);
   const classFee = initial?.class_fee ?? "";
@@ -183,6 +185,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       is_class: isClass,
       class_students: isClass ? classStudents : null,
       class_fee: isClass ? classFee.trim() || null : null,
+      duration_minutes: duration,
     };
     const values: MatchFormValues =
       locMode === "club" && club
@@ -258,7 +261,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           { v: true, l: tr("Class", "Clase", "Cours") },
         ].map((o) => (
           <button key={String(o.v)} type="button" aria-pressed={isClass === o.v}
-            onClick={() => { setIsClass(o.v); if (o.v && classStudents < minStudents) setClassStudents(Math.min(3, minStudents)); }}
+            onClick={() => { setIsClass(o.v); if (o.v && classStudents < minStudents) setClassStudents(Math.min(4, minStudents)); }}
             className={`h-9 rounded-full text-[11px] uppercase tracking-[0.18em] font-medium transition ${isClass === o.v ? (o.v ? "bg-[var(--plum)] text-[var(--paper)]" : "bg-white text-[var(--ink)] shadow-sm") : "text-[var(--ink)]/55"}`}>
             {o.l}
           </button>
@@ -294,6 +297,25 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       </section>
         <div className={rowDivider} />
         <MatchDateTimePicker value={when} onChange={setWhen} bare />
+        <div className={rowDivider} />
+        <div className={rowCls}>
+          <span className={rowLabel}>
+            {tr("Length", "Duración", "Durée")}
+            {when && (
+              <span className="ml-1.5 text-[12px] text-[var(--ink)]/45 tabular-nums">
+                {tr("ends", "termina", "fin")} {matchEndsAt(new Date(when), duration).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
+              </span>
+            )}
+          </span>
+          <div className="grid grid-cols-2 rounded-lg bg-[var(--ink)]/[0.06] p-0.5 w-44">
+            {MATCH_DURATIONS.map((m) => (
+              <button key={m} type="button" aria-pressed={duration === m} onClick={() => setDuration(m)}
+                className={`h-8 rounded-md text-xs font-medium tabular-nums transition ${duration === m ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/55"}`}>
+                {m} min
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className={cardCls}>
@@ -301,7 +323,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           <>
             <div className={rowCls}>
               <span className={rowLabel}>{tr("Students", "Alumnos", "Élèves")}</span>
-              <div className="grid grid-cols-3 rounded-lg bg-[var(--ink)]/[0.06] p-0.5 w-44">
+              <div className="grid grid-cols-4 rounded-lg bg-[var(--ink)]/[0.06] p-0.5 w-44">
                 {CLASS_STUDENT_OPTIONS.map((n) => (
                   <button key={n} type="button" aria-pressed={classStudents === n} disabled={n < minStudents} onClick={() => setClassStudents(n)}
                     className={`h-8 rounded-md text-xs font-medium tabular-nums transition disabled:opacity-30 ${classStudents === n ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/55"}`}>

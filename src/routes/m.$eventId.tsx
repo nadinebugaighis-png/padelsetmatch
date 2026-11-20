@@ -8,7 +8,7 @@ import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.func
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { genderRuleLabel, matchPreviewMeta } from "@/lib/match-rules";
+import { genderRuleLabel, matchDuration, matchPreviewMeta } from "@/lib/match-rules";
 
 
 const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/dbc7c0f5-88b1-4692-9b4e-c13975074410/padel-share-logo.jpg";
@@ -257,7 +257,7 @@ function PublicMatchPage() {
                     <span className="text-[var(--ink)]/25">·</span>
                     <span>{genderLabel}</span>
                     <span className="text-[var(--ink)]/25">·</span>
-                    <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> 90 min</span>
+                    <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> {matchDuration(match as { duration_minutes?: number | null })} min</span>
                     {match.court_booked && (
                       <>
                         <span className="text-[var(--ink)]/25">·</span>

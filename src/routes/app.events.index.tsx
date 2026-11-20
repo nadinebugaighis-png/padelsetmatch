@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { genderRuleLabel } from "@/lib/match-rules";
+import { genderRuleLabel, matchDuration } from "@/lib/match-rules";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
@@ -84,9 +84,10 @@ type EventLite = {
   is_class?: boolean;
   class_students?: number | null;
   class_fee?: string | null;
+  duration_minutes?: number | null;
   capacity?: number;
   host?: { first_name?: string } | null;
-  participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null } | null } | null>;
+  participants?: Array<{ profile_id?: string; profiles?: { first_name?: string; photo_url?: string | null; is_coach?: boolean | null } | null } | null>;
   guests?: Array<{ id: string; display_name: string; level?: string | null }>;
 };
 
@@ -665,8 +666,12 @@ function MatchCard({
 
   // Order: app players, link guests, then friends the host already has coming
   // (extra_confirmed). Whatever is left is a place that still needs a player.
+  // In a class, a verified coach always sits first so players see who teaches.
+  const orderedParticipants = e.is_class
+    ? [...(e.participants ?? [])].sort((a, b) => Number(!!b?.profiles?.is_coach) - Number(!!a?.profiles?.is_coach))
+    : e.participants ?? [];
   const playerSlots: SlotData[] = [
-    ...(e.participants ?? []).map((participant) => ({ participant })),
+    ...orderedParticipants.map((participant) => ({ participant })),
     ...(e.guests ?? []).map((guest) => ({ guest })),
     ...Array.from({ length: e.extra_confirmed ?? 0 }, () => ({ friend: true as const })),
   ];
@@ -763,7 +768,7 @@ function MatchCard({
             {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
             {genderLabel && <span>{genderLabel}</span>}
             {genderLabel && <span className="text-[var(--ink)]/25">·</span>}
-            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> 90 min</span>
+            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> {matchDuration(e)} min</span>
             {e.free_court && (
               <>
                 <span className="text-[var(--ink)]/25">·</span>
@@ -795,7 +800,7 @@ function MatchCard({
           </div>
 
           {/* Players + action */}
-          <div className="mt-2 flex items-center gap-2">
+          <div className={`mt-2 flex items-center ${capacity > 4 ? "gap-1" : "gap-2"}`}>
             {slots.map((s, i) => (
               <SlotAvatar
                 key={i}
@@ -853,6 +858,7 @@ function SlotAvatar({
 }) {
   const name = slot?.participant?.profiles?.first_name ?? slot?.guest?.display_name;
   const photo = slot?.participant?.profiles?.photo_url;
+  const isCoach = !!slot?.participant?.profiles?.is_coach;
 
   if (slot?.friend) {
     return <FriendSlot label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />;
@@ -880,8 +886,8 @@ function SlotAvatar({
 
   return (
     <div
-      title={name ?? ""}
-      className="w-7 h-7 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
+      title={isCoach ? `${name ?? ""} · ${tr("Coach", "Profesor", "Coach")}` : name ?? ""}
+      className={`w-7 h-7 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center ${isCoach ? "ring-2 ring-[var(--plum)]" : ""}`}
     >
       {photo ? (
         <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />

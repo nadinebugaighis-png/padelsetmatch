@@ -1,7 +1,7 @@
 import { MapPin, Clock, Plus } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
 import { useI18n, useTr } from "@/lib/i18n";
-import { genderRuleLabel, matchCapacity } from "@/lib/match-rules";
+import { genderRuleLabel, matchCapacity, matchDuration } from "@/lib/match-rules";
 
 export type ProgrammeMatch = {
   starts_at: string;
@@ -16,6 +16,7 @@ export type ProgrammeMatch = {
   is_class?: boolean | null;
   class_students?: number | null;
   class_fee?: string | null;
+  duration_minutes?: number | null;
   note?: string | null;
   filled?: number | null;
   participant_names?: string[] | null;
@@ -144,7 +145,7 @@ export function MatchProgrammeCard({
             )}
             <span className="text-[var(--ink)]/25">·</span>
             <span className="inline-flex items-center gap-1">
-              <Clock className="w-3 h-3" /> 90 min
+              <Clock className="w-3 h-3" /> {matchDuration(match)} min
             </span>
             {match.court_booked && (
               <>

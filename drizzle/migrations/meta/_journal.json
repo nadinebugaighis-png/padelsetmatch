@@ -162,6 +162,13 @@
       "when": 1794987784317,
       "tag": "0022_chat_alerts_skip_house_game_host",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1795164549976,
+      "tag": "0023_match_duration_and_four_students",
+      "breakpoints": true
     }
   ]
 }

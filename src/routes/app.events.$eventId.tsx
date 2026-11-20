@@ -28,7 +28,7 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { genderRuleAllows, genderRuleLabel, matchShareText } from "@/lib/match-rules";
+import { genderRuleAllows, genderRuleLabel, matchDuration, matchEndsAt, matchShareText } from "@/lib/match-rules";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
@@ -432,7 +432,8 @@ function EventDetail() {
       {(() => {
         const d = new Date(event.starts_at);
         const dateLabel = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
-        const time = d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+        const hm = { hour: "2-digit", minute: "2-digit", hour12: false } as const;
+        const time = `${d.toLocaleTimeString(undefined, hm)}–${matchEndsAt(d, event.duration_minutes).toLocaleTimeString(undefined, hm)} · ${matchDuration(event)} min`;
         const status =
           event.status === "cancelled"
             ? { cls: "bg-red-50 text-red-700", label: tr("Cancelled", "Cancelado", "Annulé") }
@@ -451,7 +452,7 @@ function EventDetail() {
           <section className="rounded-2xl border border-[var(--ink)]/10 bg-white overflow-hidden">
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between gap-2">
-                <div className="text-[13px] font-semibold text-[var(--ink)] capitalize">{dateLabel} · {time}</div>
+                <div className="text-[13px] font-semibold text-[var(--ink)] capitalize">{dateLabel} · <span className="normal-case">{time}</span></div>
                 <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${status.cls}`}>{status.label}</span>
               </div>
               <h1 className="text-serif text-2xl leading-tight text-[var(--ink)] mt-1 truncate">{event.club_name}</h1>
@@ -517,7 +518,6 @@ function EventDetail() {
                     </>
                   ) : null;
                 })()}
-                <span className="text-[var(--ink)]/50"> · </span>
                 {tr(
                   `${event.class_students ?? 3} student${(event.class_students ?? 3) === 1 ? "" : "s"}`,
                   `${event.class_students ?? 3} alumno${(event.class_students ?? 3) === 1 ? "" : "s"}`,
@@ -610,7 +610,9 @@ function EventDetail() {
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/{event.capacity ?? 4}</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          {(event.participants ?? []).map((p: any) => {
+          {[...(event.participants ?? [])]
+            .sort((a: any, b: any) => (event.is_class ? Number(!!b.profiles?.is_coach) - Number(!!a.profiles?.is_coach) : 0))
+            .map((p: any) => {
             const isMe = p.profile_id === me?.id;
             const isHost = p.profile_id === event.host_profile_id;
             return (

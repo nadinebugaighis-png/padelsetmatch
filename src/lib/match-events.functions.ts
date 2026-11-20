@@ -250,7 +250,8 @@ const CreateInput = z.object({
   is_private_court: z.boolean().optional(),
   free_court: z.boolean().optional(),
   is_class: z.boolean().optional(),
-  class_students: z.number().int().min(1).max(3).nullable().optional(),
+  class_students: z.number().int().min(1).max(4).nullable().optional(),
+  duration_minutes: z.union([z.literal(60), z.literal(90)]).optional(),
   class_fee: z.string().trim().max(40).nullable().optional(),
 });
 
@@ -349,7 +350,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const myKeywords = locationMatchKeywords(profile?.locations);
 
     const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
-    const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level))";
+    const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level, is_coach))";
 
     // Always include events the user is involved in (host, participant, or invited),
     // regardless of city filter — otherwise a match joined via share link outside
@@ -659,6 +660,7 @@ export const duplicateMatchEvent = createServerFn({ method: "POST" })
         is_class: src.is_class ?? false,
         class_students: src.class_students ?? null,
         class_fee: src.class_fee ?? null,
+        duration_minutes: src.duration_minutes ?? 90,
         extra_confirmed: src.extra_confirmed ?? 0,
         note: src.note,
         playtomic_link: src.playtomic_link,
@@ -701,7 +703,8 @@ const UpdateInput = z.object({
   is_private_court: z.boolean().optional(),
   free_court: z.boolean().optional(),
   is_class: z.boolean().optional(),
-  class_students: z.number().int().min(1).max(3).nullable().optional(),
+  class_students: z.number().int().min(1).max(4).nullable().optional(),
+  duration_minutes: z.union([z.literal(60), z.literal(90)]).optional(),
   class_fee: z.string().trim().max(40).nullable().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
 });

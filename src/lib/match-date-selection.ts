@@ -27,3 +27,25 @@ export function groupByDay<T>(items: T[], keyOf: (item: T) => string) {
   }
   return groups;
 }
+
+// The chosen days survive leaving and returning to the Matches page within one
+// app session. "all" is stored as a marker so new days still count as included.
+export const MATCH_DAYS_STORAGE_KEY = "psm.matchDays";
+
+export function serializeMatchDays(selected: Set<string>, allKeys: string[]) {
+  return selected.size === allKeys.length ? "all" : JSON.stringify([...selected]);
+}
+
+export function restoreMatchDays(saved: string | null, allKeys: string[]): Set<string> | null {
+  if (!saved) return null;
+  if (saved === "all") return new Set(allKeys);
+  try {
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return null;
+    const valid = new Set(allKeys);
+    const kept = parsed.filter((k): k is string => typeof k === "string" && valid.has(k));
+    return kept.length ? new Set(kept) : null;
+  } catch {
+    return null;
+  }
+}

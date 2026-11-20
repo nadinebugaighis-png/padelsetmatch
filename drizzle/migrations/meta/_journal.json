@@ -169,6 +169,13 @@
       "when": 1795164549976,
       "tag": "0023_match_duration_and_four_students",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1795187895244,
+      "tag": "0024_transfer_host_keeps_lineup",
+      "breakpoints": true
     }
   ]
 }

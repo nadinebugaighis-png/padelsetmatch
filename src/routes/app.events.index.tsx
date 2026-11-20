@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
 import { Button } from "@/components/ui/button";
-import { defaultMatchDays, groupByDay, toggleMatchDay } from "@/lib/match-date-selection";
+import { defaultMatchDays, groupByDay, toggleMatchDay, MATCH_DAYS_STORAGE_KEY, restoreMatchDays, serializeMatchDays } from "@/lib/match-date-selection";
 
 export const Route = createFileRoute("/app/events/")({
   head: () => ({
@@ -172,8 +172,24 @@ function EventsPage() {
   const allDates = selectedDays.size === days.length;
   const activeFilterCount = Number(levelOnly) + Number(timeOfDay !== "all");
 
+  // Bring back the days chosen earlier in this session (e.g. after opening a match).
+  useEffect(() => {
+    try {
+      const restored = restoreMatchDays(sessionStorage.getItem(MATCH_DAYS_STORAGE_KEY), days.map(dayKey));
+      if (restored) setSelectedDays(restored);
+    } catch { /* storage unavailable */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function chooseDays(next: Set<string>) {
+    setSelectedDays(next);
+    try {
+      sessionStorage.setItem(MATCH_DAYS_STORAGE_KEY, serializeMatchDays(next, days.map(dayKey)));
+    } catch { /* storage unavailable */ }
+  }
+
   function toggleDay(k: string) {
-    setSelectedDays((prev) => toggleMatchDay(prev, k, days.map(dayKey)));
+    chooseDays(toggleMatchDay(selectedDays, k, days.map(dayKey)));
   }
 
   const searchLower = search.trim().toLowerCase();
@@ -384,7 +400,7 @@ function EventsPage() {
         {mode === "find" && (
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1.5" aria-label={tr("Match dates", "Fechas de partidos", "Dates des matchs")}>
             <Button variant={allDates ? "default" : "ghost"} aria-pressed={allDates}
-              onClick={() => setSelectedDays(new Set(days.map(dayKey)))}
+              onClick={() => chooseDays(new Set(days.map(dayKey)))}
               className="shrink-0 h-11 min-w-11 px-2 shadow-none flex-col gap-0">
               <span className="text-xs">{tr("All", "Todas", "Toutes")}</span>
               <span className="text-xs">{tr("dates", "fechas", "dates")}</span>
@@ -466,7 +482,7 @@ function EventsPage() {
                 worldwide={worldwide}
                 onExpandArea={() => setWorldwide(true)}
                 onResetDays={() =>
-                  setSelectedDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
+                  chooseDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
                 }
                 onCreate={() => navigate({ to: "/app/events/new" })}
               />

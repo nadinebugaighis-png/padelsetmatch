@@ -1,2 +1,3 @@
 - Any player may edit a visible match's where/when/level/note (match-player-edit.ts); cancel/delete/gender/booking/class stay host-only.
 - Game length is match_events.duration_minutes (60 or 90, default 90); read it through matchDuration/matchEndsAt in match-rules.ts and never hardcode "90 min", so feeds, detail and share pages agree.
+- Passing hosting (transfer_match_host) only changes match_events.host_profile_id; never delete or re-insert participant rows, because those fire leave/join alerts and drop the new host from the line-up.

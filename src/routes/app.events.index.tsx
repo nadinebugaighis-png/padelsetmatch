@@ -17,6 +17,7 @@ import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
+import { CourtViewCard } from "@/components/CourtViewCard";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
@@ -694,143 +695,145 @@ function MatchCard({
   const dayTone = (((calendarDay % 3) + (daySlot % 3)) % 3 + 3) % 3;
   const toneClass = ["bg-match-lavender", "bg-match-green", "bg-match-gold"][dayTone];
 
+  // Four-player matches read as two pairs facing each other; classes and other
+  // sizes sit in one row (coach first).
+  const asPairs = !e.is_class && capacity === 4;
+  const renderSlot = (s: SlotData | null, i: number) => (
+    <SlotAvatar
+      key={i}
+      slot={s}
+      tr={tr}
+      // A "+" only ever joins — hosts who stepped out included.
+      onJoin={() => {
+        if (playing) { toast(tr("You're already in this match", "Ya estás en este partido", "Tu es déjà dans ce match")); return; }
+        if (!full) onJoin(e);
+      }}
+      canJoin={!full}
+      isPending={isPending}
+    />
+  );
+  const sep = <span className="text-[var(--ink)]/25">·</span>;
+  // Skip the place line when it would only repeat the title.
+  const rawPlace = e.city || e.club_address || "";
+  const placeLine = rawPlace.trim().toLowerCase() === (e.club_name ?? "").trim().toLowerCase() ? "" : rawPlace;
+
   return (
     <div
-      className={`rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] ${
-        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/10"
+      className={`rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.03),0_10px_24px_-18px_rgba(15,62,46,0.22)] ${
+        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/[0.07]"
       }`}
     >
-      <div className="flex">
-        {/* Date / time block */}
-        <button
-          type="button"
-          onClick={openFromCard}
-          className={`w-[76px] sm:w-[88px] shrink-0 flex flex-col items-center justify-center py-2.5 text-center ${toneClass}`}
-        >
-          <div className="text-serif text-[21px] sm:text-[23px] leading-none text-[var(--ink)]">{time}</div>
-          <div className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
-            {whenLabel}
-          </div>
-          {!dateBadge && (
-            <div className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
-              {dayNum} <span className="capitalize">{monthShort}</span>
-            </div>
-          )}
-          {levelWord && (
-            <div className="mt-1.5 rounded-full bg-white/70 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.1em] font-bold text-[var(--ink)] leading-none max-w-[70px] truncate">
-              {levelWord}
-            </div>
-          )}
-        </button>
-
-        {/* Body */}
-        <div className="flex-1 min-w-0 p-3">
-          <div className="flex items-start justify-between gap-2">
-            <button type="button" onClick={openFromCard} className="min-w-0 text-left">
-              {e.tag && (
-                <div className="mb-1 inline-block -rotate-2 rounded-sm bg-[var(--gold)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink)] shadow-sm">
-                  {e.tag}
-                </div>
-              )}
-              <div className="text-[14px] font-semibold text-[var(--ink)] truncate">
-                {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
-              </div>
-              <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60 min-w-0">
-                <MapPin className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{e.city || e.club_address || "—"}</span>
-              </div>
-            </button>
-            <span
-              className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-0.5 font-semibold whitespace-nowrap ${
-                full
-                  ? "bg-[var(--ink)]/8 text-[var(--ink)]/55"
-                  : "bg-[var(--plum)]/12 text-[var(--plum)]"
-              }`}
-            >
-              {full
-                ? tr("Full", "Completo", "Complet")
-                : tr(`Need ${e.needs}`, `Falta${e.needs > 1 ? "n" : ""} ${e.needs}`, `${e.needs} manquant${e.needs > 1 ? "s" : ""}`)}
+      {/* Header: when, where, places left */}
+      <button type="button" onClick={openFromCard} className="block w-full text-left px-4 pt-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`inline-flex items-baseline gap-1.5 rounded-full px-2.5 py-1 ${toneClass}`}>
+              <span className="text-serif text-[15px] leading-none text-[var(--ink)]">{time}</span>
+            </span>
+            <span className="text-[10.5px] uppercase tracking-[0.18em] font-semibold text-[var(--ink)]/70 truncate">
+              {whenLabel}
+              {!dateBadge && <> · {dayNum} <span className="capitalize">{monthShort}</span></>}
             </span>
           </div>
-
-          {/* Meta row */}
-          <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
-            {e.is_class && (
-              <>
-                <span className="rounded-full border border-[var(--gold)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">
-                  {tr("Class", "Clase", "Cours")}
-                </span>
-                {e.class_fee && <span className="font-semibold text-[var(--ink)]/80">{e.class_fee}</span>}
-                <span className="text-[var(--ink)]/25">·</span>
-              </>
-            )}
-            {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
-            {levelLabel && <span className="text-[var(--ink)]/25">·</span>}
-            {genderLabel && <span>{genderLabel}</span>}
-            {genderLabel && <span className="text-[var(--ink)]/25">·</span>}
-            <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> {matchDuration(e)} min</span>
-            {e.free_court && (
-              <>
-                <span className="text-[var(--ink)]/25">·</span>
-                <span className="font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
-              </>
-            )}
-            {e.court_booked && (
-              <>
-                <span className="text-[var(--ink)]/25">·</span>
-                <span className="font-semibold text-[var(--court-deep)]">
-                  {tr("Court booked", "Pista reservada", "Court réservé")}
-                </span>
-              </>
-            )}
-            {e.is_private_court && (
-              <>
-                <span className="text-[var(--ink)]/25">·</span>
-                <span className="font-semibold text-amber-800">{tr("Private", "Privada", "Privé")}</span>
-              </>
-            )}
-            {mine && (
-              <>
-                <span className="text-[var(--ink)]/25">·</span>
-                <span className={`font-semibold ${e.iAmHost ? "text-[var(--plum)]" : "text-[var(--ink)]/80"}`}>
-                  {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
-                </span>
-              </>
-            )}
-          </div>
-
-          {/* Players + action */}
-          <div className={`mt-2 flex items-center ${capacity > 4 ? "gap-1" : "gap-2"}`}>
-            {slots.map((s, i) => (
-              <SlotAvatar
-                key={i}
-                slot={s}
-                tr={tr}
-                // A "+" only ever joins — hosts who stepped out included.
-                onJoin={() => {
-                  if (playing) { toast(tr("You're already in this match", "Ya estás en este partido", "Tu es déjà dans ce match")); return; }
-                  if (!full) onJoin(e);
-                }}
-                canJoin={!full}
-                isPending={isPending}
-              />
-            ))}
-            <button
-              type="button"
-              onClick={(ev) => {
-                ev.stopPropagation();
-                // Everyone manages from here: hosts and players alike open the
-                // match to join, leave, chat or edit. The "+" spots still join directly.
-                if (e.iAmHost) onManage(e);
-                else onOpen(e.id);
-              }}
-              disabled={isPending}
-              className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] ml-auto shrink-0 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.14em] px-3 py-1.5 disabled:opacity-50"
-            >
-              {tr("Manage", "Gestionar", "Gérer")}
-            </button>
-          </div>
+          <span
+            className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-0.5 font-semibold whitespace-nowrap ${
+              full ? "bg-[var(--ink)]/[0.06] text-[var(--ink)]/55" : "bg-[var(--plum)]/10 text-[var(--plum)]"
+            }`}
+          >
+            {full
+              ? tr("Full", "Completo", "Complet")
+              : tr(`Need ${e.needs}`, `Falta${e.needs > 1 ? "n" : ""} ${e.needs}`, `${e.needs} manquant${e.needs > 1 ? "s" : ""}`)}
+          </span>
         </div>
+        {e.tag && (
+          <div className="mt-2 inline-block -rotate-2 rounded-sm bg-[var(--gold)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--ink)] shadow-sm">
+            {e.tag}
+          </div>
+        )}
+        <div className="mt-2 text-serif text-[18px] leading-tight text-[var(--ink)] truncate">
+          {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+        </div>
+        {placeLine && (
+          <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/55 min-w-0">
+            <MapPin className="w-3 h-3 shrink-0" />
+            <span className="truncate">{placeLine}</span>
+          </div>
+        )}
+      </button>
+
+      {/* Players: portraits with names, open places invite a tap */}
+      <div className="px-3 pt-3 pb-3">
+        {asPairs ? (
+          <div className="flex items-start justify-center">
+            <div className="flex flex-1 justify-evenly">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
+            <span className="mt-3 text-serif italic text-[13px] text-[var(--ink)]/35 px-1">vs</span>
+            <div className="flex flex-1 justify-evenly">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
+          </div>
+        ) : (
+          <div className="flex items-start justify-evenly">{slots.map((s, i) => renderSlot(s, i))}</div>
+        )}
+      </div>
+
+      {/* Quiet footer: details and the one action */}
+      <div className="mx-4 border-t border-[var(--gold)]/25 py-2.5 flex items-center gap-2">
+        <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+          {e.is_class && (
+            <>
+              <span className="rounded-full border border-[var(--gold)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">
+                {tr("Class", "Clase", "Cours")}
+              </span>
+              {e.class_fee && <span className="font-semibold text-[var(--ink)]/80">{e.class_fee}</span>}
+              {sep}
+            </>
+          )}
+          {levelLabel && <span className="font-semibold text-[var(--ink)]/80">{levelLabel}</span>}
+          {levelLabel && sep}
+          {genderLabel && <span>{genderLabel}</span>}
+          {genderLabel && sep}
+          <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> {matchDuration(e)} min</span>
+          {e.free_court && (
+            <>
+              {sep}
+              <span className="font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
+            </>
+          )}
+          {e.court_booked && (
+            <>
+              {sep}
+              <span className="font-semibold text-[var(--court-deep)]">
+                {tr("Court booked", "Pista reservada", "Court réservé")}
+              </span>
+            </>
+          )}
+          {e.is_private_court && (
+            <>
+              {sep}
+              <span className="font-semibold text-amber-800">{tr("Private", "Privada", "Privé")}</span>
+            </>
+          )}
+          {mine && (
+            <>
+              {sep}
+              <span className={`font-semibold ${e.iAmHost ? "text-[var(--plum)]" : "text-[var(--ink)]/80"}`}>
+                {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("You're in", "Estás dentro", "Inscrit")}
+              </span>
+            </>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={(ev) => {
+            ev.stopPropagation();
+            // Everyone manages from here: hosts and players alike open the
+            // match to join, leave, chat or edit. The "+" spots still join directly.
+            if (e.iAmHost) onManage(e);
+            else onOpen(e.id);
+          }}
+          disabled={isPending}
+          className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] shrink-0 inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10.5px] font-semibold uppercase tracking-[0.16em] px-3.5 py-1.5 disabled:opacity-50"
+        >
+          {tr("Manage", "Gestionar", "Gérer")}
+        </button>
       </div>
     </div>
   );
@@ -859,9 +862,16 @@ function SlotAvatar({
   const name = slot?.participant?.profiles?.first_name ?? slot?.guest?.display_name;
   const photo = slot?.participant?.profiles?.photo_url;
   const isCoach = !!slot?.participant?.profiles?.is_coach;
+  const seed = slot?.participant?.profile_id ?? slot?.guest?.id ?? name;
+  const caption = "mt-1.5 block w-[60px] truncate text-center text-[11px] leading-tight";
 
   if (slot?.friend) {
-    return <FriendSlot label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />;
+    return (
+      <div className="flex w-[60px] flex-col items-center">
+        <FriendSlot size="lg" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
+        <span className={`${caption} text-[var(--ink)]/60`}>{tr("Friend", "Amigo", "Ami")}</span>
+      </div>
+    );
   }
 
   if (!slot) {
@@ -872,31 +882,48 @@ function SlotAvatar({
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         aria-label={tr("Player needed", "Falta jugador", "Joueur recherché")}
         title={tr("Player needed", "Falta jugador", "Joueur recherché")}
-        // Invisible larger touch area so a single tap on the small "+" always lands.
-        className={`relative before:absolute before:-inset-x-1 before:-inset-y-2.5 before:content-[''] w-7 h-7 shrink-0 rounded-full border-2 border-dashed grid place-items-center transition ${
-          canJoin
-            ? "border-[var(--plum)]/45 text-[var(--plum)] hover:bg-[var(--plum)]/8"
-            : "border-[var(--ink)]/25 text-[var(--ink)]/35"
-        } ${isPending ? "opacity-50" : ""}`}
+        className={`group flex w-[60px] flex-col items-center ${isPending ? "opacity-50" : ""}`}
       >
-        <Plus className="w-3.5 h-3.5" />
+        <span
+          className={`w-11 h-11 rounded-full border border-dashed grid place-items-center transition ${
+            canJoin
+              ? "border-[var(--plum)]/50 text-[var(--plum)] bg-[var(--plum)]/[0.04] group-hover:bg-[var(--plum)]/10"
+              : "border-[var(--ink)]/25 text-[var(--ink)]/35"
+          }`}
+        >
+          <Plus className="w-4 h-4" strokeWidth={1.75} />
+        </span>
+        <span className={`${caption} ${canJoin ? "text-[var(--plum)] font-semibold" : "text-[var(--ink)]/40"}`}>
+          {canJoin ? tr("Join", "Unirme", "Rejoindre") : tr("Open", "Libre", "Libre")}
+        </span>
       </button>
     );
   }
 
   return (
     <div
+      className="flex w-[60px] flex-col items-center"
       title={isCoach ? `${name ?? ""} · ${tr("Coach", "Profesor", "Coach")}` : name ?? ""}
-      className={`w-7 h-7 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center ${isCoach ? "ring-2 ring-[var(--plum)]" : ""}`}
     >
-      {photo ? (
-        <img src={photo} alt={name ?? ""} className="w-full h-full object-cover" />
-      ) : (
-        <span className="text-[12px] font-bold text-[var(--ink)]/70">{(name ?? "?").slice(0, 1).toUpperCase()}</span>
+      <div
+        className={`w-11 h-11 rounded-full overflow-hidden bg-[var(--paper-2)] ${
+          isCoach ? "ring-2 ring-[var(--plum)] ring-offset-2 ring-offset-white" : "border border-[var(--ink)]/10"
+        }`}
+      >
+        {photo ? (
+          <img src={photo} alt={name ?? ""} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+        ) : (
+          <CourtViewCard seed={seed} name={name} role="img" className="w-full h-full" letterClassName="text-[17px]" />
+        )}
+      </div>
+      <span className={`${caption} text-[var(--ink)]/80`}>{name ?? "?"}</span>
+      {isCoach && (
+        <span className="text-[9px] uppercase tracking-[0.16em] font-semibold text-[var(--plum)] leading-none mt-0.5">
+          {tr("Coach", "Profesor", "Coach")}
+        </span>
       )}
     </div>
   );
-
 }
 
 // ---------- Empty state ----------

@@ -5,9 +5,9 @@ import { UserCheck } from "lucide-react";
  * "extra confirmed" players). Solid and calm, so it never reads like the
  * dashed "+" of a place that still needs a player.
  */
-export function FriendSlot({ size = "sm", label }: { size?: "sm" | "md"; label: string }) {
-  const box = size === "md" ? "w-9 h-9" : "w-7 h-7";
-  const icon = size === "md" ? "w-4 h-4" : "w-3.5 h-3.5";
+export function FriendSlot({ size = "sm", label }: { size?: "sm" | "md" | "lg"; label: string }) {
+  const box = size === "lg" ? "w-11 h-11" : size === "md" ? "w-9 h-9" : "w-7 h-7";
+  const icon = size === "lg" ? "w-[18px] h-[18px]" : size === "md" ? "w-4 h-4" : "w-3.5 h-3.5";
   return (
     <div
       title={label}

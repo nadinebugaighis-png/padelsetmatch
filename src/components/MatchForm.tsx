@@ -11,7 +11,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
-import { CLASS_STUDENT_OPTIONS, NEW_CLASS_STUDENTS, DEFAULT_GENDER_RULE, DEFAULT_MATCH_DURATION, MATCH_DURATIONS, matchEndsAt, type GenderRule, type MatchDuration } from "@/lib/match-rules";
+import { CLASS_STUDENT_OPTIONS, NEW_CLASS_STUDENTS, DEFAULT_GENDER_RULE, DEFAULT_MATCH_DURATION, MATCH_DURATIONS, matchEndsAt, startFromFormValue, type GenderRule, type MatchDuration } from "@/lib/match-rules";
 
 export type MatchFormValues = {
   starts_at: string;
@@ -35,6 +35,8 @@ export type MatchFormValues = {
   class_students: number | null;
   class_fee: string | null;
   duration_minutes: MatchDuration;
+  /** Only sent when editing a game that started with no hour. */
+  time_tbd?: boolean;
 };
 
 export type MatchFormInitial = Partial<MatchFormValues> & {
@@ -133,7 +135,12 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   );
   // City is no longer typed: edits keep the saved one, new matches get it from the host's area on the server.
   const customCity = !isClub ? initial?.city ?? "" : "";
-  const [when, setWhen] = useState(initial?.when_local ?? toLocalDatetime(initial?.starts_at));
+  // A game with no hour yet opens with just its date; the hour stays empty until someone picks it.
+  const allowNoTime = !!initial?.time_tbd;
+  const [when, setWhen] = useState(
+    initial?.when_local ?? (allowNoTime ? toLocalDatetime(initial?.starts_at).slice(0, 10) : toLocalDatetime(initial?.starts_at)),
+  );
+  const hasTime = when.length > 10;
   const [genderRule, setGenderRule] = useState<GenderRule>(
     initial?.gender_rule ?? DEFAULT_GENDER_RULE,
   );
@@ -169,10 +176,12 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const formWaClub = null as ReturnType<typeof clubWhatsappBooking>;
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
-  const canSave = locationReady && !!when && !saving;
+  const whenReady = hasTime || (allowNoTime && when.length === 10);
+  const canSave = locationReady && whenReady && !saving;
 
   const handleSubmit = async () => {
-    if (!locationReady || !when) return;
+    if (!locationReady || !whenReady) return;
+    const { startsLocal, timeTbd } = startFromFormValue(when);
     const normalized = normalizePlaytomicLink(playtomicLink);
     if (normalized.error) {
       setPlaytomicError(tr("Enter a valid Playtomic link (playtomic.io)", "Introduce un enlace válido de Playtomic (playtomic.io)", "Saisis un lien Playtomic valide (playtomic.io)"));
@@ -186,11 +195,12 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       class_students: isClass ? classStudents : null,
       class_fee: isClass ? classFee.trim() || null : null,
       duration_minutes: duration,
+      ...(allowNoTime ? { time_tbd: timeTbd } : {}),
     };
     const values: MatchFormValues =
       locMode === "club" && club
         ? {
-            starts_at: new Date(when).toISOString(),
+            starts_at: new Date(startsLocal).toISOString(),
             club_name: club.name,
             club_address: club.address || null,
             club_place_id: club.place_id || null,
@@ -210,7 +220,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             ...classValues,
           }
         : {
-            starts_at: new Date(when).toISOString(),
+            starts_at: new Date(startsLocal).toISOString(),
             club_name: customAddress.trim(),
             club_address: customAddress.trim(),
             club_place_id: null,
@@ -296,12 +306,12 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         )}
       </section>
         <div className={rowDivider} />
-        <MatchDateTimePicker value={when} onChange={setWhen} bare />
+        <MatchDateTimePicker value={when} onChange={setWhen} bare allowNoTime={allowNoTime} />
         <div className={rowDivider} />
         <div className={rowCls}>
           <span className={rowLabel}>
             {tr("Length", "Duración", "Durée")}
-            {when && (
+            {hasTime && (
               <span className="ml-1.5 text-[12px] text-[var(--ink)]/45 tabular-nums">
                 {tr("ends", "termina", "fin")} {matchEndsAt(new Date(when), duration).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
               </span>

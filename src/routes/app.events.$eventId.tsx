@@ -205,7 +205,10 @@ function EventDetail() {
   const mapsUrl = event.club_place_id
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name + " " + (event.city ?? ""))}`;
-  const shareText = matchShareText({ clubName: event.club_name, when: fmtWhen(event.starts_at), freeCourt: !!event.free_court }, tr);
+  const shareWhen = event.time_tbd
+    ? new Date(event.starts_at).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "short" })
+    : fmtWhen(event.starts_at);
+  const shareText = matchShareText({ clubName: event.club_name, when: shareWhen, freeCourt: !!event.free_court }, tr);
 
   const displayShareUrl = shortShareUrl || shareUrl;
 
@@ -441,7 +444,9 @@ function EventDetail() {
         const d = new Date(event.starts_at);
         const dateLabel = d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
         const hm = { hour: "2-digit", minute: "2-digit", hour12: false } as const;
-        const time = `${d.toLocaleTimeString(undefined, hm)}–${matchEndsAt(d, event.duration_minutes).toLocaleTimeString(undefined, hm)} · ${matchDuration(event)} min`;
+        const time = event.time_tbd
+          ? tr("Time", "Hora", "Heure")
+          : `${d.toLocaleTimeString(undefined, hm)}–${matchEndsAt(d, event.duration_minutes).toLocaleTimeString(undefined, hm)} · ${matchDuration(event)} min`;
         const status =
           event.status === "cancelled"
             ? { cls: "bg-red-50 text-red-700", label: tr("Cancelled", "Cancelado", "Annulé") }

@@ -167,7 +167,7 @@ export function PublicPlayFeed({
                         <div className="min-w-0">
                           <div className="text-sm font-medium text-[var(--cream)] truncate">{m.club_name ?? tr("Padel match", "Partido de pádel", "Match de padel")}</div>
                           <div className="text-xs text-[var(--cream)]/60 mt-0.5 flex items-center gap-2 flex-wrap">
-                            <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> {fmtTime(m)}</span>
+                            <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> {m.time_tbd ? tr("Time", "Hora", "Heure") : fmtTime(m)}</span>
                             {m.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" /> {m.city}</span>}
                             <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {m.filled}/4</span>
                           </div>

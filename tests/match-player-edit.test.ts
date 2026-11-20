@@ -24,3 +24,9 @@ describe("who can edit a match", () => {
     expect(nonHostCanEdit("cancelled")).toBe(false);
   });
 });
+
+describe("games with no hour yet", () => {
+  it("lets any player set the hour on a game that has none", () => {
+    expect(pickPlayerEditable({ time_tbd: false })).toEqual({ time_tbd: false });
+  });
+});

@@ -121,3 +121,20 @@ export function houseGameUnclaimed(e: {
   if (!e.auto_slot_id) return false;
   return !(e.participants ?? []).some((p) => p?.profile_id != null && p.profile_id === e.host_profile_id);
 }
+
+/**
+ * Games with no hour set yet (time_tbd), like the daily ready-made games, keep
+ * a placeholder late-evening start so they stay listed all day; screens show
+ * the word "Time" instead of that hour until a player picks one.
+ */
+export const TIME_TBD_PLACEHOLDER = "21:00";
+
+export function hasNoTime(e: { time_tbd?: boolean | null } | null | undefined): boolean {
+  return !!e?.time_tbd;
+}
+
+/** The start to save from a form value: "yyyy-MM-dd" (no hour picked) or "yyyy-MM-ddTHH:mm". */
+export function startFromFormValue(value: string): { startsLocal: string; timeTbd: boolean } {
+  const timeTbd = value.length <= 10;
+  return { startsLocal: timeTbd ? `${value}T${TIME_TBD_PLACEHOLDER}` : value, timeTbd };
+}

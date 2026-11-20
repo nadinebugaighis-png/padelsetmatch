@@ -64,6 +64,7 @@ function dayKey(d: Date) {
 type EventLite = {
   id: string;
   starts_at: string;
+  time_tbd?: boolean | null;
   filled: number;
   needs: number;
   extra_confirmed?: number | null;
@@ -203,9 +204,10 @@ function EventsPage() {
     if (e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower))) return true;
     return e.guests?.some((guest) => guest.display_name.toLowerCase().includes(searchLower)) ?? false;
   }
-  function eventMatchesTime(iso: string) {
-    if (timeOfDay === "all") return true;
-    const h = new Date(iso).getHours();
+  function eventMatchesTime(e: EventLite) {
+    // A game with no hour yet suits any time of day.
+    if (timeOfDay === "all" || e.time_tbd) return true;
+    const h = new Date(e.starts_at).getHours();
     if (timeOfDay === "morning") return h < 12;
     if (timeOfDay === "afternoon") return h >= 12 && h < 17;
     return h >= 17;
@@ -224,7 +226,7 @@ function EventsPage() {
     () => all
       .filter(eventMatchesName)
       .filter((e) => selectedDays.has(dayKey(new Date(e.starts_at))))
-      .filter((e) => eventMatchesTime(e.starts_at))
+      .filter((e) => eventMatchesTime(e))
       .filter((e) => !levelOnly || eventMatchesLevel(e))
       .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
     [all, searchLower, selectedDays, timeOfDay, levelOnly, myLevel],
@@ -591,7 +593,7 @@ function FeedSection({
               <ul className="mt-2 space-y-2">
                 {group.items.map((e, i) => {
                   const prev = i > 0 ? group.items[i - 1] : null;
-                  const slotChanged = prev !== null &&
+                  const slotChanged = prev !== null && !e.time_tbd && !prev.time_tbd &&
                     Math.floor(new Date(prev.starts_at).getHours() / 12) !== Math.floor(new Date(e.starts_at).getHours() / 12);
                   return (
                     <li key={e.id} className={`lazy-row ${slotChanged ? "pt-4" : ""}`}>
@@ -647,7 +649,10 @@ function MatchCard({
   const weekday = start.toLocaleDateString(locale, { weekday: "short" });
   const dayNum = start.toLocaleDateString(locale, { day: "numeric" });
   const monthShort = start.toLocaleDateString(locale, { month: "short" });
-  const time = start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+  // No hour picked yet: the card simply says "Time" until a player sets one.
+  const time = e.time_tbd
+    ? tr("Time", "Hora", "Heure")
+    : start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
   const hour = start.getHours();
   const timeOfDay: "morning" | "afternoon" | "evening" =
     hour < 12 ? "morning" : hour < 18 ? "afternoon" : "evening";
@@ -1076,7 +1081,9 @@ function MyMatchesList({
               {list.map((e) => {
                 const isPending = pending === e.id;
                 const filled = e.filled ?? 0;
-                const time = new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
+                const time = e.time_tbd
+                  ? tr("Time", "Hora", "Heure")
+                  : new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
                   <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-2.5 flex items-center gap-3 cursor-pointer hover:bg-[var(--paper-2)]/40 transition">
                     <div className="flex flex-col items-center justify-center w-14 shrink-0">

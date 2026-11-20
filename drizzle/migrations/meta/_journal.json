@@ -183,6 +183,20 @@
       "when": 1795195813191,
       "tag": "0025_house_games_first_player_hosts",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1795197146853,
+      "tag": "0026_house_games_time_open",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1795197305058,
+      "tag": "0027_alerts_word_games_without_time",
+      "breakpoints": true
     }
   ]
 }

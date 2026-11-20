@@ -716,6 +716,7 @@ export const duplicateMatchEvent = createServerFn({ method: "POST" })
 const UpdateInput = z.object({
   id: z.string().uuid(),
   starts_at: z.string().min(1).optional(),
+  time_tbd: z.boolean().optional(),
   club_name: z.string().min(1).max(200).optional(),
   club_address: z.string().max(400).nullable().optional(),
   club_place_id: z.string().max(200).nullable().optional(),

@@ -1,6 +1,7 @@
 // Fields any player (not just the host) may change on a match listed on Play.
 export const PLAYER_EDITABLE_FIELDS = [
   "starts_at",
+  "time_tbd",
   "duration_minutes",
   "club_name",
   "club_address",

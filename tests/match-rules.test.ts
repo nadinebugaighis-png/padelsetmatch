@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { houseGameUnclaimed, matchCardAction } from "../src/lib/match-rules";
+import { houseGameUnclaimed, matchCardAction, startFromFormValue } from "../src/lib/match-rules";
 import { DEFAULT_GENDER_RULE, genderRuleAllows, matchPreviewMeta, matchShareText } from "../src/lib/match-rules";
 
 const es = (_en: string, es: string) => es;
@@ -69,5 +69,14 @@ describe("ready-made games start without a host", () => {
   });
   it("never applies to games a player created", () => {
     expect(houseGameUnclaimed({ auto_slot_id: null, host_profile_id: "ana", participants: [] })).toBe(false);
+  });
+});
+
+describe("game with no set time", () => {
+  it("keeps a date-only value as no time, at the 21:00 placeholder", () => {
+    expect(startFromFormValue("2026-11-21")).toEqual({ startsLocal: "2026-11-21T21:00", timeTbd: true });
+  });
+  it("treats a picked hour as a real time", () => {
+    expect(startFromFormValue("2026-11-21T18:30")).toEqual({ startsLocal: "2026-11-21T18:30", timeTbd: false });
   });
 });

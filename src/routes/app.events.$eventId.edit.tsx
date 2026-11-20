@@ -105,6 +105,7 @@ function EditEvent() {
         onSubmit={onSubmit}
         initial={{
           starts_at: event.starts_at,
+          time_tbd: !!event.time_tbd,
           club_name: event.club_name,
           club_address: event.club_address,
           club_place_id: event.club_place_id,

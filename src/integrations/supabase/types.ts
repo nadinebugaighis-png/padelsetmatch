@@ -947,6 +947,7 @@ export type Database = {
           starts_at: string
           status: Database["public"]["Enums"]["match_event_status"]
           tag: string | null
+          time_tbd: boolean
           updated_at: string
         }
         Insert: {
@@ -978,6 +979,7 @@ export type Database = {
           starts_at: string
           status?: Database["public"]["Enums"]["match_event_status"]
           tag?: string | null
+          time_tbd?: boolean
           updated_at?: string
         }
         Update: {
@@ -1009,6 +1011,7 @@ export type Database = {
           starts_at?: string
           status?: Database["public"]["Enums"]["match_event_status"]
           tag?: string | null
+          time_tbd?: boolean
           updated_at?: string
         }
         Relationships: [
@@ -1384,6 +1387,7 @@ export type Database = {
           local_start: string
           note: string | null
           series: string
+          time_tbd: boolean
           time_zone: string
         }
         Insert: {
@@ -1399,6 +1403,7 @@ export type Database = {
           local_start: string
           note?: string | null
           series: string
+          time_tbd?: boolean
           time_zone: string
         }
         Update: {
@@ -1414,6 +1419,7 @@ export type Database = {
           local_start?: string
           note?: string | null
           series?: string
+          time_tbd?: boolean
           time_zone?: string
         }
         Relationships: [

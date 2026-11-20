@@ -11,16 +11,33 @@ import { useTr } from "@/lib/i18n";
 const fieldClass = "h-9 rounded-lg border border-[var(--ink)]/15 bg-white px-3 text-sm font-medium text-[var(--ink)] shadow-none hover:border-[var(--ink)]/35 focus:ring-[var(--ink)]";
 const sheetClass = "match-date-time border border-[var(--ink)]/15 bg-white text-[var(--ink)]";
 
-export function MatchDateTimePicker({ value, onChange, bare = false }: { value: string; onChange: (value: string) => void; bare?: boolean }) {
+/** Local calendar date from "yyyy-MM-dd…" (avoids the UTC shift of new Date("yyyy-MM-dd")). */
+function localDate(value: string): Date | undefined {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : undefined;
+}
+
+export function MatchDateTimePicker({ value, onChange, bare = false, allowNoTime = false }: {
+  value: string;
+  onChange: (value: string) => void;
+  bare?: boolean;
+  /** A game with no hour yet: a date alone is kept as "yyyy-MM-dd". */
+  allowNoTime?: boolean;
+}) {
   const tr = useTr();
-  const [date, setDate] = useState<Date | undefined>(() => value ? new Date(value) : undefined);
+  const [date, setDate] = useState<Date | undefined>(() => localDate(value));
   const [hour, setHour] = useState(value.slice(11, 13));
   const [minute, setMinute] = useState(value.slice(14, 16));
   const [open, setOpen] = useState(false);
   const lang = tr("en", "es", "fr");
   const locale = lang === "es" ? es : lang === "fr" ? fr : enGB;
   const update = (nextDate: Date | undefined, nextHour: string, nextMinute: string) => {
-    onChange(nextDate && nextHour && nextMinute ? `${format(nextDate, "yyyy-MM-dd")}T${nextHour}:${nextMinute}` : "");
+    if (!nextDate) return onChange("");
+    const day = format(nextDate, "yyyy-MM-dd");
+    if (nextHour && nextMinute) return onChange(`${day}T${nextHour}:${nextMinute}`);
+    // On a game with no hour yet, picking the hour fills in :00 so it can't silently stay unset.
+    if (allowNoTime && nextHour && !nextMinute) { setMinute("00"); return onChange(`${day}T${nextHour}:00`); }
+    onChange(allowNoTime ? day : "");
   };
 
   return (

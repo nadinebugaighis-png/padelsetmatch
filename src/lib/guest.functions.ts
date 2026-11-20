@@ -131,6 +131,7 @@ export const listPublicUpcomingMatches = createServerFn({ method: "GET" })
     return (res as Array<{
       id: string;
       starts_at: string;
+      time_tbd?: boolean | null;
       club_name: string | null;
       city: string | null;
       club_address: string | null;

@@ -95,3 +95,15 @@ export function matchEndsAt(startsAt: string | Date, durationMinutes?: number | 
   const start = typeof startsAt === "string" ? new Date(startsAt) : startsAt;
   return new Date(start.getTime() + matchDuration({ duration_minutes: durationMinutes }) * 60_000);
 }
+
+export type MatchCardAction = "manage" | "join" | "view";
+
+/**
+ * The one button on a Play card: players already in the game (or hosting it)
+ * manage it; everyone else is invited to join, or to view it once it's full.
+ * Anyone can still open any game from the card to edit it.
+ */
+export function matchCardAction(e: { iAmHost?: boolean; iAmParticipant?: boolean; iAmPlaying?: boolean; filled: number; capacity?: number | null }): MatchCardAction {
+  if (e.iAmHost || e.iAmParticipant || e.iAmPlaying) return "manage";
+  return e.filled >= (e.capacity ?? 4) ? "view" : "join";
+}

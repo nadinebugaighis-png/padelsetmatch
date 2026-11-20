@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { matchCardAction } from "../src/lib/match-rules";
 import { DEFAULT_GENDER_RULE, genderRuleAllows, matchPreviewMeta, matchShareText } from "../src/lib/match-rules";
 
 const es = (_en: string, es: string) => es;
@@ -41,5 +42,20 @@ describe("free court share text", () => {
   it("link preview only promises free for free-court matches", () => {
     expect(matchPreviewMeta(true).title).toContain("Pista gratis");
     expect(matchPreviewMeta(false).title.toLowerCase()).not.toContain("gratis");
+  });
+});
+
+describe("Play card button", () => {
+  it("invites a player who isn't in the game to join", () => {
+    expect(matchCardAction({ filled: 2, capacity: 4 })).toBe("join");
+  });
+  it("shows View when the game is full and you're not in it", () => {
+    expect(matchCardAction({ filled: 4, capacity: 4 })).toBe("view");
+  });
+  it("shows Manage to players already in the game", () => {
+    expect(matchCardAction({ iAmParticipant: true, filled: 2, capacity: 4 })).toBe("manage");
+  });
+  it("shows Manage to the host", () => {
+    expect(matchCardAction({ iAmHost: true, filled: 1, capacity: 4 })).toBe("manage");
   });
 });

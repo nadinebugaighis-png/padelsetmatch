@@ -56,3 +56,15 @@ export function ageMatchesPreference(preference: AgePreference, player: Brackete
   if (!span) return true;
   return span[1] >= preference.age_min && span[0] <= preference.age_max;
 }
+
+/** The full adult range, used when a player skips the optional age preference. */
+export const ANY_AGE_PREFERENCE: AgePreference = { age_min: 18, age_max: 99 };
+
+/**
+ * Partner age range is optional at signup: a blank (or half-filled) range
+ * means "any age", so skipping it never hides anyone from the player's grid.
+ */
+export function resolveAgePreference(min: number | null | undefined, max: number | null | undefined): AgePreference {
+  if (min == null || max == null) return { ...ANY_AGE_PREFERENCE };
+  return { age_min: min, age_max: max };
+}

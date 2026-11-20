@@ -29,7 +29,7 @@ import {
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchDuration, matchEndsAt, matchShareText } from "@/lib/match-rules";
-import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle } from "lucide-react";
+import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle, LogOut } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/app/events/$eventId")({
@@ -747,9 +747,11 @@ function EventDetail() {
         )}
         {me?.iAmParticipant && (!me?.iAmHost || (event.participants ?? []).some((p: any) => p.profile_id === me?.id)) && event.status !== "cancelled" && (
           <button
+            type="button"
             onClick={onLeave}
-            className="w-full py-2.5 rounded-full border border-[var(--ink)]/15 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition-colors"
+            className="w-full py-3 rounded-full border border-[var(--clay)]/45 bg-white text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--clay)] hover:bg-[var(--clay)]/5 active:scale-[0.99] transition inline-flex items-center justify-center gap-2"
           >
+            <LogOut className="w-3.5 h-3.5" />
             {me?.iAmHost
               ? tr("Leave line-up (stay organiser)", "Salir de la alineación (sigues organizando)", "Quitter la composition (rester organisateur)")
               : tr("Leave match", "Salir del partido", "Quitter le match")}

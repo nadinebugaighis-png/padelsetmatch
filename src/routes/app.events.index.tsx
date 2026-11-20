@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { genderRuleLabel, matchDuration } from "@/lib/match-rules";
+import { genderRuleLabel, matchCardAction, matchDuration } from "@/lib/match-rules";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
@@ -678,6 +678,7 @@ function MatchCard({
   // on the card never takes you somewhere you didn't mean to go.
   const openFromCard = e.iAmHost ? undefined : () => onOpen(e.id);
   const playing = e.iAmPlaying ?? (mine && !e.iAmHost);
+  const cardAction = matchCardAction({ ...e, capacity: e.capacity ?? 4 });
   const capacity = e.capacity ?? 4;
   const full = e.filled >= capacity;
 
@@ -848,15 +849,21 @@ function MatchCard({
           type="button"
           onClick={(ev) => {
             ev.stopPropagation();
-            // Everyone manages from here: hosts and players alike open the
-            // match to join, leave, chat or edit. The "+" spots still join directly.
-            if (e.iAmHost) onManage(e);
+            // Players in the game manage it; everyone else joins in one tap
+            // (or views it when full). Tapping the card still opens any game
+            // so every player can edit it.
+            if (cardAction === "join") onJoin(e);
+            else if (e.iAmHost) onManage(e);
             else onOpen(e.id);
           }}
           disabled={isPending}
           className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] shrink-0 inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10.5px] font-semibold uppercase tracking-[0.16em] px-3.5 py-1.5 disabled:opacity-50"
         >
-          {tr("Manage", "Gestionar", "Gérer")}
+          {cardAction === "join"
+            ? isPending ? "…" : e.is_class ? tr("Join class", "Unirme", "Rejoindre") : tr("Join", "Unirme", "Rejoindre")
+            : cardAction === "view"
+              ? tr("View", "Ver", "Voir")
+              : tr("Manage", "Gestionar", "Gérer")}
         </button>
       </div>
     </div>

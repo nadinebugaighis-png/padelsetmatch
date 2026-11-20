@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, type AgeBracket } from "@/lib/age-bracket";
+import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, resolveAgePreference, type AgeBracket } from "@/lib/age-bracket";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   PADEL_STYLES, PERSONAL_STRENGTHS,
@@ -336,7 +336,7 @@ function Onboarding() {
     const legacy = interested_in;
 
     const first = validBlocks[0];
-    if (age === null || age_min === null || age_max === null || !gender || !level) {
+    if (age === null || !gender || !level) {
       throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
     }
     await upsert({
@@ -345,7 +345,7 @@ function Onboarding() {
         friend_interested_in: friendAud, partner_interested_in: partnerAud,
         age_bracket_lo: (bracket ?? bracketForMidpoint(age))?.[0] ?? null,
         age_bracket_hi: (bracket ?? bracketForMidpoint(age))?.[1] ?? null,
-        age_min, age_max, nationality: nationality === "__none__" ? "" : nationality,
+        ...resolveAgePreference(age_min, age_max), nationality: nationality === "__none__" ? "" : nationality,
         // A second nationality only counts alongside a real first one.
         nationality_2: nationality !== "__none__" && nationality !== "" && nationality !== "Other" && nationality2 !== nationality ? nationality2 : "",
         zone: first ? first.city : "",
@@ -387,10 +387,8 @@ function Onboarding() {
       !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
       null,
       null,
-      age_min === null || age_max === null ? { key: "age_range", label: tr("age range", "rango de edad", "tranche d'âge") } : null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
       validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
-      languages.length === 0 ? { key: "languages", label: tr("languages", "idiomas", "langues") } : null,
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
     [],
@@ -569,6 +567,7 @@ function Onboarding() {
                 <span>{t("ob.to")}</span>
                 <AgeInput value={age_max} onCommit={setAgeMax} />
               </div>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional. Leave blank to play with all ages.", "Opcional. Déjalo en blanco para jugar con todas las edades.", "Optionnel. Laisse vide pour jouer avec tous les âges.")}</p>
             </div>
           </>
         )}
@@ -721,6 +720,7 @@ function Onboarding() {
 
             <div data-field="languages" className={fieldCls("languages")}>
               <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
+              <p className="text-[10px] text-[var(--ink)]/50 mt-0.5">{tr("Optional", "Opcional", "Optionnel")}</p>
               {(() => {
                 const COMMON = ["English", "Spanish", "Portuguese", "French", "Italian", "German", "Arabic"];
                 const ALL = LANGUAGES as readonly string[];
@@ -917,8 +917,8 @@ function Onboarding() {
       {(() => {
         const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&
           (!hasPartnerGoal || !!meetPref) &&
-          age_min !== null && age_max !== null && age_min <= age_max &&
-          validBlocks.length > 0 && languages.length > 0 && !!level;
+          (age_min === null || age_max === null || age_min <= age_max) &&
+          validBlocks.length > 0 && !!level;
         return (
           <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ink)]/10 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/85" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.25rem)" }}>
             <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 pt-3 pb-2 flex items-center justify-between gap-2 flex-wrap">

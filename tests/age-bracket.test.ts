@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { resolveAgePreference } from "../src/lib/age-bracket";
 import {
   AGE_BRACKETS,
   ageMatchesPreference,
@@ -48,5 +49,17 @@ describe("age bracket matching", () => {
     // Quick sign-ups without an age must still appear on their area's grid.
     expect(ageMatchesPreference({ age_min: 20, age_max: 60 }, { age: null })).toBe(true);
     expect(ageMatchesPreference({ age_min: 18, age_max: 24 }, { age: null, age_bracket_lo: null, age_bracket_hi: null })).toBe(true);
+  });
+});
+
+describe("optional partner age range at signup", () => {
+  it("treats a skipped range as all ages 18 to 99", () => {
+    expect(resolveAgePreference(null, null)).toEqual({ age_min: 18, age_max: 99 });
+  });
+  it("treats a half-filled range as all ages", () => {
+    expect(resolveAgePreference(30, null)).toEqual({ age_min: 18, age_max: 99 });
+  });
+  it("keeps a range the player filled in", () => {
+    expect(resolveAgePreference(30, 50)).toEqual({ age_min: 30, age_max: 50 });
   });
 });

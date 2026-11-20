@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchCapacity, matchDuration, matchEndsAt } from "./match-rules";
+import { matchCapacity, matchDuration, matchEndsAt, NEW_CLASS_STUDENTS } from "./match-rules";
 
 describe("matchCapacity", () => {
   it("a normal match has 4 places", () => {
@@ -13,6 +13,9 @@ describe("matchCapacity", () => {
   });
   it("a class can take up to 4 students plus the coach", () => {
     expect(matchCapacity({ is_class: true, class_students: 4 })).toBe(5);
+  });
+  it("a new class starts with 4 students plus the coach", () => {
+    expect(matchCapacity({ is_class: true, class_students: NEW_CLASS_STUDENTS })).toBe(5);
   });
   it("a class without a student count defaults to 3 students", () => {
     expect(matchCapacity({ is_class: true, class_students: null })).toBe(4);

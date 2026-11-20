@@ -714,6 +714,7 @@ function MatchCard({
   // Four-player matches read as two pairs facing each other; classes and other
   // sizes sit in one row (coach first).
   const asPairs = !e.is_class && capacity === 4;
+  const coachFirst = !!e.is_class && !!slots[0]?.participant?.profiles?.is_coach;
   const renderSlot = (s: SlotData | null, i: number) => (
     <SlotAvatar
       key={i}
@@ -784,6 +785,13 @@ function MatchCard({
             <div className="flex flex-1 justify-evenly">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
             <span className="mt-3 text-serif italic text-[13px] text-[var(--ink)]/35 px-1">vs</span>
             <div className="flex flex-1 justify-evenly">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
+          </div>
+        ) : coachFirst ? (
+          // Class: the coach stands apart, students share the court.
+          <div className="flex items-start justify-center">
+            <div className="flex shrink-0 justify-center pr-2">{renderSlot(slots[0] ?? null, 0)}</div>
+            <span aria-hidden className="mt-1 h-10 w-px shrink-0 bg-[var(--gold)]/40" />
+            <div className="flex flex-1 justify-evenly pl-1">{slots.slice(1).map((s, i) => renderSlot(s, i + 1))}</div>
           </div>
         ) : (
           <div className="flex items-start justify-evenly">{slots.map((s, i) => renderSlot(s, i))}</div>

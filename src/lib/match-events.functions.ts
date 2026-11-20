@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
-import { DEFAULT_GENDER_RULE, GENDER_RULES, matchCapacity, type GenderRule } from "./match-rules";
+import { DEFAULT_GENDER_RULE, GENDER_RULES, matchCapacity, NEW_CLASS_STUDENTS, type GenderRule } from "./match-rules";
 import { locationMatchKeywords } from "./location-matching";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
@@ -275,7 +275,7 @@ export const createMatchEvent = createServerFn({ method: "POST" })
         ...data,
         city,
         ...(data.is_class
-          ? { extra_confirmed: 0, class_students: data.class_students ?? 3, class_fee: data.class_fee || null }
+          ? { extra_confirmed: 0, class_students: data.class_students ?? NEW_CLASS_STUDENTS, class_fee: data.class_fee || null }
           : { class_students: null, class_fee: null }),
         host_profile_id: profile.id,
       })

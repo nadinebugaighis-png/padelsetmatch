@@ -11,7 +11,7 @@ import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
 import { useTr } from "@/lib/i18n";
-import { CLASS_STUDENT_OPTIONS, DEFAULT_CLASS_STUDENTS, DEFAULT_GENDER_RULE, DEFAULT_MATCH_DURATION, MATCH_DURATIONS, matchEndsAt, type GenderRule, type MatchDuration } from "@/lib/match-rules";
+import { CLASS_STUDENT_OPTIONS, NEW_CLASS_STUDENTS, DEFAULT_GENDER_RULE, DEFAULT_MATCH_DURATION, MATCH_DURATIONS, matchEndsAt, type GenderRule, type MatchDuration } from "@/lib/match-rules";
 
 export type MatchFormValues = {
   starts_at: string;
@@ -141,7 +141,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
   const [duration, setDuration] = useState<MatchDuration>(initial?.duration_minutes === 60 ? 60 : DEFAULT_MATCH_DURATION);
   const [isClass, setIsClass] = useState<boolean>(initial?.is_class ?? false);
-  const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? DEFAULT_CLASS_STUDENTS);
+  const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? NEW_CLASS_STUDENTS);
   const classFee = initial?.class_fee ?? "";
   // Students already in (everyone except the coach) — the class can't be made smaller than that.
   const minStudents = Math.max(1, appPlayersCount - 1);

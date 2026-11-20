@@ -65,7 +65,10 @@ export function matchPreviewMeta(freeCourt: boolean | null | undefined): { title
 // ---------- Classes ----------
 /** A class is a coach plus 1–4 students. */
 export const CLASS_STUDENT_OPTIONS = [1, 2, 3, 4] as const;
+/** Fallback for older classes saved without a size (mirrors public.match_event_capacity). */
 export const DEFAULT_CLASS_STUDENTS = 3;
+/** New classes start at the full size: coach plus 4 students. */
+export const NEW_CLASS_STUDENTS = 4;
 export const CLASS_FEE_MAX = 40;
 
 type ClassLike = { is_class?: boolean | null; class_students?: number | null };

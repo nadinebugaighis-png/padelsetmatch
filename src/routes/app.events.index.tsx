@@ -285,11 +285,13 @@ function EventsPage() {
   async function instantJoin(e: EventLite) {
     setPending(e.id);
     try {
-      await join({ data: { id: e.id } });
+      const res = await join({ data: { id: e.id } });
       await refetch();
       toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"), {
         duration: 10000,
-        description: tr("Joined by mistake? Tap Leave.", "¿Te uniste por error? Toca Salir.", "Rejoint par erreur ? Touche Quitter."),
+        description: res?.becameHost
+          ? tr("You joined first, so you're the host: you can edit it and share it.", "Llegaste primero, así que organizas tú: puedes editarlo y compartirlo.", "Tu es arrivé·e en premier, tu organises : tu peux le modifier et le partager.")
+          : tr("Joined by mistake? Tap Leave.", "¿Te uniste por error? Toca Salir.", "Rejoint par erreur ? Touche Quitter."),
         action: {
           label: tr("Leave", "Salir", "Quitter"),
           onClick: async () => {

@@ -176,6 +176,13 @@
       "when": 1795187895244,
       "tag": "0024_transfer_host_keeps_lineup",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1795195813191,
+      "tag": "0025_house_games_first_player_hosts",
+      "breakpoints": true
     }
   ]
 }

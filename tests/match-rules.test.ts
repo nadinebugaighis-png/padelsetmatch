@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchCardAction } from "../src/lib/match-rules";
+import { houseGameUnclaimed, matchCardAction } from "../src/lib/match-rules";
 import { DEFAULT_GENDER_RULE, genderRuleAllows, matchPreviewMeta, matchShareText } from "../src/lib/match-rules";
 
 const es = (_en: string, es: string) => es;
@@ -57,5 +57,17 @@ describe("Play card button", () => {
   });
   it("shows Manage to the host", () => {
     expect(matchCardAction({ iAmHost: true, filled: 1, capacity: 4 })).toBe("manage");
+  });
+});
+
+describe("ready-made games start without a host", () => {
+  it("is neutral while nobody has joined", () => {
+    expect(houseGameUnclaimed({ auto_slot_id: "s", host_profile_id: "house", participants: [] })).toBe(true);
+  });
+  it("is hosted once the host is playing in it", () => {
+    expect(houseGameUnclaimed({ auto_slot_id: "s", host_profile_id: "ana", participants: [{ profile_id: "ana" }] })).toBe(false);
+  });
+  it("never applies to games a player created", () => {
+    expect(houseGameUnclaimed({ auto_slot_id: null, host_profile_id: "ana", participants: [] })).toBe(false);
   });
 });

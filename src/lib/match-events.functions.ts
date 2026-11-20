@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
-import { DEFAULT_GENDER_RULE, GENDER_RULES, matchCapacity, NEW_CLASS_STUDENTS, type GenderRule } from "./match-rules";
+import { DEFAULT_GENDER_RULE, GENDER_RULES, houseGameUnclaimed, matchCapacity, NEW_CLASS_STUDENTS, type GenderRule } from "./match-rules";
 import { locationMatchKeywords } from "./location-matching";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
@@ -431,13 +431,16 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const list = merged.map((e: any) => {
       const guests = guestsByEvent.get(e.id) ?? [];
       const filled = (e.participants?.length ?? 0) + guests.length + (e.extra_confirmed ?? 0);
-      const iAmHost = !!profile && e.host_profile_id === profile.id;
+      // A ready-made game nobody has joined yet is neutral: no host shown, and
+      // the first player to join becomes its host (database trigger).
+      const unclaimed = houseGameUnclaimed(e);
+      const iAmHost = !unclaimed && !!profile && e.host_profile_id === profile.id;
       const joined = !!profile && (e.participants ?? []).some((p: any) => p.profile_id === profile.id);
       // Ready-made daily games (auto_slot_id) list the organiser as host for
       // management only; they count as "my match" just once she actually joins.
       const iAmParticipant = joined || (iAmHost && !e.auto_slot_id);
       const capacity = matchCapacity(e);
-      return { ...e, guests, filled, capacity, needs: Math.max(0, capacity - filled), iAmHost, iAmParticipant, iAmPlaying: joined };
+      return { ...e, host: unclaimed ? null : e.host, unclaimed, guests, filled, capacity, needs: Math.max(0, capacity - filled), iAmHost, iAmParticipant, iAmPlaying: joined };
     });
     return { events: data.needs ? list.filter((e) => e.needs === data.needs) : list };
   });
@@ -464,7 +467,8 @@ export const getMatchEvent = createServerFn({ method: "POST" })
       .order("created_at", { ascending: true });
     let guests: any[] = guestsRaw ?? [];
     const filled = (event.participants?.length ?? 0) + guests.length + (event.extra_confirmed ?? 0);
-    const iAmHost = !!profile && event.host_profile_id === profile.id;
+    const unclaimed = houseGameUnclaimed(event);
+    const iAmHost = !unclaimed && !!profile && event.host_profile_id === profile.id;
     // iAmPlaying = actually in the lineup. A host who stepped out still manages
     // the match (iAmParticipant) but can take a free place again.
     const iAmPlaying = !!profile && (event.participants ?? []).some((p: any) => p.profile_id === profile.id);
@@ -486,7 +490,7 @@ export const getMatchEvent = createServerFn({ method: "POST" })
     const myInvite = profile ? invites.find((i: any) => i.invitee_profile_id === profile.id) ?? null : null;
 
     return {
-      event: { ...event, guests, filled, capacity: matchCapacity(event), needs: Math.max(0, matchCapacity(event) - filled), invites, invite_lock_until: null, lock_active: false },
+      event: { ...event, host: unclaimed ? null : event.host, unclaimed, guests, filled, capacity: matchCapacity(event), needs: Math.max(0, matchCapacity(event) - filled), invites, invite_lock_until: null, lock_active: false },
       me: profile ? { id: profile.id, gender: profile.gender, iAmParticipant, iAmPlaying, iAmHost, myInvite } : null,
     };
 
@@ -504,11 +508,20 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
     if (!profile.first_name || !profile.level) throw new Error("Please add your name and padel level first.");
     const { data: event } = await supabase
       .from("match_events")
-      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id, is_class, class_students")
+      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id, is_class, class_students, auto_slot_id")
       .eq("id", data.id)
       .maybeSingle();
     if (!event) throw new Error("Match not found");
     if (event.status !== "open") throw new Error("This match is no longer open");
+    let wasUnclaimed = false;
+    if (event.auto_slot_id) {
+      const { count: hostIn } = await supabase
+        .from("match_event_participants")
+        .select("id", { count: "exact", head: true })
+        .eq("match_event_id", data.id)
+        .eq("profile_id", event.host_profile_id);
+      wasUnclaimed = (hostIn ?? 0) === 0;
+    }
     if (event.gender_rule === "men_only" && profile.gender && profile.gender !== "man") throw new Error("This match is for men only");
     if (event.gender_rule === "women_only" && profile.gender && profile.gender !== "woman") throw new Error("This match is for women only");
     // First-come, first-served: no invite lock. Auto-accept a pending invite if the invitee joins directly.
@@ -533,7 +546,13 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
       .from("match_event_participants")
       .insert({ match_event_id: data.id, profile_id: profile.id });
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
-    return { ok: true };
+    // Joining an empty ready-made game makes you its host; tell the player.
+    let becameHost = false;
+    if (!error && wasUnclaimed) {
+      const { data: after } = await supabase.from("match_events").select("host_profile_id").eq("id", data.id).maybeSingle();
+      becameHost = after?.host_profile_id === profile.id;
+    }
+    return { ok: true, becameHost };
   });
 
 // ---------- Leave ----------
@@ -556,6 +575,15 @@ export const leaveMatchEvent = createServerFn({ method: "POST" })
   });
 
 // ---------- Cancel (host) ----------
+// Ready-made daily games are shared: whoever hosts them can leave (hosting
+// passes on) but not cancel or delete them. Only app admins can remove one.
+async function assertNotHouseGame(supabase: any, eventId: string) {
+  const { data: ev } = await supabase.from("match_events").select("auto_slot_id").eq("id", eventId).maybeSingle();
+  if (!ev?.auto_slot_id) return;
+  const { data: isAdmin } = await supabase.rpc("is_current_user_admin");
+  if (isAdmin !== true) throw new Error("Ready-made games can't be cancelled or deleted. Leave instead and the next player hosts.");
+}
+
 export const cancelMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
@@ -563,6 +591,7 @@ export const cancelMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
+    await assertNotHouseGame(supabase, data.id);
     const { error } = await supabase
       .from("match_events")
       .update({ status: "cancelled" })
@@ -580,6 +609,7 @@ export const deleteMatchEvent = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id").eq("user_id", userId).maybeSingle();
     if (!profile) throw new Error("No profile");
+    await assertNotHouseGame(supabase, data.id);
     // Like Playtomic: once another player has joined, an active match can only be
     // cancelled (which notifies them), never silently deleted.
     const { data: ev } = await supabase

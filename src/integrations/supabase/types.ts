@@ -2129,6 +2129,7 @@ export type Database = {
           phone: string
         }[]
       }
+      house_game_unclaimed: { Args: { _event_id: string }; Returns: boolean }
       ignore_intro: {
         Args: { _acting_user_id: string; _match_id: string }
         Returns: undefined

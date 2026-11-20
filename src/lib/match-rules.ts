@@ -107,3 +107,17 @@ export function matchCardAction(e: { iAmHost?: boolean; iAmParticipant?: boolean
   if (e.iAmHost || e.iAmParticipant || e.iAmPlaying) return "manage";
   return e.filled >= (e.capacity ?? 4) ? "view" : "join";
 }
+
+/**
+ * Ready-made daily games (auto_slot_id) start neutral: until a player joins,
+ * nobody is shown as host. The first player in becomes host (database
+ * trigger), and if that host leaves the next player takes over.
+ */
+export function houseGameUnclaimed(e: {
+  auto_slot_id?: string | null;
+  host_profile_id?: string | null;
+  participants?: Array<{ profile_id?: string | null } | null> | null;
+}): boolean {
+  if (!e.auto_slot_id) return false;
+  return !(e.participants ?? []).some((p) => p?.profile_id != null && p.profile_id === e.host_profile_id);
+}

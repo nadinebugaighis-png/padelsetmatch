@@ -233,8 +233,14 @@ function EventDetail() {
 
   const onJoin = async () => {
     try {
-      await join({ data: { id: eventId } });
-      toast.success(tr("You're in!", "¡Estás dentro!", "Tu es inscrit·e !"));
+      const res = await join({ data: { id: eventId } });
+      if (res?.becameHost) {
+        toast.success(tr("You're in, and you're the host", "Estás dentro y organizas tú", "Tu es inscrit·e et tu organises"), {
+          description: tr("You joined first, so you can edit it and share it.", "Llegaste primero, así que puedes editarlo y compartirlo.", "Tu es arrivé·e en premier : tu peux le modifier et le partager."),
+        });
+      } else {
+        toast.success(tr("You're in!", "¡Estás dentro!", "Tu es inscrit·e !"));
+      }
       qc.invalidateQueries({ queryKey: ["event", eventId] });
       qc.invalidateQueries({ queryKey: ["open-events"] });
     } catch (e) {
@@ -245,7 +251,9 @@ function EventDetail() {
   };
 
   const onLeave = async () => {
-    const leaveMsg = me?.iAmHost
+    const leaveMsg = me?.iAmHost && event.auto_slot_id
+      ? tr("Leave this match? Your spot opens up and the next player becomes the host.", "¿Salir de este partido? Tu plaza quedará libre y el siguiente jugador pasará a organizar.", "Quitter ce match ? Ta place se libère et le joueur suivant devient l'organisateur.")
+      : me?.iAmHost
       ? tr("Stop playing in this match? Your spot opens up and you stay as organiser.", "¿Dejar de jugar en este partido? Tu plaza quedará libre y seguirás como organizadora.", "Ne plus jouer dans ce match ? Ta place se libère et tu restes organisateur·rice.")
       : tr("Leave this match? Your spot will open up for someone else.", "¿Salir de este partido? Tu plaza quedará libre para otro jugador.", "Quitter ce match ? Ta place sera libérée pour un autre joueur.");
     if (!confirm(leaveMsg)) return;
@@ -572,7 +580,9 @@ function EventDetail() {
               </div>
             )}
             {/* One option, like Playtomic: Delete while nobody else has joined, Cancel (which notifies them) once someone has. */}
-            {event.status !== "cancelled" && othersJoined ? (
+            {/* Ready-made daily games belong to everyone: the host just leaves and
+                hosting passes on, so there is no cancel or delete. */}
+            {event.auto_slot_id ? null : event.status !== "cancelled" && othersJoined ? (
               <button
                 type="button"
                 onClick={() => void onCancel()}
@@ -752,7 +762,7 @@ function EventDetail() {
             className="w-full py-3 rounded-full border border-[var(--clay)]/45 bg-white text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--clay)] hover:bg-[var(--clay)]/5 active:scale-[0.99] transition inline-flex items-center justify-center gap-2"
           >
             <LogOut className="w-3.5 h-3.5" />
-            {me?.iAmHost
+            {me?.iAmHost && !event.auto_slot_id
               ? tr("Leave line-up (stay organiser)", "Salir de la alineación (sigues organizando)", "Quitter la composition (rester organisateur)")
               : tr("Leave match", "Salir del partido", "Quitter le match")}
           </button>

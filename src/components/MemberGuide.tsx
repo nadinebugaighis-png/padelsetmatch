@@ -53,7 +53,7 @@ export function MemberGuide() {
             </li>
           ))}
         </ul>
-        <button type="button" onClick={close} className="mt-1 sm:mt-2 w-full h-10 sm:h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] sm:text-[13px] uppercase tracking-[0.18em] font-semibold">
+        <button type="button" onClick={close} className="outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30 focus-visible:ring-offset-2 mt-1 sm:mt-2 w-full h-10 sm:h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] sm:text-[13px] uppercase tracking-[0.18em] font-semibold">
           {tr("Enter the club", "Entrar al club", "Entrer dans le club")}
         </button>
       </DialogContent>

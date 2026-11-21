@@ -1,0 +1,2 @@
+ALTER TABLE public.competitions ADD COLUMN IF NOT EXISTS whatsapp_url text;
+ALTER TABLE public.competitions ADD CONSTRAINT competitions_whatsapp_url_host CHECK (whatsapp_url IS NULL OR whatsapp_url ~ '^https://(chat\.whatsapp\.com|wa\.me)/[A-Za-z0-9_\-/?=&.%+]{1,300}$');

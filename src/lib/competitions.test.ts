@@ -20,3 +20,13 @@ describe("competition sign-up", () => {
     expect(canRegisterInApp({ hosted: false })).toBe(false);
   });
 });
+
+import { safeWhatsAppUrl } from "./competitions";
+describe("safeWhatsAppUrl", () => {
+  it("accepts a WhatsApp group invite link", () => {
+    expect(safeWhatsAppUrl("chat.whatsapp.com/AbC123")).toBe("https://chat.whatsapp.com/AbC123");
+  });
+  it("rejects links that are not WhatsApp", () => {
+    expect(safeWhatsAppUrl("https://evil.com/chat.whatsapp.com")).toBeNull();
+  });
+});

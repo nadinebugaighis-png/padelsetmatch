@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTr, useI18n } from "@/lib/i18n";
-import { canRegisterInApp, competitionPhase, formatLabel, myProfileId, safeSignupUrl } from "@/lib/competitions";
+import { canRegisterInApp, competitionPhase, formatLabel, myProfileId, safeSignupUrl, safeWhatsAppUrl } from "@/lib/competitions";
 
 export const Route = createFileRoute("/app/competitions/$competitionId")({
   head: () => ({ meta: [
@@ -71,6 +71,7 @@ function CompetitionDetail() {
   const creator = byId.get(comp.creator_profile_id);
   const hosted = canRegisterInApp(comp);
   const signupLink = safeSignupUrl(comp.signup_url);
+  const whatsappLink = safeWhatsAppUrl(comp.whatsapp_url);
 
   async function toggle() {
     if (!me) return;
@@ -159,6 +160,12 @@ function CompetitionDetail() {
             {tr("Sign up with the organiser", "Inscríbete con el organizador", "S'inscrire auprès de l'organisateur")}<ArrowUpRight className="size-4" />
           </a>
         ) : null}
+        {phase !== "past" && whatsappLink && (
+          <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+            className="mt-3 flex h-11 w-full items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/20 bg-white text-sm font-medium text-[var(--ink)]">
+            {tr("Join the WhatsApp group", "Únete al grupo de WhatsApp", "Rejoindre le groupe WhatsApp")}<ArrowUpRight className="size-4" />
+          </a>
+        )}
         {isCreator && <button type="button" onClick={remove} className="mt-8 text-xs text-destructive underline underline-offset-2">{tr("Delete competition", "Eliminar competición", "Supprimer la compétition")}</button>}
       </div>
     </div>

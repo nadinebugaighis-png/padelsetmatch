@@ -359,6 +359,7 @@ export type Database = {
           starts_at: string
           title: string
           updated_at: string
+          whatsapp_url: string | null
         }
         Insert: {
           capacity?: number
@@ -378,6 +379,7 @@ export type Database = {
           starts_at: string
           title: string
           updated_at?: string
+          whatsapp_url?: string | null
         }
         Update: {
           capacity?: number
@@ -397,6 +399,7 @@ export type Database = {
           starts_at?: string
           title?: string
           updated_at?: string
+          whatsapp_url?: string | null
         }
         Relationships: [
           {

@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MatchDateTimePicker } from "@/components/MatchDateTimePicker";
 import { useTr } from "@/lib/i18n";
-import { COMPETITION_FORMATS, formatLabel, myProfileId, safeSignupUrl } from "@/lib/competitions";
+import { COMPETITION_FORMATS, formatLabel, myProfileId, safeSignupUrl, safeWhatsAppUrl } from "@/lib/competitions";
 
 export const Route = createFileRoute("/app/competitions/new")({
   head: () => ({ meta: [
@@ -43,6 +43,7 @@ function NewCompetition() {
   const [saving, setSaving] = useState(false);
   const [hosted, setHosted] = useState(false);
   const [signupUrl, setSignupUrl] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const checkAdmin = useServerFn(getIsAdmin);
   const { data: isAdmin } = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin(), retry: false });
 
@@ -54,6 +55,11 @@ function NewCompetition() {
     const link = signupUrl.trim() ? safeSignupUrl(signupUrl) : null;
     if (signupUrl.trim() && !link) {
       toast.error(tr("Check the sign-up link", "Revisa el enlace de inscripción", "Vérifie le lien d'inscription"));
+      return;
+    }
+    const wa = whatsapp.trim() ? safeWhatsAppUrl(whatsapp) : null;
+    if (whatsapp.trim() && !wa) {
+      toast.error(tr("Check the WhatsApp group link", "Revisa el enlace del grupo de WhatsApp", "Vérifie le lien du groupe WhatsApp"));
       return;
     }
     setSaving(true);
@@ -82,6 +88,7 @@ function NewCompetition() {
         level_note: level.trim() || null,
         description: description.trim() || null,
         poster_path: posterPath,
+        whatsapp_url: wa,
       }).select("id").single();
       if (error) {
         if (posterPath) await supabase.storage.from("competition-posters").remove([posterPath]);
@@ -157,6 +164,10 @@ function NewCompetition() {
             <Input value={signupUrl} maxLength={500} inputMode="url" onChange={(e) => setSignupUrl(e.target.value)} placeholder="playtomic.com/…" />
           </div>
         )}
+        <div className="space-y-1.5">
+          <div className={label}>{tr("WhatsApp group (optional)", "Grupo de WhatsApp (opcional)", "Groupe WhatsApp (optionnel)")}</div>
+          <Input value={whatsapp} maxLength={300} inputMode="url" onChange={(e) => setWhatsapp(e.target.value)} placeholder="chat.whatsapp.com/…" />
+        </div>
         <div className="space-y-1.5">
           <div className={label}>{tr("Details (optional)", "Detalles (opcional)", "Détails (optionnel)")}</div>
           <Textarea value={description} maxLength={1500} rows={4} onChange={(e) => setDescription(e.target.value)} placeholder={tr("Price, prizes, dress code, how pairs are made", "Precio, premios, dress code, cómo se forman las parejas", "Prix, lots, tenue, formation des paires")} />

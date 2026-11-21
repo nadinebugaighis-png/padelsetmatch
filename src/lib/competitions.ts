@@ -48,3 +48,17 @@ export function safeSignupUrl(raw: string | null | undefined): string | null {
     return u.toString().slice(0, 500);
   } catch { return null; }
 }
+
+/** Only real WhatsApp group or chat links (chat.whatsapp.com, wa.me) are accepted. */
+export function safeWhatsAppUrl(raw: string | null | undefined): string | null {
+  const v = (raw ?? "").trim();
+  if (!v) return null;
+  try {
+    const u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`);
+    const host = u.hostname.toLowerCase().replace(/^www\./, "");
+    if (host !== "chat.whatsapp.com" && host !== "wa.me") return null;
+    if (u.pathname.length < 2) return null;
+    const out = `https://${host}${u.pathname}${u.search}`;
+    return /^https:\/\/(chat\.whatsapp\.com|wa\.me)\/[A-Za-z0-9_\-/?=&.%+]{1,300}$/.test(out) ? out : null;
+  } catch { return null; }
+}

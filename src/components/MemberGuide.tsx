@@ -36,24 +36,24 @@ export function MemberGuide() {
 
   return (
     <Dialog open={open} onOpenChange={(o) => (o ? setOpen(true) : close())}>
-      <DialogContent className="w-[88vw] max-w-sm p-5 gap-3 bg-[var(--paper)] border-[var(--gold)]/40 max-h-[75vh] overflow-y-auto">
-        <DialogTitle className="text-serif text-[22px] leading-tight text-[var(--ink)] font-normal">
+      <DialogContent className="w-[88vw] max-w-sm sm:max-w-xl p-5 sm:p-10 gap-3 sm:gap-6 bg-[var(--paper)] border-[var(--gold)]/40 max-h-[75vh] sm:max-h-[88vh] overflow-y-auto rounded-2xl">
+        <DialogTitle className="text-serif text-[22px] sm:text-[32px] leading-tight text-[var(--ink)] font-normal">
           {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
         </DialogTitle>
-        <ul className="space-y-3">
+        <ul className="space-y-3 sm:space-y-5">
           {steps.map(([title, body], i) => (
             <li key={i} >
               <div>
-                <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
+                <div className="flex items-center gap-2 text-[11px] sm:text-[13px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
                   {title}
-                  {i === 2 && <CourtIcon className="w-5 h-3 shrink-0" strokeWidth={2} aria-hidden="true" />}
+                  {i === 2 && <CourtIcon className="w-5 h-3 sm:w-7 sm:h-4 shrink-0" strokeWidth={2} aria-hidden="true" />}
                 </div>
-                <p className="text-[13px] text-[var(--ink)]/75 leading-snug mt-0.5">{body}</p>
+                <p className="text-[13px] sm:text-[16px] text-[var(--ink)]/75 leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">{body}</p>
               </div>
             </li>
           ))}
         </ul>
-        <button type="button" onClick={close} className="mt-1 w-full h-10 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-[0.18em] font-semibold">
+        <button type="button" onClick={close} className="mt-1 sm:mt-2 w-full h-10 sm:h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] sm:text-[13px] uppercase tracking-[0.18em] font-semibold">
           {tr("Enter the club", "Entrar al club", "Entrer dans le club")}
         </button>
       </DialogContent>

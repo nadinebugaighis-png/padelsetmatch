@@ -1602,6 +1602,44 @@ export type Database = {
           },
         ]
       }
+      play_checkins: {
+        Row: {
+          area_keys: string[]
+          area_label: string | null
+          created_at: string
+          id: string
+          play_date: string
+          profile_id: string
+          slot: string
+        }
+        Insert: {
+          area_keys?: string[]
+          area_label?: string | null
+          created_at?: string
+          id?: string
+          play_date: string
+          profile_id: string
+          slot: string
+        }
+        Update: {
+          area_keys?: string[]
+          area_label?: string | null
+          created_at?: string
+          id?: string
+          play_date?: string
+          profile_id?: string
+          slot?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "play_checkins_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       played_confirmations: {
         Row: {
           created_at: string
@@ -2333,6 +2371,7 @@ export type Database = {
         Returns: number
       }
       my_profile_id: { Args: never; Returns: string }
+      not_blocked_with_me: { Args: { _other: string }; Returns: boolean }
       open_intro_chat: {
         Args: {
           _acting_user_id: string

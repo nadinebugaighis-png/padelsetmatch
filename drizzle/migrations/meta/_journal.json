@@ -267,6 +267,13 @@
       "when": 1795270086158,
       "tag": "0037_lesson_chat_free_messaging",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795273215510,
+      "tag": "0038_who_can_play_checkins",
+      "breakpoints": true
     }
   ]
 }

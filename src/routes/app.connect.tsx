@@ -21,16 +21,25 @@ import { adminDeleteContent, getIsAdmin } from "@/lib/admin.functions";
 import { useTr } from "@/lib/i18n";
 import { ReportContentButton } from "@/components/ReportContentButton";
 import { Button } from "@/components/ui/button";
+import { WhoCanPlay } from "@/components/WhoCanPlay";
+import { PLAY_SLOTS } from "@/lib/who-can-play";
+import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+const searchSchema = z.object({
+  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().catch(undefined),
+  slot: z.enum(PLAY_SLOTS).optional().catch(undefined),
+});
+
 export const Route = createFileRoute("/app/connect")({
   head: () => ({ meta: [
-      { name: "description", content: "Padel news, local players and community conversations." },
-      { property: "og:title", content: "Connect \u00b7 PadelSetMatch" },
-      { property: "og:description", content: "Padel news, local players and community conversations." },
+      { name: "description", content: "See who can play near you this week and join them with one tap." },
+      { property: "og:title", content: "Who can play? \u00b7 PadelSetMatch" },
+      { property: "og:description", content: "See who can play near you this week and join them with one tap." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },{ title: "Connect · PadelSetMatch" }, { name: "robots", content: "noindex" }] }),
+      { name: "twitter:card", content: "summary" },{ title: "Who can play? · PadelSetMatch" }, { name: "robots", content: "noindex" }] }),
+  validateSearch: (s) => searchSchema.parse(s),
   component: ConnectPage,
 });
 
@@ -77,6 +86,7 @@ function timeAgo(iso: string, tr: ReturnType<typeof useTr>) {
 
 function ConnectPage() {
   const tr = useTr();
+  const search = Route.useSearch();
   const catLabel = useCategoryLabel();
   const qc = useQueryClient();
   const list = useServerFn(listConnectPosts);
@@ -168,15 +178,20 @@ function ConnectPage() {
   return (
     <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">
       {/* Header */}
-      <div className="mb-6">
-        <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("Community board", "Tablón comunitario", "Tableau communautaire")}</div>
-        <div className="flex items-end justify-between gap-3 mt-1">
-          <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none">{tr("Connect", "Conecta", "Connecter")}</h1>
-          <Button onClick={() => { setEditingPost(null); setComposerOpen(true); }} className="shrink-0 bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-9 px-4">
-            <Plus className="w-4 h-4 mr-1" />
-            {tr("New post", "Publicar", "Publier")}
-          </Button>
-        </div>
+      <div className="mb-5">
+        <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("Connect", "Conecta", "Connecter")}</div>
+        <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none mt-1">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
+      </div>
+
+      <WhoCanPlay focusDay={search.day} focusSlot={search.slot} />
+
+      {/* Community board */}
+      <div className="mt-10 mb-4 pt-6 border-t border-[var(--ink)]/10 flex items-end justify-between gap-3">
+        <h2 className="text-serif text-2xl text-[var(--ink)] leading-none">{tr("Community board", "Tablón", "Tableau")}</h2>
+        <Button onClick={() => { setEditingPost(null); setComposerOpen(true); }} variant="outline" className="shrink-0 bg-white border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 rounded-full h-8 px-3.5 text-xs">
+          <Plus className="w-3.5 h-3.5 mr-1" />
+          {tr("New post", "Publicar", "Publier")}
+        </Button>
       </div>
 
       {/* Filters */}

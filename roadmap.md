@@ -76,3 +76,6 @@
 ## Play page filters and area feed
 - [x] Remove the second bell (match alerts now open from Filters), add Filters (level, time, places left) and area chips for players with two or more areas; the feed shows only games in each player's own areas. 11 focused tests pass; signed-in phone check verified chips and filters.
 - [ ] Bring in open matches from nearby clubs' Playtomic (needs each club's Playtomic API key or Playtomic Connect approval).
+
+## Connect: Who can play?
+- [x] Turn Connect into "Who can play?": pick day + morning/afternoon/evening, one-tap "Me too", local to the player's areas, alerts to others in the same slot; community board kept below.

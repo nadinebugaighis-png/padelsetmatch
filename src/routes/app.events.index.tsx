@@ -392,6 +392,10 @@ function EventsPage() {
                 {value === "mine" && mineCount > 0 && <span className="text-xs text-muted-foreground">({mineCount})</span>}
               </Button>
             ))}
+            <Button role="tab" aria-selected={false} variant="ghost" onClick={() => navigate({ to: "/app/competitions" })}
+              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-transparent text-muted-foreground hover:bg-transparent">
+              {tr("Competitions", "Competiciones", "Compétitions")}
+            </Button>
           </div>
           <Button variant="ghost" size="sm" aria-pressed={worldwide} onClick={() => setWorldwide((v) => !v)}
             className="shrink-0 gap-1 px-1 text-xs text-muted-foreground">
@@ -790,9 +794,15 @@ function MatchCard({
       <div className="px-3 pt-3 pb-3">
         {asPairs ? (
           <div className="flex items-start justify-center">
-            <div className="flex flex-1 justify-evenly">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
-            <span className="mt-3 text-serif italic text-[13px] text-[var(--ink)]/35 px-1">vs</span>
-            <div className="flex flex-1 justify-evenly">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
+            <div className="flex-1">
+              <div className="mb-1.5 text-center text-[9px] uppercase tracking-[0.25em] text-[var(--ink)]/45">{tr("Team A", "Equipo A", "Équipe A")}</div>
+              <div className="flex justify-evenly">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
+            </div>
+            <span className="mt-8 text-serif italic text-[13px] text-[var(--ink)]/35 px-1">vs</span>
+            <div className="flex-1">
+              <div className="mb-1.5 text-center text-[9px] uppercase tracking-[0.25em] text-[var(--ink)]/45">{tr("Team B", "Equipo B", "Équipe B")}</div>
+              <div className="flex justify-evenly">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
+            </div>
           </div>
         ) : coachFirst ? (
           // Class: the coach stands apart, students share the court.

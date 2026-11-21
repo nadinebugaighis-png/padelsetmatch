@@ -45,6 +45,9 @@ import { Route as PreviewPlayerCardRouteImport } from './routes/preview.player-c
 import { Route as PreviewPlayerCardV2RouteImport } from './routes/preview.player-card-v2'
 import { Route as SCodeRouteImport } from './routes/s.$code'
 import { Route as ApiPublicPhotoRouteImport } from './routes/api/public/photo'
+import { Route as AppCompetitionsIndexRouteImport } from './routes/app.competitions.index'
+import { Route as AppCompetitionsCompetitionIdRouteImport } from './routes/app.competitions.$competitionId'
+import { Route as AppCompetitionsNewRouteImport } from './routes/app.competitions.new'
 import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
@@ -235,6 +238,22 @@ const ApiPublicPhotoRoute = ApiPublicPhotoRouteImport.update({
   path: '/api/public/photo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppCompetitionsIndexRoute = AppCompetitionsIndexRouteImport.update({
+  id: '/competitions/',
+  path: '/competitions/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCompetitionsCompetitionIdRoute =
+  AppCompetitionsCompetitionIdRouteImport.update({
+    id: '/competitions/$competitionId',
+    path: '/competitions/$competitionId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppCompetitionsNewRoute = AppCompetitionsNewRouteImport.update({
+  id: '/competitions/new',
+  path: '/competitions/new',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppEventsIndexRoute = AppEventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
@@ -308,9 +327,12 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/play/': typeof PlayIndexRoute
   '/api/public/photo': typeof ApiPublicPhotoRoute
+  '/app/competitions/$competitionId': typeof AppCompetitionsCompetitionIdRoute
+  '/app/competitions/new': typeof AppCompetitionsNewRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
+  '/app/competitions/': typeof AppCompetitionsIndexRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -352,9 +374,12 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/play': typeof PlayIndexRoute
   '/api/public/photo': typeof ApiPublicPhotoRoute
+  '/app/competitions/$competitionId': typeof AppCompetitionsCompetitionIdRoute
+  '/app/competitions/new': typeof AppCompetitionsNewRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
+  '/app/competitions': typeof AppCompetitionsIndexRoute
   '/app/events': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -398,9 +423,12 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/play/': typeof PlayIndexRoute
   '/api/public/photo': typeof ApiPublicPhotoRoute
+  '/app/competitions/$competitionId': typeof AppCompetitionsCompetitionIdRoute
+  '/app/competitions/new': typeof AppCompetitionsNewRoute
   '/app/events/$eventId': typeof AppEventsEventIdRouteWithChildren
   '/app/events/new': typeof AppEventsNewRoute
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
+  '/app/competitions/': typeof AppCompetitionsIndexRoute
   '/app/events/': typeof AppEventsIndexRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -445,9 +473,12 @@ export interface FileRouteTypes {
     | '/app/'
     | '/play/'
     | '/api/public/photo'
+    | '/app/competitions/$competitionId'
+    | '/app/competitions/new'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
+    | '/app/competitions/'
     | '/app/events/'
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
@@ -489,9 +520,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/play'
     | '/api/public/photo'
+    | '/app/competitions/$competitionId'
+    | '/app/competitions/new'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
+    | '/app/competitions'
     | '/app/events'
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
@@ -534,9 +568,12 @@ export interface FileRouteTypes {
     | '/app/'
     | '/play/'
     | '/api/public/photo'
+    | '/app/competitions/$competitionId'
+    | '/app/competitions/new'
     | '/app/events/$eventId'
     | '/app/events/new'
     | '/app/matches/$matchId'
+    | '/app/competitions/'
     | '/app/events/'
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
@@ -827,6 +864,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPhotoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/competitions/': {
+      id: '/app/competitions/'
+      path: '/competitions'
+      fullPath: '/app/competitions/'
+      preLoaderRoute: typeof AppCompetitionsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/competitions/$competitionId': {
+      id: '/app/competitions/$competitionId'
+      path: '/competitions/$competitionId'
+      fullPath: '/app/competitions/$competitionId'
+      preLoaderRoute: typeof AppCompetitionsCompetitionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/competitions/new': {
+      id: '/app/competitions/new'
+      path: '/competitions/new'
+      fullPath: '/app/competitions/new'
+      preLoaderRoute: typeof AppCompetitionsNewRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/events/': {
       id: '/app/events/'
       path: '/events'
@@ -914,8 +972,11 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppQuickStartRoute: typeof AppQuickStartRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppCompetitionsCompetitionIdRoute: typeof AppCompetitionsCompetitionIdRoute
+  AppCompetitionsNewRoute: typeof AppCompetitionsNewRoute
   AppEventsEventIdRoute: typeof AppEventsEventIdRouteWithChildren
   AppEventsNewRoute: typeof AppEventsNewRoute
+  AppCompetitionsIndexRoute: typeof AppCompetitionsIndexRoute
   AppEventsIndexRoute: typeof AppEventsIndexRoute
 }
 
@@ -931,8 +992,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppQuickStartRoute: AppQuickStartRoute,
   AppIndexRoute: AppIndexRoute,
+  AppCompetitionsCompetitionIdRoute: AppCompetitionsCompetitionIdRoute,
+  AppCompetitionsNewRoute: AppCompetitionsNewRoute,
   AppEventsEventIdRoute: AppEventsEventIdRouteWithChildren,
   AppEventsNewRoute: AppEventsNewRoute,
+  AppCompetitionsIndexRoute: AppCompetitionsIndexRoute,
   AppEventsIndexRoute: AppEventsIndexRoute,
 }
 

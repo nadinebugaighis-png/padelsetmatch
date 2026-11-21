@@ -238,6 +238,101 @@ export type Database = {
           },
         ]
       }
+      competition_entries: {
+        Row: {
+          competition_id: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          competition_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          competition_id?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_entries_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competition_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          capacity: number
+          city: string | null
+          club_name: string
+          created_at: string
+          creator_profile_id: string
+          description: string | null
+          ends_at: string | null
+          format: string
+          id: string
+          level_note: string | null
+          poster_url: string | null
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number
+          city?: string | null
+          club_name: string
+          created_at?: string
+          creator_profile_id: string
+          description?: string | null
+          ends_at?: string | null
+          format?: string
+          id?: string
+          level_note?: string | null
+          poster_url?: string | null
+          starts_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number
+          city?: string | null
+          club_name?: string
+          created_at?: string
+          creator_profile_id?: string
+          description?: string | null
+          ends_at?: string | null
+          format?: string
+          id?: string
+          level_note?: string | null
+          poster_url?: string | null
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitions_creator_profile_id_fkey"
+            columns: ["creator_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       connect_comments: {
         Row: {
           author_profile_id: string | null

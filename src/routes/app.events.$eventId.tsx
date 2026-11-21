@@ -624,8 +624,8 @@ function EventDetail() {
           <div className="flex-1 h-px bg-[var(--ink)]/10" />
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">{event.filled}/{event.capacity ?? 4}</div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {[...(event.participants ?? [])]
+        {(() => { const chips: any[] = [
+          ...[...(event.participants ?? [])]
             .sort((a: any, b: any) => (event.is_class ? Number(!!b.profiles?.is_coach) - Number(!!a.profiles?.is_coach) : 0))
             .map((p: any) => {
             const isMe = p.profile_id === me?.id;
@@ -656,8 +656,8 @@ function EventDetail() {
                 )}
               </button>
             );
-          })}
-          {(event.guests ?? []).map((g: any) => (
+          }),
+          ...(event.guests ?? []).map((g: any) => (
             <div
               key={g.id}
               className="flex items-center gap-2 bg-white border border-[var(--ink)]/10 rounded-full pl-1 pr-3 py-1"
@@ -678,14 +678,14 @@ function EventDetail() {
                 </a>
               ) : null}
             </div>
-          ))}
-          {Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
+            )),
+          ...Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
 
             <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/10 rounded-full px-3 py-1.5">
               <span className="text-xs text-[var(--ink)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
             </div>
-          ))}
-          {Array.from({ length: event.needs }).map((_, i) => (
+            )),
+          ...Array.from({ length: event.needs }).map((_, i) => (
             <button
               key={`o-${i}`}
               type="button"
@@ -704,8 +704,26 @@ function EventDetail() {
                   : canJoin ? tr("Join open spot", "Unirme al hueco", "Rejoindre la place") : tr("Open spot", "Hueco libre", "Place ouverte")}
               </span>
             </button>
-          ))}
-        </div>
+            )),
+        ];
+          // Four-player matches read as two pairs facing each other.
+          if (!event.is_class && (event.capacity ?? 4) === 4) {
+            const team = (label: string, items: any[]) => (
+              <div className="min-w-0">
+                <div className="mb-1.5 text-center text-[9px] uppercase tracking-[0.25em] text-[var(--ink)]/45">{label}</div>
+                <div className="flex flex-col items-stretch gap-1.5 [&>*]:justify-start">{items}</div>
+              </div>
+            );
+            return (
+              <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-2">
+                {team(tr("Team A", "Equipo A", "Équipe A"), chips.slice(0, 2))}
+                <span className="mt-7 text-serif italic text-[13px] text-[var(--ink)]/35">vs</span>
+                {team(tr("Team B", "Equipo B", "Équipe B"), chips.slice(2, 4))}
+              </div>
+            );
+          }
+          return <div className="flex flex-wrap gap-2">{chips}</div>;
+        })()}
       </div>
 
       {/* Invitee response */}

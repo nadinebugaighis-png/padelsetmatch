@@ -31,7 +31,7 @@ export function QuickActions() {
   return (
     <>
       {open && <div aria-hidden className="fixed inset-0 z-[46] bg-[var(--ink)]/70 backdrop-blur-[3px] animate-in fade-in duration-150" onClick={() => setOpen(false)} />}
-      <div className="quick-actions fixed right-4 z-[47] flex flex-col items-end gap-3.5 lg:right-8">
+      <div data-bottom-ui className="quick-actions fixed right-4 z-[47] flex flex-col items-end gap-3.5 lg:right-8">
         {open && actions.map((a, i) => (
           <button key={a.key} type="button" onClick={() => { setOpen(false); a.run(); }}
             className="flex items-center gap-3.5 animate-in fade-in slide-in-from-bottom-2 duration-200 fill-mode-both"

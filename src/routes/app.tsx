@@ -388,6 +388,7 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && (
         <nav
+          data-bottom-ui
           className="fixed inset-x-0 bottom-0 z-40 lg:hidden px-3 pointer-events-none"
           style={{
             paddingBottom: "max(env(safe-area-inset-bottom, 0px), 10px)",

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteCompetition, getPosterUrls } from "@/lib/competitions.functions";
+import { getIsAdmin } from "@/lib/admin.functions";
 import { ArrowLeft, ArrowUpRight, CalendarDays, MapPin, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,8 @@ function CompetitionDetail() {
   const [busy, setBusy] = useState(false);
   const posterUrls = useServerFn(getPosterUrls);
   const removeComp = useServerFn(deleteCompetition);
+  const checkAdmin = useServerFn(getIsAdmin);
+  const { data: isAdmin } = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin(), retry: false });
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : "en-GB";
 
   const { data, isLoading } = useQuery({
@@ -166,7 +169,8 @@ function CompetitionDetail() {
             {tr("Join the WhatsApp group", "Únete al grupo de WhatsApp", "Rejoindre le groupe WhatsApp")}<ArrowUpRight className="size-4" />
           </a>
         )}
-        {isCreator && <button type="button" onClick={remove} className="mt-8 text-xs text-destructive underline underline-offset-2">{tr("Delete competition", "Eliminar competición", "Supprimer la compétition")}</button>}
+        {/* Only the organiser or an admin may delete; the database enforces the same rule. */}
+        {(isCreator || isAdmin === true) && <button type="button" onClick={remove} className="mt-8 text-xs text-destructive underline underline-offset-2">{tr("Delete competition", "Eliminar competición", "Supprimer la compétition")}</button>}
       </div>
     </div>
   );

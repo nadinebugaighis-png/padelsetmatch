@@ -44,7 +44,7 @@ export const deleteCompetition = createServerFn({ method: "POST" })
       .select("id, poster_path");
     if (error) throw new Error(error.message);
     const row = gone?.[0];
-    if (!row) throw new Error("Only the organiser can delete this competition");
+    if (!row) throw new Error("Only the organiser or an admin can delete this competition");
     if (row.poster_path) {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       await supabaseAdmin.storage.from(BUCKET).remove([row.poster_path]);

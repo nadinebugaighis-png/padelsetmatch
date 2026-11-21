@@ -353,6 +353,7 @@ export type Database = {
           hosted: boolean
           id: string
           level_note: string | null
+          poster_path: string | null
           poster_url: string | null
           signup_url: string | null
           starts_at: string
@@ -371,6 +372,7 @@ export type Database = {
           hosted?: boolean
           id?: string
           level_note?: string | null
+          poster_path?: string | null
           poster_url?: string | null
           signup_url?: string | null
           starts_at: string
@@ -389,6 +391,7 @@ export type Database = {
           hosted?: boolean
           id?: string
           level_note?: string | null
+          poster_path?: string | null
           poster_url?: string | null
           signup_url?: string | null
           starts_at?: string

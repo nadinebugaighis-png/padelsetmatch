@@ -60,15 +60,14 @@ function NewCompetition() {
     try {
       const profileId = await myProfileId();
       if (!profileId) throw new Error(tr("Please sign in first", "Inicia sesión primero", "Connecte-toi d'abord"));
-      let posterUrl: string | null = null;
+      let posterPath: string | null = null;
       if (poster) {
         const { data: u } = await supabase.auth.getUser();
         const ext = (poster.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
         const path = `${u.user!.id}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage.from("competition-posters").upload(path, poster, { contentType: poster.type });
         if (upErr) throw upErr;
-        const { data: signed } = await supabase.storage.from("competition-posters").createSignedUrl(path, 60 * 60 * 24 * 365 * 2);
-        posterUrl = signed?.signedUrl ?? null;
+        posterPath = path;
       }
       const { data, error } = await supabase.from("competitions").insert({
         creator_profile_id: profileId,
@@ -82,9 +81,12 @@ function NewCompetition() {
         signup_url: hosted && isAdmin ? null : link,
         level_note: level.trim() || null,
         description: description.trim() || null,
-        poster_url: posterUrl,
+        poster_path: posterPath,
       }).select("id").single();
-      if (error) throw error;
+      if (error) {
+        if (posterPath) await supabase.storage.from("competition-posters").remove([posterPath]);
+        throw error;
+      }
       toast.success(tr("Competition announced", "Competición anunciada", "Compétition annoncée"));
       navigate({ to: "/app/competitions/$competitionId", params: { competitionId: data.id } });
     } catch (e) {

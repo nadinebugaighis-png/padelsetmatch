@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteCompetition, getPosterUrls } from "@/lib/competitions.functions";
 import { ArrowLeft, ArrowUpRight, CalendarDays, MapPin, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +29,8 @@ function CompetitionDetail() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const posterUrls = useServerFn(getPosterUrls);
+  const removeComp = useServerFn(deleteCompetition);
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : "en-GB";
 
   const { data, isLoading } = useQuery({
@@ -44,13 +48,17 @@ function CompetitionDetail() {
       const { data: people } = ids.length ? await supabase.from("profiles").select("id, first_name, photo_url").in("id", ids) : { data: [] };
       const byId = new Map<string, any>(((people as any[]) ?? []).map((p: any) => [p.id, p]));
       const total = counts.data?.[0]?.entries ?? 0;
-      return { me, comp: comp.data, entries: entries.data ?? [], total, byId };
+      const posters = comp.data?.poster_path
+        ? await posterUrls({ data: { ids: [competitionId] } }).catch(() => ({} as Record<string, string>))
+        : {};
+      const posterUrl = posters[competitionId] ?? null;
+      return { me, comp: comp.data, entries: entries.data ?? [], total, byId, posterUrl };
     },
   });
 
   if (isLoading) return <div className="programme-page min-h-screen" />;
   if (!data?.comp) return <div className="programme-page min-h-screen p-6 text-foreground">{tr("Competition not found", "Competición no encontrada", "Compétition introuvable")}</div>;
-  const { comp, entries, total, me, byId } = data;
+  const { comp, entries, total, me, byId, posterUrl } = data;
   const joined = !!me && entries.some((e) => e.profile_id === me);
   const isCreator = me === comp.creator_profile_id;
   const full = total >= comp.capacity;
@@ -86,8 +94,12 @@ function CompetitionDetail() {
 
   async function remove() {
     if (!confirm(tr("Delete this competition?", "¿Eliminar esta competición?", "Supprimer cette compétition ?"))) return;
-    const { error } = await supabase.from("competitions").delete().eq("id", comp!.id);
-    if (error) { toast.error(error.message); return; }
+    try {
+      await removeComp({ data: { id: comp!.id } });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not delete it", "No se pudo eliminar", "Impossible de supprimer"));
+      return;
+    }
     qc.invalidateQueries({ queryKey: ["competitions"] });
     navigate({ to: "/app/competitions" });
   }
@@ -96,7 +108,7 @@ function CompetitionDetail() {
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md mx-auto px-4 pt-3 pb-24">
         <Button variant="ghost" size="icon" onClick={() => navigate({ to: "/app/competitions" })} aria-label={tr("Back", "Atrás", "Retour")}><ArrowLeft /></Button>
-        {comp.poster_url && <img src={comp.poster_url} alt="" className="mt-2 w-full rounded-2xl object-cover max-h-[460px]" />}
+        {posterUrl && <img src={posterUrl} alt="" className="mt-2 w-full rounded-2xl object-cover max-h-[460px]" />}
         <div className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[var(--gold)]">
           <span>{formatLabel(comp.format, tr)}</span>
           <span className="h-px w-4 bg-current" />

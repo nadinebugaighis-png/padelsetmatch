@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getPosterUrls } from "@/lib/competitions.functions";
 import { Plus, CalendarDays, CircleDot, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTr, useI18n } from "@/lib/i18n";
@@ -27,22 +29,26 @@ function CompetitionsPage() {
   const tr = useTr();
   const { lang } = useI18n();
   const navigate = useNavigate();
+  const posterUrls = useServerFn(getPosterUrls);
   const { data = [], isLoading } = useQuery({
     queryKey: ["competitions"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("competitions")
-        .select("id,title,format,club_name,city,starts_at,ends_at,capacity,poster_url,hosted")
+        .select("id,title,format,club_name,city,starts_at,ends_at,capacity,poster_path,hosted")
         .order("starts_at", { ascending: true })
         .limit(100);
       if (error) throw error;
-      const rows = (data ?? []) as unknown as Omit<CompetitionRow, "competition_entries">[];
+      const rows = (data ?? []) as unknown as (Omit<CompetitionRow, "competition_entries" | "poster_url"> & { poster_path: string | null })[];
       // Sign-up names are private; counts come from a count-only lookup.
       const { data: counts } = rows.length
         ? await supabase.rpc("competition_entry_counts", { _ids: rows.map((r) => r.id) })
         : { data: [] as { competition_id: string; entries: number }[] };
       const byComp = new Map((counts ?? []).map((c) => [c.competition_id, c.entries]));
-      return rows.map((r) => ({ ...r, competition_entries: [{ count: byComp.get(r.id) ?? 0 }] })) as CompetitionRow[];
+      // Posters are private files shown through links that expire after an hour.
+      const withPoster = rows.filter((r) => r.poster_path).map((r) => r.id);
+      const posters = withPoster.length ? await posterUrls({ data: { ids: withPoster } }).catch(() => ({} as Record<string, string>)) : {};
+      return rows.map(({ poster_path: _p, ...r }) => ({ ...r, poster_url: posters[r.id] ?? null, competition_entries: [{ count: byComp.get(r.id) ?? 0 }] })) as CompetitionRow[];
     },
   });
   const live = data.filter((c) => competitionPhase(c.starts_at, c.ends_at) === "live");

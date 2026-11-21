@@ -288,6 +288,13 @@
       "when": 1795280859763,
       "tag": "0040_slot_chat_edit_messages",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1795286594804,
+      "tag": "0041_competition_poster_paths",
+      "breakpoints": true
     }
   ]
 }

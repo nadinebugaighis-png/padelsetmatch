@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { levelRangeLabel } from "@/lib/level-label";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
@@ -255,7 +256,7 @@ function GuestMatchRoom() {
                 <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
                 {preview && (
                   <span className="text-[10px] uppercase tracking-widest text-[var(--gold)] font-semibold">
-                    {tr("Match level", "Nivel del partido", "Niveau du match")}: {preview.level_min === preview.level_max ? preview.level_min : `${preview.level_min} – ${preview.level_max}`}
+                    {tr("Match level", "Nivel del partido", "Niveau du match")}: {levelRangeLabel(preview.level_min, preview.level_max, tr)}
                   </span>
                 )}
               </div>

@@ -207,6 +207,25 @@ function Onboarding() {
     }
   }, [profileQ.data]);
 
+  // Brand-new Apple accounts: a returning member whose Apple sign-in produced a
+  // fresh hidden address lands here; offer a quiet way back to their email.
+  const [newAppleAccount, setNewAppleAccount] = useState(false);
+  useEffect(() => {
+    if (!profileQ.isSuccess || profileQ.data) return;
+    let alive = true;
+    supabase.auth.getUser().then(({ data }) => {
+      const providers = (data.user?.app_metadata?.["providers"] as string[] | undefined) ?? [];
+      if (alive && (data.user?.app_metadata?.["provider"] === "apple" || providers.includes("apple"))) setNewAppleAccount(true);
+    }).catch(() => { /* non-blocking */ });
+    return () => { alive = false; };
+  }, [profileQ.isSuccess, profileQ.data]);
+  const switchToEmail = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", search: { redirect: undefined, join: undefined }, replace: true });
+  };
+
   // Welcome toast — fires once for brand-new users (no profile yet).
   // Covers OAuth signups that bypass the auth.tsx toast path.
   const [welcomed, setWelcomed] = useState(false);
@@ -510,6 +529,14 @@ function Onboarding() {
             <span className="font-semibold">{tr("To continue, complete:", "Para continuar, completa:", "Pour continuer, complète :")}</span>{" "}
             {missingByStep[step].join(", ")}.
           </div>
+        )}
+        {step === 0 && newAppleAccount && (
+          <p className="text-[12px] text-[var(--ink)]/60 leading-relaxed">
+            {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
+            <button type="button" onClick={switchToEmail} className="underline underline-offset-2 text-[var(--ink)]/80 hover:text-[var(--ink)]">
+              {tr("Sign in with your email instead", "Entra con tu email", "Connecte-toi avec ton e-mail")}
+            </button>
+          </p>
         )}
         {step === 0 && (
           <>

@@ -159,7 +159,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
                 disabled={!anyOpen}
                 aria-pressed={active}
                 onClick={() => { setDay(d); if (!slotStillOpen(slot, d, now)) setSlot(firstOpenSlot(d) ?? "evening"); }}
-                className={`shrink-0 px-3.5 h-9 rounded-full text-serif text-[15px] font-normal tracking-normal border transition capitalize disabled:opacity-35 ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white text-[var(--ink)]/75 border-[var(--ink)]/15 hover:border-[var(--ink)]/35"}`}
+                className={`shrink-0 px-3.5 h-9 rounded-full text-[13px] font-semibold border transition capitalize disabled:opacity-35 ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white text-[var(--ink)]/75 border-[var(--ink)]/15 hover:border-[var(--ink)]/35"}`}
               >
                 {dayLabel(d)}
               </button>
@@ -215,7 +215,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
       {/* Who is free */}
       {hasAreas && (
         <div>
-          <p id="who-can-play" className="sr-only">
+          <p id="who-can-play" className="mb-2.5 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">
             {tr("Free this week", "Libres esta semana", "Libres cette semaine")}
           </p>
           {q.isLoading ? (

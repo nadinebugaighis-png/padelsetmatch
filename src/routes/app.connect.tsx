@@ -3,7 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MapPin, MessageCircle, Pencil, Plus, ShieldAlert, Trash2, X } from "lucide-react";
+import { MapPin, MessageCircle, MoreHorizontal, Pencil, Plus, SendHorizontal, ShieldAlert, Trash2, X } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   addConnectComment,
   createConnectPost,
@@ -47,27 +48,15 @@ export const Route = createFileRoute("/app/connect")({
 
 const CATEGORIES: ConnectCategory[] = ["traveling", "looking_to_play", "looking_for_coach", "selling", "question", "news", "other"];
 
-function catMeta(c: ConnectCategory): { emoji: string; tone: string } {
-  switch (c) {
-    case "traveling": return { emoji: "✈️", tone: "bg-sky-50 text-sky-900 border-sky-200" };
-    case "looking_to_play": return { emoji: "🎾", tone: "bg-emerald-50 text-emerald-900 border-emerald-200" };
-    case "looking_for_coach": return { emoji: "🎓", tone: "bg-[var(--plum)]/10 text-[var(--plum)] border-[var(--plum)]/25" };
-    case "selling": return { emoji: "🎟️", tone: "bg-amber-50 text-amber-900 border-amber-200" };
-    case "question": return { emoji: "❓", tone: "bg-violet-50 text-violet-900 border-violet-200" };
-    case "news": return { emoji: "📣", tone: "bg-rose-50 text-rose-900 border-rose-200" };
-    case "other": return { emoji: "💬", tone: "bg-neutral-100 text-neutral-800 border-neutral-200" };
-  }
-}
-
 function useCategoryLabel() {
   const tr = useTr();
   return (c: ConnectCategory) => {
     switch (c) {
-      case "traveling": return tr("Traveling", "De viaje", "En voyage");
-      case "looking_to_play": return tr("Looking to play", "Busco jugar", "Cherche à jouer");
-      case "looking_for_coach": return tr("Looking for a coach", "Busco entrenador", "Cherche un coach");
-      case "selling": return tr("Selling / offering", "Vendo / ofrezco", "Je vends / propose");
-      case "question": return tr("Question", "Pregunta", "Question");
+      case "traveling": return tr("Travelling", "De viaje", "En voyage");
+      case "looking_to_play": return tr("Play", "Jugar", "Jouer");
+      case "looking_for_coach": return tr("Coaching", "Entrenador", "Coaching");
+      case "selling": return tr("Offers", "Ofertas", "Offres");
+      case "question": return tr("Questions", "Preguntas", "Questions");
       case "news": return tr("News", "Noticias", "Actualités");
       case "other": return tr("Other", "Otro", "Autre");
     }
@@ -102,6 +91,7 @@ function ConnectPage() {
 
   const [city, setCity] = useState("");
   const [cityInput, setCityInput] = useState("");
+  const [cityOpen, setCityOpen] = useState(false);
   const [cat, setCat] = useState<ConnectCategory | null>(null);
   const [composerOpen, setComposerOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<ConnectPost | null>(null);
@@ -188,275 +178,271 @@ function ConnectPage() {
       <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} />
 
       {/* Community board */}
-      <div className="mt-10 mb-4 pt-6 border-t border-[var(--ink)]/10 flex items-end justify-between gap-3">
-        <h2 className="text-serif text-2xl text-[var(--ink)] leading-none">{tr("Community board", "Tablón", "Tableau")}</h2>
-        <Button onClick={() => { setEditingPost(null); setComposerOpen(true); }} variant="outline" className="shrink-0 bg-white border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 rounded-full h-8 px-3.5 text-xs">
-          <Plus className="w-3.5 h-3.5 mr-1" />
-          {tr("New post", "Publicar", "Publier")}
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <div className="space-y-3 mb-6">
-        <form
-          onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }}
-          className="relative"
-        >
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/40" />
-          <Input
-            value={cityInput}
-            onChange={(e) => setCityInput(e.target.value)}
-            placeholder={tr("Filter by city…", "Filtrar por ciudad…", "Filtrer par ville…")}
-            className="h-10 pl-9 pr-9 bg-white border-[var(--ink)]/15"
-          />
-          {(cityInput || city) && (
-            <button type="button" onClick={() => { setCity(""); setCityInput(""); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 hover:text-[var(--ink)]">
-              <X className="w-4 h-4" />
+      <section className="mt-12 pt-8 border-t border-[var(--ink)]/10">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-serif text-2xl text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setCityOpen((v) => !v)}
+              className={`h-9 w-9 grid place-items-center rounded-full transition ${cityOpen || city ? "bg-[var(--ink)]/8 text-[var(--ink)]" : "text-[var(--ink)]/55 hover:text-[var(--ink)]"}`}
+              aria-label={tr("Filter by city", "Filtrar por ciudad", "Filtrer par ville")}
+            >
+              <MapPin className="w-4 h-4" />
             </button>
-          )}
-        </form>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            onClick={() => setCat(null)}
-            className={`px-3 h-8 rounded-full text-xs font-semibold border transition ${cat === null ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
+            <button
+              type="button"
+              onClick={() => { setEditingPost(null); setComposerOpen(true); }}
+              className="h-9 pl-3 pr-3.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-semibold tracking-wide"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              {tr("Post", "Publicar", "Publier")}
+            </button>
+          </div>
+        </div>
+
+        {(cityOpen || city) && (
+          <form
+            onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }}
+            className="relative mt-4"
           >
-            {tr("All", "Todas", "Toutes")}
-          </button>
-          {CATEGORIES.map((c) => {
-            const m = catMeta(c);
-            const active = cat === c;
-            return (
+            <Input
+              autoFocus={!city}
+              value={cityInput}
+              onChange={(e) => setCityInput(e.target.value)}
+              onBlur={() => setCity(cityInput.trim())}
+              placeholder={tr("City", "Ciudad", "Ville")}
+              className="h-10 pr-9 bg-white border-[var(--ink)]/12 rounded-full px-4"
+            />
+            {(cityInput || city) && (
               <button
-                key={c}
-                onClick={() => setCat(active ? null : c)}
-                className={`px-3 h-8 rounded-full text-xs font-semibold border transition inline-flex items-center gap-1 ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
+                type="button"
+                onClick={() => { setCity(""); setCityInput(""); setCityOpen(false); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/45 hover:text-[var(--ink)]"
+                aria-label={tr("Clear", "Borrar", "Effacer")}
               >
-                <span>{m.emoji}</span>
-                <span>{catLabel(c)}</span>
+                <X className="w-4 h-4" />
               </button>
-            );
-          })}
-        </div>
-      </div>
+            )}
+          </form>
+        )}
 
-      {/* Feed */}
-      {postsQ.isLoading && !postsQ.data ? (
-        <ul className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <li key={i} className="rounded-2xl border border-[var(--ink)]/8 bg-white p-4 space-y-2.5">
-              <div className="h-3.5 w-1/3 rounded bg-[var(--ink)]/8 animate-pulse" />
-              <div className="h-4 w-3/4 rounded bg-[var(--ink)]/8 animate-pulse" />
-              <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
-            </li>
-          ))}
-        </ul>
-      ) : (postsQ.data ?? []).length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[var(--ink)]/25 p-10 text-center bg-white/60">
-          <div className="text-3xl mb-2">💬</div>
-          <p className="text-sm text-[var(--ink)]/70">
-            {tr("No posts yet. Be the first to share!", "Aún no hay publicaciones. ¡Sé el primero!", "Aucune publication. Soyez le premier !")}
-          </p>
+        {/* Category tabs: one quiet scrolling row */}
+        <div className="-mx-4 sm:mx-0 mt-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-5 px-4 sm:px-0 border-b border-[var(--ink)]/8 min-w-max">
+            {([null, ...CATEGORIES] as (ConnectCategory | null)[]).map((c) => {
+              const active = cat === c;
+              return (
+                <button
+                  key={c ?? "all"}
+                  type="button"
+                  onClick={() => setCat(c)}
+                  className={`relative pb-2.5 text-[13px] whitespace-nowrap transition ${active ? "text-[var(--ink)] font-semibold" : "text-[var(--ink)]/50 hover:text-[var(--ink)]/80"}`}
+                >
+                  {c ? catLabel(c) : tr("All", "Todo", "Tout")}
+                  {active && <span className="absolute left-0 right-0 -bottom-px h-[2px] rounded-full bg-[var(--ink)]" />}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      ) : (
-        <ul className="space-y-3">
-          {(postsQ.data ?? []).map((p) => {
-            const m = catMeta(p.category);
-            const mine = myProfileId === p.author_profile_id;
-            return (
-              <li key={p.id} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/10 p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition">
-                <div className="flex items-start gap-3">
-                  {p.author?.photo_url ? (
-                    <img src={p.author.photo_url} alt="" className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white" />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[var(--ink)]/40 text-sm font-semibold">
-                      {(p.author?.first_name ?? "?").charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 text-[12px] text-[var(--ink)]/60">
-                      <span className="font-semibold text-[var(--ink)]">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                      <span className="text-[var(--ink)]/30">·</span>
-                      <span>{timeAgo(p.created_at, tr)}</span>
-                    </div>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      <span className={`inline-flex items-center gap-1 px-2 h-6 rounded-full text-[11px] font-semibold border ${m.tone}`}>
-                        <span>{m.emoji}</span><span>{catLabel(p.category)}</span>
-                      </span>
-                      {p.city && (
-                        <span className="inline-flex items-center gap-1 px-2 h-6 rounded-full text-[11px] font-medium bg-[var(--ink)]/5 text-[var(--ink)]/75 border border-[var(--ink)]/10">
-                          <MapPin className="w-3 h-3" />{p.city}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-serif text-lg sm:text-xl text-[var(--ink)] mt-2 leading-snug">{p.title}</h3>
-                    <p className="text-sm text-[var(--ink)]/80 mt-1 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
 
-                    {/* Inline comments preview */}
-                    {p.latest_comments.length > 0 && (
-                      <div className="mt-3 space-y-2">
-                        {p.latest_comments.map((c) => {
-                          const mine = myProfileId === c.author_profile_id;
-                          const isEditing = editingComment?.id === c.id;
-                          return (
-                            <div key={c.id} className="flex items-start gap-2 bg-white/70 rounded-xl px-3 py-2 border border-[var(--ink)]/8">
-                              {c.author?.photo_url ? (
-                                <img src={c.author.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
-                              ) : (
-                                <div className="w-6 h-6 rounded-full bg-[var(--ink)]/10 shrink-0 grid place-items-center text-[10px] font-semibold text-[var(--ink)]/50">
-                                  {(c.author?.first_name ?? "?").charAt(0).toUpperCase()}
-                                </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/60">
-                                  <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
-                                  <span>·</span>
-                                  <span>{timeAgo(c.created_at, tr)}</span>
-                                  {!mine && (
-                                    <span className="ml-auto flex items-center gap-1">
-                                      <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
-                                      {isAdmin && (
-                                        <button
-                                          onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); }}
-                                          className="inline-flex items-center text-red-500/70 hover:text-red-600 transition px-1"
-                                          aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
-                                          title={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
-                                        >
-                                          <ShieldAlert className="w-3 h-3" />
-                                        </button>
-                                      )}
-                                    </span>
-                                  )}
-                                  {mine && !isEditing && (
-                                    <div className="ml-auto flex items-center gap-0.5">
-                                      <button
-                                        onClick={() => setEditingComment({ id: c.id, body: c.body })}
-                                        className="inline-flex items-center text-[var(--ink)]/50 hover:text-[var(--plum)] transition px-1"
-                                        aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
-                                      >
-                                        <Pencil className="w-3 h-3" />
-                                      </button>
-                                      <button
-                                        onClick={() => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); }}
-                                        className="inline-flex items-center text-red-500/70 hover:text-red-500 transition px-1"
-                                        aria-label={tr("Delete comment", "Eliminar comentario", "Supprimer le commentaire")}
-                                      >
-                                        <Trash2 className="w-3 h-3" />
-                                      </button>
-                                    </div>
-                                  )}
-                                </div>
-                                {isEditing ? (
-                                  <div className="mt-1 space-y-1.5">
-                                    <Input
-                                      value={editingComment?.body ?? ""}
-                                      onChange={(e) => setEditingComment((prev) => prev ? { ...prev, body: e.target.value } : null)}
-                                      className="bg-white text-sm"
-                                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && (editingComment?.body ?? "").trim()) { e.preventDefault(); updateMut.mutate({ id: c.id, body: editingComment!.body }); } }}
-                                    />
-                                    <div className="flex items-center justify-end gap-2">
-                                      <button
-                                        onClick={() => setEditingComment(null)}
-                                        className="text-[11px] font-medium text-[var(--ink)]/60 hover:text-[var(--ink)] px-2 py-1"
-                                      >
-                                        {tr("Cancel", "Cancelar", "Annuler")}
-                                      </button>
-                                      <button
-                                        disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
-                                        onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
-                                        className="text-[11px] font-semibold text-[var(--plum)] hover:text-[var(--plum)]/80 disabled:opacity-50 px-2 py-1"
-                                      >
-                                        {tr("Save", "Guardar", "Enregistrer")}
-                                      </button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap break-words leading-snug">{c.body}</p>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                        {p.comment_count > p.latest_comments.length && (
-                          <button
-                            onClick={() => setOpenPost(p)}
-                            className="text-xs font-medium text-[var(--plum)] hover:text-[var(--plum)]/80"
+        {/* Feed */}
+        {postsQ.isLoading && !postsQ.data ? (
+          <ul className="divide-y divide-[var(--ink)]/8">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <li key={i} className="py-5 space-y-2.5">
+                <div className="h-3.5 w-1/3 rounded bg-[var(--ink)]/8 animate-pulse" />
+                <div className="h-4 w-3/4 rounded bg-[var(--ink)]/8 animate-pulse" />
+                <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
+              </li>
+            ))}
+          </ul>
+        ) : (postsQ.data ?? []).length === 0 ? (
+          <div className="py-12 text-center">
+            <p className="text-serif text-lg text-[var(--ink)]/80">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
+            <button
+              type="button"
+              onClick={() => { setEditingPost(null); setComposerOpen(true); }}
+              className="mt-2 text-xs font-semibold text-[var(--ink)]/60 underline underline-offset-4 hover:text-[var(--ink)]"
+            >
+              {tr("Write the first post", "Escribe la primera", "Écrire la première")}
+            </button>
+          </div>
+        ) : (
+          <ul className="divide-y divide-[var(--ink)]/8">
+            {(postsQ.data ?? []).map((p) => {
+              const mine = myProfileId === p.author_profile_id;
+              return (
+                <li key={p.id} className="lazy-row py-5">
+                  {/* Author */}
+                  <div className="flex items-center gap-2.5">
+                    {p.author?.photo_url ? (
+                      <img src={p.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-[var(--ink)]/8 shrink-0 grid place-items-center text-[var(--ink)]/45 text-xs font-semibold">
+                        {(p.author?.first_name ?? "?").charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1 leading-tight">
+                      <div className="text-[13px] font-semibold text-[var(--ink)] truncate">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</div>
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/45 truncate mt-0.5">
+                        {catLabel(p.category)}{p.city ? ` · ${p.city}` : ""}
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-[var(--ink)]/40 shrink-0">{timeAgo(p.created_at, tr)}</span>
+                    {mine ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button type="button" className="-mr-1.5 h-8 w-8 grid place-items-center rounded-full text-[var(--ink)]/45 hover:text-[var(--ink)]" aria-label={tr("Options", "Opciones", "Options")}>
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="min-w-[140px]">
+                          <DropdownMenuItem onSelect={() => { setEditingPost(p); setComposerOpen(true); }}>
+                            <Pencil className="w-3.5 h-3.5 mr-2" />{tr("Edit", "Editar", "Modifier")}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onSelect={() => { if (confirm(tr("Delete this post?", "¿Eliminar esta publicación?", "Supprimer cette publication ?"))) delMut.mutate(p.id); }}
                           >
-                            {tr("View all", "Ver todos", "Voir tout")} {p.comment_count} {tr("comments", "comentarios", "commentaires")}
+                            <Trash2 className="w-3.5 h-3.5 mr-2" />{tr("Delete", "Eliminar", "Supprimer")}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <div className="flex items-center -mr-1">
+                        <ReportContentButton kind="post" contentId={p.id} authorProfileId={p.author_profile_id} size="xs" />
+                        {isAdmin && (
+                          <button
+                            onClick={() => { if (confirm(tr("Remove this post as admin?", "¿Eliminar esta publicación como admin?", "Supprimer cette publication en tant qu'admin ?"))) adminDelMut.mutate({ kind: "post", id: p.id }); }}
+                            className="p-1.5 text-destructive/70 hover:text-destructive"
+                            aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
+                          >
+                            <ShieldAlert className="w-3.5 h-3.5" />
                           </button>
                         )}
                       </div>
                     )}
+                  </div>
 
-                    <div className="mt-3 pt-3 border-t border-[var(--ink)]/8 flex items-center justify-between">
-                      <button
-                        onClick={() => setReplyPostId(replyPostId === p.id ? null : p.id)}
-                        className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--ink)]/70 hover:text-[var(--plum)] transition"
-                      >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        {p.comment_count === 0
-                          ? tr("Comment", "Comentar", "Commenter")
-                          : `${p.comment_count} ${tr("comments", "comentarios", "commentaires")}`}
-                      </button>
-                      {!mine && (
-                        <div className="flex items-center gap-1">
-                          <ReportContentButton kind="post" contentId={p.id} authorProfileId={p.author_profile_id} className="ml-1" />
-                          {isAdmin && (
-                            <button
-                              onClick={() => { if (confirm(tr("Remove this post as admin?", "¿Eliminar esta publicación como admin?", "Supprimer cette publication en tant qu'admin ?"))) adminDelMut.mutate({ kind: "post", id: p.id }); }}
-                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600/80 hover:text-red-600 transition px-2 py-1 rounded-full hover:bg-red-500/5"
-                              aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
-                            >
-                              <ShieldAlert className="w-3.5 h-3.5" />
-                              {tr("Remove", "Eliminar", "Supprimer")}
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      {mine && (
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => { setEditingPost(p); setComposerOpen(true); }}
-                            className="inline-flex items-center text-[var(--ink)]/60 hover:text-[var(--ink)] transition p-1.5 rounded-full hover:bg-[var(--ink)]/5"
-                            aria-label={tr("Edit", "Editar", "Modifier")}
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => { if (confirm(tr("Delete this post?", "¿Eliminar esta publicación?", "Supprimer cette publication ?"))) delMut.mutate(p.id); }}
-                            className="inline-flex items-center text-red-500/80 hover:text-red-600 transition p-1.5 rounded-full hover:bg-red-500/5"
-                            aria-label={tr("Delete", "Eliminar", "Supprimer")}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                  {/* Post */}
+                  <h3 className="text-serif text-[19px] sm:text-xl text-[var(--ink)] mt-3 leading-snug">{p.title}</h3>
+                  <p className="text-[14px] text-[var(--ink)]/75 mt-1 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
+
+                  {/* Latest comments */}
+                  {p.latest_comments.length > 0 && (
+                    <div className="mt-3 pl-3 border-l border-[var(--ink)]/10 space-y-2">
+                      {p.latest_comments.map((c) => {
+                        const cMine = myProfileId === c.author_profile_id;
+                        const isEditing = editingComment?.id === c.id;
+                        return (
+                          <div key={c.id} className="text-[13px] leading-snug">
+                            {isEditing ? (
+                              <div className="space-y-1.5">
+                                <Input
+                                  autoFocus
+                                  value={editingComment?.body ?? ""}
+                                  onChange={(e) => setEditingComment((prev) => prev ? { ...prev, body: e.target.value } : null)}
+                                  className="bg-white text-sm h-9"
+                                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && (editingComment?.body ?? "").trim()) { e.preventDefault(); updateMut.mutate({ id: c.id, body: editingComment!.body }); } }}
+                                />
+                                <div className="flex items-center justify-end gap-3 text-[11px] font-semibold">
+                                  <button onClick={() => setEditingComment(null)} className="text-[var(--ink)]/50 hover:text-[var(--ink)]">{tr("Cancel", "Cancelar", "Annuler")}</button>
+                                  <button
+                                    disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
+                                    onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
+                                    className="text-[var(--ink)] disabled:opacity-40"
+                                  >
+                                    {tr("Save", "Guardar", "Enregistrer")}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : cMine ? (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <button type="button" className="text-left w-full">
+                                    <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
+                                    <span className="text-[var(--ink)]/75 whitespace-pre-wrap break-words">{c.body}</span>
+                                  </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="min-w-[140px]">
+                                  <DropdownMenuItem onSelect={() => setEditingComment({ id: c.id, body: c.body })}>
+                                    <Pencil className="w-3.5 h-3.5 mr-2" />{tr("Edit", "Editar", "Modifier")}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    className="text-destructive focus:text-destructive"
+                                    onSelect={() => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); }}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 mr-2" />{tr("Delete", "Eliminar", "Supprimer")}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            ) : (
+                              <div className="flex items-start gap-1">
+                                <p className="flex-1 min-w-0">
+                                  <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
+                                  <span className="text-[var(--ink)]/75 whitespace-pre-wrap break-words">{c.body}</span>
+                                </p>
+                                <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
+                                {isAdmin && (
+                                  <button
+                                    onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); }}
+                                    className="p-1 text-destructive/70 hover:text-destructive"
+                                    aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
+                                  >
+                                    <ShieldAlert className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      {p.comment_count > p.latest_comments.length && (
+                        <button onClick={() => setOpenPost(p)} className="text-[12px] text-[var(--ink)]/50 hover:text-[var(--ink)]">
+                          {tr("View all", "Ver los", "Voir les")} {p.comment_count} {tr("comments", "comentarios", "commentaires")}
+                        </button>
                       )}
                     </div>
+                  )}
 
-                    {replyPostId === p.id && (
-                      <div className="mt-3 flex items-center gap-2">
-                        <Input
-                          value={replyBody}
-                          onChange={(e) => setReplyBody(e.target.value)}
-                          placeholder={tr("Write a comment…", "Escribe un comentario…", "Écrire un commentaire…")}
-                          className="bg-white"
-                          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && replyBody.trim()) { e.preventDefault(); addMut.mutate({ id: p.id, body: replyBody }); } }}
-                        />
-                        <Button
-                          disabled={!replyBody.trim() || addMut.isPending}
-                          onClick={() => addMut.mutate({ id: p.id, body: replyBody })}
-                          className="bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full shrink-0"
-                        >
-                          {tr("Send", "Enviar", "Envoyer")}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                  {/* Reply */}
+                  {replyPostId === p.id ? (
+                    <div className="mt-3 flex items-center gap-2">
+                      <Input
+                        autoFocus
+                        value={replyBody}
+                        onChange={(e) => setReplyBody(e.target.value)}
+                        placeholder={tr("Write a comment", "Escribe un comentario", "Écrire un commentaire")}
+                        className="bg-white rounded-full h-10 px-4 border-[var(--ink)]/12"
+                        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && replyBody.trim()) { e.preventDefault(); addMut.mutate({ id: p.id, body: replyBody }); } }}
+                      />
+                      <button
+                        type="button"
+                        disabled={!replyBody.trim() || addMut.isPending}
+                        onClick={() => addMut.mutate({ id: p.id, body: replyBody })}
+                        className="h-10 w-10 shrink-0 grid place-items-center rounded-full bg-[var(--ink)] text-[var(--paper)] disabled:opacity-35 transition"
+                        aria-label={tr("Send", "Enviar", "Envoyer")}
+                      >
+                        <SendHorizontal className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setReplyPostId(p.id); setReplyBody(""); }}
+                      className="mt-3 inline-flex items-center gap-1.5 text-[12px] text-[var(--ink)]/50 hover:text-[var(--ink)] transition"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      {tr("Reply", "Responder", "Répondre")}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       {composerOpen && <Composer post={editingPost} onClose={() => { setComposerOpen(false); setEditingPost(null); }} />}
       {openPost && <PostThread post={openPost} myProfileId={myProfileId} isAdmin={isAdmin} onClose={() => setOpenPost(null)} />}
@@ -504,16 +490,15 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
             <label className="text-[11px] uppercase tracking-wider font-bold text-[var(--ink)]/70">{tr("Category", "Categoría", "Catégorie")}</label>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {CATEGORIES.map((c) => {
-                const m = catMeta(c);
                 const active = category === c;
                 return (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setCategory(c)}
-                    className={`px-3 h-8 rounded-full text-xs font-semibold border inline-flex items-center gap-1 transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/80 hover:border-[var(--ink)]/40"}`}
+                    className={`px-3 h-8 rounded-full text-xs font-semibold border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
                   >
-                    <span>{m.emoji}</span><span>{catLabel(c)}</span>
+                    {catLabel(c)}
                   </button>
                 );
               })}

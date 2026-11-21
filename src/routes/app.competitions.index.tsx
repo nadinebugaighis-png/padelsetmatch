@@ -32,11 +32,17 @@ function CompetitionsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("competitions")
-        .select("id,title,format,club_name,city,starts_at,ends_at,capacity,poster_url,hosted,competition_entries(count)")
+        .select("id,title,format,club_name,city,starts_at,ends_at,capacity,poster_url,hosted")
         .order("starts_at", { ascending: true })
         .limit(100);
       if (error) throw error;
-      return (data ?? []) as unknown as CompetitionRow[];
+      const rows = (data ?? []) as unknown as Omit<CompetitionRow, "competition_entries">[];
+      // Sign-up names are private; counts come from a count-only lookup.
+      const { data: counts } = rows.length
+        ? await supabase.rpc("competition_entry_counts", { _ids: rows.map((r) => r.id) })
+        : { data: [] as { competition_id: string; entries: number }[] };
+      const byComp = new Map((counts ?? []).map((c) => [c.competition_id, c.entries]));
+      return rows.map((r) => ({ ...r, competition_entries: [{ count: byComp.get(r.id) ?? 0 }] })) as CompetitionRow[];
     },
   });
   const live = data.filter((c) => competitionPhase(c.starts_at, c.ends_at) === "live");

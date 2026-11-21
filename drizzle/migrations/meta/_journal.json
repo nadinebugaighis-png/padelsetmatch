@@ -239,6 +239,20 @@
       "when": 1795268433556,
       "tag": "0033_coach_lessons_at_club_or_home",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795268990514,
+      "tag": "0034_private_competition_signups_and_posters",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1795269043224,
+      "tag": "0035_gear_follows_profile_visibility",
+      "breakpoints": true
     }
   ]
 }

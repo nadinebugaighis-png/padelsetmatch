@@ -2231,6 +2231,13 @@ export type Database = {
         Returns: undefined
       }
       clear_my_compat_scores: { Args: never; Returns: undefined }
+      competition_entry_counts: {
+        Args: { _ids: string[] }
+        Returns: {
+          competition_id: string
+          entries: number
+        }[]
+      }
       current_user_is_adult: { Args: never; Returns: boolean }
       delete_expired_push_subs: {
         Args: { _endpoints: string[] }
@@ -2311,6 +2318,7 @@ export type Database = {
         Args: { _acting_user_id: string; _match_id: string }
         Returns: undefined
       }
+      is_competition_participant: { Args: { _comp: string }; Returns: boolean }
       is_current_user_admin: { Args: never; Returns: boolean }
       is_safe_match_link: { Args: { _url: string }; Returns: boolean }
       is_verified_pair: { Args: { _other: string }; Returns: boolean }

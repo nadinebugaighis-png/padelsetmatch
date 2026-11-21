@@ -32,25 +32,29 @@ function CompetitionDetail() {
   const { data, isLoading } = useQuery({
     queryKey: ["competition", competitionId],
     queryFn: async () => {
-      const [me, comp, entries] = await Promise.all([
+      const [me, comp, entries, counts] = await Promise.all([
         myProfileId(),
         supabase.from("competitions").select("*").eq("id", competitionId).maybeSingle(),
+        // Names are visible only to signed-up players, the organiser and admins.
         supabase.from("competition_entries").select("profile_id, created_at").eq("competition_id", competitionId).order("created_at"),
+        supabase.rpc("competition_entry_counts", { _ids: [competitionId] }),
       ]);
       if (comp.error) throw comp.error;
       const ids = [...new Set([...(entries.data ?? []).map((e) => e.profile_id), comp.data?.creator_profile_id].filter(Boolean))] as string[];
       const { data: people } = ids.length ? await supabase.from("profiles").select("id, first_name, photo_url").in("id", ids) : { data: [] };
       const byId = new Map<string, any>(((people as any[]) ?? []).map((p: any) => [p.id, p]));
-      return { me, comp: comp.data, entries: entries.data ?? [], byId };
+      const total = counts.data?.[0]?.entries ?? 0;
+      return { me, comp: comp.data, entries: entries.data ?? [], total, byId };
     },
   });
 
   if (isLoading) return <div className="programme-page min-h-screen" />;
   if (!data?.comp) return <div className="programme-page min-h-screen p-6 text-foreground">{tr("Competition not found", "Competición no encontrada", "Compétition introuvable")}</div>;
-  const { comp, entries, me, byId } = data;
+  const { comp, entries, total, me, byId } = data;
   const joined = !!me && entries.some((e) => e.profile_id === me);
   const isCreator = me === comp.creator_profile_id;
-  const full = entries.length >= comp.capacity;
+  const full = total >= comp.capacity;
+  const seesNames = entries.length > 0;
   const phase = competitionPhase(comp.starts_at, comp.ends_at);
   const start = new Date(comp.starts_at);
   const end = comp.ends_at ? new Date(comp.ends_at) : null;
@@ -103,7 +107,7 @@ function CompetitionDetail() {
           <div className="flex items-center gap-2"><CalendarDays className="size-4" />{when}</div>
           <div className="flex items-center gap-2"><MapPin className="size-4" />{comp.club_name}</div>
           {hosted ? (
-            <div className="flex items-center gap-2"><Users className="size-4" />{tr(`${entries.length} of ${comp.capacity} signed up`, `${entries.length} de ${comp.capacity} apuntados`, `${entries.length} sur ${comp.capacity} inscrits`)}{comp.level_note ? ` · ${comp.level_note}` : ""}</div>
+            <div className="flex items-center gap-2"><Users className="size-4" />{tr(`${total} of ${comp.capacity} signed up`, `${total} de ${comp.capacity} apuntados`, `${total} sur ${comp.capacity} inscrits`)}{comp.level_note ? ` · ${comp.level_note}` : ""}</div>
           ) : comp.level_note ? (
             <div className="flex items-center gap-2"><Users className="size-4" />{comp.level_note}</div>
           ) : null}
@@ -118,10 +122,12 @@ function CompetitionDetail() {
                 {joined ? tr("Leave", "Salir", "Se retirer") : full ? tr("Full", "Completo", "Complet") : tr("Sign up", "Apuntarme", "M'inscrire")}
               </Button>
             )}
-            <h2 className="mt-7 mb-2 text-[10px] uppercase tracking-[0.25em] text-foreground/60">{tr("Players", "Jugadores", "Joueurs")}</h2>
-            {entries.length === 0 ? (
+            {(total === 0 || seesNames) && (
+              <h2 className="mt-7 mb-2 text-[10px] uppercase tracking-[0.25em] text-foreground/60">{tr("Players", "Jugadores", "Joueurs")}</h2>
+            )}
+            {total === 0 ? (
               <p className="text-sm text-muted-foreground">{tr("Be the first to sign up.", "Sé el primero en apuntarte.", "Sois le premier à t'inscrire.")}</p>
-            ) : (
+            ) : !seesNames ? null : (
               <div className="flex flex-wrap gap-2">
                 {entries.map((e) => {
                   const p = byId.get(e.profile_id);

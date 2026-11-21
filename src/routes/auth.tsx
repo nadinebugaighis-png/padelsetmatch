@@ -102,8 +102,22 @@ function AuthPage() {
     let cancelled = false;
     void supabase.auth.getSession().then(async ({ data, error }) => {
       if (cancelled) return;
-      if (!error && data.session) await navigate(afterAuthTarget() as never);
-      else setCheckingSession(false);
+      if (!error && data.session) { await navigate(afterAuthTarget() as never); return; }
+      setCheckingSession(false);
+      // Coming back from Apple/Google with a refusal: say so instead of
+      // silently showing the form again, and keep the reason for support.
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const query = new URLSearchParams(window.location.search);
+      const reason = hash.get("error_description") ?? query.get("error_description")
+        ?? hash.get("error") ?? query.get("error") ?? error?.message ?? null;
+      if (reason) {
+        console.warn("[auth] sign-in returned an error:", reason);
+        toast.error(
+          tr("Sign-in didn't finish", "No se pudo completar el acceso", "La connexion n'a pas abouti"),
+          { description: reason.replace(/\+/g, " "), duration: 15000 },
+        );
+        if (window.location.hash) window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
     }).catch(() => { if (!cancelled) setCheckingSession(false); });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps

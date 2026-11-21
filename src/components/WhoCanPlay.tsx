@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronDown, MapPin, MessageCircle } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { photoSrc } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
@@ -17,6 +17,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { addPlayCheckin, listPlayCheckins, removePlayCheckin } from "@/lib/who-can-play.functions";
 import { PLAY_SLOTS, groupCheckins, slotStillOpen, upcomingDays, type PlayGroup, type PlaySlot } from "@/lib/who-can-play";
 
@@ -24,10 +34,9 @@ type Props = {
   focusDay?: string | undefined;
   focusSlot?: PlaySlot | undefined;
   focusArea?: string | undefined;
-  openChat?: boolean | undefined;
 };
 
-export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) {
+export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
   const tr = useTr();
   const { lang } = useI18n();
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : "en";
@@ -44,7 +53,6 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
   const [slot, setSlot] = useState<PlaySlot>(focusSlot ?? firstOpenSlot(initialDay) ?? "evening");
   // Browsing another area never changes the player's home area or their alerts.
   const [areaKey, setAreaKey] = useState<string | undefined>(focusArea);
-  const [chatKey, setChatKey] = useState<string | null>(openChat && focusDay && focusSlot ? `${focusDay}|${focusSlot}` : null);
 
   const range = { from: days[0]!, to: days[days.length - 1]! };
   const q = useQuery({
@@ -67,7 +75,6 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
     mutationFn: (v: { date: string; slot: PlaySlot }) => add({ data: { ...v, area: area!.key } }),
     onSuccess: (_r, v) => {
       refresh();
-      setChatKey(`${v.date}|${v.slot}`);
       toast.success(tr(`You're available in ${area?.label}.`, `Disponible en ${area?.label}.`, `Disponible à ${area?.label}.`));
     },
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Error"),
@@ -115,7 +122,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-56 bg-white text-[var(--ink)] border-[var(--ink)]/10">
-            <DropdownMenuRadioGroup value={area?.key ?? ""} onValueChange={(v) => { setAreaKey(v === q.data?.mine[0]?.key ? undefined : v); setChatKey(null); }}>
+            <DropdownMenuRadioGroup value={area?.key ?? ""} onValueChange={(v) => { setAreaKey(v === q.data?.mine[0]?.key ? undefined : v); }}>
               {q.data.mine.length > 0 && (
                 <>
                   <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Your areas", "Tus zonas", "Tes zones")}</DropdownMenuLabel>
@@ -229,9 +236,6 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
                   areaKey={area!.key}
                   title={dayLabel(g.date, true)}
                   slotLabel={slotLabel(g.slot)}
-                  messages={q.data?.messageCounts[g.key] ?? 0}
-                  chatOpen={chatKey === g.key}
-                  onToggleChat={() => setChatKey((k) => (k === g.key ? null : g.key))}
                   focused={g.date === focusDay && g.slot === focusSlot}
                   busy={busy}
                   onJoin={() => addMut.mutate({ date: g.date, slot: g.slot })}
@@ -246,13 +250,14 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
   );
 }
 
-function GroupCard({ group, areaKey, title, slotLabel, messages, chatOpen, onToggleChat, focused, busy, onJoin, onLeave }: {
-  group: PlayGroup; areaKey: string; title: string; slotLabel: string; messages: number;
-  chatOpen: boolean; onToggleChat: () => void; focused: boolean; busy: boolean; onJoin: () => void; onLeave: () => void;
+function GroupCard({ group, areaKey, title, slotLabel, focused, busy, onJoin, onLeave }: {
+  group: PlayGroup; areaKey: string; title: string; slotLabel: string;
+  focused: boolean; busy: boolean; onJoin: () => void; onLeave: () => void;
 }) {
   const tr = useTr();
   const { label } = useI18n();
   const count = group.players.length;
+  const [confirmLeave, setConfirmLeave] = useState(false);
 
   return (
     <li className={`rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${focused ? "ring-2 ring-[var(--grass)]/50" : ""}`}>
@@ -271,55 +276,79 @@ function GroupCard({ group, areaKey, title, slotLabel, messages, chatOpen, onTog
             <span className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0">
               <PlayerPhoto src={photoSrc(p.photo_url, 240)} seed={p.profile_id} alt={p.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
             </span>
-            <span className="text-[13px] text-[var(--ink)] whitespace-nowrap">
-              {p.mine ? tr("You", "Tú", "Toi") : p.first_name ?? tr("Player", "Jugador", "Joueur")}
-              {p.level ? <span className="text-[var(--ink)]/45 capitalize"> · {label(p.level)}</span> : null}
-            </span>
+            {p.mine ? (
+              <button
+                type="button"
+                onClick={() => setConfirmLeave(true)}
+                className="text-[13px] text-[var(--ink)] whitespace-nowrap underline decoration-[var(--ink)]/25 decoration-1 underline-offset-4 hover:decoration-[var(--ink)]/60"
+              >
+                {tr("You", "Tú", "Toi")}
+                {p.level ? <span className="text-[var(--ink)]/45 capitalize"> · {label(p.level)}</span> : null}
+              </button>
+            ) : (
+              <span className="text-[13px] text-[var(--ink)] whitespace-nowrap">
+                {p.first_name ?? tr("Player", "Jugador", "Joueur")}
+                {p.level ? <span className="text-[var(--ink)]/45 capitalize"> · {label(p.level)}</span> : null}
+              </span>
+            )}
           </li>
         ))}
       </ul>
 
-      <div className="mt-3.5 flex items-center gap-2">
-        {!group.imIn ? (
+      {!group.imIn && (
+        <div className="mt-3.5">
           <button type="button" disabled={busy} onClick={onJoin} className="inline-flex items-center h-9 px-5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold hover:bg-[var(--ink)]/90 disabled:opacity-50">
             {tr("Me too", "Yo también", "Moi aussi")}
           </button>
-        ) : count >= 2 ? (
-          <Link
-            to="/app/events/new"
-            search={{ day: group.date, slot: group.slot }}
-            className="inline-flex items-center h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold"
-          >
-            {tr("Start a match", "Crear partido", "Lancer un match")}
-          </Link>
-        ) : null}
-        <button
-          type="button"
-          aria-expanded={chatOpen}
-          onClick={onToggleChat}
-          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[13px] font-semibold transition ${chatOpen ? "bg-[var(--club-soft)] text-[var(--ink)]" : "bg-[var(--paper)] text-[var(--ink)]/80 hover:text-[var(--ink)]"}`}
-        >
-          <MessageCircle className="w-4 h-4" />
-          {tr("Chat", "Chat", "Discuter")}
-          {messages > 0 && <span className="min-w-5 h-5 px-1.5 grid place-items-center rounded-full bg-[var(--pitch)] text-[var(--paper)] text-[11px]">{messages}</span>}
-        </button>
-        {group.imIn && (
+        </div>
+      )}
+      {group.imIn && (
+        <div className="mt-3.5 flex items-center gap-2">
+          {count >= 2 && (
+            <Link
+              to="/app/events/new"
+              search={{ day: group.date, slot: group.slot }}
+              className="inline-flex items-center h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold"
+            >
+              {tr("Start a match", "Crear partido", "Lancer un match")}
+            </Link>
+          )}
           <button type="button" disabled={busy} onClick={onLeave} className="ml-auto text-[12px] font-medium text-[var(--ink)]/45 hover:text-[var(--ink)] disabled:opacity-50">
             {tr("Leave", "Salir", "Quitter")}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      {chatOpen && (
+      {group.imIn && (
         <SlotChat
           area={areaKey}
           date={group.date}
           slot={group.slot}
-          canWrite={group.imIn}
+          canWrite
           onJoin={onJoin}
           joining={busy}
         />
       )}
+
+      <AlertDialog open={confirmLeave} onOpenChange={setConfirmLeave}>
+        <AlertDialogContent className="bg-white text-[var(--ink)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-serif text-lg">{tr("Leave this time?", "¿Salir de esta hora?", "Quitter ce créneau ?")}</AlertDialogTitle>
+            <AlertDialogDescription className="text-[13px] text-[var(--ink)]/60">
+              {tr(`You'll disappear from ${title} · ${slotLabel}.`, `Dejarás ${title} · ${slotLabel}.`, `Tu quitteras ${title} · ${slotLabel}.`)}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">{tr("Stay", "Me quedo", "Rester")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-full bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"
+              onClick={() => { setConfirmLeave(false); onLeave(); }}
+            >
+              {tr("Leave", "Salir", "Quitter")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </li>
   );
 }

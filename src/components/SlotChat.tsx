@@ -33,6 +33,16 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
   const [editingId, setEditingId] = useState<string | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const [typing, setTyping] = useState(false);
+  const blurTimer = useRef<number | undefined>(undefined);
+
+  // Keep the floating + button out of the way while someone is writing, so it never covers Send.
+  useEffect(() => {
+    if (!typing) return;
+    document.body.classList.add("chat-typing");
+    return () => document.body.classList.remove("chat-typing");
+  }, [typing]);
+  useEffect(() => () => { if (blurTimer.current) window.clearTimeout(blurTimer.current); }, []);
 
   const key = ["slot-chat", area, date, slot] as const;
   const q = useQuery({ queryKey: key, queryFn: () => list({ data: { area, date, slot } }), staleTime: 15_000 });
@@ -164,6 +174,8 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
               rows={1}
               placeholder={tr("Message", "Mensaje", "Message")}
               aria-label={tr("Message", "Mensaje", "Message")}
+              onFocus={() => { if (blurTimer.current) window.clearTimeout(blurTimer.current); setTyping(true); }}
+              onBlur={() => { if (blurTimer.current) window.clearTimeout(blurTimer.current); blurTimer.current = window.setTimeout(() => setTyping(false), 400); }}
               className="flex-1 resize-none max-h-28 rounded-3xl bg-white px-4 py-2.5 text-[16px] sm:text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]"
             />
             <button

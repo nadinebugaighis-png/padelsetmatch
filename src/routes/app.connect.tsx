@@ -185,7 +185,7 @@ function ConnectPage() {
         <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none mt-1">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
       </div>
 
-      <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} openChat={search.chat === 1} />
+      <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} />
 
       {/* Community board */}
       <div className="mt-10 mb-4 pt-6 border-t border-[var(--ink)]/10 flex items-end justify-between gap-3">

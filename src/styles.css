@@ -391,6 +391,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 /* + menu sits just above the floating bar on phones, bottom-right on desktop. */
 .quick-actions {
   bottom: calc(max(env(safe-area-inset-bottom, 0px), 10px) + 90px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 @media (min-width: 1024px) {
   .quick-actions { bottom: 2rem; }
@@ -403,6 +404,13 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, var(--cream) 14%, transparent),
     0 14px 30px -12px oklch(0 0 0 / 0.5);
+}
+
+/* While someone is writing in a "Who can play?" chat, the + button steps aside so it never covers Send. */
+body.chat-typing .quick-actions {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.96);
 }
 
 /* ---- Toasts: quiet, editorial, on-brand ---- */

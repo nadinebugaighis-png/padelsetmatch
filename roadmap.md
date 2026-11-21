@@ -79,3 +79,4 @@
 
 ## Connect: Who can play?
 - [x] Turn Connect into "Who can play?": pick day + morning/afternoon/evening, one-tap "Me too", local to the player's areas, alerts to others in the same slot; community board kept below.
+- [ ] Connect cards: no Chat button (chat opens by itself), quiet Leave link kept, tap own name also leaves after confirmation

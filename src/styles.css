@@ -97,6 +97,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --ink: #0F3E2E;
   --plum: #482E92;
   --grass: #A5E358;
+  --pitch: oklch(0.52 0.09 158);             /* soft club green for counts */
   --gold: #C9A84C;
   --match-amber: #E8B84B;
   --match-lavender: color-mix(in oklab, var(--plum) 20%, transparent);

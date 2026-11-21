@@ -1,8 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, CalendarDays, Trophy } from "lucide-react";
+import { Plus, CalendarDays, CircleDot, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useTr, useI18n } from "@/lib/i18n";
 import { competitionPhase, formatLabel } from "@/lib/competitions";
 
@@ -42,78 +41,115 @@ function CompetitionsPage() {
   });
   const live = data.filter((c) => competitionPhase(c.starts_at, c.ends_at) === "live");
   const upcoming = data.filter((c) => competitionPhase(c.starts_at, c.ends_at) === "upcoming");
-  const past = data.filter((c) => competitionPhase(c.starts_at, c.ends_at) === "past").reverse().slice(0, 6);
+  const past = data.filter((c) => competitionPhase(c.starts_at, c.ends_at) === "past").reverse().slice(0, 8);
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : "en-GB";
+  const nothing = tr("Nothing scheduled yet", "Aún no hay nada programado", "Rien de prévu pour l'instant");
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
-      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 pt-3 pb-24">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-serif text-xl sm:text-3xl leading-tight text-foreground">{tr("COMPETITIONS", "COMPETICIONES", "COMPÉTITIONS")}</h1>
-          <Button onClick={() => navigate({ to: "/app/competitions/new" })} className="h-9 px-3 shrink-0 shadow-none">
-            <Plus />{tr("Create", "Crear", "Créer")}
-          </Button>
-        </div>
-        <div className="mt-2 mb-4 flex gap-4 border-b border-border">
-          <Link to="/app/events" className="h-9 inline-flex items-center text-sm text-muted-foreground border-b-2 border-transparent">{tr("Matches", "Partidos", "Matchs")}</Link>
-          <span className="h-9 inline-flex items-center text-sm text-primary border-b-2 border-primary">{tr("Competitions", "Competiciones", "Compétitions")}</span>
-        </div>
-
-        {isLoading ? null : data.length === 0 || (live.length === 0 && upcoming.length === 0) ? (
-          <div className="py-12 text-center">
-            <Trophy className="mx-auto size-8 text-[var(--gold)]" strokeWidth={1.25} />
-            <p className="mt-3 text-serif text-lg text-foreground">{tr("Nothing scheduled yet", "Aún no hay nada programado", "Rien de prévu pour l'instant")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{tr("Organise an Americana or a Pozo for your club.", "Organiza una Americana o un Pozo para tu club.", "Organise une Americana ou un Pozo pour ton club.")}</p>
-            <Button variant="outline" className="mt-4" onClick={() => navigate({ to: "/app/competitions/new" })}>{tr("Create a competition", "Crear competición", "Créer une compétition")}</Button>
+      <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pt-2 pb-32">
+        {/* Icon tabs, as in a members' club programme */}
+        <div className="grid grid-cols-2 border-b border-[var(--ink)]/12">
+          <Link to="/app/events" className="flex flex-col items-center gap-1.5 pt-2 pb-3 text-[var(--ink)]/55">
+            <CircleDot className="size-[22px]" strokeWidth={1.5} />
+            <span className="text-[14px]">{tr("Matches", "Partidos", "Matchs")}</span>
+          </Link>
+          <div className="relative flex flex-col items-center gap-1.5 pt-2 pb-3 text-[var(--ink)]">
+            <ShieldCheck className="size-[22px]" strokeWidth={1.5} />
+            <span className="text-[14px] font-medium">{tr("Competitions", "Competiciones", "Compétitions")}</span>
+            <span className="absolute -bottom-px h-[3px] w-24 rounded-t-full bg-[var(--ink)]" />
           </div>
-        ) : null}
+        </div>
 
-        <Section title={tr("Happening now", "En curso", "En cours")} items={live} live locale={locale} tr={tr} />
-        <Section title={tr("Upcoming", "Próximas", "À venir")} items={upcoming} locale={locale} tr={tr} />
-        <Section title={tr("Past", "Pasadas", "Passées")} items={past} muted locale={locale} tr={tr} />
+        <div className="px-5 pt-6">
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-4">
+              {[0, 1].map((i) => <div key={i} className="aspect-[4/5] rounded-[22px] bg-[var(--ink)]/[0.06] animate-pulse" />)}
+            </div>
+          ) : (
+            <>
+              <Section title={tr("Happening now", "En curso", "En cours")} items={live} live empty={tr("Nothing happening right now", "Nada en curso ahora mismo", "Rien en cours pour l'instant")} locale={locale} tr={tr} />
+              <Section title={tr("Upcoming", "Próximas", "À venir")} items={upcoming} empty={nothing} locale={locale} tr={tr} />
+              <div className="mt-2 border-t border-[var(--ink)]/10 pt-6">
+                <h2 className="text-[19px] font-semibold text-[var(--ink)]">{tr("Past competitions", "Competiciones pasadas", "Compétitions passées")}</h2>
+                {past.length > 0 && (
+                  <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 opacity-75">
+                    {past.map((c) => <PosterCard key={c.id} c={c} past locale={locale} tr={tr} />)}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Floating create button */}
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/app/competitions/new" })}
+        aria-label={tr("Create a competition", "Crear competición", "Créer une compétition")}
+        className="fixed right-5 z-40 grid size-14 place-items-center rounded-full bg-[var(--ink)] text-[var(--cream)] ring-2 ring-[var(--cream)] shadow-[0_10px_24px_-6px_rgba(15,62,46,0.55)] active:scale-95 transition-transform lg:bottom-8"
+        style={{ bottom: "calc(max(env(safe-area-inset-bottom, 0px), 8px) + 132px)" }}
+      >
+        <Plus className="size-7" strokeWidth={1.75} />
+      </button>
     </div>
   );
 }
 
-function Section({ title, items, live, muted, locale, tr }: { title: string; items: CompetitionRow[]; live?: boolean; muted?: boolean; locale: string; tr: ReturnType<typeof useTr> }) {
-  if (items.length === 0) return null;
+function Section({ title, items, live, empty, locale, tr }: { title: string; items: CompetitionRow[]; live?: boolean; empty: string; locale: string; tr: ReturnType<typeof useTr> }) {
   return (
-    <section className="mb-7">
-      <h2 className="text-serif text-[22px] text-foreground mb-3">{title}</h2>
-      <div className={`grid grid-cols-2 lg:grid-cols-3 gap-3 ${muted ? "opacity-70" : ""}`}>
-        {items.map((c) => <PosterCard key={c.id} c={c} live={live} locale={locale} tr={tr} />)}
-      </div>
+    <section className="mb-8">
+      <h2 className="text-serif text-[24px] leading-tight text-[var(--ink)]">{title}</h2>
+      {items.length === 0 ? (
+        <p className="mt-4 text-[15px] text-[var(--ink)]/50">{empty}</p>
+      ) : (
+        <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6">
+          {items.map((c) => <PosterCard key={c.id} c={c} live={live} locale={locale} tr={tr} />)}
+        </div>
+      )}
     </section>
   );
 }
 
-function PosterCard({ c, live, locale, tr }: { c: CompetitionRow; live?: boolean; locale: string; tr: ReturnType<typeof useTr> }) {
+function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: boolean; past?: boolean; locale: string; tr: ReturnType<typeof useTr> }) {
   const joined = c.competition_entries?.[0]?.count ?? 0;
   const start = new Date(c.starts_at);
   const end = c.ends_at ? new Date(c.ends_at) : null;
   const fmt = (d: Date) => d.toLocaleDateString(locale, { day: "numeric", month: "short" });
-  const dates = end && fmt(end) !== fmt(start) ? `${fmt(start)} – ${fmt(end)}` : `${fmt(start)} · ${start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}`;
+  const multiDay = !!end && fmt(end) !== fmt(start);
+  const dates = live && !multiDay
+    ? `${tr("Since", "Desde", "Depuis")} ${fmt(start)} · ${c.club_name}`
+    : multiDay ? `${fmt(start)} – ${fmt(end!)}` : `${fmt(start)} · ${c.club_name}`;
+  const count = past
+    ? tr(`${joined} played`, `${joined} jugaron`, `${joined} ont joué`)
+    : tr(`${joined} of ${c.capacity} signed up`, `${joined} de ${c.capacity} apuntados`, `${joined} sur ${c.capacity} inscrits`);
   return (
-    <Link to="/app/competitions/$competitionId" params={{ competitionId: c.id }} className="block min-w-0">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-[var(--ink)]">
+    <Link to="/app/competitions/$competitionId" params={{ competitionId: c.id }} className="group block min-w-0">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-[var(--ink)] shadow-[0_14px_30px_-18px_rgba(15,62,46,0.6)]">
         {c.poster_url ? (
-          <img src={c.poster_url} alt="" className="h-full w-full object-cover" loading="lazy" />
+          <img src={c.poster_url} alt="" className="h-full w-full object-cover transition-transform duration-500 group-active:scale-[1.02]" loading="lazy" />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center px-3 text-center">
-            <span className="text-[9px] uppercase tracking-[0.3em] text-[var(--gold)]">{formatLabel(c.format, tr)}</span>
-            <span className="mt-2 text-serif italic text-[22px] leading-tight text-[var(--cream)] line-clamp-3">{c.title}</span>
-            <span className="mt-3 h-px w-10 bg-[var(--gold)]/60" />
-            <span className="mt-3 text-[10px] uppercase tracking-[0.2em] text-[var(--cream)]/70 line-clamp-2">{c.club_name}</span>
+          <div className="relative flex h-full flex-col items-center justify-center px-4 pt-4 text-center bg-[radial-gradient(120%_80%_at_50%_0%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_60%)]">
+            <span className="absolute inset-2.5 rounded-[16px] border border-[var(--gold)]/35" />
+            <span className="text-[8.5px] uppercase tracking-[0.35em] text-[var(--gold)]">PadelSetMatch</span>
+            <span className="mt-3 text-serif italic text-[21px] leading-[1.08] text-[var(--cream)] line-clamp-3">{c.title}</span>
+            <span className="mt-3 flex items-center gap-2 text-[var(--gold)]"><span className="h-px w-6 bg-current" /><span className="text-[9px] uppercase tracking-[0.3em]">{formatLabel(c.format, tr)}</span><span className="h-px w-6 bg-current" /></span>
+            <span className="mt-3 max-w-full text-[9.5px] uppercase tracking-[0.2em] text-[var(--cream)]/75 truncate">{c.club_name}</span>
+            <span className="mt-1 text-serif text-[13px] text-[var(--cream)]">{start.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" })}</span>
           </div>
         )}
-        {live && <span className="absolute left-2 top-2 rounded-full bg-[var(--cream)] px-2 py-0.5 text-[10px] font-semibold text-[var(--plum)]">{tr("Live", "En curso", "En cours")}</span>}
+        {live && (
+          <span className="absolute left-3 top-3 rounded-full border border-[var(--plum)]/30 bg-[var(--cream)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--plum)] shadow-sm">
+            {tr("Live", "En curso", "En cours")}
+          </span>
+        )}
       </div>
-      <div className="mt-2 text-[14px] font-medium text-foreground truncate">{c.title}</div>
-      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground min-w-0">
-        <CalendarDays className="size-3 shrink-0" /><span className="truncate">{dates}</span>
+      <div className="mt-2.5 text-[16px] font-semibold leading-snug text-[var(--ink)] truncate">{c.title}</div>
+      <div className="mt-0.5 flex items-center gap-1.5 text-[13.5px] text-[var(--ink)]/50 min-w-0">
+        <CalendarDays className="size-3.5 shrink-0" strokeWidth={1.5} /><span className="truncate">{dates}</span>
       </div>
-      <div className="text-[12px] text-primary">{tr(`${joined} of ${c.capacity} signed up`, `${joined} de ${c.capacity} apuntados`, `${joined} sur ${c.capacity} inscrits`)}</div>
+      <div className="mt-0.5 text-[13.5px] text-[var(--pitch)]">{count}</div>
     </Link>
   );
 }

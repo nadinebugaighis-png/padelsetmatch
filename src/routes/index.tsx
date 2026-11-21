@@ -154,19 +154,35 @@ function Landing() {
             {t("land.lede")}
           </p>
 
-          <div className="mt-9 lg:mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-9 lg:mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
               to="/auth"
-              search={{ redirect: undefined, join: undefined, mode: undefined }}
-              className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[11.5px] px-6 py-2.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
+              search={{ redirect: undefined, join: undefined, mode: "signup" }}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.2em] text-[12.5px] px-10 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
             >
               {t("land.cta")}
             </Link>
+            <Link
+              to="/auth"
+              search={{ redirect: undefined, join: undefined, mode: "signin" }}
+              className="text-[14px] text-[var(--ink)]/70 hover:text-[var(--ink)] transition"
+            >
+              {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
+              <span className="font-semibold text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30">
+                {tr("Sign in", "Inicia sesión", "Se connecter")}
+              </span>
+            </Link>
           </div>
 
-          <div className="mt-5 lg:mt-4 flex flex-wrap items-center gap-3">
-            <AppStoreBadge className="[&_img]:!h-8" />
-            <GooglePlayBadge className="[&_img]:!h-8" />
+          <div className="mt-10 lg:mt-9 max-w-md">
+            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/50">
+              <span>{tr("Or get the app", "O descarga la app", "Ou télécharge l’app")}</span>
+              <span className="h-px flex-1 bg-[var(--ink)]/15" aria-hidden />
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <AppStoreBadge className="[&_img]:!h-10" />
+              <GooglePlayBadge className="[&_img]:!h-10" />
+            </div>
           </div>
         </div>
       </section>

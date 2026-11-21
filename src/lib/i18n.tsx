@@ -14,8 +14,8 @@ const en: Dict = {
   "land.h1.a": "find your",
   "land.h1.a2": "best",
   "land.h1.b": "Match.",
-  "land.lede": "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time — in your city or wherever you travel.",
-  "land.cta": "Get started",
+  "land.lede": "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time, in your city or wherever you travel.",
+  "land.cta": "Sign up",
   "land.cta.sub": "Join matches, meet players, and start playing.",
   "land.howItWorks": "How it works",
 
@@ -296,8 +296,8 @@ const es: Dict = {
   "land.h1.a": "encuentra tu",
   "land.h1.a2": "mejor",
   "land.h1.b": "Match.",
-  "land.lede": "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a otros jugadores antes de salir — en tu ciudad o donde viajes.",
-  "land.cta": "Empezar",
+  "land.lede": "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a otros jugadores antes de salir, en tu ciudad o donde viajes.",
+  "land.cta": "Regístrate",
   "land.cta.sub": "Únete a partidos, conoce jugadores y empieza a jugar.",
   "land.howItWorks": "Cómo funciona",
 
@@ -573,8 +573,8 @@ const fr: Dict = {
   "land.h1.a": "trouve ton",
   "land.h1.a2": "meilleur",
   "land.h1.b": "Match.",
-  "land.lede": "Un annuaire de joueurs de padel autour de toi. Vois qui est partant pour un match, qui a un court disponible, et rencontre des joueurs à l'avance — dans ta ville ou où que tu voyages.",
-  "land.cta": "Commencer",
+  "land.lede": "Un annuaire de joueurs de padel autour de toi. Vois qui est partant pour un match, qui a un court disponible, et rencontre des joueurs à l'avance, dans ta ville ou où que tu voyages.",
+  "land.cta": "S'inscrire",
   "land.cta.sub": "Rejoins des matchs, rencontre des joueurs et commence à jouer.",
   "land.howItWorks": "Comment ça marche",
 

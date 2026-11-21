@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupCheckins, slotStillOpen, upcomingDays, type PlayCheckin } from "./who-can-play";
+import { connectAreaOptions, groupCheckins, matchStartFor, slotStillOpen, upcomingDays, type PlayCheckin } from "./who-can-play";
 
 const row = (p: Partial<PlayCheckin>): PlayCheckin => ({
   id: Math.random().toString(36), profile_id: "a", play_date: "2026-11-22", slot: "evening",
@@ -35,5 +35,22 @@ describe("who can play", () => {
     expect(groups[1]!.players.map((p) => p.profile_id)).toEqual(["me", "a"]);
     expect(groups[1]!.imIn).toBe(true);
     expect(groups[0]!.imIn).toBe(false);
+  });
+
+  it("puts the player's home area first and never repeats it under elsewhere", () => {
+    const { mine, elsewhere } = connectAreaOptions(["Spain|Madrid|La Moraleja", "Spain|Madrid|Salamanca"]);
+    expect(mine.map((a) => a.key)).toEqual(["area:la moraleja", "area:salamanca"]);
+    expect(elsewhere.map((a) => a.key)).not.toContain("area:la moraleja");
+    expect(elsewhere.map((a) => a.key)).toContain("city:london");
+  });
+
+  it("folds El Soto into La Moraleja for the switcher", () => {
+    expect(connectAreaOptions(["Spain|Madrid|El Soto"]).mine).toEqual([{ key: "area:la moraleja", label: "La Moraleja" }]);
+  });
+
+  it("suggests a match hour that fits the part of the day", () => {
+    expect(matchStartFor("2026-11-24", "morning")).toBe("2026-11-24T10:00");
+    expect(matchStartFor("2026-11-24", "afternoon")).toBe("2026-11-24T15:00");
+    expect(matchStartFor("2026-11-24", "evening")).toBe("2026-11-24T19:00");
   });
 });

@@ -56,6 +56,8 @@ type Props = {
   backEventId?: string;
   /** New matches: open on the club search or the free address field. */
   startMode?: "club" | "address" | "playtomic";
+  /** New matches: suggested local date and time (YYYY-MM-DDTHH:MM), e.g. from "Who can play?". */
+  startWhen?: string;
 };
 
 function toLocalDatetime(iso?: string | null) {
@@ -108,7 +110,7 @@ function SegButton({
   );
 }
 
-export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode }: Props) {
+export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode, startWhen }: Props) {
   const tr = useTr();
   // People already in the lineup (0 when the host stepped out); a new match starts with the host.
   const appPlayersCount = Math.min(5, Math.max(0, initial?.app_players_count ?? 1));
@@ -144,7 +146,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   // A game with no hour yet opens with just its date; the hour stays empty until someone picks it.
   const allowNoTime = !!initial?.time_tbd;
   const [when, setWhen] = useState(
-    initial?.when_local ?? (allowNoTime ? toLocalDatetime(initial?.starts_at).slice(0, 10) : toLocalDatetime(initial?.starts_at)),
+    initial?.when_local ?? (!initial && startWhen ? startWhen : allowNoTime ? toLocalDatetime(initial?.starts_at).slice(0, 10) : toLocalDatetime(initial?.starts_at)),
   );
   const hasTime = when.length > 10;
   const [genderRule, setGenderRule] = useState<GenderRule>(

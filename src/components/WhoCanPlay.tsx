@@ -1,18 +1,33 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check } from "lucide-react";
+import { Check, ChevronDown, MapPin, MessageCircle } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { photoSrc } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
+import { SlotChat } from "@/components/SlotChat";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { addPlayCheckin, listPlayCheckins, removePlayCheckin } from "@/lib/who-can-play.functions";
 import { PLAY_SLOTS, groupCheckins, slotStillOpen, upcomingDays, type PlayGroup, type PlaySlot } from "@/lib/who-can-play";
 
-type Props = { focusDay?: string | undefined; focusSlot?: PlaySlot | undefined };
+type Props = {
+  focusDay?: string | undefined;
+  focusSlot?: PlaySlot | undefined;
+  focusArea?: string | undefined;
+  openChat?: boolean | undefined;
+};
 
-export function WhoCanPlay({ focusDay, focusSlot }: Props) {
+export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) {
   const tr = useTr();
   const { lang } = useI18n();
   const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : "en";
@@ -27,20 +42,34 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
   const initialDay = focusDay && days.includes(focusDay) ? focusDay : firstOpenSlot(days[0]!) ? days[0]! : days[1]!;
   const [day, setDay] = useState(initialDay);
   const [slot, setSlot] = useState<PlaySlot>(focusSlot ?? firstOpenSlot(initialDay) ?? "evening");
+  // Browsing another area never changes the player's home area or their alerts.
+  const [areaKey, setAreaKey] = useState<string | undefined>(focusArea);
+  const [chatKey, setChatKey] = useState<string | null>(openChat && focusDay && focusSlot ? `${focusDay}|${focusSlot}` : null);
 
   const range = { from: days[0]!, to: days[days.length - 1]! };
   const q = useQuery({
-    queryKey: ["play-checkins", range],
-    queryFn: () => list({ data: range }),
+    queryKey: ["play-checkins", range, areaKey ?? "home"],
+    queryFn: () => list({ data: { ...range, ...(areaKey ? { area: areaKey } : {}) } }),
     staleTime: 30_000,
+    placeholderData: keepPreviousData,
   });
+  // A link to an area we can't show falls back to the home area.
+  useEffect(() => {
+    if (areaKey && q.data && !q.isPlaceholderData && !q.data.area) setAreaKey(undefined);
+  }, [areaKey, q.data, q.isPlaceholderData]);
+
+  const area = q.data?.area ?? null;
   const groups = useMemo(() => groupCheckins(q.data?.checkins ?? [], now), [q.data, now]);
-  const hasAreas = (q.data?.areaLabels.length ?? 1) > 0;
+  const hasAreas = (q.data?.mine.length ?? 1) > 0 || !!area;
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["play-checkins"] });
   const addMut = useMutation({
-    mutationFn: (v: { date: string; slot: PlaySlot }) => add({ data: v }),
-    onSuccess: () => { refresh(); toast.success(tr("You're in. Players near you can join.", "Apuntado. Los jugadores de tu zona pueden unirse.", "C'est noté. Les joueurs du coin peuvent se joindre.")); },
+    mutationFn: (v: { date: string; slot: PlaySlot }) => add({ data: { ...v, area: area!.key } }),
+    onSuccess: (_r, v) => {
+      refresh();
+      setChatKey(`${v.date}|${v.slot}`);
+      toast.success(tr(`You're available in ${area?.label}.`, `Disponible en ${area?.label}.`, `Disponible à ${area?.label}.`));
+    },
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Error"),
   });
   const removeMut = useMutation({
@@ -65,9 +94,50 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
   const pickedGroup = groups.find((g) => g.date === day && g.slot === slot);
   const pickedIn = pickedGroup?.imIn ?? false;
   const pickedOpen = slotStillOpen(slot, day, now);
+  // Already free at this time in another area: one place per time, so offer to remove it there.
+  const elsewhereMine = !pickedIn && area
+    ? q.data?.myCheckins.find((c) => c.date === day && c.slot === slot && !c.areaKeys.includes(area.key))
+    : undefined;
 
   return (
     <section aria-labelledby="who-can-play" className="space-y-5">
+      {/* Area switcher */}
+      {hasAreas && q.data && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 h-9 pl-3 pr-2.5 -mt-1 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]/35 transition"
+            >
+              <MapPin className="w-3.5 h-3.5 text-[var(--pitch)]" />
+              {area?.label ?? tr("Choose area", "Elige zona", "Choisir une zone")}
+              <ChevronDown className="w-3.5 h-3.5 text-[var(--ink)]/50" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-56 bg-white text-[var(--ink)] border-[var(--ink)]/10">
+            <DropdownMenuRadioGroup value={area?.key ?? ""} onValueChange={(v) => { setAreaKey(v === q.data?.mine[0]?.key ? undefined : v); setChatKey(null); }}>
+              {q.data.mine.length > 0 && (
+                <>
+                  <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Your areas", "Tus zonas", "Tes zones")}</DropdownMenuLabel>
+                  {q.data.mine.map((a) => (
+                    <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
+                  ))}
+                </>
+              )}
+              {q.data.elsewhere.length > 0 && (
+                <>
+                  <DropdownMenuSeparator className="bg-[var(--ink)]/10" />
+                  <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Travelling", "De viaje", "En voyage")}</DropdownMenuLabel>
+                  {q.data.elsewhere.map((a) => (
+                    <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
+                  ))}
+                </>
+              )}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
       {/* Picker */}
       <div className="rounded-2xl bg-white border border-[var(--ink)]/10 p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
         <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("When are you free?", "¿Cuándo puedes jugar?", "Quand es-tu libre ?")}</div>
@@ -108,16 +178,25 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
           })}
         </div>
         {hasAreas ? (
-          <button
-            type="button"
-            disabled={busy || !pickedOpen}
-            onClick={() => (pickedIn ? removeMut.mutate({ date: day, slot }) : addMut.mutate({ date: day, slot }))}
-            className={`mt-4 w-full h-11 rounded-full text-sm font-semibold transition disabled:opacity-50 ${pickedIn ? "bg-white text-[var(--ink)] border border-[var(--ink)]/25" : "bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"}`}
-          >
-            {pickedIn
-              ? tr("You're in · Remove me", "Estás apuntado · Quitarme", "Tu es inscrit · Me retirer")
-              : tr("I can play", "Puedo jugar", "Je peux jouer")}
-          </button>
+          <>
+            <button
+              type="button"
+              disabled={busy || !pickedOpen || !area}
+              onClick={() => (pickedIn || elsewhereMine ? removeMut.mutate({ date: day, slot }) : addMut.mutate({ date: day, slot }))}
+              className={`mt-4 w-full h-11 rounded-full text-sm font-semibold transition disabled:opacity-50 ${pickedIn || elsewhereMine ? "bg-white text-[var(--ink)] border border-[var(--ink)]/25" : "bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"}`}
+            >
+              {pickedIn
+                ? tr("You're available · Remove me", "Estás disponible · Quitarme", "Tu es disponible · Me retirer")
+                : elsewhereMine
+                ? tr(`Available in ${elsewhereMine.areaLabel ?? "another area"} · Remove`, `Disponible en ${elsewhereMine.areaLabel ?? "otra zona"} · Quitar`, `Disponible à ${elsewhereMine.areaLabel ?? "une autre zone"} · Retirer`)
+                : tr("I can play", "Puedo jugar", "Je peux jouer")}
+            </button>
+            {area && !pickedIn && !elsewhereMine && (
+              <p className="mt-2 text-center text-[11.5px] text-[var(--ink)]/50">
+                {tr(`Shared with players in ${area.label}`, `Visible para jugadores de ${area.label}`, `Visible par les joueurs de ${area.label}`)}
+              </p>
+            )}
+          </>
         ) : (
           <p className="mt-4 text-sm text-[var(--ink)]/70">
             {tr("Add your area to see who can play near you.", "Añade tu zona para ver quién puede jugar cerca.", "Ajoute ta zone pour voir qui peut jouer près de toi.")}{" "}
@@ -129,17 +208,9 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
       {/* Who is free */}
       {hasAreas && (
         <div>
-          <div className="flex items-baseline gap-3 mb-2.5 min-w-0">
-            <p id="who-can-play" className="shrink-0 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">
-              {tr("Free this week", "Libres esta semana", "Libres cette semaine")}
-            </p>
-            {q.data?.areaLabels.length ? (
-              <p className="min-w-0 flex-1 truncate text-right text-[12px] italic text-serif text-[var(--ink)]/50">
-                {q.data.areaLabels[0]}
-                {q.data.areaLabels.length > 1 ? ` +${q.data.areaLabels.length - 1}` : ""}
-              </p>
-            ) : null}
-          </div>
+          <p id="who-can-play" className="mb-2.5 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">
+            {tr("Free this week", "Libres esta semana", "Libres cette semaine")}
+          </p>
           {q.isLoading ? (
             <div className="space-y-2.5">
               {[0, 1].map((i) => <div key={i} className="h-24 rounded-2xl bg-[var(--ink)]/5 animate-pulse" />)}
@@ -153,10 +224,15 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
             <ul className="space-y-2.5">
               {groups.map((g) => (
                 <GroupCard
-                  key={g.key}
+                  key={`${area?.key}|${g.key}`}
                   group={g}
+                  areaKey={area!.key}
+                  areaLabel={area!.label}
                   title={dayLabel(g.date, true)}
                   slotLabel={slotLabel(g.slot)}
+                  messages={q.data?.messageCounts[g.key] ?? 0}
+                  chatOpen={chatKey === g.key}
+                  onToggleChat={() => setChatKey((k) => (k === g.key ? null : g.key))}
                   focused={g.date === focusDay && g.slot === focusSlot}
                   busy={busy}
                   onJoin={() => addMut.mutate({ date: g.date, slot: g.slot })}
@@ -171,14 +247,12 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
   );
 }
 
-function GroupCard({ group, title, slotLabel, focused, busy, onJoin, onLeave }: {
-  group: PlayGroup; title: string; slotLabel: string; focused: boolean; busy: boolean; onJoin: () => void; onLeave: () => void;
+function GroupCard({ group, areaKey, areaLabel, title, slotLabel, messages, chatOpen, onToggleChat, focused, busy, onJoin, onLeave }: {
+  group: PlayGroup; areaKey: string; areaLabel: string; title: string; slotLabel: string; messages: number;
+  chatOpen: boolean; onToggleChat: () => void; focused: boolean; busy: boolean; onJoin: () => void; onLeave: () => void;
 }) {
   const tr = useTr();
-  const shown = group.players.slice(0, 5);
-  const extra = group.players.length - shown.length;
-  const names = group.players.map((p) => (p.mine ? tr("You", "Tú", "Toi") : p.first_name ?? tr("Player", "Jugador", "Joueur")));
-  const nameLine = names.length <= 3 ? names.join(", ") : `${names.slice(0, 2).join(", ")} ${tr(`and ${names.length - 2} more`, `y ${names.length - 2} más`, `et ${names.length - 2} autres`)}`;
+  const { label } = useI18n();
   const count = group.players.length;
 
   return (
@@ -186,46 +260,76 @@ function GroupCard({ group, title, slotLabel, focused, busy, onJoin, onLeave }: 
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-serif text-lg text-[var(--ink)] leading-tight capitalize">{title}</div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55 mt-0.5">{slotLabel}</div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55 mt-0.5 truncate">{slotLabel} · {areaLabel}</div>
         </div>
         <div className="shrink-0 text-[12px] font-semibold text-[var(--pitch)]">
-          {count === 1 ? tr("1 can play", "1 puede", "1 dispo") : tr(`${count} can play`, `${count} pueden`, `${count} dispos`)}
+          {count === 1 ? tr("1 available", "1 disponible", "1 dispo") : tr(`${count} available`, `${count} disponibles`, `${count} dispos`)}
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-3">
-        <div className="flex -space-x-2 shrink-0">
-          {shown.map((p) => (
-            <div key={p.profile_id} className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-white bg-[var(--ink)]/10">
+
+      <ul className="mt-3 flex flex-wrap gap-1.5">
+        {group.players.map((p) => (
+          <li key={p.profile_id} className="inline-flex items-center gap-1.5 h-8 pl-0.5 pr-2.5 rounded-full bg-[var(--paper)] border border-[var(--ink)]/10">
+            <span className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0">
               <PlayerPhoto src={photoSrc(p.photo_url, 240)} seed={p.profile_id} alt={p.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
-            </div>
-          ))}
-          {extra > 0 && (
-            <div className="w-9 h-9 rounded-full ring-2 ring-white bg-[var(--ink)]/8 grid place-items-center text-[11px] font-semibold text-[var(--ink)]/70">+{extra}</div>
-          )}
-        </div>
-        <p className="text-sm text-[var(--ink)]/75 min-w-0 truncate">{nameLine}</p>
-      </div>
-      <div className="mt-3.5 flex items-center gap-2">
+            </span>
+            <span className="text-[13px] text-[var(--ink)] whitespace-nowrap">
+              {p.mine ? tr("You", "Tú", "Toi") : p.first_name ?? tr("Player", "Jugador", "Joueur")}
+              {p.level ? <span className="text-[var(--ink)]/50 capitalize"> · {label(p.level)}</span> : null}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-3.5 flex flex-wrap items-center gap-2">
         {group.imIn ? (
           <>
             <span className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-[var(--club-soft)] text-[var(--ink)] text-[13px] font-semibold">
-              <Check className="w-3.5 h-3.5" strokeWidth={2.5} />{tr("You're in", "Estás dentro", "Tu en es")}
+              <Check className="w-3.5 h-3.5" strokeWidth={2.5} />{tr("You're available", "Disponible", "Disponible")}
             </span>
             {count >= 2 && (
-              <Link to="/app/events/new" className="inline-flex items-center h-9 px-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold">
+              <Link
+                to="/app/events/new"
+                search={{ day: group.date, slot: group.slot }}
+                className="inline-flex items-center h-9 px-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold"
+              >
                 {tr("Start a match", "Crear partido", "Lancer un match")}
               </Link>
             )}
-            <button type="button" disabled={busy} onClick={onLeave} className="ml-auto text-[12px] font-medium text-[var(--ink)]/55 hover:text-[var(--ink)] underline underline-offset-2 disabled:opacity-50">
-              {tr("Remove", "Quitar", "Retirer")}
-            </button>
           </>
         ) : (
           <button type="button" disabled={busy} onClick={onJoin} className="inline-flex items-center h-9 px-5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold hover:bg-[var(--ink)]/90 disabled:opacity-50">
             {tr("Me too", "Yo también", "Moi aussi")}
           </button>
         )}
+        <button
+          type="button"
+          aria-expanded={chatOpen}
+          onClick={onToggleChat}
+          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-[13px] font-semibold transition ${chatOpen ? "border-[var(--ink)]/45 bg-[var(--paper)] text-[var(--ink)]" : "border-[var(--ink)]/15 bg-white text-[var(--ink)]/75 hover:border-[var(--ink)]/35"}`}
+        >
+          <MessageCircle className="w-3.5 h-3.5" />
+          {tr("Chat", "Chat", "Discuter")}
+          {messages > 0 && <span className="text-[var(--pitch)]">{messages}</span>}
+        </button>
+        {group.imIn && (
+          <button type="button" disabled={busy} onClick={onLeave} className="ml-auto text-[12px] font-medium text-[var(--ink)]/55 hover:text-[var(--ink)] underline underline-offset-2 disabled:opacity-50">
+            {tr("Remove", "Quitar", "Retirer")}
+          </button>
+        )}
       </div>
+
+      {chatOpen && (
+        <SlotChat
+          area={areaKey}
+          date={group.date}
+          slot={group.slot}
+          pinned={`${title} · ${slotLabel} · ${areaLabel}`}
+          canWrite={group.imIn}
+          onJoin={onJoin}
+          joining={busy}
+        />
+      )}
     </li>
   );
 }

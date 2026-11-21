@@ -1640,6 +1640,44 @@ export type Database = {
           },
         ]
       }
+      play_slot_messages: {
+        Row: {
+          area_key: string
+          body: string
+          created_at: string
+          id: string
+          play_date: string
+          sender_profile_id: string
+          slot: string
+        }
+        Insert: {
+          area_key: string
+          body: string
+          created_at?: string
+          id?: string
+          play_date: string
+          sender_profile_id: string
+          slot: string
+        }
+        Update: {
+          area_key?: string
+          body?: string
+          created_at?: string
+          id?: string
+          play_date?: string
+          sender_profile_id?: string
+          slot?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "play_slot_messages_sender_profile_id_fkey"
+            columns: ["sender_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       played_confirmations: {
         Row: {
           created_at: string
@@ -2276,6 +2314,7 @@ export type Database = {
           entries: number
         }[]
       }
+      connect_area_param: { Args: { _key: string }; Returns: string }
       current_user_is_adult: { Args: never; Returns: boolean }
       delete_expired_push_subs: {
         Args: { _endpoints: string[] }

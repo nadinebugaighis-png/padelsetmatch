@@ -2,8 +2,12 @@
  * "Who can play?" on Connect: players say which day and part of the day they
  * are free, others tap "Me too". Check-ins are shown only to players who share
  * one of the same areas (see feed-areas.ts), so a London player never sees
- * La Moraleja availability.
+ * La Moraleja availability. Connect shows one area at a time (the player's
+ * home area by default) and each area, day and part of the day has its own chat.
  */
+import { feedAreas } from "./feed-areas";
+import { LOCATION_PRESETS } from "./location-presets";
+
 export const PLAY_SLOTS = ["morning", "afternoon", "evening"] as const;
 export type PlaySlot = (typeof PLAY_SLOTS)[number];
 
@@ -73,4 +77,36 @@ export function groupCheckins(rows: PlayCheckin[], now: Date): PlayGroup[] {
   return Array.from(map.values())
     .map((g) => ({ ...g, players: [...g.players.filter((p) => p.mine), ...g.players.filter((p) => !p.mine)] }))
     .sort((a, b) => (a.date === b.date ? order(a.slot) - order(b.slot) : a.date < b.date ? -1 : 1));
+}
+
+/** Areas a player can switch Connect to: their own first (home = first), then the main communities. */
+export type ConnectArea = { key: string; label: string };
+
+const PRESET_LOCATIONS = LOCATION_PRESETS.map((p) => `${p.country}|${p.city}|${p.area ?? ""}`);
+
+export function connectAreaOptions(rawLocations: unknown): { mine: ConnectArea[]; elsewhere: ConnectArea[] } {
+  const mine = feedAreas(rawLocations).map(({ key, label }) => ({ key, label }));
+  const own = new Set(mine.map((a) => a.key));
+  const elsewhere = feedAreas(PRESET_LOCATIONS)
+    .filter((a) => !own.has(a.key))
+    .map(({ key, label }) => ({ key, label }));
+  return { mine, elsewhere };
+}
+
+/** Readable name for an area key that is not in the option lists, e.g. from an old alert link. */
+export function areaLabelFromKey(key: string): string {
+  const raw = key.includes(":") ? key.slice(key.indexOf(":") + 1) : key;
+  return raw.replace(/\b\p{L}/gu, (c) => c.toUpperCase());
+}
+
+/** The hour "Start a match" suggests for each part of the day; the host can change it. */
+export const SLOT_START: Record<PlaySlot, string> = { morning: "10:00", afternoon: "15:00", evening: "19:00" };
+
+export function matchStartFor(date: string, slot: PlaySlot): string {
+  return `${date}T${SLOT_START[slot]}`;
+}
+
+/** One chat per area, day and part of the day. */
+export function slotThreadKey(area: string, date: string, slot: PlaySlot): string {
+  return `${area}|${date}|${slot}`;
 }

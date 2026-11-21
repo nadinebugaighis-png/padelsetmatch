@@ -30,6 +30,8 @@ import { Textarea } from "@/components/ui/textarea";
 const searchSchema = z.object({
   day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().catch(undefined),
   slot: z.enum(PLAY_SLOTS).optional().catch(undefined),
+  area: z.string().max(120).optional().catch(undefined),
+  chat: z.coerce.number().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/app/connect")({
@@ -183,7 +185,7 @@ function ConnectPage() {
         <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none mt-1">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
       </div>
 
-      <WhoCanPlay focusDay={search.day} focusSlot={search.slot} />
+      <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} openChat={search.chat === 1} />
 
       {/* Community board */}
       <div className="mt-10 mb-4 pt-6 border-t border-[var(--ink)]/10 flex items-end justify-between gap-3">

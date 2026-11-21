@@ -129,11 +129,16 @@ export function WhoCanPlay({ focusDay, focusSlot }: Props) {
       {/* Who is free */}
       {hasAreas && (
         <div>
-          <div className="flex items-baseline justify-between gap-3 mb-2.5">
-            <p id="who-can-play" className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">
+          <div className="flex items-baseline gap-3 mb-2.5 min-w-0">
+            <p id="who-can-play" className="shrink-0 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">
               {tr("Free this week", "Libres esta semana", "Libres cette semaine")}
-              {q.data?.areaLabels.length ? <span> · {q.data.areaLabels.join(" · ")}</span> : null}
             </p>
+            {q.data?.areaLabels.length ? (
+              <p className="min-w-0 flex-1 truncate text-right text-[12px] italic text-serif text-[var(--ink)]/50">
+                {q.data.areaLabels[0]}
+                {q.data.areaLabels.length > 1 ? ` +${q.data.areaLabels.length - 1}` : ""}
+              </p>
+            ) : null}
           </div>
           {q.isLoading ? (
             <div className="space-y-2.5">

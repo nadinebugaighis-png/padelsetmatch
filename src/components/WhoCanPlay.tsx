@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, ChevronDown, MapPin, MessageCircle } from "lucide-react";
+import { ChevronDown, MapPin, MessageCircle } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { photoSrc } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
@@ -227,7 +227,6 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
                   key={`${area?.key}|${g.key}`}
                   group={g}
                   areaKey={area!.key}
-                  areaLabel={area!.label}
                   title={dayLabel(g.date, true)}
                   slotLabel={slotLabel(g.slot)}
                   messages={q.data?.messageCounts[g.key] ?? 0}
@@ -247,8 +246,8 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea, openChat }: Props) 
   );
 }
 
-function GroupCard({ group, areaKey, areaLabel, title, slotLabel, messages, chatOpen, onToggleChat, focused, busy, onJoin, onLeave }: {
-  group: PlayGroup; areaKey: string; areaLabel: string; title: string; slotLabel: string; messages: number;
+function GroupCard({ group, areaKey, title, slotLabel, messages, chatOpen, onToggleChat, focused, busy, onJoin, onLeave }: {
+  group: PlayGroup; areaKey: string; title: string; slotLabel: string; messages: number;
   chatOpen: boolean; onToggleChat: () => void; focused: boolean; busy: boolean; onJoin: () => void; onLeave: () => void;
 }) {
   const tr = useTr();
@@ -256,65 +255,57 @@ function GroupCard({ group, areaKey, areaLabel, title, slotLabel, messages, chat
   const count = group.players.length;
 
   return (
-    <li className={`rounded-2xl bg-white border p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${focused ? "border-[var(--ink)]/50 ring-2 ring-[var(--grass)]/50" : "border-[var(--ink)]/10"}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="text-serif text-lg text-[var(--ink)] leading-tight capitalize">{title}</div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55 mt-0.5 truncate">{slotLabel} · {areaLabel}</div>
+    <li className={`rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${focused ? "ring-2 ring-[var(--grass)]/50" : ""}`}>
+      <div className="flex items-baseline justify-between gap-3">
+        <div className="min-w-0 text-serif text-lg text-[var(--ink)] leading-tight capitalize truncate">
+          {title} <span className="text-[var(--ink)]/45">· {slotLabel}</span>
         </div>
         <div className="shrink-0 text-[12px] font-semibold text-[var(--pitch)]">
           {count === 1 ? tr("1 available", "1 disponible", "1 dispo") : tr(`${count} available`, `${count} disponibles`, `${count} dispos`)}
         </div>
       </div>
 
-      <ul className="mt-3 flex flex-wrap gap-1.5">
+      <ul className="mt-3 flex flex-wrap gap-x-3.5 gap-y-2">
         {group.players.map((p) => (
-          <li key={p.profile_id} className="inline-flex items-center gap-1.5 h-8 pl-0.5 pr-2.5 rounded-full bg-[var(--paper)] border border-[var(--ink)]/10">
+          <li key={p.profile_id} className="inline-flex items-center gap-1.5">
             <span className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0">
               <PlayerPhoto src={photoSrc(p.photo_url, 240)} seed={p.profile_id} alt={p.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
             </span>
             <span className="text-[13px] text-[var(--ink)] whitespace-nowrap">
               {p.mine ? tr("You", "Tú", "Toi") : p.first_name ?? tr("Player", "Jugador", "Joueur")}
-              {p.level ? <span className="text-[var(--ink)]/50 capitalize"> · {label(p.level)}</span> : null}
+              {p.level ? <span className="text-[var(--ink)]/45 capitalize"> · {label(p.level)}</span> : null}
             </span>
           </li>
         ))}
       </ul>
 
-      <div className="mt-3.5 flex flex-wrap items-center gap-2">
-        {group.imIn ? (
-          <>
-            <span className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-[var(--club-soft)] text-[var(--ink)] text-[13px] font-semibold">
-              <Check className="w-3.5 h-3.5" strokeWidth={2.5} />{tr("You're available", "Disponible", "Disponible")}
-            </span>
-            {count >= 2 && (
-              <Link
-                to="/app/events/new"
-                search={{ day: group.date, slot: group.slot }}
-                className="inline-flex items-center h-9 px-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold"
-              >
-                {tr("Start a match", "Crear partido", "Lancer un match")}
-              </Link>
-            )}
-          </>
-        ) : (
+      <div className="mt-3.5 flex items-center gap-2">
+        {!group.imIn ? (
           <button type="button" disabled={busy} onClick={onJoin} className="inline-flex items-center h-9 px-5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold hover:bg-[var(--ink)]/90 disabled:opacity-50">
             {tr("Me too", "Yo también", "Moi aussi")}
           </button>
-        )}
+        ) : count >= 2 ? (
+          <Link
+            to="/app/events/new"
+            search={{ day: group.date, slot: group.slot }}
+            className="inline-flex items-center h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold"
+          >
+            {tr("Start a match", "Crear partido", "Lancer un match")}
+          </Link>
+        ) : null}
         <button
           type="button"
           aria-expanded={chatOpen}
           onClick={onToggleChat}
-          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-[13px] font-semibold transition ${chatOpen ? "border-[var(--ink)]/45 bg-[var(--paper)] text-[var(--ink)]" : "border-[var(--ink)]/15 bg-white text-[var(--ink)]/75 hover:border-[var(--ink)]/35"}`}
+          className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[13px] font-semibold transition ${chatOpen ? "bg-[var(--club-soft)] text-[var(--ink)]" : "bg-[var(--paper)] text-[var(--ink)]/80 hover:text-[var(--ink)]"}`}
         >
-          <MessageCircle className="w-3.5 h-3.5" />
+          <MessageCircle className="w-4 h-4" />
           {tr("Chat", "Chat", "Discuter")}
-          {messages > 0 && <span className="text-[var(--pitch)]">{messages}</span>}
+          {messages > 0 && <span className="min-w-5 h-5 px-1.5 grid place-items-center rounded-full bg-[var(--pitch)] text-[var(--paper)] text-[11px]">{messages}</span>}
         </button>
         {group.imIn && (
-          <button type="button" disabled={busy} onClick={onLeave} className="ml-auto text-[12px] font-medium text-[var(--ink)]/55 hover:text-[var(--ink)] underline underline-offset-2 disabled:opacity-50">
-            {tr("Remove", "Quitar", "Retirer")}
+          <button type="button" disabled={busy} onClick={onLeave} className="ml-auto text-[12px] font-medium text-[var(--ink)]/45 hover:text-[var(--ink)] disabled:opacity-50">
+            {tr("Leave", "Salir", "Quitter")}
           </button>
         )}
       </div>
@@ -324,7 +315,6 @@ function GroupCard({ group, areaKey, areaLabel, title, slotLabel, messages, chat
           area={areaKey}
           date={group.date}
           slot={group.slot}
-          pinned={`${title} · ${slotLabel} · ${areaLabel}`}
           canWrite={group.imIn}
           onJoin={onJoin}
           joining={busy}

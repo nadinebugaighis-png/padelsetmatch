@@ -121,6 +121,7 @@ export type SlotMessage = {
   id: string;
   body: string;
   created_at: string;
+  edited_at: string | null;
   mine: boolean;
   sender: { id: string; first_name: string | null; photo_url: string | null; level: string | null };
 };
@@ -135,20 +136,20 @@ export const listSlotMessages = createServerFn({ method: "GET" })
     const viewer = await me(context.supabase, context.userId);
     const { data: rows, error } = await context.supabase
       .from("play_slot_messages")
-      .select("id, body, created_at, sender_profile_id")
+      .select("id, body, created_at, edited_at, sender_profile_id")
       .eq("area_key", data.area)
       .eq("play_date", data.date)
       .eq("slot", data.slot)
       .order("created_at", { ascending: true })
       .limit(300);
     if (error) throw error;
-    const list = (rows ?? []) as Array<{ id: string; body: string; created_at: string; sender_profile_id: string }>;
+    const list = (rows ?? []) as Array<{ id: string; body: string; created_at: string; edited_at: string | null; sender_profile_id: string }>;
     const byId = await people(context.supabase, Array.from(new Set(list.map((r) => r.sender_profile_id))));
     const messages: SlotMessage[] = [];
     for (const r of list) {
       const p = byId.get(r.sender_profile_id);
       if (!p) continue;
-      messages.push({ id: r.id, body: r.body, created_at: r.created_at, mine: r.sender_profile_id === viewer.id, sender: p });
+      messages.push({ id: r.id, body: r.body, created_at: r.created_at, edited_at: r.edited_at, mine: r.sender_profile_id === viewer.id, sender: p });
     }
     return { messages };
   });
@@ -176,5 +177,21 @@ export const deleteSlotMessage = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("play_slot_messages").delete().eq("id", data.id);
     if (error) throw error;
+    return { ok: true };
+  });
+
+export const editSlotMessage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), body: z.string().trim().min(1).max(500) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const viewer = await me(context.supabase, context.userId);
+    const { data: rows, error } = await context.supabase
+      .from("play_slot_messages")
+      .update({ body: data.body, edited_at: new Date().toISOString() })
+      .eq("id", data.id)
+      .eq("sender_profile_id", viewer.id)
+      .select("id");
+    if (error) throw error;
+    if (!rows?.length) throw new Error("Message not found");
     return { ok: true };
   });

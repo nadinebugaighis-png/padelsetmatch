@@ -281,6 +281,13 @@
       "when": 1795280207939,
       "tag": "0039_who_can_play_slot_chat",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1795280859763,
+      "tag": "0040_slot_chat_edit_messages",
+      "breakpoints": true
     }
   ]
 }

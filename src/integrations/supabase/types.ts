@@ -1645,6 +1645,7 @@ export type Database = {
           area_key: string
           body: string
           created_at: string
+          edited_at: string | null
           id: string
           play_date: string
           sender_profile_id: string
@@ -1654,6 +1655,7 @@ export type Database = {
           area_key: string
           body: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           play_date: string
           sender_profile_id: string
@@ -1663,6 +1665,7 @@ export type Database = {
           area_key?: string
           body?: string
           created_at?: string
+          edited_at?: string | null
           id?: string
           play_date?: string
           sender_profile_id?: string

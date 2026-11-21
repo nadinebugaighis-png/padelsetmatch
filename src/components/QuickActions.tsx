@@ -52,7 +52,7 @@ export function QuickActions() {
         <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
           aria-label={open ? tr("Close", "Cerrar", "Fermer") : tr("Quick actions", "Acciones rápidas", "Actions rapides")}
           className="quick-actions-fab grid size-14 place-items-center rounded-full text-[var(--cream)] outline-none [-webkit-tap-highlight-color:transparent] active:scale-90 transition-transform duration-150">
-          <Plus className={`size-6 transition-transform duration-200 ${open ? "rotate-45" : ""}`} strokeWidth={1.5} />
+          <Plus className={`size-7 transition-transform duration-200 ${open ? "rotate-45" : ""}`} strokeWidth={1.75} />
         </button>
       </div>
       <CreateMatchChooser open={chooser} onClose={() => setChooser(false)} />

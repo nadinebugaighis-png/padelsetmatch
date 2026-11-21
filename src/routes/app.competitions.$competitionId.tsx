@@ -129,7 +129,8 @@ function CompetitionDetail() {
           ) : null}
         </div>
         {comp.description && <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-foreground/80">{comp.description}</p>}
-        {creator && <p className="mt-3 text-xs text-muted-foreground">{tr("Organised by", "Organiza", "Organisé par")} {creator.first_name}</p>}
+        {/* Announcements are posted by players, not organised by them, so only hosted events name an organiser. */}
+        {hosted && creator && <p className="mt-3 text-xs text-muted-foreground">{tr("Organised by", "Organiza", "Organisé par")} {creator.first_name}</p>}
 
         {hosted ? (
           <>

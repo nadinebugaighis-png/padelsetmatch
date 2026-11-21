@@ -72,3 +72,7 @@
 - [x] Book a coach: coaches share times, players request, coach accepts/declines; checked end to end with two test players.
 - [x] Competitions: announcements by default, in-app sign-up only when hosted by PadelSetMatch.
 - [ ] Publish the website so players see it (requires Nadine to publish).
+
+## Play page filters and area feed
+- [x] Remove the second bell (match alerts now open from Filters), add Filters (level, time, places left) and area chips for players with two or more areas; the feed shows only games in each player's own areas. 11 focused tests pass; signed-in phone check verified chips and filters.
+- [ ] Bring in open matches from nearby clubs' Playtomic (needs each club's Playtomic API key or Playtomic Connect approval).

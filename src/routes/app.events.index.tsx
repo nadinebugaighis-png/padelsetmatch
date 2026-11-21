@@ -15,12 +15,15 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, X, Trash2, Clock, Users, Send, Plus } from "lucide-react";
+import { MapPin, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
 import { CourtViewCard } from "@/components/CourtViewCard";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { AlertsButton } from "@/components/AlertsSheet";
+import { AlertsSheet } from "@/components/AlertsSheet";
+import { MatchFiltersSheet } from "@/components/MatchFiltersSheet";
+import { feedAreas, eventInArea } from "@/lib/feed-areas";
+import { activeFilterCount, passesFilters, restoreFilters, NO_FILTERS, MATCH_FILTERS_STORAGE_KEY, type MatchFilters } from "@/lib/match-filters";
 import { Button } from "@/components/ui/button";
 import { CreateMatchChooser } from "@/components/CreateMatchChooser";
 import { defaultMatchDays, groupByDay, toggleMatchDay, MATCH_DAYS_STORAGE_KEY, restoreMatchDays, serializeMatchDays } from "@/lib/match-date-selection";
@@ -98,7 +101,7 @@ function EventsPage() {
   const [chooser, setChooser] = useState(false);
   const navigate = useNavigate();
   const tr = useTr();
-  const { lang } = useI18n();
+  const { lang, label } = useI18n();
   const qc = useQueryClient();
 
   const list = useServerFn(listOpenEvents);
@@ -117,7 +120,31 @@ function EventsPage() {
     retry: false,
   });
   // Players see their own areas; anyone without an area (e.g. World) sees every game.
-  const myAreasOnly = (((profileQ.data as { locations?: string[] | null } | undefined)?.locations) ?? []).length > 0;
+  const myLocations = ((profileQ.data as { locations?: string[] | null } | undefined)?.locations) ?? [];
+  const myAreasOnly = myLocations.length > 0;
+  const myLevel = (profileQ.data as { level?: string | null } | undefined)?.level ?? null;
+  const areas = useMemo(() => feedAreas(myLocations), [myLocations.join("\n")]);
+
+  // Filters: area chips (players with two or more areas) and the Filters sheet.
+  const [areaKeys, setAreaKeys] = useState<Set<string>>(new Set());
+  const [filters, setFiltersState] = useState<MatchFilters>(NO_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [alertsOpen, setAlertsOpen] = useState(false);
+  useEffect(() => {
+    try { setFiltersState(restoreFilters(sessionStorage.getItem(MATCH_FILTERS_STORAGE_KEY))); } catch { /* storage unavailable */ }
+  }, []);
+  function setFilters(next: MatchFilters) {
+    setFiltersState(next);
+    try { sessionStorage.setItem(MATCH_FILTERS_STORAGE_KEY, JSON.stringify(next)); } catch { /* storage unavailable */ }
+  }
+  function toggleArea(key: string) {
+    setAreaKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next.size === areas.length ? new Set() : next;
+    });
+  }
+  const filterCount = activeFilterCount(filters);
 
   const eventsQ = useQuery({
     queryKey: ["open-events", myAreasOnly],
@@ -190,12 +217,14 @@ function EventsPage() {
 
   const all = (eventsQ.data?.events ?? []) as EventLite[];
 
-  const filtered = useMemo(
-    () => all
+  const filtered = useMemo(() => {
+    const chosen = areas.filter((a) => areaKeys.has(a.key));
+    return all
       .filter((e) => selectedDays.has(dayKey(new Date(e.starts_at))))
-      .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
-    [all, selectedDays],
-  );
+      .filter((e) => chosen.length === 0 || chosen.some((a) => eventInArea(e, a)))
+      .filter((e) => passesFilters(e, filters, myLevel))
+      .sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  }, [all, selectedDays, areas, areaKeys, filters, myLevel]);
 
 
   const myEvents = useMemo(
@@ -357,7 +386,13 @@ function EventsPage() {
               {tr("Competitions", "Competiciones", "Compétitions")}
             </Button>
           </div>
-          {mode === "find" && <AlertsButton />}
+          {mode === "find" && (
+            <Button variant="ghost" size="sm" aria-label={tr("Filters", "Filtros", "Filtres")} onClick={() => setFiltersOpen(true)}
+              className={`shrink-0 h-9 gap-1.5 px-1.5 text-xs hover:bg-transparent ${filterCount > 0 ? "text-primary" : "text-muted-foreground"}`}>
+              <SlidersHorizontal className="size-4" />
+              {filterCount > 0 && <span>{filterCount}</span>}
+            </Button>
+          )}
         </div>
 
         {mode === "find" && (
@@ -384,6 +419,28 @@ function EventsPage() {
           </div>
         )}
 
+        {mode === "find" && areas.length >= 2 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1" aria-label={tr("Areas", "Zonas", "Zones")}>
+            <button type="button" aria-pressed={areaKeys.size === 0} onClick={() => setAreaKeys(new Set())}
+              className={`shrink-0 h-8 rounded-full border px-3.5 text-[13px] transition ${areaKeys.size === 0 ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/15 bg-white text-[var(--ink)]"}`}>
+              {tr("All my areas", "Todas mis zonas", "Toutes mes zones")}
+            </button>
+            {areas.map((a) => {
+              const on = areaKeys.has(a.key);
+              return (
+                <button key={a.key} type="button" aria-pressed={on} onClick={() => toggleArea(a.key)}
+                  className={`shrink-0 h-8 rounded-full border px-3.5 text-[13px] transition ${on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/15 bg-white text-[var(--ink)]"}`}>
+                  {a.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <MatchFiltersSheet open={filtersOpen} onClose={() => setFiltersOpen(false)} value={filters} onChange={setFilters}
+          myLevelLabel={myLevel ? label(myLevel).replace(/^./, (c) => c.toUpperCase()) : null} resultCount={filtered.length} onAlerts={() => setAlertsOpen(true)} />
+        <AlertsSheet open={alertsOpen} onClose={() => setAlertsOpen(false)} />
+
         {mode === "find" ? (
           <>
             {eventsQ.isPending ? (
@@ -398,6 +455,7 @@ function EventsPage() {
               </div>
             ) : filtered.length === 0 ? (
               <EmptyFeed
+                onClearFilters={filterCount > 0 || areaKeys.size > 0 ? () => { setFilters(NO_FILTERS); setAreaKeys(new Set()); } : undefined}
                 onResetDays={() =>
                   chooseDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
                 }
@@ -888,9 +946,11 @@ function SlotAvatar({
 function EmptyFeed({
   onResetDays,
   onCreate,
+  onClearFilters,
 }: {
   onResetDays: () => void;
   onCreate: () => void;
+  onClearFilters?: () => void;
 }) {
   const tr = useTr();
   return (
@@ -899,6 +959,15 @@ function EmptyFeed({
         {tr("No matches found", "Sin partidos", "Aucun match")}
       </div>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
+        {onClearFilters && (
+          <button
+            type="button"
+            onClick={onClearFilters}
+            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          >
+            {tr("Clear filters", "Borrar filtros", "Effacer les filtres")}
+          </button>
+        )}
         <button
           type="button"
           onClick={onResetDays}

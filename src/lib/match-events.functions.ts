@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
 import { DEFAULT_GENDER_RULE, GENDER_RULES, houseGameUnclaimed, matchCapacity, NEW_CLASS_STUDENTS, type GenderRule } from "./match-rules";
-import { locationMatchKeywords } from "./location-matching";
+import { feedKeywords } from "./feed-areas";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 
@@ -347,7 +347,8 @@ export const listOpenEvents = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
-    const myKeywords = locationMatchKeywords(profile?.locations);
+    // Only games in the player's own areas (La Moraleja players see La Moraleja, not all of Madrid).
+    const myKeywords = feedKeywords(profile?.locations);
 
     const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level, is_coach))";

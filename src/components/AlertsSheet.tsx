@@ -113,9 +113,9 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
           <div className="p-5 space-y-4">
             <p className="text-sm text-[var(--ink)]/70 leading-relaxed">
               {tr(
-                "Get notified when a match opens up that fits your times and area — even a spot in an existing one.",
-                "Recibe una notificación cuando aparezca un partido en tus horarios y zona — también si se libera una plaza.",
-                "Recevez une notification quand un match apparaît selon vos créneaux — ou qu'une place se libère.",
+                "Get notified when a match opens up that fits your times and area, even a spot in an existing one.",
+                "Recibe una notificación cuando aparezca un partido en tus horarios y zona, también si se libera una plaza.",
+                "Recevez une notification quand un match apparaît selon vos créneaux, ou qu'une place se libère.",
               )}
             </p>
 

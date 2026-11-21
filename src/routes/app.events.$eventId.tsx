@@ -28,7 +28,8 @@ import {
   updateMatchEvent,
 } from "@/lib/match-events.functions";
 import { toast } from "sonner";
-import { genderRuleAllows, genderRuleLabel, matchDuration, matchEndsAt, matchShareText } from "@/lib/match-rules";
+import { genderRuleAllows, genderRuleLabel, matchDuration, matchEndsAt, matchShareText, playtomicJoinLink } from "@/lib/match-rules";
+import { openExternal } from "@/lib/native";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle, LogOut } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
@@ -230,9 +231,28 @@ function EventDetail() {
   };
 
   const genderLabel = genderRuleLabel(event.gender_rule, tr);
+  // Shared from Playtomic: players join there, so in-app joining is off.
+  const ptLink = playtomicJoinLink(event);
   const canJoin =
-    !me?.iAmPlaying && event.status === "open" && event.needs > 0 &&
+    !ptLink && !me?.iAmPlaying && event.status === "open" && event.needs > 0 &&
     genderRuleAllows(event.gender_rule, me?.gender);
+
+  const openPlaytomic = (placement: string) => {
+    if (!ptLink) return;
+    window.__lovableEvents?.track?.("project.playtomic_match_join_clicked", { placement });
+    void openExternal(ptLink);
+  };
+
+  const onMarkFull = async () => {
+    try {
+      await update({ data: { id: eventId, extra_confirmed: Math.min(3, (event.extra_confirmed ?? 0) + event.needs) } });
+      toast.success(tr("Marked as full", "Marcado como completo", "Marqué complet"));
+      qc.invalidateQueries({ queryKey: ["event", eventId] });
+      qc.invalidateQueries({ queryKey: ["open-events"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : tr("Could not update", "No se pudo actualizar", "Mise à jour impossible"));
+    }
+  };
 
   const onJoin = async () => {
     try {
@@ -366,7 +386,7 @@ function EventDetail() {
           >
             <Share2 className="w-4 h-4" />
           </button>
-          {me && event.status !== "cancelled" && (
+          {me && event.status !== "cancelled" && (!ptLink || me.iAmHost) && (
             <button
               type="button"
               onClick={() => navigate({ to: "/app/events/$eventId/edit", params: { eventId } })}
@@ -459,7 +479,7 @@ function EventDetail() {
         // Booking is via Playtomic only for now (WhatsApp booking paused).
         const waClub = null as ReturnType<typeof clubWhatsappBooking>;
         const showWhatsappBooking = !!waClub && iHost && !event.court_booked && event.status !== "cancelled";
-        const showBooking = !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled"
+        const showBooking = !ptLink && !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled"
           && (!waClub || booking.source === "host");
         return (
           <section className="rounded-2xl border border-[var(--ink)]/10 bg-white overflow-hidden">
@@ -476,7 +496,7 @@ function EventDetail() {
                 {event.is_class && (
                   <span className="mr-1.5 inline-flex items-center rounded-full border border-[var(--gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">{tr("Class", "Clase", "Cours")}</span>
                 )}
-                {genderLabel} · {label(event.level_min)} · {event.court_booked ? tr("Court booked ✓", "Pista reservada ✓", "Pista réservée ✓") : tr("Court to book", "Falta pista", "Pista à réserver")}
+                {genderLabel} · {label(event.level_min)} · {ptLink ? tr("On Playtomic", "En Playtomic", "Sur Playtomic") : event.court_booked ? tr("Court booked ✓", "Pista reservada ✓", "Pista réservée ✓") : tr("Court to book", "Falta pista", "Pista à réserver")}
                 {event.free_court && (
                   <span className="ml-1.5 inline-flex items-center rounded-full bg-[var(--court-deep)]/10 px-2 py-0.5 text-[11px] font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
                 )}
@@ -568,7 +588,16 @@ function EventDetail() {
             {tr("You're hosting", "Organizas tú", "Tu organises")}
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {event.status !== "cancelled" ? (
+            {event.status !== "cancelled" && ptLink ? (
+              <button
+                type="button"
+                onClick={() => void onMarkFull()}
+                disabled={event.needs === 0}
+                className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5 disabled:opacity-50"
+              >
+                <Check className="w-4 h-4" /> {event.needs === 0 ? tr("Full", "Completo", "Complet") : tr("Mark as full", "Marcar completo", "Marquer complet")}
+              </button>
+            ) : event.status !== "cancelled" ? (
               <>
                 <button
                   type="button"
@@ -682,10 +711,19 @@ function EventDetail() {
           ...Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
 
             <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/10 rounded-full px-3 py-1.5">
-              <span className="text-xs text-[var(--ink)]/60">{tr("+1 friend", "+1 amigo", "+1 ami")}</span>
+              <span className="text-xs text-[var(--ink)]/60">{ptLink ? tr("Taken", "Ocupada", "Prise") : tr("+1 friend", "+1 amigo", "+1 ami")}</span>
             </div>
             )),
-          ...Array.from({ length: event.needs }).map((_, i) => (
+          ...Array.from({ length: event.needs }).map((_, i) => ptLink ? (
+            <button
+              key={`o-${i}`}
+              type="button"
+              onClick={() => { if (!me?.iAmHost) openPlaytomic("match_page_spot"); }}
+              className="flex items-center gap-2 border border-dashed border-[var(--ink)]/30 rounded-full px-3 py-1.5 hover:bg-[var(--ink)]/5"
+            >
+              <span className="text-xs text-[var(--ink)]">{me?.iAmHost ? tr("Open spot", "Hueco libre", "Place ouverte") : tr("Join on Playtomic", "Unirme en Playtomic", "Rejoindre sur Playtomic")}</span>
+            </button>
+          ) : (
             <button
               key={`o-${i}`}
               type="button"
@@ -727,7 +765,7 @@ function EventDetail() {
       </div>
 
       {/* Invitee response */}
-      {me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
+      {!ptLink && me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
         <div className="mt-4 rounded-xl border border-[var(--ink)]/25 bg-[var(--ink)]/5 p-3">
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
           <p className="mt-1 text-sm text-[var(--ink)]/80">
@@ -764,6 +802,21 @@ function EventDetail() {
 
       {/* Actions */}
       <div className="mt-4 space-y-2">
+        {ptLink && !me?.iAmHost && event.status !== "cancelled" && (
+          <>
+            <button
+              type="button"
+              onClick={() => openPlaytomic("match_page")}
+              className="w-full py-3.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs uppercase tracking-[0.22em] font-semibold shadow-[0_10px_24px_-14px_rgba(15,62,46,0.6)] active:scale-[0.99] transition-transform inline-flex items-center justify-center gap-2"
+            >
+              {event.needs > 0 ? tr("Join on Playtomic", "Unirme en Playtomic", "Rejoindre sur Playtomic") : tr("View on Playtomic", "Ver en Playtomic", "Voir sur Playtomic")}
+              <ExternalLink className="w-3.5 h-3.5" />
+            </button>
+            <p className="text-[11px] text-[var(--ink)]/50 text-center">
+              {tr("Availability may have changed. Check and join on Playtomic.", "Las plazas pueden haber cambiado. Compruébalo y únete en Playtomic.", "Les places ont pu changer. Vérifie et rejoins sur Playtomic.")}
+            </p>
+          </>
+        )}
         {canJoin && (
           <button
             onClick={onJoin}
@@ -778,7 +831,7 @@ function EventDetail() {
                 : tr("Join this match", "Unirme al partido", "Rejoindre ce match")}
           </button>
         )}
-        {me?.iAmParticipant && (!me?.iAmHost || (event.participants ?? []).some((p: any) => p.profile_id === me?.id)) && event.status !== "cancelled" && (
+        {!ptLink && me?.iAmParticipant && (!me?.iAmHost || (event.participants ?? []).some((p: any) => p.profile_id === me?.id)) && event.status !== "cancelled" && (
           <button
             type="button"
             onClick={onLeave}
@@ -791,7 +844,7 @@ function EventDetail() {
           </button>
         )}
         {me?.iAmHost && event.status !== "cancelled" && (
-          <div className="grid grid-cols-2 gap-2">
+          <div className={`grid gap-2 ${ptLink ? "grid-cols-1" : "grid-cols-2"}`}>
             <a
               href={`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`}
               target="_blank"
@@ -800,15 +853,17 @@ function EventDetail() {
             >
               <Share2 className="w-4 h-4" /> {tr("Share on WhatsApp", "Compartir en WhatsApp", "Partager sur WhatsApp")}
             </a>
+            {ptLink ? null : (
             <button
               onClick={() => setInviteOpen(true)}
               className="h-11 rounded-xl border border-[var(--ink)]/15 bg-white text-[var(--ink)] text-[13px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-[var(--ink)]/5"
             >
               <UserPlus className="w-4 h-4" /> {tr("Invite players", "Invitar jugadores", "Inviter")}
             </button>
+            )}
           </div>
         )}
-        {!canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
+        {!ptLink && !canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
           <p className="text-[11px] text-[var(--ink)]/50 text-center italic pt-1">
             {tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
           </p>

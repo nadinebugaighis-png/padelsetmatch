@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Building2, MapPin, X } from "lucide-react";
+import { Building2, Link2, MapPin, X } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 
-type Where = "club" | "address";
+type Where = "club" | "address" | "playtomic";
 
 /** "Where are you playing?" before the match form, so the right fields open ready. */
 export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -42,6 +42,9 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
           <Option value="address" icon={<MapPin className="size-[18px]" strokeWidth={1.6} />}
             title={tr("I already know where I'm playing", "Ya sé dónde voy a jugar", "Je sais déjà où je joue")}
             body={tr("A private court, a residence or any other address.", "Una pista privada, una urbanización u otra dirección.", "Un court privé, une résidence ou une autre adresse.")} />
+          <Option value="playtomic" icon={<Link2 className="size-[18px]" strokeWidth={1.6} />}
+            title={tr("It's already on Playtomic", "Ya está en Playtomic", "Il est déjà sur Playtomic")}
+            body={tr("Paste your match link. Local players find it here and join on Playtomic.", "Pega el enlace de tu partido. Los jugadores de tu zona lo ven aquí y se unen en Playtomic.", "Colle le lien de ton match. Les joueurs du coin le voient ici et rejoignent sur Playtomic.")} />
         </div>
         <button type="button" onClick={go}
           className="mt-5 h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] active:scale-[0.99] transition">

@@ -10,7 +10,7 @@ import { z } from "zod";
 const searchSchema = z.object({
   invite: z.string().uuid().optional(),
   name: z.string().optional(),
-  where: z.enum(["club", "address"]).optional(),
+  where: z.enum(["club", "address", "playtomic"]).optional(),
 });
 
 export const Route = createFileRoute("/app/events/new")({
@@ -47,6 +47,8 @@ function NewEvent() {
         } catch (e) {
           toast.error(e instanceof Error ? e.message : tr("Match created but invite failed", "Partido creado pero falló la invitación", "Match créé mais échec de l'invitation"));
         }
+      } else if (v.joins_on_playtomic) {
+        toast.success(tr("Shared. Local players can find it on Play.", "Compartido. Los jugadores de tu zona lo verán en Jugar.", "Partagé. Les joueurs du coin le verront dans Jouer."));
       } else {
         toast.success(tr("Match called! Waiting for players.", "¡Partido convocado! Esperando jugadores.", "Match lancé ! En attente des joueurs."));
       }
@@ -59,9 +61,12 @@ function NewEvent() {
   };
 
   const trimmedName = name?.trim();
-  const title = invite && trimmedName
+  const sharing = where === "playtomic";
+  const title = sharing
+    ? tr("Share a Playtomic match", "Compartir un partido de Playtomic", "Partager un match Playtomic")
+    : invite && trimmedName
     ? tr(`Invite ${trimmedName} to play`, `Invitar a ${trimmedName} a jugar`, `Inviter ${trimmedName} à jouer`)
     : tr("Call a match", "Convocar partido", "Lancer un match");
 
-  return <MatchForm title={title} submitLabel={tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} startMode={where} />;
+  return <MatchForm title={title} submitLabel={sharing ? tr("Share this match", "Compartir este partido", "Partager ce match") : tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} startMode={where} />;
 }

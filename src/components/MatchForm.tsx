@@ -35,6 +35,8 @@ export type MatchFormValues = {
   class_students: number | null;
   class_fee: string | null;
   duration_minutes: MatchDuration;
+  /** Players join this match on Playtomic through playtomic_link, never in the app. */
+  joins_on_playtomic?: boolean;
   /** Only sent when editing a game that started with no hour. */
   time_tbd?: boolean;
 };
@@ -53,7 +55,7 @@ type Props = {
   /** When editing, the back arrow returns to this match instead of the feed. */
   backEventId?: string;
   /** New matches: open on the club search or the free address field. */
-  startMode?: "club" | "address";
+  startMode?: "club" | "address" | "playtomic";
 };
 
 function toLocalDatetime(iso?: string | null) {
@@ -117,8 +119,10 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   );
   const isClub = !!initial?.club_place_id;
   const [locMode, setLocMode] = useState<"club" | "address">(
-    initial ? (isClub ? "club" : "address") : startMode ?? "club",
+    initial ? (isClub ? "club" : "address") : startMode === "address" ? "address" : "club",
   );
+  // Shared from Playtomic: players tap through and join there.
+  const onPlaytomic = initial?.joins_on_playtomic ?? startMode === "playtomic";
   const [club, setClub] = useState<ClubResult | null>(
     isClub
       ? {
@@ -149,7 +153,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const [freeCourt, setFreeCourt] = useState<boolean>(initial?.free_court ?? false);
   const [playersNeeded, setPlayersNeeded] = useState<number>(initialNeeded);
   const [duration, setDuration] = useState<MatchDuration>(initial?.duration_minutes === 60 ? 60 : DEFAULT_MATCH_DURATION);
-  const [isClass, setIsClass] = useState<boolean>(initial?.is_class ?? false);
+  const [isClass, setIsClass] = useState<boolean>(!onPlaytomic && (initial?.is_class ?? false));
   const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? NEW_CLASS_STUDENTS);
   const classFee = initial?.class_fee ?? "";
   // Students already in (everyone except the coach) — the class can't be made smaller than that.
@@ -163,7 +167,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const [note, setNote] = useState(initial?.note ?? "");
   // Optional settings stay folded away unless an edited match already uses them.
   const [showMore, setShowMore] = useState<boolean>(
-    !!(initial?.note || initial?.playtomic_link || initial?.free_court || initial?.is_private_court ||
+    !!(initial?.note || (initial?.playtomic_link && !onPlaytomic) || initial?.free_court || initial?.is_private_court ||
       (initial?.gender_rule && initial.gender_rule !== DEFAULT_GENDER_RULE) ||
       (initial?.level_min && initial.level_min !== "casual") || (initial?.level_max && initial.level_max !== "advanced")),
   );
@@ -179,13 +183,14 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
 
   const locationReady = locMode === "club" ? !!club : customAddress.trim().length > 3;
   const whenReady = hasTime || (allowNoTime && when.length === 10);
-  const canSave = locationReady && whenReady && !saving;
+  const linkReady = !onPlaytomic || playtomicLink.trim().length > 0;
+  const canSave = locationReady && whenReady && linkReady && !saving;
 
   const handleSubmit = async () => {
-    if (!locationReady || !whenReady) return;
+    if (!locationReady || !whenReady || !linkReady) return;
     const { startsLocal, timeTbd } = startFromFormValue(when);
     const normalized = normalizePlaytomicLink(playtomicLink);
-    if (normalized.error) {
+    if (normalized.error || (onPlaytomic && !normalized.url)) {
       setPlaytomicError(tr("Enter a valid Playtomic link (playtomic.io)", "Introduce un enlace válido de Playtomic (playtomic.io)", "Saisis un lien Playtomic valide (playtomic.io)"));
       return;
     }
@@ -197,6 +202,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       class_students: isClass ? classStudents : null,
       class_fee: isClass ? classFee.trim() || null : null,
       duration_minutes: duration,
+      ...(onPlaytomic ? { joins_on_playtomic: true } : {}),
       ...(allowNoTime ? { time_tbd: timeTbd } : {}),
     };
     const values: MatchFormValues =
@@ -216,9 +222,9 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             extra_confirmed: extraConfirmed,
             note: note || null,
             playtomic_link: normalized.url,
-            court_booked: courtBooked,
+            court_booked: onPlaytomic || courtBooked,
             is_private_court: false,
-            free_court: freeCourt,
+            free_court: !onPlaytomic && freeCourt,
             ...classValues,
           }
         : {
@@ -236,9 +242,9 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             extra_confirmed: extraConfirmed,
             note: note || null,
             playtomic_link: normalized.url,
-            court_booked: courtBooked,
+            court_booked: onPlaytomic || courtBooked,
             is_private_court: isPrivateCourt,
-            free_court: freeCourt,
+            free_court: !onPlaytomic && freeCourt,
             ...classValues,
           };
     await onSubmit(values);
@@ -267,6 +273,29 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         <h1 className="font-serif text-2xl sm:text-3xl leading-tight text-[var(--ink)]">{title}</h1>
       </header>
 
+      {onPlaytomic ? (
+        <div className={`${cardCls} py-3`}>
+          <label htmlFor="playtomic-match-link" className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/60">
+            {tr("Your Playtomic match link", "Enlace de tu partido en Playtomic", "Lien de ton match Playtomic")}
+          </label>
+          <input
+            id="playtomic-match-link"
+            type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+            value={playtomicLink}
+            onChange={(e) => { setPlaytomicLink(e.target.value); if (playtomicError) setPlaytomicError(null); }}
+            placeholder="https://app.playtomic.io/…"
+            className={`${inputCls} mt-2`}
+          />
+          {playtomicError && <p className="pt-1.5 text-[11px] text-red-500">{playtomicError}</p>}
+          <p className={helperCls}>
+            {tr(
+              "In Playtomic, open your match and tap Share. Players here tap through and join on Playtomic.",
+              "En Playtomic, abre tu partido y pulsa Compartir. Los jugadores de aquí entran y se unen en Playtomic.",
+              "Dans Playtomic, ouvre ton match et touche Partager. Les joueurs d'ici rejoignent sur Playtomic.",
+            )}
+          </p>
+        </div>
+      ) : (
       <div className="grid grid-cols-2 rounded-full bg-[var(--ink)]/[0.06] p-0.5">
         {[
           { v: false, l: tr("Match", "Partido", "Match") },
@@ -279,6 +308,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           </button>
         ))}
       </div>
+      )}
 
       {/* Card 1 — Where & when */}
       <div className={cardCls}>
@@ -355,6 +385,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           </div>
         </div>
         )}
+        {!onPlaytomic && (<>
         <div className={rowDivider} />
         <div className={rowCls}>
           <span className={rowLabel}>{tr("Court booked", "Pista reservada", "Terrain réservé")}</span>
@@ -392,6 +423,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             <Switch className="data-[state=checked]:bg-[var(--ink)]" checked={courtBooked} onCheckedChange={setCourtBooked} aria-label={tr("Court booked", "Pista reservada", "Terrain réservé")} />
           </div>
         </div>
+        </>)}
       </div>
 
       <button type="button" onClick={() => setShowMore((v) => !v)} aria-expanded={showMore}
@@ -436,6 +468,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             </select>
           </div>
         </div>
+        {!onPlaytomic && (<>
         <div className={rowDivider} />
         <div className={rowCls}>
           <div className="min-w-0">
@@ -450,6 +483,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           </div>
           <Switch className="data-[state=checked]:bg-[var(--ink)] shrink-0" checked={freeCourt} onCheckedChange={setFreeCourt} aria-label={tr("Free court", "Pista gratis", "Terrain gratuit")} />
         </div>
+        </>)}
         {locMode === "address" && (
           <>
             <div className={rowDivider} />
@@ -459,6 +493,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             </div>
           </>
         )}
+        {!onPlaytomic && (<>
         <div className={rowDivider} />
         <input
           type="url" inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false}
@@ -475,6 +510,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             {tr("Book on Playtomic", "Reservar en Playtomic", "Réserver sur Playtomic")} <ExternalLink className="w-3 h-3" />
           </a>
         )}
+        </>)}
         <div className={rowDivider} />
         <textarea
           value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} rows={1}

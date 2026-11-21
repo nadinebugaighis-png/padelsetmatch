@@ -225,6 +225,13 @@
       "when": 1795264387160,
       "tag": "0031_coach_lesson_alerts_without_fixed_timezone",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1795267376629,
+      "tag": "0032_share_playtomic_matches",
+      "breakpoints": true
     }
   ]
 }

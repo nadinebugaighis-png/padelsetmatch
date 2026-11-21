@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { PADEL_LEVELS } from "./types";
-import { DEFAULT_GENDER_RULE, GENDER_RULES, houseGameUnclaimed, matchCapacity, NEW_CLASS_STUDENTS, type GenderRule } from "./match-rules";
+import { DEFAULT_GENDER_RULE, GENDER_RULES, houseGameUnclaimed, matchCapacity, playtomicListingExpired, NEW_CLASS_STUDENTS, type GenderRule } from "./match-rules";
 import { feedKeywords } from "./feed-areas";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
@@ -253,6 +253,7 @@ const CreateInput = z.object({
   class_students: z.number().int().min(1).max(4).nullable().optional(),
   duration_minutes: z.union([z.literal(60), z.literal(90)]).optional(),
   class_fee: z.string().trim().max(40).nullable().optional(),
+  joins_on_playtomic: z.boolean().optional(),
 });
 
 export const createMatchEvent = createServerFn({ method: "POST" })
@@ -269,12 +270,24 @@ export const createMatchEvent = createServerFn({ method: "POST" })
       const parts = first ? first.split("|").map((s) => s.trim()).filter(Boolean) : [];
       city = parts[parts.length - 1] || null;
     }
+    // A match shared from Playtomic is joined there: it needs a valid link, is a
+    // match (not a class) and its court is already booked on Playtomic.
+    const shared = !!data.joins_on_playtomic;
+    let playtomicLink = data.playtomic_link ?? null;
+    if (shared) {
+      const { normalizePlaytomicLink } = await import("./affinity");
+      const n = normalizePlaytomicLink(playtomicLink);
+      if (!n.url) throw new Error("Paste your Playtomic match link");
+      playtomicLink = n.url;
+    }
     const { data: created, error } = await supabase
       .from("match_events")
       .insert({
         ...data,
         city,
-        ...(data.is_class
+        playtomic_link: playtomicLink,
+        ...(shared ? { is_class: false, court_booked: true, free_court: false } : {}),
+        ...(data.is_class && !shared
           ? { extra_confirmed: 0, class_students: data.class_students ?? NEW_CLASS_STUDENTS, class_fee: data.class_fee || null }
           : { class_students: null, class_fee: null }),
         host_profile_id: profile.id,
@@ -413,7 +426,8 @@ export const listOpenEvents = createServerFn({ method: "POST" })
       (extra ?? []).forEach((e: any) => eventsMap.set(e.id, e));
     }
 
-    const merged = Array.from(eventsMap.values()).sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
+    const nowDate = new Date();
+    const merged = Array.from(eventsMap.values()).filter((e: any) => !playtomicListingExpired(e, nowDate)).sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
     const eventIds = merged.map((event: any) => event.id);
     const guestsByEvent = new Map<string, any[]>();
     if (eventIds.length > 0) {
@@ -509,10 +523,11 @@ export const joinMatchEvent = createServerFn({ method: "POST" })
     if (!profile.first_name || !profile.level) throw new Error("Please add your name and padel level first.");
     const { data: event } = await supabase
       .from("match_events")
-      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id, is_class, class_students, auto_slot_id")
+      .select("gender_rule, status, extra_confirmed, invite_lock_until, host_profile_id, is_class, class_students, auto_slot_id, joins_on_playtomic")
       .eq("id", data.id)
       .maybeSingle();
     if (!event) throw new Error("Match not found");
+    if (event.joins_on_playtomic && event.host_profile_id !== profile.id) throw new Error("Join this match on Playtomic");
     if (event.status !== "open") throw new Error("This match is no longer open");
     let wasUnclaimed = false;
     if (event.auto_slot_id) {
@@ -739,6 +754,7 @@ const UpdateInput = z.object({
   duration_minutes: z.union([z.literal(60), z.literal(90)]).optional(),
   class_fee: z.string().trim().max(40).nullable().optional(),
   status: z.enum(["open", "full", "cancelled", "played"]).optional(),
+  joins_on_playtomic: z.boolean().optional(),
 });
 import { nonHostCanEdit, pickPlayerEditable } from "./match-player-edit";
 export const updateMatchEvent = createServerFn({ method: "POST" })
@@ -751,12 +767,14 @@ export const updateMatchEvent = createServerFn({ method: "POST" })
     const { id, ...rawPatch } = data;
     const { data: current } = await supabase
       .from("match_events")
-      .select("extra_confirmed, host_profile_id, status, is_class, class_students")
+      .select("extra_confirmed, host_profile_id, status, is_class, class_students, joins_on_playtomic")
       .eq("id", id)
       .maybeSingle();
     if (!current) throw new Error("Match not found");
     const isHost = current.host_profile_id === profile.id;
     if (!isHost) {
+      // Playtomic is the source of truth for a shared match; only its organiser updates the listing.
+      if (current.joins_on_playtomic) throw new Error("Only the organiser can edit a Playtomic match");
       // Any signed-in player who can see the match (the read above runs under
       // their own permissions) may edit where/when/level/note only. Cancel,
       // delete, gender, booking and class settings stay with the host.
@@ -911,6 +929,8 @@ export type PublicMatchView = {
   note: string | null;
   court_booked: boolean;
   free_court?: boolean;
+  joins_on_playtomic?: boolean;
+  playtomic_link?: string | null;
   is_class?: boolean;
   class_students?: number | null;
   class_fee?: string | null;

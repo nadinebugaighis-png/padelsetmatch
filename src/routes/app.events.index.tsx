@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { genderRuleLabel, matchCardAction, matchDuration } from "@/lib/match-rules";
+import { genderRuleLabel, matchCardAction, matchDuration, playtomicJoinLink } from "@/lib/match-rules";
+import { openExternal } from "@/lib/native";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
@@ -15,7 +16,7 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal } from "lucide-react";
+import { MapPin, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ExternalLink } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
 import { CourtViewCard } from "@/components/CourtViewCard";
 import { toast } from "sonner";
@@ -87,6 +88,8 @@ type EventLite = {
   court_booked?: boolean;
   is_private_court?: boolean;
   free_court?: boolean;
+  joins_on_playtomic?: boolean;
+  playtomic_link?: string | null;
   is_class?: boolean;
   class_students?: number | null;
   class_fee?: string | null;
@@ -657,6 +660,14 @@ function MatchCard({
   const openFromCard = e.iAmHost ? undefined : () => onOpen(e.id);
   const playing = e.iAmPlaying ?? (mine && !e.iAmHost);
   const cardAction = matchCardAction({ ...e, capacity: e.capacity ?? 4 });
+  // Shared from Playtomic: every join opens the organiser's Playtomic match.
+  const ptLink = playtomicJoinLink(e);
+  const joinCard = () => {
+    if (ptLink) {
+      window.__lovableEvents?.track?.("project.playtomic_match_join_clicked", { placement: "play_card" });
+      void openExternal(ptLink);
+    } else onJoin(e);
+  };
   const capacity = e.capacity ?? 4;
   const full = e.filled >= capacity;
 
@@ -702,10 +713,11 @@ function MatchCard({
       // A "+" only ever joins — hosts who stepped out included.
       onJoin={() => {
         if (playing) { toast(tr("You're already in this match", "Ya estás en este partido", "Tu es déjà dans ce match")); return; }
-        if (!full) onJoin(e);
+        if (!full) joinCard();
       }}
       canJoin={!full}
       isPending={isPending}
+      playtomic={!!ptLink}
     />
   );
   const sep = <span className="text-[var(--ink)]/25">·</span>;
@@ -806,7 +818,12 @@ function MatchCard({
               <span className="font-semibold text-[var(--court-deep)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
             </>
           )}
-          {e.court_booked && (
+          {ptLink ? (
+            <>
+              {sep}
+              <span className="font-semibold text-[var(--court-deep)]">Playtomic</span>
+            </>
+          ) : e.court_booked && (
             <>
               {sep}
               <span className="font-semibold text-[var(--court-deep)]">
@@ -836,14 +853,16 @@ function MatchCard({
             // Players in the game manage it; everyone else joins in one tap
             // (or views it when full). Tapping the card still opens any game
             // so every player can edit it.
-            if (cardAction === "join") onJoin(e);
+            if (cardAction === "join") joinCard();
             else if (e.iAmHost) onManage(e);
             else onOpen(e.id);
           }}
           disabled={isPending}
           className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] shrink-0 inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] text-[10.5px] font-semibold uppercase tracking-[0.16em] px-3.5 py-1.5 disabled:opacity-50"
         >
-          {cardAction === "join"
+          {cardAction === "join" && ptLink
+            ? <>{tr("Join on Playtomic", "Unirme en Playtomic", "Rejoindre sur Playtomic")}<ExternalLink className="ml-1 w-3 h-3" /></>
+            : cardAction === "join"
             ? isPending ? "…" : e.is_class ? tr("Join class", "Unirme", "Rejoindre") : tr("Join", "Unirme", "Rejoindre")
             : cardAction === "view"
               ? tr("View", "Ver", "Voir")
@@ -867,12 +886,15 @@ function SlotAvatar({
   onJoin,
   canJoin,
   isPending,
+  playtomic = false,
 }: {
   slot: SlotData | null;
   tr: ReturnType<typeof useTr>;
   onJoin: () => void;
   canJoin: boolean;
   isPending: boolean;
+  /** Shared from Playtomic: held places were taken there, not by a friend. */
+  playtomic?: boolean;
 }) {
   const name = slot?.participant?.profiles?.first_name ?? slot?.guest?.display_name;
   const photo = slot?.participant?.profiles?.photo_url;
@@ -883,8 +905,8 @@ function SlotAvatar({
   if (slot?.friend) {
     return (
       <div className="flex w-[60px] flex-col items-center">
-        <FriendSlot size="lg" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
-        <span className={`${caption} text-[var(--ink)]/60`}>{tr("Friend", "Amigo", "Ami")}</span>
+        <FriendSlot size="lg" label={playtomic ? tr("Taken on Playtomic", "Ocupada en Playtomic", "Prise sur Playtomic") : tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
+        <span className={`${caption} text-[var(--ink)]/60`}>{playtomic ? tr("Taken", "Ocupada", "Prise") : tr("Friend", "Amigo", "Ami")}</span>
       </div>
     );
   }

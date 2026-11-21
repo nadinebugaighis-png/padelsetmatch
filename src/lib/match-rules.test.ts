@@ -34,3 +34,25 @@ describe("match length", () => {
     expect(matchDuration(null)).toBe(90);
   });
 });
+
+import { playtomicJoinLink, playtomicListingExpired } from "./match-rules";
+
+describe("matches shared from Playtomic", () => {
+  it("players are sent to the organiser's Playtomic link", () => {
+    expect(playtomicJoinLink({ joins_on_playtomic: true, playtomic_link: "app.playtomic.io/matches/abc" })).toBe(
+      "https://app.playtomic.io/matches/abc",
+    );
+  });
+  it("an ordinary game with a booking link is still joined in the app", () => {
+    expect(playtomicJoinLink({ joins_on_playtomic: false, playtomic_link: "https://playtomic.io/x" })).toBeNull();
+  });
+  it("a shared Playtomic match disappears once it starts", () => {
+    const now = new Date("2026-11-21T18:00:00Z");
+    expect(playtomicListingExpired({ joins_on_playtomic: true, starts_at: "2026-11-21T18:00:00Z" }, now)).toBe(true);
+    expect(playtomicListingExpired({ joins_on_playtomic: true, starts_at: "2026-11-21T19:00:00Z" }, now)).toBe(false);
+  });
+  it("ordinary games keep the usual listing window", () => {
+    const now = new Date("2026-11-21T18:00:00Z");
+    expect(playtomicListingExpired({ joins_on_playtomic: false, starts_at: "2026-11-21T17:00:00Z" }, now)).toBe(false);
+  });
+});

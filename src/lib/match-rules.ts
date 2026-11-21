@@ -1,4 +1,5 @@
 // Shared, browser-safe rules for who can join a match and how it is described.
+import { normalizePlaytomicLink } from "./affinity";
 
 export const GENDER_RULES = ["open", "mixed", "men_only", "women_only"] as const;
 export type GenderRule = (typeof GENDER_RULES)[number];
@@ -137,4 +138,26 @@ export function hasNoTime(e: { time_tbd?: boolean | null } | null | undefined): 
 export function startFromFormValue(value: string): { startsLocal: string; timeTbd: boolean } {
   const timeTbd = value.length <= 10;
   return { startsLocal: timeTbd ? `${value}T${TIME_TBD_PLACEHOLDER}` : value, timeTbd };
+}
+
+// ---------- Matches shared from Playtomic ----------
+/**
+ * A match the organiser shared from Playtomic is joined there, never in the
+ * app: returns the link players should open, or null for ordinary games.
+ * Mirrors the database trigger that blocks in-app joins on these games.
+ */
+export function playtomicJoinLink(
+  e: { joins_on_playtomic?: boolean | null; playtomic_link?: string | null } | null | undefined,
+): string | null {
+  if (!e?.joins_on_playtomic) return null;
+  return normalizePlaytomicLink(e.playtomic_link).url;
+}
+
+/** Shared Playtomic matches leave the Play page at their start time; availability there is never live. */
+export function playtomicListingExpired(
+  e: { joins_on_playtomic?: boolean | null; starts_at: string; time_tbd?: boolean | null },
+  now: Date = new Date(),
+): boolean {
+  if (!e.joins_on_playtomic || e.time_tbd) return false;
+  return new Date(e.starts_at).getTime() <= now.getTime();
 }

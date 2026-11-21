@@ -8,7 +8,8 @@ import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.func
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { genderRuleLabel, matchDuration, matchPreviewMeta } from "@/lib/match-rules";
+import { genderRuleLabel, matchDuration, matchPreviewMeta, playtomicJoinLink } from "@/lib/match-rules";
+import { openExternal } from "@/lib/native";
 
 
 const OG_IMAGE = "https://padelmatchapp.lovable.app/__l5e/assets-v1/dbc7c0f5-88b1-4692-9b4e-c13975074410/padel-share-logo.jpg";
@@ -174,7 +175,14 @@ function PublicMatchPage() {
     }
   };
 
+  // Shared from Playtomic: joining happens there, with or without an account here.
+  const ptLink = playtomicJoinLink(match);
   const onJoinClick = () => {
+    if (ptLink) {
+      window.__lovableEvents?.track?.("project.playtomic_match_join_clicked", { placement: "public_match" });
+      void openExternal(ptLink);
+      return;
+    }
     const search: Record<string, string> = { join: eventId };
     if (inviteToken) search.i = inviteToken;
     if (hasSession) navigate({ to: "/app/join-setup", search: search as never });
@@ -261,7 +269,7 @@ function PublicMatchPage() {
                     {match.court_booked && (
                       <>
                         <span className="text-[var(--ink)]/25">·</span>
-                        <span className="font-semibold text-[var(--court-deep)]">{tr("Court booked", "Pista reservada", "Court réservé")}</span>
+                        <span className="font-semibold text-[var(--court-deep)]">{ptLink ? "Playtomic" : tr("Court booked", "Pista reservada", "Court réservé")}</span>
                       </>
                     )}
                     {match.host?.first_name && (
@@ -336,6 +344,8 @@ function PublicMatchPage() {
               >
                 {openSpots === 0
                   ? tr("Match is full", "Partido completo", "Match complet")
+                  : ptLink
+                    ? tr("Join on Playtomic", "Unirme en Playtomic", "Rejoindre sur Playtomic")
                   : freeCourt
                     ? hasSession
                       ? tr("Join this match free", "Unirme gratis al partido", "Rejoindre gratuitement")
@@ -344,7 +354,12 @@ function PublicMatchPage() {
                       ? tr("Join this match", "Unirme al partido", "Rejoindre ce match")
                       : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
-              {!hasSession && openSpots > 0 && (
+              {ptLink && openSpots > 0 && (
+                <p className="text-[11px] text-[var(--ink)]/50 text-center">
+                  {tr("Availability may have changed. Check and join on Playtomic.", "Las plazas pueden haber cambiado. Compruébalo y únete en Playtomic.", "Les places ont pu changer. Vérifie et rejoins sur Playtomic.")}
+                </p>
+              )}
+              {!ptLink && !hasSession && openSpots > 0 && (
                 <Link
                   to="/g/$eventId"
                   params={{ eventId }}
@@ -356,9 +371,9 @@ function PublicMatchPage() {
               <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
-              <p className="text-[11px] text-[var(--ink)]/50 text-center pt-1">
+              {!ptLink && <p className="text-[11px] text-[var(--ink)]/50 text-center pt-1">
                 {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
-              </p>
+              </p>}
             </div>
           </>
         )}

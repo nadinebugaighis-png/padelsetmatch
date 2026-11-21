@@ -119,6 +119,7 @@ function EditEvent() {
           extra_confirmed: event.extra_confirmed,
           note: event.note,
           playtomic_link: event.playtomic_link,
+          joins_on_playtomic: !!event.joins_on_playtomic,
           court_booked: event.court_booked,
           is_private_court: event.is_private_court,
           free_court: event.free_court ?? false,

@@ -1098,6 +1098,7 @@ export type Database = {
           invite_lock_until: string | null
           is_class: boolean
           is_private_court: boolean
+          joins_on_playtomic: boolean
           level_max: string
           level_min: string
           note: string | null
@@ -1130,6 +1131,7 @@ export type Database = {
           invite_lock_until?: string | null
           is_class?: boolean
           is_private_court?: boolean
+          joins_on_playtomic?: boolean
           level_max?: string
           level_min?: string
           note?: string | null
@@ -1162,6 +1164,7 @@ export type Database = {
           invite_lock_until?: string | null
           is_class?: boolean
           is_private_court?: boolean
+          joins_on_playtomic?: boolean
           level_max?: string
           level_min?: string
           note?: string | null

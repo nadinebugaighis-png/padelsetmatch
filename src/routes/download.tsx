@@ -7,7 +7,7 @@ import { isNative } from "@/lib/native";
 import { DOWNLOAD_URL, pickStore } from "@/lib/store-link";
 
 const SHARE_IMAGE = "https://padelsetmatch.com/download-share.jpg";
-const TITLE = "PadelSetMatch — Tu pista. Tu gente. Tu partido.";
+const TITLE = "PadelSetMatch · Tu pista. Tu gente. Tu partido.";
 const DESC =
   "Encuentra jugadores y organiza partidos de pádel en La Moraleja y Madrid. Descárgala gratis para iPhone y Android.";
 
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/download")({
       { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "PadelSetMatch — Tu pista. Tu gente. Tu partido." },
+      { property: "og:image:alt", content: "PadelSetMatch · Tu pista. Tu gente. Tu partido." },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },

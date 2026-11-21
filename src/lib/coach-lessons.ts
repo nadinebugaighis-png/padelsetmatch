@@ -9,7 +9,38 @@ export type CoachSlot = {
   status: "open" | "requested" | "booked";
   student_profile_id: string | null;
   student_note: string | null;
+  /** club = at the club, travel = the coach comes to the player, both = the player chooses. */
+  lesson_place: LessonPlace;
+  /** Areas a travelling coach covers (urbanizaciones, neighbourhoods). */
+  travel_area: string | null;
+  /** Where the requesting player chose to have the lesson. */
+  student_place: "club" | "travel" | null;
 };
+
+export type LessonPlace = "club" | "travel" | "both";
+
+export const offersClub = (p: LessonPlace) => p !== "travel";
+export const offersTravel = (p: LessonPlace) => p !== "club";
+
+/** Mirrors request_coach_slot: fixed places decide themselves, "both" needs the player's pick. */
+export function requestPlace(place: LessonPlace, choice: "club" | "travel" | null): "club" | "travel" | null {
+  if (place === "club" || place === "travel") return place;
+  return choice;
+}
+
+/**
+ * Stored place fields for new lesson times, or null when a needed field is blank.
+ * Travel-only times repeat the area in club_name so every alert has a place to show.
+ */
+export function placeFields(place: LessonPlace, club: string, area: string): { club_name: string; travel_area: string | null } | null {
+  const c = club.trim();
+  const a = area.trim();
+  if (offersClub(place) && !c) return null;
+  if (offersTravel(place) && !a) return null;
+  if (place === "club") return { club_name: c, travel_area: null };
+  if (place === "travel") return { club_name: a, travel_area: a };
+  return { club_name: c, travel_area: a };
+}
 
 export const COACH_HOURS = Array.from({ length: 16 }, (_, i) => 7 + i); // 07:00 to 22:00
 
@@ -39,17 +70,24 @@ export function openCountByDay(slots: CoachSlot[], now = new Date()): Map<string
   return m;
 }
 
-export type CoachDayGroup = { key: string; coachId: string; club: string; duration: number; price: string | null; slots: CoachSlot[] };
+export type CoachDayGroup = {
+  key: string; coachId: string; club: string; place: LessonPlace; area: string | null;
+  duration: number; price: string | null; slots: CoachSlot[];
+};
 
-/** One card per coach, club and lesson length on a given day, earliest first. */
+/** One card per coach, place and lesson length on a given day, earliest first. */
 export function groupDay(slots: CoachSlot[], day: string, now = new Date()): CoachDayGroup[] {
   const groups = new Map<string, CoachDayGroup>();
   const sorted = slots
     .filter((s) => bookable(s, now) && dayKey(new Date(s.starts_at)) === day)
     .sort((a, b) => a.starts_at.localeCompare(b.starts_at));
   for (const s of sorted) {
-    const key = `${s.coach_profile_id}|${s.club_name}|${s.duration_minutes}`;
-    const g = groups.get(key) ?? { key, coachId: s.coach_profile_id, club: s.club_name, duration: s.duration_minutes, price: s.price_note, slots: [] };
+    const place = s.lesson_place ?? "club";
+    const key = `${s.coach_profile_id}|${place}|${s.club_name}|${s.travel_area ?? ""}|${s.duration_minutes}`;
+    const g = groups.get(key) ?? {
+      key, coachId: s.coach_profile_id, club: s.club_name, place, area: s.travel_area ?? null,
+      duration: s.duration_minutes, price: s.price_note, slots: [],
+    };
     g.slots.push(s);
     groups.set(key, g);
   }

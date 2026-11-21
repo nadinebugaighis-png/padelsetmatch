@@ -8,7 +8,7 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { Input } from "@/components/ui/input";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { addCoachSlots, cancelCoachSlot, getMyCoachSlots, respondCoachSlot } from "@/lib/coach-lessons.functions";
-import { COACH_HOURS, dayKey, nextDays, slotStarts, type CoachSlot } from "@/lib/coach-lessons";
+import { COACH_HOURS, dayKey, nextDays, offersClub, offersTravel, placeFields, slotStarts, type CoachSlot, type LessonPlace } from "@/lib/coach-lessons";
 
 export const Route = createFileRoute("/app/coach")({
   head: () => ({ meta: [
@@ -24,6 +24,9 @@ export const Route = createFileRoute("/app/coach")({
 
 const label = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55";
 const LAST_CLUB = "coach-last-club";
+const LAST_PLACE = "coach-last-place";
+const LAST_AREA = "coach-last-area";
+const remembered = (k: string) => { try { return localStorage.getItem(k) ?? ""; } catch { return ""; } };
 
 function CoachTimesPage() {
   const tr = useTr();
@@ -41,7 +44,12 @@ function CoachTimesPage() {
   const [day, setDay] = useState(dayKey(days[0]!));
   const [hours, setHours] = useState<number[]>([]);
   const [duration, setDuration] = useState<60 | 90>(60);
-  const [club, setClub] = useState(() => { try { return localStorage.getItem(LAST_CLUB) ?? ""; } catch { return ""; } });
+  const [club, setClub] = useState(() => remembered(LAST_CLUB));
+  const [place, setPlace] = useState<LessonPlace>(() => {
+    const v = remembered(LAST_PLACE);
+    return v === "travel" || v === "both" ? v : "club";
+  });
+  const [area, setArea] = useState(() => remembered(LAST_AREA));
   const [price, setPrice] = useState("");
   const [saving, setSaving] = useState(false);
   const now = Date.now();
@@ -53,16 +61,30 @@ function CoachTimesPage() {
 
   const time = (iso: string) => new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   const longDate = (iso: string) => new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
+  const where = (s: CoachSlot) => {
+    if (s.student_place === "travel") return tr("At their place", "A domicilio", "À domicile");
+    if (s.student_place === "club" || s.lesson_place === "club") return s.club_name;
+    if (s.lesson_place === "travel") return `${tr("At players' homes", "A domicilio", "À domicile")} · ${s.travel_area ?? s.club_name}`;
+    return `${s.club_name} · ${tr("or at home", "o a domicilio", "ou à domicile")}`;
+  };
   const refresh = () => qc.invalidateQueries({ queryKey: ["my-coach-slots"] }).then(() => qc.invalidateQueries({ queryKey: ["coach-board"] }));
 
   async function save() {
-    if (!club.trim()) { toast.error(tr("Add the club", "Añade el club", "Ajoute le club")); return; }
+    if (offersClub(place) && !club.trim()) { toast.error(tr("Add the club", "Añade el club", "Ajoute le club")); return; }
+    if (offersTravel(place) && !area.trim()) { toast.error(tr("Add the areas you cover", "Añade las zonas que cubres", "Ajoute les zones couvertes")); return; }
+    if (!placeFields(place, club, area)) return;
     if (!starts.length) { toast.error(tr("Pick at least one time", "Elige al menos una hora", "Choisis au moins une heure")); return; }
     setSaving(true);
     try {
-      const r = await add({ data: { starts, duration_minutes: duration, club_name: club.trim(), price_note: price.trim() || null } });
-      try { localStorage.setItem(LAST_CLUB, club.trim()); } catch { /* ignore */ }
-      toast.success(tr(`${r.added} lesson times shared`, `${r.added} horarios publicados`, `${r.added} horaires publiés`));
+      const r = await add({ data: { starts, duration_minutes: duration, lesson_place: place, club_name: club.trim(), travel_area: area.trim(), price_note: price.trim() || null } });
+      try {
+        localStorage.setItem(LAST_PLACE, place);
+        if (club.trim()) localStorage.setItem(LAST_CLUB, club.trim());
+        if (area.trim()) localStorage.setItem(LAST_AREA, area.trim());
+      } catch { /* ignore */ }
+      toast.success(r.added === 1
+        ? tr("1 lesson time shared", "1 horario publicado", "1 horaire publié")
+        : tr(`${r.added} lesson times shared`, `${r.added} horarios publicados`, `${r.added} horaires publiés`));
       setHours([]);
       await refresh();
     } catch (e) {
@@ -121,7 +143,7 @@ function CoachTimesPage() {
                       <PlayerPhoto src={p?.photo_url ?? undefined} seed={s.student_profile_id} alt={p?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
                       <div className="min-w-0 flex-1">
                         <div className="text-[15px] font-medium text-[var(--ink)] truncate">{p?.first_name ?? tr("A player", "Un jugador", "Un joueur")}</div>
-                        <div className="text-[12.5px] text-[var(--ink)]/55 truncate">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.club_name}</div>
+                        <div className="text-[12.5px] text-[var(--ink)]/55 truncate">{longDate(s.starts_at)} · {time(s.starts_at)} · {where(s)}</div>
                       </div>
                     </div>
                     {s.student_note && <p className="mt-2 text-[13.5px] text-[var(--ink)]/75">"{s.student_note}"</p>}
@@ -171,9 +193,31 @@ function CoachTimesPage() {
             ))}
           </div>
           <div className="space-y-1.5">
-            <div className={label}>{tr("Club", "Club", "Club")}</div>
-            <Input value={club} maxLength={120} onChange={(e) => setClub(e.target.value)} placeholder="Club de Pádel La Moraleja" />
+            <div className={label}>{tr("Where you teach", "Dónde das clase", "Où tu enseignes")}</div>
+            <div className="grid grid-cols-3 rounded-full border border-[var(--ink)]/12 p-1">
+              {([
+                ["club", tr("At a club", "En un club", "En club")],
+                ["travel", tr("I come to you", "A domicilio", "À domicile")],
+                ["both", tr("Both", "Ambos", "Les deux")],
+              ] as const).map(([v, text]) => (
+                <button key={v} type="button" onClick={() => setPlace(v)} aria-pressed={place === v}
+                  className={`h-8 rounded-full text-[13px] ${place === v ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/60"}`}>{text}</button>
+              ))}
+            </div>
           </div>
+          {offersClub(place) && (
+            <div className="space-y-1.5">
+              <div className={label}>{tr("Club", "Club", "Club")}</div>
+              <Input value={club} maxLength={120} onChange={(e) => setClub(e.target.value)} placeholder="Club de Pádel La Moraleja" />
+            </div>
+          )}
+          {offersTravel(place) && (
+            <div className="space-y-1.5">
+              <div className={label}>{tr("Areas you cover", "Zonas que cubres", "Zones couvertes")}</div>
+              <Input value={area} maxLength={120} onChange={(e) => setArea(e.target.value)} placeholder={tr("La Moraleja, El Soto, nearby urbanizaciones", "La Moraleja, El Soto, urbanizaciones cercanas", "La Moraleja, El Soto, urbanizaciones voisines")} />
+              <p className="text-[12px] text-[var(--ink)]/45">{tr("Players with a court at home or in their urbanización can ask you to come.", "Los jugadores con pista en casa o en su urbanización pueden pedirte que vayas.", "Les joueurs avec un court chez eux ou dans leur résidence peuvent te demander de venir.")}</p>
+            </div>
+          )}
           <div className="space-y-1.5">
             <div className={label}>{tr("Price (optional)", "Precio (opcional)", "Prix (optionnel)")}</div>
             <Input value={price} maxLength={40} onChange={(e) => setPrice(e.target.value)} placeholder={tr("€50 per hour", "50 € la hora", "50 € l'heure")} />
@@ -197,7 +241,7 @@ function CoachTimesPage() {
                   <li key={s.id} className="flex items-center gap-3 px-4 py-3">
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
-                      <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{s.club_name}{s.price_note ? ` · ${s.price_note}` : ""}</div>
+                      <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{where(s)}{s.price_note ? ` · ${s.price_note}` : ""}</div>
                     </div>
                     <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${s.status === "booked" ? "bg-[var(--pitch)]/12 text-[var(--pitch)]" : "bg-[var(--ink)]/[0.05] text-[var(--ink)]/60"}`}>
                       {s.status === "booked" ? (p?.first_name ?? tr("Booked", "Reservada", "Réservé")) : tr("Open", "Libre", "Libre")}

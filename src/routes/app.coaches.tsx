@@ -2,12 +2,12 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, X } from "lucide-react";
+import { ArrowLeft, Home, MapPin, X } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { getCoachBoard, requestCoachSlot, cancelCoachSlot } from "@/lib/coach-lessons.functions";
-import { dayKey, firstOpenDay, groupDay, nextDays, openCountByDay, type CoachSlot } from "@/lib/coach-lessons";
+import { dayKey, firstOpenDay, groupDay, nextDays, offersClub, offersTravel, openCountByDay, requestPlace, type CoachSlot } from "@/lib/coach-lessons";
 
 export const Route = createFileRoute("/app/coaches")({
   head: () => ({ meta: [
@@ -40,6 +40,12 @@ function CoachesPage() {
   const groups = groupDay(visible, day);
   const [confirm, setConfirm] = useState<CoachSlot | null>(null);
   const [note, setNote] = useState("");
+  const [choice, setChoice] = useState<"club" | "travel" | null>(null);
+  const chosen = confirm ? requestPlace(confirm.lesson_place ?? "club", choice) : null;
+  const comesToMe = chosen === "travel";
+  const homeLabel = tr("Comes to you", "A domicilio", "À domicile");
+  const lessonWhere = (s: CoachSlot) => s.student_place === "travel" ? tr("At your place", "En tu casa", "Chez toi") : s.club_name;
+  function openRequest(s: CoachSlot) { setConfirm(s); setChoice(null); setNote(""); }
   const [busy, setBusy] = useState(false);
   const time = (iso: string) => new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   const longDate = (iso: string) => new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
@@ -47,9 +53,11 @@ function CoachesPage() {
 
   async function send() {
     if (!confirm) return;
+    if (!chosen) { toast.error(tr("Choose the club or your place", "Elige el club o tu casa", "Choisis le club ou chez toi")); return; }
+    if (chosen === "travel" && !note.trim()) { toast.error(tr("Tell the coach where to come", "Dile al entrenador dónde ir", "Indique au coach où venir")); return; }
     setBusy(true);
     try {
-      await request({ data: { slotId: confirm.id, note: note.trim() || null } });
+      await request({ data: { slotId: confirm.id, note: note.trim() || null, place: chosen } });
       toast.success(tr("Request sent. The coach will confirm.", "Solicitud enviada. El entrenador confirmará.", "Demande envoyée. Le coach confirmera."));
       setConfirm(null); setNote("");
       await qc.invalidateQueries({ queryKey: ["coach-board"] });
@@ -88,7 +96,7 @@ function CoachesPage() {
                 <li key={s.id} className="flex items-center gap-3 px-4 py-3">
                   <div className="min-w-0 flex-1">
                     <div className="text-[15px] font-medium text-[var(--ink)] truncate">{person(s.coach_profile_id)?.first_name ?? tr("Coach", "Entrenador", "Coach")} · {longDate(s.starts_at)} {time(s.starts_at)}</div>
-                    <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{s.club_name}</div>
+                    <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{lessonWhere(s)}</div>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${s.status === "booked" ? "bg-[var(--pitch)]/12 text-[var(--pitch)]" : "bg-[var(--gold)]/15 text-[var(--ink)]"}`}>
                     {s.status === "booked" ? tr("Confirmed", "Confirmada", "Confirmé") : tr("Waiting", "Pendiente", "En attente")}
@@ -132,12 +140,17 @@ function CoachesPage() {
                       <span className="shrink-0 text-[14px] text-[var(--ink)]/55">{g.duration}'</span>
                     </div>
                     <div className="mt-1 text-[14px] text-[var(--ink)]/55">{tr("Private lesson", "Clase privada", "Cours privé")}{g.price ? ` · ${g.price}` : ""}</div>
-                    <div className="mt-1 flex items-center gap-1 text-[12.5px] text-[var(--ink)]/45 min-w-0"><MapPin className="size-3.5 shrink-0" /><span className="truncate">{g.club}</span></div>
+                    {offersClub(g.place) && (
+                      <div className="mt-1 flex items-center gap-1 text-[12.5px] text-[var(--ink)]/45 min-w-0"><MapPin className="size-3.5 shrink-0" /><span className="truncate">{g.club}</span></div>
+                    )}
+                    {offersTravel(g.place) && (
+                      <div className="mt-1 flex items-center gap-1 text-[12.5px] text-[var(--pitch)] min-w-0"><Home className="size-3.5 shrink-0" /><span className="truncate">{homeLabel}{g.area ? ` · ${g.area}` : ""}</span></div>
+                    )}
                   </div>
                 </div>
                 <div className="mt-3.5 border-t border-[var(--ink)]/[0.08] pt-3.5 grid grid-cols-4 gap-2">
                   {g.slots.map((s) => (
-                    <button key={s.id} type="button" onClick={() => setConfirm(s)}
+                    <button key={s.id} type="button" onClick={() => openRequest(s)}
                       className="h-9 rounded-full border border-[var(--ink)]/20 text-[14px] text-[var(--ink)] active:bg-[var(--ink)] active:text-[var(--cream)] transition">
                       {time(s.starts_at)}
                     </button>
@@ -170,9 +183,28 @@ function CoachesPage() {
             <p className="mt-2 text-[15px] text-[var(--ink)]/70">
               {person(confirm.coach_profile_id)?.first_name} · {longDate(confirm.starts_at)} · {time(confirm.starts_at)} · {confirm.duration_minutes}'
             </p>
-            <p className="text-[13px] text-[var(--ink)]/50">{confirm.club_name}{confirm.price_note ? ` · ${confirm.price_note}` : ""}</p>
+            <p className="text-[13px] text-[var(--ink)]/50">
+              {confirm.lesson_place === "travel" ? `${homeLabel} · ${confirm.travel_area ?? confirm.club_name}` : confirm.club_name}
+              {confirm.price_note ? ` · ${confirm.price_note}` : ""}
+            </p>
+            {confirm.lesson_place === "both" && (
+              <div className="mt-4 grid grid-cols-2 rounded-full border border-[var(--ink)]/12 p-1">
+                {([
+                  ["club", tr("At the club", "En el club", "Au club")],
+                  ["travel", tr("Come to me", "A domicilio", "Chez moi")],
+                ] as const).map(([v, text]) => (
+                  <button key={v} type="button" onClick={() => setChoice(v)} aria-pressed={choice === v}
+                    className={`h-9 rounded-full text-[14px] ${choice === v ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/60"}`}>{text}</button>
+                ))}
+              </div>
+            )}
+            {confirm.lesson_place === "both" && confirm.travel_area && (
+              <p className="mt-1.5 text-[12px] text-[var(--ink)]/45">{tr(`Covers ${confirm.travel_area}`, `Cubre ${confirm.travel_area}`, `Couvre ${confirm.travel_area}`)}</p>
+            )}
             <textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={200} rows={2}
-              placeholder={tr("Anything the coach should know? (optional)", "¿Algo que deba saber el entrenador? (opcional)", "Quelque chose à dire au coach ? (optionnel)")}
+              placeholder={comesToMe
+                ? tr("Your urbanización or address", "Tu urbanización o dirección", "Ta résidence ou adresse")
+                : tr("Anything the coach should know? (optional)", "¿Algo que deba saber el entrenador? (opcional)", "Quelque chose à dire au coach ? (optionnel)")}
               className="mt-4 w-full rounded-xl border border-[var(--ink)]/15 bg-white px-3 py-2.5 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none" />
             <p className="mt-2 text-[12px] text-[var(--ink)]/45">{tr("The coach confirms the lesson. Payment is arranged with the coach.", "El entrenador confirma la clase. El pago se acuerda con él.", "Le coach confirme le cours. Le paiement se règle avec lui.")}</p>
             <button type="button" disabled={busy} onClick={send} className="mt-4 h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] disabled:opacity-60">

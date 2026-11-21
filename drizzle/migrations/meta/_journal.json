@@ -232,6 +232,13 @@
       "when": 1795267376629,
       "tag": "0032_share_playtomic_matches",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795268433556,
+      "tag": "0033_coach_lessons_at_club_or_home",
+      "breakpoints": true
     }
   ]
 }

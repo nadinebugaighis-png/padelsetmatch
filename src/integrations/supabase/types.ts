@@ -152,11 +152,14 @@ export type Database = {
           created_at: string
           duration_minutes: number
           id: string
+          lesson_place: string
           price_note: string | null
           starts_at: string
           status: string
           student_note: string | null
+          student_place: string | null
           student_profile_id: string | null
+          travel_area: string | null
           updated_at: string
         }
         Insert: {
@@ -165,11 +168,14 @@ export type Database = {
           created_at?: string
           duration_minutes?: number
           id?: string
+          lesson_place?: string
           price_note?: string | null
           starts_at: string
           status?: string
           student_note?: string | null
+          student_place?: string | null
           student_profile_id?: string | null
+          travel_area?: string | null
           updated_at?: string
         }
         Update: {
@@ -178,11 +184,14 @@ export type Database = {
           created_at?: string
           duration_minutes?: number
           id?: string
+          lesson_place?: string
           price_note?: string | null
           starts_at?: string
           status?: string
           student_note?: string | null
+          student_place?: string | null
           student_profile_id?: string | null
+          travel_area?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2344,7 +2353,7 @@ export type Database = {
       }
       record_app_share: { Args: { _channel: string }; Returns: undefined }
       request_coach_slot: {
-        Args: { _note?: string; _slot: string }
+        Args: { _note?: string; _place?: string; _slot: string }
         Returns: undefined
       }
       resolve_short_link: { Args: { _code: string }; Returns: string }

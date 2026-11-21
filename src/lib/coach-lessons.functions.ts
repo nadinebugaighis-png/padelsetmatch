@@ -1,11 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import type { CoachSlot } from "@/lib/coach-lessons";
+import { placeFields, type CoachSlot } from "@/lib/coach-lessons";
 
 export type LessonPerson = { id: string; first_name: string | null; photo_url: string | null; zone: string | null };
 
-const SLOT_COLS = "id, coach_profile_id, starts_at, duration_minutes, club_name, price_note, status, student_profile_id, student_note";
+const SLOT_COLS = "id, coach_profile_id, starts_at, duration_minutes, club_name, price_note, status, student_profile_id, student_note, lesson_place, travel_area, student_place";
 
 type Sb = { from: (t: string) => any; rpc: (fn: string, args: Record<string, unknown>) => any };
 
@@ -63,16 +63,20 @@ export const addCoachSlots = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({
     starts: z.array(z.string().datetime()).min(1).max(24),
     duration_minutes: z.union([z.literal(60), z.literal(90)]),
-    club_name: z.string().trim().min(1).max(120),
+    lesson_place: z.enum(["club", "travel", "both"]),
+    club_name: z.string().trim().max(120),
+    travel_area: z.string().trim().max(120),
     price_note: z.string().trim().max(40).nullable(),
   }).parse(d))
   .handler(async ({ data, context }) => {
     const sb = context.supabase as unknown as Sb;
     const profile = await me(sb, context.userId);
     if (!profile?.is_coach) throw new Error("Turn on coach mode first");
+    const place = placeFields(data.lesson_place, data.club_name, data.travel_area);
+    if (!place) throw new Error(data.lesson_place === "club" ? "Add the club" : "Add the club and the areas you cover");
     const rows = data.starts.filter((s) => new Date(s).getTime() > Date.now()).map((starts_at) => ({
       coach_profile_id: profile.id, starts_at, duration_minutes: data.duration_minutes,
-      club_name: data.club_name, price_note: data.price_note || null,
+      lesson_place: data.lesson_place, ...place, price_note: data.price_note || null,
     }));
     if (!rows.length) throw new Error("Pick a time that hasn't passed");
     const { error } = await sb.from("coach_slots").upsert(rows, { onConflict: "coach_profile_id,starts_at", ignoreDuplicates: true });
@@ -84,9 +88,12 @@ const SlotId = z.object({ slotId: z.string().uuid() });
 
 export const requestCoachSlot = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => SlotId.extend({ note: z.string().trim().max(200).nullable() }).parse(d))
+  .inputValidator((d: unknown) => SlotId.extend({
+    note: z.string().trim().max(200).nullable(),
+    place: z.enum(["club", "travel"]).nullable(),
+  }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await (context.supabase as unknown as Sb).rpc("request_coach_slot", { _slot: data.slotId, _note: data.note });
+    const { error } = await (context.supabase as unknown as Sb).rpc("request_coach_slot", { _slot: data.slotId, _note: data.note, _place: data.place });
     if (error) throw new Error(error.message);
     return { ok: true };
   });

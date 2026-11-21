@@ -222,7 +222,7 @@ function Onboarding() {
   const switchToEmail = async () => {
     await qc.cancelQueries();
     qc.clear();
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     navigate({ to: "/auth", search: { redirect: undefined, join: undefined }, replace: true });
   };
 

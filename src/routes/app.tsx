@@ -46,7 +46,7 @@ export const Route = createFileRoute("/app")({
           ? (error as { status?: number }).status
           : undefined;
         if (status === 401 || status === 403) {
-          try { await supabase.auth.signOut(); } catch { /* ignore */ }
+          try { await supabase.auth.signOut({ scope: "local" }); } catch { /* ignore */ }
           throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
         }
         // Network hiccup: trust the stored session and let the app load.
@@ -257,7 +257,7 @@ function AuthShell() {
   const onSignOut = async () => {
     await qc.cancelQueries();
     qc.clear();
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     navigate({ to: "/auth", search: { redirect: undefined, join: undefined }, replace: true });
   };
 

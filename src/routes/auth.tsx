@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { BrandMark } from "@/components/BrandMark";
 import { isNative, nativeAppleSignIn } from "@/lib/native";
+import { exchangeNativeAppleToken } from "@/lib/apple-native.functions";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { SessionLoading } from "@/components/SessionLoading";
 import { AuthTimeoutError, normalizeEmail, withAuthTimeout } from "@/lib/auth-input";
@@ -403,11 +404,14 @@ function AuthPage() {
         navigate(afterAuthTarget() as never);
         return;
       }
-      const { error } = await withAuthTimeout(supabase.auth.signInWithIdToken({
-        provider: "apple",
-        token: res.identityToken,
-        nonce: res.nonce,
-      }));
+      let error: unknown = null;
+      try {
+        const { tokenHash } = await withAuthTimeout(exchangeNativeAppleToken({ data: { identityToken: res.identityToken, nonce: res.nonce } }));
+        ({ error } = await withAuthTimeout(supabase.auth.verifyOtp({ token_hash: tokenHash, type: "magiclink" })));
+      } catch (e) {
+        if (e instanceof AuthTimeoutError) throw e;
+        error = e;
+      }
       if (error) {
         // The Apple sheet finished but the sign-in service refused the result.
         // Never leave the player stuck on a raw technical message: point them

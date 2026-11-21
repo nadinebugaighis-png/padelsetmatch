@@ -15,7 +15,7 @@ import {
 } from "@/lib/match-events.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Search, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { MapPin, X, Trash2, Clock, Users, Send, Plus } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
 import { CourtViewCard } from "@/components/CourtViewCard";
 import { toast } from "sonner";
@@ -94,13 +94,11 @@ type EventLite = {
   guests?: Array<{ id: string; display_name: string; level?: string | null }>;
 };
 
-type TimeOfDay = "all" | "morning" | "afternoon" | "evening";
-
 function EventsPage() {
   const [chooser, setChooser] = useState(false);
   const navigate = useNavigate();
   const tr = useTr();
-  const { lang, label } = useI18n();
+  const { lang } = useI18n();
   const qc = useQueryClient();
 
   const list = useServerFn(listOpenEvents);
@@ -111,21 +109,20 @@ function EventsPage() {
   const duplicate = useServerFn(duplicateMatchEvent);
   const getProfile = useServerFn(getMyProfile);
 
-  const [worldwide, setWorldwide] = useState(false);
-  const [search, setSearch] = useState("");
   const [mode, setMode] = useState<"find" | "mine">("find");
-  const myAreasOnly = !worldwide;
 
   const profileQ = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getProfile(),
     retry: false,
   });
-  const myLevel: string | undefined = (profileQ.data as any)?.level;
+  // Players see their own areas; anyone without an area (e.g. World) sees every game.
+  const myAreasOnly = (((profileQ.data as { locations?: string[] | null } | undefined)?.locations) ?? []).length > 0;
 
   const eventsQ = useQuery({
     queryKey: ["open-events", myAreasOnly],
     queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
+    enabled: !profileQ.isPending,
     refetchOnWindowFocus: true,
     refetchInterval: 15_000,
     staleTime: 10_000,
@@ -169,11 +166,7 @@ function EventsPage() {
     }
     return defaultMatchDays(keys);
   });
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("all");
-  const [levelOnly, setLevelOnly] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const allDates = selectedDays.size === days.length;
-  const activeFilterCount = Number(levelOnly) + Number(timeOfDay !== "all");
 
   // Bring back the days chosen earlier in this session (e.g. after opening a match).
   useEffect(() => {
@@ -195,52 +188,21 @@ function EventsPage() {
     chooseDays(toggleMatchDay(selectedDays, k, days.map(dayKey)));
   }
 
-  const searchLower = search.trim().toLowerCase();
-  function eventMatchesName(e: EventLite) {
-    if (!searchLower) return true;
-    const hostName = e.host?.first_name ?? "";
-    if (hostName.toLowerCase().includes(searchLower)) return true;
-    if (e.club_name?.toLowerCase().includes(searchLower)) return true;
-    if (e.city?.toLowerCase().includes(searchLower)) return true;
-    if (e.club_address?.toLowerCase().includes(searchLower)) return true;
-    if (e.participants?.some((p) => p?.profiles?.first_name?.toLowerCase().includes(searchLower))) return true;
-    return e.guests?.some((guest) => guest.display_name.toLowerCase().includes(searchLower)) ?? false;
-  }
-  function eventMatchesTime(e: EventLite) {
-    // A game with no hour yet suits any time of day.
-    if (timeOfDay === "all" || e.time_tbd) return true;
-    const h = new Date(e.starts_at).getHours();
-    if (timeOfDay === "morning") return h < 12;
-    if (timeOfDay === "afternoon") return h >= 12 && h < 17;
-    return h >= 17;
-  }
-  function eventMatchesLevel(e: EventLite) {
-    if (!myLevel) return true;
-    const my = LEVEL_INDEX[myLevel];
-    const lo = LEVEL_INDEX[e.level_min ?? "casual"] ?? 0;
-    const hi = LEVEL_INDEX[e.level_max ?? "advanced"] ?? 4;
-    return my >= lo && my <= hi;
-  }
-
   const all = (eventsQ.data?.events ?? []) as EventLite[];
 
   const filtered = useMemo(
     () => all
-      .filter(eventMatchesName)
       .filter((e) => selectedDays.has(dayKey(new Date(e.starts_at))))
-      .filter((e) => eventMatchesTime(e))
-      .filter((e) => !levelOnly || eventMatchesLevel(e))
       .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
-    [all, searchLower, selectedDays, timeOfDay, levelOnly, myLevel],
+    [all, selectedDays],
   );
 
 
   const myEvents = useMemo(
     () => all
       .filter((e) => e.iAmParticipant)
-      .filter(eventMatchesName)
       .sort((a, b) => a.starts_at.localeCompare(b.starts_at)),
-    [all, searchLower],
+    [all],
   );
   const mineCount = useMemo(() => all.filter((e) => e.iAmParticipant).length, [all]);
 
@@ -377,14 +339,9 @@ function EventsPage() {
     <div className="programme-page match-feed-page min-h-[calc(100vh-4rem)]">
       <CreateMatchChooser open={chooser} onClose={() => setChooser(false)} />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-3 sm:pt-4 pb-24">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
-            {tr("MATCHES", "PARTIDOS", "MATCHES")}
-          </h1>
-          <Button onClick={() => setChooser(true)} className="h-9 px-3 sm:px-4 shrink-0 shadow-none">
-            <Plus />{tr("Start a match", "Convocar partido", "Lancer un match")}
-          </Button>
-        </div>
+        <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
+          {tr("MATCHES", "PARTIDOS", "MATCHES")}
+        </h1>
 
         <div className="mt-2 mb-2 flex items-center justify-between gap-2 border-b border-border">
           <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-3 sm:gap-5">
@@ -400,12 +357,7 @@ function EventsPage() {
               {tr("Competitions", "Competiciones", "Compétitions")}
             </Button>
           </div>
-          <Button variant="ghost" size="sm" aria-pressed={worldwide} onClick={() => setWorldwide((v) => !v)}
-            className="shrink-0 gap-1 px-1 text-xs text-muted-foreground">
-            <MapPin className="size-3.5" />
-            {!worldwide ? tr("My areas", "Mis zonas", "Mes zones") : tr("All matches", "Todos", "Partout")}
-            <ChevronDown className="size-3" />
-          </Button>
+          {mode === "find" && <AlertsButton />}
         </div>
 
         {mode === "find" && (
@@ -432,53 +384,9 @@ function EventsPage() {
           </div>
         )}
 
-        <div className="flex items-center gap-2 mt-1">
-          <div className="relative flex-1 min-w-0">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-            <input type="search" value={search} onChange={(e) => setSearch(e.target.value)}
-              aria-label={tr("Search matches", "Buscar partidos", "Rechercher des matchs")}
-              placeholder={tr("Club, city or player", "Club, ciudad o jugador", "Club, ville ou joueur")}
-              className="h-9 w-full rounded-md bg-accent border border-input pl-9 pr-9 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary" />
-            {search && <Button variant="ghost" size="icon" aria-label={tr("Clear search", "Borrar búsqueda", "Effacer la recherche")}
-              onClick={() => setSearch("")} className="absolute right-0.5 top-0.5 size-9"><X /></Button>}
-          </div>
-          {mode === "find" && (
-            <>
-              <Button variant="outline" aria-expanded={filtersOpen} aria-controls="match-filters" onClick={() => setFiltersOpen((v) => !v)} className="h-9 px-3 shadow-none gap-1.5">
-                <SlidersHorizontal />{tr("Filters", "Filtros", "Filtres")}
-                {activeFilterCount > 0 && <span className="text-xs">({activeFilterCount})</span>}
-              </Button>
-              <AlertsButton />
-            </>
-          )}
-        </div>
-
         {mode === "find" ? (
           <>
-            {filtersOpen && (
-              <div id="match-filters" className="mt-3 pb-3 border-b border-border flex flex-wrap items-center gap-2">
-                <Button variant="outline" size="sm" disabled={!myLevel} aria-pressed={levelOnly} onClick={() => setLevelOnly((v) => !v)}
-                  className={`shadow-none ${levelOnly ? "bg-accent border-primary/40" : ""}`}>
-                  {tr("For my level", "Para mi nivel", "Pour mon niveau")}
-                  {myLevel && <span className="text-muted-foreground">· {label(myLevel as any)}</span>}
-                </Button>
-                <div className="relative">
-                  <select aria-label={tr("Time of day", "Hora del día", "Moment de la journée")} value={timeOfDay} onChange={(e) => setTimeOfDay(e.target.value as TimeOfDay)}
-                    className="h-9 rounded-md border border-input bg-background text-foreground pl-3 pr-8 appearance-none">
-                    <option value="all">{tr("All day", "Todo el día", "Toute la journée")}</option>
-                    <option value="morning">{tr("Morning", "Mañana", "Matin")}</option>
-                    <option value="afternoon">{tr("Afternoon", "Tarde", "Après-midi")}</option>
-                    <option value="evening">{tr("Evening", "Noche", "Soir")}</option>
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-4 pointer-events-none text-muted-foreground" />
-                </div>
-                {activeFilterCount > 0 && <Button variant="ghost" size="sm" onClick={() => { setTimeOfDay("all"); setLevelOnly(false); }}>
-                  <X />{tr("Reset", "Restablecer", "Réinitialiser")}
-                </Button>}
-              </div>
-            )}
-
-            {eventsQ.isLoading && !eventsQ.data ? (
+            {eventsQ.isPending ? (
               <div className="mt-6 space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="rounded-2xl border border-[var(--ink)]/8 bg-white p-4 space-y-2.5">
@@ -490,8 +398,6 @@ function EventsPage() {
               </div>
             ) : filtered.length === 0 ? (
               <EmptyFeed
-                worldwide={worldwide}
-                onExpandArea={() => setWorldwide(true)}
                 onResetDays={() =>
                   chooseDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
                 }
@@ -980,13 +886,9 @@ function SlotAvatar({
 // ---------- Empty state ----------
 
 function EmptyFeed({
-  worldwide,
-  onExpandArea,
   onResetDays,
   onCreate,
 }: {
-  worldwide: boolean;
-  onExpandArea: () => void;
   onResetDays: () => void;
   onCreate: () => void;
 }) {
@@ -1004,15 +906,6 @@ function EmptyFeed({
         >
           {tr("Show whole week", "Ver toda la semana", "Voir toute la semaine")}
         </button>
-        {!worldwide && (
-          <button
-            type="button"
-            onClick={onExpandArea}
-            className="rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold px-4 py-2"
-          >
-            {tr("Search all areas", "Buscar en todas las zonas", "Rechercher partout")}
-          </button>
-        )}
         <button
           type="button"
           onClick={onCreate}

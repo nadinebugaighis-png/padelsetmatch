@@ -298,7 +298,8 @@ export function AlertsButton({ seedCity, count }: { seedCity?: string | null; co
         type="button"
         onClick={() => setOpen(true)}
         title={tr("Match alerts", "Alertas", "Alertes")}
-        className="shrink-0 relative inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--ink)]/15 text-[var(--ink)]/70 hover:border-[var(--ink)]/35"
+        aria-label={tr("Match alerts", "Alertas de partidos", "Alertes de matchs")}
+        className="shrink-0 relative inline-flex items-center justify-center w-9 h-9 rounded-full text-[var(--ink)]/60 hover:text-[var(--ink)]"
       >
         <Bell className="w-4 h-4" />
         {count && count > 0 ? (

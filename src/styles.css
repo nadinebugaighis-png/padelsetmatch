@@ -395,11 +395,14 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 @media (min-width: 1024px) {
   .quick-actions { bottom: 2rem; }
 }
+/* Same see-through green glass as the floating bar, no gold ring. */
 .quick-actions-fab {
-  background: var(--ink);
+  background: color-mix(in oklab, var(--ink) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--cream) 12%, transparent);
   box-shadow:
-    0 0 0 1.5px color-mix(in oklab, var(--gold) 55%, transparent),
-    0 14px 28px -10px oklch(0 0 0 / 0.55);
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 14%, transparent),
+    0 14px 30px -12px oklch(0 0 0 / 0.5);
 }
 
 /* ---- Toasts: quiet, editorial, on-brand ---- */

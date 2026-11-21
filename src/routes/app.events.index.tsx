@@ -117,6 +117,13 @@ function EventsPage() {
   const getProfile = useServerFn(getMyProfile);
 
   const [mode, setMode] = useState<"find" | "mine">("find");
+  // The Competitions page's "My matches" tab asks for this tab once.
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("psm-matches-tab") === "mine") setMode("mine");
+      sessionStorage.removeItem("psm-matches-tab");
+    } catch { /* storage unavailable */ }
+  }, []);
 
   const profileQ = useQuery({
     queryKey: ["my-profile"],

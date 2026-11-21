@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPosterUrls } from "@/lib/competitions.functions";
-import { Plus, CalendarDays, CircleDot, ShieldCheck } from "lucide-react";
+import { Plus, CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useTr, useI18n } from "@/lib/i18n";
 import { canRegisterInApp, competitionPhase, formatLabel } from "@/lib/competitions";
@@ -60,20 +61,29 @@ function CompetitionsPage() {
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pt-2 pb-32">
-        {/* Icon tabs, as in a members' club programme */}
-        <div className="grid grid-cols-2 border-b border-[var(--ink)]/12">
-          <Link to="/app/events" className="flex flex-col items-center gap-1.5 pt-2 pb-3 text-[var(--ink)]/55">
-            <CircleDot className="size-[22px]" strokeWidth={1.5} />
-            <span className="text-[14px]">{tr("Matches", "Partidos", "Matchs")}</span>
-          </Link>
-          <div className="relative flex flex-col items-center gap-1.5 pt-2 pb-3 text-[var(--ink)]">
-            <ShieldCheck className="size-[22px]" strokeWidth={1.5} />
-            <span className="text-[14px] font-medium">{tr("Competitions", "Competiciones", "Compétitions")}</span>
-            <span className="absolute -bottom-px h-[3px] w-24 rounded-t-full bg-[var(--ink)]" />
+        {/* Same heading and tabs as the Matches page, with Competitions selected. */}
+        <div className="px-4 sm:px-6 lg:px-10 pt-1 sm:pt-2">
+          <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
+            {tr("MATCHES", "PARTIDOS", "MATCHES")}
+          </h1>
+          <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="mt-2 mb-2 flex min-w-0 gap-3 sm:gap-5 border-b border-border">
+            <Button role="tab" aria-selected={false} variant="ghost" onClick={() => navigate({ to: "/app/events" })}
+              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-transparent text-muted-foreground hover:bg-transparent">
+              {tr("Find a match", "Buscar partido", "Trouver un match")}
+            </Button>
+            <Button role="tab" aria-selected={false} variant="ghost"
+              onClick={() => { try { sessionStorage.setItem("psm-matches-tab", "mine"); } catch { /* ignore */ } navigate({ to: "/app/events" }); }}
+              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-transparent text-muted-foreground hover:bg-transparent">
+              {tr("My matches", "Mis partidos", "Mes matchs")}
+            </Button>
+            <Button role="tab" aria-selected variant="ghost"
+              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-primary text-primary hover:bg-transparent">
+              {tr("Competitions", "Competiciones", "Compétitions")}
+            </Button>
           </div>
         </div>
 
-        <div className="px-5 pt-6">
+        <div className="px-4 sm:px-6 lg:px-10 pt-4">
           <div className="-mt-1 mb-5 flex justify-end">
             <button type="button" onClick={() => navigate({ to: "/app/competitions/new" })}
               className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[var(--ink)]/20 bg-white px-3.5 text-[13px] font-medium text-[var(--ink)]">
@@ -91,7 +101,7 @@ function CompetitionsPage() {
               <div className="mt-2 border-t border-[var(--ink)]/10 pt-6">
                 <h2 className="text-serif text-[24px] leading-tight text-[var(--ink)]">{tr("Past competitions", "Competiciones pasadas", "Compétitions passées")}</h2>
                 {past.length > 0 && (
-                  <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 opacity-75">
+                  <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 items-start gap-x-4 gap-y-6 opacity-75">
                     {past.map((c) => <PosterCard key={c.id} c={c} past locale={locale} tr={tr} />)}
                   </div>
                 )}
@@ -112,7 +122,7 @@ function Section({ title, items, live, empty, locale, tr }: { title: string; ite
       {items.length === 0 ? (
         <p className="mt-4 text-[15px] text-[var(--ink)]/50">{empty}</p>
       ) : (
-        <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6">
+        <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 items-start gap-x-4 gap-y-6">
           {items.map((c) => <PosterCard key={c.id} c={c} live={live} locale={locale} tr={tr} />)}
         </div>
       )}
@@ -137,9 +147,10 @@ function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: b
     : tr(`${joined} of ${c.capacity} signed up`, `${joined} de ${c.capacity} apuntados`, `${joined} sur ${c.capacity} inscrits`);
   return (
     <Link to="/app/competitions/$competitionId" params={{ competitionId: c.id }} className="group block min-w-0">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-[var(--ink)] shadow-[0_14px_30px_-18px_rgba(15,62,46,0.6)]">
+      {/* Posters show whole, never cropped; only the drawn fallback keeps a fixed shape. */}
+      <div className={`relative overflow-hidden rounded-[22px] bg-[var(--ink)] shadow-[0_14px_30px_-18px_rgba(15,62,46,0.6)] ${c.poster_url ? "" : "aspect-[4/5]"}`}>
         {c.poster_url ? (
-          <img src={c.poster_url} alt="" className="h-full w-full object-cover transition-transform duration-500 group-active:scale-[1.02]" loading="lazy" />
+          <img src={c.poster_url} alt="" className="block h-auto w-full transition-transform duration-500 group-active:scale-[1.02]" loading="lazy" />
         ) : (
           <div className="relative flex h-full flex-col items-center justify-center px-4 pt-4 text-center bg-[radial-gradient(120%_80%_at_50%_0%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_60%)]">
             <span className="absolute inset-2.5 rounded-[16px] border border-[var(--gold)]/35" />
@@ -161,7 +172,7 @@ function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: b
           </span>
         )}
       </div>
-      <div className="mt-2.5 text-[16px] font-semibold leading-snug text-[var(--ink)] truncate">{c.title}</div>
+      <div className="mt-2.5 text-serif text-[18px] leading-snug text-[var(--ink)] line-clamp-2">{c.title}</div>
       <div className="mt-0.5 flex items-center gap-1.5 text-[13.5px] text-[var(--ink)]/50 min-w-0">
         <CalendarDays className="size-3.5 shrink-0" strokeWidth={1.5} /><span className="truncate">{dates}</span>
       </div>

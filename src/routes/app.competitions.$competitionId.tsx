@@ -109,7 +109,7 @@ function CompetitionDetail() {
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md mx-auto px-4 pt-3 pb-24">
         <Button variant="ghost" size="icon" onClick={() => navigate({ to: "/app/competitions" })} aria-label={tr("Back", "Atrás", "Retour")}><ArrowLeft /></Button>
-        {posterUrl && <img src={posterUrl} alt="" className="mt-2 w-full rounded-2xl object-cover max-h-[460px]" />}
+        {posterUrl && <img src={posterUrl} alt="" className="mt-2 block h-auto w-full rounded-2xl" />}
         <div className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[var(--gold)]">
           <span>{formatLabel(comp.format, tr)}</span>
           <span className="h-px w-4 bg-current" />

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { competitionPhase } from "./competitions";
+import { canRegisterInApp, competitionPhase } from "./competitions";
 
 describe("competitionPhase", () => {
   const now = new Date("2026-11-21T12:00:00Z");
@@ -11,5 +11,12 @@ describe("competitionPhase", () => {
   });
   it("is past after the end", () => {
     expect(competitionPhase("2026-11-01T10:00:00Z", "2026-11-02T20:00:00Z", now)).toBe("past");
+  });
+});
+
+describe("competition sign-up", () => {
+  it("lets players register in the app only for competitions PadelSetMatch hosts", () => {
+    expect(canRegisterInApp({ hosted: true })).toBe(true);
+    expect(canRegisterInApp({ hosted: false })).toBe(false);
   });
 });

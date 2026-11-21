@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsButton } from "@/components/AlertsSheet";
 import { Button } from "@/components/ui/button";
+import { CreateMatchChooser } from "@/components/CreateMatchChooser";
 import { defaultMatchDays, groupByDay, toggleMatchDay, MATCH_DAYS_STORAGE_KEY, restoreMatchDays, serializeMatchDays } from "@/lib/match-date-selection";
 
 export const Route = createFileRoute("/app/events/")({
@@ -96,6 +97,7 @@ type EventLite = {
 type TimeOfDay = "all" | "morning" | "afternoon" | "evening";
 
 function EventsPage() {
+  const [chooser, setChooser] = useState(false);
   const navigate = useNavigate();
   const tr = useTr();
   const { lang, label } = useI18n();
@@ -373,12 +375,13 @@ function EventsPage() {
 
   return (
     <div className="programme-page match-feed-page min-h-[calc(100vh-4rem)]">
+      <CreateMatchChooser open={chooser} onClose={() => setChooser(false)} />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-3 sm:pt-4 pb-24">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
             {tr("MATCHES", "PARTIDOS", "MATCHES")}
           </h1>
-          <Button onClick={() => navigate({ to: "/app/events/new" })} className="h-9 px-3 sm:px-4 shrink-0 shadow-none">
+          <Button onClick={() => setChooser(true)} className="h-9 px-3 sm:px-4 shrink-0 shadow-none">
             <Plus />{tr("Start a match", "Convocar partido", "Lancer un match")}
           </Button>
         </div>
@@ -492,7 +495,7 @@ function EventsPage() {
                 onResetDays={() =>
                   chooseDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
                 }
-                onCreate={() => navigate({ to: "/app/events/new" })}
+                onCreate={() => setChooser(true)}
               />
             ) : (
               <div className="mt-3 space-y-4">

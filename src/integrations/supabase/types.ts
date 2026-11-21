@@ -145,6 +145,63 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_slots: {
+        Row: {
+          club_name: string
+          coach_profile_id: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          price_note: string | null
+          starts_at: string
+          status: string
+          student_note: string | null
+          student_profile_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          club_name: string
+          coach_profile_id: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          price_note?: string | null
+          starts_at: string
+          status?: string
+          student_note?: string | null
+          student_profile_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          club_name?: string
+          coach_profile_id?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          price_note?: string | null
+          starts_at?: string
+          status?: string
+          student_note?: string | null
+          student_profile_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_slots_coach_profile_id_fkey"
+            columns: ["coach_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coach_slots_student_profile_id_fkey"
+            columns: ["student_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compatibility_feedback: {
         Row: {
           created_at: string
@@ -284,9 +341,11 @@ export type Database = {
           description: string | null
           ends_at: string | null
           format: string
+          hosted: boolean
           id: string
           level_note: string | null
           poster_url: string | null
+          signup_url: string | null
           starts_at: string
           title: string
           updated_at: string
@@ -300,9 +359,11 @@ export type Database = {
           description?: string | null
           ends_at?: string | null
           format?: string
+          hosted?: boolean
           id?: string
           level_note?: string | null
           poster_url?: string | null
+          signup_url?: string | null
           starts_at: string
           title: string
           updated_at?: string
@@ -316,9 +377,11 @@ export type Database = {
           description?: string | null
           ends_at?: string | null
           format?: string
+          hosted?: boolean
           id?: string
           level_note?: string | null
           poster_url?: string | null
+          signup_url?: string | null
           starts_at?: string
           title?: string
           updated_at?: string
@@ -2147,6 +2210,7 @@ export type Database = {
       }
       admin_top_sharers: { Args: never; Returns: Json }
       can_read_current_photo: { Args: { _path: string }; Returns: boolean }
+      cancel_coach_slot: { Args: { _slot: string }; Returns: undefined }
       check_app_health_alerts: { Args: never; Returns: Json }
       claim_pending_push_delivery: { Args: { _limit?: number }; Returns: Json }
       claim_push_outbox: { Args: { _limit?: number }; Returns: Json }
@@ -2276,7 +2340,15 @@ export type Database = {
         Returns: boolean
       }
       record_app_share: { Args: { _channel: string }; Returns: undefined }
+      request_coach_slot: {
+        Args: { _note?: string; _slot: string }
+        Returns: undefined
+      }
       resolve_short_link: { Args: { _code: string }; Returns: string }
+      respond_coach_slot: {
+        Args: { _accept: boolean; _slot: string }
+        Returns: undefined
+      }
       respond_to_intro: {
         Args: { _accept: boolean; _match_id: string }
         Returns: undefined

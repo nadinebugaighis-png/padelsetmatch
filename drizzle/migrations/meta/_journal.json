@@ -211,6 +211,20 @@
       "when": 1795261557927,
       "tag": "0029_competitions",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1795263957763,
+      "tag": "0030_coach_lessons_and_hosted_competitions",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795264387160,
+      "tag": "0031_coach_lesson_alerts_without_fixed_timezone",
+      "breakpoints": true
     }
   ]
 }

@@ -52,6 +52,8 @@ type Props = {
   title: string;
   /** When editing, the back arrow returns to this match instead of the feed. */
   backEventId?: string;
+  /** New matches: open on the club search or the free address field. */
+  startMode?: "club" | "address";
 };
 
 function toLocalDatetime(iso?: string | null) {
@@ -104,7 +106,7 @@ function SegButton({
   );
 }
 
-export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId }: Props) {
+export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode }: Props) {
   const tr = useTr();
   // People already in the lineup (0 when the host stepped out); a new match starts with the host.
   const appPlayersCount = Math.min(5, Math.max(0, initial?.app_players_count ?? 1));
@@ -115,7 +117,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   );
   const isClub = !!initial?.club_place_id;
   const [locMode, setLocMode] = useState<"club" | "address">(
-    initial ? (isClub ? "club" : "address") : "club",
+    initial ? (isClub ? "club" : "address") : startMode ?? "club",
   );
   const [club, setClub] = useState<ClubResult | null>(
     isClub

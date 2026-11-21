@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Plus, CalendarDays, CircleDot, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTr, useI18n } from "@/lib/i18n";
-import { competitionPhase, formatLabel } from "@/lib/competitions";
+import { canRegisterInApp, competitionPhase, formatLabel } from "@/lib/competitions";
 
 export const Route = createFileRoute("/app/competitions/")({
   head: () => ({ meta: [
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/app/competitions/")({
 
 export type CompetitionRow = {
   id: string; title: string; format: string; club_name: string; city: string | null;
-  starts_at: string; ends_at: string | null; capacity: number; poster_url: string | null;
+  starts_at: string; ends_at: string | null; capacity: number; poster_url: string | null; hosted: boolean;
   competition_entries: { count: number }[];
 };
 
@@ -32,7 +32,7 @@ function CompetitionsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("competitions")
-        .select("id,title,format,club_name,city,starts_at,ends_at,capacity,poster_url,competition_entries(count)")
+        .select("id,title,format,club_name,city,starts_at,ends_at,capacity,poster_url,hosted,competition_entries(count)")
         .order("starts_at", { ascending: true })
         .limit(100);
       if (error) throw error;
@@ -62,6 +62,12 @@ function CompetitionsPage() {
         </div>
 
         <div className="px-5 pt-6">
+          <div className="-mt-1 mb-5 flex justify-end">
+            <button type="button" onClick={() => navigate({ to: "/app/competitions/new" })}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[var(--ink)]/20 bg-white px-3.5 text-[13px] font-medium text-[var(--ink)]">
+              <Plus className="size-4" strokeWidth={1.75} />{tr("Announce a competition", "Anunciar competición", "Annoncer une compétition")}
+            </button>
+          </div>
           {isLoading ? (
             <div className="grid grid-cols-2 gap-4">
               {[0, 1].map((i) => <div key={i} className="aspect-[4/5] rounded-[22px] bg-[var(--ink)]/[0.06] animate-pulse" />)}
@@ -71,7 +77,7 @@ function CompetitionsPage() {
               <Section title={tr("Happening now", "En curso", "En cours")} items={live} live empty={tr("Nothing happening right now", "Nada en curso ahora mismo", "Rien en cours pour l'instant")} locale={locale} tr={tr} />
               <Section title={tr("Upcoming", "Próximas", "À venir")} items={upcoming} empty={nothing} locale={locale} tr={tr} />
               <div className="mt-2 border-t border-[var(--ink)]/10 pt-6">
-                <h2 className="text-[19px] font-semibold text-[var(--ink)]">{tr("Past competitions", "Competiciones pasadas", "Compétitions passées")}</h2>
+                <h2 className="text-serif text-[24px] leading-tight text-[var(--ink)]">{tr("Past competitions", "Competiciones pasadas", "Compétitions passées")}</h2>
                 {past.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 opacity-75">
                     {past.map((c) => <PosterCard key={c.id} c={c} past locale={locale} tr={tr} />)}
@@ -83,16 +89,6 @@ function CompetitionsPage() {
         </div>
       </div>
 
-      {/* Floating create button */}
-      <button
-        type="button"
-        onClick={() => navigate({ to: "/app/competitions/new" })}
-        aria-label={tr("Create a competition", "Crear competición", "Créer une compétition")}
-        className="fixed right-5 z-40 grid size-14 place-items-center rounded-full bg-[var(--ink)] text-[var(--cream)] ring-2 ring-[var(--cream)] shadow-[0_10px_24px_-6px_rgba(15,62,46,0.55)] active:scale-95 transition-transform lg:bottom-8"
-        style={{ bottom: "calc(max(env(safe-area-inset-bottom, 0px), 8px) + 132px)" }}
-      >
-        <Plus className="size-7" strokeWidth={1.75} />
-      </button>
     </div>
   );
 }
@@ -121,7 +117,10 @@ function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: b
   const dates = live && !multiDay
     ? `${tr("Since", "Desde", "Depuis")} ${fmt(start)} · ${c.club_name}`
     : multiDay ? `${fmt(start)} – ${fmt(end!)}` : `${fmt(start)} · ${c.club_name}`;
-  const count = past
+  const hosted = canRegisterInApp(c);
+  const count = !hosted
+    ? formatLabel(c.format, tr)
+    : past
     ? tr(`${joined} played`, `${joined} jugaron`, `${joined} ont joué`)
     : tr(`${joined} of ${c.capacity} signed up`, `${joined} de ${c.capacity} apuntados`, `${joined} sur ${c.capacity} inscrits`);
   return (
@@ -138,6 +137,11 @@ function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: b
             <span className="mt-3 max-w-full text-[9.5px] uppercase tracking-[0.2em] text-[var(--cream)]/75 truncate">{c.club_name}</span>
             <span className="mt-1 text-serif text-[13px] text-[var(--cream)]">{start.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" })}</span>
           </div>
+        )}
+        {hosted && (
+          <span className="absolute right-3 top-3 rounded-full bg-[var(--ink)]/85 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-[var(--gold)] ring-1 ring-[var(--gold)]/40">
+            {tr("Sign up", "Inscripción", "Inscription")}
+          </span>
         )}
         {live && (
           <span className="absolute left-3 top-3 rounded-full border border-[var(--plum)]/30 bg-[var(--cream)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--plum)] shadow-sm">

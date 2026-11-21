@@ -378,9 +378,28 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
 }
 @utility programme-nav {
+  background: color-mix(in oklab, var(--ink) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--gold) 32%, transparent);
+  border-radius: 9999px;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 14%, transparent),
+    0 18px 40px -16px oklch(0 0 0 / 0.55),
+    0 4px 12px -6px oklch(0 0 0 / 0.3);
+}
+
+/* + menu sits just above the floating bar on phones, bottom-right on desktop. */
+.quick-actions {
+  bottom: calc(max(env(safe-area-inset-bottom, 0px), 10px) + 90px);
+}
+@media (min-width: 1024px) {
+  .quick-actions { bottom: 2rem; }
+}
+.quick-actions-fab {
   background: var(--ink);
-  border-top: 1px solid color-mix(in oklab, var(--cream) 18%, transparent);
-  box-shadow: 0 -10px 28px -14px oklch(0 0 0 / 0.35);
+  box-shadow:
+    0 0 0 1.5px color-mix(in oklab, var(--gold) 55%, transparent),
+    0 14px 28px -10px oklch(0 0 0 / 0.55);
 }
 
 /* ---- Toasts: quiet, editorial, on-brand ---- */

@@ -31,3 +31,20 @@ export async function myProfileId(): Promise<string | null> {
   const { data: p } = await supabase.from("profiles").select("id").eq("user_id", data.user.id).maybeSingle();
   return p?.id ?? null;
 }
+
+/** Only PadelSetMatch-hosted competitions take sign-ups in the app; the rest are announcements. */
+export function canRegisterInApp(c: { hosted: boolean | null | undefined }): boolean {
+  return c.hosted === true;
+}
+
+/** Keeps organiser links to https pages only. */
+export function safeSignupUrl(raw: string | null | undefined): string | null {
+  const v = (raw ?? "").trim();
+  if (!v) return null;
+  try {
+    const u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    u.protocol = "https:";
+    return u.toString().slice(0, 500);
+  } catch { return null; }
+}

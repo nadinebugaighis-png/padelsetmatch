@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getIsAdmin } from "@/lib/admin.functions";
+import { Switch } from "@/components/ui/switch";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
@@ -8,14 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MatchDateTimePicker } from "@/components/MatchDateTimePicker";
 import { useTr } from "@/lib/i18n";
-import { COMPETITION_FORMATS, formatLabel, myProfileId } from "@/lib/competitions";
+import { COMPETITION_FORMATS, formatLabel, myProfileId, safeSignupUrl } from "@/lib/competitions";
 
 export const Route = createFileRoute("/app/competitions/new")({
   head: () => ({ meta: [
-    { title: "Create a Padel Competition | PadelSetMatch" },
-    { name: "description", content: "Organise an Americana, Pozo, tournament or league and let players sign up." },
-    { property: "og:title", content: "Create a Padel Competition | PadelSetMatch" },
-    { property: "og:description", content: "Organise an Americana, Pozo, tournament or league and let players sign up." },
+    { title: "Announce a Padel Competition | PadelSetMatch" },
+    { name: "description", content: "Announce an Americana, Pozo, tournament or league to the PadelSetMatch community." },
+    { property: "og:title", content: "Announce a Padel Competition | PadelSetMatch" },
+    { property: "og:description", content: "Announce an Americana, Pozo, tournament or league to the PadelSetMatch community." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -37,10 +41,19 @@ function NewCompetition() {
   const [description, setDescription] = useState("");
   const [poster, setPoster] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [hosted, setHosted] = useState(false);
+  const [signupUrl, setSignupUrl] = useState("");
+  const checkAdmin = useServerFn(getIsAdmin);
+  const { data: isAdmin } = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin(), retry: false });
 
   async function submit() {
     if (title.trim().length < 2 || !club.trim() || !start) {
       toast.error(tr("Add a name, a club and a start date.", "Añade nombre, club y fecha de inicio.", "Ajoute un nom, un club et une date."));
+      return;
+    }
+    const link = signupUrl.trim() ? safeSignupUrl(signupUrl) : null;
+    if (signupUrl.trim() && !link) {
+      toast.error(tr("Check the sign-up link", "Revisa el enlace de inscripción", "Vérifie le lien d'inscription"));
       return;
     }
     setSaving(true);
@@ -64,13 +77,15 @@ function NewCompetition() {
         club_name: club.trim(),
         starts_at: new Date(start).toISOString(),
         ends_at: end ? new Date(end).toISOString() : null,
-        capacity,
+        capacity: hosted && isAdmin ? capacity : 16,
+        hosted: !!(hosted && isAdmin),
+        signup_url: hosted && isAdmin ? null : link,
         level_note: level.trim() || null,
         description: description.trim() || null,
         poster_url: posterUrl,
       }).select("id").single();
       if (error) throw error;
-      toast.success(tr("Competition published", "Competición publicada", "Compétition publiée"));
+      toast.success(tr("Competition announced", "Competición anunciada", "Compétition annoncée"));
       navigate({ to: "/app/competitions/$competitionId", params: { competitionId: data.id } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not create it", "No se pudo crear", "Impossible de créer"));
@@ -82,7 +97,7 @@ function NewCompetition() {
       <div className="max-w-md mx-auto px-4 pt-3 pb-24 space-y-5">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={() => navigate({ to: "/app/competitions" })} aria-label={tr("Back", "Atrás", "Retour")}><ArrowLeft /></Button>
-          <h1 className="text-serif text-xl text-foreground">{tr("New competition", "Nueva competición", "Nouvelle compétition")}</h1>
+          <h1 className="text-serif text-xl text-foreground">{tr("Announce a competition", "Anunciar una competición", "Annoncer une compétition")}</h1>
         </div>
 
         <div className="space-y-1.5">
@@ -113,16 +128,33 @@ function NewCompetition() {
           <div className={label}>{tr("Ends (optional, for leagues)", "Termina (opcional, para ligas)", "Fin (optionnel, pour les ligues)")}</div>
           <MatchDateTimePicker value={end} onChange={setEnd} />
         </div>
+        {isAdmin && (
+          <label className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--gold)]/45 bg-white px-4 py-3">
+            <span>
+              <span className="block text-sm font-medium text-[var(--ink)]">{tr("Hosted by PadelSetMatch", "Organizada por PadelSetMatch", "Organisée par PadelSetMatch")}</span>
+              <span className="block text-xs text-[var(--ink)]/55">{tr("Players register in the app", "Los jugadores se inscriben en la app", "Les joueurs s'inscrivent dans l'app")}</span>
+            </span>
+            <Switch checked={hosted} onCheckedChange={setHosted} />
+          </label>
+        )}
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <div className={label}>{tr("Players", "Jugadores", "Joueurs")}</div>
-            <Input type="number" inputMode="numeric" min={4} max={128} value={capacity} onChange={(e) => setCapacity(Math.max(4, Math.min(128, Number(e.target.value) || 4)))} />
-          </div>
-          <div className="space-y-1.5">
+          {hosted && isAdmin && (
+            <div className="space-y-1.5">
+              <div className={label}>{tr("Players", "Jugadores", "Joueurs")}</div>
+              <Input type="number" inputMode="numeric" min={4} max={128} value={capacity} onChange={(e) => setCapacity(Math.max(4, Math.min(128, Number(e.target.value) || 4)))} />
+            </div>
+          )}
+          <div className={`space-y-1.5 ${hosted && isAdmin ? "" : "col-span-2"}`}>
             <div className={label}>{tr("Level (optional)", "Nivel (opcional)", "Niveau (optionnel)")}</div>
             <Input value={level} maxLength={60} onChange={(e) => setLevel(e.target.value)} placeholder={tr("All levels", "Todos los niveles", "Tous niveaux")} />
           </div>
         </div>
+        {!(hosted && isAdmin) && (
+          <div className="space-y-1.5">
+            <div className={label}>{tr("Sign-up link (optional)", "Enlace de inscripción (opcional)", "Lien d'inscription (optionnel)")}</div>
+            <Input value={signupUrl} maxLength={500} inputMode="url" onChange={(e) => setSignupUrl(e.target.value)} placeholder="playtomic.com/…" />
+          </div>
+        )}
         <div className="space-y-1.5">
           <div className={label}>{tr("Details (optional)", "Detalles (opcional)", "Détails (optionnel)")}</div>
           <Textarea value={description} maxLength={1500} rows={4} onChange={(e) => setDescription(e.target.value)} placeholder={tr("Price, prizes, dress code, how pairs are made", "Precio, premios, dress code, cómo se forman las parejas", "Prix, lots, tenue, formation des paires")} />

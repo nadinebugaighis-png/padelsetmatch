@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { GraduationCap } from "lucide-react";
@@ -36,9 +37,9 @@ export function CoachSelfSection({ isCoach }: { isCoach: boolean; profileId?: st
             <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Padel coach", "Entrenador de pádel", "Coach de padel")}</h2>
             <p className="text-xs text-[var(--ink)]/60 mt-0.5">
               {tr(
-                "Turn this on if you also coach. A coach badge shows on your profile.",
-                "Actívalo si también entrenas. Aparecerá un distintivo de entrenador en tu perfil.",
-                "Active si tu donnes aussi des cours. Un badge de coach s'affichera sur ton profil.",
+                "Turn this on if you also coach. Players can then book lessons at the times you share.",
+                "Actívalo si también entrenas. Los jugadores podrán reservar clases en los horarios que publiques.",
+                "Active si tu donnes aussi des cours. Les joueurs pourront réserver aux horaires que tu publies.",
               )}
             </p>
           </div>
@@ -53,6 +54,11 @@ export function CoachSelfSection({ isCoach }: { isCoach: boolean; profileId?: st
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isCoach ? "translate-x-5" : ""}`} />
         </button>
       </div>
+      {isCoach && (
+        <Link to="/app/coach" className="mt-4 flex h-11 items-center justify-center rounded-full bg-[var(--ink)] text-[14px] font-medium text-[var(--cream)]">
+          {tr("Share your lesson times", "Publica tus horarios de clases", "Publie tes horaires de cours")}
+        </Link>
+      )}
     </div>
   );
 }

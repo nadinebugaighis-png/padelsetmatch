@@ -65,3 +65,10 @@
 
 ## Second nationality (15 Nov)
 - [x] Optional second nationality on the profile form; cards show both with a plain space (e.g. "Libyan British"); matching checks both.
+
+## Floating bar, + menu, coaches and competitions
+- [x] Floating see-through green bar; + menu with Book a court, Create a match, Book a coach, Share the app.
+- [x] "Where are you playing?" step before the match form.
+- [x] Book a coach: coaches share times, players request, coach accepts/declines; checked end to end with two test players.
+- [x] Competitions: announcements by default, in-app sign-up only when hosted by PadelSetMatch.
+- [ ] Publish the website so players see it (requires Nadine to publish).

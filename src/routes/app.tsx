@@ -17,6 +17,7 @@ import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanne
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
 import { SessionLoading } from "@/components/SessionLoading";
+import { QuickActions } from "@/components/QuickActions";
 
 /** Never let a stalled session check leave the app on a blank screen. */
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
@@ -294,9 +295,12 @@ function AuthShell() {
   const hasProfile = !!profileQ.data;
   const onOnboarding = path.startsWith("/app/onboarding") || path.startsWith("/app/choose-location");
   const isAdmin = adminQ.data === true;
+  // The + menu shows on the main tabs only, never over forms or chats.
+  const cleanPath = path.replace(/\/+$/, "");
+  const showQuickActions = ["/app/grid", "/app/events", "/app/competitions", "/app/connect", "/app/profile"].includes(cleanPath);
 
   return (
-    <div className="min-h-screen pb-24 lg:pb-0 programme-page">
+    <div className="min-h-screen pb-28 lg:pb-0 programme-page">
       {/* Thin top progress bar so tab switches never blank the shell */}
       <div
         aria-hidden
@@ -378,22 +382,22 @@ function AuthShell() {
         <Link to="/support" className="block underline">{tr("Support", "Ayuda", "Assistance")}</Link>
       </div> : <Outlet />}
 
+      {hasProfile && !onOnboarding && showQuickActions && <QuickActions />}
+
       {hasProfile && !onOnboarding && (
         <nav
-          className="fixed left-0 right-0 bottom-0 programme-nav z-40 lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 lg:hidden px-3 pointer-events-none"
           style={{
-            paddingBottom: "max(env(safe-area-inset-bottom, 0px), 8px)",
+            paddingBottom: "max(env(safe-area-inset-bottom, 0px), 10px)",
             transform: "translateZ(0)",
             WebkitTransform: "translateZ(0)",
           }}
         >
-
-          <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto grid px-4" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
-            <NavTab to="/app/grid" onPrefetch={() => prefetchTab("/app/grid")} label={t("shell.tab.grid")} icon={<Home className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/grid")} />
-            <NavTab to="/app/events" onPrefetch={() => prefetchTab("/app/events")} label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-7 h-7" />} active={path.startsWith("/app/events")} />
-
-            <NavTab to="/app/connect" onPrefetch={() => prefetchTab("/app/connect")} label={t("shell.tab.connect")} icon={<Users className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
-            <NavTab to="/app/profile" onPrefetch={() => prefetchTab("/app/profile")} label={t("shell.tab.me")} icon={<User className="w-[26px] h-[26px]" strokeWidth={2.25} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
+          <div className="programme-nav pointer-events-auto max-w-md sm:max-w-lg mx-auto grid px-2" style={{ gridTemplateColumns: `repeat(4, minmax(0, 1fr))` }}>
+            <NavTab to="/app/grid" onPrefetch={() => prefetchTab("/app/grid")} label={t("shell.tab.grid")} icon={<Home className="w-[24px] h-[24px]" strokeWidth={2} />} active={path.startsWith("/app/grid")} />
+            <NavTab to="/app/events" onPrefetch={() => prefetchTab("/app/events")} label={t("shell.tab.play")} icon={<PlayMenuIcon className="w-[26px] h-[26px]" />} active={path.startsWith("/app/events") || path.startsWith("/app/competitions")} />
+            <NavTab to="/app/connect" onPrefetch={() => prefetchTab("/app/connect")} label={t("shell.tab.connect")} icon={<Users className="w-[24px] h-[24px]" strokeWidth={2} />} active={path.startsWith("/app/connect")} dot={connectHasNew} />
+            <NavTab to="/app/profile" onPrefetch={() => prefetchTab("/app/profile")} label={t("shell.tab.me")} icon={<User className="w-[24px] h-[24px]" strokeWidth={2} />} active={path.startsWith("/app/profile")} badge={matchesQ.data?.reduce((n, m) => n + (m.unread ?? 0), 0) ?? 0} />
           </div>
         </nav>
       )}
@@ -406,7 +410,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot, onP
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} onPointerDown={onPrefetch} onMouseEnter={onPrefetch} onTouchStart={onPrefetch} className={`flex min-h-[72px] sm:min-h-[76px] flex-col items-center justify-center gap-1.5 px-1 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.1em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
+    <Link to={to} aria-label={ariaLabel} onPointerDown={onPrefetch} onMouseEnter={onPrefetch} onTouchStart={onPrefetch} className={`flex min-h-[62px] flex-col items-center justify-center gap-1 px-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
@@ -421,7 +425,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot, onP
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
       {active && (
-        <span className="absolute bottom-2 w-1 h-1 rounded-full bg-[var(--cream)]" />
+        <span className="absolute bottom-1.5 w-1 h-1 rounded-full bg-[var(--gold)]" />
       )}
       {isHighlight && (
         <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--plum)] opacity-90">{t("shell.core")}</span>

@@ -230,3 +230,70 @@ export function clubWhatsappBookingUrl(input: {
   const text = clubBookingMessage({ clubDisplayName: wa.displayName, startsAt: input.startsAt, courtType: input.courtType, hostName: input.hostName });
   return `https://wa.me/${wa.number}?text=${encodeURIComponent(text)}`;
 }
+
+/* ------------------------------------------------------------------ */
+/* Book a court: curated clubs players can reserve directly            */
+/* ------------------------------------------------------------------ */
+export type BookCourtRegion = "madrid" | "london";
+const BOOK_COURT_NAMES: Array<[string, string, BookCourtRegion]> = [
+  ["club_padel_la_moraleja", "Club de Pádel La Moraleja", "madrid"],
+  ["riber_padel_moraleja", "Riber Pádel Moraleja", "madrid"],
+  ["club_irlandesas", "Club Irlandesas", "madrid"],
+  ["club_el_estudiante", "Club El Estudiante", "madrid"],
+  ["liceo_europeo", "Liceo Europeo", "madrid"],
+  ["golf_park", "Golf Park", "madrid"],
+  ["las_tablas_sports_club", "Las Tablas Sports Club", "madrid"],
+  ["la_vida_padel_alcobendas", "La Vida Pádel Alcobendas", "madrid"],
+  ["calido_alcobendas", "Cálido Alcobendas", "madrid"],
+  ["ciudad_deportiva_jarama", "Ciudad Deportiva Jarama", "madrid"],
+  ["dreamfit_sanse", "Dreamfit Sanse", "madrid"],
+  ["campus_23", "Campus 23", "madrid"],
+  ["norte_real_sport_club", "Norte Real Sport Club", "madrid"],
+  ["fmp_canal_isabel_ii", "FMP Canal de Isabel II", "madrid"],
+  ["parque_santander", "Parque de Santander", "madrid"],
+  ["rocks_lane_chiswick", "Rocks Lane Chiswick", "london"],
+  ["rocks_lane_barnes", "Rocks Lane Barnes", "london"],
+  ["barn_elms", "Barn Elms Sports Centre", "london"],
+  ["battersea_millennium_arena", "Battersea Park Millennium Arena", "london"],
+  ["padel_social_earls_court", "Padel Social Club Earl's Court", "london"],
+  ["padel_social_o2", "Padel Social Club The O2", "london"],
+  ["cw_padel_club", "CW Padel Club", "london"],
+  ["powerleague_shoreditch", "Powerleague Shoreditch", "london"],
+  ["padel_play_london", "Padel Play London", "london"],
+  ["padelhub_n20", "The Padel Hub N20", "london"],
+  ["padel_united_willesden", "Padel United Willesden", "london"],
+  ["s3_finchley_road", "S3 Finchley Road", "london"],
+  ["s3_wembley", "S3 Wembley", "london"],
+  ["s3_sutton", "S3 Sutton", "london"],
+  ["the_hive_london", "The Hive London", "london"],
+  ["catford_padel", "Catford Padel Collective", "london"],
+  ["padel_pals_sydenham", "Padel Pals Sydenham", "london"],
+  ["padel_padel_eltham", "Padel Padel Eltham", "london"],
+  ["georgians_padel", "Georgians Padel", "london"],
+  ["padel_zest", "Padel Zest", "london"],
+  ["padel_and_coffee", "Padel & Coffee", "london"],
+  ["the_108", "The 108", "london"],
+  ["padium_canary_wharf", "Padium Canary Wharf", "london"],
+  ["racketeer", "Racketeer", "london"],
+  ["rocket_padel_battersea", "Rocket Padel Battersea", "london"],
+  ["rocket_padel_beckton", "Rocket Padel Beckton", "london"],
+  ["rocket_padel_ilford", "Rocket Padel Ilford", "london"],
+  ["instantpadel_canada_water", "InstantPadel Canada Water", "london"],
+  ["house_of_racquet", "House of Racquet", "london"],
+  ["playtime_padel_kingston", "Playtime Padel Kingston", "london"],
+  ["parksports_lammas", "Lammas Park, Ealing", "london"],
+];
+
+export type BookCourtClub = { key: string; name: string; region: BookCourtRegion; url: string; via: "playtomic" | "padelmates" | "club" };
+
+/** Every curated club with its tagged booking page, in display order. */
+export function bookCourtClubs(): BookCourtClub[] {
+  const out: BookCourtClub[] = [];
+  for (const [key, name, region] of BOOK_COURT_NAMES) {
+    const known = KNOWN_CLUBS.find((c) => c.key === key);
+    if (!known) continue;
+    const via = known.url.includes("playtomic.com") ? "playtomic" : known.url.includes("padelmates") ? "padelmates" : "club";
+    out.push({ key, name, region, url: tagBookingUrl(known.url), via });
+  }
+  return out;
+}

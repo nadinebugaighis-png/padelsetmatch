@@ -10,6 +10,7 @@ import { z } from "zod";
 const searchSchema = z.object({
   invite: z.string().uuid().optional(),
   name: z.string().optional(),
+  where: z.enum(["club", "address"]).optional(),
 });
 
 export const Route = createFileRoute("/app/events/new")({
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/app/events/new")({
 function NewEvent() {
   const navigate = useNavigate();
   const tr = useTr();
-  const { invite, name } = Route.useSearch();
+  const { invite, name, where } = Route.useSearch();
   const create = useServerFn(createMatchEvent);
   const invitePlayer = useServerFn(inviteToMatchEvent);
   const [saving, setSaving] = useState(false);
@@ -62,5 +63,5 @@ function NewEvent() {
     ? tr(`Invite ${trimmedName} to play`, `Invitar a ${trimmedName} a jugar`, `Inviter ${trimmedName} à jouer`)
     : tr("Call a match", "Convocar partido", "Lancer un match");
 
-  return <MatchForm title={title} submitLabel={tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} />;
+  return <MatchForm title={title} submitLabel={tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} startMode={where} />;
 }

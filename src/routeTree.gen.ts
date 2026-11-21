@@ -28,7 +28,10 @@ import { Route as DotwellKnownAppleAppSiteAssociationRouteImport } from './route
 import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known.assetlinks[.]json'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AppBookCourtRouteImport } from './routes/app.book-court'
 import { Route as AppChooseLocationRouteImport } from './routes/app.choose-location'
+import { Route as AppCoachRouteImport } from './routes/app.coach'
+import { Route as AppCoachesRouteImport } from './routes/app.coaches'
 import { Route as AppConnectRouteImport } from './routes/app.connect'
 import { Route as AppGridRouteImport } from './routes/app.grid'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
@@ -153,9 +156,24 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBookCourtRoute = AppBookCourtRouteImport.update({
+  id: '/book-court',
+  path: '/book-court',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppChooseLocationRoute = AppChooseLocationRouteImport.update({
   id: '/choose-location',
   path: '/choose-location',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCoachRoute = AppCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCoachesRoute = AppCoachesRouteImport.update({
+  id: '/coaches',
+  path: '/coaches',
   getParentRoute: () => AppRoute,
 } as any)
 const AppConnectRoute = AppConnectRouteImport.update({
@@ -309,7 +327,10 @@ export interface FileRoutesByFullPath {
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/book-court': typeof AppBookCourtRoute
   '/app/choose-location': typeof AppChooseLocationRoute
+  '/app/coach': typeof AppCoachRoute
+  '/app/coaches': typeof AppCoachesRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -356,7 +377,10 @@ export interface FileRoutesByTo {
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/book-court': typeof AppBookCourtRoute
   '/app/choose-location': typeof AppChooseLocationRoute
+  '/app/coach': typeof AppCoachRoute
+  '/app/coaches': typeof AppCoachesRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -405,7 +429,10 @@ export interface FileRoutesById {
   '/.well-known/apple-app-site-association': typeof DotwellKnownAppleAppSiteAssociationRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/app/admin': typeof AppAdminRoute
+  '/app/book-court': typeof AppBookCourtRoute
   '/app/choose-location': typeof AppChooseLocationRoute
+  '/app/coach': typeof AppCoachRoute
+  '/app/coaches': typeof AppCoachesRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -455,7 +482,10 @@ export interface FileRouteTypes {
     | '/.well-known/apple-app-site-association'
     | '/.well-known/assetlinks.json'
     | '/app/admin'
+    | '/app/book-court'
     | '/app/choose-location'
+    | '/app/coach'
+    | '/app/coaches'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -502,7 +532,10 @@ export interface FileRouteTypes {
     | '/.well-known/apple-app-site-association'
     | '/.well-known/assetlinks.json'
     | '/app/admin'
+    | '/app/book-court'
     | '/app/choose-location'
+    | '/app/coach'
+    | '/app/coaches'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -550,7 +583,10 @@ export interface FileRouteTypes {
     | '/.well-known/apple-app-site-association'
     | '/.well-known/assetlinks.json'
     | '/app/admin'
+    | '/app/book-court'
     | '/app/choose-location'
+    | '/app/coach'
+    | '/app/coaches'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -745,11 +781,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/book-court': {
+      id: '/app/book-court'
+      path: '/book-court'
+      fullPath: '/app/book-court'
+      preLoaderRoute: typeof AppBookCourtRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/choose-location': {
       id: '/app/choose-location'
       path: '/choose-location'
       fullPath: '/app/choose-location'
       preLoaderRoute: typeof AppChooseLocationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/coach': {
+      id: '/app/coach'
+      path: '/coach'
+      fullPath: '/app/coach'
+      preLoaderRoute: typeof AppCoachRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/coaches': {
+      id: '/app/coaches'
+      path: '/coaches'
+      fullPath: '/app/coaches'
+      preLoaderRoute: typeof AppCoachesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/connect': {
@@ -962,7 +1019,10 @@ const AppEventsEventIdRouteWithChildren =
 
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRoute
+  AppBookCourtRoute: typeof AppBookCourtRoute
   AppChooseLocationRoute: typeof AppChooseLocationRoute
+  AppCoachRoute: typeof AppCoachRoute
+  AppCoachesRoute: typeof AppCoachesRoute
   AppConnectRoute: typeof AppConnectRoute
   AppGridRoute: typeof AppGridRoute
   AppHiddenRoute: typeof AppHiddenRoute
@@ -982,7 +1042,10 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRoute,
+  AppBookCourtRoute: AppBookCourtRoute,
   AppChooseLocationRoute: AppChooseLocationRoute,
+  AppCoachRoute: AppCoachRoute,
+  AppCoachesRoute: AppCoachesRoute,
   AppConnectRoute: AppConnectRoute,
   AppGridRoute: AppGridRoute,
   AppHiddenRoute: AppHiddenRoute,

@@ -1,26 +1,27 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Building2, Link2, MapPin, X } from "lucide-react";
+import { Building2, ChevronRight, Link2, MapPin, X } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 
 type Where = "club" | "address" | "playtomic";
 
-/** "Where are you playing?" before the match form, so the right fields open ready. */
+/** "Where are you playing?" before the match form: tapping a card opens the form straight away. */
 export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: () => void }) {
   const tr = useTr();
   const navigate = useNavigate();
-  const [where, setWhere] = useState<Where>("club");
   if (!open) return null;
 
-  const go = () => {
+  const go = (where: Where) => {
     onClose();
     navigate({ to: "/app/events/new", search: { where } });
   };
 
   const Option = ({ value, icon, title, body }: { value: Where; icon: React.ReactNode; title: string; body: string }) => (
-    <button type="button" onClick={() => setWhere(value)} aria-pressed={where === value}
-      className={`w-full rounded-2xl border bg-white px-4 py-3.5 text-left transition ${where === value ? "border-[var(--ink)] shadow-[0_0_0_1px_var(--ink)]" : "border-[var(--ink)]/12"}`}>
-      <span className="flex items-center gap-2.5 text-[15px] font-medium text-[var(--ink)]">{icon}{title}</span>
+    <button type="button" onClick={() => go(value)}
+      className="w-full rounded-2xl border border-[var(--ink)]/12 bg-white px-4 py-3.5 text-left transition active:scale-[0.99] active:border-[var(--ink)]/30">
+      <span className="flex items-center gap-2.5 text-[15px] font-medium text-[var(--ink)]">
+        <span className="flex min-w-0 flex-1 items-center gap-2.5">{icon}{title}</span>
+        <ChevronRight className="size-4 shrink-0 text-[var(--ink)]/35" strokeWidth={1.8} aria-hidden="true" />
+      </span>
       <span className="mt-1 block text-[13px] leading-snug text-[var(--ink)]/55">{body}</span>
     </button>
   );
@@ -46,10 +47,6 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
             title={tr("It's already on Playtomic", "Ya está en Playtomic", "Il est déjà sur Playtomic")}
             body={tr("Paste your match link. Local players find it here and join on Playtomic.", "Pega el enlace de tu partido. Los jugadores de tu zona lo ven aquí y se unen en Playtomic.", "Colle le lien de ton match. Les joueurs du coin le voient ici et rejoignent sur Playtomic.")} />
         </div>
-        <button type="button" onClick={go}
-          className="mt-5 h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] active:scale-[0.99] transition">
-          {tr("Next", "Siguiente", "Suivant")}
-        </button>
       </div>
     </div>
   );

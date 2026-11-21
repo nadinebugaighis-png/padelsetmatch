@@ -395,7 +395,20 @@ function AuthPage() {
         nonce: res.nonce,
       }));
       if (error) {
-        toast.error(error.message);
+        // The Apple sheet finished but the sign-in service refused the result.
+        // Never leave the player stuck on a raw technical message: point them
+        // to email sign-in and the reset link, which works for Apple accounts too.
+        toast.error(
+          tr("Apple sign-in didn't go through", "No se pudo entrar con Apple", "La connexion Apple n'a pas abouti"),
+          {
+            description: tr(
+              'Sign in with your email below. If you never set a password, tap "Forgot password?" and we\'ll email you a link.',
+              'Entra con tu correo aquí abajo. Si nunca creaste una contraseña, pulsa "¿Has olvidado tu contraseña?" y te enviaremos un enlace.',
+              'Connecte-toi avec ton e-mail ci-dessous. Si tu n\'as jamais créé de mot de passe, appuie sur « Mot de passe oublié ? » et nous t\'enverrons un lien.',
+            ),
+            duration: 10000,
+          },
+        );
         setLoading(false);
         return;
       }

@@ -159,10 +159,9 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
                 disabled={!anyOpen}
                 aria-pressed={active}
                 onClick={() => { setDay(d); if (!slotStillOpen(slot, d, now)) setSlot(firstOpenSlot(d) ?? "evening"); }}
-                className={`shrink-0 h-12 min-w-12 px-2.5 rounded-xl flex flex-col items-center justify-center border transition capitalize disabled:opacity-35 ${active ? "bg-[var(--club-soft)] border-[var(--ink)]/40" : "bg-white border-transparent hover:border-[var(--ink)]/20"}`}
+                className={`shrink-0 px-3.5 h-9 rounded-full text-serif text-[15px] font-normal tracking-normal border transition capitalize disabled:opacity-35 ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white text-[var(--ink)]/75 border-[var(--ink)]/15 hover:border-[var(--ink)]/35"}`}
               >
-                <span className="text-[11px] font-normal leading-tight text-[var(--ink)]/60">{d === days[0] ? tr("Today", "Hoy", "Auj.") : d === days[1] ? tr("Tomorrow", "Mañana", "Demain") : (() => { const [y, m, dd] = d.split("-").map(Number); return new Date(y!, m! - 1, dd!).toLocaleDateString(locale, { weekday: "short" }).replace(".", ""); })()}</span>
-                <span className="text-serif text-base leading-tight text-[var(--ink)]">{Number(d.split("-")[2])}</span>
+                {dayLabel(d)}
               </button>
             );
           })}

@@ -124,9 +124,19 @@ export async function flush() {
   }
 }
 
+/**
+ * The Lovable editor preview reloads code live while the app is being changed,
+ * which throws one-off errors no player ever sees. Never count those as crashes.
+ */
+function isEditorPreview(): boolean {
+  const h = window.location.hostname;
+  return h === "localhost" || h.endsWith(".lovableproject.com") || h.startsWith("id-preview--");
+}
+
 function enqueue(e: Queued) {
   if (typeof window === "undefined") return;
   if (!isTelemetryEnabled()) return;
+  if (isEditorPreview()) return;
   queue.push({
     ...e,
     at: new Date().toISOString(),

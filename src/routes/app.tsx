@@ -298,6 +298,8 @@ function AuthShell() {
   // The + menu shows on the main tabs only, never over forms or chats.
   const cleanPath = path.replace(/\/+$/, "");
   const showQuickActions = ["/app/grid", "/app/events", "/app/competitions", "/app/connect", "/app/profile"].includes(cleanPath);
+  // Private chats size themselves to the screen, so top strips would push the message box behind the bottom bar.
+  const inChat = /^\/app\/matches\/[^/]+$/.test(cleanPath);
 
   return (
     <div className="min-h-screen pb-28 lg:pb-0 programme-page">
@@ -335,9 +337,9 @@ function AuthShell() {
         </header>
       </div>
 
-      {hasProfile && !onOnboarding && <EnableNotificationsBanner />}
+      {hasProfile && !onOnboarding && !inChat && <EnableNotificationsBanner />}
 
-      {hasProfile && !onOnboarding && visibleInvites.length > 0 && (
+      {hasProfile && !onOnboarding && !inChat && visibleInvites.length > 0 && (
         <div className="border-b border-[var(--ink)]/10 bg-[var(--paper-2)]">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 space-y-2">
             {visibleInvites.slice(0, 3).map((inv) => {

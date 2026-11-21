@@ -136,7 +136,7 @@ function ChatRoom() {
   };
 
   return (
-    <main className="programme-page max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col h-[calc(100dvh-150px)] text-[var(--ink)]">
+    <main className="programme-page max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col text-[var(--ink)]" style={{ height: "calc(100dvh - 160px - env(safe-area-inset-bottom, 0px))" }}>
       <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--ink)]/10">
         <button
           type="button"

@@ -253,6 +253,20 @@
       "when": 1795269043224,
       "tag": "0035_gear_follows_profile_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1795270060182,
+      "tag": "0036_lesson_chat_on_accept",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1795270086158,
+      "tag": "0037_lesson_chat_free_messaging",
+      "breakpoints": true
     }
   ]
 }

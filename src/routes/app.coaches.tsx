@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { getCoachBoard, requestCoachSlot, cancelCoachSlot } from "@/lib/coach-lessons.functions";
+import { LessonMessageButton } from "@/components/LessonMessageButton";
 import { dayKey, firstOpenDay, groupDay, nextDays, offersClub, offersTravel, openCountByDay, requestPlace, type CoachSlot } from "@/lib/coach-lessons";
 
 export const Route = createFileRoute("/app/coaches")({
@@ -96,11 +97,11 @@ function CoachesPage() {
                 <li key={s.id} className="flex items-center gap-3 px-4 py-3">
                   <div className="min-w-0 flex-1">
                     <div className="text-[15px] font-medium text-[var(--ink)] truncate">{person(s.coach_profile_id)?.first_name ?? tr("Coach", "Entrenador", "Coach")} · {longDate(s.starts_at)} {time(s.starts_at)}</div>
-                    <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{lessonWhere(s)}</div>
+                    <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{s.status === "booked" && <span className="text-[var(--pitch)]">{tr("Confirmed", "Confirmada", "Confirmé")} · </span>}{lessonWhere(s)}</div>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${s.status === "booked" ? "bg-[var(--pitch)]/12 text-[var(--pitch)]" : "bg-[var(--gold)]/15 text-[var(--ink)]"}`}>
-                    {s.status === "booked" ? tr("Confirmed", "Confirmada", "Confirmé") : tr("Waiting", "Pendiente", "En attente")}
-                  </span>
+                  {s.status === "booked" ? <LessonMessageButton slotId={s.id} /> : (
+                    <span className="shrink-0 rounded-full bg-[var(--gold)]/15 px-2.5 py-1 text-[11px] font-medium text-[var(--ink)]">{tr("Waiting", "Pendiente", "En attente")}</span>
+                  )}
                   <button type="button" onClick={() => cancelLesson(s)} aria-label={tr("Cancel", "Cancelar", "Annuler")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/40"><X className="size-4" /></button>
                 </li>
               ))}

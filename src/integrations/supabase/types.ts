@@ -2256,6 +2256,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      ensure_lesson_thread: {
+        Args: { _coach: string; _student: string }
+        Returns: string
+      }
       ensure_open_games: { Args: { _days_ahead?: number }; Returns: number }
       fanout_match_alerts: {
         Args: { _match_id: string; _reason: string }
@@ -2337,6 +2341,7 @@ export type Database = {
         }
         Returns: string
       }
+      open_lesson_chat: { Args: { _slot: string }; Returns: string }
       padel_level_rank: { Args: { lvl: string }; Returns: number }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
       qa_affinity_scores: {

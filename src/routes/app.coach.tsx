@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { Input } from "@/components/ui/input";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
+import { LessonMessageButton } from "@/components/LessonMessageButton";
 import { addCoachSlots, cancelCoachSlot, getMyCoachSlots, respondCoachSlot } from "@/lib/coach-lessons.functions";
 import { COACH_HOURS, dayKey, nextDays, offersClub, offersTravel, placeFields, slotStarts, type CoachSlot, type LessonPlace } from "@/lib/coach-lessons";
 
@@ -95,7 +96,8 @@ function CoachTimesPage() {
   async function answer(s: CoachSlot, accept: boolean) {
     try {
       await respond({ data: { slotId: s.id, accept } });
-      toast.success(accept ? tr("Lesson confirmed", "Clase confirmada", "Cours confirmé") : tr("Time reopened", "Hora disponible de nuevo", "Horaire rouvert"));
+      if (accept) toast.success(tr("Lesson confirmed. Your chat is open in Messages.", "Clase confirmada. Tenéis un chat abierto en Mensajes.", "Cours confirmé. Votre conversation est ouverte dans Messages."));
+      else toast.success(tr("Time reopened", "Hora disponible de nuevo", "Horaire rouvert"));
       await refresh();
     } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
   }
@@ -241,11 +243,11 @@ function CoachTimesPage() {
                   <li key={s.id} className="flex items-center gap-3 px-4 py-3">
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
-                      <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{where(s)}{s.price_note ? ` · ${s.price_note}` : ""}</div>
+                      <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{s.status === "booked" && <span className="text-[var(--pitch)]">{p?.first_name ?? tr("Booked", "Reservada", "Réservé")} · </span>}{where(s)}{s.price_note ? ` · ${s.price_note}` : ""}</div>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${s.status === "booked" ? "bg-[var(--pitch)]/12 text-[var(--pitch)]" : "bg-[var(--ink)]/[0.05] text-[var(--ink)]/60"}`}>
-                      {s.status === "booked" ? (p?.first_name ?? tr("Booked", "Reservada", "Réservé")) : tr("Open", "Libre", "Libre")}
-                    </span>
+                    {s.status === "booked" ? <LessonMessageButton slotId={s.id} /> : (
+                      <span className="shrink-0 rounded-full bg-[var(--ink)]/[0.05] px-2.5 py-1 text-[11px] font-medium text-[var(--ink)]/60">{tr("Open", "Libre", "Libre")}</span>
+                    )}
                     <button type="button" onClick={() => remove(s)} aria-label={tr("Remove", "Quitar", "Retirer")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/40"><Trash2 className="size-4" /></button>
                   </li>
                 );

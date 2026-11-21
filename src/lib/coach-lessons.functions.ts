@@ -115,3 +115,13 @@ export const cancelCoachSlot = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Opens (or reopens) the private chat between the coach and player of a confirmed lesson. */
+export const openLessonChat = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => SlotId.parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: matchId, error } = await (context.supabase as unknown as Sb).rpc("open_lesson_chat", { _slot: data.slotId });
+    if (error) throw new Error(error.message);
+    return { matchId: matchId as string };
+  });

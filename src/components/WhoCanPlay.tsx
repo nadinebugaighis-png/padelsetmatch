@@ -186,20 +186,22 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
         </div>
         {hasAreas ? (
           <>
-            <button
-              type="button"
-              disabled={busy || !pickedOpen || !area}
-              onClick={() => (pickedIn || elsewhereMine ? removeMut.mutate({ date: day, slot }) : addMut.mutate({ date: day, slot }))}
-              className={`mt-4 w-full h-11 rounded-full text-sm font-semibold transition disabled:opacity-50 ${pickedIn || elsewhereMine ? "bg-white text-[var(--ink)] border border-[var(--ink)]/25" : "bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"}`}
-            >
-              {pickedIn
-                ? tr("You're available · Remove me", "Estás disponible · Quitarme", "Tu es disponible · Me retirer")
-                : elsewhereMine
-                ? tr(`Available in ${elsewhereMine.areaLabel ?? "another area"} · Remove`, `Disponible en ${elsewhereMine.areaLabel ?? "otra zona"} · Quitar`, `Disponible à ${elsewhereMine.areaLabel ?? "une autre zone"} · Retirer`)
-                : tr("I can play", "Puedo jugar", "Je peux jouer")}
-            </button>
+            <div className="mt-3.5 flex justify-center">
+              <button
+                type="button"
+                disabled={busy || !pickedOpen || !area}
+                onClick={() => (pickedIn || elsewhereMine ? removeMut.mutate({ date: day, slot }) : addMut.mutate({ date: day, slot }))}
+                className={`max-w-full truncate h-9 px-5 rounded-full text-[13px] font-semibold transition disabled:opacity-50 ${pickedIn || elsewhereMine ? "bg-white text-[var(--ink)]/70 border border-[var(--ink)]/20 hover:border-[var(--ink)]/40" : "bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"}`}
+              >
+                {pickedIn
+                  ? tr("You're available · Remove", "Estás disponible · Quitarme", "Tu es disponible · Me retirer")
+                  : elsewhereMine
+                  ? tr(`Available in ${elsewhereMine.areaLabel ?? "another area"} · Remove`, `Disponible en ${elsewhereMine.areaLabel ?? "otra zona"} · Quitar`, `Disponible à ${elsewhereMine.areaLabel ?? "une autre zone"} · Retirer`)
+                  : tr("I can play", "Puedo jugar", "Je peux jouer")}
+              </button>
+            </div>
             {area && !pickedIn && !elsewhereMine && (
-              <p className="mt-2 text-center text-[11.5px] text-[var(--ink)]/50">
+              <p className="mt-1.5 text-center text-[11.5px] text-[var(--ink)]/50">
                 {tr(`Shared with players in ${area.label}`, `Visible para jugadores de ${area.label}`, `Visible par les joueurs de ${area.label}`)}
               </p>
             )}

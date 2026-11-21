@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -115,27 +115,16 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
         ) : (
           messages.map((m) =>
             m.mine ? (
-              <div key={m.id} className="flex justify-end">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      className={`max-w-[80%] text-left rounded-lg rounded-tr-sm bg-[var(--club-soft)] px-2.5 py-1.5 text-[14.5px] leading-snug text-[var(--ink)] shadow-[0_1px_0.5px_rgba(0,0,0,0.08)] outline-none ${editingId === m.id ? "ring-2 ring-[var(--pitch)]/40" : ""}`}
-                    >
-                      <span className="whitespace-pre-wrap break-words">{m.body}</span>
-                      {meta(m)}
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-36 bg-white text-[var(--ink)] border-[var(--ink)]/10">
-                    <DropdownMenuItem onSelect={() => startEdit(m.id, m.body)}>
-                      <Pencil className="w-4 h-4" />{tr("Edit", "Editar", "Modifier")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => { if (editingId === m.id) cancelEdit(); delMut.mutate(m.id); }} className="text-destructive focus:text-destructive">
-                      <Trash2 className="w-4 h-4" />{tr("Delete", "Borrar", "Supprimer")}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+              <OwnBubble
+                key={m.id}
+                editing={editingId === m.id}
+                onEdit={() => startEdit(m.id, m.body)}
+                onDelete={() => { if (editingId === m.id) cancelEdit(); delMut.mutate(m.id); }}
+                labels={{ edit: tr("Edit", "Editar", "Modifier"), del: tr("Delete", "Borrar", "Supprimer"), hint: tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer") }}
+              >
+                <span className="whitespace-pre-wrap break-words">{m.body}</span>
+                {meta(m)}
+              </OwnBubble>
             ) : (
               <div key={m.id} className="flex items-end gap-1.5">
                 <div className="w-6 h-6 shrink-0 rounded-full overflow-hidden bg-[var(--ink)]/10">
@@ -196,6 +185,79 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+const HOLD_MS = 450;
+const MOVE_TOLERANCE = 10;
+
+/**
+ * My own chat bubble. Like WhatsApp, Edit/Delete only opens after pressing and holding still,
+ * so swiping or scrolling through the chat never pops the menu. A mouse click still opens it.
+ */
+function OwnBubble({ children, editing, onEdit, onDelete, labels }: {
+  children: ReactNode;
+  editing: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+  labels: { edit: string; del: string; hint: string };
+}) {
+  const [open, setOpen] = useState(false);
+  const [holding, setHolding] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+  const start = useRef<{ x: number; y: number } | null>(null);
+
+  const clear = () => {
+    if (timer.current) window.clearTimeout(timer.current);
+    timer.current = undefined;
+    start.current = null;
+    setHolding(false);
+  };
+  useEffect(() => () => { if (timer.current) window.clearTimeout(timer.current); }, []);
+
+  return (
+    <div className="flex justify-end">
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label={labels.hint}
+            onPointerDown={(e) => {
+              // Stop the menu opening on first touch; we decide below.
+              e.preventDefault();
+              if (e.pointerType === "mouse") return;
+              start.current = { x: e.clientX, y: e.clientY };
+              setHolding(true);
+              timer.current = window.setTimeout(() => {
+                timer.current = undefined;
+                setHolding(false);
+                setOpen(true);
+                try { navigator.vibrate?.(12); } catch { /* not supported */ }
+              }, HOLD_MS);
+            }}
+            onPointerMove={(e) => {
+              const s = start.current;
+              if (s && Math.hypot(e.clientX - s.x, e.clientY - s.y) > MOVE_TOLERANCE) clear();
+            }}
+            onPointerUp={(e) => { if (e.pointerType === "mouse" && e.button === 0) setOpen(true); clear(); }}
+            onPointerCancel={clear}
+            onPointerLeave={clear}
+            onContextMenu={(e) => e.preventDefault()}
+            className={`max-w-[80%] select-none [-webkit-touch-callout:none] [-webkit-user-select:none] text-left rounded-lg rounded-tr-sm bg-[var(--club-soft)] px-2.5 py-1.5 text-[14.5px] leading-snug text-[var(--ink)] shadow-[0_1px_0.5px_rgba(0,0,0,0.08)] outline-none transition-[transform,filter] duration-300 ${holding ? "scale-[0.97] brightness-95" : ""} ${open || editing ? "ring-2 ring-[var(--pitch)]/40" : ""}`}
+          >
+            {children}
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-36 bg-white text-[var(--ink)] border-[var(--ink)]/10">
+          <DropdownMenuItem onSelect={onEdit}>
+            <Pencil className="w-4 h-4" />{labels.edit}
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={onDelete} className="text-destructive focus:text-destructive">
+            <Trash2 className="w-4 h-4" />{labels.del}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

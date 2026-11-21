@@ -396,14 +396,12 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 @media (min-width: 1024px) {
   .quick-actions { bottom: 2rem; }
 }
-/* Same see-through green glass as the floating bar, no gold ring. */
+/* Solid deep green so page content never shows through it; a thin paper ring lifts it off busy content. No gold. */
 .quick-actions-fab {
-  background: color-mix(in oklab, var(--ink) 82%, transparent);
-  backdrop-filter: blur(18px) saturate(160%);
-  border: 1px solid color-mix(in oklab, var(--cream) 12%, transparent);
+  background: var(--ink);
   box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--cream) 14%, transparent),
-    0 14px 30px -12px oklch(0 0 0 / 0.5);
+    0 0 0 3px var(--paper),
+    0 10px 24px -8px color-mix(in oklab, var(--ink) 55%, transparent);
 }
 
 /* While someone is writing in a "Who can play?" chat, the + button steps aside so it never covers Send. */

@@ -114,11 +114,11 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 h-9 pl-3 pr-2.5 -mt-1 rounded-full border border-[var(--ink)]/15 bg-white text-[13px] font-semibold text-[var(--ink)] hover:border-[var(--ink)]/35 transition"
+              className="-mt-1 inline-flex items-center gap-1.5 px-0.5 text-[13px] font-semibold text-[var(--ink)] transition hover:text-[var(--ink)]/65"
             >
               <MapPin className="w-3.5 h-3.5 text-[var(--pitch)]" />
               {area?.label ?? tr("Choose area", "Elige zona", "Choisir une zone")}
-              <ChevronDown className="w-3.5 h-3.5 text-[var(--ink)]/50" />
+              <ChevronDown className="w-3 h-3 text-[var(--ink)]/40" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-56 bg-white text-[var(--ink)] border-[var(--ink)]/10">

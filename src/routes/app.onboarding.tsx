@@ -101,6 +101,7 @@ function Onboarding() {
   const [languages, setLanguages] = useState<string[]>([]);
   const [showSecondNat, setShowSecondNat] = useState(false);
   const [langQuery, setLangQuery] = useState("");
+  const [langOpen, setLangOpen] = useState(false);
   const [level, setLevel] = useState<PadelLevel | "">("");
   const [priorities, setPriorities] = useState<string[]>([]);
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
@@ -794,12 +795,14 @@ function Onboarding() {
                     <input
                       type="text"
                       value={langQuery}
-                      onChange={(e) => setLangQuery(e.target.value)}
+                      onChange={(e) => { setLangQuery(e.target.value); setLangOpen(true); }}
+                      onFocus={() => setLangOpen(true)}
+                      onBlur={() => setTimeout(() => setLangOpen(false), 150)}
                       onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (canAddCustom) addCustom(); } }}
-                      placeholder={tr("Search or type your language…", "Busca o escribe tu idioma…", "Cherche ou tape ta langue…")}
+                      placeholder={tr("+ Add a language", "+ Añadir idioma", "+ Ajouter une langue")}
                       className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-10 px-3 text-sm"
                     />
-                    <div className="max-h-60 overflow-y-auto overscroll-contain rounded-md border border-[var(--ink)]/10 bg-[var(--paper)]" role="listbox" aria-multiselectable="true" aria-label={t("ob.langs")}>
+                    {langOpen && <div onMouseDown={(e) => e.preventDefault()} className="max-h-44 overflow-y-auto overscroll-contain rounded-md border border-[var(--ink)]/10 bg-[var(--paper)]" role="listbox" aria-multiselectable="true" aria-label={t("ob.langs")}>
                       {visible.map((l) => {
                         const on = languages.includes(l);
                         return (
@@ -808,7 +811,7 @@ function Onboarding() {
                             type="button"
                             role="option"
                             aria-selected={on}
-                            onClick={() => toggleLanguage(l)}
+                            onClick={() => { toggleLanguage(l); setLangQuery(""); }}
                             className={`flex w-full min-h-11 items-center justify-between px-3 text-left text-[14px] border-b border-[var(--ink)]/[0.06] last:border-b-0 active:bg-[var(--ink)]/[0.05] ${on ? "font-medium text-[var(--ink)]" : "text-[var(--ink)]/80"}`}
                           >
                             <span>{label(l)}</span>
@@ -826,7 +829,7 @@ function Onboarding() {
                       {visible.length === 0 && !canAddCustom && (
                         <p className="px-3 py-3 text-xs text-[var(--ink)]/60">{tr("No match. Type a name and press Enter to add.", "Sin resultados. Escribe un nombre y pulsa Intro para añadirlo.", "Aucun résultat. Tape un nom et appuie sur Entrée pour l'ajouter.")}</p>
                       )}
-                    </div>
+                    </div>}
                   </div>
                 );
               })()}

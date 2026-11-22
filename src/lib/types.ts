@@ -76,7 +76,7 @@ export const PADEL_LEVELS = ["just starting", "casual", "intermediate", "advance
 export type PadelLevel = (typeof PADEL_LEVELS)[number];
 
 export const AVAILABILITY_SLOTS = [
-  "Weekday mornings", "Weekday lunchtime", "Weekday afternoons", "Weekday evenings",
+  "Weekday mornings", "Weekday lunchtime", "Weekday evenings",
   "Weekend mornings", "Weekend afternoons", "Weekend evenings",
 ] as const;
 export type AvailabilitySlot = (typeof AVAILABILITY_SLOTS)[number];

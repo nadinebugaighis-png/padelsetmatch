@@ -311,8 +311,8 @@ function AuthShell() {
       >
         <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
-      <div className="lg:sticky lg:top-0 lg:z-40 lg:bg-[var(--paper)]/95 lg:backdrop-blur lg:border-b lg:border-[var(--ink)]/10">
-        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 lg:border-b-0 gap-3 max-w-7xl mx-auto w-full">
+      <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
+        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">

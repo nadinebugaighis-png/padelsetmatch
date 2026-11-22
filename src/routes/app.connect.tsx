@@ -178,9 +178,6 @@ function ConnectPage() {
       <header className="mb-7 sm:mb-10">
         <div className={smallCaps}>{tr("Connect", "Conecta", "Connecter")}</div>
         <h1 className="mt-2 text-serif text-[28px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
-        <p className="mt-2 text-serif italic text-[14px] sm:text-[17px] text-[var(--ink)]/78">
-          {tr("Say when you're free. Members nearby can join you.", "Di cuándo puedes. Los miembros de tu zona se unen.", "Dis quand tu es libre. Les membres du coin te rejoignent.")}
-        </p>
       </header>
 
       <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} />

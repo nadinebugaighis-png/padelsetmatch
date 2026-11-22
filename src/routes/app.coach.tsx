@@ -55,8 +55,6 @@ function CoachTimesPage() {
   });
   const [area, setArea] = useState(() => remembered(LAST_AREA));
   const [price, setPrice] = useState(() => remembered(LAST_PRICE));
-  const [groups, setGroups] = useState(() => remembered(LAST_GROUPS) !== "off");
-  const [groupPrice, setGroupPrice] = useState(() => remembered(LAST_GROUP_PRICE));
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const now = Date.now();
@@ -83,14 +81,12 @@ function CoachTimesPage() {
     if (!starts.length) { toast.error(tr("Pick at least one time", "Elige al menos una hora", "Choisis au moins une heure")); return; }
     setSaving(true);
     try {
-      const r = await add({ data: { starts, duration_minutes: duration, lesson_place: place, club_name: club.trim(), travel_area: area.trim(), price_note: price.trim() || null, offers_group: groups, group_price_note: groupPrice.trim() || null } });
+      const r = await add({ data: { starts, duration_minutes: duration, lesson_place: place, club_name: club.trim(), travel_area: area.trim(), price_note: price.trim() || null, offers_group: false, group_price_note: null } });
       try {
         localStorage.setItem(LAST_PLACE, place);
         if (club.trim()) localStorage.setItem(LAST_CLUB, club.trim());
         if (area.trim()) localStorage.setItem(LAST_AREA, area.trim());
         localStorage.setItem(LAST_PRICE, price.trim());
-        localStorage.setItem(LAST_GROUP_PRICE, groupPrice.trim());
-        localStorage.setItem(LAST_GROUPS, groups ? "on" : "off");
       } catch { /* ignore */ }
       toast.success(r.added === 1
         ? tr("1 lesson time shared", "1 horario publicado", "1 horaire publié")
@@ -237,7 +233,7 @@ function CoachTimesPage() {
                   <div className="min-w-0 flex-1">
                     <div className="text-[14.5px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
                     <div className="text-[12px] text-[var(--ink)]/45 truncate">
-                      {where(s)}{s.offers_group ? ` · ${tr("Private or group", "Privada o grupo", "Privé ou groupe")}` : ` · ${tr("Private only", "Solo privada", "Privé uniquement")}`}
+                      {where(s)}
                     </div>
                   </div>
                   <button type="button" onClick={() => remove(s)} aria-label={tr("Remove", "Quitar", "Retirer")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/40"><Trash2 className="size-4" /></button>
@@ -307,24 +303,12 @@ function CoachTimesPage() {
               </div>
             )}
 
-            <div className={`pt-1 ${label}`}>{tr("3 · Price (optional)", "3 · Precio (opcional)", "3 · Prix (optionnel)")}</div>
+            <div className={`pt-1 ${label}`}>{tr("3 · Lesson price (optional)", "3 · Precio de la clase (opcional)", "3 · Prix du cours (optionnel)")}</div>
             <Input value={price} maxLength={40} onChange={(e) => setPrice(e.target.value)} aria-label={tr("Private lesson price", "Precio clase privada", "Prix cours privé")} placeholder={tr("Private lesson, e.g. €50", "Clase privada, ej. 50 €", "Cours privé, ex. 50 €")} />
-            <button type="button" onClick={() => setGroups((v) => !v)} aria-pressed={groups} className="flex w-full items-center justify-between gap-3 text-left">
-              <span>
-                <span className="block text-[14px] text-[var(--ink)]">{tr(`Open groups too (up to ${GROUP_CLASS_PLAYERS} players)`, `También grupos (hasta ${GROUP_CLASS_PLAYERS} jugadores)`, `Groupes aussi (jusqu'à ${GROUP_CLASS_PLAYERS} joueurs)`)}</span>
-                <span className="block text-[12px] text-[var(--ink)]/45">{tr("Players can pick a group class others can join", "Los jugadores pueden pedir una clase a la que se unan otros", "Les joueurs peuvent choisir un cours que d'autres rejoignent")}</span>
-              </span>
-              <span className={`relative h-6 w-10 shrink-0 rounded-full transition-colors ${groups ? "bg-[var(--pitch)]" : "bg-[var(--ink)]/20"}`}>
-                <span className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-[var(--paper)] transition-transform ${groups ? "translate-x-4" : ""}`} />
-              </span>
-            </button>
-            {groups && (
-              <Input value={groupPrice} maxLength={40} onChange={(e) => setGroupPrice(e.target.value)} aria-label={tr("Group price per person", "Precio por persona en grupo", "Prix par personne en groupe")} placeholder={tr("Group, per person, e.g. €20", "Grupo, por persona, ej. 20 €", "Groupe, par personne, ex. 20 €")} />
-            )}
-
+            <p className="text-[12px] text-[var(--ink)]/45">{tr("Players who want to bring friends can ask you in the chat.", "Si un jugador quiere traer amigos, te lo puede pedir por el chat.", "Un joueur qui veut venir avec des amis peut te le demander par message.")}</p>
             <button type="button" disabled={saving} onClick={save} className="h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] disabled:opacity-60">
               {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : starts.length
-                ? tr(`Share ${starts.length} ${starts.length === 1 ? "time" : "times"}`, `Publicar ${starts.length} ${starts.length === 1 ? "hora" : "horas"}`, `Publier ${starts.length} horaire${starts.length === 1 ? "" : "s"}`)
+                ? tr(`Publish ${starts.length} ${starts.length === 1 ? "slot" : "slots"}`, `Publicar ${starts.length} ${starts.length === 1 ? "horario" : "horarios"}`, `Publier ${starts.length} horaire${starts.length === 1 ? "" : "s"}`)
                 : tr("Pick your hours above", "Elige tus horas arriba", "Choisis tes heures plus haut")}
             </button>
           </section>

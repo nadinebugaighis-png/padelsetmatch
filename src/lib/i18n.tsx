@@ -9,7 +9,6 @@ export function isRTL(_lang: Lang): boolean {
 type Dict = Record<string, string>;
 
 const en: Dict = {
-  "Weekday lunchtime": "Weekday afternoons",
   // Landing
   "land.signin": "Sign in",
   "land.h1.a": "find your",
@@ -855,6 +854,7 @@ const LABELS: Record<Lang, Record<string, string>> = {
     "just starting": "just starting", casual: "casual", beginner: "beginner", intermediate: "intermediate", advanced: "advanced", competitive: "competitive",
     friend: "friend", partner: "partner", both: "both",
     everyone: "everyone", women: "women", men: "men", "lesbian women": "lesbian women", "gay men": "gay men", bisexual: "bisexual", queer: "queer",
+    "Weekday lunchtime": "Weekday afternoons",
   },
   es: {
     woman: "mujer", man: "hombre", "non-binary": "no binario", "self-describe": "Prefiero describirme",

@@ -7,7 +7,6 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tansta
 import { CURATED_QUESTIONS } from "@/lib/daily-questions";
 import { offCourtScore, pairLabel } from "@/lib/pair-label";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
-import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus } from "lucide-react";
@@ -239,33 +238,6 @@ function Discover() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
   });
 
-  const listFavs = useServerFn(listMyFavorites);
-  const favsQ = useQuery({ queryKey: ["favorites"], queryFn: () => listFavs(), enabled: !!feedQ.data?.me, staleTime: 60_000 });
-  const favSet = new Set(favsQ.data?.ids ?? []);
-  const toggleFav = useServerFn(toggleFavorite);
-  const [favNote, setFavNote] = useState<{ id: string; on: boolean } | null>(null);
-  const favNoteTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (favNoteTimer.current) clearTimeout(favNoteTimer.current); }, []);
-  const toggleFavM = useMutation({
-    mutationFn: (id: string) => toggleFav({ data: { favoriteProfileId: id } }),
-    onMutate: async (id) => {
-      await qc.cancelQueries({ queryKey: ["favorites"] });
-      const prev = qc.getQueryData<{ ids: string[] }>(["favorites"]);
-      const ids = new Set(prev?.ids ?? []);
-      const wasFav = ids.has(id);
-      if (wasFav) ids.delete(id); else ids.add(id);
-      qc.setQueryData(["favorites"], { ids: Array.from(ids) });
-      return { prev, wasFav };
-    },
-    onError: (_e, _id, ctx) => { if (ctx?.prev) qc.setQueryData(["favorites"], ctx.prev); toast.error("Couldn't update favorite"); },
-    onSuccess: (r, id) => {
-      // A quiet note under the star replaces the always-on caption.
-      setFavNote({ id, on: r.favorited });
-      if (favNoteTimer.current) clearTimeout(favNoteTimer.current);
-      favNoteTimer.current = setTimeout(() => setFavNote(null), 4000);
-    },
-    onSettled: () => qc.invalidateQueries({ queryKey: ["favorites"] }),
-  });
 
 
 
@@ -969,20 +941,6 @@ function Discover() {
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
-                      {!isSelf && (
-                        <button
-                          type="button"
-                          onClick={() => toggleFavM.mutate(preview.id)}
-                          disabled={toggleFavM.isPending}
-                          aria-pressed={favSet.has(preview.id)}
-                          aria-label={favSet.has(preview.id) ? tr(`Stop following ${preview.first_name}`, `Dejar de seguir a ${preview.first_name}`, `Ne plus suivre ${preview.first_name}`) : tr(`Follow ${preview.first_name}`, `Seguir a ${preview.first_name}`, `Suivre ${preview.first_name}`)}
-                          title={favSet.has(preview.id) ? tr("Following: you'll be told when they play", "Siguiendo: te avisaremos cuando juegue", "Suivi : on te préviendra quand il/elle joue") : tr("Follow: be told when they play", "Seguir: te avisamos cuando juegue", "Suivre : être prévenu quand il/elle joue")}
-                          className={`absolute top-4 right-4 sm:top-5 sm:right-5 h-8 px-3.5 rounded-full flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition active:scale-[0.95] disabled:opacity-70 shadow-[0_6px_18px_-8px_rgba(15,62,46,0.45)] ${favSet.has(preview.id) ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)]/90 backdrop-blur-sm text-[var(--ink)]"}`}
-                        >
-                          {favSet.has(preview.id) && <Check className="w-3 h-3" strokeWidth={2.4} />}
-                          {favSet.has(preview.id) ? tr("Following", "Siguiendo", "Suivi") : tr("Follow", "Seguir", "Suivre")}
-                        </button>
-                      )}
                     </div>
                   </div>
 
@@ -1037,51 +995,17 @@ function Discover() {
                           {tr("Edit profile", "Editar perfil", "Modifier le profil")}
                         </Link>
                       ) : (
-                        <div className="flex items-stretch gap-2">
-                          {match ? (
-                            <button
-                              type="button"
-                              onClick={() => navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } })}
-                              className="flex-1 basis-0 h-11 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110"
-                            >
-                              <MessageCircle className="w-4 h-4" strokeWidth={1.8} />
-                              {tr("Send message", "Enviar mensaje", "Envoyer un message")}
-                            </button>
-                          ) : preview.liked ? (
-                            <div
-                              role="status"
-                              className="flex-1 basis-0 h-11 px-3 rounded-full bg-[var(--limestone)] text-[var(--ink)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center gap-1.5 animate-in fade-in duration-300"
-                            >
-                              <Check className="w-3.5 h-3.5" strokeWidth={2.2} />
-                              {tr("Request sent", "Solicitud enviada", "Demande envoyée")}
-                            </div>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => likeM.mutate(preview.id)}
-                              disabled={likeM.isPending}
-                              className="flex-1 basis-0 h-11 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110"
-                            >
-                              {tr("Connect", "Conectar", "Connecter")}
-                            </button>
-                          )}
-                          {!match && (
-                            <button
-                              type="button"
-                              onClick={() => { setIntroText(""); setIntroOpen(true); }}
-                              className="flex-1 basis-0 h-11 px-4 rounded-full border border-[var(--ink)]/20 bg-white text-[var(--ink)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center transition active:scale-[0.98] hover:border-[var(--ink)]/45"
-                            >
-                              {tr("Intro note", "Nota", "Mot")}
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      {!isSelf && favNote?.id === preview.id && (
-                        <p role="status" className="-mt-2 text-center lg:text-left text-serif italic text-[13px] text-[var(--ink)]/65 animate-in fade-in duration-300">
-                          {favNote.on
-                            ? tr(`You'll be told when ${preview.first_name} plays`, `Te avisaremos cuando ${preview.first_name} juegue`, `On te préviendra quand ${preview.first_name} joue`)
-                            : tr(`You'll no longer be told when ${preview.first_name} plays`, `Ya no te avisaremos cuando ${preview.first_name} juegue`, `On ne te préviendra plus quand ${preview.first_name} joue`)}
-                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                            setIntroText(""); setIntroOpen(true);
+                          }}
+                          className="mx-auto lg:mx-0 w-full max-w-[260px] h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] whitespace-nowrap flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.6} />
+                          {tr("Send a message", "Enviar un mensaje", "Envoyer un message")}
+                        </button>
                       )}
 
                       {/* You two — on-court and off-court scores, a pair label, headline, shared answers, pairings; full AI read behind a tap */}

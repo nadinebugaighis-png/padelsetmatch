@@ -1,13 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ShareQR } from "@/components/ShareQR";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvailability, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { AVAILABILITY_SLOTS } from "@/lib/types";
+import { decodeLocation } from "@/lib/types";
 import { formatNationalities } from "@/lib/affinity";
-import { Camera, ChevronDown, ChevronRight, GraduationCap, Lock, Mail, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, User, UserPlus } from "lucide-react";
+import { Camera, ChevronRight, Mail, MessageCircle } from "lucide-react";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
@@ -159,128 +158,99 @@ function ProfilePage() {
       </main>
     );
   }
-  const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
+  const firstArea = (() => {
+    const first = ((p as any).locations ?? [])[0] as string | undefined;
+    if (!first) return "";
+    const l = decodeLocation(first);
+    return l.area || l.city || "";
+  })();
+  const metaLine = [label(p.level), formatNationalities(p), firstArea].filter(Boolean).join(" · ");
 
   return (
-    <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-5 sm:px-8 pt-4 sm:pt-8 pb-10 max-w-md sm:max-w-xl lg:max-w-2xl mx-auto min-h-[calc(100vh-4rem)]">
 
-      {/* Hero: compact photo + name side-by-side, even on mobile */}
-      <div className="programme-card p-4 sm:p-5">
-        <div className="flex items-start gap-3 sm:gap-5">
-          {/* Photo */}
-          <div className="relative shrink-0">
+      {/* Header: arched portrait, name, one quiet line, bio, Edit profile */}
+      <header className="flex flex-col items-center text-center pb-7">
+        <div className="relative">
+          <div className="w-36 h-44 sm:w-44 sm:h-52 rounded-t-full rounded-b-[18px] overflow-hidden border border-[var(--ink)]/10 bg-[var(--paper-2)]">
             {p.photo_url ? (
-              <img
-                src={p.photo_url}
-                alt={p.first_name}
-                className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-[var(--ink)]/20 shadow"
-              />
+              <img src={p.photo_url} alt={p.first_name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-[var(--ink)]/30 border-2 border-[var(--ink)]/15">
-                <Camera className="w-6 h-6 sm:w-7 sm:h-7" />
+              <div className="w-full h-full flex items-center justify-center text-[var(--ink)]/30">
+                <Camera className="w-7 h-7" />
               </div>
             )}
-            <input
-              ref={fileRef}
-              id={photoInputId}
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              disabled={uploading}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) setPendingFile(f);
-                e.target.value = "";
-              }}
-            />
-            <label
-              htmlFor={photoInputId}
-              aria-disabled={uploading}
-              title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
-              className={`absolute -bottom-0.5 -right-0.5 inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--ink)] text-[var(--paper)] shadow-md border-2 border-[var(--paper)] cursor-pointer transition hover:scale-105 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
-            >
-              <Camera className="w-3.5 h-3.5" />
-            </label>
           </div>
-
-          {/* Name + meta */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <h1 className="text-serif text-xl sm:text-3xl lg:text-4xl leading-tight truncate text-[var(--ink)]">{p.first_name}</h1>
-                <p className="mt-0.5 text-xs sm:text-sm text-[var(--ink)]/75">
-                  {[label(p.level), formatNationalities(p)].filter(Boolean).join(" · ")}
-                </p>
-                <p className="text-xs sm:text-sm text-[var(--ink)]/55">{genderLabel}</p>
-              </div>
-              <EditSectionsMenu />
-
-            </div>
-          </div>
+          <input
+            ref={fileRef}
+            id={photoInputId}
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            disabled={uploading}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) setPendingFile(f);
+              e.target.value = "";
+            }}
+          />
+          <label
+            htmlFor={photoInputId}
+            aria-disabled={uploading}
+            aria-label={tr("Change photo", "Cambiar foto", "Changer la photo")}
+            title={uploading ? tr("Uploading…", "Subiendo…", "Téléversement…") : tr("Change photo", "Cambiar foto", "Changer la photo")}
+            className={`absolute -bottom-1 -right-1 inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--paper)] text-[var(--ink)] border border-[var(--ink)]/15 shadow-sm cursor-pointer transition active:scale-95 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+          >
+            <Camera className="w-4 h-4" />
+          </label>
         </div>
 
-
+        <h1 className="mt-5 text-serif text-[40px] sm:text-5xl leading-none text-[var(--ink)]">{p.first_name}</h1>
+        {metaLine && (
+          <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{metaLine}</p>
+        )}
         {p.bio && (
-          <p className="mt-2 text-sm leading-relaxed text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/20 pl-3">
-            {p.bio}
+          <p className="mt-4 max-w-sm text-serif italic text-[17px] leading-snug text-[var(--ink)]/80">
+            “{p.bio}”
           </p>
         )}
-      </div>
+        <Link
+          to="/app/onboarding"
+          className="mt-5 inline-flex items-center h-10 px-6 rounded-full border border-[var(--ink)]/30 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)] hover:bg-[var(--ink)]/[0.04] active:scale-[0.98] transition"
+        >
+          {tr("Edit profile", "Editar perfil", "Modifier le profil")}
+        </Link>
+      </header>
 
-      
+      <div className="border-t border-[var(--ink)]/12">
+        {(p as any).is_coach && <CoachBar />}
 
-      {(p as any).is_coach && (
-        <div className="mt-3 sm:mt-4">
-          <CoachBar />
-        </div>
-      )}
-
-      {/* Messages — placed right under name & photo for quick access */}
-      <div className="mt-3 sm:mt-4">
         <MessagesRow />
-      </div>
 
-      {/* My kit — gear shelf */}
-      <div className="mt-3 sm:mt-4 programme-card p-5">
-        <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">
-          {tr("My kit", "Mi equipo", "Mon matériel")}
-        </h2>
-        <p className="text-xs text-[var(--ink)]/60 mt-1 mb-3">
-          {tr("Racket, shoes, anything you love. Shows on your player card.", "Pala, zapatillas, lo que te guste. Se ve en tu ficha.", "Raquette, chaussures, ce que tu aimes. Visible sur ta fiche.")}
-        </p>
-        <GearEditor profileId={p.id} />
-      </div>
+        {/* My kit */}
+        <section className="border-b border-[var(--ink)]/12 py-5">
+          <h2 className="text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("My kit", "Mi equipo", "Mon matériel")}</h2>
+          <p className="text-xs text-[var(--ink)]/55 mt-1 mb-3">
+            {tr("Shows on your player card.", "Se ve en tu ficha.", "Visible sur ta fiche.")}
+          </p>
+          <GearEditor profileId={p.id} />
+        </section>
 
-
-
-      <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} slots={((p as any).availability ?? []) as string[]} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-        <CollapsibleRow
-          icon={<MapPin className="w-4 h-4" />}
-          title={tr("Your clubs", "Tus clubes", "Tes clubs")}
-          subtitle={tr("Clubs & compounds for smarter matches", "Clubes y urbanizaciones para mejor match", "Clubs et résidences pour de meilleurs matchs")}
-        >
+        <CollapsibleRow title={tr("Your clubs", "Tus clubes", "Tes clubs")}>
           <VenuesSection />
         </CollapsibleRow>
 
         <QaRow />
 
-        <MemberGuide />
+        <InviteFriendsRow />
 
-
-        <CollapsibleRow
-          icon={<MessageSquare className="w-4 h-4" />}
-          title={tr("Help & feedback", "Ayuda y comentarios", "Aide et avis")}
-          subtitle={tr("How PadelSetMatch works · Send feedback", "Cómo funciona PadelSetMatch · Comentarios", "Comment fonctionne PadelSetMatch · Avis")}
-        >
-          <button type="button" onClick={openMemberGuide} className="mb-3 w-full h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
+        <CollapsibleRow title={tr("Help & feedback", "Ayuda y comentarios", "Aide et avis")}>
+          <button type="button" onClick={openMemberGuide} className="mb-3 w-full h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
             {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
           </button>
-          <div className="mb-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 text-center">
-            {tr("Contact us", "Contáctanos", "Contactez-nous")}
-          </div>
-          <div className="mb-4 grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={async () => {
@@ -294,15 +264,15 @@ function ProfilePage() {
                   { duration: 6000 },
                 );
               }}
-              className="h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
+              className="h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
             >
               <Mail className="w-3.5 h-3.5" />
               {tr("Email", "Email", "Email")}
             </button>
             <button
               type="button"
-              onClick={() => void openExternal("https://wa.me/34620296060?text=" + encodeURIComponent(tr("Hi! I play on PadelSetMatch —", "¡Hola! Juego en PadelSetMatch —", "Bonjour ! Je joue sur PadelSetMatch —")))}
-              className="h-10 rounded-lg border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
+              onClick={() => void openExternal("https://wa.me/34620296060?text=" + encodeURIComponent(tr("Hi! I play on PadelSetMatch.", "¡Hola! Juego en PadelSetMatch.", "Bonjour ! Je joue sur PadelSetMatch.")))}
+              className="h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               WhatsApp
@@ -311,26 +281,23 @@ function ProfilePage() {
           <FeedbackBox />
         </CollapsibleRow>
 
-        <CollapsibleRow
-          icon={<ShieldCheck className="w-4 h-4" />}
-          title={tr("Privacy", "Privacidad", "Confidentialité")}
-          subtitle={tr("Analytics & crash reports", "Analítica e informes de fallos", "Analytique et rapports de plantage")}
-        >
+        <CollapsibleRow title={tr("Privacy", "Privacidad", "Confidentialité")}>
           <AnalyticsConsent />
         </CollapsibleRow>
 
+        <LinkRow to="/app/hidden" title={tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")} />
+      </div>
 
-        <InviteFriendsRow />
+      <MemberGuide />
 
-        <Link to="/app/hidden" className={buttonVariants({ variant: "outline", className: "w-full" })}>{tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")}</Link>
-
+      <div className="mt-10 text-center">
         <button
           onClick={onDelete}
-          className="mt-2 w-full h-11 rounded-lg border border-red-500/40 bg-red-500/5 text-sm font-semibold uppercase tracking-widest text-red-600 hover:bg-red-500/10 transition"
+          className="text-[11px] uppercase tracking-[0.2em] text-[var(--destructive)] hover:underline underline-offset-4"
         >
           {t("prof.delete")}
         </button>
-        <p className="text-center text-[11px] text-[var(--ink)]/50">
+        <p className="mt-1.5 text-[11px] text-[var(--ink)]/45">
           {tr(
             "Permanently deletes your account and all your data.",
             "Elimina tu cuenta y todos tus datos de forma permanente.",
@@ -338,8 +305,6 @@ function ProfilePage() {
           )}
         </p>
       </div>
-
-
 
       <PhotoCropDialog
         file={pendingFile}
@@ -353,49 +318,56 @@ function ProfilePage() {
   );
 }
 
-function EditSectionsMenu() {
-  const tr = useTr();
+/** One hairline row: serif title on the left, quiet detail and chevron on the right. */
+function RowInner({ title, meta, dot = false, open }: { title: string; meta?: ReactNode; dot?: boolean; open?: boolean }) {
   return (
-    <Link
-      to="/app/onboarding"
-      className="inline-flex items-center gap-1 px-2.5 sm:px-3 h-7 sm:h-8 rounded-full border border-[var(--ink)]/25 text-[10px] sm:text-xs uppercase tracking-widest text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/50 transition shrink-0"
-    >
-      <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-      {tr("Edit", "Editar", "Éditer")}
+    <>
+      <span className="text-serif text-[22px] leading-tight text-[var(--ink)] truncate">{title}</span>
+      <span className="flex items-center gap-2 shrink-0 text-[13px] text-[var(--ink)]/55">
+        {dot && <span className="w-1.5 h-1.5 rounded-full bg-[var(--ink)]" aria-hidden="true" />}
+        {meta}
+        <ChevronRight className={`w-4 h-4 text-[var(--ink)]/40 transition-transform ${open ? "rotate-90" : ""}`} />
+      </span>
+    </>
+  );
+}
+
+const ROW_CLASS = "w-full min-h-[60px] flex items-center justify-between gap-3 py-4 text-left border-b border-[var(--ink)]/12 active:bg-[var(--ink)]/[0.03] transition-colors";
+
+function LinkRow({ to, title, meta, dot }: { to: "/app/hidden" | "/app/matches" | "/app/coach"; title: string; meta?: ReactNode; dot?: boolean }) {
+  return (
+    <Link to={to} className={ROW_CLASS}>
+      <RowInner title={title} meta={meta} dot={dot} />
     </Link>
   );
 }
 
-function EditSectionsStrip() {
-  const tr = useTr();
-  const sections: Array<{ step: number; label: string }> = [
-    { step: 0, label: tr("Basics", "Datos básicos", "Bases") },
-    { step: 1, label: tr("Who to meet", "A quién conocer", "Qui rencontrer") },
-    { step: 2, label: tr("Padel & where", "Pádel y dónde", "Padel et lieux") },
-    { step: 3, label: tr("Photo & bio", "Foto y bio", "Photo et bio") },
-  ];
+function CollapsibleRow({
+  title,
+  meta,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  meta?: ReactNode;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="mt-3">
-      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/55 mb-2 px-1">
-        {tr("Edit a section", "Editar una sección", "Modifier une section")}
-      </div>
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
-        {sections.map((s) => (
-          <Link
-            key={s.step}
-            to="/app/onboarding"
-            search={{ step: s.step }}
-            className="shrink-0 inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/20 text-xs text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--ink)]/40 transition whitespace-nowrap"
-          >
-            <Pencil className="w-3 h-3" />
-            {s.label}
-          </Link>
-        ))}
-      </div>
+    <div className={open ? "border-b border-[var(--ink)]/12 pb-5" : ""}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className={open ? ROW_CLASS.replace("border-b border-[var(--ink)]/12", "") : ROW_CLASS}
+      >
+        <RowInner title={title} meta={meta} open={open} />
+      </button>
+      {open && <div className="pt-1">{children}</div>}
     </div>
   );
 }
-
 
 function FeedbackBox() {
   const { t } = useI18n();
@@ -422,21 +394,18 @@ function FeedbackBox() {
   };
 
   return (
-    <div className="mt-6 programme-card p-5">
-      <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-[var(--ink)]" />
-        <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{t("fb.title")}</h2>
-      </div>
+    <div className="mt-5">
+      <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{t("fb.title")}</h3>
       <Textarea
         value={msg}
         onChange={(e) => setMsg(e.target.value.slice(0, 2000))}
         placeholder={t("fb.placeholder")}
-        className="mt-3 min-h-[110px] border-[var(--ink)]/20 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
+        className="mt-2 min-h-[110px] bg-[var(--card)] border-[var(--ink)]/15 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
         maxLength={2000}
       />
       <div className="flex items-center justify-between mt-2">
         <span className="text-[10px] text-[var(--ink)]/50">{msg.length >= 1800 ? `${msg.length}/2000` : ""}</span>
-        <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm" variant="outline">
+        <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm" variant="outline" className="rounded-full">
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>
       </div>
@@ -444,61 +413,27 @@ function FeedbackBox() {
   );
 }
 
-function CollapsibleRow({
-  icon,
-  title,
-  subtitle,
-  defaultOpen = false,
-  contentCard = false,
-  children,
-}: {
-  icon?: ReactNode;
-  title: string;
-  subtitle?: string;
-  defaultOpen?: boolean;
-  contentCard?: boolean;
-  children: ReactNode;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
+function Switch({ on, onClick, disabled, label }: { on: boolean; onClick: () => void; disabled?: boolean; label: string }) {
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="w-full flex items-center justify-between gap-3 rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper)] px-4 py-3.5 text-left hover:bg-[var(--paper-2)] transition-colors"
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          {icon && (
-            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--ink)]/[0.06] text-[var(--ink)] shrink-0">
-              {icon}
-            </span>
-          )}
-          <div className="min-w-0">
-            <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight truncate">{title}</div>
-            {subtitle && <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">{subtitle}</div>}
-          </div>
-        </div>
-        <ChevronDown className={`w-5 h-5 text-[var(--ink)]/50 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && (
-        <div className={contentCard ? "mt-2 programme-card p-4 sm:p-5" : "mt-2"}>
-          {children}
-        </div>
-      )}
-    </div>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      onClick={onClick}
+      disabled={disabled}
+      className={`relative shrink-0 w-12 h-7 rounded-full transition-colors ${on ? "bg-[var(--ink)]" : "bg-[var(--ink)]/15"}`}
+    >
+      <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-[var(--card)] shadow-sm transition-transform ${on ? "translate-x-5" : ""}`} />
+    </button>
   );
 }
 
-
-function Info({ label, v }: { label: string; v: string }) {
-  return (
-    <div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">{label}</div>
-      <div className="text-sm sm:text-base font-medium text-[var(--ink)]">{v}</div>
-    </div>
-  );
-}
+// Weekday "lunchtime" is the middle slot on weekdays; its English label reads "afternoons".
+const RHYTHM_ROWS: Array<{ key: "weekday" | "weekend"; slots: [string, string, string] }> = [
+  { key: "weekday", slots: ["Weekday mornings", "Weekday lunchtime", "Weekday evenings"] },
+  { key: "weekend", slots: ["Weekend mornings", "Weekend afternoons", "Weekend evenings"] },
+];
 
 function AvailabilityCard({ awayUntil, slots, onSaved }: { awayUntil: string | null; slots: string[]; onSaved: () => void }) {
   const setAway = useServerFn(setAwayStatus);
@@ -538,57 +473,67 @@ function AvailabilityCard({ awayUntil, slots, onSaved }: { awayUntil: string | n
     }
   };
 
+  const cols = [
+    tr("Morning", "Mañana", "Matin"),
+    tr("Afternoon", "Mediodía", "Après-midi"),
+    tr("Evening", "Noche", "Soir"),
+  ];
+  const rowLabel = (k: "weekday" | "weekend") =>
+    k === "weekday" ? tr("Weekdays", "Entre semana", "En semaine") : tr("Weekends", "Fines de semana", "Week-end");
+
   return (
-    <div className="mt-4 programme-card p-5">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Availability", "Disponibilidad", "Disponibilité")}</h2>
-          <p className="text-xs text-[var(--ink)]/60 mt-1">
+    <section className="border-b border-[var(--ink)]/12 py-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("My rhythm", "Mi ritmo", "Mon rythme")}</h2>
+          <p className="text-xs text-[var(--ink)]/55 mt-1">
             {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={toggle}
-          disabled={busy}
-          className={`relative w-12 h-7 rounded-full transition-colors ${isAway ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}
-          aria-label="Toggle holiday status"
-        >
-          <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isAway ? "translate-x-5" : ""}`} />
-        </button>
+        <Switch on={isAway} onClick={toggle} disabled={busy} label={tr("On holidays", "De vacaciones", "En vacances")} />
       </div>
 
-      <div className="mt-4 border-t border-[var(--ink)]/10 pt-4">
-        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">
-          {tr("When do you usually play?", "¿Cuándo sueles jugar?", "Quand joues-tu d'habitude ?")}
-        </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {AVAILABILITY_SLOTS.map((s) => {
-            const on = picked.includes(s);
-            return (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setPicked((cur) => (cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]))}
-                className={`px-3 py-1.5 rounded-full text-xs border transition ${on ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80 hover:bg-[var(--ink)]/[0.04]"}`}
-              >
-                {label(s)}
-              </button>
-            );
-          })}
+      <div className="mt-4" role="group" aria-label={tr("When do you usually play?", "¿Cuándo sueles jugar?", "Quand joues-tu d'habitude ?")}>
+        <div className="grid grid-cols-[1fr_repeat(3,minmax(0,1fr))] items-center">
+          <span />
+          {cols.map((c) => (
+            <span key={c} className="text-center text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/50 pb-1">{c}</span>
+          ))}
+          {RHYTHM_ROWS.map((row) => (
+            <div key={row.key} className="contents">
+              <span className="text-sm text-[var(--ink)] py-1">{rowLabel(row.key)}</span>
+              {row.slots.map((s) => {
+                const on = picked.includes(s);
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    aria-pressed={on}
+                    aria-label={label(s)}
+                    onClick={() => setPicked((cur) => (cur.includes(s) ? cur.filter((x) => x !== s) : [...cur, s]))}
+                    className="h-11 flex items-center justify-center active:scale-90 transition-transform"
+                  >
+                    <span className={`w-4 h-4 rounded-full border transition-colors ${on ? "bg-[var(--ink)] border-[var(--ink)]" : "border-[var(--ink)]/35"}`} />
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </div>
         {dirty && (
-          <button
-            type="button"
-            onClick={saveSlots}
-            disabled={busy}
-            className="mt-3 px-4 py-2 rounded-full bg-[var(--plum)] text-white text-xs font-bold uppercase tracking-widest disabled:opacity-60"
-          >
-            {tr("Save", "Guardar", "Enregistrer")}
-          </button>
+          <div className="mt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={saveSlots}
+              disabled={busy}
+              className="h-9 px-5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-[0.2em] disabled:opacity-60"
+            >
+              {tr("Save", "Guardar", "Enregistrer")}
+            </button>
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -604,7 +549,7 @@ function AnalyticsConsent() {
     setTelemetryEnabled(next);
     toast.success(
       next
-        ? tr("Analytics on — thanks for helping", "Analítica activada — gracias por ayudar", "Analytique activée — merci")
+        ? tr("Analytics on, thanks for helping", "Analítica activada, gracias por ayudar", "Analytique activée, merci")
         : tr("Analytics off", "Analítica desactivada", "Analytique désactivée"),
     );
   };
@@ -629,7 +574,7 @@ function AnalyticsConsent() {
         role="switch"
         aria-checked={enabled}
         aria-label={tr("Share usage & crash data", "Compartir uso y fallos", "Partager l'usage et les plantages")}
-        className={`relative shrink-0 w-12 h-7 rounded-full transition-colors ${enabled ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}
+        className={`relative shrink-0 w-12 h-7 rounded-full transition-colors ${enabled ? "bg-[var(--ink)]" : "bg-[var(--ink)]/15"}`}
       >
         <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${enabled ? "translate-x-5" : ""}`} />
       </button>
@@ -647,32 +592,15 @@ function InviteFriendsRow() {
       recordAppShare("share_sheet");
     } else if (outcome === "copied") {
       recordAppShare("copy_link");
-      toast.success(tr("Link copied — paste it in WhatsApp", "Enlace copiado — pégalo en WhatsApp", "Lien copié — colle-le dans WhatsApp"));
+      toast.success(tr("Link copied, paste it in WhatsApp", "Enlace copiado, pégalo en WhatsApp", "Lien copié, colle-le dans WhatsApp"));
     } else if (outcome === "unavailable") {
       recordAppShare("whatsapp");
       window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${DOWNLOAD_URL}`)}`, "_blank", "noopener");
     }
   };
   return (
-    <button
-      type="button"
-      onClick={onShare}
-      className="w-full flex items-center justify-between gap-3 rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper)] px-4 py-3.5 text-left hover:bg-[var(--paper-2)] transition-colors"
-    >
-      <div className="flex items-center gap-3 min-w-0">
-        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--grass)]/30 text-[var(--ink)] shrink-0">
-          <UserPlus className="w-4 h-4" />
-        </span>
-        <div className="min-w-0">
-          <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight truncate">
-            {tr("Invite friends", "Invitar amigos", "Inviter des amis")}
-          </div>
-          <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">
-            {tr("Share the app on WhatsApp", "Comparte la app por WhatsApp", "Partage l’app sur WhatsApp")}
-          </div>
-        </div>
-      </div>
-      <Share2 className="w-4 h-4 text-[var(--ink)]/50 shrink-0" />
+    <button type="button" onClick={onShare} className={ROW_CLASS}>
+      <RowInner title={tr("Invite friends", "Invitar amigos", "Inviter des amis")} meta="WhatsApp" />
     </button>
   );
 }
@@ -683,33 +611,13 @@ function MessagesRow() {
   const q = useQuery({ queryKey: ["my-matches"], queryFn: () => getMatches() });
   const unread = (q.data ?? []).reduce((n: number, m: any) => n + (m.unread ?? 0), 0);
   const count = (q.data ?? []).length;
-  return (
-    <Link
-      to="/app/matches"
-      className="group flex items-center justify-between gap-3 w-full rounded-2xl border border-[var(--plum)]/30 bg-gradient-to-r from-[var(--plum)] to-[var(--plum)]/90 px-4 py-3.5 shadow-[0_8px_24px_-12px_color-mix(in_oklab,var(--plum)_55%,transparent)] hover:shadow-[0_12px_28px_-10px_color-mix(in_oklab,var(--plum)_60%,transparent)] hover:scale-[1.01] transition-all"
-    >
-      <div className="flex items-center gap-3.5">
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-[var(--paper)]/15 backdrop-blur-sm">
-          <MessageCircle className="w-5 h-5 text-[var(--paper)]" />
-          {unread > 0 && (
-            <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold flex items-center justify-center border-2 border-[var(--plum)]">{unread > 9 ? "9+" : unread}</span>
-          )}
-        </div>
-        <div>
-          <div className="text-[15px] sm:text-base font-bold text-[var(--paper)] tracking-tight">{tr("Messages", "Mensajes", "Messages")}</div>
-          <div className="text-[12px] text-[var(--paper)]/80">
-            {count > 0
-              ? tr(`${count} conversation${count > 1 ? "s" : ""}`, `${count} conversación${count > 1 ? "es" : ""}`, `${count} conversation${count > 1 ? "s" : ""}`)
-              : tr("Chat with your matches", "Chatea con tus matches", "Discute avec tes matchs")}
-          </div>
-        </div>
-      </div>
-      <span className="text-[var(--paper)]/80 text-lg group-hover:text-[var(--paper)] transition-colors">›</span>
-    </Link>
-  );
+  const meta = unread > 0
+    ? tr(`${unread > 9 ? "9+" : unread} new`, `${unread > 9 ? "9+" : unread} nuevos`, `${unread > 9 ? "9+" : unread} nouveaux`)
+    : count > 0
+      ? tr(`${count} conversation${count > 1 ? "s" : ""}`, `${count} conversación${count > 1 ? "es" : ""}`, `${count} conversation${count > 1 ? "s" : ""}`)
+      : undefined;
+  return <LinkRow to="/app/matches" title={tr("Messages", "Mensajes", "Messages")} meta={meta} dot={unread > 0} />;
 }
-
-
 
 function QaRow() {
   const tr = useTr();
@@ -717,11 +625,8 @@ function QaRow() {
   const n = saved.size;
   return (
     <CollapsibleRow
-      icon={<Sparkles className="w-4 h-4" />}
       title={tr("Compatibility", "Compatibilidad", "Compatibilité")}
-      subtitle={query.isSuccess
-        ? tr(`${n} of ${QA_TOTAL} answered`, `${n} de ${QA_TOTAL} respondidas`, `${n} sur ${QA_TOTAL} répondues`)
-        : tr("Quick questions for better pairings", "Preguntas rápidas para mejores parejas", "Questions rapides pour de meilleurs duos")}
+      meta={query.isSuccess ? tr(`${n} of ${QA_TOTAL}`, `${n} de ${QA_TOTAL}`, `${n} sur ${QA_TOTAL}`) : undefined}
     >
       <QaAnswers />
     </CollapsibleRow>
@@ -734,31 +639,13 @@ function CoachBar() {
   const { data } = useQuery({ queryKey: ["my-coach-slots"], queryFn: () => fetchMine() });
   const requests = (data?.slots ?? []).filter((s) => s.status === "requested").length;
   return (
-    <Link
+    <LinkRow
       to="/app/coach"
-      className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--plum)]/25 bg-[var(--plum)]/[0.05] px-4 py-3 transition-colors hover:bg-[var(--plum)]/[0.09]"
-    >
-      <div className="flex items-center gap-3 min-w-0">
-        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--plum)]/12 text-[var(--plum)] shrink-0">
-          <GraduationCap className="w-4 h-4" />
-        </span>
-        <div className="min-w-0">
-          <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight">{tr("Coaching", "Entrenador", "Coaching")}</div>
-          <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">
-            {requests > 0
-              ? tr(`${requests} to answer`, `${requests} por responder`, `${requests} à répondre`)
-              : tr("Requests, classes and your times", "Solicitudes, clases y tus horas", "Demandes, cours et horaires")}
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center gap-2 shrink-0">
-        {requests > 0 && (
-          <span className="inline-flex min-w-6 h-6 px-1.5 items-center justify-center rounded-full bg-[var(--plum)] text-[11px] font-semibold text-[var(--paper)]">
-            {requests}
-          </span>
-        )}
-        <ChevronRight className="w-5 h-5 text-[var(--ink)]/45" />
-      </div>
-    </Link>
+      title={tr("Coaching", "Entrenador", "Coaching")}
+      dot={requests > 0}
+      meta={requests > 0
+        ? tr(`${requests} to answer`, `${requests} por responder`, `${requests} à répondre`)
+        : tr("Requests and times", "Solicitudes y horas", "Demandes et horaires")}
+    />
   );
 }

@@ -26,20 +26,36 @@ export function CoachSelfSection({ isCoach, showLink = true }: { isCoach: boolea
     }
   };
 
-  // Same look as the free court box just above it.
+  const title = tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel");
+  // Same row look as "I have free court access" just above it.
   return (
-    <div className="rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-3 mt-2">
-      <label className="flex items-start gap-2 text-sm">
-        <input type="checkbox" checked={isCoach} disabled={busy} onChange={toggle} className="accent-[var(--cream)] mt-0.5" />
-        <span>
-          <span className="inline-flex items-center gap-1.5 font-semibold"><GraduationCap className="h-5 w-5 shrink-0 fill-[var(--plum)]/25 text-[var(--plum)]/60" strokeWidth={1.5} aria-hidden="true" />{tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel")}</span>
-          <span className="block text-xs text-[var(--ink)]/70 mt-0.5">
-            {isCoach
-              ? tr("Your lessons and requests are under Coaching on your Me page.", "Tus clases y solicitudes están en Entrenador, en tu página Yo.", "Tes cours et demandes sont dans Coaching, sur ta page Moi.")
-              : tr("Share your lesson times so players can book you, private or in a small group.", "Publica tus horas para que los jugadores te reserven, en privado o en grupo pequeño.", "Partage tes horaires pour que les joueurs te réservent, en privé ou en petit groupe.")}
+    <div className="py-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="inline-flex w-8 justify-center shrink-0">
+            <GraduationCap className="h-5 w-5 fill-[var(--plum)]/25 text-[var(--plum)]/60" strokeWidth={1.5} aria-hidden="true" />
           </span>
-        </span>
-      </label>
+          <div className="min-w-0">
+            <div className="text-[16px] text-[var(--ink)] leading-tight">{title}</div>
+            <div className="text-[12px] text-[var(--ink)]/55 mt-0.5">
+              {isCoach
+                ? tr("Lessons and requests are under Coaching on Me.", "Clases y solicitudes en Entrenador, en Yo.", "Cours et demandes dans Coaching, sur Moi.")
+                : tr("Players can book lessons with you", "Los jugadores pueden reservar clases contigo", "Les joueurs peuvent réserver des cours")}
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isCoach}
+          aria-label={title}
+          onClick={toggle}
+          disabled={busy}
+          className={`relative shrink-0 w-12 h-7 rounded-full transition-colors disabled:opacity-60 ${isCoach ? "bg-[var(--ink)]" : "bg-[var(--ink)]/15"}`}
+        >
+          <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-[var(--card)] shadow-sm transition-transform ${isCoach ? "translate-x-5" : ""}`} />
+        </button>
+      </div>
       {isCoach && showLink && (
         <Link to="/app/coach" className="mt-2 inline-block text-[13px] font-medium text-[var(--plum)] underline underline-offset-4">
           {tr("Open coaching", "Abrir panel de entrenador", "Ouvrir l'espace coach")}

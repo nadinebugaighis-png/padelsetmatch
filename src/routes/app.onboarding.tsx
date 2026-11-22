@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import * as SliderPrimitive from "@radix-ui/react-slider";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, resolveAgePreference, type AgeBracket } from "@/lib/age-bracket";
 import {
@@ -21,13 +23,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { presetByKey } from "@/lib/location-presets";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
-import { ArrowUp, Camera, Check, Crop, Plus, Trash2, X } from "lucide-react";
+import { Camera, Check, ChevronLeft, ChevronRight, Lock, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
 import { CoachSelfSection } from "@/components/CoachSelfSection";
-import { parseAdultAge } from "@/lib/qa-safety";
 
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
@@ -50,29 +51,6 @@ export const Route = createFileRoute("/app/onboarding")({
   },
   component: Onboarding,
 });
-
-function AgeInput({ value, onCommit, placeholder }: { value: number | null; onCommit: (n: number | null) => void; placeholder?: string }) {
-  const tr = useTr();
-  const [text, setText] = useState(value === null ? "" : String(value));
-  useEffect(() => { setText(value === null ? "" : String(value)); }, [value]);
-  return (
-    <Input
-      type="text"
-      inputMode="numeric"
-      pattern="[0-9]*"
-      maxLength={4}
-      placeholder={placeholder}
-      value={text}
-      onChange={(e) => setText(e.target.value.replace(/[^0-9]/g, ""))}
-      onBlur={() => {
-        if (text.trim() === "") { onCommit(null); return; }
-        const age = parseAdultAge(text);
-        if (age === null) toast.error(tr("Enter an age from 18 to 99.", "Introduce una edad de 18 a 99 años.", "Saisis un âge entre 18 et 99 ans."));
-        onCommit(age);
-      }}
-    />
-  );
-}
 
 function Onboarding() {
   const navigate = useNavigate();
@@ -121,6 +99,7 @@ function Onboarding() {
   const [personalTraits, setPersonalTraits] = useState<string[]>([]);
   const [padelStyle, setPadelStyle] = useState<string[]>([]);
   const [showStepHelp, setShowStepHelp] = useState(false);
+  const [sheet, setSheet] = useState<{ kind: "loc"; i: number } | { kind: "nat" } | { kind: "lang" } | { kind: "style" } | null>(null);
 
 
   // Hydrate the form from the saved profile exactly ONCE. Without this guard a
@@ -252,9 +231,9 @@ function Onboarding() {
           : tr("Welcome aboard! 🎾", "¡Bienvenido a la pista! 🎾", "Bienvenue sur le court ! 🎾"),
         {
           description: tr(
-            "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
-            "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
-            "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+            "Hope you love it, share with a padel friend or two, it plays better with more of us on the court.",
+            "Esperamos que te encante, compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+            "On espère que ça te plaira, partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
           ),
           duration: 8000,
         },
@@ -327,7 +306,7 @@ function Onboarding() {
       }
       if (upErr) {
         if (isTransient(upErr.message)) {
-          throw new Error("Server is busy right now — please wait a few seconds and try again.");
+          throw new Error("Server is busy right now. Please wait a few seconds and try again.");
         }
         throw upErr;
       }
@@ -498,489 +477,496 @@ function Onboarding() {
     );
   }
 
-  return (
-    <main className="px-4 py-6 pb-32 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-      <h1 className="sr-only">{tr("Create your profile", "Crea tu perfil", "Créez votre profil")}</h1>
-      <div className="sticky top-0 z-20 -mx-4 px-4 pt-2 pb-3 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/80">
-        <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-widest text-[var(--ink)]/70">
-          {step > 0 ? (
-            <button
-              type="button"
-              aria-label={t("ob.back")}
-              onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}
-              className="inline-flex items-center justify-center w-8 h-8 -ml-1 rounded-full hover:bg-[var(--ink)]/10 active:bg-[var(--ink)]/15"
-            >
-              <ArrowUp className="w-4 h-4 -rotate-90" />
-            </button>
-          ) : <span className="w-8" />}
-          <span className="flex-1 text-center">{steps[step]}</span>
-          <button
-            type="button"
-            onClick={requestExit}
-            disabled={save.isPending}
-            className="text-[10px] tracking-[0.2em] text-[var(--ink)]/60 hover:text-[var(--ink)] disabled:opacity-40"
-          >
-            {tr("Exit", "Salir", "Sortir")}
-          </button>
-        </div>
-      </div>
+  const isNew = !profileQ.data;
+  const SEL = "w-full h-11 rounded-xl border border-[var(--ink)]/15 bg-[var(--card)] px-3 text-[15px] text-[var(--ink)] disabled:opacity-50";
+  const CUSTOM = "__custom__";
+  const realNat = (n: string) => n !== "__none__" && n !== "" && n !== "Other";
+  const natSummary = nationality === "__none__"
+    ? ""
+    : nationality === ""
+      ? tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")
+      : [nationality === "Other" ? tr("Other", "Otro", "Autre") : nationality, realNat(nationality) && nationality2 && nationality2 !== nationality ? nationality2 : ""].filter(Boolean).join(" ");
+  const langSummary = languages.map((l) => ((LANGUAGES as readonly string[]).includes(l) ? label(l) : l)).join(", ");
+  const ageMinShown = age_min ?? 18;
+  const ageMaxShown = age_max ?? 99;
+  const ageRangeText = age_min === null && age_max === null
+    ? tr("Any age", "Cualquier edad", "Tous âges")
+    : `${ageMinShown} ${tr("to", "a", "à")} ${age_max === null ? "99" : ageMaxShown}`;
 
-      <div className="mt-6 rounded-3xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-sm p-5 sm:p-8 space-y-4">
-        {showStepHelp && missingByStep[step]?.length > 0 && (
-          <div className="rounded-2xl border border-[var(--clay)]/25 bg-[var(--clay)]/10 px-4 py-3 text-sm text-[var(--ink)]/85">
-            <span className="font-semibold">{tr("To continue, complete:", "Para continuar, completa:", "Pour continuer, complète :")}</span>{" "}
-            {missingByStep[step].join(", ")}.
+  const renderLocEditor = (i: number) => {
+    const b = locBlocks[i];
+    if (!b) return null;
+    const countryInList = !b.country || COUNTRY_NAMES.includes(b.country);
+    const cities = citiesFor(countryInList ? b.country : "");
+    const cityInList = !b.city || cities.some((c) => c.name === b.city);
+    const areaOpts = areasFor(countryInList ? b.country : "", cityInList ? b.city : "");
+    return (
+      <div className="space-y-3">
+        <div>
+          <FieldLabel>{tr("Country", "País", "Pays")}</FieldLabel>
+          <select
+            value={countryInList ? b.country : CUSTOM}
+            onChange={(e) => {
+              const v = e.target.value;
+              const nextCountry = v === CUSTOM ? CUSTOM : v;
+              const firstCity = nextCountry && nextCountry !== CUSTOM ? (citiesFor(nextCountry)[0]?.name ?? "") : "";
+              updateBlock(i, { country: nextCountry, city: firstCity, areas: ["", "", ""] });
+            }}
+            className={SEL}
+          >
+            <option value="">{tr("Country", "País", "Pays")}</option>
+            {COUNTRY_NAMES.map((n) => <option key={n} value={n}>{n}</option>)}
+            <option value={CUSTOM}>{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)", "+ Autre (saisis le tien)")}</option>
+          </select>
+          {!countryInList && (
+            <Input className="mt-2 h-11 rounded-xl" maxLength={60} value={b.country === CUSTOM ? "" : b.country} onChange={(e) => updateBlock(i, { country: e.target.value })} placeholder={tr("Type country name", "Escribe el país", "Saisis le nom du pays")} />
+          )}
+        </div>
+        {isReal(b.country) && (
+          <div>
+            <FieldLabel>{tr("City", "Ciudad", "Ville")}</FieldLabel>
+            {cities.length > 0 && (
+              <select
+                value={cityInList ? b.city : CUSTOM}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  updateBlock(i, { city: v === CUSTOM ? CUSTOM : v, areas: ["", "", ""] });
+                }}
+                className={SEL}
+              >
+                <option value="">{tr("City", "Ciudad", "Ville")}</option>
+                {cities.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                <option value={CUSTOM}>{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)", "+ Autre (saisis le tien)")}</option>
+              </select>
+            )}
+            {(cities.length === 0 || !cityInList) && (
+              <Input className="mt-2 h-11 rounded-xl" maxLength={60} value={b.city === CUSTOM ? "" : b.city} onChange={(e) => updateBlock(i, { city: e.target.value })} placeholder={tr("Type city name", "Escribe la ciudad", "Saisis le nom de la ville")} />
+            )}
           </div>
         )}
-        {step === 0 && newAppleAccount && (
-          <p className="text-[12px] text-[var(--ink)]/60 leading-relaxed">
-            {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
-            <button type="button" onClick={switchToEmail} className="underline underline-offset-2 text-[var(--ink)]/80 hover:text-[var(--ink)]">
-              {tr("Sign in with your email instead", "Entra con tu email", "Connecte-toi avec ton e-mail")}
-            </button>
-          </p>
-        )}
-        {step === 0 && (
-          <>
-            <h2 className="text-display text-[1.375rem] sm:text-3xl leading-tight">{t("ob.h0")}</h2>
-            <div data-field="first_name" className={fieldCls("first_name")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.firstName")}</label>
-              <Input value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} />
-            </div>
-            <div data-field="age" className={fieldCls("age")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Age bracket", "Rango de edad", "Tranche d'âge")}</label>
-              <p className="text-[11px] text-[var(--ink)]/55 mt-1">{tr("Never shown on your profile — used only to find good matches.", "Nunca se muestra en tu perfil — solo se usa para encontrar buenos matches.", "Jamais affiché sur ton profil — sert uniquement à trouver de bons matchs.")}</p>
-              <div className="mt-3 flex w-full overflow-hidden rounded-full border border-[var(--ink)]/20 bg-[var(--paper,#fdfaf3)] shadow-[inset_0_1px_0_rgba(0,0,0,0.04)]">
-                {AGE_BRACKETS.map((b, idx) => {
-                  const mid = bracketMidpoint(b);
-                  const selected = bracket !== null && bracket[0] === b[0] && bracket[1] === b[1];
-                  const labelTxt = bracketLabel(b);
+        {isReal(b.city) && (
+          <div>
+            <FieldLabel>{tr("Areas, up to 3 (optional)", "Zonas, hasta 3 (opcional)", "Zones, jusqu'à 3 (optionnel)")}</FieldLabel>
+            <div className="space-y-2">
+              {b.areas.map((a, ai) => {
+                const areaInList = !a || areaOpts.includes(a);
+                const taken = new Set(b.areas.filter((x, k) => k !== ai && x && x !== CUSTOM));
+                if (areaOpts.length > 0 && areaInList) {
                   return (
-                    <button
-                      key={labelTxt}
-                      onClick={() => { setBracket(b); setAge(mid); }}
-                      className={`flex-1 py-2.5 text-[13px] font-medium tracking-tight transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/15" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper,#fdfaf3)]" : "text-[var(--ink)]/75 hover:bg-[var(--ink)]/5"}`}
-                    >
-                      {labelTxt}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div data-field="gender" className={fieldCls("gender")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.iAm")}</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {GENDERS.map((g) => (
-                  <button key={g} onClick={() => setGender(g)} className={`chip-paper ${gender === g ? "chip-paper-selected" : ""}`}>{label(g)}</button>
-                ))}
-              </div>
-              {gender === "self-describe" && (
-                <Input className="mt-2" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself (e.g. trans woman, genderfluid…)", "Descríbete (p. ej. mujer trans, género fluido…)", "Décris-toi (p. ex. femme trans, genre fluide…)")} maxLength={40} />
-              )}
-            </div>
-            {/* "What are you looking for?" removed — everyone is a padel player. */}
-
-          </>
-        )}
-        {step === 0 && (
-          <>
-            <h2 className="text-display text-[1.375rem] sm:text-3xl leading-tight pt-4 border-t border-[var(--ink)]/10">{t("ob.h1")}</h2>
-
-
-
-
-            <div data-field="age_range" className={fieldCls("age_range")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.ageRange")}</label>
-              <div className="flex items-center gap-3 mt-1">
-                <AgeInput value={age_min} onCommit={setAgeMin} />
-                <span>{t("ob.to")}</span>
-                <AgeInput value={age_max} onCommit={setAgeMax} />
-              </div>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional. Leave blank to play with all ages.", "Opcional. Déjalo en blanco para jugar con todas las edades.", "Optionnel. Laisse vide pour jouer avec tous les âges.")}</p>
-            </div>
-          </>
-        )}
-        {step === 0 && (
-          <>
-            <h2 className="text-display text-[1.375rem] sm:text-3xl leading-tight pt-4 border-t border-[var(--ink)]/10">{t("ob.h2")}</h2>
-
-            <div data-field="locations" className={fieldCls("locations")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Where do you play?", "¿Dónde juegas?", "Où joues-tu ?")}</label>
-              <p className="text-xs text-[var(--ink)]/55 mt-1">{tr("Add the places you play — home, work, summer house, or when travelling. Up to 3 areas per country.", "Añade los sitios donde juegas — casa, trabajo, casa de verano o cuando viajas. Hasta 3 zonas por país.", "Ajoute les endroits où tu joues — chez toi, au travail, ta maison d'été ou en voyage. Jusqu'à 3 zones par pays.")}</p>
-            </div>
-
-
-            <div className="space-y-3">
-              {locBlocks.map((b, i) => {
-                const CUSTOM = "__custom__";
-                const countryInList = !b.country || COUNTRY_NAMES.includes(b.country);
-                const cities = citiesFor(countryInList ? b.country : "");
-                const cityInList = !b.city || cities.some((c) => c.name === b.city);
-                const areaOpts = areasFor(countryInList ? b.country : "", cityInList ? b.city : "");
-                return (
-                  <div key={i} className="rounded-lg border border-[var(--cream)]/15 p-3 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Location", "Ubicación", "Lieu")} {i + 1}</span>
-                      {locBlocks.length > 1 && (
-                        <button type="button" onClick={() => removeBlock(i)} aria-label={tr("Remove this location", "Eliminar esta ubicación", "Supprimer ce lieu")} className="text-[var(--ink)]/70 hover:text-[var(--clay)]">
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                    <select
-                      value={countryInList ? b.country : CUSTOM}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        const nextCountry = v === CUSTOM ? CUSTOM : v;
-                        const firstCity = nextCountry && nextCountry !== CUSTOM ? (citiesFor(nextCountry)[0]?.name ?? "") : "";
-                        updateBlock(i, { country: nextCountry, city: firstCity, areas: ["", "", ""] });
-                      }}
-                      className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--ink)]"
-                    >
-                      <option value="" className="bg-[var(--court-deep)]">{tr("Country", "País", "Pays")}</option>
-                      {COUNTRY_NAMES.map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-                      <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)", "+ Autre (saisis le tien)")}</option>
-
+                    <select key={ai} value={a || "__none__"} onChange={(e) => updateArea(i, ai, e.target.value === "__none__" ? "" : e.target.value)} className={SEL}>
+                      <option value="__none__">{tr("Area", "Zona", "Zone")} {ai + 1}</option>
+                      {areaOpts.filter((o) => !taken.has(o)).map((o) => <option key={o} value={o}>{o}</option>)}
+                      <option value={CUSTOM}>{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)", "+ Autre (saisis le tien)")}</option>
                     </select>
-                    {!countryInList && (
-                      <Input
-                        maxLength={60}
-                        value={b.country === CUSTOM ? "" : b.country}
-                        onChange={(e) => updateBlock(i, { country: e.target.value })}
-                        placeholder={tr("Type country name", "Escribe el país", "Saisis le nom du pays")}
-                      />
-                    )}
-                    {cities.length > 0 ? (
-                      <select
-                        value={cityInList ? b.city : CUSTOM}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          updateBlock(i, { city: v === CUSTOM ? CUSTOM : v, areas: ["", "", ""] });
-                        }}
-                        disabled={!isReal(b.country) && countryInList}
-                        className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--ink)] disabled:opacity-50"
-                      >
-                        <option value="" className="bg-[var(--court-deep)]">{b.country ? tr("City", "Ciudad", "Ville") : tr("Pick country first", "Elige país primero", "Choisis d'abord le pays")}</option>
-                        {cities.map((c) => <option key={c.name} value={c.name} className="bg-[var(--court-deep)]">{c.name}</option>)}
-                        <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)", "+ Autre (saisis le tien)")}</option>
-
-                      </select>
-                    ) : null}
-                    {(cities.length === 0 || !cityInList) && isReal(b.country) && (
-                      <Input
-                        maxLength={60}
-                        value={b.city === CUSTOM ? "" : b.city}
-                        onChange={(e) => updateBlock(i, { city: e.target.value })}
-                        placeholder={tr("Type city name", "Escribe la ciudad", "Saisis le nom de la ville")}
-                      />
-                    )}
-                    {isReal(b.city) && (
-                      <div className="grid grid-cols-1 gap-2">
-                        {b.areas.map((a, ai) => {
-                          const areaInList = !a || areaOpts.includes(a);
-                          const taken = new Set(b.areas.filter((x, k) => k !== ai && x && x !== CUSTOM));
-                          if (areaOpts.length > 0 && areaInList) {
-                            return (
-                              <select
-                                key={ai}
-                                value={a || "__none__"}
-                                onChange={(e) => updateArea(i, ai, e.target.value === "__none__" ? "" : e.target.value)}
-                                className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 text-sm text-[var(--ink)]"
-                              >
-                                <option value="__none__" className="bg-[var(--court-deep)]">{tr("Area", "Zona", "Zone")} {ai + 1} ({tr("optional", "opcional", "optionnel")})</option>
-                                {areaOpts.filter((o) => !taken.has(o)).map((o) => <option key={o} value={o} className="bg-[var(--court-deep)]">{o}</option>)}
-                                <option value={CUSTOM} className="bg-[var(--court-deep)]">{tr("+ Other (type your own)", "+ Otro (escribe el tuyo)", "+ Autre (saisis le tien)")}</option>
-
-                              </select>
-                            );
-                          }
-                          return (
-                            <div key={ai} className="flex gap-2">
-                              <Input
-                                maxLength={80}
-                                value={a === CUSTOM ? "" : a}
-                                onChange={(e) => updateArea(i, ai, e.target.value)}
-                                placeholder={`${tr("Area", "Zona", "Zone")} ${ai + 1} (${tr("optional", "opcional", "optionnel")})`}
-                              />
-                              {a && (
-                                <button type="button" onClick={() => updateArea(i, ai, "")} aria-label={tr("Clear this area", "Borrar esta zona", "Effacer cette zone")} className="text-[var(--ink)]/70 hover:text-[var(--clay)] px-2">
-                                  <X className="w-4 h-4" />
-                                </button>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {isReal(b.country) && !isReal(b.city) && (
-                      <p className="text-[11px] text-[var(--ink)]/80">
-                        {tr("Choose a city too so we can show nearby players.", "Elige también una ciudad para poder mostrar jugadores cerca.", "Choisis aussi une ville pour qu'on puisse montrer les joueurs à proximité.")}
-                      </p>
+                  );
+                }
+                return (
+                  <div key={ai} className="flex gap-2">
+                    <Input className="h-11 rounded-xl" maxLength={80} value={a === CUSTOM ? "" : a} onChange={(e) => updateArea(i, ai, e.target.value)} placeholder={`${tr("Area", "Zona", "Zone")} ${ai + 1}`} />
+                    {a && (
+                      <button type="button" onClick={() => updateArea(i, ai, "")} aria-label={tr("Clear this area", "Borrar esta zona", "Effacer cette zone")} className="px-2 text-[var(--ink)]/60">
+                        <X className="w-4 h-4" />
+                      </button>
                     )}
                   </div>
                 );
               })}
-              <Button type="button" variant="outline" onClick={addBlock} className="w-full">
-                <Plus className="w-4 h-4 mr-1" /> {tr("Add another country", "Añadir otro país", "Ajouter un autre pays")}
-              </Button>
-            </div>
-
-
-            <div data-field="nationality" className={fieldCls("nationality")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.nat")}</label>
-              <select className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality} onChange={(e) => setNationality(e.target.value)}>
-                <option value="__none__" className="bg-[var(--court-deep)]">{tr("Select country", "Selecciona país", "Sélectionne un pays")}</option>
-                {NATIONALITIES.filter((n) => n !== "Other").map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-                <option value="Other" className="bg-[var(--court-deep)]">{tr("Other", "Otro", "Autre")}</option>
-                <option value="" className="bg-[var(--court-deep)]">{tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}</option>
-              </select>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Optional", "Opcional", "Optionnel")}</p>
-              {nationality !== "__none__" && nationality !== "" && nationality !== "Other" && (
-                showSecondNat || (nationality2 !== "" && nationality2 !== nationality) ? (
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")}</label>
-                      <button type="button" onClick={() => { setNationality2(""); setShowSecondNat(false); }} className="text-[11px] text-[var(--ink)]/60 underline underline-offset-2">
-                        {tr("Remove", "Quitar", "Retirer")}
-                      </button>
-                    </div>
-                    <select aria-label={tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")} className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-9 px-2 mt-1" value={nationality2 === nationality ? "" : nationality2} onChange={(e) => setNationality2(e.target.value)}>
-                      <option value="" className="bg-[var(--court-deep)]">{tr("Select country", "Selecciona país", "Sélectionne un pays")}</option>
-                      {NATIONALITIES.filter((n) => n !== "Other" && n !== nationality).map((n) => <option key={n} value={n} className="bg-[var(--court-deep)]">{n}</option>)}
-                    </select>
-                  </div>
-                ) : (
-                  <button type="button" onClick={() => setShowSecondNat(true)} className="mt-2 inline-flex min-h-9 items-center gap-1 text-[12px] text-[var(--ink)]/65 underline-offset-2 hover:underline">
-                    <Plus className="w-3.5 h-3.5" /> {tr("Add second nationality", "Añadir segunda nacionalidad", "Ajouter une seconde nationalité")}
-                  </button>
-                )
-              )}
-            </div>
-
-            <div data-field="languages" className={fieldCls("languages")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.langs")}</label>
-              <p className="text-[10px] text-[var(--ink)]/50 mt-0.5">{tr("Optional", "Opcional", "Optionnel")}</p>
-              {(() => {
-                const COMMON = ["English", "Spanish", "Portuguese", "French", "Italian", "German", "Arabic"];
-                const ALL = LANGUAGES as readonly string[];
-                const q = langQuery.trim().toLowerCase();
-                // Common languages first, then the rest alphabetically, all in one scrollable list.
-                const ordered = [...COMMON.filter((l) => ALL.includes(l)), ...ALL.filter((l) => !COMMON.includes(l))];
-                const visible = q ? ordered.filter((l) => l.toLowerCase().includes(q) || label(l).toLowerCase().includes(q)) : ordered;
-                const trimmed = langQuery.trim();
-                const canAddCustom =
-                  trimmed.length >= 2 &&
-                  !languages.some((l) => l.toLowerCase() === trimmed.toLowerCase()) &&
-                  !ALL.some((l) => l.toLowerCase() === trimmed.toLowerCase());
-                const addCustom = () => {
-                  const name = trimmed.replace(/\s+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-                  if (!name) return;
-                  if (name.length > 30 || languages.length >= 10) { toast.error(tr("Up to 10 languages, 30 characters each", "Hasta 10 idiomas, 30 caracteres cada uno", "Jusqu’à 10 langues, 30 caractères chacune")); return; }
-                  if (!languages.some((l) => l.toLowerCase() === name.toLowerCase())) {
-                    setLanguages((cur) => [...cur, name]);
-                  }
-                  setLangQuery("");
-                };
-                return (
-                  <div className="mt-1 space-y-2">
-                    {languages.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {languages.map((l) => (
-                          <button key={l} type="button" onClick={() => toggleLanguage(l)} aria-label={`${tr("Remove", "Quitar", "Retirer")} ${ALL.includes(l) ? label(l) : l}`} className="chip-paper chip-paper-selected">
-                            {ALL.includes(l) ? label(l) : l} <X className="w-3 h-3" />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      value={langQuery}
-                      onChange={(e) => { setLangQuery(e.target.value); setLangOpen(true); }}
-                      onFocus={() => setLangOpen(true)}
-                      onBlur={() => setTimeout(() => setLangOpen(false), 150)}
-                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (canAddCustom) addCustom(); } }}
-                      placeholder={tr("+ Add a language", "+ Añadir idioma", "+ Ajouter une langue")}
-                      className="w-full bg-transparent border border-[var(--cream)]/20 rounded-md h-10 px-3 text-sm"
-                    />
-                    {langOpen && <div onMouseDown={(e) => e.preventDefault()} className="max-h-44 overflow-y-auto overscroll-contain rounded-md border border-[var(--ink)]/10 bg-[var(--paper)]" role="listbox" aria-multiselectable="true" aria-label={t("ob.langs")}>
-                      {visible.map((l) => {
-                        const on = languages.includes(l);
-                        return (
-                          <button
-                            key={l}
-                            type="button"
-                            role="option"
-                            aria-selected={on}
-                            onClick={() => { toggleLanguage(l); setLangQuery(""); }}
-                            className={`flex w-full min-h-11 items-center justify-between px-3 text-left text-[14px] border-b border-[var(--ink)]/[0.06] last:border-b-0 active:bg-[var(--ink)]/[0.05] ${on ? "font-medium text-[var(--ink)]" : "text-[var(--ink)]/80"}`}
-                          >
-                            <span>{label(l)}</span>
-                            <span className={`flex h-5 w-5 items-center justify-center rounded-full border ${on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]" : "border-[var(--ink)]/25"}`}>
-                              {on && <Check className="w-3 h-3" strokeWidth={3} />}
-                            </span>
-                          </button>
-                        );
-                      })}
-                      {canAddCustom && (
-                        <button type="button" onClick={addCustom} className="flex w-full min-h-11 items-center gap-2 px-3 text-left text-[14px] text-[var(--ink)]/80 active:bg-[var(--ink)]/[0.05]">
-                          <Plus className="w-4 h-4" /> {tr("Add", "Añadir", "Ajouter")} "{trimmed}"
-                        </button>
-                      )}
-                      {visible.length === 0 && !canAddCustom && (
-                        <p className="px-3 py-3 text-xs text-[var(--ink)]/60">{tr("No match. Type a name and press Enter to add.", "Sin resultados. Escribe un nombre y pulsa Intro para añadirlo.", "Aucun résultat. Tape un nom et appuie sur Entrée pour l'ajouter.")}</p>
-                      )}
-                    </div>}
-                  </div>
-                );
-              })()}
-            </div>
-
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{tr("Your padel style (pick up to 3)", "Tu estilo de pádel (elige hasta 3)", "Ton style de padel (jusqu'à 3)")}</label>
-            <SearchableChips
-              options={PADEL_STYLES as readonly string[]}
-              selected={padelStyle}
-              onToggle={(s) =>
-                setPadelStyle((cur) =>
-                  cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]
-                )
-              }
-              onAddCustom={(v) => {
-                setPadelStyle((cur) => (cur.length >= 3 || cur.includes(v) ? cur : [...cur, v]));
-              }}
-              labelFn={label}
-              placeholder={tr("Search or type your style…", "Busca o escribe tu estilo…", "Cherche ou tape ton style…")}
-              addWord={tr("Add", "Añadir", "Ajouter")}
-              moreWord={tr("more", "más", "plus")}
-              lessWord={tr("Show less", "Ver menos", "Voir moins")}
-            />
-
-            <div data-field="level" className={fieldCls("level")}>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.padelLevel")}</label>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {PADEL_LEVELS.map((l) => (
-                  <button key={l} onClick={() => setLevel(l)} className={`chip-paper ${level === l ? "chip-paper-selected" : ""}`}>{label(l)}</button>
-                ))}
-              </div>
-            </div>
-
-
-
-            <label className="flex items-center gap-2 text-sm pt-1">
-              <input type="checkbox" checked={mixedDoubles} onChange={(e) => setMixedDoubles(e.target.checked)} className="accent-[var(--cream)]" />
-              {tr("Open to mixed doubles (2 men + 2 women format)", "Abierto a dobles mixtos (formato 2 hombres + 2 mujeres)", "Ouvert au double mixte (format 2 hommes + 2 femmes)")}
-            </label>
-
-            <div className="rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-3 mt-2">
-              <label className="flex items-start gap-2 text-sm">
-                <input type="checkbox" checked={freeCourt} onChange={(e) => setFreeCourt(e.target.checked)} className="accent-[var(--cream)] mt-0.5" />
-                <span>
-                  <span className="font-semibold">{tr("🎾 I have free court access", "🎾 Tengo pista gratis", "🎾 J'ai accès à une pista gratuitement")}</span>
-                  <span className="block text-xs text-[var(--ink)]/70 mt-0.5">{tr("Private club, residential court, or comp slots you can share with a match. A badge will appear on your profile.", "Club privado, pista residencial o slots gratuitos que puedes compartir con tu match. Aparecerá una insignia en tu perfil.", "Club privé, pista résidentielle ou créneaux offerts à partager avec un match. Un badge apparaîtra sur ton profil.")}</span>
-                </span>
-              </label>
-              {freeCourt && (
-                <Input
-                  className="mt-2"
-                  value={freeCourtNote}
-                  onChange={(e) => setFreeCourtNote(e.target.value)}
-                  placeholder={tr("Optional: court name or area (share full address only in chat)", "Opcional: nombre de la pista o zona (comparte la dirección solo en el chat)", "Optionnel : nom de la pista ou zone (partage l'adresse complète seulement en chat)")}
-                  maxLength={200}
-                />
-              )}
-            </div>
-
-
-            {profileQ.data && <CoachSelfSection isCoach={!!(profileQ.data as { is_coach?: boolean }).is_coach} showLink={false} />}
-
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.bio")}</label>
-            <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
-
-            <h2 className="text-display text-2xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
-            <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>
-            <div className="flex flex-col items-center gap-3">
-              <label className="block aspect-[3/4] w-full max-w-[220px] sm:max-w-[240px] rounded-2xl border border-dashed border-[var(--ink)]/30 overflow-hidden relative cursor-pointer bg-[var(--paper-2)]">
-                {photoUrl ? (
-                  <img src={photoUrl} alt="you" className="absolute inset-0 w-full h-full object-cover" />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--ink)]/70 gap-2">
-                    <Camera className="w-7 h-7" />
-                    <span className="text-sm">{uploading ? t("ob.uploading") : t("ob.tapUpload")}</span>
-                    <span className="text-[11px] text-[var(--ink)]/55 px-4 text-center">{tr("Tip: a photo with your racket gets 3× more matches 🎾", "Consejo: una foto con tu pala consigue 3× más matches 🎾", "Astuce : une photo avec ta raquette obtient 3× plus de matches 🎾")}</span>
-                  </div>
-                )}
-                <input
-                  id="ob-photo-input"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) setPendingPhotoFile(f);
-                    e.target.value = "";
-                  }}
-                />
-              </label>
-
-              {photoUrl ? (
-                <div className="flex flex-wrap gap-2 justify-center">
-                  <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()}>
-                    <Camera className="w-3.5 h-3.5 mr-1.5" />
-                    {tr("Change", "Cambiar", "Changer")}
-                  </Button>
-                  {lastPhotoFile && (
-                    <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => setPendingPhotoFile(lastPhotoFile)}>
-                      <Crop className="w-3.5 h-3.5 mr-1.5" />
-                      {tr("Recrop", "Recortar", "Recadrer")}
-                    </Button>
-                  )}
-                  <Button type="button" variant="outline" size="sm" disabled={uploading} className="text-red-600 hover:text-red-700" onClick={() => { setPhotoUrl(null); setLastPhotoFile(null); }}>
-                    <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                    {tr("Remove", "Quitar", "Retirer")}
-                  </Button>
-                </div>
-              ) : (
-                <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()}>
-                  <Camera className="w-3.5 h-3.5 mr-1.5" />
-                  {uploading ? t("ob.uploading") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
-                </Button>
-              )}
-            </div>
-
-            {!photoUrl && (
-              <p className="text-[11px] text-[var(--ink)]/55 text-center">
-                {tr("No photo? No problem — you can add one anytime from your profile.", "¿Sin foto? Sin problema — puedes añadirla cuando quieras desde tu perfil.", "Pas de photo ? Pas de souci — tu peux en ajouter une plus tard depuis ton profil.")}
-              </p>
-            )}
-          </>
-        )}
-      </div>
-
-
-      {(() => {
-        const coreDone = !!first_name.trim() && age !== null && !!gender && goals.length > 0 &&
-          (!hasPartnerGoal || !!meetPref) &&
-          (age_min === null || age_max === null || age_min <= age_max) &&
-          validBlocks.length > 0 && !!level;
-        return (
-          <div data-bottom-ui className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ink)]/10 bg-[var(--paper,#fdfaf3)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--paper,#fdfaf3)]/85" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.25rem)" }}>
-            <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 pt-3 pb-2 flex items-center justify-between gap-2 flex-wrap">
-              {step > 0 ? (
-                <Button variant="outline" size="sm" onClick={() => { setStep(step - 1); setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30); }}>{t("ob.back")}</Button>
-              ) : <div />}
-              <div className="flex items-center gap-2 ml-auto">
-                <Button
-                  size="sm"
-                  onClick={() => requestSave("grid")}
-                  disabled={save.isPending || uploading}
-                >
-                  {save.isPending ? t("ob.saving") : tr("Save", "Guardar", "Enregistrer")}
-                </Button>
-              </div>
             </div>
           </div>
-        );
-      })()}
+        )}
+        {locBlocks.length > 1 && (
+          <button type="button" onClick={() => { removeBlock(i); setSheet(null); }} className="w-full pt-3 text-center text-[13px] text-[var(--destructive)]">
+            {tr("Remove this place", "Quitar este lugar", "Retirer ce lieu")}
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const nationalityEditor = (
+    <div className="space-y-3">
+      <div>
+        <FieldLabel>{t("ob.nat")}</FieldLabel>
+        <select className={SEL} value={nationality} onChange={(e) => setNationality(e.target.value)}>
+          <option value="__none__">{tr("Select country", "Selecciona país", "Sélectionne un pays")}</option>
+          {NATIONALITIES.filter((n) => n !== "Other").map((n) => <option key={n} value={n}>{n}</option>)}
+          <option value="Other">{tr("Other", "Otro", "Autre")}</option>
+          <option value="">{tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}</option>
+        </select>
+      </div>
+      {realNat(nationality) && (
+        showSecondNat || (nationality2 !== "" && nationality2 !== nationality) ? (
+          <div>
+            <div className="flex items-center justify-between">
+              <FieldLabel>{tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")}</FieldLabel>
+              <button type="button" onClick={() => { setNationality2(""); setShowSecondNat(false); }} className="text-[12px] text-[var(--ink)]/60 underline underline-offset-2">
+                {tr("Remove", "Quitar", "Retirer")}
+              </button>
+            </div>
+            <select aria-label={tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")} className={SEL} value={nationality2 === nationality ? "" : nationality2} onChange={(e) => setNationality2(e.target.value)}>
+              <option value="">{tr("Select country", "Selecciona país", "Sélectionne un pays")}</option>
+              {NATIONALITIES.filter((n) => n !== "Other" && n !== nationality).map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setShowSecondNat(true)} className="inline-flex min-h-11 items-center gap-1 text-[14px] text-[var(--ink)]/70">
+            <Plus className="w-4 h-4" /> {tr("Add second nationality", "Añadir segunda nacionalidad", "Ajouter une seconde nationalité")}
+          </button>
+        )
+      )}
+    </div>
+  );
+
+  const languagesEditor = (() => {
+    const COMMON = ["English", "Spanish", "Portuguese", "French", "Italian", "German", "Arabic"];
+    const ALL = LANGUAGES as readonly string[];
+    const q = langQuery.trim().toLowerCase();
+    const ordered = [...COMMON.filter((l) => ALL.includes(l)), ...ALL.filter((l) => !COMMON.includes(l))];
+    const visible = q ? ordered.filter((l) => l.toLowerCase().includes(q) || label(l).toLowerCase().includes(q)) : ordered;
+    const trimmed = langQuery.trim();
+    const canAddCustom =
+      trimmed.length >= 2 &&
+      !languages.some((l) => l.toLowerCase() === trimmed.toLowerCase()) &&
+      !ALL.some((l) => l.toLowerCase() === trimmed.toLowerCase());
+    const addCustom = () => {
+      const name = trimmed.replace(/\s+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      if (!name) return;
+      if (name.length > 30 || languages.length >= 10) { toast.error(tr("Up to 10 languages, 30 characters each", "Hasta 10 idiomas, 30 caracteres cada uno", "Jusqu’à 10 langues, 30 caractères chacune")); return; }
+      if (!languages.some((l) => l.toLowerCase() === name.toLowerCase())) setLanguages((cur) => [...cur, name]);
+      setLangQuery("");
+    };
+    return (
+      <div className="space-y-3">
+        {languages.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {languages.map((l) => (
+              <button key={l} type="button" onClick={() => toggleLanguage(l)} aria-label={`${tr("Remove", "Quitar", "Retirer")} ${ALL.includes(l) ? label(l) : l}`} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px]">
+                {ALL.includes(l) ? label(l) : l} <X className="w-3 h-3" />
+              </button>
+            ))}
+          </div>
+        )}
+        <input
+          type="text"
+          value={langQuery}
+          onChange={(e) => setLangQuery(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (canAddCustom) addCustom(); } }}
+          placeholder={tr("Search a language", "Busca un idioma", "Cherche une langue")}
+          aria-label={t("ob.langs")}
+          className={SEL}
+        />
+        <div className="max-h-[40vh] overflow-y-auto overscroll-contain" role="listbox" aria-multiselectable="true" aria-label={t("ob.langs")}>
+          {visible.map((l) => {
+            const on = languages.includes(l);
+            return (
+              <button
+                key={l}
+                type="button"
+                role="option"
+                aria-selected={on}
+                onClick={() => { toggleLanguage(l); setLangQuery(""); }}
+                className={`flex w-full min-h-12 items-center justify-between text-left text-[15px] border-b border-[var(--ink)]/[0.07] last:border-b-0 active:bg-[var(--ink)]/[0.04] ${on ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}
+              >
+                <span>{label(l)}</span>
+                {on && <Check className="w-4 h-4 text-[var(--ink)]" strokeWidth={2.5} />}
+              </button>
+            );
+          })}
+          {canAddCustom && (
+            <button type="button" onClick={addCustom} className="flex w-full min-h-12 items-center gap-2 text-left text-[15px] text-[var(--ink)]/80">
+              <Plus className="w-4 h-4" /> {tr("Add", "Añadir", "Ajouter")} "{trimmed}"
+            </button>
+          )}
+          {visible.length === 0 && !canAddCustom && (
+            <p className="py-3 text-xs text-[var(--ink)]/60">{tr("No match. Type a name and press Enter to add.", "Sin resultados. Escribe un nombre y pulsa Intro para añadirlo.", "Aucun résultat. Tape un nom et appuie sur Entrée pour l'ajouter.")}</p>
+          )}
+        </div>
+      </div>
+    );
+  })();
+
+  const styleEditor = (
+    <SearchableChips
+      options={PADEL_STYLES as readonly string[]}
+      selected={padelStyle}
+      onToggle={(s) => setPadelStyle((cur) => (cur.includes(s) ? cur.filter((x) => x !== s) : cur.length >= 3 ? cur : [...cur, s]))}
+      onAddCustom={(v) => setPadelStyle((cur) => (cur.length >= 3 || cur.includes(v) ? cur : [...cur, v]))}
+      labelFn={label}
+      placeholder={tr("Search or type your style…", "Busca o escribe tu estilo…", "Cherche ou tape ton style…")}
+      addWord={tr("Add", "Añadir", "Ajouter")}
+      moreWord={tr("more", "más", "plus")}
+      lessWord={tr("Show less", "Ver menos", "Voir moins")}
+    />
+  );
+
+  const sheetTitle = !sheet ? "" :
+    sheet.kind === "loc" ? tr("Where you play", "Dónde juegas", "Où tu joues") :
+    sheet.kind === "nat" ? t("ob.nat") :
+    sheet.kind === "lang" ? t("ob.langs") :
+    tr("Your style, up to 3", "Tu estilo, hasta 3", "Ton style, jusqu'à 3");
+
+  return (
+    <main className="programme-page px-5 pb-36 max-w-md sm:max-w-xl mx-auto min-h-screen">
+      <h1 className="sr-only">{isNew ? tr("Create your profile", "Crea tu perfil", "Créez votre profil") : tr("Edit profile", "Editar perfil", "Modifier le profil")}</h1>
+      <div className="sticky top-0 z-20 -mx-5 px-3 pt-2 pb-2 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/[0.06]">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            aria-label={tr("Back", "Atrás", "Retour")}
+            onClick={requestExit}
+            disabled={save.isPending}
+            className="inline-flex items-center justify-center w-10 h-10 rounded-full text-[var(--ink)] active:bg-[var(--ink)]/10 disabled:opacity-40"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="flex-1 text-center text-serif text-[19px] text-[var(--ink)]">
+            {isNew ? tr("Your profile", "Tu perfil", "Ton profil") : tr("Edit profile", "Editar perfil", "Modifier le profil")}
+          </span>
+          <span className="w-10" />
+        </div>
+      </div>
+
+      {showStepHelp && missingByStep[0]?.length > 0 && (
+        <div className="mt-4 rounded-2xl border border-[var(--clay)]/25 bg-[var(--clay)]/10 px-4 py-3 text-sm text-[var(--ink)]/85">
+          <span className="font-semibold">{tr("To continue, complete:", "Para continuar, completa:", "Pour continuer, complète :")}</span>{" "}
+          {missingByStep[0].join(", ")}.
+        </div>
+      )}
+      {newAppleAccount && (
+        <p className="mt-4 text-[12px] text-[var(--ink)]/60 leading-relaxed text-center">
+          {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
+          <button type="button" onClick={switchToEmail} className="underline underline-offset-2 text-[var(--ink)]/80">
+            {tr("Sign in with your email instead", "Entra con tu email", "Connecte-toi avec ton e-mail")}
+          </button>
+        </p>
+      )}
+
+      {/* Photo */}
+      <div className="pt-6 flex flex-col items-center">
+        <label className="relative block w-32 h-40 rounded-t-full rounded-b-[16px] overflow-hidden border border-[var(--ink)]/10 bg-[var(--paper-2)] cursor-pointer">
+          {photoUrl ? (
+            <img src={photoUrl} alt={first_name || tr("Your photo", "Tu foto", "Ta photo")} className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <span className="absolute inset-0 flex items-center justify-center text-[var(--ink)]/40">
+              <Camera className="w-7 h-7" />
+            </span>
+          )}
+          <input
+            id="ob-photo-input"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) setPendingPhotoFile(f);
+              e.target.value = "";
+            }}
+          />
+        </label>
+        <div className="mt-2 flex items-center gap-1 text-[13px] text-[var(--ink)]/75">
+          <button type="button" disabled={uploading} onClick={() => document.getElementById("ob-photo-input")?.click()} className="min-h-10 px-2 underline-offset-4 hover:underline disabled:opacity-50">
+            {uploading ? t("ob.uploading") : photoUrl ? tr("Change photo", "Cambiar foto", "Changer la photo") : tr("Add photo", "Añadir foto", "Ajouter une photo")}
+          </button>
+          {photoUrl && lastPhotoFile && (
+            <>
+              <span aria-hidden="true">·</span>
+              <button type="button" disabled={uploading} onClick={() => setPendingPhotoFile(lastPhotoFile)} className="min-h-10 px-2 underline-offset-4 hover:underline">
+                {tr("Recrop", "Recortar", "Recadrer")}
+              </button>
+            </>
+          )}
+          {photoUrl && (
+            <>
+              <span aria-hidden="true">·</span>
+              <button type="button" disabled={uploading} onClick={() => { setPhotoUrl(null); setLastPhotoFile(null); }} className="min-h-10 px-2 text-[var(--ink)]/55 underline-offset-4 hover:underline">
+                {tr("Remove", "Quitar", "Retirer")}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* About you */}
+      <Section title={tr("About you", "Sobre ti", "À propos de toi")}>
+        <div data-field="first_name" className={`py-3 border-b border-[var(--ink)]/12 ${fieldCls("first_name")}`}>
+          <FieldLabel htmlFor="ob-first-name">{tr("First name", "Nombre", "Prénom")}</FieldLabel>
+          <input id="ob-first-name" value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} className="w-full bg-transparent text-[17px] text-[var(--ink)] placeholder:text-[var(--ink)]/30 focus:outline-none" />
+        </div>
+        <div className="py-3 border-b border-[var(--ink)]/12">
+          <FieldLabel htmlFor="ob-bio">{tr("Short bio", "Bio corta", "Bio courte")}</FieldLabel>
+          <textarea id="ob-bio" rows={3} maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} className="w-full resize-none bg-transparent text-serif italic text-[17px] leading-snug text-[var(--ink)] placeholder:text-[var(--ink)]/30 focus:outline-none" />
+          <div className="text-right text-[10px] text-[var(--ink)]/40">{bio.length}/280</div>
+        </div>
+      </Section>
+
+      {/* Your game */}
+      <Section title={tr("Your game", "Tu juego", "Ton jeu")}>
+        <div data-field="level" className={`py-3 ${fieldCls("level")}`}>
+          <FieldLabel>{t("ob.padelLevel")}</FieldLabel>
+          <div className="relative mt-2" role="radiogroup" aria-label={t("ob.padelLevel")}>
+            <div className="absolute left-[10%] right-[10%] top-[21px] h-px bg-[var(--ink)]/20" aria-hidden="true" />
+            <div className="grid grid-cols-5">
+              {PADEL_LEVELS.map((l) => {
+                const sel = level === l;
+                return (
+                  <button key={l} type="button" role="radio" aria-checked={sel} onClick={() => setLevel(l)} className="relative flex flex-col items-center gap-1.5 pt-3 pb-1 active:scale-95 transition-transform">
+                    <span className={`w-[18px] h-[18px] rounded-full border transition-colors ${sel ? "bg-[var(--ink)] border-[var(--ink)]" : "bg-[var(--paper)] border-[var(--ink)]/30"}`} />
+                    <span className={`block text-[11px] leading-tight text-center first-letter:uppercase ${sel ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/55"}`}>{label(l)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <SummaryRow label={tr("Style", "Estilo", "Style")} value={padelStyle.map((s) => label(s)).join(", ")} onClick={() => setSheet({ kind: "style" })} />
+        <ToggleRow
+          title={tr("Open to mixed doubles", "Abierto a dobles mixtos", "Ouvert au double mixte")}
+          sub={tr("2 men + 2 women", "2 hombres + 2 mujeres", "2 hommes + 2 femmes")}
+          on={mixedDoubles}
+          onChange={() => setMixedDoubles((v) => !v)}
+        />
+      </Section>
+
+      {/* Where you play */}
+      <Section title={tr("Where you play", "Dónde juegas", "Où tu joues")} sub={tr("Home, work, summer house or travel.", "Casa, trabajo, verano o viajes.", "Maison, travail, été ou voyage.")}>
+        <div data-field="locations" className={fieldCls("locations")}>
+          {locBlocks.map((b, i) => {
+            const areas = b.areas.filter((a) => a && a !== CUSTOM);
+            const head = [isReal(b.country) ? b.country : "", isReal(b.city) ? b.city : ""].filter(Boolean).join(" · ");
+            return (
+              <SummaryRow
+                key={i}
+                label={head || tr("New place", "Nuevo lugar", "Nouveau lieu")}
+                value={areas.length ? areas.join(", ") : isReal(b.city) ? b.city : ""}
+                onClick={() => setSheet({ kind: "loc", i })}
+              />
+            );
+          })}
+        </div>
+        <button type="button" onClick={() => { const n = locBlocks.length; addBlock(); if (n < 5) setSheet({ kind: "loc", i: n }); }} className="mt-1 inline-flex min-h-11 items-center gap-1.5 text-[14px] text-[var(--ink)]/75">
+          <Plus className="w-4 h-4" /> {tr("Add another place", "Añadir otro lugar", "Ajouter un autre lieu")}
+        </button>
+      </Section>
+
+      {/* Who you match with */}
+      <Section title={tr("Who you match with", "Con quién juegas", "Avec qui tu joues")} sub={tr("Private. Never shown on your profile.", "Privado. Nunca se muestra en tu perfil.", "Privé. Jamais affiché sur ton profil.")} icon={<Lock className="w-3 h-3" />}>
+        <div data-field="age" className={`py-3 border-b border-[var(--ink)]/12 ${fieldCls("age")}`}>
+          <FieldLabel>{tr("Your age", "Tu edad", "Ton âge")}</FieldLabel>
+          <div className="mt-1 grid grid-cols-5 overflow-hidden rounded-xl border border-[var(--ink)]/15">
+            {AGE_BRACKETS.map((b, idx) => {
+              const mid = bracketMidpoint(b);
+              const selected = bracket !== null && bracket[0] === b[0] && bracket[1] === b[1];
+              const labelTxt = bracketLabel(b);
+              return (
+                <button
+                  key={labelTxt}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => { setBracket(b); setAge(mid); }}
+                  className={`h-11 text-[13px] transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/15" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/75 active:bg-[var(--ink)]/5"}`}
+                >
+                  {labelTxt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div data-field="gender" className={`py-3 border-b border-[var(--ink)]/12 ${fieldCls("gender")}`}>
+          <FieldLabel>{t("ob.iAm")}</FieldLabel>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {GENDERS.map((g) => (
+              <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)} className={`h-9 px-4 rounded-full border text-[14px] first-letter:uppercase transition-colors ${gender === g ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80"}`}>
+                {label(g)}
+              </button>
+            ))}
+          </div>
+          {gender === "self-describe" && (
+            <Input className="mt-2 h-11 rounded-xl" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself", "Descríbete", "Décris-toi")} maxLength={40} />
+          )}
+        </div>
+        <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>
+          <div className="flex items-center justify-between">
+            <FieldLabel>{tr("Play with ages", "Jugar con edades", "Jouer avec des âges")}</FieldLabel>
+            <span className="text-[14px] text-[var(--ink)]">{ageRangeText}</span>
+          </div>
+          <SliderPrimitive.Root
+            className="relative mt-3 flex h-8 w-full touch-none select-none items-center"
+            min={18}
+            max={99}
+            step={1}
+            minStepsBetweenThumbs={1}
+            value={[ageMinShown, ageMaxShown]}
+            onValueChange={(v) => {
+              const lo = v[0] ?? 18;
+              const hi = v[1] ?? 99;
+              setAgeMin(lo <= 18 ? null : lo);
+              setAgeMax(hi >= 99 ? null : hi);
+            }}
+            aria-label={tr("Play with ages", "Jugar con edades", "Jouer avec des âges")}
+          >
+            <SliderPrimitive.Track className="relative h-px w-full grow bg-[var(--ink)]/20">
+              <SliderPrimitive.Range className="absolute h-full bg-[var(--ink)]" />
+            </SliderPrimitive.Track>
+            <SliderPrimitive.Thumb aria-label={tr("Youngest", "Mínima", "Minimum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
+            <SliderPrimitive.Thumb aria-label={tr("Oldest", "Máxima", "Maximum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
+          </SliderPrimitive.Root>
+        </div>
+      </Section>
+
+      {/* Background */}
+      <Section title={tr("Background", "Origen", "Origines")} note={tr("optional", "opcional", "optionnel")}>
+        <SummaryRow label={t("ob.nat")} value={natSummary} onClick={() => setSheet({ kind: "nat" })} />
+        <SummaryRow label={t("ob.langs")} value={langSummary} onClick={() => setSheet({ kind: "lang" })} />
+      </Section>
+
+      {/* Extras */}
+      <Section title={tr("Extras", "Extras", "Extras")}>
+        <ToggleRow
+          icon={<span className="text-[18px] leading-none" aria-hidden="true">🎾</span>}
+          title={tr("I have free court access", "Tengo pista gratis", "J'ai accès à une pista gratuite")}
+          sub={tr("Private club or residential court", "Club privado o pista residencial", "Club privé ou pista résidentielle")}
+          on={freeCourt}
+          onChange={() => setFreeCourt((v) => !v)}
+        />
+        {freeCourt && (
+          <Input
+            className="mt-1 mb-2 h-11 rounded-xl"
+            value={freeCourtNote}
+            onChange={(e) => setFreeCourtNote(e.target.value)}
+            placeholder={tr("Court name or area (address only in chat)", "Nombre de la pista o zona (dirección solo en el chat)", "Nom de la pista ou zone (adresse seulement en chat)")}
+            maxLength={200}
+          />
+        )}
+        {profileQ.data && <CoachSelfSection isCoach={!!(profileQ.data as { is_coach?: boolean }).is_coach} showLink={false} />}
+      </Section>
+
+      <Sheet open={!!sheet} onOpenChange={(o) => { if (!o) setSheet(null); }}>
+        <SheetContent side="bottom" className="programme-page rounded-t-3xl max-h-[88vh] overflow-y-auto px-5 pt-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] [&>button:first-of-type]:hidden">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <SheetTitle style={{ fontFamily: "var(--font-serif)" }} className="text-[22px] font-normal normal-case tracking-normal text-[var(--ink)]">{sheetTitle}</SheetTitle>
+            <button type="button" onClick={() => setSheet(null)} className="min-h-10 px-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]">
+              {tr("Done", "Listo", "OK")}
+            </button>
+          </div>
+          {sheet?.kind === "loc" && renderLocEditor(sheet.i)}
+          {sheet?.kind === "nat" && nationalityEditor}
+          {sheet?.kind === "lang" && languagesEditor}
+          {sheet?.kind === "style" && styleEditor}
+        </SheetContent>
+      </Sheet>
+
+      <div data-bottom-ui className="fixed inset-x-0 bottom-0 z-30 bg-[var(--paper)]/95 backdrop-blur border-t border-[var(--ink)]/[0.06]" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}>
+        <div className="max-w-md sm:max-w-xl mx-auto px-5 pt-3">
+          <button
+            type="button"
+            onClick={() => requestSave(isNew ? "grid" : "profile")}
+            disabled={save.isPending || uploading}
+            className="w-full h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] tracking-[0.08em] active:scale-[0.99] transition disabled:opacity-60"
+          >
+            {save.isPending ? t("ob.saving") : isNew ? tr("Save and start", "Guardar y empezar", "Enregistrer et commencer") : tr("Save changes", "Guardar cambios", "Enregistrer")}
+          </button>
+        </div>
+      </div>
 
       <PhotoCropDialog
         file={pendingPhotoFile}
@@ -991,7 +977,61 @@ function Onboarding() {
           uploadPhoto(cropped);
         }}
       />
-
     </main>
+  );
+}
+
+function Section({ title, sub, note, icon, children }: { title: string; sub?: string; note?: string; icon?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="pt-9">
+      <div className="flex items-baseline gap-2">
+        <h2 className="text-serif text-[26px] leading-tight text-[var(--ink)]">{title}</h2>
+        {note && <span className="text-[12px] text-[var(--ink)]/45">{note}</span>}
+      </div>
+      {sub && <p className="mt-1 flex items-center gap-1.5 text-[12px] text-[var(--ink)]/55">{icon}{sub}</p>}
+      <div className="mt-2">{children}</div>
+    </section>
+  );
+}
+
+function FieldLabel({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) {
+  return <label htmlFor={htmlFor} className="block text-[12px] text-[var(--ink)]/55 mb-0.5">{children}</label>;
+}
+
+function SummaryRow({ label, value, onClick }: { label: string; value: string; onClick: () => void }) {
+  const tr = useTr();
+  return (
+    <button type="button" onClick={onClick} className="w-full min-h-[60px] flex items-center justify-between gap-3 py-3 text-left border-b border-[var(--ink)]/12 active:bg-[var(--ink)]/[0.03]">
+      <span className="min-w-0">
+        <span className="block text-[12px] text-[var(--ink)]/55">{label}</span>
+        <span className={`block truncate text-[16px] ${value ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}>{value || tr("Add", "Añadir", "Ajouter")}</span>
+      </span>
+      <ChevronRight className="w-4 h-4 shrink-0 text-[var(--ink)]/40" />
+    </button>
+  );
+}
+
+function ToggleRow({ icon, title, sub, on, onChange, disabled }: { icon?: ReactNode; title: string; sub?: string; on: boolean; onChange: () => void; disabled?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-3 border-b border-[var(--ink)]/12 last:border-b-0">
+      <div className="flex items-center gap-3 min-w-0">
+        {icon && <span className="inline-flex w-8 justify-center shrink-0">{icon}</span>}
+        <div className="min-w-0">
+          <div className="text-[16px] text-[var(--ink)] leading-tight">{title}</div>
+          {sub && <div className="text-[12px] text-[var(--ink)]/55 mt-0.5">{sub}</div>}
+        </div>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={on}
+        aria-label={title}
+        onClick={onChange}
+        disabled={disabled}
+        className={`relative shrink-0 w-12 h-7 rounded-full transition-colors disabled:opacity-60 ${on ? "bg-[var(--ink)]" : "bg-[var(--ink)]/15"}`}
+      >
+        <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-[var(--card)] shadow-sm transition-transform ${on ? "translate-x-5" : ""}`} />
+      </button>
+    </div>
   );
 }

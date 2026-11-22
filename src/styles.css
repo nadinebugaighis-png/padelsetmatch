@@ -95,10 +95,10 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --ball: #A5E358;             /* grass green — unified accent */
 
   /* Wimbledon "Programme" palette (light editorial pages) */
-  --paper: #F6F2EA;
-  --paper-2: #E5E0D6;
+  --paper: #FDFBF7;
+  --paper-2: #EAE7E0;
   --limestone: color-mix(in oklab, var(--paper-2) 75%, var(--paper));   /* settled, confirmed states */
-  --ink: #0F3E2E;
+  --ink: #0B3426;
   --plum: #482E92;
   --grass: #A5E358;
   --pitch: oklch(0.52 0.09 158);             /* soft club green for counts */
@@ -289,10 +289,10 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 @utility programme-card {
   background: #ffffff;
-  border: 1px solid color-mix(in oklab, var(--ink) 22%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
   border-radius: 14px;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 4%, transparent),
-              0 8px 24px -16px color-mix(in oklab, var(--ink) 18%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent),
+              0 6px 18px -10px color-mix(in oklab, var(--ink) 24%, transparent);
 }
 @utility programme-card-ink {
   background: var(--ink);
@@ -479,4 +479,10 @@ html.native-shell .app-shell {
   overflow-x: hidden;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
+}
+
+/* White cards: firm hairline edge plus a soft lift so they read clearly on the cream page. */
+@utility card-lift {
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent),
+              0 6px 18px -10px color-mix(in oklab, var(--ink) 22%, transparent);
 }

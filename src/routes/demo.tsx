@@ -290,7 +290,7 @@ function DemoPage() {
             <p className="text-[13px] text-[var(--ink)]/82 -mt-1">Madrid · next 7 days</p>
 
             {MATCHES.map((m, i) => (
-              <div key={i} className="rounded-2xl border border-[var(--ink)]/24 bg-white/70 overflow-hidden shadow-sm">
+              <div key={i} className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift/70 overflow-hidden shadow-sm">
                 <div className="flex">
                   <div
                     className="w-[92px] flex-shrink-0 flex flex-col items-center justify-center py-4"
@@ -366,7 +366,7 @@ function DemoPage() {
         {/* CHAT */}
         {tab === "chat" && (
           <div className="max-w-2xl mx-auto">
-            <div className="rounded-2xl border border-[var(--ink)]/24 bg-white/70 overflow-hidden shadow-sm">
+            <div className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift/70 overflow-hidden shadow-sm">
               <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ink)]/24">
                 <div className="flex -space-x-2">
                   {[PLAYERS[0], PLAYERS[1], PLAYERS[2]].map((p) => (
@@ -432,7 +432,7 @@ function DemoPage() {
                 <button
                   key={i}
                   onClick={() => nudge(`Open chat with ${c.p.name}?`)}
-                  className="w-full flex items-center gap-3 rounded-2xl border border-[var(--ink)]/24 bg-white/60 px-4 py-3 text-left"
+                  className="w-full flex items-center gap-3 rounded-2xl border border-[var(--ink)]/30 bg-white card-lift/60 px-4 py-3 text-left"
                 >
                   <img src={c.p.photo} alt={c.p.name} className="w-10 h-10 rounded-full object-cover" />
                   <div className="min-w-0 flex-1">
@@ -468,7 +468,7 @@ function DemoPage() {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-3 rounded-2xl border border-[var(--ink)]/24 bg-white/60 divide-x divide-[var(--ink)]/16">
+            <div className="mt-5 grid grid-cols-3 rounded-2xl border border-[var(--ink)]/30 bg-white card-lift/60 divide-x divide-[var(--ink)]/16">
               {[
                 { v: ME.matches, l: "Matches" },
                 { v: ME.hours, l: "Hours on court" },
@@ -487,7 +487,7 @@ function DemoPage() {
                 { icon: <CourtIcon className="w-6 h-4" />, l: "Side", v: ME.side },
                 { icon: <Calendar className="w-5 h-5" />, l: "Plays", v: ME.plays },
               ].map((s) => (
-                <div key={s.l} className="rounded-2xl border border-[var(--ink)]/24 bg-white/60 py-3 flex flex-col items-center gap-1.5 text-[var(--ink)]">
+                <div key={s.l} className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift/60 py-3 flex flex-col items-center gap-1.5 text-[var(--ink)]">
                   {s.icon}
                   <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/78 font-semibold">{s.l}</div>
                   <div className="text-[13px] font-semibold">{s.v}</div>

@@ -70,7 +70,7 @@ function BookCourtPage() {
           <span className="text-serif italic text-[12.5px] text-[var(--ink)]/72">{tr("Tap to book", "Toca para reservar", "Touche pour réserver")}</span>
         </div>
 
-        <ul className="mt-2 overflow-hidden rounded-2xl border border-[var(--ink)]/24 bg-white divide-y divide-[var(--ink)]/[0.07]">
+        <ul className="mt-2 overflow-hidden rounded-2xl border border-[var(--ink)]/30 bg-white card-lift divide-y divide-[var(--ink)]/[0.07]">
           {shown.map((c) => (
             <li key={c.key}>
               <a href={c.url} target="_blank" rel="noopener noreferrer"

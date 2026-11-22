@@ -1215,7 +1215,7 @@ function Discover() {
             onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
             rows={4}
             placeholder={tr("Hey! We played at Padel Now last month — up for another game?", "¡Hola! Jugamos en Padel Now el mes pasado — ¿otro partido?", "Salut ! On a joué à Padel Now le mois dernier — on rejoue ?")}
-            className="w-full rounded-2xl border border-[var(--ink)]/28 bg-white p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--plum)] resize-none"
+            className="w-full rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--plum)] resize-none"
           />
           <div className="flex items-center justify-between text-[11px] text-[var(--ink)]/78">
             <span>{introText.length}/300</span>
@@ -1250,7 +1250,7 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
   if (typeof padel === "number") rows.push({ label: tr("Padel", "Pádel", "Padel"), value: padel });
   if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
-    <div className="rounded-2xl border border-[var(--ink)]/24 bg-white p-4">
+    <div className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-4">
       <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78 mb-3">{tr("Your Match Score", "Tu puntuación de compatibilidad", "Ton score de match")}</div>
 
       <div className="flex items-center gap-4">

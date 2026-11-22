@@ -1044,7 +1044,7 @@ function Discover() {
                                   { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
                                   { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
                                 ].map((s, i) => (
-                                  <div key={s.key} className={i === 1 ? "px-3 text-center border-l border-[var(--ink)]/16" : "px-3 text-center"}>
+                                  <div key={s.key} className={i === 1 ? "px-3 text-center" : "px-3 text-center"}>
                                     <div className="text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/76">{s.label}</div>
                                     {s.value != null && (
                                       <div className="text-serif text-[34px] leading-none text-[var(--ink)] tabular-nums mt-2">

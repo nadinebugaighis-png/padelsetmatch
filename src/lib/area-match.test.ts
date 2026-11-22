@@ -81,7 +81,8 @@ describe("location presets", () => {
     expect(presetByKey("miami_coconut_grove_brickell")).toMatchObject({ city: "Miami", area: "Coconut Grove & Brickell" });
     expect(presetByKey("dubai")).toMatchObject({ city: "Dubai" });
     expect(presetByKey("dubai")?.area).toBeUndefined();
-    expect(presetByKey("marbella")).toMatchObject({ country: "Spain", city: "Marbella", area: "Golden Mile" });
+    expect(presetByKey("marbella")).toMatchObject({ country: "Spain", city: "Marbella" });
+    expect(presetByKey("marbella")?.area).toBeUndefined();
   });
   it("La Moraleja pre-fills Spain, Madrid, La Moraleja", () => {
     expect(presetByKey("madrid_la_moraleja")).toMatchObject({ country: "Spain", city: "Madrid", area: "La Moraleja" });

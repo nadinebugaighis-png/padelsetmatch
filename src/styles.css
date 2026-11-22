@@ -389,7 +389,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink);
 }
 @utility programme-nav {
-  background: color-mix(in oklab, var(--ink) 82%, transparent);
+  background: color-mix(in oklab, var(--ink) 94%, transparent);
   backdrop-filter: blur(18px) saturate(160%);
   border: 1px solid color-mix(in oklab, var(--gold) 32%, transparent);
   border-radius: 9999px;
@@ -409,7 +409,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 /* Same see-through green glass as the floating bar, no gold ring. */
 .quick-actions-fab {
-  background: color-mix(in oklab, var(--ink) 82%, transparent);
+  background: color-mix(in oklab, var(--ink) 94%, transparent);
   backdrop-filter: blur(18px) saturate(160%);
   border: 1px solid color-mix(in oklab, var(--cream) 12%, transparent);
   box-shadow:

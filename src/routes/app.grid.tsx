@@ -22,9 +22,8 @@ import { UNLOCK_MIN_ANSWERS } from "@/lib/daily-questions";
 import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venues.functions";
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
-import { PADEL_LEVELS, MADRID_ZONES, decodeLocation, formatLocation } from "@/lib/types";
+import { PADEL_LEVELS, MADRID_ZONES } from "@/lib/types";
 import { isMoralejaMember } from "@/lib/area-match";
-import { formatNationalities } from "@/lib/affinity";
 
 
 export const Route = createFileRoute("/app/grid")({
@@ -1143,30 +1142,7 @@ function Discover() {
                         );
                       })()}
 
-                      {/* Lifestyle chips (age intentionally omitted for privacy) */}
-                      {(() => {
-                        const areas: string[] = [];
-                        for (const l of preview.locations ?? []) {
-                          const d = decodeLocation(l);
-                          const name = d?.area || d?.city || formatLocation(d);
-                          if (name && !areas.includes(name)) areas.push(name);
-                        }
-                        const chips: Array<{ key: string; text: string; icon: string }> = [];
-                        { const lv = label(preview.level); chips.push({ key: "level", text: lv.charAt(0).toUpperCase() + lv.slice(1), icon: "🎾" }); }
-                        if (areas.length) chips.push({ key: "areas", text: areas.join(" · "), icon: "📍" });
-                        if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · "), icon: "🗣️" });
-                        { const nat = formatNationalities(preview); if (nat) chips.push({ key: "nat", text: nat, icon: "🌍" }); }
-                        return (
-                          <div className="flex flex-wrap gap-3 border-t border-[var(--ink)]/16 pt-6">
-                            {chips.map((c) => (
-                              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/16 bg-white px-3.5 py-1.5 text-[12.5px] text-[var(--ink)]/90">
-                                <span aria-hidden>{c.icon}</span>
-                                {c.text}
-                              </span>
-                            ))}
-                          </div>
-                        );
-                      })()}
+                      {/* Lifestyle chips removed per Nadine's request */}
 
 
                       {!isSelf && (

@@ -1,8 +1,9 @@
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
+import { photoRetrySrc, photoSrc } from "@/lib/photo-src";
 import { ExternalLink, Loader2, Plus, X } from "lucide-react";
 import {
   DndContext,
@@ -44,6 +45,51 @@ export const GEAR_EMOJI: Record<string, string> = {
 };
 
 const MAX_ITEMS = 12;
+
+/** Kit thumbnail: a small cached copy instead of the full-size original. */
+function GearThumb({ url, kind, alt, fallback }: {
+  url: string;
+  kind: string;
+  alt: string;
+  fallback?: ReactNode;
+}) {
+  const base = photoSrc(url, 240) ?? url;
+  const [src, setSrc] = useState(base);
+  const [failed, setFailed] = useState(false);
+  const attempts = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => {
+    setSrc(base);
+    setFailed(false);
+    attempts.current = 0;
+    return () => clearTimeout(timer.current);
+  }, [base]);
+
+  if (failed) {
+    return <>{fallback ?? <span className="text-2xl">{GEAR_EMOJI[kind] ?? "✨"}</span>}</>;
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+      className="w-full h-full object-cover pointer-events-none"
+      onError={() => {
+        const attempt = ++attempts.current;
+        const retry = photoRetrySrc(base, attempt);
+        if (!retry) {
+          setFailed(true);
+          return;
+        }
+        clearTimeout(timer.current);
+        timer.current = setTimeout(() => setSrc(retry), attempt * 500);
+      }}
+    />
+  );
+}
 
 function useGear(profileId: string | undefined) {
   return useQuery({
@@ -91,7 +137,7 @@ export function GearShelf({ profileId, title }: { profileId: string; title?: str
             <>
               <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
                 {it.image_url ? (
-                  <img src={it.image_url} alt={it.title} className="w-full h-full object-cover" loading="lazy" />
+                  <GearThumb url={it.image_url} kind={it.kind} alt={it.title} />
                 ) : (
                   <span className="text-2xl">{GEAR_EMOJI[it.kind] ?? "✨"}</span>
                 )}
@@ -450,7 +496,12 @@ function SortableGearCard({
     >
       <span className={`block w-full aspect-square overflow-hidden rounded-xl bg-[var(--paper-2)] ${editing ? "ring-2 ring-[var(--ink)] ring-offset-2 ring-offset-[var(--paper)]" : ""}`}>
         {item.image_url ? (
-          <img src={item.image_url} alt="" draggable={false} className="w-full h-full object-cover pointer-events-none" />
+          <GearThumb
+            url={item.image_url}
+            kind={item.kind}
+            alt=""
+            fallback={<span className="w-full h-full flex items-center justify-center text-serif italic text-[15px] text-[var(--ink)]/72">{kindText}</span>}
+          />
         ) : (
           <span className="w-full h-full flex items-center justify-center text-serif italic text-[15px] text-[var(--ink)]/72">{kindText}</span>
         )}

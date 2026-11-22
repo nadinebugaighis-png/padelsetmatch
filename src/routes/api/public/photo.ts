@@ -27,12 +27,24 @@ export const Route = createFileRoute("/api/public/photo")({
         const path = decodeURIComponent(src.pathname.slice(PREFIX.length));
         if (path.includes("..") || path.includes("\\") || !src.searchParams.get("token")) return new Response("Forbidden", { status: 403 });
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        // Only the exact photo currently saved on an eligible profile may be
-        // resized. Withdrawn, replaced or rejected photos never match.
-        const { data: owner, error: profileError } = await supabaseAdmin.from("profiles")
-          .select("id").eq("photo_url", raw).is("suspended_at", null).neq("photo_moderation_status", "rejected")
-          .limit(1).maybeSingle();
-        if (profileError || !owner) return new Response("Photo unavailable", { status: 404, headers: { "Cache-Control": "no-store" } });
+        // Only a picture currently saved on an eligible profile may be resized:
+        // either the player's own photo or one of their kit items. Withdrawn,
+        // replaced or rejected photos never match.
+        const eligibleOwner = async (column: "photo_url" | "id", value: string) => {
+          const { data, error } = await supabaseAdmin.from("profiles")
+            .select("id").eq(column, value).is("suspended_at", null).neq("photo_moderation_status", "rejected")
+            .limit(1).maybeSingle();
+          return !error && !!data;
+        };
+        let allowed = await eligibleOwner("photo_url", raw);
+        if (!allowed) {
+          // Kit photos live on their own rows; the item must still belong to an
+          // eligible player before its picture can be served.
+          const { data: item, error: gearError } = await supabaseAdmin.from("profile_gear")
+            .select("profile_id").eq("image_url", raw).limit(1).maybeSingle();
+          if (!gearError && item?.profile_id) allowed = await eligibleOwner("id", item.profile_id);
+        }
+        if (!allowed) return new Response("Photo unavailable", { status: 404, headers: { "Cache-Control": "no-store" } });
         const { data } = await supabaseAdmin.storage
           .from("padel-photos")
           .createSignedUrl(path, 60 * 10, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });

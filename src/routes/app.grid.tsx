@@ -1157,7 +1157,7 @@ function Discover() {
                         if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · "), icon: "🗣️" });
                         { const nat = formatNationalities(preview); if (nat) chips.push({ key: "nat", text: nat, icon: "🌍" }); }
                         return (
-                          <div className="flex flex-wrap gap-2 border-t border-[var(--ink)]/16 pt-5">
+                          <div className="flex flex-wrap gap-3 border-t border-[var(--ink)]/16 pt-6">
                             {chips.map((c) => (
                               <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/16 bg-white px-3.5 py-1.5 text-[12.5px] text-[var(--ink)]/90">
                                 <span aria-hidden>{c.icon}</span>

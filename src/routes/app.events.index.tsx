@@ -576,13 +576,13 @@ function FeedSection({
                 <span className="text-serif text-[26px] leading-none text-[var(--ink)]">{heading.main}</span>
                 <span className="font-sans font-normal text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/50 truncate">{heading.sub}</span>
               </h2>
-              <ul className="mt-4 space-y-4">
+              <ul className="mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2 lg:items-start">
                 {group.items.map((e, i) => {
                   const prev = i > 0 ? group.items[i - 1] : null;
                   const slotChanged = prev !== null && !e.time_tbd && !prev.time_tbd &&
                     Math.floor(new Date(prev.starts_at).getHours() / 12) !== Math.floor(new Date(e.starts_at).getHours() / 12);
                   return (
-                    <li key={e.id} className={`lazy-row ${slotChanged ? "pt-2" : ""}`}>
+                    <li key={e.id} className={`lazy-row ${slotChanged ? "pt-1 lg:pt-0" : ""}`}>
                       <MatchCard
                         e={e}
                         locale={locale}
@@ -730,10 +730,11 @@ function MatchCard({
       playtomic={!!ptLink}
     />
   );
-  const sep = <span className="text-[var(--ink)]/25">·</span>;
+  const endTime = new Date(start.getTime() + matchDuration(e) * 60_000)
+    .toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
   // Skip the place line when it would only repeat the title.
   const rawPlace = e.city || e.club_address || "";
-  const placeLine = rawPlace.trim().toLowerCase() === (e.club_name ?? "").trim().toLowerCase() ? "" : rawPlace;
+  const placeLine = rawPlace.trim() && (e.club_name ?? "").toLowerCase().includes(rawPlace.trim().toLowerCase()) ? "" : rawPlace;
 
   const placesText = full
     ? tr("Full", "Completo", "Complet")
@@ -750,7 +751,6 @@ function MatchCard({
   if (e.is_class) details.push(<span key="class" className="text-[var(--ink)]">{tr("Class", "Clase", "Cours")}{e.class_fee ? ` ${e.class_fee}` : ""}</span>);
   if (levelLabel) details.push(<span key="lvl">{levelLabel.charAt(0).toUpperCase() + levelLabel.slice(1).toLowerCase()}</span>);
   if (genderLabel) details.push(<span key="g">{genderLabel}</span>);
-  details.push(<span key="d">{matchDuration(e)} min</span>);
   if (e.free_court) details.push(<span key="fc" className="text-[var(--ink)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>);
   if (ptLink) details.push(<span key="pt">Playtomic</span>);
   else if (e.court_booked) details.push(<span key="cb">{tr("Court booked", "Pista reservada", "Court réservé")}</span>);
@@ -759,66 +759,70 @@ function MatchCard({
 
   return (
     <div
-      className={`relative rounded-2xl bg-white overflow-hidden ${
-        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/[0.07]"
+      className={`relative h-full rounded-2xl bg-white overflow-hidden ${
+        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/[0.08]"
       }`}
     >
       {/* The day's colour lives only in a thin edge */}
       <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${toneClass}`} />
 
-      {/* Header: time, places open, club */}
-      <button type="button" onClick={openFromCard} className="block w-full text-left pl-6 pr-5 pt-5 sm:pl-8 sm:pr-7 sm:pt-6">
+      {/* Header: when, places open, where */}
+      <button type="button" onClick={openFromCard} className="block w-full text-left pl-5 pr-4 pt-4 sm:pl-6 sm:pr-5">
         <div className="flex items-baseline justify-between gap-3">
-          <div className="flex items-baseline gap-2.5 min-w-0">
-            <span className="text-serif text-[36px] sm:text-[44px] leading-none text-[var(--ink)]">{time}</span>
-            <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/50 whitespace-nowrap">
+          <div className="flex items-baseline gap-2 min-w-0">
+            <span className="text-serif text-[22px] sm:text-[24px] leading-none text-[var(--ink)] whitespace-nowrap">
+              {e.time_tbd ? time : <>{time}<span className="text-[var(--ink)]/35"> – </span>{endTime}</>}
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/45 whitespace-nowrap">
               {e.time_tbd ? tr("To be set", "Por fijar", "À fixer") : `${matchDuration(e)} min`}
             </span>
           </div>
-          <span className={`text-serif italic text-[15px] sm:text-[18px] whitespace-nowrap ${full ? "text-[var(--ink)]/45" : "text-[var(--plum)]"}`}>
+          <span className={`text-serif italic text-[14px] whitespace-nowrap ${full ? "text-[var(--ink)]/45" : "text-[var(--plum)]"}`}>
             {placesText}
           </span>
         </div>
-        {e.tag && (
-          <div className="mt-2 text-[10px] uppercase tracking-[0.2em] text-[var(--gold)]">{e.tag}</div>
-        )}
-        <div className="mt-3 text-serif text-[22px] sm:text-[28px] leading-tight text-[var(--ink)] truncate">
-          {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+        <div className="mt-1.5 flex items-baseline gap-2 min-w-0">
+          <span className="min-w-0 truncate text-[15px] sm:text-[16px] text-[var(--ink)]">
+            {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
+          </span>
+          {placeLine && (
+            <span className="shrink-0 max-w-[45%] truncate text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/45">{placeLine}</span>
+          )}
         </div>
-        {placeLine && (
-          <div className="mt-1 text-[10.5px] sm:text-[12px] uppercase tracking-[0.2em] text-[var(--ink)]/50 truncate">{placeLine}</div>
+        {e.tag && (
+          <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-[var(--gold)]">{e.tag}</div>
         )}
       </button>
 
-      {/* Players: portraits with names, open places invite a tap */}
-      <div className="pl-4 pr-3 pt-5 pb-4 sm:pl-8 sm:pr-7 sm:pt-6 sm:pb-5">
+      {/* Players: two pairs facing each other, kept close together */}
+      <div className="ml-5 mr-4 sm:ml-6 sm:mr-5 mt-3.5 border-t border-[var(--ink)]/[0.08] pt-3 pb-3">
         {asPairs ? (
-          <div className="flex items-start justify-center">
-            <div className="flex-1">
-              <div className="mb-2 sm:mb-3 text-center text-[9px] sm:text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/40">{tr("Team A", "Equipo A", "Équipe A")}</div>
-              <div className="flex justify-evenly">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
+          <div className="mx-auto grid max-w-[380px] grid-cols-[1fr_auto_1fr] items-start">
+            <div>
+              <div className="mb-2 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/40">{tr("Team A", "Equipo A", "Équipe A")}</div>
+              <div className="flex justify-center gap-2 sm:gap-3">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
             </div>
-            <span className="mt-[42px] sm:mt-14 text-serif italic text-[14px] sm:text-[17px] text-[var(--ink)]/30 px-0.5 sm:px-4">vs</span>
-            <div className="flex-1">
-              <div className="mb-2 sm:mb-3 text-center text-[9px] sm:text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/40">{tr("Team B", "Equipo B", "Équipe B")}</div>
-              <div className="flex justify-evenly">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
+            <span className="mt-[38px] px-1.5 sm:px-3 text-serif italic text-[13px] text-[var(--ink)]/30">vs</span>
+            <div>
+              <div className="mb-2 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/40">{tr("Team B", "Equipo B", "Équipe B")}</div>
+              <div className="flex justify-center gap-2 sm:gap-3">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
             </div>
           </div>
         ) : coachFirst ? (
           // Class: the coach stands apart, students share the court.
-          <div className="flex items-start justify-center">
-            <div className="flex shrink-0 justify-center pr-2 sm:pr-6">{renderSlot(slots[0] ?? null, 0)}</div>
-            <span aria-hidden className="mt-1 h-12 sm:h-16 w-px shrink-0 bg-[var(--ink)]/12" />
-            <div className="flex flex-1 justify-evenly pl-1 sm:pl-4">{slots.slice(1).map((s, i) => renderSlot(s, i + 1))}</div>
+          <div className="mx-auto flex max-w-[420px] items-start justify-center">
+            <div className="flex shrink-0 justify-center pr-2 sm:pr-3">{renderSlot(slots[0] ?? null, 0)}</div>
+            <span aria-hidden className="mt-1 h-11 w-px shrink-0 bg-[var(--ink)]/12" />
+            <div className="flex flex-1 justify-center gap-1 sm:gap-2 pl-2 sm:pl-3">{slots.slice(1).map((s, i) => renderSlot(s, i + 1))}</div>
           </div>
         ) : (
-          <div className="flex items-start justify-evenly">{slots.map((s, i) => renderSlot(s, i))}</div>
+          <div className="mx-auto flex max-w-[420px] items-start justify-center gap-2 sm:gap-3">{slots.map((s, i) => renderSlot(s, i))}</div>
         )}
       </div>
 
       {/* Quiet footer: details and the one action */}
-      <div className="ml-6 mr-5 sm:ml-8 sm:mr-7 border-t border-[var(--ink)]/[0.08] py-3.5 sm:py-4 flex items-center gap-3 sm:gap-4">
-        <div className="flex-1 min-w-0 text-[12.5px] sm:text-[14px] leading-snug text-[var(--ink)]/60">
+      <div className="ml-5 mr-4 sm:ml-6 sm:mr-5 border-t border-[var(--ink)]/[0.08] py-2.5 flex items-center gap-3">
+        <div className="flex-1 min-w-0 text-[12.5px] leading-snug text-[var(--ink)]/60 truncate">
           {details.map((d, i) => (
             <span key={i}>{i > 0 && <span className="text-[var(--ink)]/30"> · </span>}{d}</span>
           ))}
@@ -835,7 +839,7 @@ function MatchCard({
             else onOpen(e.id);
           }}
           disabled={isPending}
-          className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] shrink-0 inline-flex items-center rounded-full border border-[var(--ink)]/45 text-[var(--ink)] text-[10.5px] sm:text-[12px] uppercase tracking-[0.2em] px-4 py-2 sm:px-6 sm:py-2.5 active:bg-[var(--ink)]/[0.05] disabled:opacity-50"
+          className="relative before:absolute before:-inset-y-2 before:-inset-x-1 before:content-[''] shrink-0 inline-flex items-center rounded-full border border-[var(--ink)]/40 text-[var(--ink)] text-[10.5px] uppercase tracking-[0.18em] px-4 py-1.5 active:bg-[var(--ink)]/[0.05] disabled:opacity-50"
         >
           {cardAction === "join" && ptLink
             ? <>{tr("Join on Playtomic", "Unirme en Playtomic", "Rejoindre sur Playtomic")}<ExternalLink className="ml-1 w-3 h-3" /></>
@@ -876,11 +880,11 @@ function SlotAvatar({
   const photo = slot?.participant?.profiles?.photo_url;
   const isCoach = !!slot?.participant?.profiles?.is_coach;
   const seed = slot?.participant?.profile_id ?? slot?.guest?.id ?? name;
-  const caption = "mt-2 block w-[64px] sm:w-[96px] truncate text-center text-[12px] sm:text-[14px] leading-tight";
+  const caption = "mt-1.5 block w-[58px] truncate text-center text-[12px] leading-tight";
 
   if (slot?.friend) {
     return (
-      <div className="flex w-[64px] sm:w-[96px] flex-col items-center">
+      <div className="flex w-[58px] flex-col items-center">
         <FriendSlot size="xl" label={playtomic ? tr("Taken on Playtomic", "Ocupada en Playtomic", "Prise sur Playtomic") : tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
         <span className={`${caption} text-[var(--ink)]/60`}>{playtomic ? tr("Taken", "Ocupada", "Prise") : tr("Friend", "Amigo", "Ami")}</span>
       </div>
@@ -895,19 +899,19 @@ function SlotAvatar({
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         aria-label={tr("Player needed", "Falta jugador", "Joueur recherché")}
         title={tr("Player needed", "Falta jugador", "Joueur recherché")}
-        className={`group flex w-[64px] sm:w-[96px] flex-col items-center ${isPending ? "opacity-50" : ""}`}
+        className={`group flex w-[58px] flex-col items-center ${isPending ? "opacity-50" : ""}`}
       >
         <span
-          className={`w-[52px] h-[52px] sm:w-[72px] sm:h-[72px] rounded-full border border-dashed grid place-items-center transition ${
+          className={`w-[46px] h-[46px] rounded-full border border-dashed grid place-items-center transition ${
             canJoin
               ? "border-[var(--ink)]/30 text-[var(--ink)]/45 group-hover:bg-[var(--ink)]/[0.03] group-active:scale-95"
               : "border-[var(--ink)]/20 text-[var(--ink)]/30"
           }`}
         >
-          <Plus className="w-4 h-4 sm:w-6 sm:h-6" strokeWidth={1.25} />
+          <Plus className="w-4 h-4" strokeWidth={1.25} />
         </span>
-        <span className={`${caption} text-[10px] sm:text-[11px] uppercase tracking-[0.2em] ${canJoin ? "text-[var(--plum)]" : "text-[var(--ink)]/40"}`}>
-          {canJoin ? tr("Join", "Unirme", "Rejoindre") : tr("Open", "Libre", "Libre")}
+        <span className={`${caption} text-[9.5px] uppercase tracking-[0.18em] ${canJoin ? "text-[var(--plum)]/80" : "text-[var(--ink)]/40"}`}>
+          {tr("Open", "Libre", "Libre")}
         </span>
       </button>
     );
@@ -915,23 +919,23 @@ function SlotAvatar({
 
   return (
     <div
-      className="flex w-[64px] sm:w-[96px] flex-col items-center"
+      className="flex w-[58px] flex-col items-center"
       title={isCoach ? `${name ?? ""} · ${tr("Coach", "Profesor", "Coach")}` : name ?? ""}
     >
       <div
-        className={`w-[52px] h-[52px] sm:w-[72px] sm:h-[72px] rounded-full overflow-hidden bg-[var(--paper-2)] ${
+        className={`w-[46px] h-[46px] rounded-full overflow-hidden bg-[var(--paper-2)] ${
           isCoach ? "ring-2 ring-[var(--plum)] ring-offset-2 ring-offset-white" : "border border-[var(--ink)]/10"
         }`}
       >
         {photo ? (
           <img src={photo} alt={name ?? ""} loading="lazy" decoding="async" className="w-full h-full object-cover" />
         ) : (
-          <CourtViewCard seed={seed} name={name} role="img" className="w-full h-full" letterClassName="text-[17px] sm:text-[26px]" />
+          <CourtViewCard seed={seed} name={name} role="img" className="w-full h-full" letterClassName="text-[16px]" />
         )}
       </div>
       <span className={`${caption} text-[var(--ink)]`}>{name ?? "?"}</span>
       {isCoach && (
-        <span className="text-[9px] sm:text-[11px] uppercase tracking-[0.16em] font-semibold text-[var(--plum)] leading-none mt-0.5 sm:mt-1">
+        <span className="text-[9px] uppercase tracking-[0.16em] font-semibold text-[var(--plum)] leading-none mt-0.5">
           {tr("Coach", "Profesor", "Coach")}
         </span>
       )}

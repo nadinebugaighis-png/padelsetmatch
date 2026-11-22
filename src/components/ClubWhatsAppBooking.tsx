@@ -35,9 +35,9 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
     <>
       {trigger(() => { setSent(false); setOpen(true); }, label)}
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent className="bg-[var(--paper)] border-[var(--ink)]/10">
+        <DrawerContent className="bg-[var(--paper)] border-[var(--ink)]/16">
           <div className="mx-auto w-full max-w-md px-6 pt-4 pb-8">
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/50 text-center">
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/65 text-center">
               {tr("Direct booking", "Reserva directa", "Réservation directe")}
             </div>
             <DrawerTitle asChild>
@@ -52,7 +52,7 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
             </DrawerDescription>
 
             <div className="mt-5 h-px bg-[var(--ink)]/10" />
-            <div role="radiogroup" aria-label={tr("Court type", "Tipo de pista", "Type de terrain")} className="divide-y divide-[var(--ink)]/10">
+            <div role="radiogroup" aria-label={tr("Court type", "Tipo de pista", "Type de terrain")} className="divide-y divide-[var(--ink)]/16">
               {COURT_TYPES.filter((c) => club.courts.includes(c.key)).map((c) => {
                 const active = court === c.key;
                 return (
@@ -104,7 +104,7 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
                 {tr("Club confirmed — mark court booked", "Club confirmado — marcar pista reservada", "Club confirmé — marquer réservée")}
               </button>
             ) : (
-              <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink)]/50">
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink)]/65">
                 {tr(
                   "Once the club confirms, mark the court as booked so your players know.",
                   "Cuando el club confirme, marca la pista como reservada para que tus jugadores lo sepan.",

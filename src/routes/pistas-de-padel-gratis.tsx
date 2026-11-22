@@ -135,7 +135,7 @@ function PistasGratisPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Cuatro formas de jugar gratis
         </h2>
@@ -143,7 +143,7 @@ function PistasGratisPage() {
           {WAYS.map(({ icon: Icon, title, body }) => (
             <article
               key={title}
-              className="rounded-2xl bg-white border border-[var(--ink)]/8 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
+              className="rounded-2xl bg-white border border-[var(--ink)]/14 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
             >
               <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]">
                 <Icon className="w-5 h-5" strokeWidth={2} />
@@ -155,7 +155,7 @@ function PistasGratisPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10 max-w-3xl">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16 max-w-3xl">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Preguntas frecuentes
         </h2>
@@ -169,7 +169,7 @@ function PistasGratisPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/10">
+      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/16">
         <div className="max-w-2xl">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
             Pista resuelta. Ahora, el cuarto.

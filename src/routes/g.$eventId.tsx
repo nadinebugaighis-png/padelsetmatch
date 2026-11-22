@@ -210,7 +210,7 @@ function GuestMatchRoom() {
     return (
       <main className="programme-page min-h-screen">
         <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-8">
-          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← PadelSetMatch</Link>
+          <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/72">← PadelSetMatch</Link>
 
           <div className="mt-5 mb-3 text-center">
             <div className="inline-flex items-center gap-2 text-[var(--ink)]/70">
@@ -229,7 +229,7 @@ function GuestMatchRoom() {
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(preview.club_address)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/10 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
+              className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/16 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
             >
               <MapPin className="w-3.5 h-3.5" />
               {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
@@ -246,14 +246,14 @@ function GuestMatchRoom() {
 
           <form onSubmit={submitJoin} className="mt-6 space-y-4">
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Your name", "Tu nombre", "Ton prénom")}</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/72">{tr("Your name", "Tu nombre", "Ton prénom")}</label>
               <input value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={40} required
-                className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
+                className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/22 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/55"
                 placeholder="Alex" />
             </div>
             <div>
               <div className="flex items-center justify-between">
-                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+                <label className="text-xs uppercase tracking-widest text-[var(--ink)]/72">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
                 {preview && (
                   <span className="text-[10px] uppercase tracking-widest text-[var(--gold)] font-semibold">
                     {tr("Match level", "Nivel del partido", "Niveau du match")}: {levelRangeLabel(preview.level_min, preview.level_max, tr)}
@@ -270,24 +270,24 @@ function GuestMatchRoom() {
               </div>
             </div>
             <div>
-              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/60">{tr("Phone / WhatsApp", "Teléfono / WhatsApp", "Téléphone / WhatsApp")}</label>
+              <label className="text-xs uppercase tracking-widest text-[var(--ink)]/72">{tr("Phone / WhatsApp", "Teléfono / WhatsApp", "Téléphone / WhatsApp")}</label>
               <input value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={32} inputMode="tel" required
-                className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/40"
+                className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/22 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/55"
                 placeholder="+34 600 000 000" />
-              <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
+              <p className="text-[10px] text-[var(--ink)]/65 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
             </div>
             <button type="submit" disabled={busy}
               className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]">
               {busy ? tr("Joining…", "Uniéndote…", "Inscription…") : tr("Join match", "Unirme al partido", "Rejoindre le match")}
             </button>
             <div className="text-center">
-              <Link to="/auth" search={{ join: eventId } as never} className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 underline">
+              <Link to="/auth" search={{ join: eventId } as never} className="text-[11px] uppercase tracking-widest text-[var(--ink)]/72 underline">
                 {tr("Have an account? Sign in instead", "¿Tienes cuenta? Inicia sesión", "Tu as un compte ? Connecte-toi")}
               </Link>
             </div>
           </form>
 
-          <p className="mt-6 text-center text-xs text-[var(--ink)]/60">{tr("Already joined? Use your original guest link. If you lost it, contact the host.", "¿Ya te uniste? Usa tu enlace original de invitado. Si lo has perdido, contacta con el anfitrión.", "Déjà inscrit ? Utilise ton lien invité d’origine. Si tu l’as perdu, contacte l’hôte.")}</p>
+          <p className="mt-6 text-center text-xs text-[var(--ink)]/72">{tr("Already joined? Use your original guest link. If you lost it, contact the host.", "¿Ya te uniste? Usa tu enlace original de invitado. Si lo has perdido, contacta con el anfitrión.", "Déjà inscrit ? Utilise ton lien invité d’origine. Si tu l’as perdu, contacte l’hôte.")}</p>
 
         </div>
       </main>
@@ -296,7 +296,7 @@ function GuestMatchRoom() {
 
   // ---- ROOM ----
   if (roomQ.isLoading || !roomQ.data) {
-    return <main className="programme-page min-h-screen text-[var(--ink)]/60 flex items-center justify-center">{tr("Loading…", "Cargando…", "Chargement…")}</main>;
+    return <main className="programme-page min-h-screen text-[var(--ink)]/72 flex items-center justify-center">{tr("Loading…", "Cargando…", "Chargement…")}</main>;
   }
   const match = roomQ.data.match;
   if (!match) {
@@ -313,8 +313,8 @@ function GuestMatchRoom() {
     <main className="programme-page min-h-screen">
       <div className="max-w-md sm:max-w-2xl mx-auto px-5 py-6 space-y-4">
         <div className="flex items-center justify-between">
-          <Link to="/play" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← {tr("All matches", "Todos los partidos", "Tous les matches")}</Link>
-          <button onClick={leaveMatch} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)]">
+          <Link to="/play" className="text-xs uppercase tracking-widest text-[var(--ink)]/72">← {tr("All matches", "Todos los partidos", "Tous les matches")}</Link>
+          <button onClick={leaveMatch} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-[var(--ink)]/72 hover:text-[var(--ink)]">
             <LogOut className="w-3 h-3" /> {tr("Leave", "Salir", "Quitter")}
           </button>
         </div>
@@ -322,7 +322,7 @@ function GuestMatchRoom() {
         <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/70">
           {tr("You're in", "Estás dentro", "Tu es inscrit·e")}
         </div>
-        <p className="text-xs text-[var(--ink)]/55 -mt-2">
+        <p className="text-xs text-[var(--ink)]/68 -mt-2">
           {tr(
             "Come back anytime with this link — save it or send it to yourself below.",
             "Vuelve cuando quieras con este enlace — guárdalo o envíatelo abajo.",
@@ -339,7 +339,7 @@ function GuestMatchRoom() {
               else { await navigator.clipboard.writeText(link); toast.success(tr("Link copied — keep it to come back anytime.", "Enlace copiado — guárdalo para volver cuando quieras.", "Lien copié — garde-le pour revenir quand tu veux.")); }
             } catch { /* cancelled */ }
           }}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2.5 text-[11px] uppercase tracking-widest font-semibold text-[var(--ink)]/80 hover:bg-[var(--paper-2)] transition"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[var(--ink)]/22 bg-white px-4 py-2.5 text-[11px] uppercase tracking-widest font-semibold text-[var(--ink)]/80 hover:bg-[var(--paper-2)] transition"
         >
           <Link2 className="w-3.5 h-3.5" />
           {tr("Send this link to myself", "Enviarme este enlace", "M'envoyer ce lien")}
@@ -348,10 +348,10 @@ function GuestMatchRoom() {
         <MatchProgrammeCard match={match as never} />
 
         <div className="programme-card rounded-2xl p-4">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50 mb-3">{tr("Match chat", "Chat del partido", "Chat du match")}</div>
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65 mb-3">{tr("Match chat", "Chat del partido", "Chat du match")}</div>
           <div className="max-h-[45vh] overflow-y-auto space-y-2 pr-1">
             {messages.length === 0 && (
-              <p className="text-xs text-[var(--ink)]/40 py-4 text-center">{tr("No messages yet. Say hi 👋", "Aún no hay mensajes. Saluda 👋", "Pas de messages. Dis bonjour 👋")}</p>
+              <p className="text-xs text-[var(--ink)]/55 py-4 text-center">{tr("No messages yet. Say hi 👋", "Aún no hay mensajes. Saluda 👋", "Pas de messages. Dis bonjour 👋")}</p>
             )}
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.is_me ? "justify-end" : "justify-start"}`}>
@@ -368,7 +368,7 @@ function GuestMatchRoom() {
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } }}
               maxLength={2000}
               placeholder={tr("Write a message…", "Escribe un mensaje…", "Écris un message…")}
-              className="flex-1 bg-[var(--paper-2)] border border-[var(--ink)]/15 rounded-full px-4 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/40" />
+              className="flex-1 bg-[var(--paper-2)] border border-[var(--ink)]/22 rounded-full px-4 py-2 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/55" />
             <button onClick={sendMsg} disabled={!msg.trim()}
               className="w-11 h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center disabled:opacity-40">
               <Send className="w-4 h-4" />
@@ -377,7 +377,7 @@ function GuestMatchRoom() {
         </div>
 
         <div className="text-center pt-2">
-          <Link to="/auth" className="text-[11px] uppercase tracking-widest text-[var(--ink)]/50 underline">
+          <Link to="/auth" className="text-[11px] uppercase tracking-widest text-[var(--ink)]/65 underline">
             {tr("Create a full account to find more players", "Crea una cuenta para encontrar más jugadores", "Crée un compte pour trouver plus de joueurs")}
           </Link>
         </div>

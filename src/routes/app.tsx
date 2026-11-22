@@ -121,7 +121,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
         </div>
         <button
           onClick={() => setShowDetails((s) => !s)}
-          className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/40 hover:text-[var(--ink)]/70"
+          className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/55 hover:text-[var(--ink)]/70"
         >
           {showDetails ? tr("Hide details", "Ocultar detalles", "Masquer les détails") : tr("Show details", "Ver detalles", "Voir les détails")}
         </button>
@@ -322,7 +322,7 @@ function AuthShell() {
         <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
       <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
-        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3 max-w-7xl mx-auto w-full">
+        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/16 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
@@ -340,7 +340,7 @@ function AuthShell() {
             )}
             {hasProfile && <NotificationBell />}
             <LangSwitch />
-            <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/55 hover:text-[var(--ink)]">
+            <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/68 hover:text-[var(--ink)]">
               {t("shell.signout")}
             </button>
           </div>
@@ -350,7 +350,7 @@ function AuthShell() {
       {hasProfile && !onOnboarding && !inChat && <EnableNotificationsBanner />}
 
       {hasProfile && !onOnboarding && !inChat && visibleInvites.length > 0 && (
-        <div className="border-b border-[var(--ink)]/10 bg-[var(--paper-2)]">
+        <div className="border-b border-[var(--ink)]/16 bg-[var(--paper-2)]">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 space-y-2">
             {visibleInvites.slice(0, 3).map((inv) => {
               const ev = inv.event!;
@@ -377,7 +377,7 @@ function AuthShell() {
                   <button
                     onClick={() => setDismissedIds((d) => [...d, inv.id])}
                     aria-label={tr("Dismiss", "Descartar", "Fermer")}
-                    className="text-[var(--ink)]/50 hover:text-[var(--ink)] shrink-0"
+                    className="text-[var(--ink)]/65 hover:text-[var(--ink)] shrink-0"
                   >
                     <X className="w-4 h-4" />
                   </button>

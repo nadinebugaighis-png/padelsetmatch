@@ -74,14 +74,14 @@ function Matches() {
         {q.isLoading && !q.data ? (
           <ul className="mt-6 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <li key={i} className="rounded-2xl border border-[var(--ink)]/8 bg-white p-4 space-y-2.5">
+              <li key={i} className="rounded-2xl border border-[var(--ink)]/14 bg-white p-4 space-y-2.5">
                 <div className="h-4 w-1/2 rounded bg-[var(--ink)]/8 animate-pulse" />
                 <div className="h-3 w-3/4 rounded bg-[var(--ink)]/6 animate-pulse" />
               </li>
             ))}
           </ul>
         ) : items.length === 0 ? (
-          <div className="mt-12 text-center text-[var(--ink)]/60">
+          <div className="mt-12 text-center text-[var(--ink)]/72">
             <p>{t("ml.empty")}</p>
             <Link to="/app" className="underline mt-2 inline-block">{t("ml.discoverLink")}</Link>
           </div>
@@ -104,11 +104,11 @@ function Matches() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-serif text-2xl text-[var(--ink)] truncate">{m.other.first_name}</div>
-                          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60">{m.other.zone} · {label(m.other.level)}</div>
+                          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/72">{m.other.zone} · {label(m.other.level)}</div>
                         </div>
                       </div>
                       {m.last_message && (
-                        <blockquote className="mt-2.5 text-sm text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/15 pl-3 line-clamp-3">
+                        <blockquote className="mt-2.5 text-sm text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/22 pl-3 line-clamp-3">
                           &ldquo;{m.last_message.body}&rdquo;
                         </blockquote>
                       )}
@@ -131,7 +131,7 @@ function Matches() {
                           disabled={busyId === m.match_id}
                           onClick={() => removeThread(m.match_id, m.other!.first_name)}
                           aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
-                          className="h-9 w-9 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/60 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center shrink-0"
+                          className="h-9 w-9 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/72 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -157,13 +157,13 @@ function Matches() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <div className="text-serif text-2xl sm:text-3xl text-[var(--ink)]">{m.other.first_name}</div>
                           {m.pending_outgoing && (
-                            <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]/60">
+                            <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]/72">
                               {tr("Sent", "Enviado", "Envoyé")}
                             </span>
                           )}
                           {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--plum)] ink-ring" />}
                         </div>
-                        <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60">{m.other.zone} · {label(m.other.level)}</div>
+                        <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/72">{m.other.zone} · {label(m.other.level)}</div>
                         <div className={`text-xs sm:text-sm mt-1 line-clamp-2 ${m.unread > 0 ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/70"}`}>
                           {m.last_message ? `${m.last_message.from_me ? tr("You: ", "Tú: ", "Toi : ") : ""}${m.last_message.body}` : m.other.bio}
                         </div>
@@ -173,7 +173,7 @@ function Matches() {
                       disabled={busyId === m.match_id}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeThread(m.match_id, m.other!.first_name); }}
                       aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
-                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/15 text-[var(--ink)]/50 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center z-10"
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/22 text-[var(--ink)]/65 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center z-10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

@@ -175,7 +175,7 @@ function Landing() {
           </div>
 
           <div className="mt-10 lg:mt-9 max-w-md">
-            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/50">
+            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/65">
               <span>{tr("Or get the app", "O descarga la app", "Ou télécharge l’app")}</span>
               <span className="h-px flex-1 bg-[var(--ink)]/15" aria-hidden />
             </div>
@@ -188,7 +188,7 @@ function Landing() {
       </section>
 
       {/* Preview strip (kept, restyled subtly) */}
-      <section className="relative z-10 px-5 sm:px-8 lg:px-16 pt-10 pb-14 border-t border-[var(--ink)]/10 bg-[var(--paper)]/85 backdrop-blur">
+      <section className="relative z-10 px-5 sm:px-8 lg:px-16 pt-10 pb-14 border-t border-[var(--ink)]/16 bg-[var(--paper)]/85 backdrop-blur">
         <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
           <div className="max-w-lg">
             <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_14%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_22%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
@@ -214,10 +214,10 @@ function Landing() {
             { src: LANDING_TILES[2], name: "Aisha", city: "Dubai", score: 85 },
             { src: LANDING_TILES[3], name: "Kenji", city: "Tokyo", score: 81 },
           ].map((p, i) => (
-            <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/10 group">
+            <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/16 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/80 via-[var(--ink)]/20 to-transparent" />
-              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--paper)] text-[var(--ink)] border border-[var(--ink)]/10 rounded-full px-2.5 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--paper)] text-[var(--ink)] border border-[var(--ink)]/16 rounded-full px-2.5 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--paper)]">
                 <div className="text-serif text-xl leading-tight">{p.name}</div>
                 <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>

@@ -12,7 +12,7 @@ export function CoachBadgePanel({ coachName }: { coachName: string }) {
         </div>
         <div>
           <div className="text-[13px] font-bold text-[var(--ink)]">{tr("Padel coach", "Entrenador de pádel", "Coach de padel")}</div>
-          <div className="text-[11px] text-[var(--ink)]/60">
+          <div className="text-[11px] text-[var(--ink)]/72">
             {tr(`${coachName} also coaches padel.`, `${coachName} también entrena a otros jugadores.`, `${coachName} donne aussi des cours de padel.`)}
           </div>
         </div>

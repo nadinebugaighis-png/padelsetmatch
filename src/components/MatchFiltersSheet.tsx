@@ -27,7 +27,7 @@ export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel
 
   const Pill = ({ active, onClick, children, disabled }: { active: boolean; onClick: () => void; children: React.ReactNode; disabled?: boolean }) => (
     <button type="button" aria-pressed={active} disabled={disabled} onClick={onClick}
-      className={`h-10 rounded-full border px-4 text-[14px] transition disabled:opacity-40 ${active ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/15 bg-white text-[var(--ink)]"}`}>
+      className={`h-10 rounded-full border px-4 text-[14px] transition disabled:opacity-40 ${active ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/22 bg-white text-[var(--ink)]"}`}>
       {children}
     </button>
   );
@@ -40,7 +40,7 @@ export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel
   ];
 
   const Label = ({ children }: { children: React.ReactNode }) => (
-    <div className="mb-2 text-[12px] uppercase tracking-[0.14em] text-[var(--ink)]/50">{children}</div>
+    <div className="mb-2 text-[12px] uppercase tracking-[0.14em] text-[var(--ink)]/65">{children}</div>
   );
 
   return (
@@ -51,7 +51,7 @@ export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel
         style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
         <div className="flex items-center justify-between">
           <h2 className="text-serif text-[20px] sm:text-[24px] text-[var(--ink)]">{tr("Filters", "Filtros", "Filtres")}</h2>
-          <button type="button" onClick={onClose} aria-label={tr("Close", "Cerrar", "Fermer")} className="grid size-9 place-items-center rounded-full text-[var(--ink)]/60"><X className="size-5" /></button>
+          <button type="button" onClick={onClose} aria-label={tr("Close", "Cerrar", "Fermer")} className="grid size-9 place-items-center rounded-full text-[var(--ink)]/72"><X className="size-5" /></button>
         </div>
 
         <div className="mt-4 space-y-5">
@@ -84,8 +84,8 @@ export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel
         </div>
 
         <button type="button" onClick={() => { onClose(); onAlerts(); }}
-          className="mt-6 flex w-full items-center gap-2.5 rounded-2xl border border-[var(--ink)]/12 bg-white px-4 py-3 text-left text-[14px] text-[var(--ink)]">
-          <Bell className="size-4 shrink-0 text-[var(--ink)]/60" strokeWidth={1.6} />
+          className="mt-6 flex w-full items-center gap-2.5 rounded-2xl border border-[var(--ink)]/18 bg-white px-4 py-3 text-left text-[14px] text-[var(--ink)]">
+          <Bell className="size-4 shrink-0 text-[var(--ink)]/72" strokeWidth={1.6} />
           {tr("Tell me when a new game fits", "Avísame cuando haya un partido para mí", "Préviens-moi d'un nouveau match pour moi")}
         </button>
 

@@ -136,7 +136,7 @@ function QuickStart() {
       <div className="w-full max-w-md programme-card p-7 sm:p-9">
         <div className="flex items-center justify-between">
           <BrandMark size="sm" />
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
             {tr("30 seconds", "30 segundos", "30 secondes")}
           </span>
         </div>
@@ -161,14 +161,14 @@ function QuickStart() {
         <form onSubmit={submit} className="mt-6 space-y-5">
           {/* Photo — optional, from Google or fallback initial */}
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 flex items-center justify-center text-lg font-medium text-[var(--ink)]/60">
+            <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 flex items-center justify-center text-lg font-medium text-[var(--ink)]/72">
               {photoUrl ? (
                 <img src={photoUrl} alt="" className="w-full h-full object-cover" />
               ) : (
                 firstName.trim().charAt(0).toUpperCase() || "?"
               )}
             </div>
-            <div className="text-xs text-[var(--ink)]/55">
+            <div className="text-xs text-[var(--ink)]/68">
               {photoUrl
                 ? tr("You can change this later", "Puedes cambiarla luego", "Modifiable plus tard")
                 : tr("Add a photo later from your profile", "Añade foto luego en tu perfil", "Ajoute une photo plus tard")}
@@ -176,7 +176,7 @@ function QuickStart() {
           </div>
 
           <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
+            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
               {tr("First name", "Nombre", "Prénom")}
             </label>
             <input
@@ -190,7 +190,7 @@ function QuickStart() {
           </div>
 
           <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
+            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
               {tr("Gender", "Género", "Genre")}
             </label>
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -215,7 +215,7 @@ function QuickStart() {
           </div>
 
           <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/55">
+            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
               {tr("Padel level", "Nivel de pádel", "Niveau de padel")}
             </label>
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -248,7 +248,7 @@ function QuickStart() {
 
           <Link
             to="/app/onboarding"
-            className="block text-center text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/55 hover:text-[var(--ink)]"
+            className="block text-center text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/68 hover:text-[var(--ink)]"
           >
             {tr("Do the full profile instead", "Prefiero el perfil completo", "Faire le profil complet")}
           </Link>

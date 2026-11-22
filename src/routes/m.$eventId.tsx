@@ -193,14 +193,14 @@ function PublicMatchPage() {
   return (
     <main className="programme-page min-h-screen">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
-        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/60">← PadelSetMatch</Link>
+        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/72">← PadelSetMatch</Link>
 
-        {q.isLoading && <div className="mt-10 text-center text-[var(--ink)]/60">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
+        {q.isLoading && <div className="mt-10 text-center text-[var(--ink)]/72">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
 
         {!q.isLoading && !match && (
           <div className="mt-10 text-center text-[var(--ink)]/70">
             <p className="text-lg">{tr("This match link isn't available.", "Este enlace de partido no está disponible.", "Ce lien de match n'est pas disponible.")}</p>
-            <p className="text-sm text-[var(--ink)]/50 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.", "Il a peut-être été annulé ou déjà joué.")}</p>
+            <p className="text-sm text-[var(--ink)]/65 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.", "Il a peut-être été annulé ou déjà joué.")}</p>
             <Link to="/app/events" className="inline-block mt-6 text-[var(--ink)] underline">{tr("Browse open matches", "Ver partidos abiertos", "Explorer les matches ouverts")}</Link>
 
           </div>
@@ -230,7 +230,7 @@ function PublicMatchPage() {
             </div>
 
             {/* Match card — same style as Play page */}
-            <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/10">
+            <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/16">
               <div className="flex">
                 {/* Date / time block */}
                 <InviteTimeBlock match={match} tr={tr} />
@@ -242,7 +242,7 @@ function PublicMatchPage() {
                       <h1 className="text-[15px] font-semibold text-[var(--ink)] leading-tight">
                         {match.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
                       </h1>
-                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60 min-w-0">
+                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/72 min-w-0">
                         <MapPin className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate">{match.club_address || match.city || "—"}</span>
                       </div>
@@ -250,7 +250,7 @@ function PublicMatchPage() {
                     <span
                       className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
                         openSpots === 0
-                          ? "bg-[var(--ink)]/8 text-[var(--ink)]/55"
+                          ? "bg-[var(--ink)]/8 text-[var(--ink)]/68"
                           : "bg-[var(--plum)]/12 text-[var(--plum)]"
                       }`}
                     >
@@ -261,7 +261,7 @@ function PublicMatchPage() {
                   </div>
 
                   {/* Meta row */}
-                  <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+                  <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/72">
                     <span className="font-semibold text-[var(--ink)]/80">{levelRangeLabel(match.level_min, match.level_max, tr)}</span>
                     <span className="text-[var(--ink)]/25">·</span>
                     <span>{genderLabel}</span>
@@ -330,7 +330,7 @@ function PublicMatchPage() {
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.club_address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/10 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
+                className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/16 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
               >
                 <MapPin className="w-3.5 h-3.5" />
                 {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
@@ -356,7 +356,7 @@ function PublicMatchPage() {
                       : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
               {ptLink && openSpots > 0 && (
-                <p className="text-[11px] text-[var(--ink)]/50 text-center">
+                <p className="text-[11px] text-[var(--ink)]/65 text-center">
                   {tr("Availability may have changed. Check and join on Playtomic.", "Las plazas pueden haber cambiado. Compruébalo y únete en Playtomic.", "Les places ont pu changer. Vérifie et rejoins sur Playtomic.")}
                 </p>
               )}
@@ -372,7 +372,7 @@ function PublicMatchPage() {
               <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
-              {!ptLink && <p className="text-[11px] text-[var(--ink)]/50 text-center pt-1">
+              {!ptLink && <p className="text-[11px] text-[var(--ink)]/65 text-center pt-1">
                 {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
               </p>}
             </div>

@@ -478,7 +478,7 @@ function Onboarding() {
   }
 
   const isNew = !profileQ.data;
-  const SEL = "w-full h-11 rounded-xl border border-[var(--ink)]/15 bg-[var(--card)] px-3 text-[15px] text-[var(--ink)] disabled:opacity-50";
+  const SEL = "w-full h-11 rounded-xl border border-[var(--ink)]/22 bg-[var(--card)] px-3 text-[15px] text-[var(--ink)] disabled:opacity-50";
   const CUSTOM = "__custom__";
   const realNat = (n: string) => n !== "__none__" && n !== "" && n !== "Other";
   const natSummary = nationality === "__none__"
@@ -564,7 +564,7 @@ function Onboarding() {
                   <div key={ai} className="flex gap-2">
                     <Input className="h-11 rounded-xl" maxLength={80} value={a === CUSTOM ? "" : a} onChange={(e) => updateArea(i, ai, e.target.value)} placeholder={`${tr("Area", "Zona", "Zone")} ${ai + 1}`} />
                     {a && (
-                      <button type="button" onClick={() => updateArea(i, ai, "")} aria-label={tr("Clear this area", "Borrar esta zona", "Effacer cette zone")} className="px-2 text-[var(--ink)]/60">
+                      <button type="button" onClick={() => updateArea(i, ai, "")} aria-label={tr("Clear this area", "Borrar esta zona", "Effacer cette zone")} className="px-2 text-[var(--ink)]/72">
                         <X className="w-4 h-4" />
                       </button>
                     )}
@@ -599,7 +599,7 @@ function Onboarding() {
           <div>
             <div className="flex items-center justify-between">
               <FieldLabel>{tr("Second nationality", "Segunda nacionalidad", "Seconde nationalité")}</FieldLabel>
-              <button type="button" onClick={() => { setNationality2(""); setShowSecondNat(false); }} className="text-[12px] text-[var(--ink)]/60 underline underline-offset-2">
+              <button type="button" onClick={() => { setNationality2(""); setShowSecondNat(false); }} className="text-[12px] text-[var(--ink)]/72 underline underline-offset-2">
                 {tr("Remove", "Quitar", "Retirer")}
               </button>
             </div>
@@ -678,7 +678,7 @@ function Onboarding() {
             </button>
           )}
           {visible.length === 0 && !canAddCustom && (
-            <p className="py-3 text-xs text-[var(--ink)]/60">{tr("No match. Type a name and press Enter to add.", "Sin resultados. Escribe un nombre y pulsa Intro para añadirlo.", "Aucun résultat. Tape un nom et appuie sur Entrée pour l'ajouter.")}</p>
+            <p className="py-3 text-xs text-[var(--ink)]/72">{tr("No match. Type a name and press Enter to add.", "Sin resultados. Escribe un nombre y pulsa Intro para añadirlo.", "Aucun résultat. Tape un nom et appuie sur Entrée pour l'ajouter.")}</p>
           )}
         </div>
       </div>
@@ -733,7 +733,7 @@ function Onboarding() {
         </div>
       )}
       {newAppleAccount && (
-        <p className="mt-4 text-[12px] text-[var(--ink)]/60 leading-relaxed text-center">
+        <p className="mt-4 text-[12px] text-[var(--ink)]/72 leading-relaxed text-center">
           {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
           <button type="button" onClick={switchToEmail} className="underline underline-offset-2 text-[var(--ink)]/80">
             {tr("Sign in with your email instead", "Entra con tu email", "Connecte-toi avec ton e-mail")}
@@ -743,11 +743,11 @@ function Onboarding() {
 
       {/* Photo */}
       <div className="pt-6 flex flex-col items-center">
-        <label className="relative block w-32 h-40 rounded-t-full rounded-b-[16px] overflow-hidden border border-[var(--ink)]/10 bg-[var(--paper-2)] cursor-pointer">
+        <label className="relative block w-32 h-40 rounded-t-full rounded-b-[16px] overflow-hidden border border-[var(--ink)]/16 bg-[var(--paper-2)] cursor-pointer">
           {photoUrl ? (
             <img src={photoUrl} alt={first_name || tr("Your photo", "Tu foto", "Ta photo")} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
-            <span className="absolute inset-0 flex items-center justify-center text-[var(--ink)]/40">
+            <span className="absolute inset-0 flex items-center justify-center text-[var(--ink)]/55">
               <Camera className="w-7 h-7" />
             </span>
           )}
@@ -778,7 +778,7 @@ function Onboarding() {
           {photoUrl && (
             <>
               <span aria-hidden="true">·</span>
-              <button type="button" disabled={uploading} onClick={() => { setPhotoUrl(null); setLastPhotoFile(null); }} className="min-h-10 px-2 text-[var(--ink)]/55 underline-offset-4 hover:underline">
+              <button type="button" disabled={uploading} onClick={() => { setPhotoUrl(null); setLastPhotoFile(null); }} className="min-h-10 px-2 text-[var(--ink)]/68 underline-offset-4 hover:underline">
                 {tr("Remove", "Quitar", "Retirer")}
               </button>
             </>
@@ -788,14 +788,14 @@ function Onboarding() {
 
       {/* About you */}
       <Section title={tr("About you", "Sobre ti", "À propos de toi")}>
-        <div data-field="first_name" className={`py-3 border-b border-[var(--ink)]/12 ${fieldCls("first_name")}`}>
+        <div data-field="first_name" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("first_name")}`}>
           <FieldLabel htmlFor="ob-first-name">{tr("First name", "Nombre", "Prénom")}</FieldLabel>
           <input id="ob-first-name" value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} className="w-full bg-transparent text-[17px] text-[var(--ink)] placeholder:text-[var(--ink)]/30 focus:outline-none" />
         </div>
-        <div className="py-3 border-b border-[var(--ink)]/12">
+        <div className="py-3 border-b border-[var(--ink)]/18">
           <FieldLabel htmlFor="ob-bio">{tr("Short bio", "Bio corta", "Bio courte")}</FieldLabel>
           <textarea id="ob-bio" rows={3} maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} className="w-full resize-none bg-transparent text-serif italic text-[17px] leading-snug text-[var(--ink)] placeholder:text-[var(--ink)]/30 focus:outline-none" />
-          <div className="text-right text-[10px] text-[var(--ink)]/40">{bio.length}/280</div>
+          <div className="text-right text-[10px] text-[var(--ink)]/55">{bio.length}/280</div>
         </div>
       </Section>
 
@@ -811,7 +811,7 @@ function Onboarding() {
                 return (
                   <button key={l} type="button" role="radio" aria-checked={sel} onClick={() => setLevel(l)} className="relative flex flex-col items-center gap-1.5 pt-3 pb-1 active:scale-95 transition-transform">
                     <span className={`w-[18px] h-[18px] rounded-full border transition-colors ${sel ? "bg-[var(--ink)] border-[var(--ink)]" : "bg-[var(--paper)] border-[var(--ink)]/30"}`} />
-                    <span className={`block text-[11px] leading-tight text-center first-letter:uppercase ${sel ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/55"}`}>{label(l)}</span>
+                    <span className={`block text-[11px] leading-tight text-center first-letter:uppercase ${sel ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/68"}`}>{label(l)}</span>
                   </button>
                 );
               })}
@@ -850,9 +850,9 @@ function Onboarding() {
 
       {/* Who you match with */}
       <Section title={tr("Who you match with", "Con quién juegas", "Avec qui tu joues")} sub={tr("Private. Never shown on your profile.", "Privado. Nunca se muestra en tu perfil.", "Privé. Jamais affiché sur ton profil.")} icon={<Lock className="w-3 h-3" />}>
-        <div data-field="age" className={`py-3 border-b border-[var(--ink)]/12 ${fieldCls("age")}`}>
+        <div data-field="age" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("age")}`}>
           <FieldLabel>{tr("Your age", "Tu edad", "Ton âge")}</FieldLabel>
-          <div className="mt-1 grid grid-cols-5 overflow-hidden rounded-xl border border-[var(--ink)]/15">
+          <div className="mt-1 grid grid-cols-5 overflow-hidden rounded-xl border border-[var(--ink)]/22">
             {AGE_BRACKETS.map((b, idx) => {
               const mid = bracketMidpoint(b);
               const selected = bracket !== null && bracket[0] === b[0] && bracket[1] === b[1];
@@ -863,7 +863,7 @@ function Onboarding() {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => { setBracket(b); setAge(mid); }}
-                  className={`h-11 text-[13px] transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/15" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/75 active:bg-[var(--ink)]/5"}`}
+                  className={`h-11 text-[13px] transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/22" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/75 active:bg-[var(--ink)]/5"}`}
                 >
                   {labelTxt}
                 </button>
@@ -871,7 +871,7 @@ function Onboarding() {
             })}
           </div>
         </div>
-        <div data-field="gender" className={`py-3 border-b border-[var(--ink)]/12 ${fieldCls("gender")}`}>
+        <div data-field="gender" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("gender")}`}>
           <FieldLabel>{t("ob.iAm")}</FieldLabel>
           <div className="mt-1 flex flex-wrap gap-2">
             {GENDERS.map((g) => (
@@ -986,39 +986,39 @@ function Section({ title, sub, note, icon, children }: { title: string; sub?: st
     <section className="pt-9">
       <div className="flex items-baseline gap-2">
         <h2 className="text-serif text-[26px] leading-tight text-[var(--ink)]">{title}</h2>
-        {note && <span className="text-[12px] text-[var(--ink)]/45">{note}</span>}
+        {note && <span className="text-[12px] text-[var(--ink)]/60">{note}</span>}
       </div>
-      {sub && <p className="mt-1 flex items-center gap-1.5 text-[12px] text-[var(--ink)]/55">{icon}{sub}</p>}
+      {sub && <p className="mt-1 flex items-center gap-1.5 text-[12px] text-[var(--ink)]/68">{icon}{sub}</p>}
       <div className="mt-2">{children}</div>
     </section>
   );
 }
 
 function FieldLabel({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) {
-  return <label htmlFor={htmlFor} className="block text-[12px] text-[var(--ink)]/55 mb-0.5">{children}</label>;
+  return <label htmlFor={htmlFor} className="block text-[12px] text-[var(--ink)]/68 mb-0.5">{children}</label>;
 }
 
 function SummaryRow({ label, value, onClick }: { label: string; value: string; onClick: () => void }) {
   const tr = useTr();
   return (
-    <button type="button" onClick={onClick} className="w-full min-h-[60px] flex items-center justify-between gap-3 py-3 text-left border-b border-[var(--ink)]/12 active:bg-[var(--ink)]/[0.03]">
+    <button type="button" onClick={onClick} className="w-full min-h-[60px] flex items-center justify-between gap-3 py-3 text-left border-b border-[var(--ink)]/18 active:bg-[var(--ink)]/[0.03]">
       <span className="min-w-0">
-        <span className="block text-[12px] text-[var(--ink)]/55">{label}</span>
+        <span className="block text-[12px] text-[var(--ink)]/68">{label}</span>
         <span className={`block truncate text-[16px] ${value ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}>{value || tr("Add", "Añadir", "Ajouter")}</span>
       </span>
-      <ChevronRight className="w-4 h-4 shrink-0 text-[var(--ink)]/40" />
+      <ChevronRight className="w-4 h-4 shrink-0 text-[var(--ink)]/55" />
     </button>
   );
 }
 
 function ToggleRow({ icon, title, sub, on, onChange, disabled }: { icon?: ReactNode; title: string; sub?: string; on: boolean; onChange: () => void; disabled?: boolean }) {
   return (
-    <div className="flex items-center justify-between gap-3 py-3 border-b border-[var(--ink)]/12 last:border-b-0">
+    <div className="flex items-center justify-between gap-3 py-3 border-b border-[var(--ink)]/18 last:border-b-0">
       <div className="flex items-center gap-3 min-w-0">
         {icon && <span className="inline-flex w-8 justify-center shrink-0">{icon}</span>}
         <div className="min-w-0">
           <div className="text-[16px] text-[var(--ink)] leading-tight">{title}</div>
-          {sub && <div className="text-[12px] text-[var(--ink)]/55 mt-0.5">{sub}</div>}
+          {sub && <div className="text-[12px] text-[var(--ink)]/68 mt-0.5">{sub}</div>}
         </div>
       </div>
       <button

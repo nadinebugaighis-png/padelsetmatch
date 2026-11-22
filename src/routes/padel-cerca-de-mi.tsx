@@ -157,7 +157,7 @@ function PadelCercaDeMiPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Cómo encontrar el cuarto jugador
         </h2>
@@ -165,7 +165,7 @@ function PadelCercaDeMiPage() {
           {PASOS.map(({ icon: Icon, title, body }) => (
             <article
               key={title}
-              className="rounded-2xl bg-white border border-[var(--ink)]/8 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
+              className="rounded-2xl bg-white border border-[var(--ink)]/14 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
             >
               <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]">
                 <Icon className="w-5 h-5" strokeWidth={2} />
@@ -177,7 +177,7 @@ function PadelCercaDeMiPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Pistas gratis y de comunidad
         </h2>
@@ -193,7 +193,7 @@ function PadelCercaDeMiPage() {
         </p>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Zonas de Madrid
         </h2>
@@ -205,7 +205,7 @@ function PadelCercaDeMiPage() {
           {ZONAS.map((z) => (
             <li
               key={z}
-              className="rounded-full border border-[var(--ink)]/15 bg-white px-4 py-2 text-[13px] text-[var(--ink)]/80"
+              className="rounded-full border border-[var(--ink)]/22 bg-white px-4 py-2 text-[13px] text-[var(--ink)]/80"
             >
               {z}
             </li>
@@ -213,7 +213,7 @@ function PadelCercaDeMiPage() {
         </ul>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/10 max-w-3xl">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16 max-w-3xl">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Preguntas frecuentes
         </h2>
@@ -227,7 +227,7 @@ function PadelCercaDeMiPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/10">
+      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/16">
         <div className="max-w-2xl">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
             Esta semana puedes jugar

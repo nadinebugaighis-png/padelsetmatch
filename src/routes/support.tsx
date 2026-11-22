@@ -54,7 +54,7 @@ function SupportPage() {
           <p className="text-sm text-[var(--ink)]/80">
             <a className="underline decoration-[var(--grass,#2e7d32)] decoration-2" href={`mailto:${CONTACT}`}>{CONTACT}</a>
           </p>
-          <p className="text-xs text-[var(--ink)]/60">Moorish Arches S.L. · Madrid, España</p>
+          <p className="text-xs text-[var(--ink)]/72">Moorish Arches S.L. · Madrid, España</p>
         </section>
 
         <section className="space-y-3">

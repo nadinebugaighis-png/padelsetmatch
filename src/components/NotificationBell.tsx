@@ -180,15 +180,15 @@ export function NotificationBell() {
         )}
       </Button>
       {open && (
-        <div className="fixed left-3 right-3 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[340px] bg-[var(--paper)] border border-[var(--ink)]/15 rounded-xl shadow-xl z-50 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--ink)]/10">
+        <div className="fixed left-3 right-3 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[340px] bg-[var(--paper)] border border-[var(--ink)]/22 rounded-xl shadow-xl z-50 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--ink)]/16">
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold">
               {tr("Notifications", "Notificaciones", "Notifications")}
             </span>
           </div>
           <div ref={scrollRef} className="max-h-[60vh] overflow-y-auto">
             {activeInvites.length > 0 && (
-              <div className="border-b border-[var(--ink)]/10 bg-[var(--plum)]/5">
+              <div className="border-b border-[var(--ink)]/16 bg-[var(--plum)]/5">
                 <div className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-[var(--plum)] font-semibold">
                   {tr("Match invites", "Invitaciones", "Invitations")}
                 </div>
@@ -224,7 +224,7 @@ export function NotificationBell() {
                       </div>
                       <button
                         onClick={() => { setOpen(false); navigate({ to: "/app/events/$eventId", params: { eventId: ev.id } }); }}
-                        className="mt-1.5 text-[10px] text-[var(--ink)]/50 hover:text-[var(--ink)] uppercase tracking-wider"
+                        className="mt-1.5 text-[10px] text-[var(--ink)]/65 hover:text-[var(--ink)] uppercase tracking-wider"
                       >
                         {tr("View match", "Ver partido", "Voir le match")}
                       </button>
@@ -234,7 +234,7 @@ export function NotificationBell() {
               </div>
             )}
             {viewedList.length === 0 && items.length === 0 && activeInvites.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-[var(--ink)]/60">
+              <div className="px-4 py-8 text-center text-sm text-[var(--ink)]/72">
                 {tr("You're all caught up.", "Estás al día.", "Tu es à jour.")}
               </div>
             ) : (
@@ -250,7 +250,7 @@ export function NotificationBell() {
                     <div className="min-w-0 flex-1">
                       <div className="text-sm text-[var(--ink)] font-semibold truncate">{n.title}</div>
                       {n.body && <div className="text-xs text-[var(--ink)]/70 mt-0.5 line-clamp-2">{n.body}</div>}
-                      <div className="text-[10px] text-[var(--ink)]/50 mt-1 uppercase tracking-wider">
+                      <div className="text-[10px] text-[var(--ink)]/65 mt-1 uppercase tracking-wider">
                         {new Date(n.created_at).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                       </div>
                     </div>

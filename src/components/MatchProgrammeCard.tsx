@@ -79,7 +79,7 @@ export function MatchProgrammeCard({
   const genderLabel = match.gender_rule && match.gender_rule !== "open" ? genderRuleLabel(match.gender_rule, tr) : null;
 
   return (
-    <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/10">
+    <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/16">
       <div className="flex">
         <div
           className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
@@ -102,14 +102,14 @@ export function MatchProgrammeCard({
               <h2 className="text-[15px] font-semibold text-[var(--ink)] leading-tight">
                 {match.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
               </h2>
-              <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/60 min-w-0">
+              <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/72 min-w-0">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{match.club_address || match.city || "—"}</span>
               </div>
             </div>
             <span
               className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
-                openSpots === 0 ? "bg-[var(--ink)]/8 text-[var(--ink)]/55" : "bg-[var(--plum)]/12 text-[var(--plum)]"
+                openSpots === 0 ? "bg-[var(--ink)]/8 text-[var(--ink)]/68" : "bg-[var(--plum)]/12 text-[var(--plum)]"
               }`}
             >
               {openSpots === 0
@@ -122,7 +122,7 @@ export function MatchProgrammeCard({
             </span>
           </div>
 
-          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/60">
+          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/72">
             {match.is_class && (
               <>
                 <span className="rounded-full border border-[var(--gold)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">

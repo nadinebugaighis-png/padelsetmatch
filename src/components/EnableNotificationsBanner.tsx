@@ -59,13 +59,13 @@ export function EnableNotificationsBanner() {
 
   if (!show) return null;
   return (
-    <div className="border-b border-[var(--ink)]/10 bg-[color-mix(in_oklab,var(--plum)_6%,var(--paper))]">
+    <div className="border-b border-[var(--ink)]/16 bg-[color-mix(in_oklab,var(--plum)_6%,var(--paper))]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 flex items-center gap-3">
         <span className="shrink-0 w-8 h-8 rounded-full border border-[var(--plum)]/25 bg-[var(--paper)] flex items-center justify-center">
           <Bell className="w-4 h-4 text-[var(--plum)]" />
         </span>
         <div className="flex-1 min-w-0">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65">
             {tr("Notifications", "Notificaciones", "Notifications")}
           </div>
           <div className="text-[13px] leading-snug text-[var(--ink)]/85 truncate sm:whitespace-normal">
@@ -83,7 +83,7 @@ export function EnableNotificationsBanner() {
         >
           {tr("Enable", "Activar", "Activer")}
         </button>
-        <button onClick={dismiss} aria-label="dismiss" className="text-[var(--ink)]/40 hover:text-[var(--ink)] shrink-0 transition">
+        <button onClick={dismiss} aria-label="dismiss" className="text-[var(--ink)]/55 hover:text-[var(--ink)] shrink-0 transition">
           <X className="w-4 h-4" />
         </button>
       </div>

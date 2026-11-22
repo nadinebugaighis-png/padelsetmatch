@@ -55,7 +55,7 @@ function Card({
   const a = accentStyles[accent];
 
   return (
-    <div className="relative rounded-2xl bg-white border border-[var(--ink)]/8 p-6 sm:p-7 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)] flex flex-col">
+    <div className="relative rounded-2xl bg-white border border-[var(--ink)]/14 p-6 sm:p-7 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)] flex flex-col">
       <div className="flex items-start justify-between">
         <span className={`inline-flex items-center justify-center w-11 h-11 rounded-full ${a.bg} ${a.fg}`}>
           <Icon className="w-5 h-5" strokeWidth={2} />
@@ -211,7 +211,7 @@ function HowItWorksPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/10">
+      <section className="relative px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/16">
 
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase tracking-[-0.01em] text-[var(--ink)]">

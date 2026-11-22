@@ -104,7 +104,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
 
   return (
     <Dialog open={!!file} onOpenChange={(o) => { if (!o && !busy) onCancel(); }}>
-      <DialogContent className="max-w-md p-0 overflow-hidden bg-[var(--paper)] text-[var(--ink)] border-[var(--ink)]/15">
+      <DialogContent className="max-w-md p-0 overflow-hidden bg-[var(--paper)] text-[var(--ink)] border-[var(--ink)]/22">
         <DialogHeader className="px-5 pt-5">
           <DialogTitle>{tr("Crop your photo", "Recorta tu foto", "Recadre ta photo")}</DialogTitle>
         </DialogHeader>
@@ -133,7 +133,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
         <div className="px-5 py-4 space-y-4">
           {!loadError && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mb-2">{tr("Zoom", "Zoom", "Zoom")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/72 mb-2">{tr("Zoom", "Zoom", "Zoom")}</div>
               <Slider value={[zoom]} min={1} max={4} step={0.05} onValueChange={(v) => setZoom(v[0])} />
             </div>
           )}

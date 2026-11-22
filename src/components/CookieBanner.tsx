@@ -65,7 +65,7 @@ export function CookieBanner() {
 
   return (
     <div
-      className="fixed left-3 right-3 z-[60] max-w-xl mx-auto rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)]/95 backdrop-blur p-4 shadow-2xl"
+      className="fixed left-3 right-3 z-[60] max-w-xl mx-auto rounded-2xl border border-[var(--ink)]/16 bg-[var(--paper)]/95 backdrop-blur p-4 shadow-2xl"
       style={{ bottom: lift ? `${lift}px` : "12px" }}
     >
       <p className="text-xs text-[var(--ink)]/85">

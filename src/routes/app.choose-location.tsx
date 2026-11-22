@@ -38,11 +38,11 @@ function ChooseLocation() {
 
   return (
     <div className="programme-page min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col items-center px-6 pt-16 pb-12">
-      <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--ink)]/55">PadelSetMatch</p>
+      <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--ink)]/68">PadelSetMatch</p>
       <h1 className="mt-4 font-serif text-[2rem] leading-tight text-center">
         {tr("Choose your community", "Elige tu comunidad", "Choisis ta communauté")}
       </h1>
-      <p className="mt-2 font-serif italic text-[15px] text-[var(--ink)]/60 text-center">
+      <p className="mt-2 font-serif italic text-[15px] text-[var(--ink)]/72 text-center">
         {tr("Where you live, play and connect", "Donde vives, juegas y conectas", "Là où tu vis, joues et te connectes")}
       </p>
 
@@ -52,12 +52,12 @@ function ChooseLocation() {
             key={p.key}
             type="button"
             onClick={() => pick(p)}
-            className="group w-full flex items-center gap-4 rounded-2xl bg-[var(--card)] px-6 py-4 text-left border border-[var(--ink)]/12 hover:border-[var(--ink)]/30 active:scale-[0.985] active:bg-[var(--ink)]/[0.03] transition"
+            className="group w-full flex items-center gap-4 rounded-2xl bg-[var(--card)] px-6 py-4 text-left border border-[var(--ink)]/18 hover:border-[var(--ink)]/30 active:scale-[0.985] active:bg-[var(--ink)]/[0.03] transition"
           >
             <span className="flex-1 min-w-0">
               {p.area ? (
                 <>
-                  <span className="block text-[10.5px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{p.city}</span>
+                  <span className="block text-[10.5px] uppercase tracking-[0.24em] text-[var(--ink)]/68">{p.city}</span>
                   <span className="mt-1 block font-serif text-[1.3rem] leading-snug">{p.area}</span>
                 </>
               ) : (

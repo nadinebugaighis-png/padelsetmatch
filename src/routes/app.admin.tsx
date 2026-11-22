@@ -94,7 +94,7 @@ function AdminPage() {
       </section>
 
       {/* Tab switcher */}
-      <nav className="flex gap-1 p-1 rounded-full bg-[var(--ink)]/8 border border-[var(--ink)]/10">
+      <nav className="flex gap-1 p-1 rounded-full bg-[var(--ink)]/8 border border-[var(--ink)]/16">
         {([
           ["overview", "Overview"],
           ["reports", `Reports${pendingReports.length ? ` · ${pendingReports.length}` : ""}`],
@@ -142,9 +142,9 @@ function AdminPage() {
         <div className="space-y-4">
           <Card title={`Pending (${pendingReports.length})`} tone={pendingReports.length ? "danger" : "default"}>
             <div className="space-y-3">
-              {pendingReports.length === 0 && <p className="text-sm text-[var(--ink)]/60">All clear. 🎉</p>}
+              {pendingReports.length === 0 && <p className="text-sm text-[var(--ink)]/72">All clear. 🎉</p>}
               {pendingReports.map((r) => (
-                <div key={r.id} className="rounded-xl bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3 space-y-2">
+                <div key={r.id} className="rounded-xl bg-[var(--ink)]/5 border border-[var(--ink)]/16 p-3 space-y-2">
                   <div className="flex items-start gap-3">
                     {r.reported_photo_url ? (
                       <img src={r.reported_photo_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
@@ -154,7 +154,7 @@ function AdminPage() {
                     <div className="min-w-0 flex-1">
                       <div className="text-sm leading-snug">
                         <span className="font-semibold">{r.reporter_name ?? "someone"}</span>
-                        <span className="text-[var(--ink)]/60"> reported </span>
+                        <span className="text-[var(--ink)]/72"> reported </span>
                         <span className="font-semibold">{r.reported_name ?? "user"}</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-1">
@@ -164,7 +164,7 @@ function AdminPage() {
                         {r.reported_suspended && (
                           <span className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300">suspended</span>
                         )}
-                        <span className="text-[10px] text-[var(--ink)]/50">{new Date(r.created_at).toLocaleString()}</span>
+                        <span className="text-[10px] text-[var(--ink)]/65">{new Date(r.created_at).toLocaleString()}</span>
                       </div>
                       <p className="text-sm text-[var(--ink)]/85 mt-2 whitespace-pre-wrap bg-[var(--ink)]/40 rounded-md px-2 py-1.5 border border-[var(--ink)]/5">{r.reason}</p>
                       <ReportedContent reason={r.reason} />
@@ -213,7 +213,7 @@ function AdminPage() {
               <div className="space-y-1.5">
                 {handledReports.map((r) => (
                   <div key={r.id} className="text-xs text-[var(--ink)]/65 rounded-md px-2 py-1.5 bg-[var(--ink)]/5">
-                    <span className={`inline-block text-[9px] uppercase tracking-widest mr-1.5 px-1.5 py-0.5 rounded-full ${r.status === "resolved" ? "bg-emerald-500/20 text-emerald-300" : "bg-[var(--ink)]/10 text-[var(--ink)]/60"}`}>{r.status}</span>
+                    <span className={`inline-block text-[9px] uppercase tracking-widest mr-1.5 px-1.5 py-0.5 rounded-full ${r.status === "resolved" ? "bg-emerald-500/20 text-emerald-300" : "bg-[var(--ink)]/10 text-[var(--ink)]/72"}`}>{r.status}</span>
                     {r.reporter_name} → {r.reported_name}: {r.reason}
                   </div>
                 ))}
@@ -229,12 +229,12 @@ function AdminPage() {
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
             placeholder="Search name, email or zone…"
-            className="w-full text-sm rounded-full px-4 py-2 bg-[var(--ink)]/5 border border-[var(--ink)]/15 outline-none focus:border-[var(--grass)]"
+            className="w-full text-sm rounded-full px-4 py-2 bg-[var(--ink)]/5 border border-[var(--ink)]/22 outline-none focus:border-[var(--grass)]"
           />
 
           {incomplete.length > 0 && (
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
-              <p className="text-xs text-[var(--ink)]/60 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>
+              <p className="text-xs text-[var(--ink)]/72 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>
               <div className="space-y-1.5">
                 {incomplete.map((u) => {
                   const stalled = u.onboarding_stage === "lite";
@@ -244,11 +244,11 @@ function AdminPage() {
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-sm">
-                          {u.first_name ? <span className="font-semibold">{u.first_name}</span> : <span className="text-[var(--ink)]/50 italic">no name</span>}
-                          <span className="text-[var(--ink)]/40"> · </span>
+                          {u.first_name ? <span className="font-semibold">{u.first_name}</span> : <span className="text-[var(--ink)]/65 italic">no name</span>}
+                          <span className="text-[var(--ink)]/55"> · </span>
                           <span className="text-[var(--ink)]/70 truncate">{u.email ?? "(no email)"}</span>
                         </div>
-                        <div className="text-xs text-[var(--ink)]/55">
+                        <div className="text-xs text-[var(--ink)]/68">
                           {daysAgo === 0 ? "today" : `${daysAgo}d ago`}
                           {!u.email_confirmed && <span className="ml-2 text-amber-400">email unconfirmed</span>}
                         </div>
@@ -266,18 +266,18 @@ function AdminPage() {
 
           <Card title={`Active members (${completed.length})`}>
             <div className="space-y-1.5">
-              {completed.length === 0 && <p className="text-sm text-[var(--ink)]/60">No members yet.</p>}
+              {completed.length === 0 && <p className="text-sm text-[var(--ink)]/72">No members yet.</p>}
               {completed.map((u) => (
-                <div key={u.user_id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 px-3 py-2">
+                <div key={u.user_id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/16 px-3 py-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm">
                         <span className="font-semibold">{u.first_name}</span>
-                        {u.age ? <span className="text-[var(--ink)]/60">, {u.age}</span> : null}
-                        <span className="text-[var(--ink)]/40"> · </span>
+                        {u.age ? <span className="text-[var(--ink)]/72">, {u.age}</span> : null}
+                        <span className="text-[var(--ink)]/55"> · </span>
                         <span className="text-[var(--ink)]/70">{u.zone ?? "—"}</span>
                       </div>
-                      <div className="text-xs text-[var(--ink)]/50 truncate">{u.email}</div>
+                      <div className="text-xs text-[var(--ink)]/65 truncate">{u.email}</div>
                     </div>
                     {u.suspended && (
                       <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300 shrink-0">suspended</span>
@@ -293,14 +293,14 @@ function AdminPage() {
       {tab === "feedback" && (
         <Card title={`Recent feedback (${recentFeedback.length})`}>
           <div className="space-y-2">
-            {recentFeedback.length === 0 && <p className="text-sm text-[var(--ink)]/60">No feedback yet.</p>}
+            {recentFeedback.length === 0 && <p className="text-sm text-[var(--ink)]/72">No feedback yet.</p>}
             {recentFeedback.map((f) => (
-              <div key={f.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3">
+              <div key={f.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/16 p-3">
                 <div className="text-sm text-[var(--grass)]">
-                  {f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : <span className="text-[var(--ink)]/40">no rating</span>}
+                  {f.rating ? `${"★".repeat(f.rating)}${"☆".repeat(Math.max(0, 5 - f.rating))}` : <span className="text-[var(--ink)]/55">no rating</span>}
                 </div>
                 <div className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap mt-1">{f.message}</div>
-                <div className="text-xs text-[var(--ink)]/50 mt-1.5">{new Date(f.created_at).toLocaleString()}</div>
+                <div className="text-xs text-[var(--ink)]/65 mt-1.5">{new Date(f.created_at).toLocaleString()}</div>
               </div>
             ))}
           </div>
@@ -357,7 +357,7 @@ function ModerateTab() {
 
   return (
     <div className="space-y-4">
-      <nav className="flex gap-1 p-1 rounded-full bg-[var(--ink)]/8 border border-[var(--ink)]/10">
+      <nav className="flex gap-1 p-1 rounded-full bg-[var(--ink)]/8 border border-[var(--ink)]/16">
         {([
           ["photos", `Photos · ${f.photos.length}`],
           ["gear", `Kit · ${f.gear.length}`],
@@ -380,7 +380,7 @@ function ModerateTab() {
         <Card title="Newest profile photos">
           <div className="grid grid-cols-3 gap-2">
             {f.photos.map((p) => (
-              <div key={p.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/10 bg-[var(--ink)]/5">
+              <div key={p.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/16 bg-[var(--ink)]/5">
                 <img src={p.photo_url ?? ""} alt={p.first_name ?? "member"} className="w-full aspect-square object-cover" loading="lazy" />
                 <div className="p-1.5 space-y-1">
                   <div className="text-[11px] font-semibold truncate">{p.first_name ?? "—"}</div>
@@ -388,7 +388,7 @@ function ModerateTab() {
                 </div>
               </div>
             ))}
-            {f.photos.length === 0 && <p className="text-sm text-[var(--ink)]/60">No photos.</p>}
+            {f.photos.length === 0 && <p className="text-sm text-[var(--ink)]/72">No photos.</p>}
           </div>
         </Card>
       )}
@@ -397,18 +397,18 @@ function ModerateTab() {
         <Card title="Newest kit items">
           <div className="grid grid-cols-3 gap-2">
             {f.gear.map((g) => (
-              <div key={g.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/10 bg-[var(--ink)]/5">
+              <div key={g.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/16 bg-[var(--ink)]/5">
                 {g.image_url
                   ? <img src={g.image_url} alt={g.title} className="w-full aspect-square object-cover" loading="lazy" />
-                  : <div className="w-full aspect-square grid place-items-center text-[10px] text-[var(--ink)]/40">no photo</div>}
+                  : <div className="w-full aspect-square grid place-items-center text-[10px] text-[var(--ink)]/55">no photo</div>}
                 <div className="p-1.5 space-y-1">
                   <div className="text-[11px] font-semibold truncate">{g.title}</div>
-                  <div className="text-[10px] text-[var(--ink)]/55 truncate">{g.author_name ?? "—"}</div>
+                  <div className="text-[10px] text-[var(--ink)]/68 truncate">{g.author_name ?? "—"}</div>
                   <RemoveBtn kind="gear" id={g.id} label={`Remove kit item "${g.title}"`} />
                 </div>
               </div>
             ))}
-            {f.gear.length === 0 && <p className="text-sm text-[var(--ink)]/60">No kit items.</p>}
+            {f.gear.length === 0 && <p className="text-sm text-[var(--ink)]/72">No kit items.</p>}
           </div>
         </Card>
       )}
@@ -417,9 +417,9 @@ function ModerateTab() {
         <Card title="Newest Connect posts">
           <div className="space-y-2">
             {f.posts.map((p) => (
-              <div key={p.id} className="rounded-lg border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-2.5 flex items-start justify-between gap-3">
+              <div key={p.id} className="rounded-lg border border-[var(--ink)]/16 bg-[var(--ink)]/5 p-2.5 flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65">
                     {p.author_name ?? "unknown"} · {new Date(p.created_at).toLocaleString()}
                   </div>
                   <div className="text-sm font-semibold truncate">{p.title}</div>
@@ -428,7 +428,7 @@ function ModerateTab() {
                 <RemoveBtn kind="post" id={p.id} label="Remove this post" />
               </div>
             ))}
-            {f.posts.length === 0 && <p className="text-sm text-[var(--ink)]/60">No posts.</p>}
+            {f.posts.length === 0 && <p className="text-sm text-[var(--ink)]/72">No posts.</p>}
           </div>
         </Card>
       )}
@@ -437,9 +437,9 @@ function ModerateTab() {
         <Card title="Newest comments">
           <div className="space-y-2">
             {f.comments.map((c) => (
-              <div key={c.id} className="rounded-lg border border-[var(--ink)]/10 bg-[var(--ink)]/5 p-2.5 flex items-start justify-between gap-3">
+              <div key={c.id} className="rounded-lg border border-[var(--ink)]/16 bg-[var(--ink)]/5 p-2.5 flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65">
                     {c.author_name ?? "unknown"} · {new Date(c.created_at).toLocaleString()}
                   </div>
                   <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap">{c.body}</p>
@@ -447,7 +447,7 @@ function ModerateTab() {
                 <RemoveBtn kind="comment" id={c.id} label="Remove this comment" />
               </div>
             ))}
-            {f.comments.length === 0 && <p className="text-sm text-[var(--ink)]/60">No comments.</p>}
+            {f.comments.length === 0 && <p className="text-sm text-[var(--ink)]/72">No comments.</p>}
           </div>
         </Card>
       )}
@@ -487,12 +487,12 @@ function ReportedContent({ reason }: { reason: string }) {
           View reported {kind}
         </button>
       ) : (
-        <div className="rounded-lg border border-[var(--ink)]/15 bg-[var(--ink)]/5 p-2.5 space-y-2">
-          {q.isLoading && <p className="text-xs text-[var(--ink)]/60">Loading…</p>}
-          {q.data && !q.data.exists && <p className="text-xs text-[var(--ink)]/60">Already deleted.</p>}
+        <div className="rounded-lg border border-[var(--ink)]/22 bg-[var(--ink)]/5 p-2.5 space-y-2">
+          {q.isLoading && <p className="text-xs text-[var(--ink)]/72">Loading…</p>}
+          {q.data && !q.data.exists && <p className="text-xs text-[var(--ink)]/72">Already deleted.</p>}
           {q.data?.exists && (
             <>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/50">
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65">
                 {kind} · {q.data.author_name ?? "unknown"} · {q.data.created_at ? new Date(q.data.created_at).toLocaleString() : ""}
               </div>
               <p className="text-sm whitespace-pre-wrap text-[var(--ink)]/90">{q.data.body}</p>
@@ -540,11 +540,11 @@ function HealthTab() {
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-[var(--ink)] truncate">{a.title}</div>
                   {a.body && <div className="text-sm text-[var(--ink)]/80 mt-0.5">{a.body}</div>}
-                  <div className="text-[11px] text-[var(--ink)]/50 mt-1">{new Date(a.created_at).toLocaleString()}</div>
+                  <div className="text-[11px] text-[var(--ink)]/65 mt-1">{new Date(a.created_at).toLocaleString()}</div>
                 </div>
                 <button
                   type="button"
-                  className="shrink-0 text-[11px] uppercase tracking-widest text-[var(--ink)]/60 hover:text-[var(--ink)]"
+                  className="shrink-0 text-[11px] uppercase tracking-widest text-[var(--ink)]/72 hover:text-[var(--ink)]"
                   onClick={async () => { await ackAlert({ data: { alertId: a.id } }); await q.refetch(); }}
                 >
                   Dismiss
@@ -556,10 +556,10 @@ function HealthTab() {
       )}
 
       <Card title={`Recent crashes & errors (${h.recent.length})`} tone={h.crashCount > 0 ? "danger" : "default"}>
-        {h.recent.length === 0 && <p className="text-sm text-[var(--ink)]/60">Nothing reported. 🎉</p>}
+        {h.recent.length === 0 && <p className="text-sm text-[var(--ink)]/72">Nothing reported. 🎉</p>}
         <div className="space-y-2">
           {h.recent.map((c: (typeof h.recent)[number]) => (
-            <div key={c.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/10 p-3">
+            <div key={c.id} className="rounded-lg bg-[var(--ink)]/5 border border-[var(--ink)]/16 p-3">
               <button className="w-full text-left" onClick={() => setOpenId(openId === c.id ? null : c.id)}>
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${c.kind === "crash" ? "bg-red-500/20 text-red-600" : "bg-amber-500/20 text-amber-700"}`}>
@@ -568,7 +568,7 @@ function HealthTab() {
                   <span className="text-sm font-semibold text-[var(--ink)] truncate">{c.name}</span>
                 </div>
                 <div className="text-sm text-[var(--ink)]/80 mt-1 line-clamp-2">{c.message}</div>
-                <div className="text-[11px] text-[var(--ink)]/50 mt-1.5">
+                <div className="text-[11px] text-[var(--ink)]/65 mt-1.5">
                   {new Date(c.created_at).toLocaleString()} · {c.platform ?? "web"} · v{c.app_version ?? "?"} · {c.route ?? "/"}
                 </div>
               </button>
@@ -591,13 +591,13 @@ function HealthTab() {
 }
 
 function TallyList({ rows }: { rows: Array<{ name: string; count: number }> }) {
-  if (rows.length === 0) return <p className="text-sm text-[var(--ink)]/60">No data yet.</p>;
+  if (rows.length === 0) return <p className="text-sm text-[var(--ink)]/72">No data yet.</p>;
   return (
     <ul className="space-y-1.5">
       {rows.map((r) => (
         <li key={r.name} className="flex items-center justify-between gap-3 text-sm">
           <span className="text-[var(--ink)]/85 truncate">{r.name}</span>
-          <span className="text-[var(--ink)]/60 tabular-nums">{r.count}</span>
+          <span className="text-[var(--ink)]/72 tabular-nums">{r.count}</span>
         </li>
       ))}
     </ul>
@@ -612,11 +612,11 @@ function TopSharersCard() {
   return (
     <Card title="Players who shared the app">
       {q.isLoading ? (
-        <p className="text-sm text-[var(--ink)]/60">Loading…</p>
+        <p className="text-sm text-[var(--ink)]/72">Loading…</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-[var(--ink)]/60">No shares yet. Players appear here after they use "Invite friends".</p>
+        <p className="text-sm text-[var(--ink)]/72">No shares yet. Players appear here after they use "Invite friends".</p>
       ) : (
-        <ul className="divide-y divide-[var(--ink)]/10">
+        <ul className="divide-y divide-[var(--ink)]/16">
           {rows.map((r) => (
             <li key={r.profile_id} className="flex items-center justify-between gap-3 py-2">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -629,7 +629,7 @@ function TopSharersCard() {
                 )}
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-[var(--ink)] truncate">{r.first_name ?? "Player"}</div>
-                  <div className="text-[11px] text-[var(--ink)]/60">
+                  <div className="text-[11px] text-[var(--ink)]/72">
                     Last shared {new Date(r.last_shared_at).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
                   </div>
                 </div>
@@ -649,7 +649,7 @@ function Card({ title, children, tone = "default" }: { title: string; children: 
   const border =
     tone === "danger" ? "border-red-400/30" :
     tone === "warn" ? "border-amber-400/30" :
-    "border-[var(--ink)]/10";
+    "border-[var(--ink)]/16";
   return (
     <div className={`rounded-2xl bg-[var(--ink)]/5 border ${border} p-4`}>
       <h2 className="text-display text-base tracking-tight mb-3 text-[var(--ink)]">{title}</h2>
@@ -659,19 +659,19 @@ function Card({ title, children, tone = "default" }: { title: string; children: 
 }
 
 function BigStat({ label, value, accent, danger }: { label: string; value: number | string; accent?: boolean; danger?: boolean }) {
-  const bg = danger ? "bg-red-500/15 border-red-400/30" : accent ? "bg-[var(--grass)]/15 border-[var(--grass)]/40" : "bg-[var(--ink)]/5 border-[var(--ink)]/10";
+  const bg = danger ? "bg-red-500/15 border-red-400/30" : accent ? "bg-[var(--grass)]/15 border-[var(--grass)]/40" : "bg-[var(--ink)]/5 border-[var(--ink)]/16";
   const valColor = danger ? "text-red-200" : accent ? "text-[var(--grass)]" : "text-[var(--ink)]";
   return (
     <div className={`rounded-2xl border ${bg} p-3 text-center`}>
       <div className={`text-display text-3xl tracking-tight ${valColor}`}>{value}</div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/60 mt-0.5">{label}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/72 mt-0.5">{label}</div>
     </div>
   );
 }
 
 function MiniStat({ label, value, warn }: { label: string; value: number; warn?: boolean }) {
   return (
-    <div className={`rounded-xl border ${warn ? "border-amber-400/25 bg-amber-500/5" : "border-[var(--ink)]/10 bg-[var(--ink)]/5"} px-3 py-2 flex items-center justify-between`}>
+    <div className={`rounded-xl border ${warn ? "border-amber-400/25 bg-amber-500/5" : "border-[var(--ink)]/16 bg-[var(--ink)]/5"} px-3 py-2 flex items-center justify-between`}>
       <span className="text-xs text-[var(--ink)]/70">{label}</span>
       <span className={`text-lg text-display ${warn ? "text-amber-300" : "text-[var(--ink)]"}`}>{value}</span>
     </div>

@@ -72,7 +72,7 @@ export function ReportContentButton({
         onClick={() => setOpen(true)}
         aria-label={label}
         title={label}
-        className={`inline-flex items-center text-[var(--ink)]/40 hover:text-red-500 transition px-1 ${className ?? ""}`}
+        className={`inline-flex items-center text-[var(--ink)]/55 hover:text-red-500 transition px-1 ${className ?? ""}`}
       >
         <Flag className={size === "xs" ? "w-3 h-3" : "w-3.5 h-3.5"} />
       </button>
@@ -80,7 +80,7 @@ export function ReportContentButton({
       {open && (
         <div className="fixed inset-0 z-[80] grid place-items-center bg-black/50 p-4" onClick={() => setOpen(false)}>
           <div
-            className="w-full max-w-sm rounded-2xl bg-[var(--paper,#faf7f0)] border border-[var(--ink)]/10 p-4 space-y-3"
+            className="w-full max-w-sm rounded-2xl bg-[var(--paper,#faf7f0)] border border-[var(--ink)]/16 p-4 space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-serif text-lg text-[var(--ink)]">

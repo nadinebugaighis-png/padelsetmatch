@@ -149,7 +149,7 @@ function CompetitionDetail() {
                 {entries.map((e) => {
                   const p = byId.get(e.profile_id);
                   return (
-                    <div key={e.profile_id} className="flex items-center gap-2 rounded-full border border-[var(--ink)]/10 bg-white pl-1 pr-3 py-1">
+                    <div key={e.profile_id} className="flex items-center gap-2 rounded-full border border-[var(--ink)]/16 bg-white pl-1 pr-3 py-1">
                       <div className="size-7 overflow-hidden rounded-full bg-[var(--paper-2)]">{p?.photo_url && <img src={p.photo_url} alt="" className="h-full w-full object-cover" />}</div>
                       <span className="text-xs text-[var(--ink)]">{p?.first_name ?? tr("Player", "Jugador", "Joueur")}{e.profile_id === me ? tr(" (you)", " (tú)", " (toi)") : ""}</span>
                     </div>

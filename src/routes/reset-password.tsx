@@ -112,7 +112,7 @@ function ResetPasswordPage() {
         <h1 className="text-serif mt-6 text-3xl uppercase text-[var(--ink)] leading-[0.95]">{t("rp.title")}</h1>
 
         {status === "checking" && (
-          <p className="mt-4 text-sm text-[var(--ink)]/60">{tr("One moment…", "Un momento…", "Un instant…")}</p>
+          <p className="mt-4 text-sm text-[var(--ink)]/72">{tr("One moment…", "Un momento…", "Un instant…")}</p>
         )}
 
         {status === "ready" && (
@@ -132,12 +132,12 @@ function ResetPasswordPage() {
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
                 aria-label={showPw ? tr("Hide password", "Ocultar contraseña", "Masquer le mot de passe") : tr("Show password", "Mostrar contraseña", "Afficher le mot de passe")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/50 hover:text-[var(--ink)]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/65 hover:text-[var(--ink)]"
               >
                 {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            <p className="text-[12px] text-[var(--ink)]/55">{tr("At least 8 characters.", "Mínimo 8 caracteres.", "Au moins 8 caractères.")}</p>
+            <p className="text-[12px] text-[var(--ink)]/68">{tr("At least 8 characters.", "Mínimo 8 caracteres.", "Au moins 8 caractères.")}</p>
             <Button type="submit" disabled={loading} className="w-full">{t("rp.update")}</Button>
           </form>
         )}
@@ -184,7 +184,7 @@ function ResetPasswordPage() {
               </form>
             )}
             <p className="mt-5 text-center text-sm">
-              <Link to="/auth" className="text-[var(--ink)]/60 underline underline-offset-2 hover:text-[var(--ink)]">
+              <Link to="/auth" className="text-[var(--ink)]/72 underline underline-offset-2 hover:text-[var(--ink)]">
                 {tr("Back to sign in", "Volver a iniciar sesión", "Retour à la connexion")}
               </Link>
             </p>

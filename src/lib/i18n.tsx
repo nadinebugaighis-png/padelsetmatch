@@ -1119,7 +1119,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
 
   const trigger = isDark
     ? "border-[var(--paper)]/25 bg-[var(--paper)]/5 text-[var(--paper)] hover:bg-[var(--paper)]/10"
-    : "border-[var(--ink)]/15 bg-[var(--paper)]/70 text-[var(--ink)] hover:bg-[var(--paper)] backdrop-blur";
+    : "border-[var(--ink)]/22 bg-[var(--paper)]/70 text-[var(--ink)] hover:bg-[var(--paper)] backdrop-blur";
 
   return (
     <div ref={ref} className={`relative inline-block ${className}`}>
@@ -1139,7 +1139,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 mt-1.5 z-50 min-w-[4.5rem] rounded-xl border border-[var(--ink)]/12 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
+          className="absolute right-0 mt-1.5 z-50 min-w-[4.5rem] rounded-xl border border-[var(--ink)]/18 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
         >
           {options.map((o) => (
             <li key={o.code}>

@@ -250,13 +250,13 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --secondary: var(--paper-2);
   --secondary-foreground: var(--ink);
   --muted: var(--paper-2);
-  --muted-foreground: color-mix(in oklab, var(--ink) 65%, transparent);
+  --muted-foreground: color-mix(in oklab, var(--ink) 78%, transparent);
   --accent: var(--plum);
   --accent-foreground: var(--paper);
   --destructive: oklch(0.55 0.22 28);
   --destructive-foreground: var(--paper);
-  --border: color-mix(in oklab, var(--ink) 10%, transparent);
-  --input: color-mix(in oklab, var(--ink) 12%, transparent);
+  --border: color-mix(in oklab, var(--ink) 18%, transparent);
+  --input: color-mix(in oklab, var(--ink) 20%, transparent);
   --ring: var(--plum);
 }
 /* Perf: skip layout/paint work for off-screen list items (grids, feeds). */
@@ -286,7 +286,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 @utility programme-card {
   background: #ffffff;
-  border: 1px solid color-mix(in oklab, var(--ink) 8%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 16%, transparent);
   border-radius: 14px;
   box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 4%, transparent),
               0 8px 24px -16px color-mix(in oklab, var(--ink) 18%, transparent);

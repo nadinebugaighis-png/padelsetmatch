@@ -484,8 +484,17 @@ html.native-shell .app-shell {
   inset: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  overscroll-behavior-y: none;
+  /* soft, natural bounce inside the frame; the window itself never moves */
+  overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  /* clear the floating bar plus the home-indicator area, with breathing room */
+  /* room for the pinned top bar, and to clear the floating bar plus the home-indicator area */
+  padding-top: var(--shell-top, 0px);
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 9.5rem);
+}
+/* the top bar is pinned to the screen, so the frame's bounce never drags it */
+html.native-shell #app-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }

@@ -308,7 +308,15 @@ function AuthShell() {
     if (cap?.getPlatform?.() !== "ios") return;
     const root = document.documentElement;
     root.classList.add("native-shell");
-    return () => root.classList.remove("native-shell");
+    // The top bar is pinned outside the scrolling frame, so the frame reserves its exact height.
+    const bar = document.getElementById("app-top-bar");
+    const ro = bar ? new ResizeObserver(() => root.style.setProperty("--shell-top", `${bar.offsetHeight}px`)) : null;
+    if (bar && ro) ro.observe(bar);
+    return () => {
+      ro?.disconnect();
+      root.classList.remove("native-shell");
+      root.style.removeProperty("--shell-top");
+    };
   }, []);
 
   return (
@@ -321,7 +329,7 @@ function AuthShell() {
       >
         <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
-      <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
+      <div id="app-top-bar" className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/16 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (

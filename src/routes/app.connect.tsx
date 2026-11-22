@@ -186,8 +186,7 @@ function ConnectPage() {
         <div className="lg:sticky lg:top-24">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <div className={smallCaps}>{tr("The noticeboard", "El tablón", "Le tableau")}</div>
-              <h2 className="mt-2 text-serif text-[26px] sm:text-[32px] text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
+              <h2 className="text-serif text-[26px] sm:text-[32px] text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
             </div>
             <div className="flex items-center gap-1 lg:hidden">
               <button

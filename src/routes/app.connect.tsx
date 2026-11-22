@@ -169,7 +169,7 @@ function ConnectPage() {
 
   if (needsOnboarding) return <Navigate to="/app/onboarding" />;
 
-  const smallCaps = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/78";
+  const smallCaps = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/68";
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
@@ -178,7 +178,7 @@ function ConnectPage() {
       <header className="mb-7 sm:mb-10">
         <div className={smallCaps}>{tr("Connect", "Conecta", "Connecter")}</div>
         <h1 className="mt-2 text-serif text-[28px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
-        <p className="mt-2 text-serif italic text-[14px] sm:text-[17px] text-[var(--ink)]/78">
+        <p className="mt-2 text-serif italic text-[14px] sm:text-[17px] text-[var(--ink)]/68">
           {tr("Say when you're free. Members nearby can join you.", "Di cuándo puedes. Los miembros de tu zona se unen.", "Dis quand tu es libre. Les membres du coin te rejoignent.")}
         </p>
       </header>
@@ -186,7 +186,7 @@ function ConnectPage() {
       <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} />
 
       {/* Community board */}
-      <section className="mt-16 sm:mt-20 pt-10 border-t border-[var(--ink)]/24 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:items-start">
+      <section className="mt-16 sm:mt-20 pt-10 border-t border-[var(--ink)]/16 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:items-start">
         <div className="lg:sticky lg:top-24">
           <div className="flex items-end justify-between gap-3">
             <div>
@@ -197,7 +197,7 @@ function ConnectPage() {
               <button
                 type="button"
                 onClick={() => setCityOpen((v) => !v)}
-                className={`h-9 w-9 grid place-items-center rounded-full transition ${cityOpen || city ? "text-[var(--ink)]" : "text-[var(--ink)]/76 hover:text-[var(--ink)]"}`}
+                className={`h-9 w-9 grid place-items-center rounded-full transition ${cityOpen || city ? "text-[var(--ink)]" : "text-[var(--ink)]/65 hover:text-[var(--ink)]"}`}
                 aria-label={tr("Filter by city", "Filtrar por ciudad", "Filtrer par ville")}
               >
                 <MapPin className="w-4 h-4" strokeWidth={1.75} />
@@ -212,7 +212,7 @@ function ConnectPage() {
               </button>
             </div>
           </div>
-          <p className="mt-3 text-serif italic text-[15px] text-[var(--ink)]/78">
+          <p className="mt-3 text-serif italic text-[15px] text-[var(--ink)]/68">
             {tr("Travel plans, coaches, kit and questions from members.", "Viajes, entrenadores, material y preguntas de los miembros.", "Voyages, coachs, matériel et questions des membres.")}
           </p>
 
@@ -233,11 +233,11 @@ function ConnectPage() {
                 onChange={(e) => setCityInput(e.target.value)}
                 onBlur={() => setCity(cityInput.trim())}
                 placeholder={tr("City", "Ciudad", "Ville")}
-                className="h-10 pr-9 bg-white border-[var(--ink)]/26 rounded-full px-4"
+                className="h-10 pr-9 bg-white border-[var(--ink)]/18 rounded-full px-4"
               />
               {(cityInput || city) && (
                 <button type="button" onClick={() => { setCity(""); setCityInput(""); setCityOpen(false); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/72 hover:text-[var(--ink)]" aria-label={tr("Clear", "Borrar", "Effacer")}>
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/60 hover:text-[var(--ink)]" aria-label={tr("Clear", "Borrar", "Effacer")}>
                   <X className="w-4 h-4" />
                 </button>
               )}
@@ -246,18 +246,18 @@ function ConnectPage() {
 
           {/* Desktop: city search always visible, categories as a quiet list */}
           <form onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }} className="relative mt-8 hidden lg:block">
-            <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--ink)]/72" strokeWidth={1.75} />
+            <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--ink)]/60" strokeWidth={1.75} />
             <input
               value={cityInput}
               onChange={(e) => setCityInput(e.target.value)}
               onBlur={() => setCity(cityInput.trim())}
               placeholder={tr("Any city", "Cualquier ciudad", "Toute ville")}
               aria-label={tr("Filter by city", "Filtrar por ciudad", "Filtrer par ville")}
-              className="w-full h-10 bg-transparent border-b border-[var(--ink)]/30 pl-6 pr-7 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/68 outline-none focus:border-[var(--ink)]/45"
+              className="w-full h-10 bg-transparent border-b border-[var(--ink)]/22 pl-6 pr-7 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/55 outline-none focus:border-[var(--ink)]/45"
             />
             {(cityInput || city) && (
               <button type="button" onClick={() => { setCity(""); setCityInput(""); }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--ink)]/72 hover:text-[var(--ink)]" aria-label={tr("Clear", "Borrar", "Effacer")}>
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--ink)]/60 hover:text-[var(--ink)]" aria-label={tr("Clear", "Borrar", "Effacer")}>
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -268,7 +268,7 @@ function ConnectPage() {
               return (
                 <li key={c ?? "all"}>
                   <button type="button" onClick={() => setCat(c)}
-                    className={`group flex w-full items-center gap-3 py-2 text-left transition ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/76 hover:text-[var(--ink)]/88"}`}>
+                    className={`group flex w-full items-center gap-3 py-2 text-left transition ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/65 hover:text-[var(--ink)]/80"}`}>
                     <span aria-hidden className={`h-px transition-all ${active ? "w-6 bg-[var(--gold)]" : "w-3 bg-[var(--ink)]/15 group-hover:w-5"}`} />
                     <span className="text-serif text-[18px] leading-none">{c ? catLabel(c) : tr("Everything", "Todo", "Tout")}</span>
                   </button>
@@ -281,12 +281,12 @@ function ConnectPage() {
         <div className="mt-6 lg:mt-0">
         {/* Phone: category tabs in one quiet scrolling row */}
         <div className="-mx-4 sm:mx-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:hidden">
-          <div className="flex gap-5 px-4 sm:px-0 border-b border-[var(--ink)]/22 min-w-max">
+          <div className="flex gap-5 px-4 sm:px-0 border-b border-[var(--ink)]/14 min-w-max">
             {([null, ...CATEGORIES] as (ConnectCategory | null)[]).map((c) => {
               const active = cat === c;
               return (
                 <button key={c ?? "all"} type="button" onClick={() => setCat(c)}
-                  className={`relative pb-2.5 text-[13px] whitespace-nowrap transition ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/76 hover:text-[var(--ink)]/88"}`}>
+                  className={`relative pb-2.5 text-[13px] whitespace-nowrap transition ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/65 hover:text-[var(--ink)]/80"}`}>
                   {c ? catLabel(c) : tr("All", "Todo", "Tout")}
                   {active && <span className="absolute left-0 right-0 -bottom-px h-px bg-[var(--ink)]" />}
                 </button>
@@ -308,11 +308,11 @@ function ConnectPage() {
           </ul>
         ) : (postsQ.data ?? []).length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-serif italic text-[18px] sm:text-[22px] text-[var(--ink)]/88">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
+            <p className="text-serif italic text-[18px] sm:text-[22px] text-[var(--ink)]/80">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
             <button
               type="button"
               onClick={() => { setEditingPost(null); setComposerOpen(true); }}
-              className="mt-2 text-xs font-semibold text-[var(--ink)]/82 underline underline-offset-4 hover:text-[var(--ink)]"
+              className="mt-2 text-xs font-semibold text-[var(--ink)]/72 underline underline-offset-4 hover:text-[var(--ink)]"
             >
               {tr("Write the first post", "Escribe la primera", "Écrire la première")}
             </button>
@@ -328,20 +328,20 @@ function ConnectPage() {
                     {p.author?.photo_url ? (
                       <img src={p.author.photo_url} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-[var(--ink)]/10" />
                     ) : (
-                      <div className="w-9 h-9 rounded-full bg-[var(--ink)]/8 shrink-0 grid place-items-center text-serif text-[var(--ink)]/78 text-sm">
+                      <div className="w-9 h-9 rounded-full bg-[var(--ink)]/8 shrink-0 grid place-items-center text-serif text-[var(--ink)]/68 text-sm">
                         {(p.author?.first_name ?? "?").charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div className="min-w-0 flex-1 leading-tight">
                       <div className="text-[13.5px] font-medium text-[var(--ink)] truncate">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</div>
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/72 truncate mt-1">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/60 truncate mt-1">
                         {catLabel(p.category)}{p.city ? ` · ${p.city}` : ""} · {timeAgo(p.created_at, tr, locale)}
                       </div>
                     </div>
                     {mine ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button type="button" className="-mr-1.5 h-8 w-8 grid place-items-center rounded-full text-[var(--ink)]/72 hover:text-[var(--ink)]" aria-label={tr("Options", "Opciones", "Options")}>
+                          <button type="button" className="-mr-1.5 h-8 w-8 grid place-items-center rounded-full text-[var(--ink)]/60 hover:text-[var(--ink)]" aria-label={tr("Options", "Opciones", "Options")}>
                             <MoreHorizontal className="w-4 h-4" />
                           </button>
                         </DropdownMenuTrigger>
@@ -363,7 +363,7 @@ function ConnectPage() {
                         {isAdmin && (
                           <button
                             onClick={() => { if (confirm(tr("Remove this post as admin?", "¿Eliminar esta publicación como admin?", "Supprimer cette publication en tant qu'admin ?"))) adminDelMut.mutate({ kind: "post", id: p.id }); }}
-                            className="p-1.5 text-[var(--ink)]/50 hover:text-destructive"
+                            className="p-1.5 text-[var(--ink)]/35 hover:text-destructive"
                             aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
                           >
                             <ShieldAlert className="w-3.5 h-3.5" />
@@ -375,7 +375,7 @@ function ConnectPage() {
 
                   {/* Post */}
                   <h3 className="text-serif text-[20px] sm:text-[24px] text-[var(--ink)] mt-4 leading-tight">{p.title}</h3>
-                  <p className="text-[15px] text-[var(--ink)]/80 mt-2 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
+                  <p className="text-[15px] text-[var(--ink)]/70 mt-2 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
 
                   {/* Latest comments */}
                   {p.latest_comments.length > 0 && (
@@ -395,7 +395,7 @@ function ConnectPage() {
                                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && (editingComment?.body ?? "").trim()) { e.preventDefault(); updateMut.mutate({ id: c.id, body: editingComment!.body }); } }}
                                 />
                                 <div className="flex items-center justify-end gap-3 text-[11px] font-semibold">
-                                  <button onClick={() => setEditingComment(null)} className="text-[var(--ink)]/76 hover:text-[var(--ink)]">{tr("Cancel", "Cancelar", "Annuler")}</button>
+                                  <button onClick={() => setEditingComment(null)} className="text-[var(--ink)]/65 hover:text-[var(--ink)]">{tr("Cancel", "Cancelar", "Annuler")}</button>
                                   <button
                                     disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
                                     onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
@@ -410,7 +410,7 @@ function ConnectPage() {
                                 <DropdownMenuTrigger asChild>
                                   <button type="button" className="text-left w-full">
                                     <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
-                                    <span className="text-[var(--ink)]/84 whitespace-pre-wrap break-words">{c.body}</span>
+                                    <span className="text-[var(--ink)]/75 whitespace-pre-wrap break-words">{c.body}</span>
                                   </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start" className="min-w-[140px]">
@@ -429,13 +429,13 @@ function ConnectPage() {
                               <div className="flex items-start gap-1">
                                 <p className="flex-1 min-w-0">
                                   <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
-                                  <span className="text-[var(--ink)]/84 whitespace-pre-wrap break-words">{c.body}</span>
+                                  <span className="text-[var(--ink)]/75 whitespace-pre-wrap break-words">{c.body}</span>
                                 </p>
                                 <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
                                 {isAdmin && (
                                   <button
                                     onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); }}
-                                    className="p-1 text-[var(--ink)]/50 hover:text-destructive"
+                                    className="p-1 text-[var(--ink)]/35 hover:text-destructive"
                                     aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
                                   >
                                     <ShieldAlert className="w-3 h-3" />
@@ -447,7 +447,7 @@ function ConnectPage() {
                         );
                       })}
                       {p.comment_count > p.latest_comments.length && (
-                        <button onClick={() => setOpenPost(p)} className="text-[12px] text-[var(--ink)]/76 hover:text-[var(--ink)]">
+                        <button onClick={() => setOpenPost(p)} className="text-[12px] text-[var(--ink)]/65 hover:text-[var(--ink)]">
                           {tr("View all", "Ver los", "Voir les")} {p.comment_count} {tr("comments", "comentarios", "commentaires")}
                         </button>
                       )}
@@ -462,7 +462,7 @@ function ConnectPage() {
                         value={replyBody}
                         onChange={(e) => setReplyBody(e.target.value)}
                         placeholder={tr("Write a comment", "Escribe un comentario", "Écrire un commentaire")}
-                        className="bg-white rounded-full h-10 px-4 border-[var(--ink)]/26"
+                        className="bg-white rounded-full h-10 px-4 border-[var(--ink)]/18"
                         onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && replyBody.trim()) { e.preventDefault(); addMut.mutate({ id: p.id, body: replyBody }); } }}
                       />
                       <button
@@ -478,7 +478,7 @@ function ConnectPage() {
                   ) : (
                     <button
                       onClick={() => { setReplyPostId(p.id); setReplyBody(""); }}
-                      className="mt-4 inline-flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/76 hover:text-[var(--ink)] transition"
+                      className="mt-4 inline-flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/65 hover:text-[var(--ink)] transition"
                     >
                       <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
                       {tr("Reply", "Responder", "Répondre")}
@@ -526,17 +526,17 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
 
   return (
     <div className="fixed inset-0 z-50 bg-[var(--ink)]/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/24 max-h-[92vh] overflow-y-auto shadow-2xl">
+      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 max-h-[92vh] overflow-y-auto shadow-2xl">
         <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
-        <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/24 px-5 py-3 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/16 px-5 py-3 flex items-center justify-between">
           <h2 className="text-serif text-xl text-[var(--ink)]">
             {isEdit ? tr("Edit post", "Editar publicación", "Modifier la publication") : tr("New post", "Nueva publicación", "Nouvelle publication")}
           </h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-[var(--ink)]/5"><X className="w-5 h-5 text-[var(--ink)]/82" /></button>
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-[var(--ink)]/5"><X className="w-5 h-5 text-[var(--ink)]/72" /></button>
         </div>
         <div className="p-5 space-y-4">
           <div>
-            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78">{tr("Category", "Categoría", "Catégorie")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68">{tr("Category", "Categoría", "Catégorie")}</label>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {CATEGORIES.map((c) => {
                 const active = category === c;
@@ -545,7 +545,7 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
                     key={c}
                     type="button"
                     onClick={() => setCategory(c)}
-                    className={`px-3.5 h-9 rounded-full text-[13px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/30 text-[var(--ink)]/84 hover:border-[var(--ink)]/40"}`}
+                    className={`px-3.5 h-9 rounded-full text-[13px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/22 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
                   >
                     {catLabel(c)}
                   </button>
@@ -554,17 +554,17 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
             </div>
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78">{tr("City (optional)", "Ciudad (opcional)", "Ville (facultatif)")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68">{tr("City (optional)", "Ciudad (opcional)", "Ville (facultatif)")}</label>
             <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Barcelona" className="mt-2 bg-white" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78">{tr("Title", "Título", "Titre")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68">{tr("Title", "Título", "Titre")}</label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} className="mt-2 bg-white" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78">{tr("Message", "Mensaje", "Message")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68">{tr("Message", "Mensaje", "Message")}</label>
             <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={5} maxLength={2000} className="mt-2 bg-white" />
-            <p className="text-[10px] text-[var(--ink)]/76 mt-1">{tr("Posts auto-expire after 30 days.", "Las publicaciones caducan a los 30 días.", "Les publications expirent après 30 jours.")}</p>
+            <p className="text-[10px] text-[var(--ink)]/65 mt-1">{tr("Posts auto-expire after 30 days.", "Las publicaciones caducan a los 30 días.", "Les publications expirent après 30 jours.")}</p>
           </div>
           <Button
             disabled={mut.isPending || title.trim().length < 3 || body.trim().length < 3}
@@ -635,17 +635,17 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
 
   return (
     <div className="fixed inset-0 z-50 bg-[var(--ink)]/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/24 max-h-[92vh] flex flex-col shadow-2xl">
+      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 max-h-[92vh] flex flex-col shadow-2xl">
         <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
-        <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/24 px-5 py-3 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/16 px-5 py-3 flex items-center justify-between">
           <h2 className="text-serif text-lg text-[var(--ink)] truncate">{post.title}</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-[var(--ink)]/5"><X className="w-5 h-5 text-[var(--ink)]/82" /></button>
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-[var(--ink)]/5"><X className="w-5 h-5 text-[var(--ink)]/72" /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
-          <p className="text-sm text-[var(--ink)]/90 whitespace-pre-wrap leading-relaxed">{post.body}</p>
-          <div className="pt-3 border-t border-[var(--ink)]/24 space-y-3">
+          <p className="text-sm text-[var(--ink)]/85 whitespace-pre-wrap leading-relaxed">{post.body}</p>
+          <div className="pt-3 border-t border-[var(--ink)]/16 space-y-3">
             {(q.data ?? []).length === 0 && !q.isLoading && (
-              <p className="text-xs text-[var(--ink)]/76 italic">{tr("No comments yet.", "Aún no hay comentarios.", "Aucun commentaire.")}</p>
+              <p className="text-xs text-[var(--ink)]/65 italic">{tr("No comments yet.", "Aún no hay comentarios.", "Aucun commentaire.")}</p>
             )}
             {(q.data ?? []).map((c) => {
               const mine = myProfileId === c.author_profile_id;
@@ -657,8 +657,8 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
                   )}
-                  <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/22">
-                    <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/82">
+                  <div className="flex-1 min-w-0 bg-white rounded-2xl px-3 py-2 border border-[var(--ink)]/14">
+                    <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/72">
                       <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
                       <span>·</span>
                       <span>{timeAgo(c.created_at, tr, undefined)}</span>
@@ -668,7 +668,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                           {isAdmin && (
                             <button
                               onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate(c.id); }}
-                              className="text-[var(--ink)]/50 hover:text-destructive p-1"
+                              className="text-[var(--ink)]/35 hover:text-destructive p-1"
                               aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
                             >
                               <ShieldAlert className="w-3 h-3" />
@@ -680,12 +680,12 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                         <div className="ml-auto flex items-center gap-1">
                           <button
                             onClick={() => setEditingComment({ id: c.id, body: c.body })}
-                            className="text-[var(--ink)]/76 hover:text-[var(--plum)] transition p-1"
+                            className="text-[var(--ink)]/65 hover:text-[var(--plum)] transition p-1"
                             aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
                           >
                             <Pencil className="w-3 h-3" />
                           </button>
-                          <button onClick={() => delMut.mutate(c.id)} className="text-[var(--ink)]/68 hover:text-destructive p-1">
+                          <button onClick={() => delMut.mutate(c.id)} className="text-[var(--ink)]/55 hover:text-destructive p-1">
                             <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
@@ -701,7 +701,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => setEditingComment(null)}
-                            className="text-xs font-medium text-[var(--ink)]/82 hover:text-[var(--ink)] px-2 py-1"
+                            className="text-xs font-medium text-[var(--ink)]/72 hover:text-[var(--ink)] px-2 py-1"
                           >
                             {tr("Cancel", "Cancelar", "Annuler")}
                           </button>
@@ -715,7 +715,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-[var(--ink)]/90 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
+                      <p className="text-sm text-[var(--ink)]/85 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
                     )}
                   </div>
                 </div>
@@ -723,7 +723,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
             })}
           </div>
         </div>
-        <div className="border-t border-[var(--ink)]/24 p-3 flex items-center gap-2 bg-[var(--paper)]">
+        <div className="border-t border-[var(--ink)]/16 p-3 flex items-center gap-2 bg-[var(--paper)]">
           <Input
             value={body}
             onChange={(e) => setBody(e.target.value)}

@@ -21,9 +21,9 @@ function Privacy() {
   const tr = useTr();
   return (
     <main className="bg-[var(--paper)] min-h-screen max-w-2xl mx-auto px-6 py-10 text-[var(--ink)]/90 space-y-4">
-      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/82">← {tr("Home", "Inicio", "Accueil")}</Link>
+      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/72">← {tr("Home", "Inicio", "Accueil")}</Link>
       <h1 className="text-display text-4xl">{tr("Privacy Policy", "Política de Privacidad", "Politique de confidentialité")}</h1>
-      <p className="text-sm text-[var(--ink)]/82">
+      <p className="text-sm text-[var(--ink)]/72">
         {tr("Last updated:", "Última actualización:", "Dernière mise à jour :")} 1 November 2026
       </p>
 

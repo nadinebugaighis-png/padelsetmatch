@@ -97,7 +97,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
     <div className="min-h-screen flex items-center justify-center px-6 text-center programme-page">
       <div className="max-w-sm w-full">
         <h1 className="text-serif text-3xl tracking-tight text-[var(--ink)]">{t("shell.err.title")}</h1>
-        <p className="mt-3 text-sm text-[var(--ink)]/80">{t("shell.err.body")}</p>
+        <p className="mt-3 text-sm text-[var(--ink)]/70">{t("shell.err.body")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => { reset(); window.location.reload(); }}
@@ -121,12 +121,12 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
         </div>
         <button
           onClick={() => setShowDetails((s) => !s)}
-          className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/68 hover:text-[var(--ink)]/80"
+          className="mt-6 text-[10px] uppercase tracking-widest text-[var(--ink)]/55 hover:text-[var(--ink)]/70"
         >
           {showDetails ? tr("Hide details", "Ocultar detalles", "Masquer les détails") : tr("Show details", "Ver detalles", "Voir les détails")}
         </button>
         {showDetails && (
-          <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-md bg-[var(--ink)]/5 p-3 text-left text-[10px] leading-snug text-[var(--ink)]/80">
+          <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap break-words rounded-md bg-[var(--ink)]/5 p-3 text-left text-[10px] leading-snug text-[var(--ink)]/70">
 {message}
 {stack ? "\n\n" + stack : ""}
           </pre>
@@ -138,7 +138,7 @@ function AppErrorFallback({ error, reset }: { error: unknown; reset: () => void 
 
 function AppNotFoundFallback() {
   const t = useT();
-  return <div className="min-h-screen flex items-center justify-center text-[var(--ink)]/80">{t("shell.notFound")}</div>;
+  return <div className="min-h-screen flex items-center justify-center text-[var(--ink)]/70">{t("shell.notFound")}</div>;
 }
 
 
@@ -322,7 +322,7 @@ function AuthShell() {
         <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
       <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
-        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/24 gap-3 max-w-7xl mx-auto w-full">
+        <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/16 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
             <nav className="hidden lg:flex items-center gap-1 mx-4 flex-1 justify-center">
@@ -340,7 +340,7 @@ function AuthShell() {
             )}
             {hasProfile && <NotificationBell />}
             <LangSwitch />
-            <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/78 hover:text-[var(--ink)]">
+            <button onClick={onSignOut} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/68 hover:text-[var(--ink)]">
               {t("shell.signout")}
             </button>
           </div>
@@ -350,7 +350,7 @@ function AuthShell() {
       {hasProfile && !onOnboarding && !inChat && <EnableNotificationsBanner />}
 
       {hasProfile && !onOnboarding && !inChat && visibleInvites.length > 0 && (
-        <div className="border-b border-[var(--ink)]/24 bg-[var(--paper-2)]">
+        <div className="border-b border-[var(--ink)]/16 bg-[var(--paper-2)]">
           <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-3 space-y-2">
             {visibleInvites.slice(0, 3).map((inv) => {
               const ev = inv.event!;
@@ -366,7 +366,7 @@ function AuthShell() {
                     className="flex-1 min-w-0 text-sm text-[var(--ink)] hover:opacity-80"
                   >
                     <span className="font-semibold text-[var(--plum)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
-                    <span className="text-[var(--ink)]/88">
+                    <span className="text-[var(--ink)]/80">
                       {tr(
                         `by ${host} · ${when}${where ? " · " + where : ""} — tap to view`,
                         `por ${host} · ${when}${where ? " · " + where : ""} — toca para ver`,
@@ -377,7 +377,7 @@ function AuthShell() {
                   <button
                     onClick={() => setDismissedIds((d) => [...d, inv.id])}
                     aria-label={tr("Dismiss", "Descartar", "Fermer")}
-                    className="text-[var(--ink)]/76 hover:text-[var(--ink)] shrink-0"
+                    className="text-[var(--ink)]/65 hover:text-[var(--ink)] shrink-0"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -456,7 +456,7 @@ function DesktopTab({ to, label, icon, active, badge, dot, onPrefetch }: { to: s
       className={`relative flex items-center gap-2 px-3 py-2 rounded-full text-[11px] uppercase tracking-[0.14em] font-semibold transition-colors ${
         active
           ? "bg-[var(--ink)] text-[var(--paper)]"
-          : "text-[var(--ink)]/80 hover:text-[var(--ink)] hover:bg-[var(--ink)]/5"
+          : "text-[var(--ink)]/70 hover:text-[var(--ink)] hover:bg-[var(--ink)]/5"
       }`}
     >
       <span className="relative flex items-center">

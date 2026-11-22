@@ -106,11 +106,11 @@ function InviteTimeBlock({ match, tr }: { match: { starts_at: string; time_tbd?:
       style={{ background: toneBg }}
     >
       <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{match.time_tbd ? tr("Time", "Hora", "Heure") : parts.time}</div>
-      <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/90 font-semibold leading-none">
+      <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
         {dateBadge ?? parts.weekday}
       </div>
       {!dateBadge && (
-        <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/76 font-semibold leading-none">
+        <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
           {parts.day} <span className="capitalize">{parts.month}</span>
         </div>
       )}
@@ -193,14 +193,14 @@ function PublicMatchPage() {
   return (
     <main className="programme-page min-h-screen">
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-5 py-8">
-        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/82">← PadelSetMatch</Link>
+        <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/72">← PadelSetMatch</Link>
 
-        {q.isLoading && <div className="mt-10 text-center text-[var(--ink)]/82">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
+        {q.isLoading && <div className="mt-10 text-center text-[var(--ink)]/72">{tr("Loading…", "Cargando…", "Chargement…")}</div>}
 
         {!q.isLoading && !match && (
-          <div className="mt-10 text-center text-[var(--ink)]/80">
+          <div className="mt-10 text-center text-[var(--ink)]/70">
             <p className="text-lg">{tr("This match link isn't available.", "Este enlace de partido no está disponible.", "Ce lien de match n'est pas disponible.")}</p>
-            <p className="text-sm text-[var(--ink)]/76 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.", "Il a peut-être été annulé ou déjà joué.")}</p>
+            <p className="text-sm text-[var(--ink)]/65 mt-2">{tr("It may have been cancelled or already played.", "Puede que se haya cancelado o ya se haya jugado.", "Il a peut-être été annulé ou déjà joué.")}</p>
             <Link to="/app/events" className="inline-block mt-6 text-[var(--ink)] underline">{tr("Browse open matches", "Ver partidos abiertos", "Explorer les matches ouverts")}</Link>
 
           </div>
@@ -210,7 +210,7 @@ function PublicMatchPage() {
           <>
             {/* Invitation header */}
             <div className="mt-5 mb-3 text-center">
-              <div className="inline-flex items-center gap-2 text-[var(--ink)]/80">
+              <div className="inline-flex items-center gap-2 text-[var(--ink)]/70">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
                 <span className="text-[10px] uppercase tracking-[0.22em] font-semibold">
                   {tr("Invitation to join a match", "Invitación para unirte a un partido", "Invitation à rejoindre un match")}
@@ -222,7 +222,7 @@ function PublicMatchPage() {
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--court-deep)] px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--paper)]">
                     🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}
                   </span>
-                  <p className="mt-2 text-xs text-[var(--ink)]/80">
+                  <p className="mt-2 text-xs text-[var(--ink)]/70">
                     {tr("Joining costs nothing — just bring your racket and play.", "Sin coste alguno — solo ven con tu pala y a jugar.", "Aucun frais — viens avec ta raquette et joue.")}
                   </p>
                 </div>
@@ -230,7 +230,7 @@ function PublicMatchPage() {
             </div>
 
             {/* Match card — same style as Play page */}
-            <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/24">
+            <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/16">
               <div className="flex">
                 {/* Date / time block */}
                 <InviteTimeBlock match={match} tr={tr} />
@@ -242,7 +242,7 @@ function PublicMatchPage() {
                       <h1 className="text-[15px] font-semibold text-[var(--ink)] leading-tight">
                         {match.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
                       </h1>
-                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/82 min-w-0">
+                      <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/72 min-w-0">
                         <MapPin className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate">{match.club_address || match.city || "—"}</span>
                       </div>
@@ -250,7 +250,7 @@ function PublicMatchPage() {
                     <span
                       className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
                         openSpots === 0
-                          ? "bg-[var(--ink)]/8 text-[var(--ink)]/78"
+                          ? "bg-[var(--ink)]/8 text-[var(--ink)]/68"
                           : "bg-[var(--plum)]/12 text-[var(--plum)]"
                       }`}
                     >
@@ -261,28 +261,28 @@ function PublicMatchPage() {
                   </div>
 
                   {/* Meta row */}
-                  <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/82">
-                    <span className="font-semibold text-[var(--ink)]/88">{levelRangeLabel(match.level_min, match.level_max, tr)}</span>
-                    <span className="text-[var(--ink)]/40">·</span>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/72">
+                    <span className="font-semibold text-[var(--ink)]/80">{levelRangeLabel(match.level_min, match.level_max, tr)}</span>
+                    <span className="text-[var(--ink)]/25">·</span>
                     <span>{genderLabel}</span>
-                    <span className="text-[var(--ink)]/40">·</span>
+                    <span className="text-[var(--ink)]/25">·</span>
                     <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /> {matchDuration(match as { duration_minutes?: number | null })} min</span>
                     {match.court_booked && (
                       <>
-                        <span className="text-[var(--ink)]/40">·</span>
+                        <span className="text-[var(--ink)]/25">·</span>
                         <span className="font-semibold text-[var(--court-deep)]">{ptLink ? "Playtomic" : tr("Court booked", "Pista reservada", "Court réservé")}</span>
                       </>
                     )}
                     {match.host?.first_name && (
                       <>
-                        <span className="text-[var(--ink)]/40">·</span>
-                        <span className="font-semibold text-[var(--ink)]/88">{tr("Host", "Anfitrión", "Hôte")}: {match.host.first_name}</span>
+                        <span className="text-[var(--ink)]/25">·</span>
+                        <span className="font-semibold text-[var(--ink)]/80">{tr("Host", "Anfitrión", "Hôte")}: {match.host.first_name}</span>
                       </>
                     )}
                   </div>
 
                   {match.note && (
-                    <p className="mt-2 text-xs text-[var(--ink)]/84 whitespace-pre-wrap border-l-2 border-[var(--gold)] pl-2.5 italic">{match.note}</p>
+                    <p className="mt-2 text-xs text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--gold)] pl-2.5 italic">{match.note}</p>
                   )}
 
                   {/* Players + action */}
@@ -293,7 +293,7 @@ function PublicMatchPage() {
                         title={name}
                         className="w-9 h-9 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
                       >
-                        <span className="text-[12px] font-bold text-[var(--ink)]/80">{name.trim().charAt(0).toUpperCase()}</span>
+                        <span className="text-[12px] font-bold text-[var(--ink)]/70">{name.trim().charAt(0).toUpperCase()}</span>
                       </div>
                     ))}
                     {Array.from({ length: friendSpots }).map((_, i) => (
@@ -330,7 +330,7 @@ function PublicMatchPage() {
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.club_address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
+                className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/16 bg-white px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
               >
                 <MapPin className="w-3.5 h-3.5" />
                 {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}
@@ -356,7 +356,7 @@ function PublicMatchPage() {
                       : tr("Sign up & join", "Regístrate y únete", "S'inscrire et rejoindre")}
               </button>
               {ptLink && openSpots > 0 && (
-                <p className="text-[11px] text-[var(--ink)]/76 text-center">
+                <p className="text-[11px] text-[var(--ink)]/65 text-center">
                   {tr("Availability may have changed. Check and join on Playtomic.", "Las plazas pueden haber cambiado. Compruébalo y únete en Playtomic.", "Les places ont pu changer. Vérifie et rejoins sur Playtomic.")}
                 </p>
               )}
@@ -369,10 +369,10 @@ function PublicMatchPage() {
                   {tr("Join as guest — no account", "Unirme como invitado — sin cuenta", "Rejoindre en invité — sans compte")}
                 </Link>
               )}
-              <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ink)]/32 text-[var(--ink)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
+              <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
-              {!ptLink && <p className="text-[11px] text-[var(--ink)]/76 text-center pt-1">
+              {!ptLink && <p className="text-[11px] text-[var(--ink)]/65 text-center pt-1">
                 {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
               </p>}
             </div>
@@ -393,12 +393,12 @@ function PublicMatchPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-xs uppercase tracking-widest text-[var(--ink)]">{tr("Share match", "Compartir partido", "Partager le match")}</div>
-                  <p className="mt-1 text-sm text-[var(--ink)]/80">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que otros jugadores se unan a un hueco libre.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
+                  <p className="mt-1 text-sm text-[var(--ink)]/70">{tr("Send this invitation link so players can join an open spot.", "Envía este enlace para que otros jugadores se unan a un hueco libre.", "Envoie ce lien d'invitation pour qu'ils puissent prendre une place ouverte.")}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShareOpen(false)}
-                  className="rounded-full border border-[var(--ink)]/28 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/80"
+                  className="rounded-full border border-[var(--ink)]/20 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/70"
                 >
                   {tr("Close", "Cerrar", "Fermer")}
                 </button>
@@ -407,7 +407,7 @@ function PublicMatchPage() {
                 readOnly
                 value={shareUrl}
                 onFocus={(e) => e.currentTarget.select()}
-                className="mt-4 w-full rounded-full border border-[var(--ink)]/28 bg-[var(--paper-2)] px-4 py-2 text-sm text-[var(--ink)] outline-none"
+                className="mt-4 w-full rounded-full border border-[var(--ink)]/20 bg-[var(--paper-2)] px-4 py-2 text-sm text-[var(--ink)] outline-none"
               />
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <a
@@ -430,7 +430,7 @@ function PublicMatchPage() {
                 <button
                   type="button"
                   onClick={nativeShare}
-                  className="mt-2 w-full rounded-full border border-[var(--ink)]/28 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]/88"
+                  className="mt-2 w-full rounded-full border border-[var(--ink)]/20 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]/80"
                 >
                   {tr("Share with phone", "Compartir con el móvil", "Partager avec le téléphone")}
                 </button>

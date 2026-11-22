@@ -19,9 +19,9 @@ export const Route = createFileRoute("/terms")({
 function Terms() {
   return (
     <main className="bg-[var(--paper)] min-h-screen max-w-2xl mx-auto px-6 py-10 text-[var(--ink)]/90 space-y-4">
-      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/82">← Home</Link>
+      <Link to="/" className="text-xs uppercase tracking-widest text-[var(--ink)]/72">← Home</Link>
       <h1 className="text-display text-4xl">Terms of Service</h1>
-      <p className="text-sm text-[var(--ink)]/82">Last updated: {new Date().toLocaleDateString()}</p>
+      <p className="text-sm text-[var(--ink)]/72">Last updated: {new Date().toLocaleDateString()}</p>
 
       <p>
         PadelSetMatch is a padel player directory and match-finding app operated by <b>Moorish Arches

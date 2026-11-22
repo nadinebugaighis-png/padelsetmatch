@@ -178,7 +178,7 @@ function DemoPage() {
       {/* App-like top bar */}
       <header className="px-5 pt-4 pb-3 flex items-center justify-between">
         <BrandMark size="sm" />
-        <div className="flex items-center gap-3 text-[var(--ink)]/80">
+        <div className="flex items-center gap-3 text-[var(--ink)]/70">
           <Search className="w-5 h-5" strokeWidth={1.7} />
           <div className="relative">
             <Bell className="w-5 h-5" strokeWidth={1.7} />
@@ -194,7 +194,7 @@ function DemoPage() {
             <h1 className="text-serif text-[30px] leading-[1.05] text-[var(--ink)]">
               12 neighbours near you
             </h1>
-            <p className="text-[13px] text-[var(--ink)]/82 mt-1">
+            <p className="text-[13px] text-[var(--ink)]/72 mt-1">
               Madrid · within 8 km · <span className="inline-flex items-center gap-1 font-semibold text-[var(--ink)]"><CourtIcon className="w-4 h-2.5" strokeWidth={2.2} /> 4 with free court access</span>
             </p>
 
@@ -206,7 +206,7 @@ function DemoPage() {
                   className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-semibold ${
                     i === 0
                       ? "bg-[var(--ink)] text-[var(--paper)]"
-                      : "border border-[var(--ink)]/30 text-[var(--ink)]/80"
+                      : "border border-[var(--ink)]/22 text-[var(--ink)]/70"
                   }`}
                 >
                   {f}
@@ -229,7 +229,7 @@ function DemoPage() {
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       />
-                      <span className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/24 flex items-center justify-center text-[var(--ink)]">
+                      <span className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-white/90 backdrop-blur-sm border border-[var(--ink)]/16 flex items-center justify-center text-[var(--ink)]">
                         <ThumbsUp className="w-2.5 h-2.5" strokeWidth={1.6} />
                       </span>
                       <button
@@ -243,7 +243,7 @@ function DemoPage() {
 
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{p.name}</h3>
-                    <p className="mt-1 text-[9px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/68 tracking-[0.18em] font-semibold uppercase truncate">
                       {p.zone} · Lvl {p.level.toFixed(1)}
                     </p>
 
@@ -260,7 +260,7 @@ function DemoPage() {
                       </div>
                     )}
 
-                    <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/30 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full">
+                    <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/22 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full">
                       <MapPin className="w-2.5 h-2.5 shrink-0" />
                       <span className="truncate">{p.club}</span>
                     </div>
@@ -271,7 +271,7 @@ function DemoPage() {
                           <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
                         </span>
                       ) : <span />}
-                      <div className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/28">
+                      <div className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20">
                         {p.fit}
                       </div>
                     </div>
@@ -287,17 +287,17 @@ function DemoPage() {
         {tab === "play" && (
           <div className="space-y-3 max-w-2xl mx-auto">
             <h1 className="text-serif text-[30px] leading-[1.05] text-[var(--ink)]">Open matches</h1>
-            <p className="text-[13px] text-[var(--ink)]/82 -mt-1">Madrid · next 7 days</p>
+            <p className="text-[13px] text-[var(--ink)]/72 -mt-1">Madrid · next 7 days</p>
 
             {MATCHES.map((m, i) => (
-              <div key={i} className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift/70 overflow-hidden shadow-sm">
+              <div key={i} className="rounded-2xl border border-[var(--ink)]/16 bg-white/70 overflow-hidden shadow-sm">
                 <div className="flex">
                   <div
                     className="w-[92px] flex-shrink-0 flex flex-col items-center justify-center py-4"
                     style={{ background: toneBg[m.tone] }}
                   >
                     <div className="text-serif text-[26px] leading-none text-[var(--ink)]">{m.time}</div>
-                    <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/80 font-semibold">
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold">
                       {m.when}
                     </div>
                   </div>
@@ -305,7 +305,7 @@ function DemoPage() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="text-[15px] font-semibold text-[var(--ink)] truncate">{m.club}</div>
-                        <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/82">
+                        <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/72">
                           <MapPin className="w-3.5 h-3.5" /> {m.zone}
                         </div>
                       </div>
@@ -314,7 +314,7 @@ function DemoPage() {
                       </span>
                     </div>
 
-                    <div className="mt-2 flex items-center gap-2 text-[11px] text-[var(--ink)]/82">
+                    <div className="mt-2 flex items-center gap-2 text-[11px] text-[var(--ink)]/72">
                       <span className="inline-flex items-center gap-1">
                         <LevelDots level={parseFloat(m.level)} /> {m.level}
                       </span>
@@ -335,7 +335,7 @@ function DemoPage() {
                         <button
                           key={`s${j}`}
                           onClick={() => nudge("Join this match?")}
-                          className="w-9 h-9 rounded-full border-2 border-dashed border-[var(--ink)]/32 text-[var(--ink)]/68 flex items-center justify-center"
+                          className="w-9 h-9 rounded-full border-2 border-dashed border-[var(--ink)]/25 text-[var(--ink)]/55 flex items-center justify-center"
                           aria-label="Open slot"
                         >
                           <Plus className="w-4 h-4" />
@@ -355,10 +355,10 @@ function DemoPage() {
 
             <button
               onClick={goSignup}
-              className="w-full mt-2 rounded-2xl border border-dashed border-[var(--ink)]/32 py-5 text-center"
+              className="w-full mt-2 rounded-2xl border border-dashed border-[var(--ink)]/25 py-5 text-center"
             >
               <div className="text-serif text-lg text-[var(--ink)]">Host your own match</div>
-              <p className="text-[13px] text-[var(--ink)]/82 mt-0.5">Pick a court, we'll find your four.</p>
+              <p className="text-[13px] text-[var(--ink)]/72 mt-0.5">Pick a court, we'll find your four.</p>
             </button>
           </div>
         )}
@@ -366,8 +366,8 @@ function DemoPage() {
         {/* CHAT */}
         {tab === "chat" && (
           <div className="max-w-2xl mx-auto">
-            <div className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift/70 overflow-hidden shadow-sm">
-              <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ink)]/24">
+            <div className="rounded-2xl border border-[var(--ink)]/16 bg-white/70 overflow-hidden shadow-sm">
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--ink)]/16">
                 <div className="flex -space-x-2">
                   {[PLAYERS[0], PLAYERS[1], PLAYERS[2]].map((p) => (
                     <img key={p.name} src={p.photo} alt={p.name} className="w-8 h-8 rounded-full object-cover border-2 border-white" />
@@ -375,9 +375,9 @@ function DemoPage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-serif text-[16px] text-[var(--ink)] leading-tight">Tonight · Chamartín 19:00</div>
-                  <div className="text-[11px] text-[var(--ink)]/78">Lucía, Marc, Aisha · 1 spot left</div>
+                  <div className="text-[11px] text-[var(--ink)]/68">Lucía, Marc, Aisha · 1 spot left</div>
                 </div>
-                <span className="ml-auto text-[10px] uppercase tracking-[0.16em] font-semibold text-[var(--ink)]/82">
+                <span className="ml-auto text-[10px] uppercase tracking-[0.16em] font-semibold text-[var(--ink)]/72">
                   Court 4
                 </span>
               </div>
@@ -390,18 +390,18 @@ function DemoPage() {
                     )}
                     <div className={`max-w-[76%] ${m.from === "me" ? "items-end" : ""}`}>
                       {m.from === "them" && (
-                        <div className="text-[10px] uppercase tracking-[0.14em] text-[var(--ink)]/76 mb-0.5">{m.who.name}</div>
+                        <div className="text-[10px] uppercase tracking-[0.14em] text-[var(--ink)]/65 mb-0.5">{m.who.name}</div>
                       )}
                       <div
                         className={`rounded-2xl px-3.5 py-2 text-[14px] leading-snug ${
                           m.from === "me"
                             ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-md"
-                            : "bg-white text-[var(--ink)] border border-[var(--ink)]/24 rounded-bl-md"
+                            : "bg-white text-[var(--ink)] border border-[var(--ink)]/16 rounded-bl-md"
                         }`}
                       >
                         {m.text}
                       </div>
-                      <div className={`text-[10px] text-[var(--ink)]/68 mt-0.5 ${m.from === "me" ? "text-right" : ""}`}>
+                      <div className={`text-[10px] text-[var(--ink)]/55 mt-0.5 ${m.from === "me" ? "text-right" : ""}`}>
                         {m.time}
                       </div>
                     </div>
@@ -409,8 +409,8 @@ function DemoPage() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2 px-3 py-3 border-t border-[var(--ink)]/24 bg-white/70">
-                <div className="flex-1 rounded-full border border-[var(--ink)]/30 px-4 py-2.5 text-[13px] text-[var(--ink)]/68">
+              <div className="flex items-center gap-2 px-3 py-3 border-t border-[var(--ink)]/16 bg-white/70">
+                <div className="flex-1 rounded-full border border-[var(--ink)]/22 px-4 py-2.5 text-[13px] text-[var(--ink)]/55">
                   Message your four…
                 </div>
                 <button
@@ -432,15 +432,15 @@ function DemoPage() {
                 <button
                   key={i}
                   onClick={() => nudge(`Open chat with ${c.p.name}?`)}
-                  className="w-full flex items-center gap-3 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift/60 px-4 py-3 text-left"
+                  className="w-full flex items-center gap-3 rounded-2xl border border-[var(--ink)]/16 bg-white/60 px-4 py-3 text-left"
                 >
                   <img src={c.p.photo} alt={c.p.name} className="w-10 h-10 rounded-full object-cover" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-serif text-[15px] text-[var(--ink)]">{c.p.name}</span>
-                      <span className="text-[11px] text-[var(--ink)]/72">{c.time}</span>
+                      <span className="text-[11px] text-[var(--ink)]/60">{c.time}</span>
                     </div>
-                    <div className="text-[13px] text-[var(--ink)]/76 truncate">{c.text}</div>
+                    <div className="text-[13px] text-[var(--ink)]/65 truncate">{c.text}</div>
                   </div>
                 </button>
               ))}
@@ -457,7 +457,7 @@ function DemoPage() {
               </div>
               <div className="pt-1 min-w-0">
                 <h1 className="text-serif text-[32px] leading-[0.95] text-[var(--ink)]">{ME.name}</h1>
-                <div className="mt-1.5 flex items-center gap-1 text-[13px] text-[var(--ink)]/80">
+                <div className="mt-1.5 flex items-center gap-1 text-[13px] text-[var(--ink)]/70">
                   <MapPin className="w-3.5 h-3.5" /> {ME.city}
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
@@ -468,7 +468,7 @@ function DemoPage() {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-3 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift/60 divide-x divide-[var(--ink)]/16">
+            <div className="mt-5 grid grid-cols-3 rounded-2xl border border-[var(--ink)]/16 bg-white/60 divide-x divide-[var(--ink)]/16">
               {[
                 { v: ME.matches, l: "Matches" },
                 { v: ME.hours, l: "Hours on court" },
@@ -476,7 +476,7 @@ function DemoPage() {
               ].map((s) => (
                 <div key={s.l} className="py-3.5 text-center">
                   <div className="text-serif text-[24px] leading-none text-[var(--ink)]">{s.v}</div>
-                  <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/78 mt-1.5 font-semibold">{s.l}</div>
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/68 mt-1.5 font-semibold">{s.l}</div>
                 </div>
               ))}
             </div>
@@ -487,20 +487,20 @@ function DemoPage() {
                 { icon: <CourtIcon className="w-6 h-4" />, l: "Side", v: ME.side },
                 { icon: <Calendar className="w-5 h-5" />, l: "Plays", v: ME.plays },
               ].map((s) => (
-                <div key={s.l} className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift/60 py-3 flex flex-col items-center gap-1.5 text-[var(--ink)]">
+                <div key={s.l} className="rounded-2xl border border-[var(--ink)]/16 bg-white/60 py-3 flex flex-col items-center gap-1.5 text-[var(--ink)]">
                   {s.icon}
-                  <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/78 font-semibold">{s.l}</div>
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-[var(--ink)]/68 font-semibold">{s.l}</div>
                   <div className="text-[13px] font-semibold">{s.v}</div>
                 </div>
               ))}
             </div>
 
             <div className="mt-5">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78 font-semibold">My clubs</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68 font-semibold">My clubs</div>
               <div className="mt-2 space-y-2">
                 {ME.clubs.map((c) => (
-                  <div key={c} className="flex items-center gap-2 rounded-xl border border-[var(--ink)]/24 bg-white/60 px-3.5 py-2.5 text-[14px] text-[var(--ink)]">
-                    <MapPin className="w-4 h-4 text-[var(--ink)]/82" /> {c}
+                  <div key={c} className="flex items-center gap-2 rounded-xl border border-[var(--ink)]/16 bg-white/60 px-3.5 py-2.5 text-[14px] text-[var(--ink)]">
+                    <MapPin className="w-4 h-4 text-[var(--ink)]/72" /> {c}
                     <Check className="w-4 h-4 ml-auto text-[var(--grass)]" />
                   </div>
                 ))}
@@ -508,10 +508,10 @@ function DemoPage() {
             </div>
 
             <div className="mt-5">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78 font-semibold">On court I am</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68 font-semibold">On court I am</div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {ME.traits.map((t) => (
-                  <span key={t} className="rounded-full border border-[var(--ink)]/30 px-3 py-1.5 text-[12px] text-[var(--ink)]">{t}</span>
+                  <span key={t} className="rounded-full border border-[var(--ink)]/22 px-3 py-1.5 text-[12px] text-[var(--ink)]">{t}</span>
                 ))}
               </div>
             </div>
@@ -520,7 +520,7 @@ function DemoPage() {
               <button onClick={goSignup} className="rounded-xl bg-[var(--ink)] text-[var(--paper)] py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em]">
                 Edit profile
               </button>
-              <button onClick={() => nudge("Open settings?")} className="rounded-xl border border-[var(--ink)]/28 bg-white/60 text-[var(--ink)] py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
+              <button onClick={() => nudge("Open settings?")} className="rounded-xl border border-[var(--ink)]/20 bg-white/60 text-[var(--ink)] py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
                 <Settings className="w-4 h-4" /> Settings
               </button>
             </div>
@@ -545,11 +545,11 @@ function DemoPage() {
               <div className="flex items-end justify-between gap-3">
                 <div>
                   <div className="text-serif text-[26px] leading-none text-[var(--ink)]">{selected.name}</div>
-                  <div className="text-[12px] text-[var(--ink)]/82 mt-1.5">{selected.club} · {selected.city}</div>
+                  <div className="text-[12px] text-[var(--ink)]/72 mt-1.5">{selected.club} · {selected.city}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-serif text-[26px] leading-none text-[var(--ink)]">{selected.fit}%</div>
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--ink)]/78 font-semibold mt-1">Fit on court</div>
+                  <div className="text-[9px] uppercase tracking-[0.18em] text-[var(--ink)]/68 font-semibold mt-1">Fit on court</div>
                 </div>
               </div>
 
@@ -560,7 +560,7 @@ function DemoPage() {
                   { l: "Plays", v: selected.plays },
                 ].map((s) => (
                   <div key={s.l} className="rounded-xl bg-[var(--ink)]/[0.05] py-2.5">
-                    <div className="text-[9px] uppercase tracking-[0.16em] text-[var(--ink)]/78 font-semibold">{s.l}</div>
+                    <div className="text-[9px] uppercase tracking-[0.16em] text-[var(--ink)]/68 font-semibold">{s.l}</div>
                     <div className="text-[13px] font-semibold text-[var(--ink)] mt-0.5">{s.v}</div>
                   </div>
                 ))}
@@ -573,7 +573,7 @@ function DemoPage() {
                   </span>
                 )}
                 {selected.tags.map((t) => (
-                  <span key={t} className="rounded-full border border-[var(--ink)]/30 px-2.5 py-1 text-[11px] text-[var(--ink)]">{t}</span>
+                  <span key={t} className="rounded-full border border-[var(--ink)]/22 px-2.5 py-1 text-[11px] text-[var(--ink)]">{t}</span>
                 ))}
               </div>
 
@@ -581,7 +581,7 @@ function DemoPage() {
                 <button onClick={() => nudge(`Message ${selected.name}?`)} className="rounded-xl bg-[var(--ink)] text-[var(--paper)] py-3 text-[12px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
                   <MessageCircle className="w-4 h-4" /> Message
                 </button>
-                <button onClick={() => nudge(`Invite ${selected.name} to a match?`)} className="rounded-xl border border-[var(--ink)]/28 text-[var(--ink)] py-3 text-[12px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
+                <button onClick={() => nudge(`Invite ${selected.name} to a match?`)} className="rounded-xl border border-[var(--ink)]/20 text-[var(--ink)] py-3 text-[12px] font-semibold uppercase tracking-[0.16em] inline-flex items-center justify-center gap-2">
                   <ThumbsUp className="w-4 h-4" /> Invite
                 </button>
               </div>
@@ -591,7 +591,7 @@ function DemoPage() {
       )}
 
       {/* Bottom app nav */}
-      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-[var(--ink)]/24 bg-[var(--paper)]/95 backdrop-blur px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-[var(--ink)]/16 bg-[var(--paper)]/95 backdrop-blur px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         <div className="max-w-2xl mx-auto grid grid-cols-4">
           {([
             { id: "home", label: "Players", icon: Users },
@@ -605,7 +605,7 @@ function DemoPage() {
               <button
                 key={t.id}
                 onClick={() => { setTab(t.id); setSelected(null); window.scrollTo({ top: 0 }); }}
-                className={`flex flex-col items-center gap-1 py-1.5 ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/72"}`}
+                className={`flex flex-col items-center gap-1 py-1.5 ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/60"}`}
               >
                 <Icon className="w-5 h-5" strokeWidth={active ? 2.2 : 1.7} />
                 <span className="text-[10px] uppercase tracking-[0.14em] font-semibold">{t.label}</span>

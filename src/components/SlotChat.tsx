@@ -97,19 +97,19 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
   const time = (iso: string) => new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   const meta = (m: (typeof messages)[number]) => (
-    <span className="ml-2 inline-flex translate-y-1 items-center gap-1 whitespace-nowrap text-[10.5px] text-[var(--ink)]/72 float-right">
+    <span className="ml-2 inline-flex translate-y-1 items-center gap-1 whitespace-nowrap text-[10.5px] text-[var(--ink)]/60 float-right">
       {m.edited_at && tr("edited", "editado", "modifié")}
       {" "}{time(m.created_at)}
     </span>
   );
 
   return (
-    <div className="mt-4 -mx-5 sm:-mx-6 border-t border-[var(--ink)]/22 bg-[var(--paper)]">
+    <div className="mt-4 -mx-5 sm:-mx-6 border-t border-[var(--ink)]/14 bg-[var(--paper)]">
       <div ref={scroller} className="max-h-80 sm:max-h-96 overflow-y-auto px-3 py-3 space-y-1.5">
         {q.isLoading ? (
           <div className="h-10 rounded-lg bg-[var(--ink)]/5 animate-pulse" />
         ) : messages.length === 0 ? (
-          <p className="py-3 text-center text-[12.5px] text-[var(--ink)]/76">
+          <p className="py-3 text-center text-[12.5px] text-[var(--ink)]/65">
             {tr("Agree the hour, the club and who brings the fourth.", "Acordad la hora, el club y quién trae al cuarto.", "Mettez-vous d'accord sur l'heure, le club et le quatrième.")}
           </p>
         ) : (
@@ -133,7 +133,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
                 <div className="max-w-[80%] rounded-lg rounded-tl-sm bg-white px-2.5 py-1.5 text-[14.5px] leading-snug text-[var(--ink)] shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]">
                   <div className="text-[12px] font-semibold text-[var(--pitch)]">
                     {m.sender.first_name ?? tr("Player", "Jugador", "Joueur")}
-                    {m.sender.level ? <span className="font-normal text-[var(--ink)]/72 capitalize"> · {label(m.sender.level)}</span> : null}
+                    {m.sender.level ? <span className="font-normal text-[var(--ink)]/60 capitalize"> · {label(m.sender.level)}</span> : null}
                   </div>
                   <span className="whitespace-pre-wrap break-words">{m.body}</span>
                   {meta(m)}
@@ -146,7 +146,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
       {canWrite ? (
         <div className="px-2 pb-2 sm:px-3 sm:pb-3">
           {editingId && (
-            <div className="mb-1 flex items-center justify-between px-2 text-[12px] text-[var(--ink)]/82">
+            <div className="mb-1 flex items-center justify-between px-2 text-[12px] text-[var(--ink)]/72">
               <span className="inline-flex items-center gap-1.5"><Pencil className="w-3 h-3" />{tr("Editing message", "Editando mensaje", "Modification du message")}</span>
               <button type="button" onClick={cancelEdit} aria-label={tr("Cancel", "Cancelar", "Annuler")} className="p-1"><X className="w-3.5 h-3.5" /></button>
             </div>
@@ -165,7 +165,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
               aria-label={tr("Message", "Mensaje", "Message")}
               onFocus={() => { if (blurTimer.current) window.clearTimeout(blurTimer.current); setTyping(true); }}
               onBlur={() => { if (blurTimer.current) window.clearTimeout(blurTimer.current); blurTimer.current = window.setTimeout(() => setTyping(false), 400); }}
-              className="flex-1 resize-none max-h-28 rounded-3xl bg-white px-4 py-2.5 text-[16px] sm:text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/68 outline-none shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]"
+              className="flex-1 resize-none max-h-28 rounded-3xl bg-white px-4 py-2.5 text-[16px] sm:text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/55 outline-none shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]"
             />
             <button
               type="submit"
@@ -179,7 +179,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
         </div>
       ) : (
         <div className="flex items-center justify-center gap-3 px-3 pb-3">
-          <p className="text-[12px] text-[var(--ink)]/78">{tr("Free at this time? Join to write.", "¿Libre a esta hora? Únete para escribir.", "Libre à cette heure ? Rejoins pour écrire.")}</p>
+          <p className="text-[12px] text-[var(--ink)]/68">{tr("Free at this time? Join to write.", "¿Libre a esta hora? Únete para escribir.", "Libre à cette heure ? Rejoins pour écrire.")}</p>
           <button type="button" disabled={joining} onClick={onJoin} className="shrink-0 h-8 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold disabled:opacity-50">
             {tr("Me too", "Yo también", "Moi aussi")}
           </button>
@@ -249,7 +249,7 @@ function OwnBubble({ children, editing, onEdit, onDelete, labels }: {
             {children}
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-36 bg-white text-[var(--ink)] border-[var(--ink)]/24">
+        <DropdownMenuContent align="end" className="min-w-36 bg-white text-[var(--ink)] border-[var(--ink)]/16">
           <DropdownMenuItem onSelect={onEdit}>
             <Pencil className="w-4 h-4" />{labels.edit}
           </DropdownMenuItem>

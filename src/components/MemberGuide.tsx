@@ -48,7 +48,7 @@ export function MemberGuide() {
                   {title}
                   {i === 2 && <CourtIcon className="w-5 h-3 sm:w-7 sm:h-4 shrink-0" strokeWidth={2} aria-hidden="true" />}
                 </div>
-                <p className="text-[13px] sm:text-[16px] text-[var(--ink)]/84 leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">{body}</p>
+                <p className="text-[13px] sm:text-[16px] text-[var(--ink)]/75 leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">{body}</p>
               </div>
             </li>
           ))}

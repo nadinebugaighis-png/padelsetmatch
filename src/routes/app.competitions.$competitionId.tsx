@@ -149,7 +149,7 @@ function CompetitionDetail() {
                 {entries.map((e) => {
                   const p = byId.get(e.profile_id);
                   return (
-                    <div key={e.profile_id} className="flex items-center gap-2 rounded-full border border-[var(--ink)]/24 bg-white pl-1 pr-3 py-1">
+                    <div key={e.profile_id} className="flex items-center gap-2 rounded-full border border-[var(--ink)]/16 bg-white pl-1 pr-3 py-1">
                       <div className="size-7 overflow-hidden rounded-full bg-[var(--paper-2)]">{p?.photo_url && <img src={p.photo_url} alt="" className="h-full w-full object-cover" />}</div>
                       <span className="text-xs text-[var(--ink)]">{p?.first_name ?? tr("Player", "Jugador", "Joueur")}{e.profile_id === me ? tr(" (you)", " (tú)", " (toi)") : ""}</span>
                     </div>
@@ -166,7 +166,7 @@ function CompetitionDetail() {
         ) : null}
         {phase !== "past" && whatsappLink && (
           <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
-            className="mt-3 flex h-11 w-full items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/28 bg-white text-sm font-medium text-[var(--ink)]">
+            className="mt-3 flex h-11 w-full items-center justify-center gap-1.5 rounded-full border border-[var(--ink)]/20 bg-white text-sm font-medium text-[var(--ink)]">
             {tr("Join the WhatsApp group", "Únete al grupo de WhatsApp", "Rejoindre le groupe WhatsApp")}<ArrowUpRight className="size-4" />
           </a>
         )}

@@ -43,7 +43,7 @@ function Card({
       bg: "bg-[var(--ink)]/8",
       fg: "text-[var(--ink)]",
       badge: "bg-[var(--ink)]/10",
-      badgeFg: "text-[var(--ink)]/80",
+      badgeFg: "text-[var(--ink)]/70",
     },
     lime: {
       bg: "bg-[color-mix(in_oklab,#a3e635_28%,var(--paper))]",
@@ -55,7 +55,7 @@ function Card({
   const a = accentStyles[accent];
 
   return (
-    <div className="relative rounded-2xl bg-white border border-[var(--ink)]/22 p-6 sm:p-7 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)] flex flex-col">
+    <div className="relative rounded-2xl bg-white border border-[var(--ink)]/14 p-6 sm:p-7 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)] flex flex-col">
       <div className="flex items-start justify-between">
         <span className={`inline-flex items-center justify-center w-11 h-11 rounded-full ${a.bg} ${a.fg}`}>
           <Icon className="w-5 h-5" strokeWidth={2} />
@@ -67,7 +67,7 @@ function Card({
       <h3 className="mt-10 text-serif uppercase tracking-[-0.005em] text-[var(--ink)] text-xl sm:text-2xl">
         {title}
       </h3>
-      <p className="mt-3 text-[15px] text-[var(--ink)]/80 leading-relaxed">{body}</p>
+      <p className="mt-3 text-[15px] text-[var(--ink)]/70 leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -112,7 +112,7 @@ function HowItWorksPage() {
         <h1 className="mt-6 text-serif uppercase text-[var(--ink)] leading-[0.92] tracking-[-0.02em] text-[2.75rem] sm:text-6xl lg:text-7xl">
           {tr("Find players. Play more.", "Encuentra jugadores. Juega más.", "Trouve des joueurs. Joue plus.")}
         </h1>
-        <p className="mt-6 max-w-2xl text-[15px] sm:text-lg text-[var(--ink)]/84 leading-relaxed">
+        <p className="mt-6 max-w-2xl text-[15px] sm:text-lg text-[var(--ink)]/75 leading-relaxed">
           {tr(
             "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time — in your city or wherever you travel.",
             "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a los jugadores antes de jugar — en tu ciudad o adonde viajes.",
@@ -186,7 +186,7 @@ function HowItWorksPage() {
             <h3 className="mt-6 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
               {tr("Silent likes", "Me gusta en silencio", "Likes silencieux")}
             </h3>
-            <p className="mt-3 text-[14px] text-[var(--ink)]/84 leading-relaxed">
+            <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
               {tr(
                 "Tap someone and they'll never know — unless they tap you back. No notifications, no pressure, no ego bruises.",
                 "Dale 'me gusta' a alguien y no lo sabrá — a menos que te lo devuelva. Sin notificaciones, sin presión, sin herir egos.",
@@ -199,7 +199,7 @@ function HowItWorksPage() {
             <h3 className="mt-6 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
               {tr("Direct invites", "Invitaciones directas", "Invitations directes")}
             </h3>
-            <p className="mt-3 text-[14px] text-[var(--ink)]/84 leading-relaxed">
+            <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">
               {tr(
                 "Found a player with a compatible level and schedule? Send them a match invite for a specific day, time and club. Skip the small talk.",
                 "¿Has encontrado a un jugador con un nivel y horario compatibles? Envíale una invitación para un día, hora y club concretos. Sin rodeos.",
@@ -211,7 +211,7 @@ function HowItWorksPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/24">
+      <section className="relative px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/16">
 
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase tracking-[-0.01em] text-[var(--ink)]">
@@ -230,7 +230,7 @@ function HowItWorksPage() {
             </Link>
             <Link
               to="/"
-              className="inline-flex items-center rounded-full border border-[var(--ink)]/32 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-6 py-3.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
+              className="inline-flex items-center rounded-full border border-[var(--ink)]/25 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-6 py-3.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
             >
               {tr("Back to home", "Volver al inicio", "Retour à l'accueil")}
             </Link>

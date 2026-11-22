@@ -65,7 +65,7 @@ function SharedVenuesBadge({ otherProfileId }: { otherProfileId: string }) {
               : tr(`You share ${d.count} venues`, `Compartís ${d.count} lugares`, `Vous partagez ${d.count} lieux`)}
         </div>
         {!hasNames && (
-          <div className="text-xs text-[var(--ink)]/76 mt-0.5">
+          <div className="text-xs text-[var(--ink)]/65 mt-0.5">
             {tr("Kept private by one of you.", "Uno de vosotros lo mantiene privado.", "L'un de vous le garde privé.")}
           </div>
         )}
@@ -437,7 +437,7 @@ function Discover() {
         {societyName ? (
           <div>
             <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[26px] sm:text-[30px] lg:text-[34px]">{societyName}</h1>
-            <p className="mt-2 text-serif italic text-[var(--ink)]/82 text-[14px] sm:text-[15px]">{t("disc.h1.sub")}</p>
+            <p className="mt-2 text-serif italic text-[var(--ink)]/72 text-[14px] sm:text-[15px]">{t("disc.h1.sub")}</p>
           </div>
         ) : (
           <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
@@ -474,7 +474,7 @@ function Discover() {
             <button
               type="button"
               onClick={() => navigate({ to: "/app/profile" })}
-              className="mt-4 w-full rounded-xl border border-[var(--ink)]/24 bg-[var(--paper)] hover:bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3 text-left transition"
+              className="mt-4 w-full rounded-xl border border-[var(--ink)]/16 bg-[var(--paper)] hover:bg-[var(--ink)]/[0.03] p-3 flex items-center gap-3 text-left transition"
               aria-label={tr("Complete your profile", "Completa tu perfil", "Complète ton profil")}
             >
               <div className="relative shrink-0 w-9 h-9">
@@ -494,7 +494,7 @@ function Discover() {
                 </div>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[12px] font-semibold uppercase tracking-widest text-[var(--ink)]/82">
+                <div className="text-[12px] font-semibold uppercase tracking-widest text-[var(--ink)]/72">
                   {tr("Profile", "Perfil", "Profil")}
                 </div>
                 <div className="text-[13px] text-[var(--ink)] truncate">
@@ -520,7 +520,7 @@ function Discover() {
               className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
                 world
                   ? "bg-[var(--plum)] text-[var(--paper)] border border-[var(--plum)] shadow-sm"
-                  : "bg-white border border-[var(--ink)]/28 text-[var(--ink)] hover:bg-[var(--plum)]/5 hover:border-[var(--plum)]/40"
+                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--plum)]/5 hover:border-[var(--plum)]/40"
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
@@ -531,13 +531,13 @@ function Discover() {
 
         <div className="mt-4 flex items-center gap-2 sm:gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/68" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/55" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={tr("Search by name...", "Buscar por nombre...", "Rechercher par nom...")}
-              className="w-full h-10 pl-10 pr-3 rounded-full border border-[var(--ink)]/30 bg-white text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/68 focus:outline-none focus:border-[var(--ink)]/40"
+              className="w-full h-10 pl-10 pr-3 rounded-full border border-[var(--ink)]/22 bg-white text-[var(--ink)] text-[13px] placeholder:italic placeholder:text-[var(--ink)]/55 focus:outline-none focus:border-[var(--ink)]/40"
             />
           </div>
           <button
@@ -545,7 +545,7 @@ function Discover() {
             className={`h-9 rounded-full px-3.5 text-[11px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 shrink-0 border transition ${
               activeFilterCount > 0
                 ? "text-[var(--ink)] border-[var(--ink)]/40 bg-[var(--ink)]/[0.06]"
-                : "text-[var(--ink)]/80 border-[var(--ink)]/28 bg-white hover:bg-[var(--ink)]/5"
+                : "text-[var(--ink)]/70 border-[var(--ink)]/20 bg-white hover:bg-[var(--ink)]/5"
             }`}
             aria-expanded={showFilters}
           >
@@ -556,13 +556,13 @@ function Discover() {
 
 
         {showFilters && (
-          <div className="mt-3 p-3 rounded-xl border border-[var(--ink)]/30 bg-white space-y-3">
+          <div className="mt-3 p-3 rounded-xl border border-[var(--ink)]/22 bg-white space-y-3">
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/72 mb-1.5 font-semibold">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
               <select
                 value={levelFilter}
                 onChange={(e) => setLevelFilter(e.target.value)}
-                className="w-full h-9 rounded-md border border-[var(--ink)]/28 bg-white text-[var(--ink)] px-2 text-sm"
+                className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               >
                 <option value="all">{tr("Any level", "Cualquier nivel", "Tous niveaux")}</option>
                 {PADEL_LEVELS.map((lv) => (
@@ -571,14 +571,14 @@ function Discover() {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("City / barrio / zone", "Ciudad / barrio / zona", "Ville / quartier / zone")}</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/72 mb-1.5 font-semibold">{tr("City / barrio / zone", "Ciudad / barrio / zona", "Ville / quartier / zone")}</label>
               <input
                 type="text"
                 list="zone-suggestions"
                 value={zoneFilter === "all" ? "" : zoneFilter}
                 onChange={(e) => setZoneFilter(e.target.value.trim() ? e.target.value : "all")}
                 placeholder={tr("Any city or zone (e.g. Dubai, Madrid, Chamberí)", "Cualquier ciudad o zona (p. ej. Dubái, Madrid, Chamberí)", "N'importe quelle ville ou zone (ex. Dubaï, Madrid, Chamberí)")}
-                className="w-full h-9 rounded-md border border-[var(--ink)]/28 bg-white text-[var(--ink)] px-2 text-sm"
+                className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               />
               <datalist id="zone-suggestions">
                 {zonesInFeed.map((z) => (
@@ -675,7 +675,7 @@ function Discover() {
             return (
               <div className="mt-10 mx-auto max-w-sm text-center programme-card p-6">
                 <div className="text-serif text-lg text-[var(--ink)]">{title}</div>
-                <p className="text-sm text-[var(--ink)]/80 mt-2 leading-snug">{hint}</p>
+                <p className="text-sm text-[var(--ink)]/70 mt-2 leading-snug">{hint}</p>
                 {actions.length > 0 && (
                   <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
                     {actions.map((a, i) => (
@@ -686,7 +686,7 @@ function Discover() {
                         className={`rounded-full px-4 py-2 text-[12px] font-semibold uppercase tracking-widest transition ${
                           a.primary
                             ? "bg-[var(--ink)] text-[var(--paper)] hover:opacity-90"
-                            : "border border-[var(--ink)]/32 text-[var(--ink)] hover:bg-[var(--ink)]/5"
+                            : "border border-[var(--ink)]/25 text-[var(--ink)] hover:bg-[var(--ink)]/5"
                         }`}
                       >
                         {a.label}
@@ -748,7 +748,7 @@ function Discover() {
                   </div>
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
-                    <p className="mt-1 text-[9px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/68 tracking-[0.18em] font-semibold uppercase truncate">
                       {me.zone} · {label(me.level)}
                     </p>
                     {me.free_court_access && (
@@ -788,7 +788,7 @@ function Discover() {
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                          className="w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/24 flex items-center justify-center text-[var(--ink)] hover:bg-white"
+                          className="w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center text-[var(--ink)] hover:bg-white"
                           aria-label={tr(`Hide ${c.first_name}`, `Ocultar a ${c.first_name}`, `Masquer ${c.first_name}`)}
                           title={tr("Not interested — hide from my Home grid", "No me interesa — ocultar de mi Inicio", "Pas intéressé·e — masquer de mon accueil")}
                         >
@@ -804,7 +804,7 @@ function Discover() {
                             }
                             navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                           }}
-                          className={`w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/24 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/50"}`}
+                          className={`w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
                           aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
                           title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
                         >
@@ -821,11 +821,11 @@ function Discover() {
                           if (c.liked) unlikeM.mutate(c.id);
                           else likeSilentM.mutate(c.id);
                         }}
-                        className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/24 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
+                        className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
                         aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Connect with ${c.first_name}`, `Conectar con ${c.first_name}`, `Connecter avec ${c.first_name}`)}
                         title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Connect", "Conectar", "Connecter")}
                       >
-                        {c.liked ? <Check className="w-2.5 h-2.5 text-[var(--ink)]" strokeWidth={2.5} /> : <UserPlus className="w-2.5 h-2.5 text-[var(--ink)]/80" strokeWidth={1.8} />}
+                        {c.liked ? <Check className="w-2.5 h-2.5 text-[var(--ink)]" strokeWidth={2.5} /> : <UserPlus className="w-2.5 h-2.5 text-[var(--ink)]/70" strokeWidth={1.8} />}
                       </button>
 
 
@@ -840,7 +840,7 @@ function Discover() {
 
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
-                    <p className="mt-1 text-[9px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
+                    <p className="mt-1 text-[9px] text-[var(--ink)]/68 tracking-[0.18em] font-semibold uppercase truncate">
                       {c.zone} · {label(c.level)}
                     </p>
                     {(c as any).is_coach && (
@@ -849,7 +849,7 @@ function Discover() {
                       </div>
                     )}
                     {away && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/30 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/22 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
                         ✈ On holidays
                       </div>
                     )}
@@ -885,7 +885,7 @@ function Discover() {
                       ) : <span />}
 
                       <div
-                        className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/28"
+                        className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
                         title={t("disc.scoreTooltip")}
                       >
                         {c.score}
@@ -909,7 +909,7 @@ function Discover() {
 
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && closePreview()}>
-        <DialogContent className="max-w-sm sm:max-w-md lg:max-w-3xl xl:max-w-4xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/24 text-[var(--ink)] max-h-[92vh] flex flex-col rounded-3xl">
+        <DialogContent className="max-w-sm sm:max-w-md lg:max-w-3xl xl:max-w-4xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/16 text-[var(--ink)] max-h-[92vh] flex flex-col rounded-3xl">
           {preview && (() => {
             const mine = feedQ.data?.me;
             const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);
@@ -949,13 +949,13 @@ function Discover() {
                     <div className="px-5 pt-5 pb-28 lg:px-8 lg:pt-8 lg:pb-24 space-y-4">
                       {/* Programme header */}
                       <div className="text-center lg:text-left">
-                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{preview.zone} · {label(preview.level)}</div>
+                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/68">{preview.zone} · {label(preview.level)}</div>
                         <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
                         <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-1 text-[11px] uppercase tracking-normal">
                           <span className="text-[var(--ink)] font-semibold">{preview.score}% {tr("match", "afinidad", "affinité")}</span>
                         </div>
                         {preview.bio && (
-                          <blockquote className="mt-4 text-serif italic text-[19px] leading-snug text-[var(--ink)]/90 whitespace-pre-wrap">“{preview.bio.trim()}”</blockquote>
+                          <blockquote className="mt-4 text-serif italic text-[19px] leading-snug text-[var(--ink)]/85 whitespace-pre-wrap">“{preview.bio.trim()}”</blockquote>
                         )}
                       </div>
 
@@ -971,7 +971,7 @@ function Discover() {
                           <CourtIcon className="w-5 h-3 text-[var(--ink)] shrink-0" strokeWidth={2.2} />
                           <span className="font-medium">{tr("Free court access", "Pista gratis", "Terrain gratuit")}</span>
                           {preview.free_court_note && (
-                            <span className="text-[var(--ink)]/82 truncate">· {preview.free_court_note}</span>
+                            <span className="text-[var(--ink)]/72 truncate">· {preview.free_court_note}</span>
                           )}
                         </div>
                       )}
@@ -1033,44 +1033,44 @@ function Discover() {
                           : pairKind === "court" ? tr("Court partners", "Pareja de pista", "Partenaires de court")
                           : null;
                         const heading = (children: string) => (
-                          <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/78">{children}</div>
+                          <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/68">{children}</div>
                         );
                         return (
-                          <div className="border-t border-[var(--ink)]/24 pt-6">
-                            <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{tr("You two", "Vosotros dos", "Vous deux")}</span>
+                          <div className="border-t border-[var(--ink)]/16 pt-6">
+                            <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/68">{tr("You two", "Vosotros dos", "Vous deux")}</span>
                             {!needsUnlock && (
                               <div className="mt-3 grid grid-cols-2">
                                 {[
                                   { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
                                   { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
                                 ].map((s, i) => (
-                                  <div key={s.key} className={i === 1 ? "pl-5 border-l border-[var(--ink)]/24" : "pr-5"}>
-                                    <div className="text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/76">{s.label}</div>
+                                  <div key={s.key} className={i === 1 ? "pl-5 border-l border-[var(--ink)]/16" : "pr-5"}>
+                                    <div className="text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/65">{s.label}</div>
                                     {s.value != null && (
                                       <div className="text-serif text-[34px] leading-none text-[var(--ink)] tabular-nums mt-2">
-                                        {s.value}<span className="text-[17px] text-[var(--ink)]/78 ml-0.5">%</span>
+                                        {s.value}<span className="text-[17px] text-[var(--ink)]/68 ml-0.5">%</span>
                                       </div>
                                     )}
                                     {s.key === "off" && offCourtWaiting && (
-                                      <div className="text-[12px] italic text-[var(--ink)]/78 leading-snug mt-1.5">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
+                                      <div className="text-[12px] italic text-[var(--ink)]/68 leading-snug mt-1.5">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
                                     )}
                                   </div>
                                 ))}
                               </div>
                             )}
                             {!needsUnlock && pairTag && (
-                              <div className="mt-3 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/84">{pairTag}</div>
+                              <div className="mt-3 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/75">{pairTag}</div>
                             )}
                             <div className="h-5" />
 
                             {needsUnlock ? (
                               <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
                             ) : compatQ.isLoading ? (
-                              <p className="text-serif italic text-[17px] text-[var(--ink)]/78">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
+                              <p className="text-serif italic text-[17px] text-[var(--ink)]/68">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
                             ) : data ? (
                               <p className="text-serif text-[19px] text-[var(--ink)] leading-snug">{noEmoji(data.sub_scores?.headline || data.blurb)}</p>
                             ) : (
-                              <p className="text-sm text-[var(--ink)]/76 italic">{tr("The court read isn't available right now.", "La lectura de pista no está disponible ahora.", "La lecture du court n'est pas disponible pour le moment.")}</p>
+                              <p className="text-sm text-[var(--ink)]/65 italic">{tr("The court read isn't available right now.", "La lectura de pista no está disponible ahora.", "La lecture du court n'est pas disponible pour le moment.")}</p>
                             )}
 
                             {shared.length > 0 && (
@@ -1079,7 +1079,7 @@ function Discover() {
                                 <ul className="space-y-2.5">
                                   {shared.map((r) => (
                                     <li key={r.q.id}>
-                                      <div className="text-[11px] text-[var(--ink)]/76 leading-snug">{r.q.q[lang]}</div>
+                                      <div className="text-[11px] text-[var(--ink)]/65 leading-snug">{r.q.q[lang]}</div>
                                       <div className="text-serif text-[16px] text-[var(--ink)] leading-snug mt-0.5">{tr("You both:", "Los dos:", "Vous deux :")} <span className="italic">{r.opt[lang]}</span></div>
                                     </li>
                                   ))}
@@ -1104,7 +1104,7 @@ function Discover() {
                                   type="button"
                                   onClick={() => setFullReadFor(showFull ? null : preview.id)}
                                   aria-expanded={showFull}
-                                  className="mt-5 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/78 hover:text-[var(--ink)] transition"
+                                  className="mt-5 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/68 hover:text-[var(--ink)] transition"
                                 >
                                   {showFull ? tr("Hide full read", "Ocultar lectura completa", "Masquer la lecture complète") : tr("Read the full court read", "Leer el análisis completo", "Lire l'analyse complète")}
                                 </button>
@@ -1113,12 +1113,12 @@ function Discover() {
                                     {bullets.length > 0 && (
                                       <ul className="space-y-1.5">
                                         {bullets.slice(0, 3).map((b, i) => (
-                                          <li key={i} className="text-[13px] text-[var(--ink)]/88 leading-snug">{b}</li>
+                                          <li key={i} className="text-[13px] text-[var(--ink)]/80 leading-snug">{b}</li>
                                         ))}
                                       </ul>
                                     )}
                                     {data.friction && (
-                                      <p className="text-[12px] text-[var(--ink)]/84 leading-snug">
+                                      <p className="text-[12px] text-[var(--ink)]/75 leading-snug">
                                         <span className="font-medium">{tr("Worth knowing:", "A tener en cuenta:", "À savoir :")}</span> {noEmoji(data.friction)}
                                       </p>
                                     )}
@@ -1128,7 +1128,7 @@ function Discover() {
                                         <ul className="space-y-2">
                                           {character.map((r) => (
                                             <li key={r.q.id}>
-                                              <div className="text-[11px] text-[var(--ink)]/76 leading-snug">{r.q.q[lang]}</div>
+                                              <div className="text-[11px] text-[var(--ink)]/65 leading-snug">{r.q.q[lang]}</div>
                                               <div className="text-serif italic text-[15px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
                                             </li>
                                           ))}
@@ -1157,9 +1157,9 @@ function Discover() {
                         if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · "), icon: "🗣️" });
                         { const nat = formatNationalities(preview); if (nat) chips.push({ key: "nat", text: nat, icon: "🌍" }); }
                         return (
-                          <div className="flex flex-wrap gap-2 border-t border-[var(--ink)]/24 pt-5">
+                          <div className="flex flex-wrap gap-2 border-t border-[var(--ink)]/16 pt-5">
                             {chips.map((c) => (
-                              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/24 bg-white px-3.5 py-1.5 text-[12.5px] text-[var(--ink)]/90">
+                              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/16 bg-white px-3.5 py-1.5 text-[12.5px] text-[var(--ink)]/85">
                                 <span aria-hidden>{c.icon}</span>
                                 {c.text}
                               </span>
@@ -1174,7 +1174,7 @@ function Discover() {
                         <button
                           type="button"
                           onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
-                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/76 hover:text-[var(--ink)]/88 transition"
+                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/65 hover:text-[var(--ink)]/80 transition"
                           aria-label={`Block ${preview?.first_name ?? ""}`}
                         >
                           <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
@@ -1182,7 +1182,7 @@ function Discover() {
                         <button
                           type="button"
                           onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
-                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/76 hover:text-red-500/80 transition"
+                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/65 hover:text-red-500/80 transition"
                           aria-label={`Report ${preview?.first_name ?? ""}`}
                         >
                           <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
@@ -1199,11 +1199,11 @@ function Discover() {
       </Dialog>
 
       <Dialog open={introOpen} onOpenChange={setIntroOpen}>
-        <DialogContent className="max-w-md bg-[var(--paper)] border border-[var(--ink)]/26">
+        <DialogContent className="max-w-md bg-[var(--paper)] border border-[var(--ink)]/18">
           <DialogTitle className="text-serif text-3xl text-[var(--ink)]">
             {preview ? tr(`Send ${preview.first_name} a message`, `Enviar mensaje a ${preview.first_name}`, `Envoyer un message à ${preview.first_name}`) : ""}
           </DialogTitle>
-          <p className="text-[13px] text-[var(--ink)]/80 -mt-1">
+          <p className="text-[13px] text-[var(--ink)]/70 -mt-1">
             {tr(
               "One message only. They'll see it once and can accept to open the chat, or ignore it.",
               "Un solo mensaje. Lo verán una vez y pueden aceptar para abrir el chat, o ignorarlo.",
@@ -1215,16 +1215,16 @@ function Discover() {
             onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
             rows={4}
             placeholder={tr("Hey! We played at Padel Now last month — up for another game?", "¡Hola! Jugamos en Padel Now el mes pasado — ¿otro partido?", "Salut ! On a joué à Padel Now le mois dernier — on rejoue ?")}
-            className="w-full rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--plum)] resize-none"
+            className="w-full rounded-2xl border border-[var(--ink)]/20 bg-white p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--plum)] resize-none"
           />
-          <div className="flex items-center justify-between text-[11px] text-[var(--ink)]/78">
+          <div className="flex items-center justify-between text-[11px] text-[var(--ink)]/68">
             <span>{introText.length}/300</span>
           </div>
           <div className="flex gap-2 mt-1">
             <button
               type="button"
               onClick={() => setIntroOpen(false)}
-              className="flex-1 h-11 rounded-full border border-[var(--ink)]/32 text-[var(--ink)]/88 text-[11px] uppercase tracking-[0.16em] font-semibold"
+              className="flex-1 h-11 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]/80 text-[11px] uppercase tracking-[0.16em] font-semibold"
             >
               {tr("Cancel", "Cancelar", "Annuler")}
             </button>
@@ -1250,25 +1250,25 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
   if (typeof padel === "number") rows.push({ label: tr("Padel", "Pádel", "Padel"), value: padel });
   if (typeof personality === "number") rows.push({ label: tr("Personality", "Personalidad", "Personnalité"), value: personality });
   return (
-    <div className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-4">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78 mb-3">{tr("Your Match Score", "Tu puntuación de compatibilidad", "Ton score de match")}</div>
+    <div className="rounded-2xl border border-[var(--ink)]/16 bg-white p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68 mb-3">{tr("Your Match Score", "Tu puntuación de compatibilidad", "Ton score de match")}</div>
 
       <div className="flex items-center gap-4">
         <div className="text-display text-5xl text-[var(--ink)] leading-none">{total}%</div>
         <div className="flex-1 space-y-2.5">
           {rows.map((r) => (
             <div key={r.label} className="flex items-center gap-2">
-              <div className="text-[11px] text-[var(--ink)]/76 w-20 shrink-0 text-right">{r.label}</div>
+              <div className="text-[11px] text-[var(--ink)]/65 w-20 shrink-0 text-right">{r.label}</div>
               <div className="flex-1 h-1.5 rounded-full bg-[var(--ink)]/10 overflow-hidden">
                 <div className="h-full rounded-full bg-[var(--ink)]/70" style={{ width: `${r.value}%` }} />
               </div>
-              <div className="text-[11px] font-semibold text-[var(--ink)]/88 w-8 shrink-0 text-right">{r.value}%</div>
+              <div className="text-[11px] font-semibold text-[var(--ink)]/80 w-8 shrink-0 text-right">{r.value}%</div>
             </div>
           ))}
         </div>
       </div>
       {rows.length > 0 && (
-        <p className="mt-3 text-[10px] text-[var(--ink)]/78 leading-snug">
+        <p className="mt-3 text-[10px] text-[var(--ink)]/68 leading-snug">
           {tr("Overall = average of Padel and Personality.", "Total = media de Pádel y Personalidad.", "Total = moyenne de Padel et Personnalité.")}
         </p>
       )}
@@ -1279,7 +1279,7 @@ function MatchScoreCard({ total, padel, personality }: { total: number; padel: n
 function Info({ label, v }: { label: string; v: string }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/78">{label}</div>
+      <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/68">{label}</div>
       <div className="text-[var(--ink)]">{v}</div>
     </div>
   );
@@ -1305,7 +1305,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
         <div className="text-serif text-[15px] text-[var(--ink)]">
           {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
-        <div className="text-xs text-[var(--ink)]/76">{tr("Tip: a photo with your racket works best.", "Consejo: una foto con tu pala funciona mejor.", "Astuce : une photo avec ta raquette marche le mieux.")}</div>
+        <div className="text-xs text-[var(--ink)]/65">{tr("Tip: a photo with your racket works best.", "Consejo: una foto con tu pala funciona mejor.", "Astuce : une photo avec ta raquette marche le mieux.")}</div>
       </div>
       <button
         type="button"
@@ -1315,7 +1315,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
           sessionStorage.setItem("photo-reminder-dismissed", "1");
           setDismissed(true);
         }}
-        className="p-1 text-[var(--ink)]/76 hover:text-[var(--ink)]"
+        className="p-1 text-[var(--ink)]/65 hover:text-[var(--ink)]"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />
@@ -1333,7 +1333,7 @@ function GridSkeleton() {
         <div className="mt-3 h-4 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
         <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-2xl overflow-hidden border border-[var(--ink)]/22 bg-white">
+            <div key={i} className="rounded-2xl overflow-hidden border border-[var(--ink)]/14 bg-white">
               <div className="aspect-[3/4] bg-[var(--ink)]/8 animate-pulse" />
               <div className="p-3 space-y-2">
                 <div className="h-3.5 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />

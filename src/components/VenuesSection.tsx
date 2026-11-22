@@ -101,7 +101,7 @@ export function VenuesSection() {
           <h3 className="text-sm font-semibold uppercase tracking-widest text-[var(--ink)]">
             {tr("Your clubs", "Tus clubes", "Tes clubs")}
           </h3>
-          <p className="text-xs text-[var(--ink)]/82 mt-1">
+          <p className="text-xs text-[var(--ink)]/72 mt-1">
             {tr(
               "Your clubs & compounds. Private by default — we only match you with people who play there.",
               "Tus clubs y urbanizaciones. Privado por defecto — solo emparejamos con quien juega ahí.",
@@ -114,11 +114,11 @@ export function VenuesSection() {
       {mine.length > 0 && (
         <ul className="space-y-2">
           {mine.map((m) => (
-            <li key={m.venue.id} className="flex items-center gap-2 rounded-xl border border-[var(--ink)]/24 bg-white/60 p-2.5">
-              <MapPin className="w-4 h-4 text-[var(--ink)]/76 shrink-0" />
+            <li key={m.venue.id} className="flex items-center gap-2 rounded-xl border border-[var(--ink)]/16 bg-white/60 p-2.5">
+              <MapPin className="w-4 h-4 text-[var(--ink)]/65 shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{m.venue.name}</div>
-                {m.venue.city && <div className="text-xs text-[var(--ink)]/82 truncate">{m.venue.city}</div>}
+                {m.venue.city && <div className="text-xs text-[var(--ink)]/72 truncate">{m.venue.city}</div>}
               </div>
               <button
                 onClick={() => privacyMut.mutate({ venue_id: m.venue.id, is_public: !m.is_public })}
@@ -149,33 +149,33 @@ export function VenuesSection() {
           {tr("Add a venue", "Añadir un lugar", "Ajouter un lieu")}
         </Button>
       ) : (
-        <div className="space-y-2 rounded-xl border border-[var(--ink)]/24 bg-white/60 p-3">
+        <div className="space-y-2 rounded-xl border border-[var(--ink)]/16 bg-white/60 p-3">
           <input
             type="text"
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={tr("Search or type a name…", "Busca o escribe un nombre…", "Cherche ou tape un nom…")}
-            className="w-full rounded-lg border border-[var(--ink)]/30 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-[var(--ink)]/22 bg-white px-3 py-2 text-sm"
           />
 
           {q.trim().length >= 2 && (
             <div className="space-y-1">
-              {searchQ.isFetching && <div className="text-xs text-[var(--ink)]/76 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" />{tr("Searching…", "Buscando…", "Recherche…")}</div>}
+              {searchQ.isFetching && <div className="text-xs text-[var(--ink)]/65 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" />{tr("Searching…", "Buscando…", "Recherche…")}</div>}
               {results.slice(0, 6).map((r) => (
                 <button
                   key={r.id}
                   onClick={() => addMut.mutate(r.id)}
                   className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[var(--ink)]/5 text-sm flex items-center gap-2"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[var(--ink)]/68" />
+                  <MapPin className="w-3.5 h-3.5 text-[var(--ink)]/55" />
                   <span className="flex-1 truncate">{r.name}{r.city ? ` · ${r.city}` : ""}</span>
                   <Plus className="w-3.5 h-3.5" />
                 </button>
               ))}
 
-              <div className="pt-2 mt-2 border-t border-[var(--ink)]/24 space-y-2">
-                <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/76">
+              <div className="pt-2 mt-2 border-t border-[var(--ink)]/16 space-y-2">
+                <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/65">
                   {tr("Not listed? Add it", "¿No está? Añádelo", "Absent ? Ajoute-le")}
                 </div>
                 <input
@@ -183,12 +183,12 @@ export function VenuesSection() {
                   value={newCity}
                   onChange={(e) => setNewCity(e.target.value)}
                   placeholder={tr("City (optional)", "Ciudad (opcional)", "Ville (facultatif)")}
-                  className="w-full rounded-lg border border-[var(--ink)]/30 bg-white px-3 py-1.5 text-sm"
+                  className="w-full rounded-lg border border-[var(--ink)]/22 bg-white px-3 py-1.5 text-sm"
                 />
                 <select
                   value={newType}
                   onChange={(e) => setNewType(e.target.value as Venue["venue_type"])}
-                  className="w-full rounded-lg border border-[var(--ink)]/30 bg-white px-3 py-1.5 text-sm"
+                  className="w-full rounded-lg border border-[var(--ink)]/22 bg-white px-3 py-1.5 text-sm"
                 >
                   {TYPES.map((t) => (
                     <option key={t.value} value={t.value}>{tr(t.en, t.es, t.fr)}</option>
@@ -208,7 +208,7 @@ export function VenuesSection() {
             </div>
           )}
 
-          <button onClick={() => { setShowAdd(false); setQ(""); }} className="text-xs text-[var(--ink)]/76 hover:text-[var(--ink)]">
+          <button onClick={() => { setShowAdd(false); setQ(""); }} className="text-xs text-[var(--ink)]/65 hover:text-[var(--ink)]">
             {tr("Cancel", "Cancelar", "Annuler")}
           </button>
         </div>

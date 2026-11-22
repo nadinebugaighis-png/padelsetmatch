@@ -118,7 +118,7 @@ function ChatRoom() {
   });
 
 
-  if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--ink)]/82">{t("chat.opening")}</div>;
+  if (q.isLoading || !q.data) return <div className="px-4 py-10 text-center text-[var(--ink)]/72">{t("chat.opening")}</div>;
   const { other, my_profile_id, messages } = q.data;
 
   const onBlock = () => {
@@ -137,7 +137,7 @@ function ChatRoom() {
 
   return (
     <main className="programme-page max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col text-[var(--ink)]" style={{ height: "calc(100dvh - 160px - env(safe-area-inset-bottom, 0px))" }}>
-      <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--ink)]/24">
+      <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--ink)]/16">
         <button
           type="button"
           onClick={() => {
@@ -157,7 +157,7 @@ function ChatRoom() {
             <div className="text-display text-xl leading-none">{other.first_name}</div>
           </div>
 
-          <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{other.zone} · {label(other.level)}</div>
+          <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/72">{other.zone} · {label(other.level)}</div>
         </div>
 
         {statusQ.data && statusQ.data.count >= 2 && (
@@ -178,7 +178,7 @@ function ChatRoom() {
           type="button"
           onClick={() => confirmM.mutate()}
           disabled={statusQ.data?.iConfirmed || confirmM.isPending}
-          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--ink)]/30 bg-[var(--ink)]/5 px-3 py-2 text-xs hover:bg-[var(--ink)]/10 disabled:opacity-60"
+          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--ink)]/22 bg-[var(--ink)]/5 px-3 py-2 text-xs hover:bg-[var(--ink)]/10 disabled:opacity-60"
         >
           <Check className="w-3.5 h-3.5 text-[var(--ink)]" />
           {statusQ.data?.iConfirmed
@@ -200,13 +200,13 @@ function ChatRoom() {
         <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
           <div className="surface-card p-5 w-full max-w-sm space-y-3" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-display text-xl">{tr("Report", "Reportar", "Signaler")} {other.first_name}</h3>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/82">{tr("Reason", "Motivo", "Raison")}</label>
-            <select className="w-full bg-transparent border border-[var(--ink)]/28 rounded-md h-10 px-2" value={reportReason} onChange={(e) => setReportReason(e.target.value)}>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/72">{tr("Reason", "Motivo", "Raison")}</label>
+            <select className="w-full bg-transparent border border-[var(--ink)]/20 rounded-md h-10 px-2" value={reportReason} onChange={(e) => setReportReason(e.target.value)}>
               {REPORT_REASONS.map((r) => <option key={r} value={r} className="bg-[var(--paper)] text-[var(--ink)]">{r}</option>)}
             </select>
-            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/82">{tr("Details (optional)", "Detalles (opcional)", "Détails (optionnel)")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--ink)]/72">{tr("Details (optional)", "Detalles (opcional)", "Détails (optionnel)")}</label>
             <Input value={reportDetail} onChange={(e) => setReportDetail(e.target.value)} placeholder={tr("Anything else we should know?", "¿Algo más que debamos saber?", "Autre chose à savoir ?")} maxLength={400} />
-            <p className="text-xs text-[var(--ink)]/82">{tr("The account will be auto-suspended immediately while our team reviews.", "La cuenta se suspenderá al instante mientras nuestro equipo la revisa.", "Le compte sera suspendu automatiquement pendant que notre équipe vérifie.")}</p>
+            <p className="text-xs text-[var(--ink)]/72">{tr("The account will be auto-suspended immediately while our team reviews.", "La cuenta se suspenderá al instante mientras nuestro equipo la revisa.", "Le compte sera suspendu automatiquement pendant que notre équipe vérifie.")}</p>
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => setReportOpen(false)}>{tr("Cancel", "Cancelar", "Annuler")}</Button>
               <Button onClick={submitReport} className="bg-red-500 hover:bg-red-600 text-white">{tr("Submit report", "Enviar reporte", "Envoyer le signalement")}</Button>
@@ -217,7 +217,7 @@ function ChatRoom() {
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {messages.length === 0 && (
-          <div className="text-center text-sm text-[var(--ink)]/82 mt-10">
+          <div className="text-center text-sm text-[var(--ink)]/72 mt-10">
             {t("chat.empty")}
           </div>
         )}
@@ -252,7 +252,7 @@ function ChatRoom() {
                   </button>
                 </div>
               )}
-              <div className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed shadow-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm border border-[var(--ink)]" : "bg-white text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/30"}`}>
+              <div className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed shadow-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm border border-[var(--ink)]" : "bg-white text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/22"}`}>
                 {isEditing ? (
                   <form
                     onSubmit={(e) => {
@@ -282,7 +282,7 @@ function ChatRoom() {
                 ) : (
                   <>
                     <p className="whitespace-pre-wrap">{m.body}</p>
-                    <div className={`mt-1 flex items-center gap-1.5 text-[10px] ${mine ? "text-[var(--paper)]/70" : "text-[var(--ink)]/76"}`}>
+                    <div className={`mt-1 flex items-center gap-1.5 text-[10px] ${mine ? "text-[var(--paper)]/70" : "text-[var(--ink)]/65"}`}>
                       <span>{time}</span>
                       {m.edited_at && <span>{tr("(edited)", "(editado)", "(modifié)")}</span>}
                     </div>
@@ -297,7 +297,7 @@ function ChatRoom() {
 
       <form
         onSubmit={(e) => { e.preventDefault(); if (text.trim()) sendM.mutate(text.trim()); }}
-        className="px-3 py-3 border-t border-[var(--ink)]/24 flex gap-2"
+        className="px-3 py-3 border-t border-[var(--ink)]/16 flex gap-2"
       >
         <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={messages.length === 0 ? t("chat.placeholder") : ""} />
         <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending} className="bg-[var(--ink)] text-[var(--paper)] hover:brightness-110"><Send className="w-4 h-4" /></Button>
@@ -374,9 +374,9 @@ function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; ot
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-2xl border border-[var(--ink)]/24 bg-[var(--paper)] p-4 space-y-3 shadow-lg" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-sm rounded-2xl border border-[var(--ink)]/16 bg-[var(--paper)] p-4 space-y-3 shadow-lg" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <div className="text-xs uppercase tracking-widest text-[var(--ink)]/82">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
+          <div className="text-xs uppercase tracking-widest text-[var(--ink)]/72">{tr("Rate your match", "Valora tu partido", "Note ton match")}</div>
           <button type="button" onClick={onClose} className="p-1 opacity-60 hover:opacity-100"><X className="w-3.5 h-3.5" /></button>
         </div>
         <div className="flex gap-1.5 justify-center">
@@ -388,7 +388,7 @@ function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; ot
               className="p-1"
               aria-label={tr(`${n} star${n>1?"s":""}`, `${n} estrella${n>1?"s":""}`)}
             >
-              <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]/40"}`} />
+              <Star className={`w-7 h-7 transition ${n <= stars ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]/25"}`} />
             </button>
           ))}
         </div>
@@ -401,7 +401,7 @@ function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; ot
                 key={tag}
                 type="button"
                 onClick={() => setTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-                className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/28 text-[var(--ink)]/88 hover:bg-[var(--ink)]/5"}`}
+                className={`px-2.5 py-1 rounded-full text-[11px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
               >
                 {displayLabel}
               </button>

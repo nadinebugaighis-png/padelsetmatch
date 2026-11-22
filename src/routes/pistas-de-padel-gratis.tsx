@@ -115,7 +115,7 @@ function PistasGratisPage() {
           Pistas de pádel gratis
           <span className="block text-[var(--plum)]">cerca de ti</span>
         </h1>
-        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/84">
+        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/75">
           El precio de la pista es el principal motivo por el que se juega menos al pádel de lo que se
           querría. Pero una gran parte de las pistas —municipales, de comunidad, de urbanización— se pueden
           usar gratis y están vacías ahora mismo. Lo difícil nunca fue la pista: es encontrar a los otros
@@ -135,7 +135,7 @@ function PistasGratisPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/24">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Cuatro formas de jugar gratis
         </h2>
@@ -143,19 +143,19 @@ function PistasGratisPage() {
           {WAYS.map(({ icon: Icon, title, body }) => (
             <article
               key={title}
-              className="rounded-2xl bg-white border border-[var(--ink)]/22 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
+              className="rounded-2xl bg-white border border-[var(--ink)]/14 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
             >
               <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]">
                 <Icon className="w-5 h-5" strokeWidth={2} />
               </span>
               <h3 className="text-serif mt-4 text-xl text-[var(--ink)]">{title}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{body}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{body}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/24 max-w-3xl">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16 max-w-3xl">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Preguntas frecuentes
         </h2>
@@ -163,18 +163,18 @@ function PistasGratisPage() {
           {FAQ.map((f) => (
             <div key={f.q}>
               <h3 className="text-[16px] font-semibold text-[var(--ink)]">{f.q}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{f.a}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{f.a}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/24">
+      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/16">
         <div className="max-w-2xl">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
             Pista resuelta. Ahora, el cuarto.
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/80">
+          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
             PadelSetMatch es un directorio de jugadores de pádel cerca de ti. Mira quién juega tu nivel,
             quién tiene hueco esta semana y quién puede poner la pista.{" "}
             <Link to="/padel-cerca-de-mi" className="text-[var(--plum)] underline underline-offset-4">

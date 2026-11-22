@@ -1119,7 +1119,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
 
   const trigger = isDark
     ? "border-[var(--paper)]/25 bg-[var(--paper)]/5 text-[var(--paper)] hover:bg-[var(--paper)]/10"
-    : "border-[var(--ink)]/30 bg-[var(--paper)]/70 text-[var(--ink)] hover:bg-[var(--paper)] backdrop-blur";
+    : "border-[var(--ink)]/22 bg-[var(--paper)]/70 text-[var(--ink)] hover:bg-[var(--paper)] backdrop-blur";
 
   return (
     <div ref={ref} className={`relative inline-block ${className}`}>
@@ -1139,7 +1139,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 mt-1.5 z-50 min-w-[4.5rem] rounded-xl border border-[var(--ink)]/26 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
+          className="absolute right-0 mt-1.5 z-50 min-w-[4.5rem] rounded-xl border border-[var(--ink)]/18 bg-[var(--paper)] py-1 shadow-lg overflow-hidden"
         >
           {options.map((o) => (
             <li key={o.code}>
@@ -1149,7 +1149,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
                 aria-selected={lang === o.code}
                 aria-label={o.name}
                 onClick={() => { setLang(o.code); setOpen(false); }}
-                className={`w-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-center transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)]" : "text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
+                className={`w-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-center transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)]" : "text-[var(--ink)]/70 hover:bg-[var(--ink)]/5"}`}
               >
                 {o.code.toUpperCase()}
               </button>

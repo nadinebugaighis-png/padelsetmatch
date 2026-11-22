@@ -5,9 +5,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvailability, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { AVAILABILITY_SLOTS, decodeLocation, formatLocation } from "@/lib/types";
+import { AVAILABILITY_SLOTS } from "@/lib/types";
 import { formatNationalities } from "@/lib/affinity";
-import { Camera, ChevronDown, GraduationCap, Lock, Mail, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, User, UserPlus } from "lucide-react";
+import { Camera, ChevronDown, ChevronRight, GraduationCap, Lock, Mail, MapPin, MessageCircle, MessageSquare, Pencil, Share2, ShieldCheck, Sparkles, User, UserPlus } from "lucide-react";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
-import { CoachSelfSection } from "@/components/CoachSelfSection";
+import { getMyCoachSlots } from "@/lib/coach-lessons.functions";
 import { VenuesSection } from "@/components/VenuesSection";
 import { GearEditor } from "@/components/GearShelf";
 import { MemberGuide, openMemberGuide } from "@/components/MemberGuide";
@@ -159,11 +159,7 @@ function ProfilePage() {
       </main>
     );
   }
-  const locations = (p.locations ?? []).map(decodeLocation).map(formatLocation);
   const genderLabel = p.gender === "self-describe" ? (p.gender_custom || label("self-describe")) : label(p.gender);
-  const hasDetails =
-    locations.length > 0 ||
-    (p.languages?.length ?? 0) > 0;
 
   return (
     <main className="programme-page px-4 sm:px-6 lg:px-10 py-4 sm:py-6 max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto min-h-[calc(100vh-4rem)]">
@@ -233,6 +229,12 @@ function ProfilePage() {
 
       
 
+      {(p as any).is_coach && (
+        <div className="mt-3 sm:mt-4">
+          <CoachBar />
+        </div>
+      )}
+
       {/* Messages — placed right under name & photo for quick access */}
       <div className="mt-3 sm:mt-4">
         <MessagesRow />
@@ -254,49 +256,6 @@ function ProfilePage() {
       <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">
         <AvailabilityCard awayUntil={(p as any).away_until ?? null} slots={((p as any).availability ?? []) as string[]} onSaved={() => qc.invalidateQueries({ queryKey: ["my-profile"] })} />
 
-        <QaRow />
-
-        <MemberGuide />
-
-        {hasDetails && (
-          <CollapsibleRow
-            icon={<MapPin className="w-4 h-4" />}
-            title={tr("Where & languages", "Dónde y idiomas", "Où et langues")}
-            subtitle={[
-              locations[0],
-              (p.languages ?? [])[0] ? label((p.languages ?? [])[0] as any) : null,
-            ].filter(Boolean).join(" · ") || undefined}
-            contentCard
-          >
-            <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-              {locations.length > 0 && (
-                <Section title={t("prof.playsIn")}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {locations.map((l) => <span key={l} className="chip-ink">{l}</span>)}
-                  </div>
-                </Section>
-              )}
-              {p.languages?.length > 0 && (
-                <Section title={t("prof.languages")}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {p.languages.map((l) => <span key={l} className="chip-ink">{label(l)}</span>)}
-                  </div>
-                </Section>
-              )}
-            </div>
-            {p.free_court_access && (
-              <div className="mt-3 rounded-xl border border-[var(--ink)]/15 bg-[var(--ink)]/[0.04] p-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--grass)] text-[var(--ink)] text-[10px] font-bold uppercase tracking-wider shrink-0">
-                    {tr("🎾 Free court", "🎾 Pista gratis", "🎾 Pista gratuite")}
-                  </span>
-                  {p.free_court_note && <span className="text-xs text-[var(--ink)]/85">{p.free_court_note}</span>}
-                </div>
-              </div>
-            )}
-          </CollapsibleRow>
-        )}
-
         <CollapsibleRow
           icon={<MapPin className="w-4 h-4" />}
           title={tr("Your clubs", "Tus clubes", "Tes clubs")}
@@ -305,13 +264,10 @@ function ProfilePage() {
           <VenuesSection />
         </CollapsibleRow>
 
-        <CollapsibleRow
-          icon={<GraduationCap className="w-4 h-4" />}
-          title={tr("Coaching", "Entrenamiento", "Coaching")}
-          subtitle={(p as any).is_coach ? tr("You're listed as a coach", "Apareces como coach", "Tu es listé comme coach") : tr("Turn on coach mode", "Activa el modo coach", "Activer le mode coach")}
-        >
-          <CoachSelfSection isCoach={!!(p as any).is_coach} profileId={p.id} />
-        </CollapsibleRow>
+        <QaRow />
+
+        <MemberGuide />
+
 
         <CollapsibleRow
           icon={<MessageSquare className="w-4 h-4" />}
@@ -484,15 +440,6 @@ function FeedbackBox() {
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>
       </div>
-    </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div>
-      <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/60 mb-2 font-medium">{title}</div>
-      {children}
     </div>
   );
 }
@@ -778,5 +725,38 @@ function QaRow() {
     >
       <QaAnswers />
     </CollapsibleRow>
+  );
+}
+
+function CoachBar() {
+  const tr = useTr();
+  const fetchMine = useServerFn(getMyCoachSlots);
+  const { data } = useQuery({ queryKey: ["my-coach-slots"], queryFn: () => fetchMine() });
+  const requests = (data?.slots ?? []).filter((s) => s.status === "requested").length;
+  return (
+    <Link
+      to="/app/coach"
+      className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--plum)]/25 bg-[var(--plum)]/[0.05] px-4 py-3 transition-colors hover:bg-[var(--plum)]/[0.09]"
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[var(--plum)]/12 text-[var(--plum)] shrink-0">
+          <GraduationCap className="w-4 h-4" />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight">{tr("Coach", "Entrenador", "Coach")}</div>
+          <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">
+            {tr("Lesson times & requests", "Horarios de clases y solicitudes", "Horaires de cours et demandes")}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        {requests > 0 && (
+          <span className="inline-flex min-w-6 h-6 px-1.5 items-center justify-center rounded-full bg-[var(--plum)] text-[11px] font-semibold text-[var(--paper)]">
+            {requests}
+          </span>
+        )}
+        <ChevronRight className="w-5 h-5 text-[var(--ink)]/45" />
+      </div>
+    </Link>
   );
 }

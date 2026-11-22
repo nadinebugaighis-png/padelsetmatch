@@ -26,6 +26,7 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
 import { PhotoCropDialog } from "@/components/PhotoCropDialog";
+import { CoachSelfSection } from "@/components/CoachSelfSection";
 import { parseAdultAge } from "@/lib/qa-safety";
 
 export const Route = createFileRoute("/app/onboarding")({
@@ -879,6 +880,17 @@ function Onboarding() {
 
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.bio")}</label>
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
+
+            {profileQ.data && (
+              <div className="pt-2">
+                <CoachSelfSection isCoach={!!(profileQ.data as { is_coach?: boolean }).is_coach} showLink={false} />
+                {(profileQ.data as { is_coach?: boolean }).is_coach && (
+                  <p className="mt-2 text-[11px] text-[var(--ink)]/55 text-center">
+                    {tr("Manage lesson times and requests from the Coach shortcut on your Me page.", "Gestiona horarios y solicitudes desde el acceso Entrenador en tu página Yo.", "Gère horaires et demandes depuis le raccourci Coach sur ta page Moi.")}
+                  </p>
+                )}
+              </div>
+            )}
 
             <h2 className="text-display text-2xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>

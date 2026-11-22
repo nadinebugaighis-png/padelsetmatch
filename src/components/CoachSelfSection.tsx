@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { setCoachFlag } from "@/lib/coach.functions";
 import { useTr } from "@/lib/i18n";
 
-export function CoachSelfSection({ isCoach }: { isCoach: boolean; profileId?: string }) {
+export function CoachSelfSection({ isCoach, showLink = true }: { isCoach: boolean; profileId?: string; showLink?: boolean }) {
   const tr = useTr();
   const qc = useQueryClient();
   const setFlag = useServerFn(setCoachFlag);
@@ -54,7 +54,7 @@ export function CoachSelfSection({ isCoach }: { isCoach: boolean; profileId?: st
           <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isCoach ? "translate-x-5" : ""}`} />
         </button>
       </div>
-      {isCoach && (
+      {isCoach && showLink && (
         <Link to="/app/coach" className="mt-4 flex h-11 items-center justify-center rounded-full bg-[var(--ink)] text-[14px] font-medium text-[var(--cream)]">
           {tr("Share your lesson times", "Publica tus horarios de clases", "Publie tes horaires de cours")}
         </Link>

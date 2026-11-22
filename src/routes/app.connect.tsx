@@ -208,9 +208,6 @@ function ConnectPage() {
               </button>
             </div>
           </div>
-          <p className="mt-3 text-serif italic text-[15px] text-[var(--ink)]/78">
-            {tr("Travel plans, coaches, kit and questions from members.", "Viajes, entrenadores, material y preguntas de los miembros.", "Voyages, coachs, matériel et questions des membres.")}
-          </p>
 
           <button
             type="button"

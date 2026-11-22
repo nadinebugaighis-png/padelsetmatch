@@ -767,7 +767,7 @@ function MatchCard({
       <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${toneClass}`} />
 
       {/* Header: when, places open, where */}
-      <button type="button" onClick={openFromCard} className="block w-full text-left pl-5 pr-4 pt-4 sm:pl-6 sm:pr-5">
+      <button type="button" onClick={openFromCard} className="block w-full text-left pl-4 pr-3.5 pt-3 sm:pl-5 sm:pr-4">
         <div className="flex items-baseline justify-between gap-3">
           <div className="flex items-baseline gap-2 min-w-0">
             <span className="text-serif text-[19px] sm:text-[24px] leading-none text-[var(--ink)] whitespace-nowrap">
@@ -795,16 +795,16 @@ function MatchCard({
       </button>
 
       {/* Players: two pairs facing each other, kept close together */}
-      <div className="ml-5 mr-4 sm:ml-6 sm:mr-5 mt-3.5 border-t border-[var(--ink)]/[0.08] pt-3 pb-3">
+      <div className="ml-4 mr-3.5 sm:ml-5 sm:mr-4 mt-2.5 border-t border-[var(--ink)]/[0.12] pt-2 pb-2">
         {asPairs ? (
           <div className="mx-auto grid max-w-[380px] grid-cols-[1fr_auto_1fr] items-start">
             <div>
-              <div className="mb-2 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{tr("Team A", "Equipo A", "Équipe A")}</div>
+              <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{tr("Team A", "Equipo A", "Équipe A")}</div>
               <div className="flex justify-center gap-2 sm:gap-3">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
             </div>
-            <span className="mt-[38px] px-1.5 sm:px-3 text-serif italic text-[13px] text-[var(--ink)]/30">vs</span>
+            <span className="mt-[30px] px-1.5 sm:px-3 text-serif italic text-[13px] text-[var(--ink)]/30">vs</span>
             <div>
-              <div className="mb-2 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{tr("Team B", "Equipo B", "Équipe B")}</div>
+              <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{tr("Team B", "Equipo B", "Équipe B")}</div>
               <div className="flex justify-center gap-2 sm:gap-3">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
             </div>
           </div>
@@ -821,7 +821,7 @@ function MatchCard({
       </div>
 
       {/* Quiet footer: details and the one action */}
-      <div className="ml-5 mr-4 sm:ml-6 sm:mr-5 border-t border-[var(--ink)]/[0.08] py-2.5 flex items-center gap-3">
+      <div className="ml-4 mr-3.5 sm:ml-5 sm:mr-4 border-t border-[var(--ink)]/[0.12] py-1.5 flex items-center gap-3">
         <div className="flex-1 min-w-0 text-[12.5px] leading-snug text-[var(--ink)]/72 truncate">
           {details.map((d, i) => (
             <span key={i}>{i > 0 && <span className="text-[var(--ink)]/30"> · </span>}{d}</span>

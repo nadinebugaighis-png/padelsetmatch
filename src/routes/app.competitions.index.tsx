@@ -63,23 +63,25 @@ function CompetitionsPage() {
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pt-2 pb-32">
         {/* Same heading and tabs as the Matches page, with Competitions selected. */}
         <div className="px-4 sm:px-6 lg:px-10 pt-1 sm:pt-2">
-          <h1 className="text-serif text-xl sm:text-3xl leading-tight tracking-normal text-foreground">
-            {tr("MATCHES", "PARTIDOS", "MATCHES")}
+          <h1 className="text-serif text-[34px] sm:text-5xl leading-none tracking-normal text-foreground pt-1">
+            {tr("Matches", "Partidos", "Matchs")}
           </h1>
-          <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="mt-2 mb-2 flex min-w-0 gap-3 sm:gap-5 border-b border-border">
-            <Button role="tab" aria-selected={false} variant="ghost" onClick={() => navigate({ to: "/app/events" })}
-              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-transparent text-muted-foreground hover:bg-transparent">
-              {tr("Find a match", "Buscar partido", "Trouver un match")}
-            </Button>
-            <Button role="tab" aria-selected={false} variant="ghost"
-              onClick={() => { try { sessionStorage.setItem("psm-matches-tab", "mine"); } catch { /* ignore */ } navigate({ to: "/app/events" }); }}
-              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-transparent text-muted-foreground hover:bg-transparent">
-              {tr("My matches", "Mis partidos", "Mes matchs")}
-            </Button>
-            <Button role="tab" aria-selected variant="ghost"
-              className="h-9 rounded-none px-0 text-sm shadow-none border-b-2 border-primary text-primary hover:bg-transparent">
-              {tr("Competitions", "Competiciones", "Compétitions")}
-            </Button>
+          <div className="mt-4 mb-1 -mx-4 sm:mx-0 px-4 sm:px-0 border-b border-border">
+            <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-5 sm:gap-7">
+              <Button role="tab" aria-selected={false} variant="ghost" onClick={() => navigate({ to: "/app/events" })}
+                className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
+                {tr("Find a match", "Buscar partido", "Trouver un match")}
+              </Button>
+              <Button role="tab" aria-selected={false} variant="ghost"
+                onClick={() => { try { sessionStorage.setItem("psm-matches-tab", "mine"); } catch { /* ignore */ } navigate({ to: "/app/events" }); }}
+                className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
+                {tr("My matches", "Mis partidos", "Mes matchs")}
+              </Button>
+              <Button role="tab" aria-selected variant="ghost"
+                className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-primary text-primary hover:bg-transparent">
+                {tr("Competitions", "Competiciones", "Compétitions")}
+              </Button>
+            </div>
           </div>
         </div>
 

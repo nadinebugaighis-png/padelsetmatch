@@ -25,6 +25,8 @@ function measureLift(): number {
 export function CookieBanner() {
   const [show, setShow] = useState(false);
   const [lift, setLift] = useState(0);
+  // Wait while a pop-up (like the first-visit guide) is open, so the two never stack.
+  const [dialogOpen, setDialogOpen] = useState(false);
   const tr = useTr();
 
   useEffect(() => {
@@ -37,7 +39,10 @@ export function CookieBanner() {
     let frame = 0;
     const measure = () => {
       if (frame) cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setLift(measureLift()));
+      frame = requestAnimationFrame(() => {
+        setLift(measureLift());
+        setDialogOpen(!!document.querySelector('[role="dialog"][data-state="open"], [role="alertdialog"][data-state="open"]'));
+      });
     };
     measure();
     // Bars mount after data arrives, so re-measure whenever the tree changes.
@@ -51,7 +56,7 @@ export function CookieBanner() {
     };
   }, [show]);
 
-  if (!show) return null;
+  if (!show || dialogOpen) return null;
 
   const accept = () => {
     window.localStorage.setItem(KEY, "1");

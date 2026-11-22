@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Bell, X } from "lucide-react";
 import { useTr } from "@/lib/i18n";
 import { NO_FILTERS, type MatchFilters, type TimeOfDay } from "@/lib/match-filters";
@@ -15,6 +16,13 @@ type Props = {
 /** Play page filters, in the same bottom sheet style as "Where are you playing?". */
 export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel, resultCount, onAlerts }: Props) {
   const tr = useTr();
+  // Escape closes the sheet on keyboards, like the app's other pop-ups.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
   if (!open) return null;
 
   const Pill = ({ active, onClick, children, disabled }: { active: boolean; onClick: () => void; children: React.ReactNode; disabled?: boolean }) => (
@@ -36,7 +44,7 @@ export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel
   );
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={tr("Filters", "Filtros", "Filtres")}
+    <div role="dialog" aria-modal="true" data-state="open" aria-label={tr("Filters", "Filtros", "Filtres")}
       className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-[var(--ink)]/45 backdrop-blur-[2px]" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()}
         className="w-full sm:max-w-md rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 pt-5 animate-in slide-in-from-bottom-6 duration-200"

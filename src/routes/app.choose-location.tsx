@@ -11,9 +11,9 @@ export const Route = createFileRoute("/app/choose-location")({
   head: () => ({
     meta: [
       { title: "Choose your community · PadelSetMatch" },
-      { name: "description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell, Marbella or Dubai." },
+      { name: "description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell, Marbella · Golden Mile or Dubai." },
       { property: "og:title", content: "Choose your community · PadelSetMatch" },
-      { property: "og:description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell, Marbella or Dubai." },
+      { property: "og:description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell, Marbella · Golden Mile or Dubai." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

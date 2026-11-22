@@ -1036,8 +1036,8 @@ function Discover() {
                           <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/78">{children}</div>
                         );
                         return (
-                          <div className="border-t border-[var(--ink)]/16 pt-3">
-                            <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{tr("You two", "Vosotros dos", "Vous deux")}</span>
+                          <div className="border-t border-[var(--ink)]/16 pt-2">
+                            <span className="block leading-none text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{tr("You two", "Vosotros dos", "Vous deux")}</span>
                             {!needsUnlock && (
                               <div className="mt-3 grid grid-cols-2">
                                 {[

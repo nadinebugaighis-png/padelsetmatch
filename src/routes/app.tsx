@@ -311,7 +311,8 @@ function AuthShell() {
       >
         <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
-      <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
+      {/* The iPhone app reserves the clock area above the page; this cream strip above the bar hides cards scrolling behind the clock. */}
+      <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur before:content-[''] before:absolute before:inset-x-0 before:bottom-full before:h-[160px] before:bg-[var(--paper)] before:pointer-events-none">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (

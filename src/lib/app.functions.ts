@@ -635,6 +635,10 @@ export const likeProfile = createServerFn({ method: "POST" })
       .select("liker_profile_id")
       .maybeSingle();
     if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    // A like also follows the player, so you hear when they join a game.
+    await context.supabase
+      .from("favorites" as never)
+      .upsert({ profile_id: myId, favorite_profile_id: data.likedProfileId } as never, { onConflict: "profile_id,favorite_profile_id", ignoreDuplicates: true } as never);
     // Check if a match was created (trigger handles reciprocal)
     const a = myId < data.likedProfileId ? myId : data.likedProfileId;
     const b = myId < data.likedProfileId ? data.likedProfileId : myId;
@@ -682,6 +686,11 @@ export const unlikeProfile = createServerFn({ method: "POST" })
       .delete()
       .eq("liker_profile_id", myId)
       .eq("liked_profile_id", data.likedProfileId);
+    await context.supabase
+      .from("favorites" as never)
+      .delete()
+      .eq("profile_id", myId)
+      .eq("favorite_profile_id", data.likedProfileId);
     return { ok: true };
   });
 

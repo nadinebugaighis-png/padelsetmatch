@@ -20,6 +20,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ExternalLink } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
 import { CourtViewCard } from "@/components/CourtViewCard";
+import { PlayerPhoto } from "@/components/PlayerPhoto";
+import { photoSrc } from "@/lib/photo-src";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsSheet } from "@/components/AlertsSheet";
@@ -928,7 +930,7 @@ function SlotAvatar({
         }`}
       >
         {photo ? (
-          <img src={photo} alt={name ?? ""} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+          <PlayerPhoto src={photoSrc(photo, 240)} seed={seed} alt={name ?? ""} loading={isCoach ? "eager" : "lazy"} decoding="async" className="w-full h-full object-cover" />
         ) : (
           <CourtViewCard seed={seed} name={name} role="img" className="w-full h-full" letterClassName="text-[16px]" />
         )}

@@ -94,8 +94,8 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --ball: #A5E358;             /* grass green — unified accent */
 
   /* Wimbledon "Programme" palette (light editorial pages) */
-  --paper: #FDFBF7;
-  --paper-2: #EAE7E0;
+  --paper: #FDFCFA;
+  --paper-2: #F1EFE9;
   --limestone: color-mix(in oklab, var(--paper-2) 75%, var(--paper));   /* settled, confirmed states */
   --ink: #0F3E2E;
   --plum: #482E92;

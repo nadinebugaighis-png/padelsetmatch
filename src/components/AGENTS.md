@@ -1,0 +1,1 @@
+- Sign-in lives in one shared AuthPanel (Apple, then Google, then email/password) used by the home page and /auth, so the welcome screen never splits into a separate form page.

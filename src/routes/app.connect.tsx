@@ -177,8 +177,8 @@ function ConnectPage() {
       {/* Header */}
       <header className="mb-7 sm:mb-10">
         <div className={smallCaps}>{tr("Connect", "Conecta", "Connecter")}</div>
-        <h1 className="mt-2 text-serif text-[34px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
-        <p className="mt-3 text-serif italic text-[15px] sm:text-[17px] text-[var(--ink)]/55">
+        <h1 className="mt-2 text-serif text-[28px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
+        <p className="mt-2 text-serif italic text-[14px] sm:text-[17px] text-[var(--ink)]/55">
           {tr("Say when you're free. Members nearby can join you.", "Di cuándo puedes. Los miembros de tu zona se unen.", "Dis quand tu es libre. Les membres du coin te rejoignent.")}
         </p>
       </header>
@@ -191,7 +191,7 @@ function ConnectPage() {
           <div className="flex items-end justify-between gap-3">
             <div>
               <div className={smallCaps}>{tr("The noticeboard", "El tablón", "Le tableau")}</div>
-              <h2 className="mt-2 text-serif text-[30px] sm:text-[38px] text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
+              <h2 className="mt-2 text-serif text-[20px] sm:text-[32px] text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
             </div>
             <div className="flex items-center gap-1 lg:hidden">
               <button
@@ -308,7 +308,7 @@ function ConnectPage() {
           </ul>
         ) : (postsQ.data ?? []).length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-serif italic text-[22px] text-[var(--ink)]/80">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
+            <p className="text-serif italic text-[18px] sm:text-[22px] text-[var(--ink)]/80">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
             <button
               type="button"
               onClick={() => { setEditingPost(null); setComposerOpen(true); }}
@@ -374,8 +374,8 @@ function ConnectPage() {
                   </div>
 
                   {/* Post */}
-                  <h3 className="text-serif text-[23px] sm:text-[26px] text-[var(--ink)] mt-4 leading-tight">{p.title}</h3>
-                  <p className="text-[14.5px] sm:text-[15px] text-[var(--ink)]/70 mt-2 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
+                  <h3 className="text-serif text-[18px] sm:text-[24px] text-[var(--ink)] mt-4 leading-tight">{p.title}</h3>
+                  <p className="text-[14px] sm:text-[15px] text-[var(--ink)]/70 mt-2 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
 
                   {/* Latest comments */}
                   {p.latest_comments.length > 0 && (

@@ -379,7 +379,7 @@ function EventsPage() {
     <div className="programme-page match-feed-page min-h-[calc(100vh-4rem)]">
       <CreateMatchChooser open={chooser} onClose={() => setChooser(false)} />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-10 pt-3 sm:pt-4 pb-24">
-        <h1 className="text-serif text-[34px] sm:text-5xl leading-none tracking-normal text-foreground pt-1">
+        <h1 className="text-serif text-[28px] sm:text-5xl leading-none tracking-normal text-foreground pt-1">
           {tr("Matches", "Partidos", "Matchs")}
         </h1>
 
@@ -387,13 +387,13 @@ function EventsPage() {
           <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-5 sm:gap-7">
             {(["find", "mine"] as const).map((value) => (
               <Button key={value} role="tab" aria-selected={mode === value} variant="ghost" onClick={() => setMode(value)}
-                className={`h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
+                className={`h-10 rounded-none px-0 text-[14px] sm:text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px hover:bg-transparent ${mode === value ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}>
                 {value === "find" ? tr("Find a match", "Buscar partido", "Trouver un match") : tr("My matches", "Mis partidos", "Mes matchs")}
                 {value === "mine" && mineCount > 0 && <span className="text-muted-foreground">{mineCount}</span>}
               </Button>
             ))}
             <Button role="tab" aria-selected={false} variant="ghost" onClick={() => navigate({ to: "/app/competitions" })}
-              className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
+              className="h-10 rounded-none px-0 text-[14px] sm:text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
               {tr("Competitions", "Competiciones", "Compétitions")}
             </Button>
           </div>
@@ -417,7 +417,7 @@ function EventsPage() {
                   onClick={() => toggleDay(k)}
                   className="shrink-0 min-w-11 flex-1 flex flex-col items-center gap-1 py-1 active:opacity-70">
                   <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/45"}`}>{i === 0 ? tr("Today", "Hoy", "Auj.") : weekday}</span>
-                  <span className={`text-serif text-[24px] leading-none tracking-normal ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{d.getDate()}</span>
+                  <span className={`text-serif text-[20px] sm:text-[24px] leading-none tracking-normal ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{d.getDate()}</span>
                   <span aria-hidden className={`h-px w-6 ${active ? "bg-[var(--gold)]" : "bg-transparent"}`} />
                 </button>
               );
@@ -426,7 +426,7 @@ function EventsPage() {
               onClick={() => chooseDays(new Set(days.map(dayKey)))}
               className="shrink-0 min-w-11 flex-1 flex flex-col items-center gap-1 py-1 active:opacity-70">
               <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/45"}`}>{tr("All", "Todas", "Toutes")}</span>
-              <span className={`text-serif italic text-[16px] leading-[24px] ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{tr("dates", "fechas", "dates")}</span>
+              <span className={`text-serif italic text-[14px] sm:text-[16px] leading-[20px] sm:leading-[24px] ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{tr("dates", "fechas", "dates")}</span>
               <span aria-hidden className={`h-px w-6 ${allDates ? "bg-[var(--gold)]" : "bg-transparent"}`} />
             </button>
           </div>
@@ -573,7 +573,7 @@ function FeedSection({
           return (
             <div key={group.key}>
               <h2 className="flex items-baseline gap-3 pb-2 border-b border-[var(--gold)]/40">
-                <span className="text-serif text-[26px] leading-none text-[var(--ink)]">{heading.main}</span>
+                <span className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)]">{heading.main}</span>
                 <span className="font-sans font-normal text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/50 truncate">{heading.sub}</span>
               </h2>
               <ul className="mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2 lg:items-start">
@@ -770,7 +770,7 @@ function MatchCard({
       <button type="button" onClick={openFromCard} className="block w-full text-left pl-5 pr-4 pt-4 sm:pl-6 sm:pr-5">
         <div className="flex items-baseline justify-between gap-3">
           <div className="flex items-baseline gap-2 min-w-0">
-            <span className="text-serif text-[22px] sm:text-[24px] leading-none text-[var(--ink)] whitespace-nowrap">
+            <span className="text-serif text-[19px] sm:text-[24px] leading-none text-[var(--ink)] whitespace-nowrap">
               {e.time_tbd ? time : <>{time}<span className="text-[var(--ink)]/35"> – </span>{endTime}</>}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/45 whitespace-nowrap">
@@ -782,7 +782,7 @@ function MatchCard({
           </span>
         </div>
         <div className="mt-1.5 flex items-baseline gap-2 min-w-0">
-          <span className="min-w-0 truncate text-[15px] sm:text-[16px] text-[var(--ink)]">
+          <span className="min-w-0 truncate text-[14px] sm:text-[16px] text-[var(--ink)]">
             {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
           </span>
           {placeLine && (
@@ -1050,7 +1050,7 @@ function MyMatchesList({
           : first.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" });
         return (
           <div key={key}>
-            <h2 className="mb-3 pb-2 border-b border-[var(--gold)]/40 text-serif text-[24px] leading-none text-[var(--ink)] first-letter:uppercase">{label}</h2>
+            <h2 className="mb-3 pb-2 border-b border-[var(--gold)]/40 text-serif text-[20px] sm:text-[24px] leading-none text-[var(--ink)] first-letter:uppercase">{label}</h2>
             <ul className="space-y-2">
               {list.map((e) => {
                 const isPending = pending === e.id;
@@ -1060,9 +1060,9 @@ function MyMatchesList({
                   : new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
                   <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/[0.07] pl-5 pr-4 py-4 flex items-center gap-4 cursor-pointer active:bg-[var(--paper-2)]/40 transition">
-                    <span className="text-serif text-[26px] leading-none text-[var(--ink)] shrink-0 min-w-[64px]">{time}</span>
+                    <span className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)] shrink-0 min-w-[56px] sm:min-w-[64px]">{time}</span>
                     <div className="flex-1 min-w-0">
-                      <div className="text-serif text-[17px] leading-tight text-[var(--ink)] truncate">
+                      <div className="text-serif text-[15px] sm:text-[17px] leading-tight text-[var(--ink)] truncate">
                         {e.club_name || tr("Match", "Partido", "Match")}
                       </div>
                       <div className="mt-1 text-[10.5px] uppercase tracking-[0.18em] text-[var(--ink)]/50">

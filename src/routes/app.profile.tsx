@@ -205,12 +205,12 @@ function ProfilePage() {
           </label>
         </div>
 
-        <h1 className="mt-5 text-serif text-[40px] sm:text-5xl leading-none text-[var(--ink)]">{p.first_name}</h1>
+        <h1 className="mt-5 text-serif text-[28px] sm:text-[40px] leading-none text-[var(--ink)]">{p.first_name}</h1>
         {metaLine && (
           <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{metaLine}</p>
         )}
         {p.bio && (
-          <p className="mt-4 max-w-sm text-serif italic text-[17px] leading-snug text-[var(--ink)]/80">
+          <p className="mt-4 max-w-sm text-serif italic text-[15px] sm:text-[17px] leading-snug text-[var(--ink)]/80">
             “{p.bio}”
           </p>
         )}
@@ -229,7 +229,7 @@ function ProfilePage() {
 
         {/* My kit */}
         <section className="border-b border-[var(--ink)]/12 py-5">
-          <h2 className="text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("My kit", "Mi equipo", "Mon matériel")}</h2>
+          <h2 className="text-serif text-[18px] sm:text-[22px] leading-tight text-[var(--ink)]">{tr("My kit", "Mi equipo", "Mon matériel")}</h2>
           <p className="text-xs text-[var(--ink)]/55 mt-1 mb-3">
             {tr("Shows on your player card.", "Se ve en tu ficha.", "Visible sur ta fiche.")}
           </p>
@@ -322,7 +322,7 @@ function ProfilePage() {
 function RowInner({ title, meta, dot = false, open }: { title: string; meta?: ReactNode; dot?: boolean; open?: boolean }) {
   return (
     <>
-      <span className="text-serif text-[22px] leading-tight text-[var(--ink)] truncate">{title}</span>
+      <span className="text-serif text-[18px] sm:text-[22px] leading-tight text-[var(--ink)] truncate">{title}</span>
       <span className="flex items-center gap-2 shrink-0 text-[13px] text-[var(--ink)]/55">
         {dot && <span className="w-1.5 h-1.5 rounded-full bg-[var(--ink)]" aria-hidden="true" />}
         {meta}
@@ -485,7 +485,7 @@ function AvailabilityCard({ awayUntil, slots, onSaved }: { awayUntil: string | n
     <section className="border-b border-[var(--ink)]/12 py-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("My rhythm", "Mi ritmo", "Mon rythme")}</h2>
+          <h2 className="text-serif text-[18px] sm:text-[22px] leading-tight text-[var(--ink)]">{tr("My rhythm", "Mi ritmo", "Mon rythme")}</h2>
           <p className="text-xs text-[var(--ink)]/55 mt-1">
             {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>

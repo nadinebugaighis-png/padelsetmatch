@@ -171,7 +171,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
                   <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/45"}`}>
                     {i === 0 ? tr("Today", "Hoy", "Auj.") : weekdayShort(d)}
                   </span>
-                  <span className={`text-serif text-[24px] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{dayNumber(d)}</span>
+                  <span className={`text-serif text-[20px] sm:text-[24px] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{dayNumber(d)}</span>
                   <span aria-hidden className={`h-px w-6 ${active ? "bg-[var(--gold)]" : "bg-transparent"}`} />
                 </button>
               );
@@ -192,7 +192,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
                   onClick={() => setSlot(s)}
                   className="flex flex-col items-center gap-1.5 py-1.5 transition active:opacity-70 disabled:opacity-25"
                 >
-                  <span className={`text-serif text-[17px] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/50"}`}>{slotLabel(s)}</span>
+                  <span className={`text-serif text-[15px] sm:text-[17px] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/50"}`}>{slotLabel(s)}</span>
                   <span aria-hidden className={`h-px w-6 ${active ? "bg-[var(--gold)]" : "bg-transparent"}`} />
                 </button>
               );
@@ -232,7 +232,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
       {hasAreas && (
         <div className="mt-10 lg:mt-0">
           <div className="flex items-baseline gap-3">
-            <h2 id="who-can-play" className="text-serif text-[28px] sm:text-[32px] leading-none text-[var(--ink)]">
+            <h2 id="who-can-play" className="text-serif text-[20px] sm:text-[32px] leading-none text-[var(--ink)]">
               {tr("This week", "Esta semana", "Cette semaine")}
             </h2>
             {groups.length > 0 && (
@@ -248,7 +248,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
             </div>
           ) : groups.length === 0 ? (
             <div className="py-8">
-              <p className="text-serif italic text-[22px] text-[var(--ink)]">{tr("Nobody yet this week", "Nadie todavía esta semana", "Personne encore cette semaine")}</p>
+              <p className="text-serif italic text-[18px] sm:text-[22px] text-[var(--ink)]">{tr("Nobody yet this week", "Nadie todavía esta semana", "Personne encore cette semaine")}</p>
               <p className="mt-2 text-[14px] text-[var(--ink)]/60">{tr("Say when you're free and players near you can join.", "Di cuándo puedes y los jugadores de tu zona se unirán.", "Dis quand tu es libre et les joueurs du coin te rejoindront.")}</p>
             </div>
           ) : (
@@ -289,10 +289,10 @@ function GroupCard({ group, areaKey, title, slotLabel, focused, busy, onJoin, on
     <li className={`overflow-hidden rounded-[22px] bg-white border border-[var(--ink)]/10 px-5 pt-5 sm:px-6 sm:pt-6 ${group.imIn ? "" : "pb-5 sm:pb-6"} ${focused ? "ring-2 ring-[var(--gold)]/50" : ""}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-serif text-[26px] sm:text-[30px] leading-none text-[var(--ink)] capitalize truncate">{title}</div>
+          <div className="text-serif text-[20px] sm:text-[28px] leading-none text-[var(--ink)] capitalize truncate">{title}</div>
           <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{slotLabel}</div>
         </div>
-        <div className="shrink-0 pt-1 text-serif italic text-[15px] text-[var(--plum)]">{countLabel}</div>
+        <div className="shrink-0 pt-0.5 text-serif italic text-[14px] text-[var(--plum)]">{countLabel}</div>
       </div>
 
       <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-4">

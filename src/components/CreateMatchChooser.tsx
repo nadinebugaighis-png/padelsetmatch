@@ -55,7 +55,7 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
         className="w-full sm:max-w-md rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 pt-5 animate-in slide-in-from-bottom-6 duration-200"
         style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
         <div className="flex items-center justify-between">
-          <h2 className="text-serif text-[24px] text-[var(--ink)]">{tr("Where are you playing?", "¿Dónde vas a jugar?", "Où vas-tu jouer ?")}</h2>
+          <h2 className="text-serif text-[20px] sm:text-[24px] text-[var(--ink)]">{tr("Where are you playing?", "¿Dónde vas a jugar?", "Où vas-tu jouer ?")}</h2>
           <button type="button" onClick={onClose} aria-label={tr("Close", "Cerrar", "Fermer")} className="grid size-9 place-items-center rounded-full text-[var(--ink)]/60"><X className="size-5" /></button>
         </div>
         <div className="mt-4 space-y-2.5">

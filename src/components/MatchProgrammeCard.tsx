@@ -85,7 +85,7 @@ export function MatchProgrammeCard({
           className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
           style={{ background: toneBg }}
         >
-          <div className="text-serif text-[26px] sm:text-[28px] leading-none text-[var(--ink)]">{match.time_tbd ? tr("Time", "Hora", "Heure") : parts.time}</div>
+          <div className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)]">{match.time_tbd ? tr("Time", "Hora", "Heure") : parts.time}</div>
           <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
             {dateBadge ?? parts.weekday}
           </div>

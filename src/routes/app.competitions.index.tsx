@@ -63,22 +63,22 @@ function CompetitionsPage() {
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto pt-2 pb-32">
         {/* Same heading and tabs as the Matches page, with Competitions selected. */}
         <div className="px-4 sm:px-6 lg:px-10 pt-1 sm:pt-2">
-          <h1 className="text-serif text-[34px] sm:text-5xl leading-none tracking-normal text-foreground pt-1">
+          <h1 className="text-serif text-[28px] sm:text-5xl leading-none tracking-normal text-foreground pt-1">
             {tr("Matches", "Partidos", "Matchs")}
           </h1>
           <div className="mt-4 mb-1 -mx-4 sm:mx-0 px-4 sm:px-0 border-b border-border">
             <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-5 sm:gap-7">
               <Button role="tab" aria-selected={false} variant="ghost" onClick={() => navigate({ to: "/app/events" })}
-                className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
+                className="h-10 rounded-none px-0 text-[14px] sm:text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
                 {tr("Find a match", "Buscar partido", "Trouver un match")}
               </Button>
               <Button role="tab" aria-selected={false} variant="ghost"
                 onClick={() => { try { sessionStorage.setItem("psm-matches-tab", "mine"); } catch { /* ignore */ } navigate({ to: "/app/events" }); }}
-                className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
+                className="h-10 rounded-none px-0 text-[14px] sm:text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-transparent text-muted-foreground hover:bg-transparent">
                 {tr("My matches", "Mis partidos", "Mes matchs")}
               </Button>
               <Button role="tab" aria-selected variant="ghost"
-                className="h-10 rounded-none px-0 text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-primary text-primary hover:bg-transparent">
+                className="h-10 rounded-none px-0 text-[14px] sm:text-[15px] font-normal shadow-none border-b-[1.5px] -mb-px border-primary text-primary hover:bg-transparent">
                 {tr("Competitions", "Competiciones", "Compétitions")}
               </Button>
             </div>
@@ -101,7 +101,7 @@ function CompetitionsPage() {
               <Section title={tr("Happening now", "En curso", "En cours")} items={live} live empty={tr("Nothing happening right now", "Nada en curso ahora mismo", "Rien en cours pour l'instant")} locale={locale} tr={tr} />
               <Section title={tr("Upcoming", "Próximas", "À venir")} items={upcoming} empty={nothing} locale={locale} tr={tr} />
               <div className="mt-2 border-t border-[var(--ink)]/10 pt-6">
-                <h2 className="text-serif text-[24px] leading-tight text-[var(--ink)]">{tr("Past competitions", "Competiciones pasadas", "Compétitions passées")}</h2>
+                <h2 className="text-serif text-[20px] sm:text-[24px] leading-tight text-[var(--ink)]">{tr("Past competitions", "Competiciones pasadas", "Compétitions passées")}</h2>
                 {past.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 items-start gap-x-4 gap-y-6 opacity-75">
                     {past.map((c) => <PosterCard key={c.id} c={c} past locale={locale} tr={tr} />)}
@@ -120,7 +120,7 @@ function CompetitionsPage() {
 function Section({ title, items, live, empty, locale, tr }: { title: string; items: CompetitionRow[]; live?: boolean; empty: string; locale: string; tr: ReturnType<typeof useTr> }) {
   return (
     <section className="mb-8">
-      <h2 className="text-serif text-[24px] leading-tight text-[var(--ink)]">{title}</h2>
+      <h2 className="text-serif text-[20px] sm:text-[24px] leading-tight text-[var(--ink)]">{title}</h2>
       {items.length === 0 ? (
         <p className="mt-4 text-[15px] text-[var(--ink)]/50">{empty}</p>
       ) : (

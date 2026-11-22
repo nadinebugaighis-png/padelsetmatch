@@ -9,6 +9,7 @@ export function isRTL(_lang: Lang): boolean {
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "Weekday lunchtime": "Weekday afternoons",
   // Landing
   "land.signin": "Sign in",
   "land.h1.a": "find your",

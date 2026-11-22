@@ -10,7 +10,7 @@ import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile,
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus, Bell } from "lucide-react";
+import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
@@ -977,9 +977,10 @@ function Discover() {
                           aria-pressed={favSet.has(preview.id)}
                           aria-label={favSet.has(preview.id) ? tr(`Stop following ${preview.first_name}`, `Dejar de seguir a ${preview.first_name}`, `Ne plus suivre ${preview.first_name}`) : tr(`Follow ${preview.first_name}`, `Seguir a ${preview.first_name}`, `Suivre ${preview.first_name}`)}
                           title={favSet.has(preview.id) ? tr("Following: you'll be told when they play", "Siguiendo: te avisaremos cuando juegue", "Suivi : on te préviendra quand il/elle joue") : tr("Follow: be told when they play", "Seguir: te avisamos cuando juegue", "Suivre : être prévenu quand il/elle joue")}
-                          className={`absolute -top-1 -right-1 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-[0.92] disabled:opacity-70 shadow-[0_6px_18px_-6px_rgba(15,62,46,0.35)] ${favSet.has(preview.id) ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)]/90 backdrop-blur-sm text-[var(--ink)] border border-[var(--ink)]/15 hover:border-[var(--ink)]/40"}`}
+                          className={`absolute top-4 right-4 sm:top-5 sm:right-5 h-8 px-3.5 rounded-full flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition active:scale-[0.95] disabled:opacity-70 shadow-[0_6px_18px_-8px_rgba(15,62,46,0.45)] ${favSet.has(preview.id) ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)]/90 backdrop-blur-sm text-[var(--ink)]"}`}
                         >
-                          <Bell className="w-[15px] h-[15px]" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={1.8} />
+                          {favSet.has(preview.id) && <Check className="w-3 h-3" strokeWidth={2.4} />}
+                          {favSet.has(preview.id) ? tr("Following", "Siguiendo", "Suivi") : tr("Follow", "Seguir", "Suivre")}
                         </button>
                       )}
                     </div>
@@ -1041,7 +1042,7 @@ function Discover() {
                             <button
                               type="button"
                               onClick={() => navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } })}
-                              className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110"
+                              className="flex-1 basis-0 h-11 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110"
                             >
                               <MessageCircle className="w-4 h-4" strokeWidth={1.8} />
                               {tr("Send message", "Enviar mensaje", "Envoyer un message")}
@@ -1049,7 +1050,7 @@ function Discover() {
                           ) : preview.liked ? (
                             <div
                               role="status"
-                              className="flex-1 h-11 px-5 rounded-full bg-[var(--limestone)] text-[var(--ink)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center gap-2 animate-in fade-in duration-300"
+                              className="flex-1 basis-0 h-11 px-3 rounded-full bg-[var(--limestone)] text-[var(--ink)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center gap-1.5 animate-in fade-in duration-300"
                             >
                               <Check className="w-3.5 h-3.5" strokeWidth={2.2} />
                               {tr("Request sent", "Solicitud enviada", "Demande envoyée")}
@@ -1059,7 +1060,7 @@ function Discover() {
                               type="button"
                               onClick={() => likeM.mutate(preview.id)}
                               disabled={likeM.isPending}
-                              className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110"
+                              className="flex-1 basis-0 h-11 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110"
                             >
                               {tr("Connect", "Conectar", "Connecter")}
                             </button>
@@ -1068,7 +1069,7 @@ function Discover() {
                             <button
                               type="button"
                               onClick={() => { setIntroText(""); setIntroOpen(true); }}
-                              className="h-11 px-5 rounded-full border border-[var(--ink)]/20 bg-white text-[var(--ink)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center transition active:scale-[0.98] hover:border-[var(--ink)]/45"
+                              className="flex-1 basis-0 h-11 px-4 rounded-full border border-[var(--ink)]/20 bg-white text-[var(--ink)] font-semibold uppercase tracking-[0.12em] text-[11px] whitespace-nowrap flex items-center justify-center transition active:scale-[0.98] hover:border-[var(--ink)]/45"
                             >
                               {tr("Intro note", "Nota", "Mot")}
                             </button>

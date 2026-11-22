@@ -738,17 +738,6 @@ function MatchCard({
   const rawPlace = e.city || e.club_address || "";
   const placeLine = rawPlace.trim() && (e.club_name ?? "").toLowerCase().includes(rawPlace.trim().toLowerCase()) ? "" : rawPlace;
 
-  const placesText = full
-    ? tr("Full", "Completo", "Complet")
-    : e.needs === 1
-      ? tr("One place open", "Queda una plaza", "Une place libre")
-      : e.needs === 2
-        ? tr("Two places open", "Quedan dos plazas", "Deux places libres")
-        : e.needs === 3
-          ? tr("Three places open", "Quedan tres plazas", "Trois places libres")
-          : e.needs === 4
-            ? tr("Four places open", "Quedan cuatro plazas", "Quatre places libres")
-            : tr(`${e.needs} places open`, `Quedan ${e.needs} plazas`, `${e.needs} places libres`);
   const details: ReactNode[] = [];
   if (e.is_class) details.push(<span key="class" className="text-[var(--ink)]">{tr("Class", "Clase", "Cours")}{e.class_fee ? ` ${e.class_fee}` : ""}</span>);
   if (levelLabel) details.push(<span key="lvl">{levelLabel.charAt(0).toUpperCase() + levelLabel.slice(1).toLowerCase()}</span>);
@@ -779,9 +768,6 @@ function MatchCard({
               {e.time_tbd ? tr("To be set", "Por fijar", "À fixer") : `${matchDuration(e)} min`}
             </span>
           </div>
-          <span className={`text-serif italic text-[14px] whitespace-nowrap ${full ? "text-[var(--ink)]/84" : "text-[var(--plum)]"}`}>
-            {placesText}
-          </span>
         </div>
         <div className="mt-1.5 flex items-baseline gap-2 min-w-0">
           <span className="min-w-0 truncate text-[14px] sm:text-[16px] text-[var(--ink)]">

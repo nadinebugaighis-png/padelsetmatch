@@ -176,8 +176,7 @@ function ConnectPage() {
     <div className="max-w-md sm:max-w-2xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-4 sm:pt-8 pb-32">
       {/* Header */}
       <header className="mb-7 sm:mb-10">
-        <div className={smallCaps}>{tr("Connect", "Conecta", "Connecter")}</div>
-        <h1 className="mt-2 text-serif text-[28px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
+        <h1 className="text-serif text-[28px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
       </header>
 
       <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} />

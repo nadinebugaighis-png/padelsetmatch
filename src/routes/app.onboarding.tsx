@@ -450,7 +450,7 @@ function Onboarding() {
     }
     setStep(step + 1);
     setShowStepHelp(false);
-    setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 30);
+    setTimeout(() => { window.scrollTo({ top: 0, behavior: "smooth" }); document.getElementById("app-scroll")?.scrollTo({ top: 0, behavior: "smooth" }); }, 30);
   };
 
   // Personality/values used to be a second page; those insights now come

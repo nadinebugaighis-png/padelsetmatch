@@ -460,3 +460,20 @@ body.chat-typing .quick-actions {
 /* Errors stay calm: clay accent, never a full red alarm block */
 [data-sonner-toast].app-toast-error { border-left-color: var(--clay); }
 [data-sonner-toast].app-toast-error [data-icon] { color: var(--clay); }
+
+/* iPhone app: the window never scrolls (no bounce, nothing behind the clock);
+   the app frame scrolls instead, with the top bar sticky inside it. */
+html.native-shell,
+html.native-shell body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+html.native-shell .app-shell {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+}

@@ -301,8 +301,18 @@ function AuthShell() {
   // Private chats size themselves to the screen, so top strips would push the message box behind the bottom bar.
   const inChat = /^\/app\/matches\/[^/]+$/.test(cleanPath);
 
+  // In the iPhone app the page scrolls inside this frame instead of the whole window,
+  // so the top and bottom bars never bounce and nothing slides behind the clock.
+  useEffect(() => {
+    const cap = (window as unknown as { Capacitor?: { getPlatform?: () => string } }).Capacitor;
+    if (cap?.getPlatform?.() !== "ios") return;
+    const root = document.documentElement;
+    root.classList.add("native-shell");
+    return () => root.classList.remove("native-shell");
+  }, []);
+
   return (
-    <div className="min-h-screen pb-28 lg:pb-0 programme-page">
+    <div id="app-scroll" data-scroll-restoration-id="app-scroll" className="app-shell min-h-screen pb-28 lg:pb-0 programme-page">
       {/* Thin top progress bar so tab switches never blank the shell */}
       <div
         aria-hidden
@@ -311,8 +321,7 @@ function AuthShell() {
       >
         <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
-      {/* The iPhone app reserves the clock area above the page; this cream strip above the bar hides cards scrolling behind the clock. */}
-      <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur before:content-[''] before:absolute before:inset-x-0 before:bottom-full before:h-[160px] before:bg-[var(--paper)] before:pointer-events-none">
+      <div className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/10 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (

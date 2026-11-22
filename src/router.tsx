@@ -19,6 +19,8 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // The iPhone app scrolls inside the app frame, so reset it on page changes too.
+    scrollToTopSelectors: ["#app-scroll"],
     defaultPreload: "intent",
     defaultPreloadStaleTime: 30_000,
   });

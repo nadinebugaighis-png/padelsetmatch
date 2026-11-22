@@ -878,19 +878,10 @@ function Onboarding() {
             </div>
 
 
+            {profileQ.data && <CoachSelfSection isCoach={!!(profileQ.data as { is_coach?: boolean }).is_coach} showLink={false} />}
+
             <label className="text-xs uppercase tracking-widest text-[var(--ink)]/70">{t("ob.bio")}</label>
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
-
-            {profileQ.data && (
-              <div className="pt-1">
-                <CoachSelfSection isCoach={!!(profileQ.data as { is_coach?: boolean }).is_coach} showLink={false} />
-                {(profileQ.data as { is_coach?: boolean }).is_coach && (
-                  <p className="text-[11px] text-[var(--ink)]/50">
-                    {tr("Your lessons and requests are under Coaching on your Me page.", "Tus clases y solicitudes están en Entrenador, en tu página Yo.", "Tes cours et demandes sont dans Coaching, sur ta page Moi.")}
-                  </p>
-                )}
-              </div>
-            )}
 
             <h2 className="text-display text-2xl pt-4 border-t border-[var(--ink)]/10">{t("ob.h4")}</h2>
             <p className="text-sm text-[var(--ink)]/70">{t("ob.h4sub")}</p>

@@ -25,18 +25,22 @@ export function CoachSelfSection({ isCoach, showLink = true }: { isCoach: boolea
     }
   };
 
-  // One quiet line: most players ignore it, coaches flip it once.
+  // Same look as the free court box just above it.
   return (
-    <div>
-      <button type="button" onClick={toggle} disabled={busy} aria-pressed={isCoach}
-        className="flex w-full items-center justify-between gap-3 py-2 text-left disabled:opacity-60">
-        <span className="text-[14px] text-[var(--ink)]/75">{tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel")}</span>
-        <span className={`relative h-6 w-10 shrink-0 rounded-full transition-colors ${isCoach ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}>
-          <span className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-[var(--paper)] transition-transform ${isCoach ? "translate-x-4" : ""}`} />
+    <div className="rounded-xl border border-[var(--cream)]/30 bg-[var(--cream)]/5 p-3 mt-2">
+      <label className="flex items-start gap-2 text-sm">
+        <input type="checkbox" checked={isCoach} disabled={busy} onChange={toggle} className="accent-[var(--cream)] mt-0.5" />
+        <span>
+          <span className="font-semibold">{tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel")}</span>
+          <span className="block text-xs text-[var(--ink)]/70 mt-0.5">
+            {isCoach
+              ? tr("Your lessons and requests are under Coaching on your Me page.", "Tus clases y solicitudes están en Entrenador, en tu página Yo.", "Tes cours et demandes sont dans Coaching, sur ta page Moi.")
+              : tr("Share your lesson times so players can book you, private or in a small group.", "Publica tus horas para que los jugadores te reserven, en privado o en grupo pequeño.", "Partage tes horaires pour que les joueurs te réservent, en privé ou en petit groupe.")}
+          </span>
         </span>
-      </button>
+      </label>
       {isCoach && showLink && (
-        <Link to="/app/coach" className="text-[13px] font-medium text-[var(--plum)] underline underline-offset-4">
+        <Link to="/app/coach" className="mt-2 inline-block text-[13px] font-medium text-[var(--plum)] underline underline-offset-4">
           {tr("Open coaching", "Abrir panel de entrenador", "Ouvrir l'espace coach")}
         </Link>
       )}

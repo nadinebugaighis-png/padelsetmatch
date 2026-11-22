@@ -302,6 +302,13 @@
       "when": 1795286948885,
       "tag": "0042_competition_whatsapp_group",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1795336292133,
+      "tag": "0043_coach_private_or_group_classes",
+      "breakpoints": true
     }
   ]
 }

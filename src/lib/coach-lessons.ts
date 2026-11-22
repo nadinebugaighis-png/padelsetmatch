@@ -15,7 +15,30 @@ export type CoachSlot = {
   travel_area: string | null;
   /** Where the requesting player chose to have the lesson. */
   student_place: "club" | "travel" | null;
+  /** The coach also takes an open group (up to 4 players) at this time. */
+  offers_group: boolean;
+  /** Group price per person; price_note is the private price. */
+  group_price_note: string | null;
+  /** What the player asked for; null on older bookings means private. */
+  lesson_kind: LessonKind | null;
+  /** The class on the Matches page once the coach accepts a group booking. */
+  match_event_id: string | null;
 };
+
+export type LessonKind = "private" | "group";
+
+/** Players in an open group class, besides the coach (mirrors book_coach_slot / respond_coach_slot). */
+export const GROUP_CLASS_PLAYERS = 4;
+
+/** Private unless the player chose a group and the coach offers groups at that time. */
+export function bookingKind(slot: Pick<CoachSlot, "offers_group">, choice: LessonKind): LessonKind {
+  return choice === "group" && slot.offers_group ? "group" : "private";
+}
+
+/** Player places still free in a group class, given everyone in it (coach included). */
+export function groupSpotsLeft(peopleInClass: number): number {
+  return Math.max(0, GROUP_CLASS_PLAYERS + 1 - peopleInClass);
+}
 
 export type LessonPlace = "club" | "travel" | "both";
 

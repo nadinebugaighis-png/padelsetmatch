@@ -2,21 +2,21 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { Input } from "@/components/ui/input";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { LessonMessageButton } from "@/components/LessonMessageButton";
 import { addCoachSlots, cancelCoachSlot, getMyCoachSlots, respondCoachSlot } from "@/lib/coach-lessons.functions";
-import { COACH_HOURS, dayKey, nextDays, offersClub, offersTravel, placeFields, slotStarts, type CoachSlot, type LessonPlace } from "@/lib/coach-lessons";
+import { COACH_HOURS, GROUP_CLASS_PLAYERS, dayKey, nextDays, offersClub, offersTravel, placeFields, slotStarts, type CoachSlot, type LessonPlace } from "@/lib/coach-lessons";
 
 export const Route = createFileRoute("/app/coach")({
   head: () => ({ meta: [
-    { title: "Your Lesson Times | PadelSetMatch" },
-    { name: "description", content: "Share when you can give padel lessons and answer lesson requests." },
-    { property: "og:title", content: "Your Lesson Times | PadelSetMatch" },
-    { property: "og:description", content: "Share when you can give padel lessons and answer lesson requests." },
+    { title: "Coaching | PadelSetMatch" },
+    { name: "description", content: "Answer lesson requests, see your classes and share your lesson times." },
+    { property: "og:title", content: "Coaching | PadelSetMatch" },
+    { property: "og:description", content: "Answer lesson requests, see your classes and share your lesson times." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -27,6 +27,9 @@ const label = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55";
 const LAST_CLUB = "coach-last-club";
 const LAST_PLACE = "coach-last-place";
 const LAST_AREA = "coach-last-area";
+const LAST_PRICE = "coach-last-price";
+const LAST_GROUP_PRICE = "coach-last-group-price";
+const LAST_GROUPS = "coach-last-groups";
 const remembered = (k: string) => { try { return localStorage.getItem(k) ?? ""; } catch { return ""; } };
 
 function CoachTimesPage() {
@@ -51,7 +54,10 @@ function CoachTimesPage() {
     return v === "travel" || v === "both" ? v : "club";
   });
   const [area, setArea] = useState(() => remembered(LAST_AREA));
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(() => remembered(LAST_PRICE));
+  const [groups, setGroups] = useState(() => remembered(LAST_GROUPS) !== "off");
+  const [groupPrice, setGroupPrice] = useState(() => remembered(LAST_GROUP_PRICE));
+  const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const now = Date.now();
   const starts = slotStarts(day, hours);
@@ -77,16 +83,20 @@ function CoachTimesPage() {
     if (!starts.length) { toast.error(tr("Pick at least one time", "Elige al menos una hora", "Choisis au moins une heure")); return; }
     setSaving(true);
     try {
-      const r = await add({ data: { starts, duration_minutes: duration, lesson_place: place, club_name: club.trim(), travel_area: area.trim(), price_note: price.trim() || null } });
+      const r = await add({ data: { starts, duration_minutes: duration, lesson_place: place, club_name: club.trim(), travel_area: area.trim(), price_note: price.trim() || null, offers_group: groups, group_price_note: groupPrice.trim() || null } });
       try {
         localStorage.setItem(LAST_PLACE, place);
         if (club.trim()) localStorage.setItem(LAST_CLUB, club.trim());
         if (area.trim()) localStorage.setItem(LAST_AREA, area.trim());
+        localStorage.setItem(LAST_PRICE, price.trim());
+        localStorage.setItem(LAST_GROUP_PRICE, groupPrice.trim());
+        localStorage.setItem(LAST_GROUPS, groups ? "on" : "off");
       } catch { /* ignore */ }
       toast.success(r.added === 1
         ? tr("1 lesson time shared", "1 horario publicado", "1 horaire publié")
         : tr(`${r.added} lesson times shared`, `${r.added} horarios publicados`, `${r.added} horaires publiés`));
       setHours([]);
+      setAdding(false);
       await refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Enregistrement impossible"));
@@ -96,14 +106,17 @@ function CoachTimesPage() {
   async function answer(s: CoachSlot, accept: boolean) {
     try {
       await respond({ data: { slotId: s.id, accept } });
-      if (accept) toast.success(tr("Lesson confirmed. Your chat is open in Messages.", "Clase confirmada. Tenéis un chat abierto en Mensajes.", "Cours confirmé. Votre conversation est ouverte dans Messages."));
+      if (accept && s.lesson_kind === "group") toast.success(tr("Group class confirmed. It's now on Matches so others can join.", "Clase en grupo confirmada. Ya está en Partidos para que se unan otros.", "Cours collectif confirmé. Il est dans Matchs pour que d'autres le rejoignent."));
+      else if (accept) toast.success(tr("Lesson confirmed. Your chat is open in Messages.", "Clase confirmada. Tenéis un chat abierto en Mensajes.", "Cours confirmé. Votre conversation est ouverte dans Messages."));
       else toast.success(tr("Time reopened", "Hora disponible de nuevo", "Horaire rouvert"));
       await refresh();
     } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
   }
 
   async function remove(s: CoachSlot) {
-    if (s.student_profile_id && !window.confirm(tr("Cancel this lesson? The player will be told.", "¿Cancelar esta clase? Avisaremos al jugador.", "Annuler ce cours ? Le joueur sera prévenu."))) return;
+    if ((s.student_profile_id || s.match_event_id) && !window.confirm(s.match_event_id
+      ? tr("Cancel this group class? Everyone in it will be told.", "¿Cancelar esta clase en grupo? Avisaremos a todos.", "Annuler ce cours collectif ? Tout le monde sera prévenu.")
+      : tr("Cancel this lesson? The player will be told.", "¿Cancelar esta clase? Avisaremos al jugador.", "Annuler ce cours ? Le joueur sera prévenu."))) return;
     try {
       await cancel({ data: { slotId: s.id } });
       await refresh();
@@ -115,27 +128,32 @@ function CoachTimesPage() {
     return (
       <div className="programme-page min-h-[calc(100vh-4rem)]">
         <div className="max-w-md mx-auto px-5 pt-10 text-center">
-          <h1 className="text-serif text-[30px] text-[var(--ink)]">{tr("Your lesson times", "Tus horarios de clases", "Tes horaires de cours")}</h1>
-          <p className="mt-3 text-[15px] text-[var(--ink)]/60">{tr("Turn on coach mode in Me, under Coaching, to share lesson times.", "Activa el modo entrenador en Yo, en Entrenamiento, para publicar horarios.", "Active le mode coach dans Moi, rubrique Coaching, pour publier tes horaires.")}</p>
-          <Link to="/app/profile" className="mt-5 inline-flex h-11 items-center rounded-full bg-[var(--ink)] px-6 text-[14px] font-medium text-[var(--cream)]">{tr("Go to Me", "Ir a Yo", "Aller à Moi")}</Link>
+          <h1 className="text-serif text-[30px] text-[var(--ink)]">{tr("Coaching", "Entrenador", "Coaching")}</h1>
+          <p className="mt-3 text-[15px] text-[var(--ink)]/60">{tr("Turn on \"I'm a padel coach\" in Edit profile to share lesson times.", "Activa \"Soy entrenador de pádel\" en Editar perfil para publicar horarios.", "Active « Je suis coach de padel » dans Modifier le profil pour publier tes horaires.")}</p>
+          <Link to="/app/onboarding" className="mt-5 inline-flex h-11 items-center rounded-full bg-[var(--ink)] px-6 text-[14px] font-medium text-[var(--cream)]">{tr("Edit profile", "Editar perfil", "Modifier le profil")}</Link>
         </div>
       </div>
     );
   }
 
   const requests = data.slots.filter((s) => s.status === "requested");
-  const upcoming = data.slots.filter((s) => s.status !== "requested");
+  const booked = data.slots.filter((s) => s.status === "booked");
+  const open = data.slots.filter((s) => s.status === "open");
+  const showForm = adding || data.slots.length === 0;
+  const kindLabel = (s: CoachSlot) => s.lesson_kind === "group"
+    ? tr("Group class", "Clase en grupo", "Cours collectif")
+    : tr("Private lesson", "Clase privada", "Cours privé");
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl mx-auto px-5 pt-2 pb-32">
-        <button type="button" onClick={() => navigate({ to: "/app/coaches" })} aria-label={tr("Back", "Atrás", "Retour")} className="-ml-2 grid size-10 place-items-center rounded-full text-[var(--ink)]"><ArrowLeft className="size-5" /></button>
-        <h1 className="mt-1 text-serif text-[34px] leading-[1.05] text-[var(--ink)]">{tr("Your lesson times", "Tus horarios", "Tes horaires")}</h1>
-        <p className="mt-2 text-[15px] text-[var(--ink)]/55">{tr("Players see these on Book a coach and send you requests.", "Los jugadores los ven en Reservar entrenador y te envían solicitudes.", "Les joueurs les voient dans Réserver un coach et t'envoient des demandes.")}</p>
+        <button type="button" onClick={() => navigate({ to: "/app/profile" })} aria-label={tr("Back", "Atrás", "Retour")} className="-ml-2 grid size-10 place-items-center rounded-full text-[var(--ink)]"><ArrowLeft className="size-5" /></button>
+        <h1 className="mt-1 text-serif text-[34px] leading-[1.05] text-[var(--ink)]">{tr("Coaching", "Entrenador", "Coaching")}</h1>
+        <p className="mt-2 text-[15px] text-[var(--ink)]/55">{tr("Share your times. Players ask for a private lesson or an open group. You confirm.", "Publica tus horas. Los jugadores piden clase privada o grupo abierto. Tú confirmas.", "Publie tes horaires. Les joueurs demandent un cours privé ou un groupe ouvert. Tu confirmes.")}</p>
 
         {requests.length > 0 && (
           <section className="mt-6">
-            <div className={label}>{tr("Requests", "Solicitudes", "Demandes")}</div>
+            <div className={label}>{tr("To answer", "Por responder", "À répondre")}</div>
             <ul className="mt-2 space-y-2">
               {requests.map((s) => {
                 const p = s.student_profile_id ? data.people[s.student_profile_id] : undefined;
@@ -144,11 +162,14 @@ function CoachTimesPage() {
                     <div className="flex items-center gap-3">
                       <PlayerPhoto src={p?.photo_url ?? undefined} seed={s.student_profile_id} alt={p?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
                       <div className="min-w-0 flex-1">
-                        <div className="text-[15px] font-medium text-[var(--ink)] truncate">{p?.first_name ?? tr("A player", "Un jugador", "Un joueur")}</div>
+                        <div className="text-[15px] font-medium text-[var(--ink)] truncate">{p?.first_name ?? tr("A player", "Un jugador", "Un joueur")} · <span className={s.lesson_kind === "group" ? "text-[var(--plum)]" : ""}>{kindLabel(s)}</span></div>
                         <div className="text-[12.5px] text-[var(--ink)]/55 truncate">{longDate(s.starts_at)} · {time(s.starts_at)} · {where(s)}</div>
                       </div>
                     </div>
                     {s.student_note && <p className="mt-2 text-[13.5px] text-[var(--ink)]/75">"{s.student_note}"</p>}
+                    {s.lesson_kind === "group" && (
+                      <p className="mt-2 text-[12.5px] text-[var(--ink)]/50">{tr(`If you accept, the class goes on Matches with ${GROUP_CLASS_PLAYERS - 1} places open for others.`, `Si aceptas, la clase aparece en Partidos con ${GROUP_CLASS_PLAYERS - 1} plazas libres.`, `Si tu acceptes, le cours apparaît dans Matchs avec ${GROUP_CLASS_PLAYERS - 1} places libres.`)}</p>
+                    )}
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       <button type="button" onClick={() => answer(s, false)} className="h-10 rounded-full border border-[var(--ink)]/20 text-[14px] text-[var(--ink)]">{tr("Decline", "Rechazar", "Refuser")}</button>
                       <button type="button" onClick={() => answer(s, true)} className="h-10 rounded-full bg-[var(--ink)] text-[14px] font-medium text-[var(--cream)]">{tr("Accept", "Aceptar", "Accepter")}</button>
@@ -160,42 +181,112 @@ function CoachTimesPage() {
           </section>
         )}
 
-        <section className="mt-6 rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">
-          <div className={label}>{tr("Add times", "Añadir horarios", "Ajouter des horaires")}</div>
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]">
-            {days.map((d) => {
-              const k = dayKey(d);
-              const on = k === day;
-              return (
-                <button key={k} type="button" onClick={() => { setDay(k); setHours([]); }} aria-pressed={on}
-                  className={`flex h-[60px] w-[54px] shrink-0 flex-col items-center justify-center rounded-xl border ${on ? "border-[var(--pitch)] bg-[var(--pitch)] text-[var(--cream)]" : "border-[var(--ink)]/15 text-[var(--ink)]"}`}>
-                  <span className="text-[12px] leading-none">{d.toLocaleDateString(locale, { weekday: "short" })}</span>
-                  <span className="mt-1 text-[18px] font-semibold leading-none">{d.getDate()}</span>
-                </button>
-              );
-            })}
+        {booked.length > 0 && (
+          <section className="mt-6">
+            <div className={label}>{tr("Coming up", "Próximas clases", "À venir")}</div>
+            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/10 bg-white">
+              {booked.map((s) => {
+                const p = s.student_profile_id ? data.people[s.student_profile_id] : undefined;
+                const cls = s.match_event_id ? data.classes[s.match_event_id] : undefined;
+                const cancelled = cls?.status === "cancelled";
+                return (
+                  <li key={s.id} className="flex items-center gap-3 px-4 py-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[15px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
+                      <div className="text-[12.5px] text-[var(--ink)]/50 truncate">
+                        {s.match_event_id ? (
+                          <span className="text-[var(--plum)]">
+                            <Users className="mr-1 inline size-3.5 -mt-0.5" />
+                            {cancelled ? tr("Cancelled", "Cancelada", "Annulé") : cls
+                              ? tr(`${cls.people - 1} of ${GROUP_CLASS_PLAYERS} players`, `${cls.people - 1} de ${GROUP_CLASS_PLAYERS} jugadores`, `${cls.people - 1} sur ${GROUP_CLASS_PLAYERS} joueurs`)
+                              : kindLabel(s)}
+                          </span>
+                        ) : <span className="text-[var(--pitch)]">{p?.first_name ?? tr("Booked", "Reservada", "Réservé")}</span>}
+                        {" · "}{where(s)}
+                      </div>
+                    </div>
+                    {s.match_event_id ? (
+                      <Link to="/app/events/$eventId" params={{ eventId: s.match_event_id }}
+                        className="inline-flex h-8 shrink-0 items-center rounded-full border border-[var(--plum)]/35 px-3 text-[12.5px] font-medium text-[var(--plum)]">
+                        {tr("Open", "Ver", "Voir")}
+                      </Link>
+                    ) : <LessonMessageButton slotId={s.id} />}
+                    <button type="button" onClick={() => remove(s)} aria-label={tr("Cancel", "Cancelar", "Annuler")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/40"><Trash2 className="size-4" /></button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        <section className="mt-6">
+          <div className="flex items-center justify-between">
+            <div className={label}>{open.length === 0 && showForm ? tr("Add your lesson times", "Añade tus horas de clase", "Ajoute tes horaires") : tr("Your open times", "Tus horas libres", "Tes horaires libres")}</div>
+            {!showForm && (
+              <button type="button" onClick={() => setAdding(true)} className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--ink)] px-3 text-[12.5px] font-medium text-[var(--cream)]">
+                <Plus className="size-3.5" />{tr("Add times", "Añadir horas", "Ajouter")}
+              </button>
+            )}
           </div>
-          <div className="grid grid-cols-4 gap-2">
-            {COACH_HOURS.map((h) => {
-              const on = hours.includes(h);
-              const past = pastHour(h);
-              return (
-                <button key={h} type="button" disabled={past} aria-pressed={on}
-                  onClick={() => setHours((v) => on ? v.filter((x) => x !== h) : [...v, h])}
-                  className={`h-9 rounded-full border text-[14px] transition disabled:opacity-25 ${on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/20 text-[var(--ink)]"}`}>
-                  {String(h).padStart(2, "0")}:00
-                </button>
-              );
-            })}
-          </div>
-          <div className="grid grid-cols-2 rounded-full border border-[var(--ink)]/12 p-1">
-            {([60, 90] as const).map((m) => (
-              <button key={m} type="button" onClick={() => setDuration(m)} aria-pressed={duration === m}
-                className={`h-8 rounded-full text-[13px] ${duration === m ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/60"}`}>{m} min</button>
-            ))}
-          </div>
-          <div className="space-y-1.5">
-            <div className={label}>{tr("Where you teach", "Dónde das clase", "Où tu enseignes")}</div>
+          {open.length === 0 ? (
+            !showForm && <p className="mt-2 text-[14px] text-[var(--ink)]/50">{tr("No open times. Add some so players can book you.", "No tienes horas libres. Añade algunas para que te reserven.", "Aucun horaire libre. Ajoutes-en pour être réservé.")}</p>
+          ) : (
+            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/10 bg-white">
+              {open.map((s) => (
+                <li key={s.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[14.5px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
+                    <div className="text-[12px] text-[var(--ink)]/45 truncate">
+                      {where(s)}{s.offers_group ? ` · ${tr("Private or group", "Privada o grupo", "Privé ou groupe")}` : ` · ${tr("Private only", "Solo privada", "Privé uniquement")}`}
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => remove(s)} aria-label={tr("Remove", "Quitar", "Retirer")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/40"><Trash2 className="size-4" /></button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {showForm && (
+          <section className="mt-4 rounded-2xl border border-[var(--ink)]/10 bg-white p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className={label}>{tr("1 · Day and hours", "1 · Día y horas", "1 · Jour et heures")}</div>
+              {data.slots.length > 0 && <button type="button" onClick={() => setAdding(false)} className="text-[12.5px] text-[var(--ink)]/50 underline underline-offset-4">{tr("Close", "Cerrar", "Fermer")}</button>}
+            </div>
+            <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]">
+              {days.map((d) => {
+                const k = dayKey(d);
+                const on = k === day;
+                return (
+                  <button key={k} type="button" onClick={() => { setDay(k); setHours([]); }} aria-pressed={on}
+                    className={`flex h-[60px] w-[54px] shrink-0 flex-col items-center justify-center rounded-xl border ${on ? "border-[var(--pitch)] bg-[var(--pitch)] text-[var(--cream)]" : "border-[var(--ink)]/15 text-[var(--ink)]"}`}>
+                    <span className="text-[12px] leading-none">{d.toLocaleDateString(locale, { weekday: "short" })}</span>
+                    <span className="mt-1 text-[18px] font-semibold leading-none">{d.getDate()}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {COACH_HOURS.map((h) => {
+                const on = hours.includes(h);
+                const past = pastHour(h);
+                return (
+                  <button key={h} type="button" disabled={past} aria-pressed={on}
+                    onClick={() => setHours((v) => on ? v.filter((x) => x !== h) : [...v, h])}
+                    className={`h-9 rounded-full border text-[14px] transition disabled:opacity-25 ${on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/20 text-[var(--ink)]"}`}>
+                    {String(h).padStart(2, "0")}:00
+                  </button>
+                );
+              })}
+            </div>
+            <div className="grid grid-cols-2 rounded-full border border-[var(--ink)]/12 p-1">
+              {([60, 90] as const).map((m) => (
+                <button key={m} type="button" onClick={() => setDuration(m)} aria-pressed={duration === m}
+                  className={`h-8 rounded-full text-[13px] ${duration === m ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/60"}`}>{m} min</button>
+              ))}
+            </div>
+
+            <div className={`pt-1 ${label}`}>{tr("2 · Where", "2 · Dónde", "2 · Où")}</div>
             <div className="grid grid-cols-3 rounded-full border border-[var(--ink)]/12 p-1">
               {([
                 ["club", tr("At a club", "En un club", "En club")],
@@ -206,55 +297,38 @@ function CoachTimesPage() {
                   className={`h-8 rounded-full text-[13px] ${place === v ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/60"}`}>{text}</button>
               ))}
             </div>
-          </div>
-          {offersClub(place) && (
-            <div className="space-y-1.5">
-              <div className={label}>{tr("Club", "Club", "Club")}</div>
-              <Input value={club} maxLength={120} onChange={(e) => setClub(e.target.value)} placeholder="Club de Pádel La Moraleja" />
-            </div>
-          )}
-          {offersTravel(place) && (
-            <div className="space-y-1.5">
-              <div className={label}>{tr("Areas you cover", "Zonas que cubres", "Zones couvertes")}</div>
-              <Input value={area} maxLength={120} onChange={(e) => setArea(e.target.value)} placeholder={tr("La Moraleja, El Soto, nearby urbanizaciones", "La Moraleja, El Soto, urbanizaciones cercanas", "La Moraleja, El Soto, urbanizaciones voisines")} />
-              <p className="text-[12px] text-[var(--ink)]/45">{tr("Players with a court at home or in their urbanización can ask you to come.", "Los jugadores con pista en casa o en su urbanización pueden pedirte que vayas.", "Les joueurs avec un court chez eux ou dans leur résidence peuvent te demander de venir.")}</p>
-            </div>
-          )}
-          <div className="space-y-1.5">
-            <div className={label}>{tr("Price (optional)", "Precio (opcional)", "Prix (optionnel)")}</div>
-            <Input value={price} maxLength={40} onChange={(e) => setPrice(e.target.value)} placeholder={tr("€50 per hour", "50 € la hora", "50 € l'heure")} />
-          </div>
-          <button type="button" disabled={saving} onClick={save} className="h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] disabled:opacity-60">
-            {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : starts.length
-              ? tr(`Share ${starts.length} ${starts.length === 1 ? "time" : "times"}`, `Publicar ${starts.length} ${starts.length === 1 ? "hora" : "horas"}`, `Publier ${starts.length} horaire${starts.length === 1 ? "" : "s"}`)
-              : tr("Pick your times", "Elige tus horas", "Choisis tes horaires")}
-          </button>
-        </section>
+            {offersClub(place) && (
+              <Input value={club} maxLength={120} onChange={(e) => setClub(e.target.value)} placeholder={tr("Club name", "Nombre del club", "Nom du club")} aria-label={tr("Club", "Club", "Club")} />
+            )}
+            {offersTravel(place) && (
+              <div className="space-y-1.5">
+                <Input value={area} maxLength={120} onChange={(e) => setArea(e.target.value)} aria-label={tr("Areas you cover", "Zonas que cubres", "Zones couvertes")} placeholder={tr("Urbanizaciones you cover, e.g. La Moraleja, El Soto", "Urbanizaciones que cubres, ej. La Moraleja, El Soto", "Résidences couvertes, ex. La Moraleja, El Soto")} />
+                <p className="text-[12px] text-[var(--ink)]/45">{tr("Players with a court at home or in their urbanización can ask you to come.", "Los jugadores con pista en casa o en su urbanización pueden pedirte que vayas.", "Les joueurs avec un court chez eux ou dans leur résidence peuvent te demander de venir.")}</p>
+              </div>
+            )}
 
-        <section className="mt-6">
-          <div className={label}>{tr("Upcoming", "Próximas", "À venir")}</div>
-          {upcoming.length === 0 ? (
-            <p className="mt-2 text-[14px] text-[var(--ink)]/50">{tr("No lesson times yet.", "Aún no hay horarios.", "Aucun horaire pour l'instant.")}</p>
-          ) : (
-            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/10 bg-white">
-              {upcoming.map((s) => {
-                const p = s.student_profile_id ? data.people[s.student_profile_id] : undefined;
-                return (
-                  <li key={s.id} className="flex items-center gap-3 px-4 py-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[15px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
-                      <div className="text-[12.5px] text-[var(--ink)]/50 truncate">{s.status === "booked" && <span className="text-[var(--pitch)]">{p?.first_name ?? tr("Booked", "Reservada", "Réservé")} · </span>}{where(s)}{s.price_note ? ` · ${s.price_note}` : ""}</div>
-                    </div>
-                    {s.status === "booked" ? <LessonMessageButton slotId={s.id} /> : (
-                      <span className="shrink-0 rounded-full bg-[var(--ink)]/[0.05] px-2.5 py-1 text-[11px] font-medium text-[var(--ink)]/60">{tr("Open", "Libre", "Libre")}</span>
-                    )}
-                    <button type="button" onClick={() => remove(s)} aria-label={tr("Remove", "Quitar", "Retirer")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/40"><Trash2 className="size-4" /></button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
+            <div className={`pt-1 ${label}`}>{tr("3 · Price (optional)", "3 · Precio (opcional)", "3 · Prix (optionnel)")}</div>
+            <Input value={price} maxLength={40} onChange={(e) => setPrice(e.target.value)} aria-label={tr("Private lesson price", "Precio clase privada", "Prix cours privé")} placeholder={tr("Private lesson, e.g. €50", "Clase privada, ej. 50 €", "Cours privé, ex. 50 €")} />
+            <button type="button" onClick={() => setGroups((v) => !v)} aria-pressed={groups} className="flex w-full items-center justify-between gap-3 text-left">
+              <span>
+                <span className="block text-[14px] text-[var(--ink)]">{tr(`Open groups too (up to ${GROUP_CLASS_PLAYERS} players)`, `También grupos (hasta ${GROUP_CLASS_PLAYERS} jugadores)`, `Groupes aussi (jusqu'à ${GROUP_CLASS_PLAYERS} joueurs)`)}</span>
+                <span className="block text-[12px] text-[var(--ink)]/45">{tr("Players can pick a group class others can join", "Los jugadores pueden pedir una clase a la que se unan otros", "Les joueurs peuvent choisir un cours que d'autres rejoignent")}</span>
+              </span>
+              <span className={`relative h-6 w-10 shrink-0 rounded-full transition-colors ${groups ? "bg-[var(--pitch)]" : "bg-[var(--ink)]/20"}`}>
+                <span className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-[var(--paper)] transition-transform ${groups ? "translate-x-4" : ""}`} />
+              </span>
+            </button>
+            {groups && (
+              <Input value={groupPrice} maxLength={40} onChange={(e) => setGroupPrice(e.target.value)} aria-label={tr("Group price per person", "Precio por persona en grupo", "Prix par personne en groupe")} placeholder={tr("Group, per person, e.g. €20", "Grupo, por persona, ej. 20 €", "Groupe, par personne, ex. 20 €")} />
+            )}
+
+            <button type="button" disabled={saving} onClick={save} className="h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] disabled:opacity-60">
+              {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : starts.length
+                ? tr(`Share ${starts.length} ${starts.length === 1 ? "time" : "times"}`, `Publicar ${starts.length} ${starts.length === 1 ? "hora" : "horas"}`, `Publier ${starts.length} horaire${starts.length === 1 ? "" : "s"}`)
+                : tr("Pick your hours above", "Elige tus horas arriba", "Choisis tes heures plus haut")}
+            </button>
+          </section>
+        )}
       </div>
     </div>
   );

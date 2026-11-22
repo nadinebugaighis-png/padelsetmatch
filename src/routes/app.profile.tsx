@@ -743,9 +743,11 @@ function CoachBar() {
           <GraduationCap className="w-4 h-4" />
         </span>
         <div className="min-w-0">
-          <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight">{tr("Coach", "Entrenador", "Coach")}</div>
+          <div className="text-[15px] font-semibold text-[var(--ink)] leading-tight">{tr("Coaching", "Entrenador", "Coaching")}</div>
           <div className="text-xs text-[var(--ink)]/60 truncate mt-0.5">
-            {tr("Lesson times & requests", "Horarios de clases y solicitudes", "Horaires de cours et demandes")}
+            {requests > 0
+              ? tr(`${requests} to answer`, `${requests} por responder`, `${requests} à répondre`)
+              : tr("Requests, classes and your times", "Solicitudes, clases y tus horas", "Demandes, cours et horaires")}
           </div>
         </div>
       </div>

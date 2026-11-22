@@ -31,10 +31,27 @@ export function genderRuleAllows(rule: string | null | undefined, gender: string
 
 /** Text that goes with a shared match link (WhatsApp etc.). Mentions "free" only when the host marked the court free. */
 export function matchShareText(
-  opts: { clubName: string; when: string; freeCourt: boolean },
+  opts: { clubName: string; when: string; freeCourt: boolean; isClass?: boolean; coach?: string | null; fee?: string | null; spotsLeft?: number },
   tr: Tr,
 ): string {
   const tail = `${opts.clubName} · ${opts.when}`;
+  if (opts.isClass) {
+    const fee = opts.fee ? ` · ${opts.fee}` : "";
+    const spots = opts.spotsLeft && opts.spotsLeft > 0
+      ? tr(` · ${opts.spotsLeft} ${opts.spotsLeft === 1 ? "place" : "places"} left`, ` · ${opts.spotsLeft === 1 ? "queda 1 plaza" : `quedan ${opts.spotsLeft} plazas`}`, ` · ${opts.spotsLeft} place${opts.spotsLeft === 1 ? "" : "s"} restante${opts.spotsLeft === 1 ? "" : "s"}`)
+      : "";
+    return opts.coach
+      ? tr(
+          `Padel class with ${opts.coach} on PadelSetMatch: ${tail}${fee}${spots}. Join us`,
+          `Clase de pádel con ${opts.coach} en PadelSetMatch: ${tail}${fee}${spots}. Únete`,
+          `Cours de padel avec ${opts.coach} sur PadelSetMatch : ${tail}${fee}${spots}. Rejoins-nous`,
+        )
+      : tr(
+          `Padel class on PadelSetMatch: ${tail}${fee}${spots}. Join us`,
+          `Clase de pádel en PadelSetMatch: ${tail}${fee}${spots}. Únete`,
+          `Cours de padel sur PadelSetMatch : ${tail}${fee}${spots}. Rejoins-nous`,
+        );
+  }
   if (opts.freeCourt) {
     return tr(
       `🎾 Free court! Join my padel match on PadelSetMatch — ${tail}`,

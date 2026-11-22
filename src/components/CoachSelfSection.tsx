@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
-import { GraduationCap } from "lucide-react";
 import { toast } from "sonner";
 import { setCoachFlag } from "@/lib/coach.functions";
 import { useTr } from "@/lib/i18n";
@@ -26,37 +25,19 @@ export function CoachSelfSection({ isCoach, showLink = true }: { isCoach: boolea
     }
   };
 
+  // One quiet line: most players ignore it, coaches flip it once.
   return (
-    <div className="programme-card p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2">
-          <div className="w-8 h-8 rounded-full bg-[var(--plum)]/12 flex items-center justify-center text-[var(--plum)] shrink-0">
-            <GraduationCap className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Padel coach", "Entrenador de pádel", "Coach de padel")}</h2>
-            <p className="text-xs text-[var(--ink)]/60 mt-0.5">
-              {tr(
-                "Turn this on if you also coach. Players can then book lessons at the times you share.",
-                "Actívalo si también entrenas. Los jugadores podrán reservar clases en los horarios que publiques.",
-                "Active si tu donnes aussi des cours. Les joueurs pourront réserver aux horaires que tu publies.",
-              )}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={toggle}
-          disabled={busy}
-          className={`relative w-12 h-7 rounded-full transition-colors shrink-0 ${isCoach ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}
-          aria-label="Toggle coach"
-        >
-          <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white transition-transform ${isCoach ? "translate-x-5" : ""}`} />
-        </button>
-      </div>
+    <div>
+      <button type="button" onClick={toggle} disabled={busy} aria-pressed={isCoach}
+        className="flex w-full items-center justify-between gap-3 py-2 text-left disabled:opacity-60">
+        <span className="text-[14px] text-[var(--ink)]/75">{tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel")}</span>
+        <span className={`relative h-6 w-10 shrink-0 rounded-full transition-colors ${isCoach ? "bg-[var(--plum)]" : "bg-[var(--ink)]/20"}`}>
+          <span className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-[var(--paper)] transition-transform ${isCoach ? "translate-x-4" : ""}`} />
+        </span>
+      </button>
       {isCoach && showLink && (
-        <Link to="/app/coach" className="mt-4 flex h-11 items-center justify-center rounded-full bg-[var(--ink)] text-[14px] font-medium text-[var(--cream)]">
-          {tr("Share your lesson times", "Publica tus horarios de clases", "Publie tes horaires de cours")}
+        <Link to="/app/coach" className="text-[13px] font-medium text-[var(--plum)] underline underline-offset-4">
+          {tr("Open coaching", "Abrir panel de entrenador", "Ouvrir l'espace coach")}
         </Link>
       )}
     </div>

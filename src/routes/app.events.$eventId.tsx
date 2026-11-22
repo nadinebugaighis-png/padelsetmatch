@@ -209,7 +209,11 @@ function EventDetail() {
   const shareWhen = event.time_tbd
     ? new Date(event.starts_at).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "short" })
     : fmtWhen(event.starts_at);
-  const shareText = matchShareText({ clubName: event.club_name, when: shareWhen, freeCourt: !!event.free_court }, tr);
+  const shareText = matchShareText({
+    clubName: event.club_name, when: shareWhen, freeCourt: !!event.free_court,
+    isClass: !!event.is_class, coach: event.is_class ? event.host?.first_name ?? null : null,
+    fee: event.class_fee ?? null, spotsLeft: Math.max(0, (event.capacity ?? 4) - (event.filled ?? 0)),
+  }, tr);
 
   const displayShareUrl = shortShareUrl || shareUrl;
 

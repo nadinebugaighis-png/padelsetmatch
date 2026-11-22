@@ -151,8 +151,12 @@ export type Database = {
           coach_profile_id: string
           created_at: string
           duration_minutes: number
+          group_price_note: string | null
           id: string
+          lesson_kind: string | null
           lesson_place: string
+          match_event_id: string | null
+          offers_group: boolean
           price_note: string | null
           starts_at: string
           status: string
@@ -167,8 +171,12 @@ export type Database = {
           coach_profile_id: string
           created_at?: string
           duration_minutes?: number
+          group_price_note?: string | null
           id?: string
+          lesson_kind?: string | null
           lesson_place?: string
+          match_event_id?: string | null
+          offers_group?: boolean
           price_note?: string | null
           starts_at: string
           status?: string
@@ -183,8 +191,12 @@ export type Database = {
           coach_profile_id?: string
           created_at?: string
           duration_minutes?: number
+          group_price_note?: string | null
           id?: string
+          lesson_kind?: string | null
           lesson_place?: string
+          match_event_id?: string | null
+          offers_group?: boolean
           price_note?: string | null
           starts_at?: string
           status?: string
@@ -200,6 +212,13 @@ export type Database = {
             columns: ["coach_profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coach_slots_match_event_id_fkey"
+            columns: ["match_event_id"]
+            isOneToOne: false
+            referencedRelation: "match_events"
             referencedColumns: ["id"]
           },
           {
@@ -2306,6 +2325,10 @@ export type Database = {
         Returns: Json
       }
       admin_top_sharers: { Args: never; Returns: Json }
+      book_coach_slot: {
+        Args: { _kind?: string; _note?: string; _place?: string; _slot: string }
+        Returns: undefined
+      }
       can_read_current_photo: { Args: { _path: string }; Returns: boolean }
       cancel_coach_slot: { Args: { _slot: string }; Returns: undefined }
       check_app_health_alerts: { Args: never; Returns: Json }
@@ -2430,6 +2453,7 @@ export type Database = {
       }
       open_lesson_chat: { Args: { _slot: string }; Returns: string }
       padel_level_rank: { Args: { lvl: string }; Returns: number }
+      profile_feed_city: { Args: { _profile: string }; Returns: string }
       public_match_view: { Args: { _event_id: string }; Returns: Json }
       qa_affinity_scores: {
         Args: { _ids: string[]; _me_id: string }

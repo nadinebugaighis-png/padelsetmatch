@@ -882,11 +882,11 @@ function Onboarding() {
             <Textarea maxLength={280} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("ob.bioPh")} />
 
             {profileQ.data && (
-              <div className="pt-2">
+              <div className="pt-1">
                 <CoachSelfSection isCoach={!!(profileQ.data as { is_coach?: boolean }).is_coach} showLink={false} />
                 {(profileQ.data as { is_coach?: boolean }).is_coach && (
-                  <p className="mt-2 text-[11px] text-[var(--ink)]/55 text-center">
-                    {tr("Manage lesson times and requests from the Coach shortcut on your Me page.", "Gestiona horarios y solicitudes desde el acceso Entrenador en tu página Yo.", "Gère horaires et demandes depuis le raccourci Coach sur ta page Moi.")}
+                  <p className="text-[11px] text-[var(--ink)]/50">
+                    {tr("Your lessons and requests are under Coaching on your Me page.", "Tus clases y solicitudes están en Entrenador, en tu página Yo.", "Tes cours et demandes sont dans Coaching, sur ta page Moi.")}
                   </p>
                 )}
               </div>

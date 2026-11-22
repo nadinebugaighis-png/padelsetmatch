@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { groupDay, openCountByDay, placeFields, requestPlace, slotStarts, type CoachSlot } from "./coach-lessons";
+import { GROUP_CLASS_PLAYERS, bookingKind, groupDay, groupSpotsLeft, openCountByDay, placeFields, requestPlace, slotStarts, type CoachSlot } from "./coach-lessons";
 
 const now = new Date(2026, 10, 21, 12, 0);
 const slot = (id: string, coach: string, h: number, extra: Partial<CoachSlot> = {}): CoachSlot => ({
   id, coach_profile_id: coach, starts_at: new Date(2026, 10, 23, h).toISOString(), duration_minutes: 60,
   club_name: "Club de Pádel La Moraleja", price_note: null, status: "open", student_profile_id: null, student_note: null,
-  lesson_place: "club", travel_area: null, student_place: null, ...extra,
+  lesson_place: "club", travel_area: null, student_place: null, offers_group: true, group_price_note: null, lesson_kind: null, match_event_id: null, ...extra,
 });
 
 describe("coach lesson times", () => {
@@ -36,5 +36,19 @@ describe("coach lesson times", () => {
     expect(requestPlace("travel", null)).toBe("travel");
     expect(requestPlace("both", null)).toBeNull();
     expect(requestPlace("both", "travel")).toBe("travel");
+  });
+});
+
+describe("private or group lessons", () => {
+  it("books a group class only when the coach offers groups at that time", () => {
+    expect(bookingKind({ offers_group: true }, "group")).toBe("group");
+    expect(bookingKind({ offers_group: false }, "group")).toBe("private");
+    expect(bookingKind({ offers_group: true }, "private")).toBe("private");
+  });
+  it("an open group holds up to 4 players besides the coach", () => {
+    expect(GROUP_CLASS_PLAYERS).toBe(4);
+    expect(groupSpotsLeft(2)).toBe(3); // coach + first player
+    expect(groupSpotsLeft(5)).toBe(0);
+    expect(groupSpotsLeft(6)).toBe(0);
   });
 });

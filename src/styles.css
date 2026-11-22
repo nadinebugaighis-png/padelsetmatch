@@ -97,6 +97,12 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --limestone: color-mix(in oklab, var(--paper-2) 75%, var(--paper));   /* settled, confirmed states */
   --ink: #0F3E2E;
   --plum: #482E92;
+  /* Sign-in provider brand colours (Apple HIG, Google branding guidelines) */
+  --apple-black: #000000;
+  --apple-white: #FFFFFF;
+  --google-surface: #FFFFFF;
+  --google-border: #747775;
+  --google-text: #1F1F1F;
   --grass: #A5E358;
   --pitch: oklch(0.52 0.09 158);             /* soft club green for counts */
   --gold: #C9A84C;
@@ -476,4 +482,17 @@ html.native-shell .app-shell {
   overflow-x: hidden;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Frosted entrance card that sits over the court photo on the welcome screen. */
+@utility entrance-panel {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  backdrop-filter: blur(22px) saturate(1.2);
+  box-shadow: 0 30px 70px -40px color-mix(in oklab, var(--ink) 55%, transparent), inset 0 1px 0 color-mix(in oklab, var(--paper) 70%, transparent);
+  padding: 22px 20px 18px;
 }

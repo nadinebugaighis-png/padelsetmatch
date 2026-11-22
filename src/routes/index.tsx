@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { resumeNativeEntry } from "@/lib/native-entry";
 import { Button } from "@/components/ui/button";
+import { AuthPanel } from "@/components/AuthPanel";
+import { EntranceBackdrop } from "@/components/EntranceBackdrop";
 
 function useIsStandalone() {
   const [standalone, setStandalone] = useState(false);
@@ -26,7 +28,6 @@ function useIsStandalone() {
 }
 
 import shareBanner from "@/assets/padel-share-luxury.jpg.asset.json";
-import court from "@/assets/landing-court.jpg.asset.json";
 import landing1 from "@/assets/landing1.jpg.asset.json";
 import landing2 from "@/assets/landing2.jpg.asset.json";
 import landing3 from "@/assets/landing3.jpg.asset.json";
@@ -39,9 +40,9 @@ const SHARE_DESC = "Connect with Padel players nearby you, join games, discover 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PadelSetMatch — Find Padel Players Near You" },
+      { title: "PadelSetMatch · Find Padel Players Near You" },
       { name: "description", content: SHARE_DESC },
-      { property: "og:title", content: "PadelSetMatch — Find Padel Players Near You" },
+      { property: "og:title", content: "PadelSetMatch · Find Padel Players Near You" },
       { property: "og:description", content: SHARE_DESC },
       { property: "og:url", content: "https://padelsetmatch.com/" },
       { property: "og:type", content: "website" },
@@ -51,7 +52,7 @@ export const Route = createFileRoute("/")({
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "PadelSetMatch — Find Padel Players Near You" },
+      { name: "twitter:title", content: "PadelSetMatch · Find Padel Players Near You" },
       { name: "twitter:description", content: SHARE_DESC },
       { name: "twitter:image", content: SHARE_IMAGE },
     ],
@@ -61,6 +62,22 @@ export const Route = createFileRoute("/")({
   }),
   component: Landing,
 });
+
+function StoreBadges() {
+  const tr = useTr();
+  return (
+    <div className="max-w-[400px] mx-auto lg:mx-0">
+      <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/65">
+        <span>{tr("Or get the app", "O descarga la app", "Ou télécharge l’app")}</span>
+        <span className="h-px flex-1 bg-[var(--ink)]/15" aria-hidden />
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <AppStoreBadge className="[&_img]:!h-10" />
+        <GooglePlayBadge className="[&_img]:!h-10" />
+      </div>
+    </div>
+  );
+}
 
 function Landing() {
   const navigate = useNavigate();
@@ -106,34 +123,7 @@ function Landing() {
 
   return (
     <main data-native-entry={entryPending ? "pending" : "ready"} className="programme-page min-h-screen flex flex-col relative overflow-hidden">
-      {/* Court image bleeds from right, softly fading into paper */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-[62%] sm:w-[52%] lg:w-[46%] z-0">
-        <img
-          src={court.url}
-          alt=""
-          className="w-full h-full object-cover object-left"
-        />
-        {/* Padel-court green tint on the wall */}
-        <div
-          className="absolute inset-0 mix-blend-multiply"
-          style={{ background: "rgba(87, 118, 90, 0.55)" }}
-        />
-        <div
-          className="absolute inset-0 mix-blend-overlay"
-          style={{ background: "rgba(60, 90, 65, 0.25)" }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to right, var(--paper) 0%, color-mix(in oklab, var(--paper) 85%, transparent) 12%, transparent 40%)",
-          }}
-        />
-        {/* Right side fades to paper white so the green court area becomes clean white */}
-        <div
-          className="absolute inset-0 bg-[linear-gradient(to_right,transparent_80%,var(--paper)_95%)] sm:bg-[linear-gradient(to_right,transparent_60%,var(--paper)_75%)] lg:bg-[linear-gradient(to_right,transparent_38%,var(--paper)_50%)]"
-        />
-      </div>
+      <EntranceBackdrop />
 
       {/* Header */}
       <header className="relative z-30 px-5 sm:px-8 lg:px-16 pt-3 lg:pt-4 pb-2 lg:pb-3 flex items-center justify-between">
@@ -141,49 +131,30 @@ function Landing() {
         <LangSwitch />
       </header>
 
-      {/* Hero — full viewport on mobile, compact viewport-fit on desktop */}
-      <section className="relative z-10 min-h-[100dvh] flex flex-col justify-start sm:justify-center px-5 sm:px-8 lg:px-16 pt-12 sm:pt-10 lg:pt-0 pb-6 lg:min-h-[calc(100dvh-64px)]">
+      {/* One entrance: headline and sign-in on the same screen */}
+      <section className="relative z-10 min-h-[calc(100dvh-56px)] px-5 sm:px-8 lg:px-16 pt-6 sm:pt-10 lg:pt-0 pb-10 grid content-start gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:content-center lg:items-center lg:gap-16">
         <div className="max-w-xl">
-          <h1 className="text-serif mt-6 sm:mt-2 lg:mt-1 uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.5rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.5rem] xl:text-[5rem]">
+          <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] tracking-[-0.015em] text-[2.4rem] sm:text-[3rem] md:text-[3.75rem] lg:text-[4.5rem] xl:text-[5rem]">
             <span className="block">{t("land.h1.a")}</span>
             <span className="block">{t("land.h1.a2")}</span>
             <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>
           </h1>
 
-          <p className="mt-3 lg:mt-2 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.55]">
+          <p className="mt-3 text-[14.5px] sm:text-base text-[var(--ink)]/75 max-w-[22rem] sm:max-w-md leading-[1.55]">
             {t("land.lede")}
           </p>
 
-          <div className="mt-9 lg:mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <Link
-              to="/auth"
-              search={{ redirect: undefined, join: undefined, mode: "signup" }}
-              className="inline-flex h-12 items-center justify-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.2em] text-[12.5px] px-10 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
-            >
-              {t("land.cta")}
-            </Link>
-            <Link
-              to="/auth"
-              search={{ redirect: undefined, join: undefined, mode: "signin" }}
-              className="text-[14px] text-[var(--ink)]/70 hover:text-[var(--ink)] transition"
-            >
-              {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
-              <span className="font-semibold text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30">
-                {tr("Sign in", "Inicia sesión", "Se connecter")}
-              </span>
-            </Link>
+          <div className="mt-8 hidden lg:block max-w-md">
+            <StoreBadges />
           </div>
+        </div>
 
-          <div className="mt-10 lg:mt-9 max-w-md">
-            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/65">
-              <span>{tr("Or get the app", "O descarga la app", "Ou télécharge l’app")}</span>
-              <span className="h-px flex-1 bg-[var(--ink)]/15" aria-hidden />
-            </div>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <AppStoreBadge className="[&_img]:!h-10" />
-              <GooglePlayBadge className="[&_img]:!h-10" />
-            </div>
-          </div>
+        <div className="flex justify-center lg:justify-end">
+          <AuthPanel initialMode="signup" showEnterWhenSignedIn />
+        </div>
+
+        <div className="lg:hidden">
+          <StoreBadges />
         </div>
       </section>
 
@@ -199,13 +170,12 @@ function Landing() {
             </h2>
             <p className="mt-3 text-[var(--ink)]/65 leading-relaxed">{t("land.preview.sub")}</p>
           </div>
-          <Link
-            to="/auth"
-            search={{ redirect: undefined, join: undefined, mode: "signup" }}
+          <a
+            href="#join"
             className="inline-flex items-center rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.16em] text-[12px] px-5 py-2.5 hover:brightness-110 transition"
           >
             {t("land.preview.cta")}
-          </Link>
+          </a>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
@@ -223,7 +193,7 @@ function Landing() {
                 <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-[var(--ink)]/50 backdrop-blur-sm">
-                <Link to="/auth" search={{ redirect: undefined, join: undefined, mode: "signup" }} className="rounded-full bg-[var(--paper)] text-[var(--ink)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</Link>
+                <a href="#join" className="rounded-full bg-[var(--paper)] text-[var(--ink)] font-semibold px-5 py-2 text-sm tracking-wide">{t("land.preview.unlock")}</a>
               </div>
             </div>
           ))}

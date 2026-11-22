@@ -74,7 +74,7 @@ function Matches() {
         {q.isLoading && !q.data ? (
           <ul className="mt-6 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <li key={i} className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-4 space-y-2.5">
+              <li key={i} className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-4 space-y-2.5">
                 <div className="h-4 w-1/2 rounded bg-[var(--ink)]/8 animate-pulse" />
                 <div className="h-3 w-3/4 rounded bg-[var(--ink)]/6 animate-pulse" />
               </li>

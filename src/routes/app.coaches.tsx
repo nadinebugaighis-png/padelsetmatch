@@ -110,7 +110,7 @@ function CoachesPage() {
         {lessons.length > 0 && (
           <section className="mt-8 px-5 sm:px-6">
             <h2 className={sectionTitle}>{tr("Your lessons", "Tus clases", "Tes cours")}</h2>
-            <ul className="mt-3 overflow-hidden rounded-2xl border border-[var(--ink)]/30 bg-white card-lift divide-y divide-[var(--ink)]/[0.07]">
+            <ul className="mt-3 overflow-hidden rounded-2xl border border-[var(--ink)]/12 bg-white card-lift divide-y divide-[var(--ink)]/[0.07]">
               {lessons.map((s) => {
                 const group = s.lesson_kind === "group";
                 const cls = s.match_event_id ? data?.classes[s.match_event_id] : undefined;
@@ -145,7 +145,7 @@ function CoachesPage() {
           <section className="mt-8 px-5 sm:px-6">
             <h2 className={sectionTitle}>{tr("Open classes", "Clases abiertas", "Cours ouverts")}</h2>
             <p className="mt-1.5 text-serif italic text-[13px] text-[var(--ink)]/76">{tr("Small groups with places left", "Grupos reducidos con plazas", "Petits groupes avec des places")}</p>
-            <ul className="mt-3 overflow-hidden rounded-2xl border border-[var(--ink)]/30 bg-white card-lift divide-y divide-[var(--ink)]/[0.07]">
+            <ul className="mt-3 overflow-hidden rounded-2xl border border-[var(--ink)]/12 bg-white card-lift divide-y divide-[var(--ink)]/[0.07]">
               {openClasses.map((c) => {
                 const coach = person(c.host_profile_id);
                 return (
@@ -193,12 +193,12 @@ function CoachesPage() {
 
           <div className="mt-4 space-y-3 px-5 sm:px-6">
             {isLoading ? (
-              [0, 1].map((i) => <div key={i} className="h-36 rounded-2xl border border-[var(--ink)]/30 bg-white card-lift animate-pulse" />)
+              [0, 1].map((i) => <div key={i} className="h-36 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift animate-pulse" />)
             ) : groups.length > 0 ? groups.map((g) => {
               const c = person(g.coachId);
               const first = g.slots[0]!;
               return (
-                <article key={g.key} className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-4 sm:p-5">
+                <article key={g.key} className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-4 sm:p-5">
                   <div className="flex gap-3.5">
                     <PlayerPhoto src={c?.photo_url ?? undefined} seed={g.coachId} alt={c?.first_name ?? ""} className="size-16 shrink-0 rounded-full object-cover" />
                     <div className="min-w-0 flex-1">

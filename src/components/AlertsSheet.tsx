@@ -128,7 +128,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
             ) : (
               <ul className="space-y-2">
                 {items.map((a) => (
-                  <li key={a.id} className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-3">
+                  <li key={a.id} className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-3">
                     <div className="flex items-start justify-between gap-3">
                       <button className="text-left flex-1" onClick={() => startEdit(a)}>
                         <div className="font-semibold text-[var(--ink)]">

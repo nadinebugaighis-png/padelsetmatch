@@ -486,7 +486,7 @@ function EventDetail() {
         const showBooking = !ptLink && !!booking && (!event.court_booked || booking.source === "host") && event.status !== "cancelled"
           && (!waClub || booking.source === "host");
         return (
-          <section className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift overflow-hidden">
+          <section className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift overflow-hidden">
             <div className="px-4 pt-4 pb-3">
               <div className="flex items-center justify-between gap-2">
                 <div className="text-[13px] font-semibold text-[var(--ink)] capitalize">{dateLabel} · <span className="normal-case">{time}</span></div>

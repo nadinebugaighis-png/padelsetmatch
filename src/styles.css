@@ -95,7 +95,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --ball: #A5E358;             /* grass green — unified accent */
 
   /* Wimbledon "Programme" palette (light editorial pages) */
-  --paper: #FDFBF7;
+  --paper: #FAFAF8;
   --paper-2: #EAE7E0;
   --limestone: color-mix(in oklab, var(--paper-2) 75%, var(--paper));   /* settled, confirmed states */
   --ink: #0B3426;
@@ -289,10 +289,10 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 @utility programme-card {
   background: #ffffff;
-  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
   border-radius: 14px;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent),
-              0 6px 18px -10px color-mix(in oklab, var(--ink) 24%, transparent);
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--ink) 7%, transparent),
+              0 4px 16px -6px color-mix(in oklab, var(--ink) 14%, transparent);
 }
 @utility programme-card-ink {
   background: var(--ink);
@@ -483,6 +483,6 @@ html.native-shell .app-shell {
 
 /* White cards: firm hairline edge plus a soft lift so they read clearly on the cream page. */
 @utility card-lift {
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent),
-              0 6px 18px -10px color-mix(in oklab, var(--ink) 22%, transparent);
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--ink) 7%, transparent),
+              0 4px 16px -6px color-mix(in oklab, var(--ink) 14%, transparent);
 }

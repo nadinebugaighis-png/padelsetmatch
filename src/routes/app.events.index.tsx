@@ -461,7 +461,7 @@ function EventsPage() {
             {eventsQ.isPending ? (
               <div className="mt-6 space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-4 space-y-2.5">
+                  <div key={i} className="rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-4 space-y-2.5">
                     <div className="h-3.5 w-1/3 rounded bg-[var(--ink)]/8 animate-pulse" />
                     <div className="h-4 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />
                     <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
@@ -762,7 +762,7 @@ function MatchCard({
   return (
     <div
       className={`relative h-full rounded-2xl bg-white overflow-hidden card-lift ${
-        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/30"
+        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/12"
       }`}
     >
       {/* The day's colour lives only in a thin edge */}

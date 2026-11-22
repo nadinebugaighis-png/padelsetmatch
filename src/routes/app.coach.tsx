@@ -180,7 +180,7 @@ function CoachTimesPage() {
         {booked.length > 0 && (
           <section className="mt-6">
             <div className={label}>{tr("Coming up", "Próximas clases", "À venir")}</div>
-            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/30 bg-white card-lift">
+            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/12 bg-white card-lift">
               {booked.map((s) => {
                 const p = s.student_profile_id ? data.people[s.student_profile_id] : undefined;
                 const cls = s.match_event_id ? data.classes[s.match_event_id] : undefined;
@@ -227,7 +227,7 @@ function CoachTimesPage() {
           {open.length === 0 ? (
             !showForm && <p className="mt-2 text-[14px] text-[var(--ink)]/76">{tr("No open times. Add some so players can book you.", "No tienes horas libres. Añade algunas para que te reserven.", "Aucun horaire libre. Ajoutes-en pour être réservé.")}</p>
           ) : (
-            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/30 bg-white card-lift">
+            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/12 bg-white card-lift">
               {open.map((s) => (
                 <li key={s.id} className="flex items-center gap-3 px-4 py-2.5">
                   <div className="min-w-0 flex-1">
@@ -244,7 +244,7 @@ function CoachTimesPage() {
         </section>
 
         {showForm && (
-          <section className="mt-4 rounded-2xl border border-[var(--ink)]/30 bg-white card-lift p-4 space-y-4">
+          <section className="mt-4 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift p-4 space-y-4">
             <div className="flex items-center justify-between">
               <div className={label}>{tr("1 · Day and hours", "1 · Día y horas", "1 · Jour et heures")}</div>
               {data.slots.length > 0 && <button type="button" onClick={() => setAdding(false)} className="text-[12.5px] text-[var(--ink)]/76 underline underline-offset-4">{tr("Close", "Cerrar", "Fermer")}</button>}

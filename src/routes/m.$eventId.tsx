@@ -330,7 +330,7 @@ function PublicMatchPage() {
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.club_address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/30 bg-white card-lift px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
+                className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift px-4 py-3 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-2)] transition"
               >
                 <MapPin className="w-3.5 h-3.5" />
                 {tr("Open in maps", "Abrir en mapas", "Ouvrir dans Maps")}

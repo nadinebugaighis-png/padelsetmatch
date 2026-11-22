@@ -84,7 +84,7 @@ export function MatchFiltersSheet({ open, onClose, value, onChange, myLevelLabel
         </div>
 
         <button type="button" onClick={() => { onClose(); onAlerts(); }}
-          className="mt-6 flex w-full items-center gap-2.5 rounded-2xl border border-[var(--ink)]/30 bg-white card-lift px-4 py-3 text-left text-[14px] text-[var(--ink)]">
+          className="mt-6 flex w-full items-center gap-2.5 rounded-2xl border border-[var(--ink)]/12 bg-white card-lift px-4 py-3 text-left text-[14px] text-[var(--ink)]">
           <Bell className="size-4 shrink-0 text-[var(--ink)]/82" strokeWidth={1.6} />
           {tr("Tell me when a new game fits", "Avísame cuando haya un partido para mí", "Préviens-moi d'un nouveau match pour moi")}
         </button>

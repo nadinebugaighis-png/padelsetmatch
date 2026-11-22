@@ -16,6 +16,8 @@
 /* Native bridge exists before hydration: keep the public welcome page out of
    the first paint until the saved-account check has finished. Web is unchanged. */
 .native-entry-cover { display: none; }
+/* In the app there is no welcome page to go back to. */
+html.native-app .native-hide { display: none; }
 html.native-app [data-native-entry="pending"] { visibility: hidden; }
 html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   display: flex;

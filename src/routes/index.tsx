@@ -77,9 +77,25 @@ function Landing() {
     void import("@/lib/native").then(async ({ isNative }) => {
       const native = isNative();
       if (native) document.documentElement.classList.add("native-app");
-      await resumeNativeEntry(native, () => supabase.auth.getSession(), () => {
-        if (!cancelled) return navigate({ to: "/app", replace: true });
-      });
+      const result = await resumeNativeEntry(
+        native,
+        () => supabase.auth.getSession(),
+        () => {
+          if (!cancelled) return navigate({ to: "/app", replace: true });
+        },
+        12_000,
+        // The welcome page is for the website only: in the app, signed-out
+        // visitors go straight to sign-up.
+        () => {
+          if (!cancelled) return navigate({ to: "/auth", search: { mode: "signup" }, replace: true });
+        },
+      );
+      if (result === "stalled" && !cancelled) {
+        window.clearTimeout(watchdog);
+        setEntryFailed(true);
+        setEntryPending(false);
+        return;
+      }
       if (!cancelled) {
         window.clearTimeout(watchdog);
         setEntryPending(false);

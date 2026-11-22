@@ -32,7 +32,7 @@ export function CoachSelfSection({ isCoach, showLink = true }: { isCoach: boolea
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" checked={isCoach} disabled={busy} onChange={toggle} className="accent-[var(--cream)] mt-0.5" />
         <span>
-          <span className="inline-flex items-center gap-1.5 font-semibold"><GraduationCap className="h-4 w-4 shrink-0" aria-hidden="true" />{tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel")}</span>
+          <span className="inline-flex items-center gap-1.5 font-semibold"><GraduationCap className="h-4 w-4 shrink-0 text-plum" aria-hidden="true" />{tr("I'm a padel coach", "Soy entrenador de pádel", "Je suis coach de padel")}</span>
           <span className="block text-xs text-[var(--ink)]/70 mt-0.5">
             {isCoach
               ? tr("Your lessons and requests are under Coaching on your Me page.", "Tus clases y solicitudes están en Entrenador, en tu página Yo.", "Tes cours et demandes sont dans Coaching, sur ta page Moi.")

@@ -4,6 +4,7 @@
 @import "@fontsource/barlow/600.css";
 @import "@fontsource/barlow/700.css";
 @import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/500.css";
 @import "@fontsource/playfair-display/600.css";
 @import "@fontsource/playfair-display/400-italic.css";
 @import "@fontsource/barlow/700.css";
@@ -94,8 +95,8 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --ball: #A5E358;             /* grass green — unified accent */
 
   /* Wimbledon "Programme" palette (light editorial pages) */
-  --paper: #FDFBF7;
-  --paper-2: #EAE7E0;
+  --paper: #F6F2EA;
+  --paper-2: #E5E0D6;
   --limestone: color-mix(in oklab, var(--paper-2) 75%, var(--paper));   /* settled, confirmed states */
   --ink: #0F3E2E;
   --plum: #482E92;
@@ -108,7 +109,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --match-gold: color-mix(in oklab, var(--match-amber) 30%, transparent);
   --match-control: color-mix(in oklab, var(--grass) 12%, var(--paper));
   --club-soft: color-mix(in oklab, var(--grass) 16%, var(--paper));
-  --club-border: color-mix(in oklab, var(--ink) 22%, var(--paper));
+  --club-border: color-mix(in oklab, var(--ink) 30%, var(--paper));
   --club-hover: color-mix(in oklab, var(--grass) 24%, var(--paper));
   --club-surface: var(--cream);
 
@@ -252,13 +253,13 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --secondary: var(--paper-2);
   --secondary-foreground: var(--ink);
   --muted: var(--paper-2);
-  --muted-foreground: color-mix(in oklab, var(--ink) 78%, transparent);
+  --muted-foreground: color-mix(in oklab, var(--ink) 86%, transparent);
   --accent: var(--plum);
   --accent-foreground: var(--paper);
   --destructive: oklch(0.55 0.22 28);
   --destructive-foreground: var(--paper);
-  --border: color-mix(in oklab, var(--ink) 18%, transparent);
-  --input: color-mix(in oklab, var(--ink) 20%, transparent);
+  --border: color-mix(in oklab, var(--ink) 24%, transparent);
+  --input: color-mix(in oklab, var(--ink) 28%, transparent);
   --ring: var(--plum);
 }
 /* Perf: skip layout/paint work for off-screen list items (grids, feeds). */
@@ -279,7 +280,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --primary-foreground: var(--paper);
   --accent: color-mix(in oklab, var(--ink) 8%, #ffffff);
   --accent-foreground: var(--ink);
-  --muted-foreground: color-mix(in oklab, var(--ink) 70%, var(--paper));
+  --muted-foreground: color-mix(in oklab, var(--ink) 80%, var(--paper));
   --ring: var(--ink);
 }
 @utility lazy-row {
@@ -288,7 +289,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 @utility programme-card {
   background: #ffffff;
-  border: 1px solid color-mix(in oklab, var(--ink) 16%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 22%, transparent);
   border-radius: 14px;
   box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 4%, transparent),
               0 8px 24px -16px color-mix(in oklab, var(--ink) 18%, transparent);
@@ -341,7 +342,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-weight: 600;
-  border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 24%, transparent);
   background: var(--paper);
   color: var(--ink);
 }
@@ -360,7 +361,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-weight: 600;
-  border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
   background: color-mix(in oklab, var(--ink) 5%, transparent);
   color: var(--ink);
 }
@@ -420,7 +421,7 @@ body.chat-typing .quick-actions {
 [data-sonner-toast].app-toast {
   background: var(--paper);
   color: var(--ink);
-  border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 20%, transparent);
   border-left: 3px solid color-mix(in oklab, var(--ink) 45%, transparent);
   border-radius: 14px;
   box-shadow: 0 14px 40px -18px oklch(0 0 0 / 0.45);
@@ -434,7 +435,7 @@ body.chat-typing .quick-actions {
   color: var(--ink);
 }
 [data-sonner-toast].app-toast .app-toast-desc {
-  color: color-mix(in oklab, var(--ink) 68%, transparent);
+  color: color-mix(in oklab, var(--ink) 80%, transparent);
   font-size: 0.82rem;
   line-height: 1.45;
 }

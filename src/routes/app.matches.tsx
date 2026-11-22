@@ -69,19 +69,19 @@ function Matches() {
     <main className="programme-page px-4 sm:px-6 lg:px-10 py-5 sm:py-8 min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto">
         <h1 className="text-serif text-4xl sm:text-5xl lg:text-6xl text-[var(--ink)]">{t("ml.h1")}</h1>
-        <p className="text-sm sm:text-base text-[var(--ink)]/70 mt-1 sm:mt-2">{t("ml.sub")}</p>
+        <p className="text-sm sm:text-base text-[var(--ink)]/80 mt-1 sm:mt-2">{t("ml.sub")}</p>
 
         {q.isLoading && !q.data ? (
           <ul className="mt-6 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <li key={i} className="rounded-2xl border border-[var(--ink)]/14 bg-white p-4 space-y-2.5">
+              <li key={i} className="rounded-2xl border border-[var(--ink)]/22 bg-white p-4 space-y-2.5">
                 <div className="h-4 w-1/2 rounded bg-[var(--ink)]/8 animate-pulse" />
                 <div className="h-3 w-3/4 rounded bg-[var(--ink)]/6 animate-pulse" />
               </li>
             ))}
           </ul>
         ) : items.length === 0 ? (
-          <div className="mt-12 text-center text-[var(--ink)]/72">
+          <div className="mt-12 text-center text-[var(--ink)]/82">
             <p>{t("ml.empty")}</p>
             <Link to="/app" className="underline mt-2 inline-block">{t("ml.discoverLink")}</Link>
           </div>
@@ -104,11 +104,11 @@ function Matches() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-serif text-2xl text-[var(--ink)] truncate">{m.other.first_name}</div>
-                          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/72">{m.other.zone} · {label(m.other.level)}</div>
+                          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {label(m.other.level)}</div>
                         </div>
                       </div>
                       {m.last_message && (
-                        <blockquote className="mt-2.5 text-sm text-[var(--ink)]/85 italic border-l-2 border-[var(--ink)]/22 pl-3 line-clamp-3">
+                        <blockquote className="mt-2.5 text-sm text-[var(--ink)]/90 italic border-l-2 border-[var(--ink)]/30 pl-3 line-clamp-3">
                           &ldquo;{m.last_message.body}&rdquo;
                         </blockquote>
                       )}
@@ -123,7 +123,7 @@ function Matches() {
                         <button
                           disabled={busyId === m.match_id}
                           onClick={() => decide(m.match_id, false)}
-                          className="flex-1 h-9 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]/70 text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                          className="flex-1 h-9 rounded-full border border-[var(--ink)]/32 text-[var(--ink)]/80 text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
                         >
                           <X className="w-3.5 h-3.5" /> {tr("Ignore", "Ignorar", "Ignorer")}
                         </button>
@@ -131,7 +131,7 @@ function Matches() {
                           disabled={busyId === m.match_id}
                           onClick={() => removeThread(m.match_id, m.other!.first_name)}
                           aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
-                          className="h-9 w-9 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/72 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center shrink-0"
+                          className="h-9 w-9 rounded-full border border-[var(--ink)]/28 text-[var(--ink)]/82 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center shrink-0"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -157,14 +157,14 @@ function Matches() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <div className="text-serif text-2xl sm:text-3xl text-[var(--ink)]">{m.other.first_name}</div>
                           {m.pending_outgoing && (
-                            <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]/72">
+                            <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]/82">
                               {tr("Sent", "Enviado", "Envoyé")}
                             </span>
                           )}
                           {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--plum)] ink-ring" />}
                         </div>
-                        <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/72">{m.other.zone} · {label(m.other.level)}</div>
-                        <div className={`text-xs sm:text-sm mt-1 line-clamp-2 ${m.unread > 0 ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/70"}`}>
+                        <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {label(m.other.level)}</div>
+                        <div className={`text-xs sm:text-sm mt-1 line-clamp-2 ${m.unread > 0 ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>
                           {m.last_message ? `${m.last_message.from_me ? tr("You: ", "Tú: ", "Toi : ") : ""}${m.last_message.body}` : m.other.bio}
                         </div>
                       </div>
@@ -173,7 +173,7 @@ function Matches() {
                       disabled={busyId === m.match_id}
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeThread(m.match_id, m.other!.first_name); }}
                       aria-label={tr("Delete conversation", "Eliminar conversación", "Supprimer")}
-                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/22 text-[var(--ink)]/65 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center z-10"
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-[var(--paper)] border border-[var(--ink)]/30 text-[var(--ink)]/76 hover:text-red-600 hover:border-red-500/40 disabled:opacity-50 inline-flex items-center justify-center z-10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

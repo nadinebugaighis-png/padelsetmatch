@@ -82,7 +82,7 @@ export function GearShelf({ profileId, title }: { profileId: string; title?: str
 
   return (
     <div>
-      <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--ink)]/68 mb-2">
+      <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[var(--ink)]/78 mb-2">
         {title ?? tr("My kit", "Mi equipo", "Mon matériel")}
       </div>
       <div className="flex gap-2.5 overflow-x-auto -mx-1 px-1 pb-1 snap-x">
@@ -100,7 +100,7 @@ export function GearShelf({ profileId, title }: { profileId: string; title?: str
                 {it.title}
               </div>
               {it.brand && (
-                <div className="text-[10px] text-[var(--ink)]/68 truncate">{it.brand}</div>
+                <div className="text-[10px] text-[var(--ink)]/78 truncate">{it.brand}</div>
               )}
               {it.link_url && (
                 <span className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-[var(--plum)] font-semibold">
@@ -111,7 +111,7 @@ export function GearShelf({ profileId, title }: { profileId: string; title?: str
             </>
           );
           const cls =
-            "snap-start shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] border border-[var(--ink)]/16 text-left";
+            "snap-start shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] border border-[var(--ink)]/24 text-left";
           return it.link_url ? (
             <a key={it.id} href={it.link_url} target="_blank" rel="noopener noreferrer nofollow" className={cls}>
               {inner}
@@ -289,7 +289,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
                 onClick={() => setOpen(true)}
                 className="shrink-0 w-[112px] text-left active:scale-[0.98] transition-transform"
               >
-                <span className="w-full aspect-square rounded-xl border border-dashed border-[var(--ink)]/25 flex flex-col items-center justify-center gap-1 text-[var(--ink)]/68">
+                <span className="w-full aspect-square rounded-xl border border-dashed border-[var(--ink)]/32 flex flex-col items-center justify-center gap-1 text-[var(--ink)]/78">
                   <Plus className="w-5 h-5" strokeWidth={1.5} />
                   <span className="text-[12px]">{tr("Add", "Añadir", "Ajouter")}</span>
                 </span>
@@ -299,14 +299,14 @@ export function GearEditor({ profileId }: { profileId: string }) {
         </SortableContext>
       </DndContext>
       {order.length > 1 && (
-        <p className="text-[11px] text-[var(--ink)]/60">
+        <p className="text-[11px] text-[var(--ink)]/72">
           {tr("Tap to edit · hold to reorder", "Toca para editar · mantén para reordenar", "Touche pour modifier · maintiens pour réordonner")}
         </p>
       )}
 
       {!open ? (
         items.length >= MAX_ITEMS ? (
-          <p className="text-xs text-[var(--ink)]/68">
+          <p className="text-xs text-[var(--ink)]/78">
             {tr(
               `Kit is full (${MAX_ITEMS} items). Remove one to add something new.`,
               `Equipo completo (${MAX_ITEMS} objetos). Quita uno para añadir otro.`,
@@ -315,13 +315,13 @@ export function GearEditor({ profileId }: { profileId: string }) {
           </p>
         ) : null
       ) : (
-        <div className="rounded-2xl border border-[var(--ink)]/18 bg-[var(--card)] p-4 space-y-3">
+        <div className="rounded-2xl border border-[var(--ink)]/26 bg-[var(--card)] p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="text-serif text-[18px] text-[var(--ink)]">
               {editingId ? tr("Edit item", "Editar objeto", "Modifier l'objet") : tr("New item", "Nuevo objeto", "Nouvel objet")}
             </div>
             <button type="button" onClick={reset} aria-label={tr("Close", "Cerrar", "Fermer")}>
-              <X className="w-4 h-4 text-[var(--ink)]/72" />
+              <X className="w-4 h-4 text-[var(--ink)]/82" />
             </button>
           </div>
 
@@ -334,7 +334,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
                 className={`px-2.5 h-8 rounded-full text-[12px] border transition ${
                   kind === k
                     ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
-                    : "bg-[var(--card)] border-[var(--ink)]/20 text-[var(--ink)]/75"
+                    : "bg-[var(--card)] border-[var(--ink)]/28 text-[var(--ink)]/84"
                 }`}
               >
                 {kindLabel(k, tr)}
@@ -348,11 +348,11 @@ export function GearEditor({ profileId }: { profileId: string }) {
               className="shrink-0 w-[76px] h-[76px] rounded-[8px] border border-dashed border-[var(--ink)]/30 bg-white flex items-center justify-center overflow-hidden cursor-pointer"
             >
               {uploading ? (
-                <Loader2 className="w-4 h-4 animate-spin text-[var(--ink)]/72" />
+                <Loader2 className="w-4 h-4 animate-spin text-[var(--ink)]/82" />
               ) : image ? (
                 <img src={image} alt="" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-[10px] text-[var(--ink)]/68 text-center px-1">
+                <span className="text-[10px] text-[var(--ink)]/78 text-center px-1">
                   {tr("Photo", "Foto", "Photo")}
                 </span>
               )}
@@ -373,13 +373,13 @@ export function GearEditor({ profileId }: { profileId: string }) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={tr("Name (e.g. Bullpadel Vertex)", "Nombre (p. ej. Bullpadel Vertex)", "Nom (ex. Bullpadel Vertex)")}
-                className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/20 bg-white text-sm"
+                className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/28 bg-white text-sm"
               />
               <input
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 placeholder={tr("Brand (optional)", "Marca (opcional)", "Marque (optionnel)")}
-                className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/20 bg-white text-sm"
+                className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/28 bg-white text-sm"
               />
             </div>
           </div>
@@ -388,7 +388,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
             value={link}
             onChange={(e) => setLink(e.target.value)}
             placeholder={tr("Link (optional)", "Enlace (opcional)", "Lien (optionnel)")}
-            className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/20 bg-white text-sm"
+            className="w-full h-9 px-2.5 rounded-md border border-[var(--ink)]/28 bg-white text-sm"
           />
 
           <button
@@ -452,11 +452,11 @@ function SortableGearCard({
         {item.image_url ? (
           <img src={item.image_url} alt="" draggable={false} className="w-full h-full object-cover pointer-events-none" />
         ) : (
-          <span className="w-full h-full flex items-center justify-center text-serif italic text-[15px] text-[var(--ink)]/60">{kindText}</span>
+          <span className="w-full h-full flex items-center justify-center text-serif italic text-[15px] text-[var(--ink)]/72">{kindText}</span>
         )}
       </span>
       <span className="mt-2 block text-[13px] leading-tight text-[var(--ink)] line-clamp-2">{item.title}</span>
-      {item.brand && <span className="block text-[11px] text-[var(--ink)]/65 truncate">{item.brand}</span>}
+      {item.brand && <span className="block text-[11px] text-[var(--ink)]/76 truncate">{item.brand}</span>}
     </button>
   );
 }

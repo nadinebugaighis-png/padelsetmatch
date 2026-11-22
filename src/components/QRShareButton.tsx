@@ -54,7 +54,7 @@ export function ShareAppDialog({ open, onClose }: { open: boolean; onClose: () =
           {tr("Share app", "Compartir app", "Partager l’app")}
         </button>
         <button type="button" onClick={copyLink}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-[var(--ink)]/20 bg-white px-4 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5">
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-[var(--ink)]/28 bg-white px-4 py-2 text-sm font-medium text-[var(--ink)] hover:bg-[var(--ink)]/5">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied ? tr("Copied", "Copiado", "Copié") : tr("Copy link", "Copiar enlace", "Copier le lien")}
         </button>

@@ -35,7 +35,7 @@ function Chips({ q, onPick, disabled }: { q: CuratedQuestion; onPick: (en: strin
           type="button"
           disabled={disabled}
           onClick={() => onPick(opt.en)}
-          className="rounded-full border border-[var(--ink)]/22 bg-[var(--paper)] px-3 py-1.5 text-[12.5px] text-[var(--ink)] hover:bg-[var(--ink)]/[0.06] active:scale-[0.97] transition disabled:opacity-50"
+          className="rounded-full border border-[var(--ink)]/30 bg-[var(--paper)] px-3 py-1.5 text-[12.5px] text-[var(--ink)] hover:bg-[var(--ink)]/[0.06] active:scale-[0.97] transition disabled:opacity-50"
         >
           {opt[lang] ?? opt.en}
         </Button>
@@ -86,12 +86,12 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
     if (flowClosed) return null;
     return (
       <div className="mt-4 rounded-2xl border border-[var(--gold)]/50 bg-[var(--paper)] px-5 py-5 text-center">
-        <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/68">{tr("Complete", "Completado", "Terminé")}</div>
+        <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/78">{tr("Complete", "Completado", "Terminé")}</div>
         <div className="mt-2 text-serif text-[22px] leading-tight text-[var(--ink)]">{tr("Your compatibility is revealed", "Tu compatibilidad ya es visible", "Ta compatibilité est révélée")}</div>
-        <p className="mt-2 text-[13px] text-[var(--ink)]/65 leading-snug">
+        <p className="mt-2 text-[13px] text-[var(--ink)]/76 leading-snug">
           {tr("Open any player to see how you would play together.", "Abre cualquier jugador para ver cómo jugaríais juntos.", "Ouvre un profil pour voir comment vous joueriez ensemble.")}
         </p>
-        <button type="button" onClick={() => setFlowClosed(true)} className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72 underline underline-offset-4 decoration-[var(--ink)]/20 hover:text-[var(--ink)]">
+        <button type="button" onClick={() => setFlowClosed(true)} className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82 underline underline-offset-4 decoration-[var(--ink)]/20 hover:text-[var(--ink)]">
           {tr("Close", "Cerrar", "Fermer")}
         </button>
       </div>
@@ -119,14 +119,14 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
 
   if (isNew) {
     return (
-      <div className="mt-4 rounded-2xl border border-[var(--ink)]/16 bg-[var(--paper)] px-5 py-5">
+      <div className="mt-4 rounded-2xl border border-[var(--ink)]/24 bg-[var(--paper)] px-5 py-5">
         <div className="flex items-baseline justify-between gap-3">
           <div className="text-serif text-[20px] leading-tight text-[var(--ink)]">{tr("Reveal your compatibility", "Descubre tu compatibilidad", "Révèle ta compatibilité")}</div>
-          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/65 whitespace-nowrap tabular-nums">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/76 whitespace-nowrap tabular-nums">
             {tr(`${step} of ${UNLOCK_MIN_ANSWERS}`, `${step} de ${UNLOCK_MIN_ANSWERS}`, `${step} sur ${UNLOCK_MIN_ANSWERS}`)}
           </div>
         </div>
-        <p className="mt-1 text-[12.5px] text-[var(--ink)]/72 leading-snug">
+        <p className="mt-1 text-[12.5px] text-[var(--ink)]/82 leading-snug">
           {tr("Three quick answers, and every profile shows how you would play together.",
             "Tres respuestas rápidas y cada perfil te mostrará cómo jugaríais juntos.",
             "Trois réponses rapides, et chaque profil montre comment vous joueriez ensemble.")}
@@ -138,7 +138,7 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
         </div>
         <div className="mt-4 text-[15px] font-medium text-[var(--ink)] leading-snug">{q.q[lang] ?? q.q.en}</div>
         <Chips q={q} disabled={save.isPending} onPick={onPick} />
-        <p className="mt-3 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/60">
+        <p className="mt-3 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
           <Lock className="w-3 h-3" />
           {tr("Private. Never posted, only used to find players who suit you.", "Privado. Nunca se publica, solo sirve para encontrar jugadores afines.", "Privé. Jamais publié, sert uniquement à trouver des joueurs qui te correspondent.")}
         </p>
@@ -150,11 +150,11 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
     ? tr("Evening question", "Pregunta de la tarde", "Question du soir")
     : tr("Morning question", "Pregunta de la mañana", "Question du matin");
   return (
-    <div className="mt-4 rounded-xl border border-[var(--ink)]/16 bg-white px-4 py-3">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/68">{title}</div>
+    <div className="mt-4 rounded-xl border border-[var(--ink)]/24 bg-white px-4 py-3">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78">{title}</div>
       <div className="mt-1 text-[15px] font-medium text-[var(--ink)] leading-snug">{q.q[lang] ?? q.q.en}</div>
       <Chips q={q} disabled={save.isPending} onPick={onPick} />
-      <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/60">
+      <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
         <Lock className="w-3 h-3" />
         {tr("Private. Never posted, only used to find players who suit you.", "Privado. Nunca se publica, solo sirve para encontrar jugadores afines.", "Privé. Jamais publié, sert uniquement à trouver des joueurs qui te correspondent.")}
       </p>
@@ -189,7 +189,7 @@ export function UnlockMatchQuestions({ answered, name }: { answered: string[]; n
       </div>
       <div className="mt-3 text-[13.5px] text-[var(--ink)]">{q.q[lang] ?? q.q.en}</div>
       <Chips q={q} disabled={save.isPending} onPick={(answer) => save.mutate({ q, answer })} />
-      <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/60">
+      <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
         <Lock className="w-3 h-3" />
         {tr("Your answers stay private.", "Tus respuestas son privadas.", "Tes réponses restent privées.")}
       </p>

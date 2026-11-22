@@ -102,7 +102,7 @@ export function SearchableChips({
             )}
           </div>
           {trimmed.length > 0 && (
-            <p className="text-[11px] text-[var(--ink)]/72">
+            <p className="text-[11px] text-[var(--ink)]/82">
               {visible.length > 0
                 ? `${visible.length} ↓`
                 : canAddCustom
@@ -115,7 +115,7 @@ export function SearchableChips({
         <button
           type="button"
           onClick={() => setSearchOpen(true)}
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--ink)]/72 hover:text-[var(--ink)] px-2 py-1 rounded-md border border-[var(--cream)]/20"
+          className="inline-flex items-center gap-1.5 text-xs text-[var(--ink)]/82 hover:text-[var(--ink)] px-2 py-1 rounded-md border border-[var(--cream)]/20"
         >
           <Search className="w-3 h-3" />
           {placeholder}
@@ -168,7 +168,7 @@ export function SearchableChips({
         )}
       </div>
       {visible.length === 0 && !canAddCustom && emptyHint && (
-        <p className="text-xs text-[var(--ink)]/72">{emptyHint}</p>
+        <p className="text-xs text-[var(--ink)]/82">{emptyHint}</p>
       )}
     </div>
   );

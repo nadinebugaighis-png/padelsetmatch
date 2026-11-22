@@ -136,7 +136,7 @@ function QuickStart() {
       <div className="w-full max-w-md programme-card p-7 sm:p-9">
         <div className="flex items-center justify-between">
           <BrandMark size="sm" />
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
             {tr("30 seconds", "30 segundos", "30 secondes")}
           </span>
         </div>
@@ -144,7 +144,7 @@ function QuickStart() {
         <h1 className="text-display text-4xl sm:text-5xl mt-5 leading-none">
           {tr("Play first.", "Juega primero.", "Joue d'abord.")}
         </h1>
-        <p className="text-[15px] text-[var(--ink)]/70 mt-3 leading-relaxed">
+        <p className="text-[15px] text-[var(--ink)]/80 mt-3 leading-relaxed">
           {tr(
             "Three quick answers and you're in. Add the rest whenever you feel like it.",
             "Tres respuestas rápidas y ya estás. Lo demás lo añades cuando quieras.",
@@ -161,14 +161,14 @@ function QuickStart() {
         <form onSubmit={submit} className="mt-6 space-y-5">
           {/* Photo — optional, from Google or fallback initial */}
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 flex items-center justify-center text-lg font-medium text-[var(--ink)]/72">
+            <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 flex items-center justify-center text-lg font-medium text-[var(--ink)]/82">
               {photoUrl ? (
                 <img src={photoUrl} alt="" className="w-full h-full object-cover" />
               ) : (
                 firstName.trim().charAt(0).toUpperCase() || "?"
               )}
             </div>
-            <div className="text-xs text-[var(--ink)]/68">
+            <div className="text-xs text-[var(--ink)]/78">
               {photoUrl
                 ? tr("You can change this later", "Puedes cambiarla luego", "Modifiable plus tard")
                 : tr("Add a photo later from your profile", "Añade foto luego en tu perfil", "Ajoute une photo plus tard")}
@@ -176,7 +176,7 @@ function QuickStart() {
           </div>
 
           <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
+            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
               {tr("First name", "Nombre", "Prénom")}
             </label>
             <input
@@ -185,12 +185,12 @@ function QuickStart() {
               placeholder="Alex"
               maxLength={40}
               required
-              className="w-full mt-1 bg-transparent border border-[var(--ink)]/20 rounded-md h-11 px-3 text-[15px]"
+              className="w-full mt-1 bg-transparent border border-[var(--ink)]/28 rounded-md h-11 px-3 text-[15px]"
             />
           </div>
 
           <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
+            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
               {tr("Gender", "Género", "Genre")}
             </label>
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -202,7 +202,7 @@ function QuickStart() {
                   className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
                     gender === g
                       ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
-                      : "border-[var(--ink)]/20 text-[var(--ink)]/75"
+                      : "border-[var(--ink)]/28 text-[var(--ink)]/84"
                   }`}
                 >
                   {g === "woman" && tr("Woman", "Mujer", "Femme")}
@@ -215,7 +215,7 @@ function QuickStart() {
           </div>
 
           <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/68">
+            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
               {tr("Padel level", "Nivel de pádel", "Niveau de padel")}
             </label>
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -227,7 +227,7 @@ function QuickStart() {
                   className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
                     level === lvl
                       ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
-                      : "border-[var(--ink)]/20 text-[var(--ink)]/75"
+                      : "border-[var(--ink)]/28 text-[var(--ink)]/84"
                   }`}
                 >
                   {levelLabel(lvl)}
@@ -248,7 +248,7 @@ function QuickStart() {
 
           <Link
             to="/app/onboarding"
-            className="block text-center text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/68 hover:text-[var(--ink)]"
+            className="block text-center text-[11px] uppercase tracking-[0.25em] text-[var(--ink)]/78 hover:text-[var(--ink)]"
           >
             {tr("Do the full profile instead", "Prefiero el perfil completo", "Faire le profil complet")}
           </Link>

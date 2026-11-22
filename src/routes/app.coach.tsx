@@ -23,7 +23,7 @@ export const Route = createFileRoute("/app/coach")({
   component: CoachTimesPage,
 });
 
-const label = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/68";
+const label = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/78";
 const LAST_CLUB = "coach-last-club";
 const LAST_PLACE = "coach-last-place";
 const LAST_AREA = "coach-last-area";
@@ -125,7 +125,7 @@ function CoachTimesPage() {
       <div className="programme-page min-h-[calc(100vh-4rem)]">
         <div className="max-w-md mx-auto px-5 pt-10 text-center">
           <h1 className="text-serif text-[30px] text-[var(--ink)]">{tr("Coaching", "Entrenador", "Coaching")}</h1>
-          <p className="mt-3 text-[15px] text-[var(--ink)]/72">{tr("Turn on \"I'm a padel coach\" in Edit profile to share lesson times.", "Activa \"Soy entrenador de pádel\" en Editar perfil para publicar horarios.", "Active « Je suis coach de padel » dans Modifier le profil pour publier tes horaires.")}</p>
+          <p className="mt-3 text-[15px] text-[var(--ink)]/82">{tr("Turn on \"I'm a padel coach\" in Edit profile to share lesson times.", "Activa \"Soy entrenador de pádel\" en Editar perfil para publicar horarios.", "Active « Je suis coach de padel » dans Modifier le profil pour publier tes horaires.")}</p>
           <Link to="/app/onboarding" className="mt-5 inline-flex h-11 items-center rounded-full bg-[var(--ink)] px-6 text-[14px] font-medium text-[var(--cream)]">{tr("Edit profile", "Editar perfil", "Modifier le profil")}</Link>
         </div>
       </div>
@@ -145,7 +145,7 @@ function CoachTimesPage() {
       <div className="max-w-md sm:max-w-2xl mx-auto px-5 pt-2 pb-32">
         <button type="button" onClick={() => navigate({ to: "/app/profile" })} aria-label={tr("Back", "Atrás", "Retour")} className="-ml-2 grid size-10 place-items-center rounded-full text-[var(--ink)]"><ArrowLeft className="size-5" /></button>
         <h1 className="mt-1 text-serif text-[34px] leading-[1.05] text-[var(--ink)]">{tr("Coaching", "Entrenador", "Coaching")}</h1>
-        <p className="mt-2 text-[15px] text-[var(--ink)]/68">{tr("Share your times. Players ask for a private lesson or an open group. You confirm.", "Publica tus horas. Los jugadores piden clase privada o grupo abierto. Tú confirmas.", "Publie tes horaires. Les joueurs demandent un cours privé ou un groupe ouvert. Tu confirmes.")}</p>
+        <p className="mt-2 text-[15px] text-[var(--ink)]/78">{tr("Share your times. Players ask for a private lesson or an open group. You confirm.", "Publica tus horas. Los jugadores piden clase privada o grupo abierto. Tú confirmas.", "Publie tes horaires. Les joueurs demandent un cours privé ou un groupe ouvert. Tu confirmes.")}</p>
 
         {requests.length > 0 && (
           <section className="mt-6">
@@ -159,15 +159,15 @@ function CoachTimesPage() {
                       <PlayerPhoto src={p?.photo_url ?? undefined} seed={s.student_profile_id} alt={p?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
                       <div className="min-w-0 flex-1">
                         <div className="text-[15px] font-medium text-[var(--ink)] truncate">{p?.first_name ?? tr("A player", "Un jugador", "Un joueur")} · <span className={s.lesson_kind === "group" ? "text-[var(--plum)]" : ""}>{kindLabel(s)}</span></div>
-                        <div className="text-[12.5px] text-[var(--ink)]/68 truncate">{longDate(s.starts_at)} · {time(s.starts_at)} · {where(s)}</div>
+                        <div className="text-[12.5px] text-[var(--ink)]/78 truncate">{longDate(s.starts_at)} · {time(s.starts_at)} · {where(s)}</div>
                       </div>
                     </div>
-                    {s.student_note && <p className="mt-2 text-[13.5px] text-[var(--ink)]/75">"{s.student_note}"</p>}
+                    {s.student_note && <p className="mt-2 text-[13.5px] text-[var(--ink)]/84">"{s.student_note}"</p>}
                     {s.lesson_kind === "group" && (
-                      <p className="mt-2 text-[12.5px] text-[var(--ink)]/65">{tr(`If you accept, the class goes on Matches with ${GROUP_CLASS_PLAYERS - 1} places open for others.`, `Si aceptas, la clase aparece en Partidos con ${GROUP_CLASS_PLAYERS - 1} plazas libres.`, `Si tu acceptes, le cours apparaît dans Matchs avec ${GROUP_CLASS_PLAYERS - 1} places libres.`)}</p>
+                      <p className="mt-2 text-[12.5px] text-[var(--ink)]/76">{tr(`If you accept, the class goes on Matches with ${GROUP_CLASS_PLAYERS - 1} places open for others.`, `Si aceptas, la clase aparece en Partidos con ${GROUP_CLASS_PLAYERS - 1} plazas libres.`, `Si tu acceptes, le cours apparaît dans Matchs avec ${GROUP_CLASS_PLAYERS - 1} places libres.`)}</p>
                     )}
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => answer(s, false)} className="h-10 rounded-full border border-[var(--ink)]/20 text-[14px] text-[var(--ink)]">{tr("Decline", "Rechazar", "Refuser")}</button>
+                      <button type="button" onClick={() => answer(s, false)} className="h-10 rounded-full border border-[var(--ink)]/28 text-[14px] text-[var(--ink)]">{tr("Decline", "Rechazar", "Refuser")}</button>
                       <button type="button" onClick={() => answer(s, true)} className="h-10 rounded-full bg-[var(--ink)] text-[14px] font-medium text-[var(--cream)]">{tr("Accept", "Aceptar", "Accepter")}</button>
                     </div>
                   </li>
@@ -180,7 +180,7 @@ function CoachTimesPage() {
         {booked.length > 0 && (
           <section className="mt-6">
             <div className={label}>{tr("Coming up", "Próximas clases", "À venir")}</div>
-            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/16 bg-white">
+            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/24 bg-white">
               {booked.map((s) => {
                 const p = s.student_profile_id ? data.people[s.student_profile_id] : undefined;
                 const cls = s.match_event_id ? data.classes[s.match_event_id] : undefined;
@@ -189,7 +189,7 @@ function CoachTimesPage() {
                   <li key={s.id} className="flex items-center gap-3 px-4 py-3">
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
-                      <div className="text-[12.5px] text-[var(--ink)]/65 truncate">
+                      <div className="text-[12.5px] text-[var(--ink)]/76 truncate">
                         {s.match_event_id ? (
                           <span className="text-[var(--plum)]">
                             <Users className="mr-1 inline size-3.5 -mt-0.5" />
@@ -207,7 +207,7 @@ function CoachTimesPage() {
                         {tr("Open", "Ver", "Voir")}
                       </Link>
                     ) : <LessonMessageButton slotId={s.id} />}
-                    <button type="button" onClick={() => remove(s)} aria-label={tr("Cancel", "Cancelar", "Annuler")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/55"><Trash2 className="size-4" /></button>
+                    <button type="button" onClick={() => remove(s)} aria-label={tr("Cancel", "Cancelar", "Annuler")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/68"><Trash2 className="size-4" /></button>
                   </li>
                 );
               })}
@@ -225,18 +225,18 @@ function CoachTimesPage() {
             )}
           </div>
           {open.length === 0 ? (
-            !showForm && <p className="mt-2 text-[14px] text-[var(--ink)]/65">{tr("No open times. Add some so players can book you.", "No tienes horas libres. Añade algunas para que te reserven.", "Aucun horaire libre. Ajoutes-en pour être réservé.")}</p>
+            !showForm && <p className="mt-2 text-[14px] text-[var(--ink)]/76">{tr("No open times. Add some so players can book you.", "No tienes horas libres. Añade algunas para que te reserven.", "Aucun horaire libre. Ajoutes-en pour être réservé.")}</p>
           ) : (
-            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/16 bg-white">
+            <ul className="mt-2 divide-y divide-[var(--ink)]/[0.08] rounded-2xl border border-[var(--ink)]/24 bg-white">
               {open.map((s) => (
                 <li key={s.id} className="flex items-center gap-3 px-4 py-2.5">
                   <div className="min-w-0 flex-1">
                     <div className="text-[14.5px] text-[var(--ink)]">{longDate(s.starts_at)} · {time(s.starts_at)} · {s.duration_minutes}'</div>
-                    <div className="text-[12px] text-[var(--ink)]/60 truncate">
+                    <div className="text-[12px] text-[var(--ink)]/72 truncate">
                       {where(s)}
                     </div>
                   </div>
-                  <button type="button" onClick={() => remove(s)} aria-label={tr("Remove", "Quitar", "Retirer")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/55"><Trash2 className="size-4" /></button>
+                  <button type="button" onClick={() => remove(s)} aria-label={tr("Remove", "Quitar", "Retirer")} className="grid size-8 shrink-0 place-items-center rounded-full text-[var(--ink)]/68"><Trash2 className="size-4" /></button>
                 </li>
               ))}
             </ul>
@@ -244,10 +244,10 @@ function CoachTimesPage() {
         </section>
 
         {showForm && (
-          <section className="mt-4 rounded-2xl border border-[var(--ink)]/16 bg-white p-4 space-y-4">
+          <section className="mt-4 rounded-2xl border border-[var(--ink)]/24 bg-white p-4 space-y-4">
             <div className="flex items-center justify-between">
               <div className={label}>{tr("1 · Day and hours", "1 · Día y horas", "1 · Jour et heures")}</div>
-              {data.slots.length > 0 && <button type="button" onClick={() => setAdding(false)} className="text-[12.5px] text-[var(--ink)]/65 underline underline-offset-4">{tr("Close", "Cerrar", "Fermer")}</button>}
+              {data.slots.length > 0 && <button type="button" onClick={() => setAdding(false)} className="text-[12.5px] text-[var(--ink)]/76 underline underline-offset-4">{tr("Close", "Cerrar", "Fermer")}</button>}
             </div>
             <div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]">
               {days.map((d) => {
@@ -255,7 +255,7 @@ function CoachTimesPage() {
                 const on = k === day;
                 return (
                   <button key={k} type="button" onClick={() => { setDay(k); setHours([]); }} aria-pressed={on}
-                    className={`flex h-[60px] w-[54px] shrink-0 flex-col items-center justify-center rounded-xl border ${on ? "border-[var(--pitch)] bg-[var(--pitch)] text-[var(--cream)]" : "border-[var(--ink)]/22 text-[var(--ink)]"}`}>
+                    className={`flex h-[60px] w-[54px] shrink-0 flex-col items-center justify-center rounded-xl border ${on ? "border-[var(--pitch)] bg-[var(--pitch)] text-[var(--cream)]" : "border-[var(--ink)]/30 text-[var(--ink)]"}`}>
                     <span className="text-[12px] leading-none">{d.toLocaleDateString(locale, { weekday: "short" })}</span>
                     <span className="mt-1 text-[18px] font-semibold leading-none">{d.getDate()}</span>
                   </button>
@@ -269,28 +269,28 @@ function CoachTimesPage() {
                 return (
                   <button key={h} type="button" disabled={past} aria-pressed={on}
                     onClick={() => setHours((v) => on ? v.filter((x) => x !== h) : [...v, h])}
-                    className={`h-9 rounded-full border text-[14px] transition disabled:opacity-25 ${on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/20 text-[var(--ink)]"}`}>
+                    className={`h-9 rounded-full border text-[14px] transition disabled:opacity-25 ${on ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/28 text-[var(--ink)]"}`}>
                     {String(h).padStart(2, "0")}:00
                   </button>
                 );
               })}
             </div>
-            <div className="grid grid-cols-2 rounded-full border border-[var(--ink)]/18 p-1">
+            <div className="grid grid-cols-2 rounded-full border border-[var(--ink)]/26 p-1">
               {([60, 90] as const).map((m) => (
                 <button key={m} type="button" onClick={() => setDuration(m)} aria-pressed={duration === m}
-                  className={`h-8 rounded-full text-[13px] ${duration === m ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/72"}`}>{m} min</button>
+                  className={`h-8 rounded-full text-[13px] ${duration === m ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/82"}`}>{m} min</button>
               ))}
             </div>
 
             <div className={`pt-1 ${label}`}>{tr("2 · Where", "2 · Dónde", "2 · Où")}</div>
-            <div className="grid grid-cols-3 rounded-full border border-[var(--ink)]/18 p-1">
+            <div className="grid grid-cols-3 rounded-full border border-[var(--ink)]/26 p-1">
               {([
                 ["club", tr("At a club", "En un club", "En club")],
                 ["travel", tr("I come to you", "A domicilio", "À domicile")],
                 ["both", tr("Both", "Ambos", "Les deux")],
               ] as const).map(([v, text]) => (
                 <button key={v} type="button" onClick={() => setPlace(v)} aria-pressed={place === v}
-                  className={`h-8 rounded-full text-[13px] ${place === v ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/72"}`}>{text}</button>
+                  className={`h-8 rounded-full text-[13px] ${place === v ? "bg-[var(--ink)] text-[var(--cream)]" : "text-[var(--ink)]/82"}`}>{text}</button>
               ))}
             </div>
             {offersClub(place) && (
@@ -299,13 +299,13 @@ function CoachTimesPage() {
             {offersTravel(place) && (
               <div className="space-y-1.5">
                 <Input value={area} maxLength={120} onChange={(e) => setArea(e.target.value)} aria-label={tr("Areas you cover", "Zonas que cubres", "Zones couvertes")} placeholder={tr("Urbanizaciones you cover, e.g. La Moraleja, El Soto", "Urbanizaciones que cubres, ej. La Moraleja, El Soto", "Résidences couvertes, ex. La Moraleja, El Soto")} />
-                <p className="text-[12px] text-[var(--ink)]/60">{tr("Players with a court at home or in their urbanización can ask you to come.", "Los jugadores con pista en casa o en su urbanización pueden pedirte que vayas.", "Les joueurs avec un court chez eux ou dans leur résidence peuvent te demander de venir.")}</p>
+                <p className="text-[12px] text-[var(--ink)]/72">{tr("Players with a court at home or in their urbanización can ask you to come.", "Los jugadores con pista en casa o en su urbanización pueden pedirte que vayas.", "Les joueurs avec un court chez eux ou dans leur résidence peuvent te demander de venir.")}</p>
               </div>
             )}
 
             <div className={`pt-1 ${label}`}>{tr("3 · Lesson price (optional)", "3 · Precio de la clase (opcional)", "3 · Prix du cours (optionnel)")}</div>
             <Input value={price} maxLength={40} onChange={(e) => setPrice(e.target.value)} aria-label={tr("Private lesson price", "Precio clase privada", "Prix cours privé")} placeholder={tr("Private lesson, e.g. €50", "Clase privada, ej. 50 €", "Cours privé, ex. 50 €")} />
-            <p className="text-[12px] text-[var(--ink)]/60">{tr("Players who want to bring friends can ask you in the chat.", "Si un jugador quiere traer amigos, te lo puede pedir por el chat.", "Un joueur qui veut venir avec des amis peut te le demander par message.")}</p>
+            <p className="text-[12px] text-[var(--ink)]/72">{tr("Players who want to bring friends can ask you in the chat.", "Si un jugador quiere traer amigos, te lo puede pedir por el chat.", "Un joueur qui veut venir avec des amis peut te le demander par message.")}</p>
             <button type="button" disabled={saving} onClick={save} className="h-12 w-full rounded-full bg-[var(--ink)] text-[15px] font-medium text-[var(--cream)] disabled:opacity-60">
               {saving ? tr("Saving…", "Guardando…", "Enregistrement…") : starts.length
                 ? tr(`Publish ${starts.length} ${starts.length === 1 ? "slot" : "slots"}`, `Publicar ${starts.length} ${starts.length === 1 ? "horario" : "horarios"}`, `Publier ${starts.length} horaire${starts.length === 1 ? "" : "s"}`)

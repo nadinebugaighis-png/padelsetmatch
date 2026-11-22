@@ -166,7 +166,7 @@ function Landing() {
             <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>
           </h1>
 
-          <p className="mt-3 lg:mt-2 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.55]">
+          <p className="mt-3 lg:mt-2 text-[15px] sm:text-base text-[var(--ink)]/84 max-w-md leading-[1.55]">
             {t("land.lede")}
           </p>
 
@@ -181,7 +181,7 @@ function Landing() {
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined, mode: "signin" }}
-              className="text-[14px] text-[var(--ink)]/70 hover:text-[var(--ink)] transition"
+              className="text-[14px] text-[var(--ink)]/80 hover:text-[var(--ink)] transition"
             >
               {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
               <span className="font-semibold text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30">
@@ -191,7 +191,7 @@ function Landing() {
           </div>
 
           <div className="mt-10 lg:mt-9 max-w-md">
-            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/65">
+            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/76">
               <span>{tr("Or get the app", "O descarga la app", "Ou télécharge l’app")}</span>
               <span className="h-px flex-1 bg-[var(--ink)]/15" aria-hidden />
             </div>
@@ -204,7 +204,7 @@ function Landing() {
       </section>
 
       {/* Preview strip (kept, restyled subtly) */}
-      <section className="relative z-10 px-5 sm:px-8 lg:px-16 pt-10 pb-14 border-t border-[var(--ink)]/16 bg-[var(--paper)]/85 backdrop-blur">
+      <section className="relative z-10 px-5 sm:px-8 lg:px-16 pt-10 pb-14 border-t border-[var(--ink)]/24 bg-[var(--paper)]/85 backdrop-blur">
         <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
           <div className="max-w-lg">
             <p className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_oklab,var(--plum)_14%,var(--paper))] border border-[color-mix(in_oklab,var(--plum)_22%,transparent)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--plum)]">
@@ -213,7 +213,7 @@ function Landing() {
             <h2 className="text-serif mt-4 text-4xl md:text-5xl uppercase tracking-[-0.01em] text-[var(--ink)]">
               {t("land.preview.title")}
             </h2>
-            <p className="mt-3 text-[var(--ink)]/65 leading-relaxed">{t("land.preview.sub")}</p>
+            <p className="mt-3 text-[var(--ink)]/76 leading-relaxed">{t("land.preview.sub")}</p>
           </div>
           <Link
             to="/auth"
@@ -230,10 +230,10 @@ function Landing() {
             { src: LANDING_TILES[2], name: "Aisha", city: "Dubai", score: 85 },
             { src: LANDING_TILES[3], name: "Kenji", city: "Tokyo", score: 81 },
           ].map((p, i) => (
-            <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/16 group">
+            <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-[var(--ink)]/24 group">
               <img src={p.src} alt="" className="w-full h-full object-cover" style={{ filter: "blur(14px) saturate(1.1)" }} loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--ink)]/80 via-[var(--ink)]/20 to-transparent" />
-              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--paper)] text-[var(--ink)] border border-[var(--ink)]/16 rounded-full px-2.5 py-1">{p.score}</span>
+              <span className="absolute top-3 right-3 text-[11px] font-semibold bg-[var(--paper)] text-[var(--ink)] border border-[var(--ink)]/24 rounded-full px-2.5 py-1">{p.score}</span>
               <div className="absolute bottom-3 left-3 right-3 text-[var(--paper)]">
                 <div className="text-serif text-xl leading-tight">{p.name}</div>
                 <div className="text-[11px] uppercase tracking-[0.18em] opacity-75">{p.city}</div>

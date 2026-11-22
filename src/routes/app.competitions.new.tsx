@@ -26,7 +26,7 @@ export const Route = createFileRoute("/app/competitions/new")({
   component: NewCompetition,
 });
 
-const label = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/72";
+const label = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/82";
 
 function NewCompetition() {
   const tr = useTr();
@@ -114,7 +114,7 @@ function NewCompetition() {
           <div className="flex flex-wrap gap-1.5">
             {COMPETITION_FORMATS.map((f) => (
               <button key={f} type="button" onClick={() => setFormat(f)}
-                className={`rounded-full border px-3 py-1.5 text-xs ${format === f ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/20 text-[var(--ink)]"}`}>
+                className={`rounded-full border px-3 py-1.5 text-xs ${format === f ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--cream)]" : "border-[var(--ink)]/28 text-[var(--ink)]"}`}>
                 {formatLabel(f, tr)}
               </button>
             ))}
@@ -141,7 +141,7 @@ function NewCompetition() {
           <label className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--gold)]/45 bg-white px-4 py-3">
             <span>
               <span className="block text-sm font-medium text-[var(--ink)]">{tr("Hosted by PadelSetMatch", "Organizada por PadelSetMatch", "Organisée par PadelSetMatch")}</span>
-              <span className="block text-xs text-[var(--ink)]/68">{tr("Players register in the app", "Los jugadores se inscriben en la app", "Les joueurs s'inscrivent dans l'app")}</span>
+              <span className="block text-xs text-[var(--ink)]/78">{tr("Players register in the app", "Los jugadores se inscriben en la app", "Les joueurs s'inscrivent dans l'app")}</span>
             </span>
             <Switch checked={hosted} onCheckedChange={setHosted} />
           </label>
@@ -174,7 +174,7 @@ function NewCompetition() {
         </div>
         <div className="space-y-1.5">
           <div className={label}>{tr("Poster (optional)", "Cartel (opcional)", "Affiche (optionnelle)")}</div>
-          <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--ink)]/25 px-3 py-3 text-sm text-[var(--ink)]/70">
+          <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[var(--ink)]/32 px-3 py-3 text-sm text-[var(--ink)]/80">
             <ImagePlus className="size-4" />
             <span className="truncate">{poster ? poster.name : tr("Add a poster image", "Añadir imagen del cartel", "Ajouter une affiche")}</span>
             <input type="file" accept="image/*" className="hidden" onChange={(e) => setPoster(e.target.files?.[0] ?? null)} />

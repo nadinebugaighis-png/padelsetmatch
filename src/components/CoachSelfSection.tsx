@@ -37,7 +37,7 @@ export function CoachSelfSection({ isCoach, showLink = true }: { isCoach: boolea
           </span>
           <div className="min-w-0">
             <div className="text-[16px] text-[var(--ink)] leading-tight">{title}</div>
-            <div className="text-[12px] text-[var(--ink)]/68 mt-0.5">
+            <div className="text-[12px] text-[var(--ink)]/78 mt-0.5">
               {isCoach
                 ? tr("Lessons and requests are under Coaching on Me.", "Clases y solicitudes en Entrenador, en Yo.", "Cours et demandes dans Coaching, sur Moi.")
                 : tr("Players can book lessons with you", "Los jugadores pueden reservar clases contigo", "Les joueurs peuvent réserver des cours")}

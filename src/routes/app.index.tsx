@@ -33,7 +33,7 @@ function AppIndexRedirect() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] flex items-center justify-center">
-      <div className="w-8 h-8 rounded-full border-2 border-[var(--ink)]/20 border-t-[var(--ink)] animate-spin" />
+      <div className="w-8 h-8 rounded-full border-2 border-[var(--ink)]/28 border-t-[var(--ink)] animate-spin" />
     </div>
   );
 }

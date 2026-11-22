@@ -112,7 +112,7 @@ function FreeCourtsPage() {
           Free padel courts
           <span className="block text-[var(--plum)]">near you</span>
         </h1>
-        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/75">
+        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/84">
           Court fees are the main reason people play less padel than they want to. But a huge share of
           courts — municipal, community, urbanisation — are free to use and sitting empty right now. The
           hard part was never the court. It is finding the other three players.
@@ -131,7 +131,7 @@ function FreeCourtsPage() {
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/24">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Four ways to play for free
         </h2>
@@ -139,19 +139,19 @@ function FreeCourtsPage() {
           {WAYS.map(({ icon: Icon, title, body }) => (
             <article
               key={title}
-              className="rounded-2xl bg-white border border-[var(--ink)]/14 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
+              className="rounded-2xl bg-white border border-[var(--ink)]/22 p-6 shadow-[0_18px_40px_-30px_rgba(15,62,46,0.35)]"
             >
               <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[var(--ink)]/8 text-[var(--ink)]">
                 <Icon className="w-5 h-5" strokeWidth={2} />
               </span>
               <h3 className="text-serif mt-4 text-xl text-[var(--ink)]">{title}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{body}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{body}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/16 max-w-3xl">
+      <section className="px-5 sm:px-8 lg:px-16 py-12 border-t border-[var(--ink)]/24 max-w-3xl">
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Common questions
         </h2>
@@ -159,18 +159,18 @@ function FreeCourtsPage() {
           {FAQ.map((f) => (
             <div key={f.q}>
               <h3 className="text-[16px] font-semibold text-[var(--ink)]">{f.q}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{f.a}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{f.a}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/16">
+      <section className="px-5 sm:px-8 lg:px-16 py-14 border-t border-[var(--ink)]/24">
         <div className="max-w-2xl">
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
             Court sorted. Now find the fourth.
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
+          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/80">
             PadelSetMatch is a directory of padel players near you. See who plays your level, who is free
             this week, and who can bring a court.{" "}
             <Link to="/how-it-works" className="text-[var(--plum)] underline underline-offset-4">

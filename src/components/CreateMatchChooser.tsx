@@ -34,16 +34,16 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
         aria-pressed={on}
         className={`w-full rounded-2xl border px-4 py-3.5 text-left outline-none transition-all duration-150 ease-out [-webkit-tap-highlight-color:transparent] ${
           on ? "scale-[0.985] border-[var(--pitch)] bg-[var(--club-soft)]"
-            : down ? "scale-[0.985] border-[var(--ink)]/25 bg-[var(--club-soft)]"
-            : "border-[var(--ink)]/18 bg-white"
+            : down ? "scale-[0.985] border-[var(--ink)]/32 bg-[var(--club-soft)]"
+            : "border-[var(--ink)]/26 bg-white"
         }`}>
         <span className="flex items-center gap-2.5 text-[15px] font-medium text-[var(--ink)]">
           <span className="flex min-w-0 flex-1 items-center gap-2.5">{icon}{title}</span>
           {on
             ? <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[var(--pitch)] text-[var(--paper)] animate-in zoom-in-50 duration-150"><Check className="size-3" strokeWidth={3} aria-hidden="true" /></span>
-            : <ChevronRight className="size-4 shrink-0 text-[var(--ink)]/35" strokeWidth={1.8} aria-hidden="true" />}
+            : <ChevronRight className="size-4 shrink-0 text-[var(--ink)]/50" strokeWidth={1.8} aria-hidden="true" />}
         </span>
-        <span className="mt-1 block text-[13px] leading-snug text-[var(--ink)]/68">{body}</span>
+        <span className="mt-1 block text-[13px] leading-snug text-[var(--ink)]/78">{body}</span>
       </button>
     );
   };
@@ -56,7 +56,7 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
         style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
         <div className="flex items-center justify-between">
           <h2 className="text-serif text-[20px] sm:text-[24px] text-[var(--ink)]">{tr("Where are you playing?", "¿Dónde vas a jugar?", "Où vas-tu jouer ?")}</h2>
-          <button type="button" onClick={onClose} aria-label={tr("Close", "Cerrar", "Fermer")} className="grid size-9 place-items-center rounded-full text-[var(--ink)]/72"><X className="size-5" /></button>
+          <button type="button" onClick={onClose} aria-label={tr("Close", "Cerrar", "Fermer")} className="grid size-9 place-items-center rounded-full text-[var(--ink)]/82"><X className="size-5" /></button>
         </div>
         <div className="mt-4 space-y-2.5">
           {renderOption({ value: "club", icon: <Building2 className="size-[18px]" strokeWidth={1.6} />,

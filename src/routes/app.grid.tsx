@@ -10,7 +10,7 @@ import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile,
 import { listMyFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Star, Check, UserPlus } from "lucide-react";
+import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus, Bell } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
@@ -969,6 +969,19 @@ function Discover() {
                       >
                         <ArrowLeft className="w-4 h-4" />
                       </button>
+                      {!isSelf && (
+                        <button
+                          type="button"
+                          onClick={() => toggleFavM.mutate(preview.id)}
+                          disabled={toggleFavM.isPending}
+                          aria-pressed={favSet.has(preview.id)}
+                          aria-label={favSet.has(preview.id) ? tr(`Stop following ${preview.first_name}`, `Dejar de seguir a ${preview.first_name}`, `Ne plus suivre ${preview.first_name}`) : tr(`Follow ${preview.first_name}`, `Seguir a ${preview.first_name}`, `Suivre ${preview.first_name}`)}
+                          title={favSet.has(preview.id) ? tr("Following: you'll be told when they play", "Siguiendo: te avisaremos cuando juegue", "Suivi : on te préviendra quand il/elle joue") : tr("Follow: be told when they play", "Seguir: te avisamos cuando juegue", "Suivre : être prévenu quand il/elle joue")}
+                          className={`absolute -top-1 -right-1 w-9 h-9 rounded-full flex items-center justify-center transition active:scale-[0.92] disabled:opacity-70 shadow-[0_6px_18px_-6px_rgba(15,62,46,0.35)] ${favSet.has(preview.id) ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)]/90 backdrop-blur-sm text-[var(--ink)] border border-[var(--ink)]/15 hover:border-[var(--ink)]/40"}`}
+                        >
+                          <Bell className="w-[15px] h-[15px]" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={1.8} />
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -1024,48 +1037,51 @@ function Discover() {
                         </Link>
                       ) : (
                         <div className="flex items-stretch gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                              if (!preview.liked) likeM.mutate(preview.id);
-                            }}
-                            disabled={likeM.isPending && !match}
-                            className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
-                          >
-                            <MessageCircle className="w-4 h-4" />
-                            {match ? tr("Send Message", "Enviar mensaje", "Envoyer un message") : preview.liked ? tr("Request sent", "Solicitud enviada", "Demande envoyée") : tr("Connect", "Conectar", "Connecter")}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => toggleFavM.mutate(preview.id)}
-                            disabled={toggleFavM.isPending}
-                            aria-label={favSet.has(preview.id) ? tr("Remove favorite", "Quitar favorito", "Retirer des favoris") : tr("Add to favorites", "Añadir a favoritos", "Ajouter aux favoris")}
-                            title={favSet.has(preview.id) ? tr("Favorited — you'll be notified when they play", "Favorito — te avisaremos cuando jueguen", "Favori — on te préviendra") : tr("Get notified when they play", "Avísame cuando juegue", "Me prévenir quand il/elle joue")}
-                            className={`h-11 w-11 shrink-0 rounded-full border flex items-center justify-center transition active:scale-[0.94] ${favSet.has(preview.id) ? "bg-[var(--ink)] border-[var(--ink)] text-[var(--paper)]" : "bg-white border-[var(--ink)]/25 text-[var(--ink)]/70 hover:border-[var(--ink)]/60 hover:text-[var(--ink)]"}`}
-                          >
-                            <Star className="w-4 h-4" fill={favSet.has(preview.id) ? "currentColor" : "none"} strokeWidth={2} />
-                          </button>
+                          {match ? (
+                            <button
+                              type="button"
+                              onClick={() => navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } })}
+                              className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110"
+                            >
+                              <MessageCircle className="w-4 h-4" strokeWidth={1.8} />
+                              {tr("Send message", "Enviar mensaje", "Envoyer un message")}
+                            </button>
+                          ) : preview.liked ? (
+                            <div
+                              role="status"
+                              className="flex-1 h-11 px-5 rounded-full bg-[var(--limestone)] text-[var(--ink)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center gap-2 animate-in fade-in duration-300"
+                            >
+                              <Check className="w-3.5 h-3.5" strokeWidth={2.2} />
+                              {tr("Request sent", "Solicitud enviada", "Demande envoyée")}
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => likeM.mutate(preview.id)}
+                              disabled={likeM.isPending}
+                              className="flex-1 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center transition active:scale-[0.98] disabled:opacity-60 hover:brightness-110"
+                            >
+                              {tr("Connect", "Conectar", "Connecter")}
+                            </button>
+                          )}
+                          {!match && (
+                            <button
+                              type="button"
+                              onClick={() => { setIntroText(""); setIntroOpen(true); }}
+                              className="h-11 px-5 rounded-full border border-[var(--ink)]/20 bg-white text-[var(--ink)] font-semibold uppercase tracking-[0.14em] text-[11px] flex items-center justify-center transition active:scale-[0.98] hover:border-[var(--ink)]/45"
+                            >
+                              {tr("Intro note", "Nota", "Mot")}
+                            </button>
+                          )}
                         </div>
                       )}
                       {!isSelf && favNote?.id === preview.id && (
-                        <p role="status" className="-mt-2 text-right text-serif italic text-[13px] text-[var(--ink)]/65 animate-in fade-in duration-300">
+                        <p role="status" className="-mt-2 text-center lg:text-left text-serif italic text-[13px] text-[var(--ink)]/65 animate-in fade-in duration-300">
                           {favNote.on
                             ? tr(`You'll be told when ${preview.first_name} plays`, `Te avisaremos cuando ${preview.first_name} juegue`, `On te préviendra quand ${preview.first_name} joue`)
                             : tr(`You'll no longer be told when ${preview.first_name} plays`, `Ya no te avisaremos cuando ${preview.first_name} juegue`, `On ne te préviendra plus quand ${preview.first_name} joue`)}
                         </p>
                       )}
-
-                      {!isSelf && !match && (
-                        <button
-                          type="button"
-                          onClick={() => { setIntroText(""); setIntroOpen(true); }}
-                          className="w-full text-[12px] text-[var(--ink)]/70 hover:text-[var(--plum)] underline underline-offset-4 decoration-[var(--ink)]/25 hover:decoration-[var(--plum)] transition"
-                        >
-                          {tr("Send a direct intro message", "Enviar un mensaje de presentación", "Envoyer un message de présentation")}
-                        </button>
-                      )}
-
 
                       {/* You two — on-court and off-court scores, a pair label, headline, shared answers, pairings; full AI read behind a tap */}
                       {!isSelf && (() => {
@@ -1095,19 +1111,19 @@ function Discover() {
                           <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{children}</div>
                         );
                         return (
-                          <div className="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] px-5 py-5">
-                            <span className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/60">{tr("You two", "Vosotros dos", "Vous deux")}</span>
+                          <div className="border-t border-[var(--ink)]/10 pt-6">
+                            <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/55">{tr("You two", "Vosotros dos", "Vous deux")}</span>
                             {!needsUnlock && (
                               <div className="mt-3 grid grid-cols-2">
                                 {[
                                   { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
                                   { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
                                 ].map((s, i) => (
-                                  <div key={s.key} className={i === 1 ? "pl-4" : "pr-4"}>
-                                    <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/50">{s.label}</div>
+                                  <div key={s.key} className={i === 1 ? "pl-5 border-l border-[var(--ink)]/10" : "pr-5"}>
+                                    <div className="text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/50">{s.label}</div>
                                     {s.value != null && (
-                                      <div className="text-serif text-[26px] leading-tight text-[var(--ink)] tabular-nums mt-0.5">
-                                        {s.value}<span className="text-[15px] text-[var(--ink)]/60">%</span>
+                                      <div className="text-serif text-[34px] leading-none text-[var(--ink)] tabular-nums mt-2">
+                                        {s.value}<span className="text-[17px] text-[var(--ink)]/55 ml-0.5">%</span>
                                       </div>
                                     )}
                                     {s.key === "off" && offCourtWaiting && (
@@ -1216,9 +1232,9 @@ function Discover() {
                         if (preview.languages?.length) chips.push({ key: "langs", text: preview.languages.map((l) => label(l)).join(" · "), icon: "🗣️" });
                         { const nat = formatNationalities(preview); if (nat) chips.push({ key: "nat", text: nat, icon: "🌍" }); }
                         return (
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-2 border-t border-[var(--ink)]/10 pt-5">
                             {chips.map((c) => (
-                              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/15 bg-white px-3 py-1.5 text-[12.5px] tracking-[0.02em] text-[var(--ink)]">
+                              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink)]/10 bg-white px-3.5 py-1.5 text-[12.5px] text-[var(--ink)]/85">
                                 <span aria-hidden>{c.icon}</span>
                                 {c.text}
                               </span>

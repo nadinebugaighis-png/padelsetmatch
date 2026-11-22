@@ -94,6 +94,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   /* Wimbledon "Programme" palette (light editorial pages) */
   --paper: #FDFBF7;
   --paper-2: #EAE7E0;
+  --limestone: color-mix(in oklab, var(--paper-2) 75%, var(--paper));   /* settled, confirmed states */
   --ink: #0F3E2E;
   --plum: #482E92;
   --grass: #A5E358;

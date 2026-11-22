@@ -3,10 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
-import { ExternalLink, GripVertical, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ExternalLink, Loader2, Plus, X } from "lucide-react";
 import {
   DndContext,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   closestCenter,
   useSensor,
@@ -143,8 +143,10 @@ export function GearEditor({ profileId }: { profileId: string }) {
   const [order, setOrder] = useState<GearItem[]>(items);
   useEffect(() => { setOrder(items); }, [items]);
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 120, tolerance: 6 } }),
+    // Whole card is the handle: a tap edits, a mouse drag or a touch hold reorders,
+    // and a quick swipe still scrolls the row.
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 350, tolerance: 8 } }),
   );
 
   const reset = () => {
@@ -268,34 +270,39 @@ export function GearEditor({ profileId }: { profileId: string }) {
 
   return (
     <div className="space-y-3">
-      {order.length > 0 && (
-        <>
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-            <SortableContext items={order.map((i) => i.id)} strategy={horizontalListSortingStrategy}>
-              <div className="flex gap-2.5 overflow-x-auto overflow-y-visible -mx-2 px-2 pt-3 pb-2 touch-pan-x">
-                {order.map((it) => (
-                  <SortableGearCard
-                    key={it.id}
-                    item={it}
-                    editing={editingId === it.id}
-                    onEdit={() => startEdit(it)}
-                    editLabel={tr("Edit", "Editar", "Modifier")}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-          <p className="text-[11px] text-[var(--ink)]/50">
-            {tr(
-              "Swipe to browse · hold the grip to reorder",
-              "Desliza para ver · mantén el agarre para reordenar",
-              "Glisse pour parcourir · maintiens la poignée pour réordonner",
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext items={order.map((i) => i.id)} strategy={horizontalListSortingStrategy}>
+          <div className="flex gap-3 overflow-x-auto -mx-1.5 px-1.5 pt-1.5 pb-1 touch-pan-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {order.map((it) => (
+              <SortableGearCard
+                key={it.id}
+                item={it}
+                editing={editingId === it.id}
+                onEdit={() => startEdit(it)}
+                editLabel={`${tr("Edit", "Editar", "Modifier")} ${it.title}`}
+                kindText={kindLabel(it.kind, tr)}
+              />
+            ))}
+            {!open && items.length < MAX_ITEMS && (
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="shrink-0 w-[112px] text-left active:scale-[0.98] transition-transform"
+              >
+                <span className="w-full aspect-square rounded-xl border border-dashed border-[var(--ink)]/25 flex flex-col items-center justify-center gap-1 text-[var(--ink)]/55">
+                  <Plus className="w-5 h-5" strokeWidth={1.5} />
+                  <span className="text-[12px]">{tr("Add", "Añadir", "Ajouter")}</span>
+                </span>
+              </button>
             )}
-          </p>
-        </>
+          </div>
+        </SortableContext>
+      </DndContext>
+      {order.length > 1 && (
+        <p className="text-[11px] text-[var(--ink)]/45">
+          {tr("Tap to edit · hold to reorder", "Toca para editar · mantén para reordenar", "Touche pour modifier · maintiens pour réordonner")}
+        </p>
       )}
-
-
 
       {!open ? (
         items.length >= MAX_ITEMS ? (
@@ -306,25 +313,11 @@ export function GearEditor({ profileId }: { profileId: string }) {
               `Matériel complet (${MAX_ITEMS} objets). Retire-en un pour en ajouter.`,
             )}
           </p>
-        ) : (
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-[var(--ink)]/25 text-[12px] font-semibold text-[var(--ink)]"
-            >
-              <Plus className="w-4 h-4" />
-              {tr("Add item", "Añadir objeto", "Ajouter un objet")}
-            </button>
-            <span className="text-[11px] text-[var(--ink)]/50">
-              {items.length}/{MAX_ITEMS}
-            </span>
-          </div>
-        )
+        ) : null
       ) : (
-        <div className="rounded-2xl border border-[var(--ink)]/15 bg-[var(--paper-2)]/60 p-3 space-y-3">
+        <div className="rounded-2xl border border-[var(--ink)]/12 bg-[var(--card)] p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--ink)]/60">
+            <div className="text-serif text-[18px] text-[var(--ink)]">
               {editingId ? tr("Edit item", "Editar objeto", "Modifier l'objet") : tr("New item", "Nuevo objeto", "Nouvel objet")}
             </div>
             <button type="button" onClick={reset} aria-label={tr("Close", "Cerrar", "Fermer")}>
@@ -341,10 +334,10 @@ export function GearEditor({ profileId }: { profileId: string }) {
                 className={`px-2.5 h-8 rounded-full text-[12px] border transition ${
                   kind === k
                     ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
-                    : "bg-white border-[var(--ink)]/20 text-[var(--ink)]/75"
+                    : "bg-[var(--card)] border-[var(--ink)]/20 text-[var(--ink)]/75"
                 }`}
               >
-                {GEAR_EMOJI[k]} {kindLabel(k, tr)}
+                {kindLabel(k, tr)}
               </button>
             ))}
           </div>
@@ -402,7 +395,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
             type="button"
             onClick={() => save.mutate()}
             disabled={save.isPending || uploading}
-            className="w-full h-10 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
+            className="w-full h-11 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] uppercase tracking-[0.2em] disabled:opacity-60"
           >
             {save.isPending
               ? tr("Saving…", "Guardando…", "Enregistrement…")
@@ -416,7 +409,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
               type="button"
               onClick={() => remove.mutate(editingId)}
               disabled={remove.isPending}
-              className="w-full h-10 rounded-full border border-red-500/30 text-red-600 text-[12px] font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
+              className="w-full h-10 text-[var(--destructive)] text-[11px] uppercase tracking-[0.2em] disabled:opacity-60"
             >
               {remove.isPending
                 ? tr("Deleting…", "Eliminando…", "Suppression…")
@@ -435,48 +428,35 @@ function SortableGearCard({
   editing,
   onEdit,
   editLabel,
+  kindText,
 }: {
   item: GearItem;
   editing: boolean;
   onEdit: () => void;
   editLabel: string;
+  kindText: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   return (
-    <div
+    <button
+      type="button"
       ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 30 : undefined }}
-      className={`relative shrink-0 w-[104px] bg-white p-1.5 pb-2 rounded-[8px] border shadow-[0_6px_18px_-10px_rgba(15,62,46,0.4)] ${
-        editing ? "border-[var(--ink)]" : "border-[var(--ink)]/10"
-      } ${isDragging ? "opacity-90 scale-[1.03]" : ""}`}
+      {...attributes}
+      {...listeners}
+      onClick={onEdit}
+      aria-label={editLabel}
+      style={{ transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 30 : undefined, WebkitTouchCallout: "none" }}
+      className={`shrink-0 w-[112px] text-left select-none ${isDragging ? "opacity-90 scale-[1.04]" : "active:scale-[0.98]"} transition-transform`}
     >
-      <button
-        type="button"
-        {...attributes}
-        {...listeners}
-        aria-label="Reorder"
-        className="absolute -top-2.5 -left-2 w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)]/70 flex items-center justify-center shadow cursor-grab active:cursor-grabbing touch-none"
-      >
-        <GripVertical className="w-3 h-3" />
-      </button>
-      <button
-        type="button"
-        onClick={onEdit}
-        onPointerDown={(e) => e.stopPropagation()}
-        aria-label={editLabel}
-        className="absolute -top-2.5 -right-2 w-6 h-6 rounded-full bg-white border border-[var(--ink)]/25 text-[var(--ink)] flex items-center justify-center shadow"
-      >
-        <Pencil className="w-3 h-3" />
-      </button>
-      <div className="w-full aspect-square overflow-hidden rounded-[6px] bg-[var(--paper-2)] flex items-center justify-center">
+      <span className={`block w-full aspect-square overflow-hidden rounded-xl bg-[var(--paper-2)] ${editing ? "ring-2 ring-[var(--ink)] ring-offset-2 ring-offset-[var(--paper)]" : ""}`}>
         {item.image_url ? (
-          <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+          <img src={item.image_url} alt="" draggable={false} className="w-full h-full object-cover pointer-events-none" />
         ) : (
-          <span className="text-2xl">{GEAR_EMOJI[item.kind] ?? "✨"}</span>
+          <span className="w-full h-full flex items-center justify-center text-serif italic text-[15px] text-[var(--ink)]/45">{kindText}</span>
         )}
-      </div>
-      <div className="mt-1.5 text-[11px] font-semibold leading-tight line-clamp-2 text-[var(--ink)]">{item.title}</div>
-      {item.brand && <div className="text-[10px] text-[var(--ink)]/55 truncate">{item.brand}</div>}
-    </div>
+      </span>
+      <span className="mt-2 block text-[13px] leading-tight text-[var(--ink)] line-clamp-2">{item.title}</span>
+      {item.brand && <span className="block text-[11px] text-[var(--ink)]/50 truncate">{item.brand}</span>}
+    </button>
   );
 }

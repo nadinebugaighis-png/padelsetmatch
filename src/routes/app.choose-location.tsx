@@ -11,9 +11,9 @@ export const Route = createFileRoute("/app/choose-location")({
   head: () => ({
     meta: [
       { title: "Choose your community · PadelSetMatch" },
-      { name: "description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell or Dubai." },
+      { name: "description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell, Marbella or Dubai." },
       { property: "og:title", content: "Choose your community · PadelSetMatch" },
-      { property: "og:description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell or Dubai." },
+      { property: "og:description", content: "Pick your padel community: La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell, Marbella or Dubai." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -74,7 +74,7 @@ function ChooseLocation() {
         onClick={() => navigate({ to: "/app/onboarding", search: {} })}
         className="mt-8 inline-flex items-center gap-1 font-serif italic text-[15px] text-[var(--ink)]/65 hover:text-[var(--ink)] underline-offset-4 hover:underline transition"
       >
-        {tr("Elsewhere in the world", "En otro lugar del mundo", "Ailleurs dans le monde")}
+        {tr("Other", "Otro lugar", "Autre endroit")}
         <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} aria-hidden />
       </button>
     </div>

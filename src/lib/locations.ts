@@ -13,6 +13,7 @@ export const LOCATION_DATA: CountryData[] = [
       { name: "Barcelona", areas: ["Eixample", "Gràcia", "Sarrià-Sant Gervasi", "Les Corts", "Sant Martí", "Ciutat Vella", "Pedralbes", "Sant Cugat", "Castelldefels", "Sitges"] },
       { name: "Valencia", areas: ["Centro", "L'Eixample", "Campanar", "Benimaclet", "El Pla del Real", "Algirós", "Patacona"] },
       { name: "Málaga", areas: ["Centro", "Pedregalejo", "El Limonar", "Teatinos", "Churriana", "Marbella", "Estepona"] },
+      { name: "Marbella", areas: ["Centro", "Puerto Banús", "Golden Mile", "Nueva Andalucía", "San Pedro de Alcántara", "Elviria", "Estepona"] },
       { name: "Sevilla", areas: ["Centro", "Triana", "Nervión", "Los Remedios", "Bellavista"] },
       { name: "Bilbao", areas: ["Abando", "Indautxu", "Deusto", "Getxo"] },
       { name: "Mallorca", areas: ["Palma", "Port d'Andratx", "Pollença", "Alcúdia", "Sóller", "Manacor", "Calvià", "Inca"] },

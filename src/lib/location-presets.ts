@@ -6,6 +6,7 @@ export type LocationPresetKey =
   | "madrid_salamanca_chamberi"
   | "london_chelsea_battersea"
   | "miami_coconut_grove_brickell"
+  | "marbella"
   | "dubai";
 export type LocationPreset = { key: LocationPresetKey; country: string; city: string; area?: string };
 
@@ -14,6 +15,7 @@ export const LOCATION_PRESETS: LocationPreset[] = [
   { key: "madrid_salamanca_chamberi", country: "Spain", city: "Madrid", area: "Salamanca & Chamberí" },
   { key: "london_chelsea_battersea", country: "United Kingdom", city: "London", area: "Chelsea & Battersea" },
   { key: "miami_coconut_grove_brickell", country: "United States", city: "Miami", area: "Coconut Grove & Brickell" },
+  { key: "marbella", country: "Spain", city: "Marbella" },
   { key: "dubai", country: "United Arab Emirates", city: "Dubai" },
 ];
 

@@ -104,7 +104,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
   );
 
   return (
-    <div className="mt-3 -mx-4 -mb-4 rounded-b-2xl bg-[var(--paper)] overflow-hidden">
+    <div className="mt-4 -mx-5 sm:-mx-6 border-t border-[var(--ink)]/8 bg-[var(--paper)]">
       <div ref={scroller} className="max-h-80 sm:max-h-96 overflow-y-auto px-3 py-3 space-y-1.5">
         {q.isLoading ? (
           <div className="h-10 rounded-lg bg-[var(--ink)]/5 animate-pulse" />
@@ -144,7 +144,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
         )}
       </div>
       {canWrite ? (
-        <div className="px-2 pb-2">
+        <div className="px-2 pb-2 sm:px-3 sm:pb-3">
           {editingId && (
             <div className="mb-1 flex items-center justify-between px-2 text-[12px] text-[var(--ink)]/60">
               <span className="inline-flex items-center gap-1.5"><Pencil className="w-3 h-3" />{tr("Editing message", "Editando mensaje", "Modification du message")}</span>
@@ -171,7 +171,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
               type="submit"
               disabled={!body.trim() || sendMut.isPending}
               aria-label={editingId ? tr("Save", "Guardar", "Enregistrer") : tr("Send", "Enviar", "Envoyer")}
-              className="shrink-0 w-11 h-11 rounded-full grid place-items-center bg-[var(--pitch)] text-[var(--paper)] disabled:opacity-40"
+              className="shrink-0 w-11 h-11 rounded-full grid place-items-center bg-[var(--ink)] text-[var(--paper)] disabled:opacity-30"
             >
               {editingId ? <Check className="w-4 h-4" strokeWidth={2.5} /> : <ArrowUp className="w-4 h-4" strokeWidth={2.5} />}
             </button>

@@ -95,6 +95,11 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
       ? date.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "short" })
       : `${date.toLocaleDateString(locale, { weekday: "short" }).replace(".", "")} ${date.getDate()}`;
   };
+  const weekdayShort = (iso: string) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y!, m! - 1, d!).toLocaleDateString(locale, { weekday: "short" }).replace(".", "");
+  };
+  const dayNumber = (iso: string) => Number(iso.slice(8, 10));
   const slotLabel = (s: PlaySlot) =>
     s === "morning" ? tr("Morning", "Mañana", "Matin") : s === "afternoon" ? tr("Afternoon", "Tarde", "Après-midi") : tr("Evening", "Noche", "Soir");
 
@@ -106,92 +111,101 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
     ? q.data?.myCheckins.find((c) => c.date === day && c.slot === slot && !c.areaKeys.includes(area.key))
     : undefined;
 
-  return (
-    <section aria-labelledby="who-can-play" className="space-y-5">
-      {/* Area switcher */}
-      {hasAreas && q.data && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="-mt-1 inline-flex items-center gap-1.5 px-0.5 text-[13px] font-semibold text-[var(--ink)] transition hover:text-[var(--ink)]/65"
-            >
-              <MapPin className="w-3.5 h-3.5 text-[var(--pitch)]" />
-              {area?.label ?? tr("Choose area", "Elige zona", "Choisir une zone")}
-              <ChevronDown className="w-3 h-3 text-[var(--ink)]/40" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-56 bg-white text-[var(--ink)] border-[var(--ink)]/10">
-            <DropdownMenuRadioGroup value={area?.key ?? ""} onValueChange={(v) => { setAreaKey(v === q.data?.mine[0]?.key ? undefined : v); }}>
-              {q.data.mine.length > 0 && (
-                <>
-                  <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Your areas", "Tus zonas", "Tes zones")}</DropdownMenuLabel>
-                  {q.data.mine.map((a) => (
-                    <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
-                  ))}
-                </>
-              )}
-              {q.data.elsewhere.length > 0 && (
-                <>
-                  <DropdownMenuSeparator className="bg-[var(--ink)]/10" />
-                  <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Travelling", "De viaje", "En voyage")}</DropdownMenuLabel>
-                  {q.data.elsewhere.map((a) => (
-                    <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
-                  ))}
-                </>
-              )}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
+  const smallCaps = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55";
 
-      {/* Picker */}
-      <div className="rounded-2xl bg-white border border-[var(--ink)]/10 p-4 sm:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-        <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("When are you free?", "¿Cuándo puedes jugar?", "Quand es-tu libre ?")}</div>
-        <div className="mt-3 -mx-4 px-4 sm:mx-0 sm:px-0 flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {days.map((d) => {
-            const active = d === day;
-            const anyOpen = PLAY_SLOTS.some((s) => slotStillOpen(s, d, now));
-            return (
-              <button
-                key={d}
-                type="button"
-                disabled={!anyOpen}
-                aria-pressed={active}
-                onClick={() => { setDay(d); if (!slotStillOpen(slot, d, now)) setSlot(firstOpenSlot(d) ?? "evening"); }}
-                className={`shrink-0 px-3.5 h-9 rounded-full text-[13px] font-semibold border transition capitalize disabled:opacity-35 ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white text-[var(--ink)]/75 border-[var(--ink)]/15 hover:border-[var(--ink)]/35"}`}
-              >
-                {dayLabel(d)}
+  return (
+    <section aria-labelledby="who-can-play" className="lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:items-start">
+      {/* Left: where and when */}
+      <div className="lg:sticky lg:top-24 space-y-4">
+        {hasAreas && q.data && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)] transition hover:text-[var(--ink)]/65">
+                <MapPin className="w-3.5 h-3.5 text-[var(--pitch)]" strokeWidth={1.75} />
+                {area?.label ?? tr("Choose area", "Elige zona", "Choisir une zone")}
+                <ChevronDown className="w-3 h-3 text-[var(--ink)]/40" />
               </button>
-            );
-          })}
-        </div>
-        <div className="mt-2.5 grid grid-cols-3 gap-1.5">
-          {PLAY_SLOTS.map((s) => {
-            const active = s === slot;
-            const open = slotStillOpen(s, day, now);
-            return (
-              <button
-                key={s}
-                type="button"
-                disabled={!open}
-                aria-pressed={active}
-                onClick={() => setSlot(s)}
-                className={`h-9 rounded-full text-[13px] font-semibold border transition disabled:opacity-35 ${active ? "bg-[var(--club-soft)] text-[var(--ink)] border-[var(--ink)]/45" : "bg-white text-[var(--ink)]/70 border-[var(--ink)]/15 hover:border-[var(--ink)]/35"}`}
-              >
-                {slotLabel(s)}
-              </button>
-            );
-          })}
-        </div>
-        {hasAreas ? (
-          <>
-            <div className="mt-3.5 flex justify-center">
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-56 bg-white text-[var(--ink)] border-[var(--ink)]/10">
+              <DropdownMenuRadioGroup value={area?.key ?? ""} onValueChange={(v) => { setAreaKey(v === q.data?.mine[0]?.key ? undefined : v); }}>
+                {q.data.mine.length > 0 && (
+                  <>
+                    <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Your areas", "Tus zonas", "Tes zones")}</DropdownMenuLabel>
+                    {q.data.mine.map((a) => (
+                      <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
+                    ))}
+                  </>
+                )}
+                {q.data.elsewhere.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator className="bg-[var(--ink)]/10" />
+                    <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/50 font-medium">{tr("Travelling", "De viaje", "En voyage")}</DropdownMenuLabel>
+                    {q.data.elsewhere.map((a) => (
+                      <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
+                    ))}
+                  </>
+                )}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
+        <div className="rounded-[22px] bg-white border border-[var(--ink)]/10 px-4 pt-5 pb-5 sm:px-6">
+          <div className={smallCaps}>{tr("When are you free?", "¿Cuándo puedes jugar?", "Quand es-tu libre ?")}</div>
+
+          {/* Days: the same quiet strip as Matches */}
+          <div className="mt-4 -mx-1 flex items-stretch justify-between gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {days.map((d, i) => {
+              const active = d === day;
+              const anyOpen = PLAY_SLOTS.some((s) => slotStillOpen(s, d, now));
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  disabled={!anyOpen}
+                  aria-pressed={active}
+                  aria-label={dayLabel(d, true)}
+                  onClick={() => { setDay(d); if (!slotStillOpen(slot, d, now)) setSlot(firstOpenSlot(d) ?? "evening"); }}
+                  className="shrink-0 min-w-10 flex-1 flex flex-col items-center gap-1 py-1 transition active:opacity-70 disabled:opacity-30"
+                >
+                  <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/45"}`}>
+                    {i === 0 ? tr("Today", "Hoy", "Auj.") : weekdayShort(d)}
+                  </span>
+                  <span className={`text-serif text-[24px] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/55"}`}>{dayNumber(d)}</span>
+                  <span aria-hidden className={`h-px w-6 ${active ? "bg-[var(--gold)]" : "bg-transparent"}`} />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Part of the day */}
+          <div className="mt-4 grid grid-cols-3 border-t border-[var(--ink)]/8 pt-3">
+            {PLAY_SLOTS.map((s) => {
+              const active = s === slot;
+              const open = slotStillOpen(s, day, now);
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  disabled={!open}
+                  aria-pressed={active}
+                  onClick={() => setSlot(s)}
+                  className="flex flex-col items-center gap-1.5 py-1.5 transition active:opacity-70 disabled:opacity-25"
+                >
+                  <span className={`text-serif text-[17px] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/50"}`}>{slotLabel(s)}</span>
+                  <span aria-hidden className={`h-px w-6 ${active ? "bg-[var(--gold)]" : "bg-transparent"}`} />
+                </button>
+              );
+            })}
+          </div>
+
+          {hasAreas ? (
+            <div className="mt-5 flex flex-col items-center">
               <button
                 type="button"
                 disabled={busy || !pickedOpen || !area}
                 onClick={() => (pickedIn || elsewhereMine ? removeMut.mutate({ date: day, slot }) : addMut.mutate({ date: day, slot }))}
-                className={`max-w-full truncate h-9 px-5 rounded-full text-[13px] font-semibold transition disabled:opacity-50 ${pickedIn || elsewhereMine ? "bg-white text-[var(--ink)]/70 border border-[var(--ink)]/20 hover:border-[var(--ink)]/40" : "bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"}`}
+                className={`max-w-full truncate h-10 px-6 rounded-full text-[11.5px] font-semibold uppercase tracking-[0.18em] transition active:scale-[0.98] disabled:opacity-50 ${pickedIn || elsewhereMine ? "border border-[var(--ink)]/25 text-[var(--ink)]/75 hover:border-[var(--ink)]/45" : "bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)]/90"}`}
               >
                 {pickedIn
                   ? tr("You're available · Remove", "Estás disponible · Quitarme", "Tu es disponible · Me retirer")
@@ -199,38 +213,46 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
                   ? tr(`Available in ${elsewhereMine.areaLabel ?? "another area"} · Remove`, `Disponible en ${elsewhereMine.areaLabel ?? "otra zona"} · Quitar`, `Disponible à ${elsewhereMine.areaLabel ?? "une autre zone"} · Retirer`)
                   : tr("I can play", "Puedo jugar", "Je peux jouer")}
               </button>
-            </div>
-            {area && !pickedIn && !elsewhereMine && (
-              <p className="mt-1.5 text-center text-[11.5px] text-[var(--ink)]/50">
-                {tr(`Shared with players in ${area.label}`, `Visible para jugadores de ${area.label}`, `Visible par les joueurs de ${area.label}`)}
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="mt-4 text-sm text-[var(--ink)]/70">
-            {tr("Add your area to see who can play near you.", "Añade tu zona para ver quién puede jugar cerca.", "Ajoute ta zone pour voir qui peut jouer près de toi.")}{" "}
-            <Link to="/app/profile" className="font-semibold text-[var(--ink)] underline underline-offset-2">{tr("Open Me", "Abrir Yo", "Ouvrir Moi")}</Link>
-          </p>
-        )}
-      </div>
-
-      {/* Who is free */}
-      {hasAreas && (
-        <div>
-          <p id="who-can-play" className="mb-2.5 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">
-            {tr("Free this week", "Libres esta semana", "Libres cette semaine")}
-          </p>
-          {q.isLoading ? (
-            <div className="space-y-2.5">
-              {[0, 1].map((i) => <div key={i} className="h-24 rounded-2xl bg-[var(--ink)]/5 animate-pulse" />)}
-            </div>
-          ) : groups.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white/60 px-5 py-7 text-center">
-              <p className="text-serif text-lg text-[var(--ink)]">{tr("Nobody yet this week", "Nadie todavía esta semana", "Personne encore cette semaine")}</p>
-              <p className="mt-1 text-sm text-[var(--ink)]/60">{tr("Say when you're free and players near you can join.", "Di cuándo puedes y los jugadores de tu zona se unirán.", "Dis quand tu es libre et les joueurs du coin te rejoindront.")}</p>
+              {area && !pickedIn && !elsewhereMine && (
+                <p className="mt-2 text-serif italic text-[13px] text-[var(--ink)]/50">
+                  {tr(`Shared with players in ${area.label}`, `Visible para jugadores de ${area.label}`, `Visible par les joueurs de ${area.label}`)}
+                </p>
+              )}
             </div>
           ) : (
-            <ul className="space-y-2.5">
+            <p className="mt-5 text-sm text-[var(--ink)]/70">
+              {tr("Add your area to see who can play near you.", "Añade tu zona para ver quién puede jugar cerca.", "Ajoute ta zone pour voir qui peut jouer près de toi.")}{" "}
+              <Link to="/app/profile" className="font-semibold text-[var(--ink)] underline underline-offset-2">{tr("Open Me", "Abrir Yo", "Ouvrir Moi")}</Link>
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Right: who is free this week */}
+      {hasAreas && (
+        <div className="mt-10 lg:mt-0">
+          <div className="flex items-baseline gap-3">
+            <h2 id="who-can-play" className="text-serif text-[28px] sm:text-[32px] leading-none text-[var(--ink)]">
+              {tr("This week", "Esta semana", "Cette semaine")}
+            </h2>
+            {groups.length > 0 && (
+              <span className={smallCaps}>
+                {groups.length === 1 ? tr("1 time", "1 hora", "1 créneau") : tr(`${groups.length} times`, `${groups.length} horas`, `${groups.length} créneaux`)}
+              </span>
+            )}
+          </div>
+          <div aria-hidden className="mt-3 mb-5 h-px bg-[var(--gold)]/45" />
+          {q.isLoading ? (
+            <div className="space-y-3">
+              {[0, 1].map((i) => <div key={i} className="h-36 rounded-[22px] bg-[var(--ink)]/5 animate-pulse" />)}
+            </div>
+          ) : groups.length === 0 ? (
+            <div className="py-8">
+              <p className="text-serif italic text-[22px] text-[var(--ink)]">{tr("Nobody yet this week", "Nadie todavía esta semana", "Personne encore cette semaine")}</p>
+              <p className="mt-2 text-[14px] text-[var(--ink)]/60">{tr("Say when you're free and players near you can join.", "Di cuándo puedes y los jugadores de tu zona se unirán.", "Dis quand tu es libre et les joueurs du coin te rejoindront.")}</p>
+            </div>
+          ) : (
+            <ul className="space-y-4">
               {groups.map((g) => (
                 <GroupCard
                   key={`${area?.key}|${g.key}`}
@@ -257,69 +279,71 @@ function GroupCard({ group, areaKey, title, slotLabel, focused, busy, onJoin, on
   focused: boolean; busy: boolean; onJoin: () => void; onLeave: () => void;
 }) {
   const tr = useTr();
-  const { label } = useI18n();
+  const { label, lang } = useI18n();
   const count = group.players.length;
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const words = lang === "es" ? ["", "Uno", "Dos", "Tres", "Cuatro"] : lang === "fr" ? ["", "Un", "Deux", "Trois", "Quatre"] : ["", "One", "Two", "Three", "Four"];
+  const countLabel = `${words[count] ?? count} ${count === 1 ? tr("available", "disponible", "disponible") : tr("available", "disponibles", "disponibles")}`;
 
   return (
-    <li className={`rounded-2xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${focused ? "ring-2 ring-[var(--grass)]/50" : ""}`}>
-      <div className="flex items-baseline justify-between gap-3">
-        <div className="min-w-0 text-serif text-lg text-[var(--ink)] leading-tight capitalize truncate">
-          {title} <span className="text-[var(--ink)]/45">· {slotLabel}</span>
+    <li className={`overflow-hidden rounded-[22px] bg-white border border-[var(--ink)]/10 px-5 pt-5 sm:px-6 sm:pt-6 ${group.imIn ? "" : "pb-5 sm:pb-6"} ${focused ? "ring-2 ring-[var(--gold)]/50" : ""}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-serif text-[26px] sm:text-[30px] leading-none text-[var(--ink)] capitalize truncate">{title}</div>
+          <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55">{slotLabel}</div>
         </div>
-        <div className="shrink-0 text-[12px] font-semibold text-[var(--pitch)]">
-          {count === 1 ? tr("1 available", "1 disponible", "1 dispo") : tr(`${count} available`, `${count} disponibles`, `${count} dispos`)}
-        </div>
+        <div className="shrink-0 pt-1 text-serif italic text-[15px] text-[var(--plum)]">{countLabel}</div>
       </div>
 
-      <ul className="mt-3 flex flex-wrap gap-x-3.5 gap-y-2">
-        {group.players.map((p) => (
-          <li key={p.profile_id} className="inline-flex items-center gap-1.5">
-            <span className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0">
-              <PlayerPhoto src={photoSrc(p.photo_url, 240)} seed={p.profile_id} alt={p.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
-            </span>
-            {p.mine ? (
-              <button
-                type="button"
-                onClick={() => setConfirmLeave(true)}
-                className="text-[13px] text-[var(--ink)] whitespace-nowrap underline decoration-[var(--ink)]/25 decoration-1 underline-offset-4 hover:decoration-[var(--ink)]/60"
-              >
-                {tr("You", "Tú", "Toi")}
-                {p.level ? <span className="text-[var(--ink)]/45 capitalize"> · {label(p.level)}</span> : null}
-              </button>
-            ) : (
-              <span className="text-[13px] text-[var(--ink)] whitespace-nowrap">
-                {p.first_name ?? tr("Player", "Jugador", "Joueur")}
-                {p.level ? <span className="text-[var(--ink)]/45 capitalize"> · {label(p.level)}</span> : null}
+      <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-4">
+        {group.players.map((p) => {
+          const name = p.mine ? tr("You", "Tú", "Toi") : p.first_name ?? tr("Player", "Jugador", "Joueur");
+          const inner = (
+            <>
+              <span className="block w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 ring-1 ring-[var(--ink)]/10">
+                <PlayerPhoto src={photoSrc(p.photo_url, 240)} seed={p.profile_id} alt={p.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
               </span>
-            )}
-          </li>
-        ))}
+              <span className="mt-1.5 block max-w-16 truncate text-[12.5px] text-[var(--ink)]">{name}</span>
+              {p.level && <span className="block text-[9px] uppercase tracking-[0.16em] text-[var(--ink)]/45">{label(p.level)}</span>}
+            </>
+          );
+          return (
+            <li key={p.profile_id} className="flex flex-col items-center text-center">
+              {p.mine ? (
+                <button type="button" onClick={() => setConfirmLeave(true)} className="flex flex-col items-center active:opacity-70">{inner}</button>
+              ) : inner}
+            </li>
+          );
+        })}
       </ul>
 
-      {!group.imIn && (
-        <div className="mt-3.5">
-          <button type="button" disabled={busy} onClick={onJoin} className="inline-flex items-center h-9 px-5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold hover:bg-[var(--ink)]/90 disabled:opacity-50">
-            {tr("Me too", "Yo también", "Moi aussi")}
-          </button>
-        </div>
-      )}
-      {group.imIn && (
-        <div className="mt-3.5 flex items-center gap-2">
-          {count >= 2 && (
-            <Link
-              to="/app/events/new"
-              search={{ day: group.date, slot: group.slot }}
-              className="inline-flex items-center h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13px] font-semibold"
-            >
-              {tr("Start a match", "Crear partido", "Lancer un match")}
-            </Link>
-          )}
-          <button type="button" disabled={busy} onClick={onLeave} className="ml-auto text-[12px] font-medium text-[var(--ink)]/45 hover:text-[var(--ink)] disabled:opacity-50">
-            {tr("Leave", "Salir", "Quitter")}
-          </button>
-        </div>
-      )}
+      <div className="mt-5 flex items-center gap-3 border-t border-[var(--ink)]/8 pt-4">
+        {group.imIn ? (
+          <>
+            <button type="button" disabled={busy} onClick={onLeave} className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/45 hover:text-[var(--ink)] disabled:opacity-50">
+              {tr("Leave", "Salir", "Quitter")}
+            </button>
+            {count >= 2 ? (
+              <Link
+                to="/app/events/new"
+                search={{ day: group.date, slot: group.slot }}
+                className="ml-auto inline-flex items-center h-9 px-4 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.16em] active:scale-[0.98]"
+              >
+                {tr("Start a match", "Crear partido", "Lancer un match")}
+              </Link>
+            ) : (
+              <span className="ml-auto text-serif italic text-[13px] text-[var(--ink)]/45">{tr("Waiting for a second player", "Esperando a otro jugador", "En attente d'un second joueur")}</span>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="min-w-0 text-[13px] text-[var(--ink)]/55">{tr("Free then too? Join to chat.", "¿Libre también? Únete al chat.", "Libre aussi ? Rejoins le chat.")}</span>
+            <button type="button" disabled={busy} onClick={onJoin} className="ml-auto shrink-0 inline-flex items-center h-9 px-4 rounded-full border border-[var(--ink)]/30 text-[var(--ink)] text-[11px] font-semibold uppercase tracking-[0.18em] hover:border-[var(--ink)]/60 active:scale-[0.98] disabled:opacity-50">
+              {tr("Me too", "Yo también", "Moi aussi")}
+            </button>
+          </>
+        )}
+      </div>
 
       {group.imIn && (
         <SlotChat

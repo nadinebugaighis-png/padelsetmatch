@@ -19,7 +19,7 @@ import {
 } from "@/lib/connect.functions";
 import { getMyProfile } from "@/lib/app.functions";
 import { adminDeleteContent, getIsAdmin } from "@/lib/admin.functions";
-import { useTr } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 import { ReportContentButton } from "@/components/ReportContentButton";
 import { Button } from "@/components/ui/button";
 import { WhoCanPlay } from "@/components/WhoCanPlay";
@@ -63,7 +63,7 @@ function useCategoryLabel() {
   };
 }
 
-function timeAgo(iso: string, tr: ReturnType<typeof useTr>) {
+function timeAgo(iso: string, tr: ReturnType<typeof useTr>, locale?: string) {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
   if (s < 60) return tr("just now", "ahora", "à l'instant");
   const m = Math.floor(s / 60);
@@ -72,11 +72,13 @@ function timeAgo(iso: string, tr: ReturnType<typeof useTr>) {
   if (h < 24) return `${h}h`;
   const d = Math.floor(h / 24);
   if (d < 7) return `${d}d`;
-  return new Date(iso).toLocaleDateString();
+  return new Date(iso).toLocaleDateString(locale, { day: "numeric", month: "short" });
 }
 
 function ConnectPage() {
   const tr = useTr();
+  const { lang } = useI18n();
+  const locale = lang === "es" ? "es" : lang === "fr" ? "fr" : "en-GB";
   const search = Route.useSearch();
   const catLabel = useCategoryLabel();
   const qc = useQueryClient();
@@ -167,80 +169,126 @@ function ConnectPage() {
 
   if (needsOnboarding) return <Navigate to="/app/onboarding" />;
 
+  const smallCaps = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/55";
+
   return (
-    <div className="max-w-md sm:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 programme-page">
+    <div className="programme-page min-h-[calc(100vh-4rem)]">
+    <div className="max-w-md sm:max-w-2xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-4 sm:pt-8 pb-32">
       {/* Header */}
-      <div className="mb-5">
-        <div className="text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/55">{tr("Connect", "Conecta", "Connecter")}</div>
-        <h1 className="text-serif text-3xl sm:text-4xl text-[var(--ink)] leading-none mt-1">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
-      </div>
+      <header className="mb-7 sm:mb-10">
+        <div className={smallCaps}>{tr("Connect", "Conecta", "Connecter")}</div>
+        <h1 className="mt-2 text-serif text-[34px] sm:text-5xl lg:text-[56px] text-[var(--ink)] leading-none">{tr("Who can play?", "¿Quién puede jugar?", "Qui peut jouer ?")}</h1>
+        <p className="mt-3 text-serif italic text-[15px] sm:text-[17px] text-[var(--ink)]/55">
+          {tr("Say when you're free. Members nearby can join you.", "Di cuándo puedes. Los miembros de tu zona se unen.", "Dis quand tu es libre. Les membres du coin te rejoignent.")}
+        </p>
+      </header>
 
       <WhoCanPlay focusDay={search.day} focusSlot={search.slot} focusArea={search.area} />
 
       {/* Community board */}
-      <section className="mt-12 pt-8 border-t border-[var(--ink)]/10">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="text-serif text-2xl text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setCityOpen((v) => !v)}
-              className={`h-9 w-9 grid place-items-center rounded-full transition ${cityOpen || city ? "bg-[var(--ink)]/8 text-[var(--ink)]" : "text-[var(--ink)]/55 hover:text-[var(--ink)]"}`}
-              aria-label={tr("Filter by city", "Filtrar por ciudad", "Filtrer par ville")}
-            >
-              <MapPin className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => { setEditingPost(null); setComposerOpen(true); }}
-              className="h-9 pl-3 pr-3.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-xs font-semibold tracking-wide"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              {tr("Post", "Publicar", "Publier")}
-            </button>
+      <section className="mt-16 sm:mt-20 pt-10 border-t border-[var(--ink)]/10 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:items-start">
+        <div className="lg:sticky lg:top-24">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <div className={smallCaps}>{tr("The noticeboard", "El tablón", "Le tableau")}</div>
+              <h2 className="mt-2 text-serif text-[30px] sm:text-[38px] text-[var(--ink)] leading-none">{tr("Community", "Comunidad", "Communauté")}</h2>
+            </div>
+            <div className="flex items-center gap-1 lg:hidden">
+              <button
+                type="button"
+                onClick={() => setCityOpen((v) => !v)}
+                className={`h-9 w-9 grid place-items-center rounded-full transition ${cityOpen || city ? "text-[var(--ink)]" : "text-[var(--ink)]/50 hover:text-[var(--ink)]"}`}
+                aria-label={tr("Filter by city", "Filtrar por ciudad", "Filtrer par ville")}
+              >
+                <MapPin className="w-4 h-4" strokeWidth={1.75} />
+              </button>
+              <button
+                type="button"
+                onClick={() => { setEditingPost(null); setComposerOpen(true); }}
+                className="h-9 pl-3 pr-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] font-semibold uppercase tracking-[0.16em] active:scale-[0.98]"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                {tr("Post", "Publicar", "Publier")}
+              </button>
+            </div>
           </div>
-        </div>
+          <p className="mt-3 text-serif italic text-[15px] text-[var(--ink)]/55">
+            {tr("Travel plans, coaches, kit and questions from members.", "Viajes, entrenadores, material y preguntas de los miembros.", "Voyages, coachs, matériel et questions des membres.")}
+          </p>
 
-        {(cityOpen || city) && (
-          <form
-            onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }}
-            className="relative mt-4"
+          <button
+            type="button"
+            onClick={() => { setEditingPost(null); setComposerOpen(true); }}
+            className="hidden lg:inline-flex mt-6 h-10 px-5 items-center gap-2 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11.5px] font-semibold uppercase tracking-[0.18em] hover:bg-[var(--ink)]/90 active:scale-[0.98]"
           >
-            <Input
-              autoFocus={!city}
+            <Plus className="w-3.5 h-3.5" />
+            {tr("Write a post", "Escribir", "Écrire")}
+          </button>
+
+          {(cityOpen || city) && (
+            <form onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }} className="relative mt-5 lg:hidden">
+              <Input
+                autoFocus={!city}
+                value={cityInput}
+                onChange={(e) => setCityInput(e.target.value)}
+                onBlur={() => setCity(cityInput.trim())}
+                placeholder={tr("City", "Ciudad", "Ville")}
+                className="h-10 pr-9 bg-white border-[var(--ink)]/12 rounded-full px-4"
+              />
+              {(cityInput || city) && (
+                <button type="button" onClick={() => { setCity(""); setCityInput(""); setCityOpen(false); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/45 hover:text-[var(--ink)]" aria-label={tr("Clear", "Borrar", "Effacer")}>
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </form>
+          )}
+
+          {/* Desktop: city search always visible, categories as a quiet list */}
+          <form onSubmit={(e) => { e.preventDefault(); setCity(cityInput.trim()); }} className="relative mt-8 hidden lg:block">
+            <MapPin className="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--ink)]/45" strokeWidth={1.75} />
+            <input
               value={cityInput}
               onChange={(e) => setCityInput(e.target.value)}
               onBlur={() => setCity(cityInput.trim())}
-              placeholder={tr("City", "Ciudad", "Ville")}
-              className="h-10 pr-9 bg-white border-[var(--ink)]/12 rounded-full px-4"
+              placeholder={tr("Any city", "Cualquier ciudad", "Toute ville")}
+              aria-label={tr("Filter by city", "Filtrar por ciudad", "Filtrer par ville")}
+              className="w-full h-10 bg-transparent border-b border-[var(--ink)]/15 pl-6 pr-7 text-[14px] text-[var(--ink)] placeholder:text-[var(--ink)]/40 outline-none focus:border-[var(--ink)]/45"
             />
             {(cityInput || city) && (
-              <button
-                type="button"
-                onClick={() => { setCity(""); setCityInput(""); setCityOpen(false); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink)]/45 hover:text-[var(--ink)]"
-                aria-label={tr("Clear", "Borrar", "Effacer")}
-              >
+              <button type="button" onClick={() => { setCity(""); setCityInput(""); }}
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--ink)]/45 hover:text-[var(--ink)]" aria-label={tr("Clear", "Borrar", "Effacer")}>
                 <X className="w-4 h-4" />
               </button>
             )}
           </form>
-        )}
+          <ul className="mt-6 hidden lg:block">
+            {([null, ...CATEGORIES] as (ConnectCategory | null)[]).map((c) => {
+              const active = cat === c;
+              return (
+                <li key={c ?? "all"}>
+                  <button type="button" onClick={() => setCat(c)}
+                    className={`group flex w-full items-center gap-3 py-2 text-left transition ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/50 hover:text-[var(--ink)]/80"}`}>
+                    <span aria-hidden className={`h-px transition-all ${active ? "w-6 bg-[var(--gold)]" : "w-3 bg-[var(--ink)]/15 group-hover:w-5"}`} />
+                    <span className="text-serif text-[18px] leading-none">{c ? catLabel(c) : tr("Everything", "Todo", "Tout")}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
-        {/* Category tabs: one quiet scrolling row */}
-        <div className="-mx-4 sm:mx-0 mt-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mt-6 lg:mt-0">
+        {/* Phone: category tabs in one quiet scrolling row */}
+        <div className="-mx-4 sm:mx-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:hidden">
           <div className="flex gap-5 px-4 sm:px-0 border-b border-[var(--ink)]/8 min-w-max">
             {([null, ...CATEGORIES] as (ConnectCategory | null)[]).map((c) => {
               const active = cat === c;
               return (
-                <button
-                  key={c ?? "all"}
-                  type="button"
-                  onClick={() => setCat(c)}
-                  className={`relative pb-2.5 text-[13px] whitespace-nowrap transition ${active ? "text-[var(--ink)] font-semibold" : "text-[var(--ink)]/50 hover:text-[var(--ink)]/80"}`}
-                >
+                <button key={c ?? "all"} type="button" onClick={() => setCat(c)}
+                  className={`relative pb-2.5 text-[13px] whitespace-nowrap transition ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/50 hover:text-[var(--ink)]/80"}`}>
                   {c ? catLabel(c) : tr("All", "Todo", "Tout")}
-                  {active && <span className="absolute left-0 right-0 -bottom-px h-[2px] rounded-full bg-[var(--ink)]" />}
+                  {active && <span className="absolute left-0 right-0 -bottom-px h-px bg-[var(--ink)]" />}
                 </button>
               );
             })}
@@ -260,7 +308,7 @@ function ConnectPage() {
           </ul>
         ) : (postsQ.data ?? []).length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-serif text-lg text-[var(--ink)]/80">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
+            <p className="text-serif italic text-[22px] text-[var(--ink)]/80">{tr("Nothing here yet", "Aún no hay nada", "Rien pour l'instant")}</p>
             <button
               type="button"
               onClick={() => { setEditingPost(null); setComposerOpen(true); }}
@@ -274,23 +322,22 @@ function ConnectPage() {
             {(postsQ.data ?? []).map((p) => {
               const mine = myProfileId === p.author_profile_id;
               return (
-                <li key={p.id} className="lazy-row py-5">
+                <li key={p.id} className="lazy-row py-7 first:lg:pt-1">
                   {/* Author */}
                   <div className="flex items-center gap-2.5">
                     {p.author?.photo_url ? (
-                      <img src={p.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                      <img src={p.author.photo_url} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-[var(--ink)]/10" />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-[var(--ink)]/8 shrink-0 grid place-items-center text-[var(--ink)]/45 text-xs font-semibold">
+                      <div className="w-9 h-9 rounded-full bg-[var(--ink)]/8 shrink-0 grid place-items-center text-serif text-[var(--ink)]/55 text-sm">
                         {(p.author?.first_name ?? "?").charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div className="min-w-0 flex-1 leading-tight">
-                      <div className="text-[13px] font-semibold text-[var(--ink)] truncate">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</div>
-                      <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/45 truncate mt-0.5">
-                        {catLabel(p.category)}{p.city ? ` · ${p.city}` : ""}
+                      <div className="text-[13.5px] font-medium text-[var(--ink)] truncate">{p.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</div>
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/45 truncate mt-1">
+                        {catLabel(p.category)}{p.city ? ` · ${p.city}` : ""} · {timeAgo(p.created_at, tr, locale)}
                       </div>
                     </div>
-                    <span className="text-[11px] text-[var(--ink)]/40 shrink-0">{timeAgo(p.created_at, tr)}</span>
                     {mine ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -316,7 +363,7 @@ function ConnectPage() {
                         {isAdmin && (
                           <button
                             onClick={() => { if (confirm(tr("Remove this post as admin?", "¿Eliminar esta publicación como admin?", "Supprimer cette publication en tant qu'admin ?"))) adminDelMut.mutate({ kind: "post", id: p.id }); }}
-                            className="p-1.5 text-destructive/70 hover:text-destructive"
+                            className="p-1.5 text-[var(--ink)]/35 hover:text-destructive"
                             aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
                           >
                             <ShieldAlert className="w-3.5 h-3.5" />
@@ -327,12 +374,12 @@ function ConnectPage() {
                   </div>
 
                   {/* Post */}
-                  <h3 className="text-serif text-[19px] sm:text-xl text-[var(--ink)] mt-3 leading-snug">{p.title}</h3>
-                  <p className="text-[14px] text-[var(--ink)]/75 mt-1 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
+                  <h3 className="text-serif text-[23px] sm:text-[26px] text-[var(--ink)] mt-4 leading-tight">{p.title}</h3>
+                  <p className="text-[14.5px] sm:text-[15px] text-[var(--ink)]/70 mt-2 whitespace-pre-wrap break-words leading-relaxed">{p.body}</p>
 
                   {/* Latest comments */}
                   {p.latest_comments.length > 0 && (
-                    <div className="mt-3 pl-3 border-l border-[var(--ink)]/10 space-y-2">
+                    <div className="mt-4 pl-4 border-l border-[var(--gold)]/50 space-y-2.5">
                       {p.latest_comments.map((c) => {
                         const cMine = myProfileId === c.author_profile_id;
                         const isEditing = editingComment?.id === c.id;
@@ -388,7 +435,7 @@ function ConnectPage() {
                                 {isAdmin && (
                                   <button
                                     onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); }}
-                                    className="p-1 text-destructive/70 hover:text-destructive"
+                                    className="p-1 text-[var(--ink)]/35 hover:text-destructive"
                                     aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
                                   >
                                     <ShieldAlert className="w-3 h-3" />
@@ -409,7 +456,7 @@ function ConnectPage() {
 
                   {/* Reply */}
                   {replyPostId === p.id ? (
-                    <div className="mt-3 flex items-center gap-2">
+                    <div className="mt-4 flex items-center gap-2">
                       <Input
                         autoFocus
                         value={replyBody}
@@ -431,9 +478,9 @@ function ConnectPage() {
                   ) : (
                     <button
                       onClick={() => { setReplyPostId(p.id); setReplyBody(""); }}
-                      className="mt-3 inline-flex items-center gap-1.5 text-[12px] text-[var(--ink)]/50 hover:text-[var(--ink)] transition"
+                      className="mt-4 inline-flex items-center gap-1.5 text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/50 hover:text-[var(--ink)] transition"
                     >
-                      <MessageCircle className="w-3.5 h-3.5" />
+                      <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
                       {tr("Reply", "Responder", "Répondre")}
                     </button>
                   )}
@@ -442,10 +489,12 @@ function ConnectPage() {
             })}
           </ul>
         )}
+        </div>
       </section>
 
       {composerOpen && <Composer post={editingPost} onClose={() => { setComposerOpen(false); setEditingPost(null); }} />}
       {openPost && <PostThread post={openPost} myProfileId={myProfileId} isAdmin={isAdmin} onClose={() => setOpenPost(null)} />}
+    </div>
     </div>
   );
 }
@@ -476,7 +525,7 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-[var(--ink)]/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/10 max-h-[92vh] overflow-y-auto shadow-2xl">
         <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
         <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/10 px-5 py-3 flex items-center justify-between">
@@ -487,7 +536,7 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
         </div>
         <div className="p-5 space-y-4">
           <div>
-            <label className="text-[11px] uppercase tracking-wider font-bold text-[var(--ink)]/70">{tr("Category", "Categoría", "Catégorie")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55">{tr("Category", "Categoría", "Catégorie")}</label>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {CATEGORIES.map((c) => {
                 const active = category === c;
@@ -496,7 +545,7 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
                     key={c}
                     type="button"
                     onClick={() => setCategory(c)}
-                    className={`px-3 h-8 rounded-full text-xs font-semibold border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
+                    className={`px-3.5 h-9 rounded-full text-[13px] border transition ${active ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "bg-white border-[var(--ink)]/15 text-[var(--ink)]/75 hover:border-[var(--ink)]/40"}`}
                   >
                     {catLabel(c)}
                   </button>
@@ -505,22 +554,22 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
             </div>
           </div>
           <div>
-            <label className="text-[11px] uppercase tracking-wider font-bold text-[var(--ink)]/70">{tr("City (optional)", "Ciudad (opcional)", "Ville (facultatif)")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55">{tr("City (optional)", "Ciudad (opcional)", "Ville (facultatif)")}</label>
             <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Barcelona" className="mt-2 bg-white" />
           </div>
           <div>
-            <label className="text-[11px] uppercase tracking-wider font-bold text-[var(--ink)]/70">{tr("Title", "Título", "Titre")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55">{tr("Title", "Título", "Titre")}</label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} className="mt-2 bg-white" />
           </div>
           <div>
-            <label className="text-[11px] uppercase tracking-wider font-bold text-[var(--ink)]/70">{tr("Message", "Mensaje", "Message")}</label>
+            <label className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/55">{tr("Message", "Mensaje", "Message")}</label>
             <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={5} maxLength={2000} className="mt-2 bg-white" />
             <p className="text-[10px] text-[var(--ink)]/50 mt-1">{tr("Posts auto-expire after 30 days.", "Las publicaciones caducan a los 30 días.", "Les publications expirent après 30 jours.")}</p>
           </div>
           <Button
             disabled={mut.isPending || title.trim().length < 3 || body.trim().length < 3}
             onClick={() => mut.mutate()}
-            className="w-full bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-11"
+            className="w-full bg-[var(--ink)] hover:bg-[var(--ink)]/90 text-[var(--paper)] rounded-full h-11 text-[12px] font-semibold uppercase tracking-[0.18em]"
           >
             {mut.isPending
               ? (isEdit ? tr("Saving…", "Guardando…", "Enregistrement…") : tr("Posting…", "Publicando…", "Publication…"))
@@ -585,7 +634,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-[var(--ink)]/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/10 max-h-[92vh] flex flex-col shadow-2xl">
         <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
         <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/10 px-5 py-3 flex items-center justify-between">
@@ -612,14 +661,14 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                     <div className="flex items-center gap-2 text-[11px] text-[var(--ink)]/60">
                       <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>
                       <span>·</span>
-                      <span>{timeAgo(c.created_at, tr)}</span>
+                      <span>{timeAgo(c.created_at, tr, undefined)}</span>
                       {!mine && (
                         <span className="ml-auto flex items-center gap-1">
                           <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
                           {isAdmin && (
                             <button
                               onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate(c.id); }}
-                              className="text-red-500/70 hover:text-red-600 p-1"
+                              className="text-[var(--ink)]/35 hover:text-destructive p-1"
                               aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
                             >
                               <ShieldAlert className="w-3 h-3" />
@@ -636,7 +685,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                           >
                             <Pencil className="w-3 h-3" />
                           </button>
-                          <button onClick={() => delMut.mutate(c.id)} className="text-red-500/70 hover:text-red-500 p-1">
+                          <button onClick={() => delMut.mutate(c.id)} className="text-[var(--ink)]/40 hover:text-destructive p-1">
                             <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
@@ -659,7 +708,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                           <Button
                             disabled={!(editingComment?.body ?? "").trim() || updateMut.isPending}
                             onClick={() => updateMut.mutate({ id: c.id, body: editingComment!.body })}
-                            className="bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full h-7 px-3 text-xs"
+                            className="bg-[var(--ink)] hover:bg-[var(--ink)]/90 text-[var(--paper)] rounded-full h-7 px-3 text-xs"
                           >
                             {tr("Save", "Guardar", "Enregistrer")}
                           </Button>
@@ -685,7 +734,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
           <Button
             disabled={!body.trim() || addMut.isPending}
             onClick={() => addMut.mutate()}
-            className="bg-[var(--plum)] hover:bg-[var(--plum)]/90 text-white rounded-full"
+            className="bg-[var(--ink)] hover:bg-[var(--ink)]/90 text-[var(--paper)] rounded-full"
           >
             {tr("Send", "Enviar", "Envoyer")}
           </Button>

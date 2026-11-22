@@ -32,7 +32,7 @@ export function QuickActions() {
 
   const actions = [
     { key: "court", label: tr("Book a court", "Reservar pista", "Réserver un court"), icon: <CalendarDays className="size-[22px]" strokeWidth={1.6} />, run: () => navigate({ to: "/app/book-court" }) },
-    { key: "match", label: tr("Create a match", "Crear partido", "Créer un match"), icon: <RacketIcon className="size-[22px]" />, run: () => setChooser(true) },
+    { key: "match", label: tr("Create a match", "Crear partido", "Créer un match"), icon: <RacketIcon className="size-[26px]" />, run: () => setChooser(true) },
     { key: "coach", label: tr("Book a coach", "Reservar entrenador", "Réserver un coach"), icon: <GraduationCap className="size-[22px]" strokeWidth={1.6} />, run: () => navigate({ to: "/app/coaches" }) },
     { key: "share", label: tr("Share the app", "Compartir la app", "Partager l’app"), icon: <QrCode className="size-[20px]" strokeWidth={1.6} />, run: () => setShare(true) },
   ];

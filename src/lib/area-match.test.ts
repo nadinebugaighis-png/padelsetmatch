@@ -54,7 +54,34 @@ describe("isMoralejaMember", () => {
   });
 });
 
+describe("paired communities", () => {
+  it("Salamanca and Chamberí players see each other", () => {
+    expect(sharesMyArea(loc("Madrid", "Salamanca & Chamberí"), loc("Madrid", "Chamberí"))).toBe(true);
+    expect(sharesMyArea(loc("Madrid", "Salamanca"), loc("Madrid", "Salamanca & Chamberí"))).toBe(true);
+  });
+  it("Salamanca & Chamberí is not La Moraleja", () => {
+    expect(sharesMyArea(loc("Madrid", "Salamanca & Chamberí"), loc("Madrid", "La Moraleja"))).toBe(false);
+  });
+  it("Chelsea and Battersea are one London community", () => {
+    const london = (...a: string[]) => ({ locations: a.map((x) => `United Kingdom | London | ${x}`) });
+    expect(sharesMyArea(london("Chelsea & Battersea"), london("Battersea"))).toBe(true);
+    expect(sharesMyArea(london("Chelsea"), london("Chelsea & Battersea"))).toBe(true);
+  });
+  it("Coconut Grove and Brickell are one Miami community", () => {
+    const miami = (...a: string[]) => ({ locations: a.map((x) => `United States | Miami | ${x}`) });
+    expect(sharesMyArea(miami("Coconut Grove & Brickell"), miami("Brickell"))).toBe(true);
+    expect(sharesMyArea(miami("Coconut Grove"), miami("Brickell"))).toBe(true);
+  });
+});
+
 describe("location presets", () => {
+  it("the communities are La Moraleja, Salamanca & Chamberí, Chelsea & Battersea, Coconut Grove & Brickell and Dubai", () => {
+    expect(presetByKey("madrid_salamanca_chamberi")).toMatchObject({ city: "Madrid", area: "Salamanca & Chamberí" });
+    expect(presetByKey("london_chelsea_battersea")).toMatchObject({ city: "London", area: "Chelsea & Battersea" });
+    expect(presetByKey("miami_coconut_grove_brickell")).toMatchObject({ city: "Miami", area: "Coconut Grove & Brickell" });
+    expect(presetByKey("dubai")).toMatchObject({ city: "Dubai" });
+    expect(presetByKey("dubai")?.area).toBeUndefined();
+  });
   it("La Moraleja pre-fills Spain, Madrid, La Moraleja", () => {
     expect(presetByKey("madrid_la_moraleja")).toMatchObject({ country: "Spain", city: "Madrid", area: "La Moraleja" });
   });

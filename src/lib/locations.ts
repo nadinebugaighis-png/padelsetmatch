@@ -9,7 +9,7 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "Spain",
     cities: [
-      { name: "Madrid", areas: ["Centro", "Salamanca", "Chamberí", "Chamartín", "Retiro", "Moncloa-Aravaca", "Aravaca", "Mirasierra", "Tetuán", "Arganzuela", "Latina", "Carabanchel", "Ciudad Lineal", "Arturo Soria", "Conde Orgaz", "Hortaleza", "San Blas-Canillejas", "Barajas", "La Moraleja", "El Soto de La Moraleja", "El Encinar de los Reyes", "Arroyo de la Vega", "La Solana", "Diversia", "Brains", "Alcobendas", "San Sebastián de los Reyes", "Tres Cantos", "Las Rozas", "Majadahonda", "Pozuelo de Alarcón", "Boadilla del Monte", "Villanueva de la Cañada", "Villaviciosa de Odón"] },
+      { name: "Madrid", areas: ["Salamanca & Chamberí", "Centro", "Salamanca", "Chamberí", "Chamartín", "Retiro", "Moncloa-Aravaca", "Aravaca", "Mirasierra", "Tetuán", "Arganzuela", "Latina", "Carabanchel", "Ciudad Lineal", "Arturo Soria", "Conde Orgaz", "Hortaleza", "San Blas-Canillejas", "Barajas", "La Moraleja", "El Soto de La Moraleja", "El Encinar de los Reyes", "Arroyo de la Vega", "La Solana", "Diversia", "Brains", "Alcobendas", "San Sebastián de los Reyes", "Tres Cantos", "Las Rozas", "Majadahonda", "Pozuelo de Alarcón", "Boadilla del Monte", "Villanueva de la Cañada", "Villaviciosa de Odón"] },
       { name: "Barcelona", areas: ["Eixample", "Gràcia", "Sarrià-Sant Gervasi", "Les Corts", "Sant Martí", "Ciutat Vella", "Pedralbes", "Sant Cugat", "Castelldefels", "Sitges"] },
       { name: "Valencia", areas: ["Centro", "L'Eixample", "Campanar", "Benimaclet", "El Pla del Real", "Algirós", "Patacona"] },
       { name: "Málaga", areas: ["Centro", "Pedregalejo", "El Limonar", "Teatinos", "Churriana", "Marbella", "Estepona"] },
@@ -51,7 +51,7 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "United Kingdom",
     cities: [
-      { name: "London", areas: ["Central", "Chelsea", "Kensington", "Notting Hill", "Hampstead", "Wimbledon", "Canary Wharf", "Shoreditch", "Battersea", "Ealing"] },
+      { name: "London", areas: ["Chelsea & Battersea", "Central", "Chelsea", "Kensington", "Notting Hill", "Hampstead", "Wimbledon", "Canary Wharf", "Shoreditch", "Battersea", "Ealing"] },
       { name: "Manchester", areas: ["City Centre", "Didsbury", "Salford"] },
     ],
   },
@@ -152,7 +152,7 @@ export const LOCATION_DATA: CountryData[] = [
   {
     name: "United States",
     cities: [
-      { name: "Miami", areas: ["Brickell", "Coral Gables", "Coconut Grove", "Wynwood", "Aventura", "Doral", "Key Biscayne", "Miami Beach", "South Beach", "Sunny Isles", "Bal Harbour", "Bay Harbor Islands", "Surfside", "Pinecrest", "Palmetto Bay", "Edgewater", "Midtown", "Downtown Miami", "Kendall", "Coral Way"] },
+      { name: "Miami", areas: ["Coconut Grove & Brickell", "Brickell", "Coral Gables", "Coconut Grove", "Wynwood", "Aventura", "Doral", "Key Biscayne", "Miami Beach", "South Beach", "Sunny Isles", "Bal Harbour", "Bay Harbor Islands", "Surfside", "Pinecrest", "Palmetto Bay", "Edgewater", "Midtown", "Downtown Miami", "Kendall", "Coral Way"] },
       { name: "New York City", areas: ["Manhattan", "Brooklyn", "Queens", "Long Island City", "Williamsburg", "Bronx", "Westchester", "Long Island", "Hamptons"] },
       { name: "Los Angeles", areas: ["Beverly Hills", "Santa Monica", "West Hollywood", "Pasadena", "Venice", "Manhattan Beach", "Culver City", "Downtown LA"] },
       { name: "San Francisco", areas: ["Downtown", "SoMa", "Mission", "Marina", "Pacific Heights", "Nob Hill", "Presidio"] },

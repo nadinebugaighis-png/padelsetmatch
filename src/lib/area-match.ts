@@ -18,10 +18,22 @@ const GREATER_MORALEJA = [
   "brains",
 ];
 
+/**
+ * Paired neighbourhoods that form one community (signup presets). Either
+ * half, or the combined name, folds into the community key.
+ */
+export const PAIRED_COMMUNITIES: { key: string; label: string; parts: string[] }[] = [
+  { key: "salamanca & chamberi", label: "Salamanca & Chamberí", parts: ["salamanca", "chamberi"] },
+  { key: "chelsea & battersea", label: "Chelsea & Battersea", parts: ["chelsea", "battersea"] },
+  { key: "coconut grove & brickell", label: "Coconut Grove & Brickell", parts: ["coconut grove", "brickell"] },
+];
+
 export function canonicalArea(area: string): string {
   const a = norm(area).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (a === "el soto" || a === "soto") return "la moraleja";
   if (GREATER_MORALEJA.some((p) => a.includes(p))) return "la moraleja";
+  const paired = PAIRED_COMMUNITIES.find((c) => a === c.key || c.parts.includes(a));
+  if (paired) return paired.key;
   return a;
 }
 

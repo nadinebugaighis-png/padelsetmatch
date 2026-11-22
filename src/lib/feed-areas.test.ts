@@ -15,7 +15,7 @@ describe("Play feed areas", () => {
 
   it("a player with Salamanca and La Moraleja gets both areas", () => {
     const areas = feedAreas([salamanca, moraleja]);
-    expect(areas.map((a) => a.label)).toEqual(["Salamanca", "La Moraleja"]);
+    expect(areas.map((a) => a.label)).toEqual(["Salamanca & Chamberí", "La Moraleja"]);
     const sal = areas[0]!;
     expect(eventInArea({ city: "Madrid", club_address: "Calle de Serrano, Salamanca" }, sal)).toBe(true);
   });
@@ -34,6 +34,19 @@ describe("Play feed areas", () => {
   it("a city with no area covers the whole city", () => {
     const [area] = feedAreas(["United Arab Emirates | Dubai | "]);
     expect(eventInArea({ city: "Dubai" }, area!)).toBe(true);
+  });
+
+  it("Salamanca & Chamberí gets games in either barrio", () => {
+    const [area] = feedAreas(["Spain | Madrid | Salamanca & Chamberí"]);
+    expect(eventInArea({ club_address: "Calle de Serrano, Salamanca" }, area!)).toBe(true);
+    expect(eventInArea({ club_address: "Calle de Santa Engracia, Chamberi" }, area!)).toBe(true);
+    expect(eventInArea({ city: "La Moraleja" }, area!)).toBe(false);
+  });
+
+  it("the London daily game shows to Chelsea & Battersea players", () => {
+    const [area] = feedAreas(["United Kingdom | London | Chelsea & Battersea"]);
+    expect(area?.label).toBe("Chelsea & Battersea");
+    expect(eventInArea({ city: "London", club_name: "Chelsea & Battersea · Club to be decided" }, area!)).toBe(true);
   });
 
   it("no areas (World) gives no keywords, so every game shows", () => {

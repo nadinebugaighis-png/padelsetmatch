@@ -1,5 +1,5 @@
 import { LOCATION_DATA } from "./locations";
-import { canonicalArea } from "./area-match";
+import { canonicalArea, PAIRED_COMMUNITIES } from "./area-match";
 
 /**
  * The Play feed aggregates games by the player's own areas: every game at a
@@ -12,6 +12,12 @@ export type FeedArea = { key: string; label: string; keywords: string[] };
 
 /** Text that marks a game as Greater La Moraleja (see canonicalArea). */
 const MORALEJA_WORDS = ["Moraleja", "El Soto", "Encinar", "Arroyo de la Vega", "La Solana", "Diversia", "Brains"];
+
+/** "Salamanca & Chamberí" matches games in Salamanca, Chamberí (with or without accent) or the pair. */
+function pairedWords(label: string): string[] {
+  const halves = label.split("&").map((h) => h.trim());
+  return Array.from(new Set([label, ...halves, ...halves.map((h) => h.normalize("NFD").replace(/[\u0300-\u036f]/g, ""))]));
+}
 
 const fold = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
@@ -39,7 +45,11 @@ export function feedAreas(rawLocations: unknown): FeedArea[] {
       if (area) {
         const canon = canonicalArea(area);
         if (canon === "la moraleja") add({ key: "area:la moraleja", label: "La Moraleja", keywords: MORALEJA_WORDS });
-        else add({ key: `area:${canon}`, label: area, keywords: [area] });
+        else {
+          const paired = PAIRED_COMMUNITIES.find((c) => c.key === canon);
+          if (paired) add({ key: `area:${canon}`, label: paired.label, keywords: pairedWords(paired.label) });
+          else add({ key: `area:${canon}`, label: area, keywords: [area] });
+        }
       } else if (city) {
         add({ key: `city:${fold(city)}`, label: city, keywords: [city, ...cityAreas(country, city)] });
       }

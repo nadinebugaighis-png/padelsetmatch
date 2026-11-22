@@ -39,9 +39,10 @@ describe("who can play", () => {
 
   it("puts the player's home area first and never repeats it under elsewhere", () => {
     const { mine, elsewhere } = connectAreaOptions(["Spain|Madrid|La Moraleja", "Spain|Madrid|Salamanca"]);
-    expect(mine.map((a) => a.key)).toEqual(["area:la moraleja", "area:salamanca"]);
+    expect(mine.map((a) => a.key)).toEqual(["area:la moraleja", "area:salamanca & chamberi"]);
     expect(elsewhere.map((a) => a.key)).not.toContain("area:la moraleja");
-    expect(elsewhere.map((a) => a.key)).toContain("city:london");
+    expect(elsewhere.map((a) => a.key)).not.toContain("area:salamanca & chamberi");
+    expect(elsewhere.map((a) => a.key)).toContain("area:chelsea & battersea");
   });
 
   it("folds El Soto into La Moraleja for the switcher", () => {

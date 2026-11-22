@@ -38,11 +38,11 @@ function ChooseLocation() {
 
   return (
     <div className="programme-page min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col items-center px-6 pt-16 pb-12">
-      <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--ink)]/68">PadelSetMatch</p>
+      <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--ink)]/78">PadelSetMatch</p>
       <h1 className="mt-4 font-serif text-[2rem] leading-tight text-center">
         {tr("Choose your community", "Elige tu comunidad", "Choisis ta communauté")}
       </h1>
-      <p className="mt-2 font-serif italic text-[15px] text-[var(--ink)]/72 text-center">
+      <p className="mt-2 font-serif italic text-[15px] text-[var(--ink)]/82 text-center">
         {tr("Where you live, play and connect", "Donde vives, juegas y conectas", "Là où tu vis, joues et te connectes")}
       </p>
 
@@ -57,7 +57,7 @@ function ChooseLocation() {
             <span className="flex-1 min-w-0">
               {p.area ? (
                 <>
-                  <span className="block text-[10.5px] uppercase tracking-[0.24em] text-[var(--ink)]/68">{p.city}</span>
+                  <span className="block text-[10.5px] uppercase tracking-[0.24em] text-[var(--ink)]/78">{p.city}</span>
                   <span className="mt-1 block font-serif text-[1.3rem] leading-snug">{p.area}</span>
                 </>
               ) : (
@@ -72,7 +72,7 @@ function ChooseLocation() {
       <button
         type="button"
         onClick={() => navigate({ to: "/app/onboarding", search: {} })}
-        className="mt-8 inline-flex items-center gap-1 font-serif italic text-[15px] text-[var(--ink)]/65 hover:text-[var(--ink)] underline-offset-4 hover:underline transition"
+        className="mt-8 inline-flex items-center gap-1 font-serif italic text-[15px] text-[var(--ink)]/76 hover:text-[var(--ink)] underline-offset-4 hover:underline transition"
       >
         {tr("Other", "Otro lugar", "Autre endroit")}
         <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.5} aria-hidden />

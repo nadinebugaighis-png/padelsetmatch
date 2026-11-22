@@ -166,7 +166,7 @@ function Landing() {
             <span className="block text-[var(--plum)]">{t("land.h1.b")}</span>
           </h1>
 
-          <p className="mt-3 lg:mt-2 text-[15px] sm:text-base text-[var(--ink)]/75 max-w-md leading-[1.55]">
+          <p className="mt-3 lg:mt-2 text-[15px] sm:text-base text-[var(--ink)]/84 max-w-md leading-[1.55]">
             {t("land.lede")}
           </p>
 
@@ -181,7 +181,7 @@ function Landing() {
             <Link
               to="/auth"
               search={{ redirect: undefined, join: undefined, mode: "signin" }}
-              className="text-[14px] text-[var(--ink)]/70 hover:text-[var(--ink)] transition"
+              className="text-[14px] text-[var(--ink)]/80 hover:text-[var(--ink)] transition"
             >
               {tr("Already a member?", "¿Ya eres miembro?", "Déjà membre ?")}{" "}
               <span className="font-semibold text-[var(--ink)] underline underline-offset-4 decoration-[var(--ink)]/30">
@@ -191,7 +191,7 @@ function Landing() {
           </div>
 
           <div className="mt-10 lg:mt-9 max-w-md">
-            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/65">
+            <div className="flex items-center gap-3 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[var(--ink)]/76">
               <span>{tr("Or get the app", "O descarga la app", "Ou télécharge l’app")}</span>
               <span className="h-px flex-1 bg-[var(--ink)]/15" aria-hidden />
             </div>
@@ -213,7 +213,7 @@ function Landing() {
             <h2 className="text-serif mt-4 text-4xl md:text-5xl uppercase tracking-[-0.01em] text-[var(--ink)]">
               {t("land.preview.title")}
             </h2>
-            <p className="mt-3 text-[var(--ink)]/65 leading-relaxed">{t("land.preview.sub")}</p>
+            <p className="mt-3 text-[var(--ink)]/76 leading-relaxed">{t("land.preview.sub")}</p>
           </div>
           <Link
             to="/auth"

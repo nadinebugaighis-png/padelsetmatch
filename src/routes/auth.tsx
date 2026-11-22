@@ -475,7 +475,7 @@ function AuthPage() {
           <BrandMark size="sm" />
           <LangSwitch />
         </div>
-        <Link to="/" className="native-hide mt-4 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/68 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
+        <Link to="/" className="native-hide mt-4 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/78 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
         <h1 className="text-serif mt-4 text-3xl uppercase text-[var(--ink)] leading-[0.95]">
           {tr("Join PadelSetMatch", "Únete a PadelSetMatch", "Rejoignez PadelSetMatch")}
         </h1>
@@ -490,7 +490,7 @@ function AuthPage() {
             role="tab"
             aria-selected={mode === "signup"}
             onClick={() => { setMode("signup"); setConfirmPassword(""); setAgreed(false); }}
-            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signup" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/72 hover:text-[var(--ink)]"}`}
+            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signup" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/82 hover:text-[var(--ink)]"}`}
           >
             {tr("Create account", "Crear cuenta", "Créer un compte")}
           </button>
@@ -500,7 +500,7 @@ function AuthPage() {
             aria-selected={mode === "signin"}
             onClick={() => { setMode("signin"); setConfirmPassword(""); setAgreed(false); }}
 
-            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signin" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/72 hover:text-[var(--ink)]"}`}
+            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signin" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/82 hover:text-[var(--ink)]"}`}
           >
             {tr("Sign in", "Iniciar sesión", "Se connecter")}
           </button>
@@ -517,7 +517,7 @@ function AuthPage() {
               className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
               aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
             />
-            <span className="text-[12px] leading-snug text-[var(--ink)]/75">
+            <span className="text-[12px] leading-snug text-[var(--ink)]/84">
               {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
               <Link to="/terms" className="underline font-semibold">
                 {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
@@ -534,7 +534,7 @@ function AuthPage() {
             </span>
           </label>
         ) : (
-          <p className="mt-6 text-[11px] leading-snug text-[var(--ink)]/72">
+          <p className="mt-6 text-[11px] leading-snug text-[var(--ink)]/82">
             {tr("By signing in you agree to the ", "Al iniciar sesión aceptas los ", "En vous connectant, vous acceptez les ")}
             <Link to="/terms" className="underline font-semibold">
               {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
@@ -561,7 +561,7 @@ function AuthPage() {
             >
                {t("auth.apple")}
             </Button>
-            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/55 uppercase tracking-widest">
+            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/70 uppercase tracking-widest">
               <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
             </div>
           </>
@@ -596,7 +596,7 @@ function AuthPage() {
                {t("auth.apple")}
             </Button>
 
-            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/55 uppercase tracking-widest">
+            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/70 uppercase tracking-widest">
               <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
             </div>
           </>
@@ -610,7 +610,7 @@ function AuthPage() {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute inset-y-0 right-0 flex items-center px-3 text-[var(--ink)]/65 hover:text-[var(--ink)]"
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-[var(--ink)]/76 hover:text-[var(--ink)]"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -631,7 +631,7 @@ function AuthPage() {
         </form>
 
         {mode === "signup" && (
-          <p className="mt-3 text-center text-[13px] text-[var(--ink)]/72">
+          <p className="mt-3 text-center text-[13px] text-[var(--ink)]/82">
             <Link to="/demo" className="text-[var(--plum)] font-semibold underline underline-offset-2 hover:brightness-110">
               {tr("Take a quick tour →", "Haz un tour rápido →", "Fais un tour rapide →")}
             </Link>
@@ -660,7 +660,7 @@ function AuthPage() {
                 }
               }}
               disabled={resetSending}
-              className="text-[var(--ink)]/72 hover:text-[var(--ink)]"
+              className="text-[var(--ink)]/82 hover:text-[var(--ink)]"
             >
               {t("auth.forgot")}
             </button>

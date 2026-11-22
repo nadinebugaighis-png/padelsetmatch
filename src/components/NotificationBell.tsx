@@ -170,7 +170,7 @@ export function NotificationBell() {
       <Button variant="ghost" size="icon"
         onClick={() => setOpen((v) => !v)}
         aria-label={tr("Notifications", "Notificaciones", "Notifications")}
-        className="relative w-8 h-8 flex items-center justify-center text-[var(--ink)]/70 hover:text-[var(--ink)]"
+        className="relative w-8 h-8 flex items-center justify-center text-[var(--ink)]/80 hover:text-[var(--ink)]"
       >
         <Bell className="w-5 h-5" strokeWidth={2} />
         {unread > 0 && (
@@ -182,7 +182,7 @@ export function NotificationBell() {
       {open && (
         <div className="fixed left-3 right-3 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[340px] bg-[var(--paper)] border border-[var(--ink)]/22 rounded-xl shadow-xl z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--ink)]/16">
-            <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/70 font-semibold">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/80 font-semibold">
               {tr("Notifications", "Notificaciones", "Notifications")}
             </span>
           </div>
@@ -203,7 +203,7 @@ export function NotificationBell() {
                       <div className="text-sm text-[var(--ink)] font-semibold">
                         {tr(`${host} invited you`, `${host} te invitó`, `${host} t'a invité·e`)}
                       </div>
-                      <div className="text-xs text-[var(--ink)]/70 mt-0.5">
+                      <div className="text-xs text-[var(--ink)]/80 mt-0.5">
                         {fmtWhen(ev.starts_at)}{place ? ` · ${place}` : ""}
                       </div>
                       <div className="flex gap-2 mt-2">
@@ -217,14 +217,14 @@ export function NotificationBell() {
                         <button
                           disabled={busy}
                           onClick={() => decideInvite(inv.id, false)}
-                          className="flex-1 py-1.5 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]/70 text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                          className="flex-1 py-1.5 rounded-full border border-[var(--ink)]/25 text-[var(--ink)]/80 text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
                         >
                           <X className="w-3 h-3" /> {tr("Decline", "Rechazar", "Refuser")}
                         </button>
                       </div>
                       <button
                         onClick={() => { setOpen(false); navigate({ to: "/app/events/$eventId", params: { eventId: ev.id } }); }}
-                        className="mt-1.5 text-[10px] text-[var(--ink)]/65 hover:text-[var(--ink)] uppercase tracking-wider"
+                        className="mt-1.5 text-[10px] text-[var(--ink)]/76 hover:text-[var(--ink)] uppercase tracking-wider"
                       >
                         {tr("View match", "Ver partido", "Voir le match")}
                       </button>
@@ -234,7 +234,7 @@ export function NotificationBell() {
               </div>
             )}
             {viewedList.length === 0 && items.length === 0 && activeInvites.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-[var(--ink)]/72">
+              <div className="px-4 py-8 text-center text-sm text-[var(--ink)]/82">
                 {tr("You're all caught up.", "Estás al día.", "Tu es à jour.")}
               </div>
             ) : (
@@ -249,8 +249,8 @@ export function NotificationBell() {
                     {!n.read_at && <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--plum)] shrink-0" />}
                     <div className="min-w-0 flex-1">
                       <div className="text-sm text-[var(--ink)] font-semibold truncate">{n.title}</div>
-                      {n.body && <div className="text-xs text-[var(--ink)]/70 mt-0.5 line-clamp-2">{n.body}</div>}
-                      <div className="text-[10px] text-[var(--ink)]/65 mt-1 uppercase tracking-wider">
+                      {n.body && <div className="text-xs text-[var(--ink)]/80 mt-0.5 line-clamp-2">{n.body}</div>}
+                      <div className="text-[10px] text-[var(--ink)]/76 mt-1 uppercase tracking-wider">
                         {new Date(n.created_at).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                       </div>
                     </div>

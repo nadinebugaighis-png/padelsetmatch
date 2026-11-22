@@ -42,14 +42,14 @@ export function MatchDateTimePicker({ value, onChange, bare = false, allowNoTime
 
   return (
     <section className={bare ? "match-date-time py-2.5" : "match-date-time"}>
-      <label hidden={bare} htmlFor="match-date" className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/72">
+      <label hidden={bare} htmlFor="match-date" className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/82">
         {tr("Date & time", "Fecha y hora", "Date et heure")}
       </label>
       <div className="flex items-stretch gap-2">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button id="match-date" type="button" variant="outline" className={`${fieldClass} min-w-0 flex-[1.7] justify-start gap-2`}>
-              <CalendarIcon className="size-4 shrink-0 text-[var(--ink)]/72" />
+              <CalendarIcon className="size-4 shrink-0 text-[var(--ink)]/82" />
               <span className="truncate">
                 {date ? format(date, "EEE d MMM", { locale }) : tr("Choose date", "Elegir fecha", "Choisir une date")}
               </span>
@@ -77,7 +77,7 @@ export function MatchDateTimePicker({ value, onChange, bare = false, allowNoTime
             {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")).map((h) => <SelectItem key={h} value={h} className="min-h-10 text-sm">{h}</SelectItem>)}
           </SelectContent>
         </Select>
-        <span className="self-center text-sm font-medium text-[var(--ink)]/65" aria-hidden="true">:</span>
+        <span className="self-center text-sm font-medium text-[var(--ink)]/76" aria-hidden="true">:</span>
         <Select value={minute} onValueChange={(next) => { setMinute(next); update(date, hour, next); }}>
           <SelectTrigger aria-label={tr("Minutes", "Minutos", "Minutes")} className={`${fieldClass} w-[4.25rem] shrink-0`}>
             <SelectValue placeholder={tr("Min", "Min", "Min")} />

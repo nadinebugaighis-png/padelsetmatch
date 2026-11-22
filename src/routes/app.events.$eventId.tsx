@@ -39,13 +39,13 @@ export const Route = createFileRoute("/app/events/$eventId")({
     i: typeof s.i === "string" ? s.i : undefined,
   }),
   component: EventRoute,
-  errorComponent: ({ error }) => <div className="p-6 text-[var(--ink)]/70">{error instanceof Error ? error.message : String(error)}</div>,
+  errorComponent: ({ error }) => <div className="p-6 text-[var(--ink)]/80">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <NotFoundBlock />,
 });
 
 function NotFoundBlock() {
   const tr = useTr();
-  return <div className="p-6 text-[var(--ink)]/70">{tr("Not found", "No encontrado", "Introuvable")}</div>;
+  return <div className="p-6 text-[var(--ink)]/80">{tr("Not found", "No encontrado", "Introuvable")}</div>;
 }
 
 function EventRoute() {
@@ -198,10 +198,10 @@ function EventDetail() {
     return () => { cancelled = true; };
   }, [shareOpen, shareUrl, shorten]);
 
-  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--ink)]/72">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
+  if (eventQ.isLoading) return <div className="p-6 text-center text-[var(--ink)]/82">{tr("Loading…", "Cargando…", "Chargement…")}</div>;
   const event: any = eventQ.data?.event;
   const me = eventQ.data?.me;
-  if (!event) return <div className="p-6 text-center text-[var(--ink)]/72">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
+  if (!event) return <div className="p-6 text-center text-[var(--ink)]/82">{tr("Match not found", "Partido no encontrado", "Match introuvable")}</div>;
 
   const mapsUrl = event.club_place_id
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.club_name)}&query_place_id=${event.club_place_id}`
@@ -378,7 +378,7 @@ function EventDetail() {
     <div className="mx-auto w-full max-w-md sm:max-w-2xl lg:max-w-3xl max-w-[100dvw] overflow-x-hidden px-5 sm:px-6 py-4 sm:py-6 pb-32">
 
       <div className="flex items-center justify-between mb-3">
-        <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[13px] text-[var(--ink)]/70 hover:text-[var(--ink)] transition-colors">
+        <Link to="/app/events" className="inline-flex items-center gap-1.5 text-[13px] text-[var(--ink)]/80 hover:text-[var(--ink)] transition-colors">
           <ArrowLeft className="w-4 h-4" /> {tr("Matches", "Partidos", "Matches")}
         </Link>
         <div className="flex items-center gap-1">
@@ -422,7 +422,7 @@ function EventDetail() {
               <button
                 type="button"
                 onClick={() => setShareOpen(false)}
-                className="rounded-full border border-[var(--ink)]/22 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/70"
+                className="rounded-full border border-[var(--ink)]/22 px-3 py-1 text-xs uppercase tracking-widest text-[var(--ink)]/80"
               >
                 {tr("Close", "Cerrar", "Fermer")}
               </button>
@@ -455,7 +455,7 @@ function EventDetail() {
               <button
                 type="button"
                 onClick={nativeShare}
-                className="mt-2 w-full rounded-full border border-[var(--ink)]/22 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]/80"
+                className="mt-2 w-full rounded-full border border-[var(--ink)]/22 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]/88"
               >
                 {tr("Share with phone", "Compartir desde el móvil", "Partager avec le téléphone")}
               </button>
@@ -475,7 +475,7 @@ function EventDetail() {
           event.status === "cancelled"
             ? { cls: "bg-red-50 text-red-700", label: tr("Cancelled", "Cancelado", "Annulé") }
             : event.needs === 0
-            ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/70", label: tr("Full", "Completo", "Complet") }
+            ? { cls: "bg-[var(--ink)]/5 text-[var(--ink)]/80", label: tr("Full", "Completo", "Complet") }
             : { cls: "bg-[var(--grass)]/40 text-[var(--ink)]", label: tr(`${event.needs} spot${event.needs > 1 ? "s" : ""} left`, `Faltan ${event.needs}`, `${event.needs} place(s)`) };
         const booking = clubBookingLink(event);
         const iHost = !!me?.id && me.id === event.host_profile_id;
@@ -494,9 +494,9 @@ function EventDetail() {
               </div>
               <h1 className="text-serif text-2xl leading-tight text-[var(--ink)] mt-1 truncate">{event.club_name}</h1>
               {(event.club_address || event.city) && (event.club_address ?? event.city) !== event.club_name && (
-                <div className="text-xs text-[var(--ink)]/72 truncate">{event.club_address ?? event.city}</div>
+                <div className="text-xs text-[var(--ink)]/82 truncate">{event.club_address ?? event.city}</div>
               )}
-              <div className="mt-2 text-[12px] text-[var(--ink)]/75">
+              <div className="mt-2 text-[12px] text-[var(--ink)]/84">
                 {event.is_class && (
                   <span className="mr-1.5 inline-flex items-center rounded-full border border-[var(--gold)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">{tr("Class", "Clase", "Cours")}</span>
                 )}
@@ -551,7 +551,7 @@ function EventDetail() {
                       <span className="text-serif italic">
                         {tr(`Coached by ${coach.profiles.first_name}`, `Clase con ${coach.profiles.first_name}`, `Cours avec ${coach.profiles.first_name}`)}
                       </span>
-                      <span className="text-[var(--ink)]/65"> · </span>
+                      <span className="text-[var(--ink)]/76"> · </span>
                     </>
                   ) : null;
                 })()}
@@ -562,9 +562,9 @@ function EventDetail() {
                 )}
                 {event.class_fee && (
                   <>
-                    <span className="text-[var(--ink)]/65"> · </span>
+                    <span className="text-[var(--ink)]/76"> · </span>
                     <span className="font-semibold">{event.class_fee}</span>{" "}
-                    <span className="text-[var(--ink)]/72">{tr("per student, paid to the coach", "por alumno, se paga al profesor", "par élève, payé au coach")}</span>
+                    <span className="text-[var(--ink)]/82">{tr("per student, paid to the coach", "por alumno, se paga al profesor", "par élève, payé au coach")}</span>
                   </>
                 )}
               </div>
@@ -588,7 +588,7 @@ function EventDetail() {
       {/* Host controls: Edit lives in the top bar (like Playtomic); booking + more stay here */}
       {me?.iAmHost && (
         <section aria-label={tr("Hosting", "Organización", "Organisation")} className="mt-4">
-          <div className="mb-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/72">
+          <div className="mb-2 text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/82">
             {tr("You're hosting", "Organizas tú", "Tu organises")}
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -613,7 +613,7 @@ function EventDetail() {
                 </button>
               </>
             ) : (
-              <div className="h-11 inline-flex items-center justify-center text-[13px] text-[var(--ink)]/72">
+              <div className="h-11 inline-flex items-center justify-center text-[13px] text-[var(--ink)]/82">
                 {tr("Match cancelled", "Partido cancelado", "Match annulé")}
               </div>
             )}
@@ -642,7 +642,7 @@ function EventDetail() {
             <button
               type="button"
               onClick={() => setTransferOpen(true)}
-              className="mt-2.5 inline-flex items-center gap-1 text-[12px] text-[var(--ink)]/68 underline underline-offset-2 hover:text-[var(--ink)]"
+              className="mt-2.5 inline-flex items-center gap-1 text-[12px] text-[var(--ink)]/78 underline underline-offset-2 hover:text-[var(--ink)]"
             >
               <UserPlus className="w-3.5 h-3.5" /> {tr("Pass hosting to another player", "Pasar la organización a otro jugador", "Transférer l'organisation à un autre joueur")}
             </button>
@@ -653,9 +653,9 @@ function EventDetail() {
       {/* Players */}
       <div className="mt-4">
         <div className="flex items-center gap-3 mb-3">
-          <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/72">{tr("Lineup", "Alineación", "Composition")}</div>
+          <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/82">{tr("Lineup", "Alineación", "Composition")}</div>
           <div className="flex-1 h-px bg-[var(--ink)]/10" />
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65">{event.filled}/{event.capacity ?? 4}</div>
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/76">{event.filled}/{event.capacity ?? 4}</div>
         </div>
         {(() => { const chips: any[] = [
           ...[...(event.participants ?? [])]
@@ -696,15 +696,15 @@ function EventDetail() {
               className="flex items-center gap-2 bg-white border border-[var(--ink)]/16 rounded-full pl-1 pr-3 py-1"
               title={tr("Joined via invite link", "Se unió con el enlace", "A rejoint via le lien")}
             >
-              <div className="w-7 h-7 rounded-full bg-[var(--paper-2)] grid place-items-center text-[10px] text-[var(--ink)]/72">
+              <div className="w-7 h-7 rounded-full bg-[var(--paper-2)] grid place-items-center text-[10px] text-[var(--ink)]/82">
                 {(g.display_name ?? "?").slice(0, 1).toUpperCase()}
               </div>
               <span className="text-xs text-[var(--ink)]">{g.display_name}</span>
-              <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/60">{tr("guest", "invitado", "invité")}</span>
+              <span className="text-[9px] uppercase tracking-widest text-[var(--ink)]/72">{tr("guest", "invitado", "invité")}</span>
               {g.phone ? (
                 <a
                   href={`tel:${g.phone}`}
-                  className="text-[10px] tabular-nums text-[var(--ink)]/70 underline decoration-dotted underline-offset-2"
+                  className="text-[10px] tabular-nums text-[var(--ink)]/80 underline decoration-dotted underline-offset-2"
                   title={tr("Visible to the host only", "Solo visible para el anfitrión", "Visible uniquement par l'hôte")}
                 >
                   {g.phone}
@@ -715,7 +715,7 @@ function EventDetail() {
           ...Array.from({ length: event.extra_confirmed ?? 0 }).map((_, i) => (
 
             <div key={`x-${i}`} className="flex items-center gap-2 bg-[var(--paper-2)]/60 border border-dashed border-[var(--ink)]/16 rounded-full px-3 py-1.5">
-              <span className="text-xs text-[var(--ink)]/72">{ptLink ? tr("Taken", "Ocupada", "Prise") : tr("+1 friend", "+1 amigo", "+1 ami")}</span>
+              <span className="text-xs text-[var(--ink)]/82">{ptLink ? tr("Taken", "Ocupada", "Prise") : tr("+1 friend", "+1 amigo", "+1 ami")}</span>
             </div>
             )),
           ...Array.from({ length: event.needs }).map((_, i) => ptLink ? (
@@ -752,7 +752,7 @@ function EventDetail() {
           if (!event.is_class && (event.capacity ?? 4) === 4) {
             const team = (label: string, items: any[]) => (
               <div className="min-w-0">
-                <div className="mb-1.5 text-center text-[9px] uppercase tracking-[0.25em] text-[var(--ink)]/60">{label}</div>
+                <div className="mb-1.5 text-center text-[9px] uppercase tracking-[0.25em] text-[var(--ink)]/72">{label}</div>
                 <div className="flex flex-col items-stretch gap-1.5 [&>*]:justify-start">{items}</div>
               </div>
             );
@@ -772,7 +772,7 @@ function EventDetail() {
       {!ptLink && me?.myInvite && me.myInvite.status === "pending" && !me.iAmParticipant && event.status === "open" && (
         <div className="mt-4 rounded-xl border border-[var(--ink)]/25 bg-[var(--ink)]/5 p-3">
           <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("You're invited", "Estás invitado", "Tu es invité·e")}</div>
-          <p className="mt-1 text-sm text-[var(--ink)]/80">
+          <p className="mt-1 text-sm text-[var(--ink)]/88">
             {tr(`${event.host?.first_name ?? "The host"} invited you to this match.`, `${event.host?.first_name ?? "El anfitrión"} te ha invitado a este partido.`)}
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -796,7 +796,7 @@ function EventDetail() {
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
-              className="rounded-full border border-[var(--ink)]/20 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]/80"
+              className="rounded-full border border-[var(--ink)]/20 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-[var(--ink)]/88"
             >
               {tr("I can't this time", "No puedo esta vez", "Je ne peux pas cette fois")}
             </button>
@@ -816,7 +816,7 @@ function EventDetail() {
               {event.needs > 0 ? tr("Join on Playtomic", "Unirme en Playtomic", "Rejoindre sur Playtomic") : tr("View on Playtomic", "Ver en Playtomic", "Voir sur Playtomic")}
               <ExternalLink className="w-3.5 h-3.5" />
             </button>
-            <p className="text-[11px] text-[var(--ink)]/65 text-center">
+            <p className="text-[11px] text-[var(--ink)]/76 text-center">
               {tr("Availability may have changed. Check and join on Playtomic.", "Las plazas pueden haber cambiado. Compruébalo y únete en Playtomic.", "Les places ont pu changer. Vérifie et rejoins sur Playtomic.")}
             </p>
           </>
@@ -868,7 +868,7 @@ function EventDetail() {
           </div>
         )}
         {!ptLink && !canJoin && !me?.iAmParticipant && event.status === "open" && event.needs > 0 && !me?.myInvite && (
-          <p className="text-[11px] text-[var(--ink)]/65 text-center italic pt-1">
+          <p className="text-[11px] text-[var(--ink)]/76 text-center italic pt-1">
             {tr("This match doesn't match your profile settings.", "Este partido no encaja con tu perfil.", "Ce match ne correspond pas aux réglages de ton profil.")}
           </p>
         )}
@@ -895,9 +895,9 @@ function EventDetail() {
           <div className="w-full max-w-md bg-[var(--paper)] rounded-2xl p-5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-[var(--ink)]">{tr("Pass hosting to…", "Pasar la organización a…", "Transférer l'organisation à…")}</h3>
-              <button onClick={() => setTransferOpen(false)} className="text-[var(--ink)]/65 hover:text-[var(--ink)]"><X className="w-4 h-4" /></button>
+              <button onClick={() => setTransferOpen(false)} className="text-[var(--ink)]/76 hover:text-[var(--ink)]"><X className="w-4 h-4" /></button>
             </div>
-            <p className="text-[11px] text-[var(--ink)]/72 mb-3">
+            <p className="text-[11px] text-[var(--ink)]/82 mb-3">
               {tr("You'll stay in the match as a regular player.", "Seguirás en el partido como jugador.", "Tu resteras dans le match comme joueur.")}
             </p>
             <div className="space-y-2">
@@ -920,7 +920,7 @@ function EventDetail() {
                 );
               })}
               {(event.participants?.length ?? 0) === 0 && (
-                <p className="text-xs text-[var(--ink)]/65 italic">{tr("No joined players yet.", "Aún no hay jugadores.", "Pas encore de joueurs.")}</p>
+                <p className="text-xs text-[var(--ink)]/76 italic">{tr("No joined players yet.", "Aún no hay jugadores.", "Pas encore de joueurs.")}</p>
               )}
             </div>
           </div>
@@ -933,13 +933,13 @@ function EventDetail() {
       {me?.iAmParticipant && (
 
         <div id="event-chat" className="mt-6 scroll-mt-6">
-          <div className="text-xs uppercase tracking-widest text-[var(--ink)]/72 mb-2">{tr("Group chat", "Chat del grupo", "Chat de groupe")}</div>
+          <div className="text-xs uppercase tracking-widest text-[var(--ink)]/82 mb-2">{tr("Group chat", "Chat del grupo", "Chat de groupe")}</div>
           <div
             ref={scrollRef}
             className="h-72 w-full max-w-full overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-[var(--ink)]/16 bg-white p-3 space-y-3"
           >
             {msgsQ.data?.messages.length === 0 && (
-              <div className="text-center text-xs text-[var(--ink)]/65 py-8">{tr("No messages yet. Say hi!", "Aún no hay mensajes. ¡Saluda!", "Pas encore de messages. Dis bonjour !")}</div>
+              <div className="text-center text-xs text-[var(--ink)]/76 py-8">{tr("No messages yet. Say hi!", "Aún no hay mensajes. ¡Saluda!", "Pas encore de messages. Dis bonjour !")}</div>
             )}
             {msgsQ.data?.messages.map((m: any) => {
               const mine = !!m.sender_profile_id && m.sender_profile_id === me?.id;
@@ -957,7 +957,7 @@ function EventDetail() {
                     }`}
                     >
                       {!mine && !isEditing && (
-                        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65 mb-0.5">
+                        <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/76 mb-0.5">
                           {authorName}
                         </div>
                       )}
@@ -986,7 +986,7 @@ function EventDetail() {
                       ) : (
                         <div className="whitespace-pre-wrap break-words">
                           {m.body}
-                          {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--ink)]/65">{tr("(edited)", "(editado)", "(modifié)")}</span>}
+                          {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--ink)]/76">{tr("(edited)", "(editado)", "(modifié)")}</span>}
                         </div>
                       )}
                     </div>
@@ -1165,20 +1165,20 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
           <div className="mx-auto sm:hidden mb-3 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/65">
+              <div className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/76">
                 {tr("Match", "Partido", "Match")}
               </div>
               <h2 className="mt-1 font-serif text-2xl leading-tight text-[var(--ink)]">
                 {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
               </h2>
-              <p className="mt-1.5 text-xs text-[var(--ink)]/72 leading-relaxed max-w-sm">
+              <p className="mt-1.5 text-xs text-[var(--ink)]/82 leading-relaxed max-w-sm">
                 {tr("First come, first served — anyone can still join.", "Por orden de llegada — cualquiera puede unirse.", "Premier arrivé, premier servi — tout le monde peut rejoindre.")}
               </p>
             </div>
             <button
               onClick={onClose}
               aria-label={tr("Close", "Cerrar", "Fermer")}
-              className="shrink-0 h-9 w-9 grid place-items-center rounded-full border border-[var(--ink)]/22 bg-[var(--paper)] text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 transition"
+              className="shrink-0 h-9 w-9 grid place-items-center rounded-full border border-[var(--ink)]/22 bg-[var(--paper)] text-[var(--ink)]/80 hover:bg-[var(--ink)]/5 transition"
             >
               <X className="w-4 h-4" />
             </button>
@@ -1190,22 +1190,22 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
           {/* From connections */}
           <section>
             <div className="flex items-baseline justify-between mb-3">
-              <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82">
                 {tr("Your connections", "Tus conexiones", "Tes connexions")}
               </h3>
               {selected.size > 0 && (
-                <span className="text-[11px] uppercase tracking-widest text-[var(--ink)]/72">
+                <span className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">
                   {selected.size} {tr("selected", "seleccionados", "sélectionnés")}
                 </span>
               )}
             </div>
 
             {connsQ.isLoading && (
-              <div className="text-xs text-[var(--ink)]/65">{tr("Loading…", "Cargando…", "Chargement…")}</div>
+              <div className="text-xs text-[var(--ink)]/76">{tr("Loading…", "Cargando…", "Chargement…")}</div>
             )}
             {!connsQ.isLoading && people.length === 0 && (
               <div className="rounded-2xl border border-dashed border-[var(--ink)]/22 bg-[var(--paper-2)]/60 px-4 py-6 text-center">
-                <p className="text-xs text-[var(--ink)]/72 leading-relaxed">
+                <p className="text-xs text-[var(--ink)]/82 leading-relaxed">
                   {tr(
                     "No connections yet — share the invite link below on WhatsApp.",
                     "Aún no tienes conexiones — comparte el enlace de abajo por WhatsApp.",
@@ -1251,7 +1251,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                       <div className="w-full truncate text-xs font-medium text-[var(--ink)]">
                         {p.first_name ?? "—"}
                       </div>
-                      <div className="text-[9px] uppercase tracking-widest text-[var(--ink)]/65 -mt-1">
+                      <div className="text-[9px] uppercase tracking-widest text-[var(--ink)]/76 -mt-1">
                         {p.joined
                           ? tr("Joined", "Unido", "Inscrit")
                           : p.invited
@@ -1267,7 +1267,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
 
           {/* Invite link */}
           <section className="border-t border-[var(--ink)]/14 pt-5">
-            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72 mb-3">
+            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82 mb-3">
               {tr("Share an invite link", "Compartir enlace", "Partager un lien")}
             </h3>
             {!linkUrl ? (
@@ -1285,7 +1285,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                   value={displayLink || ""}
                   disabled={busy && !shortLinkUrl}
                   onFocus={(e) => e.currentTarget.select()}
-                  className="w-full rounded-xl border border-[var(--ink)]/22 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/80 outline-none focus:border-[var(--ink)]/40 disabled:opacity-60"
+                  className="w-full rounded-xl border border-[var(--ink)]/22 bg-white px-4 py-2.5 text-xs text-[var(--ink)]/88 outline-none focus:border-[var(--ink)]/40 disabled:opacity-60"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <a
@@ -1303,7 +1303,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                     {tr("Copy link", "Copiar", "Copier")}
                   </button>
                 </div>
-                <p className="text-[10px] text-[var(--ink)]/65 leading-relaxed">
+                <p className="text-[10px] text-[var(--ink)]/76 leading-relaxed">
                   {tr(
                     "Anyone who opens this link and signs in gets priority to join.",
                     "Cualquiera que abra este enlace e inicie sesión tendrá prioridad.",
@@ -1317,7 +1317,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
           {/* Existing invites */}
           {directInvites.length > 0 && (
             <section className="border-t border-[var(--ink)]/14 pt-5">
-              <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72 mb-3">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82 mb-3">
                 {tr("Invites sent", "Invitaciones enviadas", "Invitations envoyées")}
               </h3>
               <ul className="space-y-1.5">
@@ -1335,8 +1335,8 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                           inv.status === "accepted"
                             ? "bg-[var(--ink)]/10 text-[var(--ink)]"
                             : inv.status === "declined"
-                            ? "bg-[var(--ink)]/5 text-[var(--ink)]/65"
-                            : "bg-[var(--paper-2)] text-[var(--ink)]/72"
+                            ? "bg-[var(--ink)]/5 text-[var(--ink)]/76"
+                            : "bg-[var(--paper-2)] text-[var(--ink)]/82"
                         }`}
                       >
                         {inv.status === "accepted"
@@ -1353,7 +1353,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                           qc.invalidateQueries({ queryKey: ["event", eventId] });
                           qc.invalidateQueries({ queryKey: ["invitable", eventId] });
                         }}
-                        className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65 hover:text-red-500 transition"
+                        className="text-[10px] uppercase tracking-widest text-[var(--ink)]/76 hover:text-red-500 transition"
                       >
                         {tr("Cancel", "Cancelar", "Annuler")}
                       </button>

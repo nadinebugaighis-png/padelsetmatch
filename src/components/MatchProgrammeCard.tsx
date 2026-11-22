@@ -79,18 +79,18 @@ export function MatchProgrammeCard({
   const genderLabel = match.gender_rule && match.gender_rule !== "open" ? genderRuleLabel(match.gender_rule, tr) : null;
 
   return (
-    <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/16">
+    <div className="rounded-2xl card-pop overflow-hidden">
       <div className="flex">
         <div
           className="w-[86px] sm:w-[96px] shrink-0 flex flex-col items-center justify-center py-4 text-center"
           style={{ background: toneBg }}
         >
           <div className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)]">{match.time_tbd ? tr("Time", "Hora", "Heure") : parts.time}</div>
-          <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/85 font-semibold leading-none">
+          <div className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--ink)]/90 font-semibold leading-none">
             {dateBadge ?? parts.weekday}
           </div>
           {!dateBadge && (
-            <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/65 font-semibold leading-none">
+            <div className="mt-1 text-[10px] uppercase tracking-[0.12em] text-[var(--ink)]/76 font-semibold leading-none">
               {parts.day} <span className="capitalize">{parts.month}</span>
             </div>
           )}
@@ -102,14 +102,14 @@ export function MatchProgrammeCard({
               <h2 className="text-[15px] font-semibold text-[var(--ink)] leading-tight">
                 {match.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
               </h2>
-              <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/72 min-w-0">
+              <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/82 min-w-0">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{match.club_address || match.city || "—"}</span>
               </div>
             </div>
             <span
               className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
-                openSpots === 0 ? "bg-[var(--ink)]/8 text-[var(--ink)]/68" : "bg-[var(--plum)]/12 text-[var(--plum)]"
+                openSpots === 0 ? "bg-[var(--ink)]/8 text-[var(--ink)]/78" : "bg-[var(--plum)]/12 text-[var(--plum)]"
               }`}
             >
               {openSpots === 0
@@ -122,18 +122,18 @@ export function MatchProgrammeCard({
             </span>
           </div>
 
-          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/72">
+          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/82">
             {match.is_class && (
               <>
                 <span className="rounded-full border border-[var(--gold)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ink)]">
                   {tr("Class", "Clase", "Cours")}
                 </span>
-                {match.class_fee && <span className="font-semibold text-[var(--ink)]/80">{match.class_fee}</span>}
+                {match.class_fee && <span className="font-semibold text-[var(--ink)]/88">{match.class_fee}</span>}
                 <span className="text-[var(--ink)]/25">·</span>
               </>
             )}
             {match.level_min && (
-              <span className="font-semibold text-[var(--ink)]/80">
+              <span className="font-semibold text-[var(--ink)]/88">
                 {match.level_min}
                 {match.level_max && match.level_min !== match.level_max ? `–${match.level_max}` : ""}
               </span>
@@ -167,7 +167,7 @@ export function MatchProgrammeCard({
           </div>
 
           {match.note && (
-            <p className="mt-2 text-xs text-[var(--ink)]/75 whitespace-pre-wrap border-l-2 border-[var(--gold)] pl-2.5 italic">
+            <p className="mt-2 text-xs text-[var(--ink)]/84 whitespace-pre-wrap border-l-2 border-[var(--gold)] pl-2.5 italic">
               {match.note}
             </p>
           )}
@@ -179,7 +179,7 @@ export function MatchProgrammeCard({
                 title={name}
                 className="w-11 h-11 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
               >
-                <span className="text-[14px] font-bold text-[var(--ink)]/70">
+                <span className="text-[14px] font-bold text-[var(--ink)]/80">
                   {name.trim().charAt(0).toUpperCase()}
                 </span>
               </div>

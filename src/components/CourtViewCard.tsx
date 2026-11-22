@@ -30,7 +30,7 @@ export function CourtViewCard({ seed, name, className = "", letterClassName = "t
       />
       <span
         aria-hidden="true"
-        className={`absolute inset-0 flex items-center justify-center text-serif ${letterClassName} text-[var(--ink)]/60 [text-shadow:0_0_18px_var(--paper-2),0_0_6px_var(--paper-2)]`}
+        className={`absolute inset-0 flex items-center justify-center text-serif ${letterClassName} text-[var(--ink)]/72 [text-shadow:0_0_18px_var(--paper-2),0_0_6px_var(--paper-2)]`}
       >
         {(name ?? "?").trim().charAt(0).toUpperCase() || "?"}
       </span>

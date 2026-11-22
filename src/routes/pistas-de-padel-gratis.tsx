@@ -115,7 +115,7 @@ function PistasGratisPage() {
           Pistas de pádel gratis
           <span className="block text-[var(--plum)]">cerca de ti</span>
         </h1>
-        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/75">
+        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/84">
           El precio de la pista es el principal motivo por el que se juega menos al pádel de lo que se
           querría. Pero una gran parte de las pistas —municipales, de comunidad, de urbanización— se pueden
           usar gratis y están vacías ahora mismo. Lo difícil nunca fue la pista: es encontrar a los otros
@@ -149,7 +149,7 @@ function PistasGratisPage() {
                 <Icon className="w-5 h-5" strokeWidth={2} />
               </span>
               <h3 className="text-serif mt-4 text-xl text-[var(--ink)]">{title}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{body}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{body}</p>
             </article>
           ))}
         </div>
@@ -163,7 +163,7 @@ function PistasGratisPage() {
           {FAQ.map((f) => (
             <div key={f.q}>
               <h3 className="text-[16px] font-semibold text-[var(--ink)]">{f.q}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{f.a}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{f.a}</p>
             </div>
           ))}
         </div>
@@ -174,7 +174,7 @@ function PistasGratisPage() {
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
             Pista resuelta. Ahora, el cuarto.
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
+          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/80">
             PadelSetMatch es un directorio de jugadores de pádel cerca de ti. Mira quién juega tu nivel,
             quién tiene hueco esta semana y quién puede poner la pista.{" "}
             <Link to="/padel-cerca-de-mi" className="text-[var(--plum)] underline underline-offset-4">

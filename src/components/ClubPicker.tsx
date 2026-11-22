@@ -89,7 +89,7 @@ export function ClubPicker({ value, onChange }: Props) {
           selection.current++;
           onChange(null);
           setQ("");
-        }} className="text-xs text-[var(--ink)]/70 hover:bg-[var(--ink)]/5 hover:text-[var(--ink)] shrink-0">
+        }} className="text-xs text-[var(--ink)]/80 hover:bg-[var(--ink)]/5 hover:text-[var(--ink)] shrink-0">
           {tr("Change", "Cambiar", "Modifier")}
         </Button>
       </div>

@@ -13,7 +13,7 @@ export function FriendSlot({ size = "sm", label }: { size?: "sm" | "md" | "lg" |
       title={label}
       aria-label={label}
       role="img"
-      className={`${box} shrink-0 rounded-full border border-[var(--ink)]/26 bg-[var(--paper-2)] text-[var(--ink)]/68 grid place-items-center`}
+      className={`${box} shrink-0 rounded-full border border-[var(--ink)]/26 bg-[var(--paper-2)] text-[var(--ink)]/78 grid place-items-center`}
     >
       <UserCheck className={icon} strokeWidth={1.5} />
     </div>

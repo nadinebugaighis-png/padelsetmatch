@@ -37,13 +37,13 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent className="bg-[var(--paper)] border-[var(--ink)]/16">
           <div className="mx-auto w-full max-w-md px-6 pt-4 pb-8">
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/65 text-center">
+            <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/76 text-center">
               {tr("Direct booking", "Reserva directa", "Réservation directe")}
             </div>
             <DrawerTitle asChild>
               <div className="text-serif text-[24px] leading-tight text-[var(--ink)] font-normal text-center mt-1">{club.displayName}</div>
             </DrawerTitle>
-            <DrawerDescription className="mt-2 text-center text-[13px] leading-relaxed text-[var(--ink)]/65">
+            <DrawerDescription className="mt-2 text-center text-[13px] leading-relaxed text-[var(--ink)]/76">
               {tr(
                 "Choose the court you'd like. WhatsApp opens with your request already written — just tap Send.",
                 "Elige la pista que prefieres. WhatsApp se abre con tu solicitud ya escrita: solo pulsa Enviar.",
@@ -64,7 +64,7 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
                     onClick={() => setCourt(c.key)}
                     className="w-full flex items-center justify-between py-3.5 text-left"
                   >
-                    <span className={`text-[15px] ${active ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/75"}`}>
+                    <span className={`text-[15px] ${active ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/84"}`}>
                       {tr(c.en, c.es, c.fr)}
                     </span>
                     <span className={`w-5 h-5 rounded-full border flex items-center justify-center ${active ? "border-[var(--ink)] bg-[var(--ink)]" : "border-[var(--ink)]/25"}`}>
@@ -104,7 +104,7 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
                 {tr("Club confirmed — mark court booked", "Club confirmado — marcar pista reservada", "Club confirmé — marquer réservée")}
               </button>
             ) : (
-              <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink)]/65">
+              <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink)]/76">
                 {tr(
                   "Once the club confirms, mark the court as booked so your players know.",
                   "Cuando el club confirme, marca la pista como reservada para que tus jugadores lo sepan.",

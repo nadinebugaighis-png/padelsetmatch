@@ -102,6 +102,9 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --grass: #A5E358;
   --pitch: oklch(0.52 0.09 158);             /* soft club green for counts */
   --gold: #C9A84C;
+  --card-edge: color-mix(in oklab, var(--ink) 13%, transparent);
+  --shadow-card: 0 1px 2px color-mix(in oklab, var(--ink) 7%, transparent),
+                 0 4px 16px -4px color-mix(in oklab, var(--ink) 13%, transparent);
   --match-amber: #E8B84B;
   --match-lavender: color-mix(in oklab, var(--plum) 20%, transparent);
   --match-green: color-mix(in oklab, var(--grass) 26%, transparent);
@@ -252,7 +255,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --secondary: var(--paper-2);
   --secondary-foreground: var(--ink);
   --muted: var(--paper-2);
-  --muted-foreground: color-mix(in oklab, var(--ink) 78%, transparent);
+  --muted-foreground: color-mix(in oklab, var(--ink) 86%, transparent);
   --accent: var(--plum);
   --accent-foreground: var(--paper);
   --destructive: oklch(0.55 0.22 28);
@@ -288,10 +291,15 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 @utility programme-card {
   background: #ffffff;
-  border: 1px solid color-mix(in oklab, var(--ink) 16%, transparent);
+  border: 1px solid var(--card-edge);
   border-radius: 14px;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 4%, transparent),
-              0 8px 24px -16px color-mix(in oklab, var(--ink) 18%, transparent);
+  box-shadow: var(--shadow-card);
+}
+/* White card lifted off the cream page: crisp hairline edge plus a soft all-round shadow. */
+@utility card-pop {
+  background: #ffffff;
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow-card);
 }
 @utility programme-card-ink {
   background: var(--ink);

@@ -132,7 +132,7 @@ function PadelCercaDeMiPage() {
           Pádel cerca de mí
           <span className="block text-[var(--plum)]">jugadores en Madrid</span>
         </h1>
-        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/75">
+        <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/84">
           Tener ganas de jugar no es el problema. El problema es reunir a cuatro. PadelSetMatch es un
           directorio de jugadores de pádel cerca de ti: ves quién juega tu nivel, quién tiene hueco esta
           semana y quién puede poner la pista.
@@ -171,7 +171,7 @@ function PadelCercaDeMiPage() {
                 <Icon className="w-5 h-5" strokeWidth={2} />
               </span>
               <h3 className="text-serif mt-4 text-xl text-[var(--ink)]">{title}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{body}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{body}</p>
             </article>
           ))}
         </div>
@@ -181,7 +181,7 @@ function PadelCercaDeMiPage() {
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Pistas gratis y de comunidad
         </h2>
-        <p className="mt-4 max-w-3xl text-[15px] leading-[1.6] text-[var(--ink)]/70">
+        <p className="mt-4 max-w-3xl text-[15px] leading-[1.6] text-[var(--ink)]/80">
           En Madrid hay dos tipos de pista que casi nadie aprovecha: las municipales, con precios muy bajos
           fuera de hora punta, y las miles de pistas de urbanización que están vacías porque el vecino que
           tiene acceso no encuentra a tres más. En PadelSetMatch esos jugadores llevan una insignia de pista
@@ -197,7 +197,7 @@ function PadelCercaDeMiPage() {
         <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
           Zonas de Madrid
         </h2>
-        <p className="mt-4 max-w-3xl text-[15px] leading-[1.6] text-[var(--ink)]/70">
+        <p className="mt-4 max-w-3xl text-[15px] leading-[1.6] text-[var(--ink)]/80">
           Hay jugadores registrados en el centro, en la zona noroeste y en el sur del área metropolitana.
           Elige tus zonas al crear el perfil y solo verás gente con la que te puedes cruzar de verdad.
         </p>
@@ -205,7 +205,7 @@ function PadelCercaDeMiPage() {
           {ZONAS.map((z) => (
             <li
               key={z}
-              className="rounded-full border border-[var(--ink)]/22 bg-white px-4 py-2 text-[13px] text-[var(--ink)]/80"
+              className="rounded-full border border-[var(--ink)]/22 bg-white px-4 py-2 text-[13px] text-[var(--ink)]/88"
             >
               {z}
             </li>
@@ -221,7 +221,7 @@ function PadelCercaDeMiPage() {
           {FAQ.map((f) => (
             <div key={f.q}>
               <h3 className="text-[16px] font-semibold text-[var(--ink)]">{f.q}</h3>
-              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/70">{f.a}</p>
+              <p className="mt-2 text-[15px] leading-[1.6] text-[var(--ink)]/80">{f.a}</p>
             </div>
           ))}
         </div>
@@ -232,7 +232,7 @@ function PadelCercaDeMiPage() {
           <h2 className="text-serif text-3xl sm:text-4xl uppercase text-[var(--ink)]">
             Esta semana puedes jugar
           </h2>
-          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/70">
+          <p className="mt-3 text-[15px] leading-[1.6] text-[var(--ink)]/80">
             Crea tu perfil, mira los partidos abiertos y quédate con la plaza que te encaje.{" "}
             <Link to="/how-it-works" className="text-[var(--plum)] underline underline-offset-4">
               Ver cómo funciona

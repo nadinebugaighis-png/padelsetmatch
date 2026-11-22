@@ -76,7 +76,7 @@ const rowDivider = "h-px bg-[var(--ink)]/[0.08]";
 const stepBtn = "size-8 grid place-items-center rounded-full border border-[var(--ink)]/22 text-[var(--ink)] disabled:opacity-30";
 const selectCls = "bg-transparent text-sm font-medium text-[var(--ink)] outline-none capitalize text-right";
 const bareInput = "w-full bg-transparent py-3 text-sm text-[var(--ink)] placeholder:text-[var(--ink)]/55 outline-none";
-const helperCls = "text-[11px] text-[var(--ink)]/65 mt-1.5 leading-relaxed";
+const helperCls = "text-[11px] text-[var(--ink)]/76 mt-1.5 leading-relaxed";
 
 function SegButton({
   active,
@@ -99,10 +99,10 @@ function SegButton({
         light
           ? active
             ? "border-[var(--ink)] bg-white text-[var(--ink)] font-semibold shadow-[0_1px_0_0_var(--ink)]"
-            : "border-[var(--ink)]/22 bg-white text-[var(--ink)]/68 hover:border-[var(--ink)]/35 hover:text-[var(--ink)]/80"
+            : "border-[var(--ink)]/22 bg-white text-[var(--ink)]/78 hover:border-[var(--ink)]/35 hover:text-[var(--ink)]/88"
           : active
           ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
-          : "border-[var(--ink)]/22 bg-white text-[var(--ink)]/70 hover:border-[var(--ink)]/35"
+          : "border-[var(--ink)]/22 bg-white text-[var(--ink)]/80 hover:border-[var(--ink)]/35"
       }`}
     >
       {children}
@@ -258,14 +258,14 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         <Link
           to="/app/events/$eventId"
           params={{ eventId: backEventId }}
-          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72 hover:text-[var(--ink)] transition"
+          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82 hover:text-[var(--ink)] transition"
         >
           <ArrowLeft className="w-4 h-4" /> {tr("Back to match", "Volver al partido", "Retour au match")}
         </Link>
       ) : (
         <Link
           to="/app/events"
-          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72 hover:text-[var(--ink)] transition"
+          className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82 hover:text-[var(--ink)] transition"
         >
           <ArrowLeft className="w-4 h-4" /> {tr("Find matches", "Buscar partidos", "Trouver des matches")}
         </Link>
@@ -277,7 +277,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
 
       {onPlaytomic ? (
         <div className={`${cardCls} py-3`}>
-          <label htmlFor="playtomic-match-link" className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/72">
+          <label htmlFor="playtomic-match-link" className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/82">
             {tr("Your Playtomic match link", "Enlace de tu partido en Playtomic", "Lien de ton match Playtomic")}
           </label>
           <input
@@ -305,7 +305,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         ].map((o) => (
           <button key={String(o.v)} type="button" aria-pressed={isClass === o.v}
             onClick={() => { setIsClass(o.v); if (o.v && classStudents < minStudents) setClassStudents(Math.min(4, minStudents)); }}
-            className={`h-9 rounded-full text-[11px] uppercase tracking-[0.18em] font-medium transition ${isClass === o.v ? (o.v ? "bg-[var(--plum)] text-[var(--paper)]" : "bg-white text-[var(--ink)] shadow-sm") : "text-[var(--ink)]/68"}`}>
+            className={`h-9 rounded-full text-[11px] uppercase tracking-[0.18em] font-medium transition ${isClass === o.v ? (o.v ? "bg-[var(--plum)] text-[var(--paper)]" : "bg-white text-[var(--ink)] shadow-sm") : "text-[var(--ink)]/78"}`}>
             {o.l}
           </button>
         ))}
@@ -346,7 +346,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           <span className={rowLabel}>
             {tr("Length", "Duración", "Durée")}
             {hasTime && (
-              <span className="ml-1.5 text-[12px] text-[var(--ink)]/60 tabular-nums">
+              <span className="ml-1.5 text-[12px] text-[var(--ink)]/72 tabular-nums">
                 {tr("ends", "termina", "fin")} {matchEndsAt(new Date(when), duration).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false })}
               </span>
             )}
@@ -354,7 +354,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           <div className="grid grid-cols-2 rounded-lg bg-[var(--ink)]/[0.06] p-0.5 w-44">
             {MATCH_DURATIONS.map((m) => (
               <button key={m} type="button" aria-pressed={duration === m} onClick={() => setDuration(m)}
-                className={`h-8 rounded-md text-xs font-medium tabular-nums transition ${duration === m ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/68"}`}>
+                className={`h-8 rounded-md text-xs font-medium tabular-nums transition ${duration === m ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/78"}`}>
                 {m} min
               </button>
             ))}
@@ -370,7 +370,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
               <div className="grid grid-cols-4 rounded-lg bg-[var(--ink)]/[0.06] p-0.5 w-44">
                 {CLASS_STUDENT_OPTIONS.map((n) => (
                   <button key={n} type="button" aria-pressed={classStudents === n} disabled={n < minStudents} onClick={() => setClassStudents(n)}
-                    className={`h-8 rounded-md text-xs font-medium tabular-nums transition disabled:opacity-30 ${classStudents === n ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/68"}`}>
+                    className={`h-8 rounded-md text-xs font-medium tabular-nums transition disabled:opacity-30 ${classStudents === n ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/78"}`}>
                     {n}
                   </button>
                 ))}
@@ -429,7 +429,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       </div>
 
       <button type="button" onClick={() => setShowMore((v) => !v)} aria-expanded={showMore}
-        className="w-full flex items-center justify-between px-1 py-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/72 hover:text-[var(--ink)] transition">
+        className="w-full flex items-center justify-between px-1 py-2 text-[11px] uppercase tracking-[0.18em] text-[var(--ink)]/82 hover:text-[var(--ink)] transition">
         <span>{tr("More preferences", "Más preferencias", "Plus de préférences")}</span>
         <ChevronDown className={`w-4 h-4 transition ${showMore ? "rotate-180" : ""}`} />
       </button>
@@ -444,7 +444,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
               { v: "women_only" as const, l: tr("Women", "Mujeres", "Femmes") },
             ].map((o) => (
               <button key={o.v} type="button" aria-pressed={genderRule === o.v} onClick={() => setGenderRule(o.v)}
-                className={`h-8 rounded-md text-xs font-medium transition ${genderRule === o.v ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/68"}`}>
+                className={`h-8 rounded-md text-xs font-medium transition ${genderRule === o.v ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/78"}`}>
                 {o.l}
               </button>
             ))}
@@ -464,7 +464,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
             <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
               {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
             </select>
-            <span className="text-[var(--ink)]/55">–</span>
+            <span className="text-[var(--ink)]/70">–</span>
             <select aria-label={tr("Level max", "Nivel máx.", "Niveau max.")} value={levelMax} onChange={(e) => setLevelMax(e.target.value as any)} className={selectCls}>
               {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
             </select>
@@ -475,7 +475,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         <div className={rowCls}>
           <div className="min-w-0">
             <span className={rowLabel}>{tr("Free court", "Pista gratis", "Terrain gratuit")}</span>
-            <p className="text-[11px] text-[var(--ink)]/65 leading-snug">
+            <p className="text-[11px] text-[var(--ink)]/76 leading-snug">
               {tr(
                 "Players joining don't pay (e.g. urbanization court, or you're covering it). Your shared link will say it's free.",
                 "Quien se una no paga (p. ej. pista de urbanización o la pagas tú). Tu enlace dirá que es gratis.",

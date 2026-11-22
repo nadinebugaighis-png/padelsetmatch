@@ -122,7 +122,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
             />
           )}
           {loadError && (
-            <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-[var(--ink)]/80">
+            <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-[var(--ink)]/88">
               {tr(
                 "We couldn't open this photo. Please pick a JPG or PNG (iPhone HEIC photos aren't supported yet).",
                 "No pudimos abrir esta foto. Elige un JPG o PNG (las fotos HEIC del iPhone aún no funcionan).",
@@ -133,7 +133,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
         <div className="px-5 py-4 space-y-4">
           {!loadError && (
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/72 mb-2">{tr("Zoom", "Zoom", "Zoom")}</div>
+              <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-2">{tr("Zoom", "Zoom", "Zoom")}</div>
               <Slider value={[zoom]} min={1} max={4} step={0.05} onValueChange={(v) => setZoom(v[0])} />
             </div>
           )}

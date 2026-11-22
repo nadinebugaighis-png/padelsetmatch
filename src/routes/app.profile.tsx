@@ -147,12 +147,12 @@ function ProfilePage() {
     }
   };
 
-  if (q.isLoading) return <div className="programme-page px-4 py-10 text-center text-[var(--ink)]/72 min-h-screen">{t("prof.loading")}</div>;
+  if (q.isLoading) return <div className="programme-page px-4 py-10 text-center text-[var(--ink)]/82 min-h-screen">{t("prof.loading")}</div>;
   const p = q.data;
   if (!p) {
     return (
       <main className="programme-page px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center min-h-screen">
-        <p className="text-[var(--ink)]/70">{t("prof.noProfile")}</p>
+        <p className="text-[var(--ink)]/80">{t("prof.noProfile")}</p>
         <Link to="/app/onboarding" className="mt-4 inline-block underline text-[var(--plum)]">{t("prof.createLink")}</Link>
         <Button variant="outline" className="mt-5" onClick={onDelete}>{t("prof.delete")}</Button>
       </main>
@@ -207,10 +207,10 @@ function ProfilePage() {
 
         <h1 className="mt-5 text-serif text-[28px] sm:text-[40px] leading-none text-[var(--ink)]">{p.first_name}</h1>
         {metaLine && (
-          <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72">{metaLine}</p>
+          <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82">{metaLine}</p>
         )}
         {p.bio && (
-          <p className="mt-4 max-w-sm text-serif italic text-[15px] sm:text-[17px] leading-snug text-[var(--ink)]/80">
+          <p className="mt-4 max-w-sm text-serif italic text-[15px] sm:text-[17px] leading-snug text-[var(--ink)]/88">
             “{p.bio}”
           </p>
         )}
@@ -230,7 +230,7 @@ function ProfilePage() {
         {/* My kit */}
         <section className="border-b border-[var(--ink)]/18 py-5">
           <h2 className="text-serif text-[18px] sm:text-[22px] leading-tight text-[var(--ink)]">{tr("My kit", "Mi equipo", "Mon matériel")}</h2>
-          <p className="text-xs text-[var(--ink)]/68 mt-1 mb-3">
+          <p className="text-xs text-[var(--ink)]/78 mt-1 mb-3">
             {tr("Shows on your player card.", "Se ve en tu ficha.", "Visible sur ta fiche.")}
           </p>
           <GearEditor profileId={p.id} />
@@ -247,7 +247,7 @@ function ProfilePage() {
         <InviteFriendsRow />
 
         <CollapsibleRow title={tr("Help & feedback", "Ayuda y comentarios", "Aide et avis")}>
-          <button type="button" onClick={openMemberGuide} className="mb-3 w-full h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
+          <button type="button" onClick={openMemberGuide} className="mb-3 w-full h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/88 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition">
             {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
           </button>
           <div className="grid grid-cols-2 gap-2">
@@ -264,7 +264,7 @@ function ProfilePage() {
                   { duration: 6000 },
                 );
               }}
-              className="h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
+              className="h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/88 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
             >
               <Mail className="w-3.5 h-3.5" />
               {tr("Email", "Email", "Email")}
@@ -272,7 +272,7 @@ function ProfilePage() {
             <button
               type="button"
               onClick={() => void openExternal("https://wa.me/34620296060?text=" + encodeURIComponent(tr("Hi! I play on PadelSetMatch.", "¡Hola! Juego en PadelSetMatch.", "Bonjour ! Je joue sur PadelSetMatch.")))}
-              className="h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/80 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
+              className="h-11 rounded-full border border-[var(--ink)]/20 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/88 hover:text-[var(--ink)] hover:border-[var(--ink)]/40 transition inline-flex items-center justify-center gap-2"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               WhatsApp
@@ -297,7 +297,7 @@ function ProfilePage() {
         >
           {t("prof.delete")}
         </button>
-        <p className="mt-1.5 text-[11px] text-[var(--ink)]/60">
+        <p className="mt-1.5 text-[11px] text-[var(--ink)]/72">
           {tr(
             "Permanently deletes your account and all your data.",
             "Elimina tu cuenta y todos tus datos de forma permanente.",
@@ -323,10 +323,10 @@ function RowInner({ title, meta, dot = false, open }: { title: string; meta?: Re
   return (
     <>
       <span className="text-serif text-[18px] sm:text-[22px] leading-tight text-[var(--ink)] truncate">{title}</span>
-      <span className="flex items-center gap-2 shrink-0 text-[13px] text-[var(--ink)]/68">
+      <span className="flex items-center gap-2 shrink-0 text-[13px] text-[var(--ink)]/78">
         {dot && <span className="w-1.5 h-1.5 rounded-full bg-[var(--ink)]" aria-hidden="true" />}
         {meta}
-        <ChevronRight className={`w-4 h-4 text-[var(--ink)]/55 transition-transform ${open ? "rotate-90" : ""}`} />
+        <ChevronRight className={`w-4 h-4 text-[var(--ink)]/70 transition-transform ${open ? "rotate-90" : ""}`} />
       </span>
     </>
   );
@@ -395,7 +395,7 @@ function FeedbackBox() {
 
   return (
     <div className="mt-5">
-      <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/72">{t("fb.title")}</h3>
+      <h3 className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82">{t("fb.title")}</h3>
       <Textarea
         value={msg}
         onChange={(e) => setMsg(e.target.value.slice(0, 2000))}
@@ -404,7 +404,7 @@ function FeedbackBox() {
         maxLength={2000}
       />
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[10px] text-[var(--ink)]/65">{msg.length >= 1800 ? `${msg.length}/2000` : ""}</span>
+        <span className="text-[10px] text-[var(--ink)]/76">{msg.length >= 1800 ? `${msg.length}/2000` : ""}</span>
         <Button onClick={onSubmit} disabled={busy || msg.trim().length < 3} size="sm" variant="outline" className="rounded-full">
           {busy ? t("fb.sending") : t("fb.send")}
         </Button>
@@ -486,7 +486,7 @@ function AvailabilityCard({ awayUntil, slots, onSaved }: { awayUntil: string | n
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-serif text-[18px] sm:text-[22px] leading-tight text-[var(--ink)]">{tr("My rhythm", "Mi ritmo", "Mon rythme")}</h2>
-          <p className="text-xs text-[var(--ink)]/68 mt-1">
+          <p className="text-xs text-[var(--ink)]/78 mt-1">
             {isAway ? tr("✈️ On holidays", "✈️ De vacaciones", "✈️ En vacances") : tr("🎾 Available / in city", "🎾 Disponible / en la ciudad", "🎾 Disponible / en ville")}
           </p>
         </div>
@@ -497,7 +497,7 @@ function AvailabilityCard({ awayUntil, slots, onSaved }: { awayUntil: string | n
         <div className="grid grid-cols-[1fr_repeat(3,minmax(0,1fr))] items-center">
           <span />
           {cols.map((c) => (
-            <span key={c} className="text-center text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/65 pb-1">{c}</span>
+            <span key={c} className="text-center text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]/76 pb-1">{c}</span>
           ))}
           {RHYTHM_ROWS.map((row) => (
             <div key={row.key} className="contents">
@@ -560,7 +560,7 @@ function AnalyticsConsent() {
         <div className="text-[15px] font-semibold text-[var(--ink)]">
           {tr("Share usage & crash data", "Compartir uso y fallos", "Partager l'usage et les plantages")}
         </div>
-        <p className="text-xs text-[var(--ink)]/72 mt-1">
+        <p className="text-xs text-[var(--ink)]/82 mt-1">
           {tr(
             "Anonymous app events and crash reports help us fix bugs. Never sold, never used for ads.",
             "Eventos anónimos e informes de fallos nos ayudan a corregir errores. Nunca se venden ni se usan para anuncios.",

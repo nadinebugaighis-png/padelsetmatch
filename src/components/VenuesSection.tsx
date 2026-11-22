@@ -101,7 +101,7 @@ export function VenuesSection() {
           <h3 className="text-sm font-semibold uppercase tracking-widest text-[var(--ink)]">
             {tr("Your clubs", "Tus clubes", "Tes clubs")}
           </h3>
-          <p className="text-xs text-[var(--ink)]/72 mt-1">
+          <p className="text-xs text-[var(--ink)]/82 mt-1">
             {tr(
               "Your clubs & compounds. Private by default — we only match you with people who play there.",
               "Tus clubs y urbanizaciones. Privado por defecto — solo emparejamos con quien juega ahí.",
@@ -115,10 +115,10 @@ export function VenuesSection() {
         <ul className="space-y-2">
           {mine.map((m) => (
             <li key={m.venue.id} className="flex items-center gap-2 rounded-xl border border-[var(--ink)]/16 bg-white/60 p-2.5">
-              <MapPin className="w-4 h-4 text-[var(--ink)]/65 shrink-0" />
+              <MapPin className="w-4 h-4 text-[var(--ink)]/76 shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{m.venue.name}</div>
-                {m.venue.city && <div className="text-xs text-[var(--ink)]/72 truncate">{m.venue.city}</div>}
+                {m.venue.city && <div className="text-xs text-[var(--ink)]/82 truncate">{m.venue.city}</div>}
               </div>
               <button
                 onClick={() => privacyMut.mutate({ venue_id: m.venue.id, is_public: !m.is_public })}
@@ -161,21 +161,21 @@ export function VenuesSection() {
 
           {q.trim().length >= 2 && (
             <div className="space-y-1">
-              {searchQ.isFetching && <div className="text-xs text-[var(--ink)]/65 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" />{tr("Searching…", "Buscando…", "Recherche…")}</div>}
+              {searchQ.isFetching && <div className="text-xs text-[var(--ink)]/76 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" />{tr("Searching…", "Buscando…", "Recherche…")}</div>}
               {results.slice(0, 6).map((r) => (
                 <button
                   key={r.id}
                   onClick={() => addMut.mutate(r.id)}
                   className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-[var(--ink)]/5 text-sm flex items-center gap-2"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-[var(--ink)]/55" />
+                  <MapPin className="w-3.5 h-3.5 text-[var(--ink)]/70" />
                   <span className="flex-1 truncate">{r.name}{r.city ? ` · ${r.city}` : ""}</span>
                   <Plus className="w-3.5 h-3.5" />
                 </button>
               ))}
 
               <div className="pt-2 mt-2 border-t border-[var(--ink)]/16 space-y-2">
-                <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/65">
+                <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/76">
                   {tr("Not listed? Add it", "¿No está? Añádelo", "Absent ? Ajoute-le")}
                 </div>
                 <input
@@ -208,7 +208,7 @@ export function VenuesSection() {
             </div>
           )}
 
-          <button onClick={() => { setShowAdd(false); setQ(""); }} className="text-xs text-[var(--ink)]/65 hover:text-[var(--ink)]">
+          <button onClick={() => { setShowAdd(false); setQ(""); }} className="text-xs text-[var(--ink)]/76 hover:text-[var(--ink)]">
             {tr("Cancel", "Cancelar", "Annuler")}
           </button>
         </div>

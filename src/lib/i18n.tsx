@@ -1149,7 +1149,7 @@ export function LangSwitch({ className = "", variant = "light" }: { className?: 
                 aria-selected={lang === o.code}
                 aria-label={o.name}
                 onClick={() => { setLang(o.code); setOpen(false); }}
-                className={`w-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-center transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)]" : "text-[var(--ink)]/70 hover:bg-[var(--ink)]/5"}`}
+                className={`w-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-center transition ${lang === o.code ? "bg-[var(--ink)]/6 text-[var(--ink)]" : "text-[var(--ink)]/80 hover:bg-[var(--ink)]/5"}`}
               >
                 {o.code.toUpperCase()}
               </button>

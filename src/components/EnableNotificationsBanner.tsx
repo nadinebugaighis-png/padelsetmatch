@@ -65,10 +65,10 @@ export function EnableNotificationsBanner() {
           <Bell className="w-4 h-4 text-[var(--plum)]" />
         </span>
         <div className="flex-1 min-w-0">
-          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/65">
+          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/76">
             {tr("Notifications", "Notificaciones", "Notifications")}
           </div>
-          <div className="text-[13px] leading-snug text-[var(--ink)]/85 truncate sm:whitespace-normal">
+          <div className="text-[13px] leading-snug text-[var(--ink)]/90 truncate sm:whitespace-normal">
             {tr(
               "Get pinged when a match, coach or message needs you.",
               "Te avisamos cuando haya un partido, coach o mensaje.",
@@ -83,7 +83,7 @@ export function EnableNotificationsBanner() {
         >
           {tr("Enable", "Activar", "Activer")}
         </button>
-        <button onClick={dismiss} aria-label="dismiss" className="text-[var(--ink)]/55 hover:text-[var(--ink)] shrink-0 transition">
+        <button onClick={dismiss} aria-label="dismiss" className="text-[var(--ink)]/70 hover:text-[var(--ink)] shrink-0 transition">
           <X className="w-4 h-4" />
         </button>
       </div>

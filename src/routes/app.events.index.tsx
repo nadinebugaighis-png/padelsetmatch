@@ -418,8 +418,8 @@ function EventsPage() {
                 <button key={k} type="button" aria-pressed={active} aria-label={d.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })}
                   onClick={() => toggleDay(k)}
                   className="shrink-0 min-w-11 flex-1 flex flex-col items-center gap-1 py-1 active:opacity-70">
-                  <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/75"}`}>{i === 0 ? tr("Today", "Hoy", "Auj.") : weekday}</span>
-                  <span className={`text-serif text-[20px] sm:text-[24px] leading-none tracking-normal ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/68"}`}>{d.getDate()}</span>
+                  <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/84"}`}>{i === 0 ? tr("Today", "Hoy", "Auj.") : weekday}</span>
+                  <span className={`text-serif text-[20px] sm:text-[24px] leading-none tracking-normal ${active ? "text-[var(--ink)]" : "text-[var(--ink)]/78"}`}>{d.getDate()}</span>
                   <span aria-hidden className={`h-px w-6 ${active ? "bg-[var(--gold)]" : "bg-transparent"}`} />
                 </button>
               );
@@ -427,8 +427,8 @@ function EventsPage() {
             <button type="button" aria-pressed={allDates}
               onClick={() => chooseDays(new Set(days.map(dayKey)))}
               className="shrink-0 min-w-11 flex-1 flex flex-col items-center gap-1 py-1 active:opacity-70">
-              <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/75"}`}>{tr("All", "Todas", "Toutes")}</span>
-              <span className={`text-serif italic text-[14px] sm:text-[16px] leading-[20px] sm:leading-[24px] ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/68"}`}>{tr("dates", "fechas", "dates")}</span>
+              <span className={`text-[10px] uppercase tracking-[0.18em] leading-none ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/84"}`}>{tr("All", "Todas", "Toutes")}</span>
+              <span className={`text-serif italic text-[14px] sm:text-[16px] leading-[20px] sm:leading-[24px] ${allDates ? "text-[var(--ink)]" : "text-[var(--ink)]/78"}`}>{tr("dates", "fechas", "dates")}</span>
               <span aria-hidden className={`h-px w-6 ${allDates ? "bg-[var(--gold)]" : "bg-transparent"}`} />
             </button>
           </div>
@@ -437,14 +437,14 @@ function EventsPage() {
         {mode === "find" && areas.length >= 2 && (
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pt-1 pb-1" aria-label={tr("Areas", "Zonas", "Zones")}>
             <button type="button" aria-pressed={areaKeys.size === 0} onClick={() => setAreaKeys(new Set())}
-              className={`shrink-0 h-9 text-[13px] border-b transition ${areaKeys.size === 0 ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/78"}`}>
+              className={`shrink-0 h-9 text-[13px] border-b transition ${areaKeys.size === 0 ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/86"}`}>
               {tr("All my areas", "Todas mis zonas", "Toutes mes zones")}
             </button>
             {areas.map((a) => {
               const on = areaKeys.has(a.key);
               return (
                 <button key={a.key} type="button" aria-pressed={on} onClick={() => toggleArea(a.key)}
-                  className={`shrink-0 h-9 text-[13px] border-b transition ${on ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/78"}`}>
+                  className={`shrink-0 h-9 text-[13px] border-b transition ${on ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/86"}`}>
                   {a.label}
                 </button>
               );
@@ -567,7 +567,7 @@ function FeedSection({
 
   return (
     <section aria-label={title}>
-      {subtitle && <p className="text-xs text-[var(--ink)]/68 mt-1">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-[var(--ink)]/78 mt-1">{subtitle}</p>}
       <div className="space-y-9">
         {groups.map((group) => {
           const first = new Date(group.items[0].starts_at);
@@ -576,7 +576,7 @@ function FeedSection({
             <div key={group.key}>
               <h2 className="flex items-baseline gap-3 pb-2 border-b border-[var(--gold)]/40">
                 <span className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)]">{heading.main}</span>
-                <span className="font-sans font-normal text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/78 truncate">{heading.sub}</span>
+                <span className="font-sans font-normal text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/86 truncate">{heading.sub}</span>
               </h2>
               <ul className="mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2 lg:items-start">
                 {group.items.map((e, i) => {
@@ -584,7 +584,7 @@ function FeedSection({
                   const slotChanged = prev !== null && !e.time_tbd && !prev.time_tbd &&
                     Math.floor(new Date(prev.starts_at).getHours() / 12) !== Math.floor(new Date(e.starts_at).getHours() / 12);
                   return (
-                    <li key={e.id} className={`lazy-row ${slotChanged ? "pt-1 lg:pt-0" : ""}`}>
+                    <li key={e.id} className={`lazy-row -mx-3 -mt-2 -mb-5 px-3 pb-5 ${slotChanged ? "pt-3 lg:pt-2" : "pt-2"}`}>
                       <MatchCard
                         e={e}
                         locale={locale}
@@ -761,8 +761,8 @@ function MatchCard({
 
   return (
     <div
-      className={`relative h-full rounded-2xl bg-white overflow-hidden shadow-[0_1px_3px_color-mix(in_oklab,var(--ink)_12%,transparent)] ${
-        highlight ? "ring-1 ring-[var(--plum)]/45" : "border border-[var(--ink)]/[0.08]"
+      className={`relative h-full rounded-2xl card-pop overflow-hidden ${
+        highlight ? "ring-1 ring-[var(--plum)]/45" : ""
       }`}
     >
       {/* The day's colour lives only in a thin edge */}
@@ -773,13 +773,13 @@ function MatchCard({
         <div className="flex items-baseline justify-between gap-3">
           <div className="flex items-baseline gap-2 min-w-0">
             <span className="text-serif text-[19px] sm:text-[24px] leading-none text-[var(--ink)] whitespace-nowrap">
-              {e.time_tbd ? time : <>{time}<span className="text-[var(--ink)]/55"> – </span>{endTime}</>}
+              {e.time_tbd ? time : <>{time}<span className="text-[var(--ink)]/70"> – </span>{endTime}</>}
             </span>
-            <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/75 whitespace-nowrap">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/84 whitespace-nowrap">
               {e.time_tbd ? tr("To be set", "Por fijar", "À fixer") : `${matchDuration(e)} min`}
             </span>
           </div>
-          <span className={`text-serif italic text-[14px] whitespace-nowrap ${full ? "text-[var(--ink)]/75" : "text-[var(--plum)]"}`}>
+          <span className={`text-serif italic text-[14px] whitespace-nowrap ${full ? "text-[var(--ink)]/84" : "text-[var(--plum)]"}`}>
             {placesText}
           </span>
         </div>
@@ -788,7 +788,7 @@ function MatchCard({
             {e.club_name || tr("Location TBD", "Ubicación por definir", "Lieu à définir")}
           </span>
           {placeLine && (
-            <span className="shrink-0 max-w-[45%] truncate text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/75">{placeLine}</span>
+            <span className="shrink-0 max-w-[45%] truncate text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/84">{placeLine}</span>
           )}
         </div>
         {e.tag && (
@@ -801,12 +801,12 @@ function MatchCard({
         {asPairs ? (
           <div className="mx-auto grid max-w-[380px] grid-cols-[1fr_auto_1fr] items-start">
             <div>
-              <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/72">{tr("Team A", "Equipo A", "Équipe A")}</div>
+              <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/82">{tr("Team A", "Equipo A", "Équipe A")}</div>
               <div className="flex justify-center gap-2 sm:gap-3">{slots.slice(0, 2).map((s, i) => renderSlot(s, i))}</div>
             </div>
-            <span className="mt-[30px] px-1.5 sm:px-3 text-serif italic text-[13px] text-[var(--ink)]/50">vs</span>
+            <span className="mt-[30px] px-1.5 sm:px-3 text-serif italic text-[13px] text-[var(--ink)]/60">vs</span>
             <div>
-              <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/72">{tr("Team B", "Equipo B", "Équipe B")}</div>
+              <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/82">{tr("Team B", "Equipo B", "Équipe B")}</div>
               <div className="flex justify-center gap-2 sm:gap-3">{slots.slice(2, 4).map((s, i) => renderSlot(s, i + 2))}</div>
             </div>
           </div>
@@ -824,9 +824,9 @@ function MatchCard({
 
       {/* Quiet footer: details and the one action */}
       <div className="ml-4 mr-3.5 sm:ml-5 sm:mr-4 border-t border-[var(--ink)]/[0.2] py-1.5 flex items-center gap-3">
-        <div className="flex-1 min-w-0 text-[12.5px] leading-snug text-[var(--ink)]/72 truncate">
+        <div className="flex-1 min-w-0 text-[12.5px] leading-snug text-[var(--ink)]/82 truncate">
           {details.map((d, i) => (
-            <span key={i}>{i > 0 && <span className="text-[var(--ink)]/50"> · </span>}{d}</span>
+            <span key={i}>{i > 0 && <span className="text-[var(--ink)]/60"> · </span>}{d}</span>
           ))}
         </div>
         <button
@@ -888,7 +888,7 @@ function SlotAvatar({
     return (
       <div className="flex w-[58px] flex-col items-center">
         <FriendSlot size="xl" label={playtomic ? tr("Taken on Playtomic", "Ocupada en Playtomic", "Prise sur Playtomic") : tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
-        <span className={`${caption} text-[var(--ink)]/72`}>{playtomic ? tr("Taken", "Ocupada", "Prise") : tr("Friend", "Amigo", "Ami")}</span>
+        <span className={`${caption} text-[var(--ink)]/82`}>{playtomic ? tr("Taken", "Ocupada", "Prise") : tr("Friend", "Amigo", "Ami")}</span>
       </div>
     );
   }
@@ -906,13 +906,13 @@ function SlotAvatar({
         <span
           className={`w-[46px] h-[46px] rounded-full border border-dashed grid place-items-center transition ${
             canJoin
-              ? "border-[var(--ink)]/30 text-[var(--ink)]/75 group-hover:bg-[var(--ink)]/[0.03] group-active:scale-95"
-              : "border-[var(--ink)]/20 text-[var(--ink)]/50"
+              ? "border-[var(--ink)]/30 text-[var(--ink)]/84 group-hover:bg-[var(--ink)]/[0.03] group-active:scale-95"
+              : "border-[var(--ink)]/20 text-[var(--ink)]/60"
           }`}
         >
           <Plus className="w-4 h-4" strokeWidth={1.25} />
         </span>
-        <span className={`${caption} text-[9.5px] uppercase tracking-[0.18em] ${canJoin ? "text-[var(--plum)]/80" : "text-[var(--ink)]/72"}`}>
+        <span className={`${caption} text-[9.5px] uppercase tracking-[0.18em] ${canJoin ? "text-[var(--plum)]/80" : "text-[var(--ink)]/82"}`}>
           {tr("Open", "Libre", "Libre")}
         </span>
       </button>
@@ -1017,7 +1017,7 @@ function MyMatchesList({
   if (events.length === 0) {
     return (
       <div className="mt-6 rounded-2xl border border-dashed border-[var(--ink)]/20 bg-white p-8 text-center">
-        <div className="text-[var(--ink)]/80 text-base font-semibold mb-1">
+        <div className="text-[var(--ink)]/88 text-base font-semibold mb-1">
           {tr("No matches yet", "Sin partidos aún", "Aucun match pour l'instant")}
         </div>
         <div className="mb-4" />
@@ -1061,13 +1061,13 @@ function MyMatchesList({
                   ? tr("Time", "Hora", "Heure")
                   : new Date(e.starts_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                 return (
-                  <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl bg-white border border-[var(--ink)]/[0.07] pl-5 pr-4 py-4 flex items-center gap-4 cursor-pointer active:bg-[var(--paper-2)]/40 transition">
+                  <li key={e.id} onClick={() => onOpen(e.id)} className="lazy-row rounded-2xl card-pop pl-5 pr-4 py-4 flex items-center gap-4 cursor-pointer active:bg-[var(--paper-2)]/40 transition">
                     <span className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)] shrink-0 min-w-[56px] sm:min-w-[64px]">{time}</span>
                     <div className="flex-1 min-w-0">
                       <div className="text-serif text-[15px] sm:text-[17px] leading-tight text-[var(--ink)] truncate">
                         {e.club_name || tr("Match", "Partido", "Match")}
                       </div>
-                      <div className="mt-1 text-[10.5px] uppercase tracking-[0.18em] text-[var(--ink)]/78">
+                      <div className="mt-1 text-[10.5px] uppercase tracking-[0.18em] text-[var(--ink)]/86">
                         {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("Joined", "Unido", "Inscrit")} · {filled}/{e.capacity ?? 4}
                       </div>
                     </div>
@@ -1132,11 +1132,11 @@ function MyMatchSheet({
               {event.iAmHost ? tr("Your match", "Tu partido", "Ton match") : tr("You're in", "Estás dentro", "Vous êtes dedans")}
             </div>
             <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-0.5">{when}</div>
-            <div className="text-xs text-[var(--ink)]/70 mt-1 truncate">
+            <div className="text-xs text-[var(--ink)]/80 mt-1 truncate">
               {event.club_name || tr("No club yet", "Sin club aún", "Pas de club")}
             </div>
           </div>
-          <button type="button" onClick={onClose} className="text-[var(--ink)]/72 hover:text-[var(--ink)] shrink-0 p-1">
+          <button type="button" onClick={onClose} className="text-[var(--ink)]/82 hover:text-[var(--ink)] shrink-0 p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -1151,7 +1151,7 @@ function MyMatchSheet({
 
         {event.iAmHost && (
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/68 mb-1.5 flex items-center gap-1.5">
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/78 mb-1.5 flex items-center gap-1.5">
               <Clock className="w-3 h-3" /> {tr("Extend / copy", "Extender / copiar", "Prolonger / copier")}
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -1166,7 +1166,7 @@ function MyMatchSheet({
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-[var(--ink)]/78 mt-1.5 leading-relaxed">
+            <p className="text-[10px] text-[var(--ink)]/86 mt-1.5 leading-relaxed">
               {tr("Creates a copy at the next hour with same players and details.", "Crea una copia en la hora siguiente con los mismos jugadores y detalles.", "Crée une copie à l'heure suivante avec mêmes joueurs.")}
             </p>
           </div>
@@ -1235,12 +1235,12 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
 
   return (
     <div className="rounded-xl border border-[var(--ink)]/26 bg-white overflow-hidden">
-      <div className="px-3 py-2 border-b border-[var(--ink)]/26 text-[10px] uppercase tracking-widest text-[var(--ink)]/72">
+      <div className="px-3 py-2 border-b border-[var(--ink)]/26 text-[10px] uppercase tracking-widest text-[var(--ink)]/82">
         {tr("Match chat", "Chat del partido", "Chat du match")}
       </div>
       <div ref={scrollRef} className="max-h-60 overflow-y-auto px-3 py-2 space-y-2">
         {messages.length === 0 && (
-          <div className="text-center text-xs text-[var(--ink)]/78 py-4">
+          <div className="text-center text-xs text-[var(--ink)]/86 py-4">
             {tr("No messages yet. Say hi 👋", "Aún no hay mensajes. Saluda 👋", "Pas encore de messages. Dis bonjour 👋")}
           </div>
         )}
@@ -1253,7 +1253,7 @@ function InlineMatchChat({ eventId }: { eventId: string }) {
               <div className={`max-w-[80%] rounded-2xl px-3 py-1.5 text-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm" : "bg-[var(--paper-2)]/70 text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/26"}`}>
                 {!mine && name && <div className="text-[10px] uppercase tracking-widest opacity-60 mb-0.5">{name}</div>}
                 <p className="whitespace-pre-wrap break-words leading-snug">{m.body}</p>
-                <div className={`text-[9px] mt-0.5 ${mine ? "text-[var(--paper)]/60" : "text-[var(--ink)]/78"}`}>{time}</div>
+                <div className={`text-[9px] mt-0.5 ${mine ? "text-[var(--paper)]/60" : "text-[var(--ink)]/86"}`}>{time}</div>
               </div>
             </div>
           );

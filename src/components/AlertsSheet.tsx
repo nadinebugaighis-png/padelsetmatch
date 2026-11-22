@@ -106,12 +106,12 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
             <BellRing className="w-5 h-5 text-[var(--plum)]" />
             <h2 className="text-serif text-xl">{tr("Match alerts", "Alertas de partidos", "Alertes de matchs")}</h2>
           </div>
-          <button onClick={onClose} className="p-1 -m-1 text-[var(--ink)]/72"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-1 -m-1 text-[var(--ink)]/82"><X className="w-5 h-5" /></button>
         </div>
 
         {!editing ? (
           <div className="p-5 space-y-4">
-            <p className="text-sm text-[var(--ink)]/70 leading-relaxed">
+            <p className="text-sm text-[var(--ink)]/80 leading-relaxed">
               {tr(
                 "Get notified when a match opens up that fits your times and area, even a spot in an existing one.",
                 "Recibe una notificación cuando aparezca un partido en tus horarios y zona, también si se libera una plaza.",
@@ -120,9 +120,9 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
             </p>
 
             {alertsQ.isLoading ? (
-              <div className="text-sm text-[var(--ink)]/65 text-center py-4">…</div>
+              <div className="text-sm text-[var(--ink)]/76 text-center py-4">…</div>
             ) : items.length === 0 ? (
-              <div className="text-center py-6 text-sm text-[var(--ink)]/72">
+              <div className="text-center py-6 text-sm text-[var(--ink)]/82">
                 {tr("No alerts yet.", "Aún no tienes alertas.", "Aucune alerte pour l'instant.")}
               </div>
             ) : (
@@ -135,7 +135,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                           {a.city || tr("Anywhere", "Cualquier ciudad", "Partout")}
                           {a.level_only && <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--plum)]">{tr("My level", "Mi nivel", "Mon niveau")}</span>}
                         </div>
-                        <div className="text-xs text-[var(--ink)]/72 mt-1">
+                        <div className="text-xs text-[var(--ink)]/82 mt-1">
                           {a.days_of_week.length === 7
                             ? tr("Every day", "Todos los días", "Tous les jours")
                             : a.days_of_week.map((d) => dayLabels[d]).join(", ")}
@@ -180,7 +180,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
         ) : (
           <div className="p-5 space-y-4">
             <div>
-              <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/72">
+              <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/82">
                 {tr("City (optional)", "Ciudad (opcional)", "Ville (optionnel)")}
               </label>
               <input
@@ -192,7 +192,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
             </div>
 
             <div>
-              <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/72">
+              <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/82">
                 {tr("Days", "Días", "Jours")}
               </label>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -210,7 +210,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                         setDraft({ ...draft, days_of_week: next });
                       }}
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
-                        on ? "bg-[var(--ink)] text-white border-[var(--ink)]" : "bg-white text-[var(--ink)]/70 border-[var(--ink)]/22"
+                        on ? "bg-[var(--ink)] text-white border-[var(--ink)]" : "bg-white text-[var(--ink)]/80 border-[var(--ink)]/22"
                       }`}
                     >
                       {lbl}
@@ -222,7 +222,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/72">
+                <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/82">
                   {tr("From", "Desde", "De")}
                 </label>
                 <select
@@ -236,7 +236,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                 </select>
               </div>
               <div>
-                <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/72">
+                <label className="text-[11px] uppercase tracking-widest font-bold text-[var(--ink)]/82">
                   {tr("To", "Hasta", "À")}
                 </label>
                 <select
@@ -274,7 +274,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
             <div className="flex gap-2 pt-2">
               <button
                 onClick={() => { setEditing(false); setDraft({ ...DEFAULT_DRAFT, city: seedCity ?? "" }); }}
-                className="flex-1 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/80 font-semibold py-3"
+                className="flex-1 rounded-full border border-[var(--ink)]/20 text-[var(--ink)]/88 font-semibold py-3"
               >
                 {tr("Cancel", "Cancelar", "Annuler")}
               </button>
@@ -299,7 +299,7 @@ export function AlertsButton({ seedCity, count }: { seedCity?: string | null; co
         onClick={() => setOpen(true)}
         title={tr("Match alerts", "Alertas", "Alertes")}
         aria-label={tr("Match alerts", "Alertas de partidos", "Alertes de matchs")}
-        className="shrink-0 relative inline-flex items-center justify-center w-9 h-9 rounded-full text-[var(--ink)]/72 hover:text-[var(--ink)]"
+        className="shrink-0 relative inline-flex items-center justify-center w-9 h-9 rounded-full text-[var(--ink)]/82 hover:text-[var(--ink)]"
       >
         <Bell className="w-4 h-4" />
         {count && count > 0 ? (

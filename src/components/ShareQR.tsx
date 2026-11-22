@@ -57,13 +57,13 @@ export function ShareQR({ url, label }: { url: string; label?: string }) {
           <div className="relative programme-card p-6 max-w-xs w-full text-center">
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-[var(--ink)]/65 hover:text-[var(--ink)]"
+              className="absolute top-3 right-3 text-[var(--ink)]/76 hover:text-[var(--ink)]"
               aria-label={tr("Close", "Cerrar", "Fermer")}
             >
               <X className="w-4 h-4" />
             </button>
             <p className="text-serif text-lg tracking-tight text-[var(--ink)]">{tr("Share PadelSetMatch", "Compartir PadelSetMatch", "Partager PadelSetMatch")}</p>
-            <p className="text-xs text-[var(--ink)]/72 mt-1">{tr("Scan to open", "Escanea para abrir", "Scanne pour ouvrir")}</p>
+            <p className="text-xs text-[var(--ink)]/82 mt-1">{tr("Scan to open", "Escanea para abrir", "Scanne pour ouvrir")}</p>
 
 
             {dataUrl ? (

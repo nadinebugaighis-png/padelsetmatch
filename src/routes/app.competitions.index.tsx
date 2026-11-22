@@ -122,7 +122,7 @@ function Section({ title, items, live, empty, locale, tr }: { title: string; ite
     <section className="mb-8">
       <h2 className="text-serif text-[20px] sm:text-[24px] leading-tight text-[var(--ink)]">{title}</h2>
       {items.length === 0 ? (
-        <p className="mt-4 text-[15px] text-[var(--ink)]/65">{empty}</p>
+        <p className="mt-4 text-[15px] text-[var(--ink)]/76">{empty}</p>
       ) : (
         <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 items-start gap-x-4 gap-y-6">
           {items.map((c) => <PosterCard key={c.id} c={c} live={live} locale={locale} tr={tr} />)}
@@ -175,7 +175,7 @@ function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: b
         )}
       </div>
       <div className="mt-2.5 text-serif text-[18px] leading-snug text-[var(--ink)] line-clamp-2">{c.title}</div>
-      <div className="mt-0.5 flex items-center gap-1.5 text-[13.5px] text-[var(--ink)]/65 min-w-0">
+      <div className="mt-0.5 flex items-center gap-1.5 text-[13.5px] text-[var(--ink)]/76 min-w-0">
         <CalendarDays className="size-3.5 shrink-0" strokeWidth={1.5} /><span className="truncate">{dates}</span>
       </div>
       <div className="mt-0.5 text-[13.5px] text-[var(--pitch)]">{count}</div>

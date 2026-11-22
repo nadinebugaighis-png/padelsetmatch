@@ -72,7 +72,7 @@ export function ReportContentButton({
         onClick={() => setOpen(true)}
         aria-label={label}
         title={label}
-        className={`inline-flex items-center text-[var(--ink)]/55 hover:text-red-500 transition px-1 ${className ?? ""}`}
+        className={`inline-flex items-center text-[var(--ink)]/70 hover:text-red-500 transition px-1 ${className ?? ""}`}
       >
         <Flag className={size === "xs" ? "w-3 h-3" : "w-3.5 h-3.5"} />
       </button>

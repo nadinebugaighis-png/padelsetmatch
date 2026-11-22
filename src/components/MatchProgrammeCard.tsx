@@ -177,23 +177,23 @@ export function MatchProgrammeCard({
               <div
                 key={`p-${i}`}
                 title={name}
-                className="w-9 h-9 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
+                className="w-11 h-11 shrink-0 rounded-full overflow-hidden border-2 border-white shadow bg-[var(--ink)]/10 grid place-items-center"
               >
-                <span className="text-[12px] font-bold text-[var(--ink)]/70">
+                <span className="text-[14px] font-bold text-[var(--ink)]/70">
                   {name.trim().charAt(0).toUpperCase()}
                 </span>
               </div>
             ))}
             {Array.from({ length: friendSpots }).map((_, i) => (
-              <FriendSlot key={`f-${i}`} size="md" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
+              <FriendSlot key={`f-${i}`} size="lg" label={tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
             ))}
             {Array.from({ length: openSpots }).map((_, i) => (
               <div
                 key={`o-${i}`}
                 aria-hidden
-                className="w-9 h-9 shrink-0 rounded-full border-2 border-dashed grid place-items-center border-[var(--plum)]/45 text-[var(--plum)]"
+                className="w-11 h-11 shrink-0 rounded-full border-2 border-dashed grid place-items-center border-[var(--plum)]/45 text-[var(--plum)]"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
               </div>
             ))}
             {actionLabel && (

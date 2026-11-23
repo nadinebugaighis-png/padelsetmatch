@@ -84,4 +84,6 @@
 ## Communities directory
 - [x] Communities page (yours + all by country/city with member counts), start/join/leave, visit another community on Home and Play, signup picks from the live list, contact Nadine by WhatsApp/email. Tests and signed-in phone checks pass.
 - [x] Organiser emails now go to Nadine@padelsetmatch.com; the mistaken "La Moraleja" city entry was moved to Madrid · La Moraleja, so the list shows only real cities.
-- [ ] Confirm the organiser contact email (waiting on Nadine's answer).
+- [x] Confirm the organiser contact email.
+- [x] Padelodontics (dentists) under London with its gold seal; Tarik in it, keeping Chelsea & Battersea.
+- [x] Press and hold a community to share it; the shared link shows that community first with Join.

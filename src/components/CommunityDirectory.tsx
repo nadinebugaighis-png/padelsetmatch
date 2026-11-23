@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import { Check, ChevronRight, Mail, MessageCircle, Plus } from "lucide-react";
-import type { Community, Directory } from "@/lib/communities";
-import { openExternal, openMailTo } from "@/lib/native";
+import { toast } from "sonner";
+import { communityShareUrl, type Community, type Directory } from "@/lib/communities";
+import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { useTr } from "@/lib/i18n";
 
 export const CONCIERGE_WHATSAPP = "34620296060";
@@ -18,6 +20,58 @@ export function useMembersLabel() {
         : tr(`${n} members`, `${n} miembros`, `${n} membres`);
 }
 
+/** Small round seal for communities that have their own logo. */
+export function CommunitySeal({ logo, className = "size-9" }: { logo?: string; className?: string }) {
+  if (!logo) return null;
+  return <img src={logo} alt="" aria-hidden loading="lazy" decoding="async" draggable={false} className={`${className} shrink-0 rounded-full object-cover shadow-[0_1px_3px_rgba(0,0,0,0.18)]`} />;
+}
+
+/**
+ * Press and hold a community to share it. Returns pointer handlers for the
+ * row and a guard that swallows the tap that follows a long press.
+ */
+export function useCommunityShare() {
+  const tr = useTr();
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fired = useRef(false);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const clear = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
+
+  const share = async (c: Community) => {
+    const outcome = await nativeShare({
+      title: c.label,
+      text: tr(`Join ${c.label} on PadelSetMatch`, `Únete a ${c.label} en PadelSetMatch`, `Rejoins ${c.label} sur PadelSetMatch`),
+      url: communityShareUrl(c.location),
+    });
+    if (outcome === "copied") toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
+    else if (outcome === "unavailable") toast.error(tr("Couldn't share right now", "No se pudo compartir", "Partage impossible"));
+  };
+
+  return (c: Community) => ({
+    onPointerDown: (e: React.PointerEvent) => {
+      fired.current = false;
+      start.current = { x: e.clientX, y: e.clientY };
+      clear();
+      timer.current = setTimeout(() => {
+        fired.current = true;
+        try { navigator.vibrate?.(12); } catch { /* not supported */ }
+        void share(c);
+      }, 550);
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      if (start.current && Math.hypot(e.clientX - start.current.x, e.clientY - start.current.y) > 10) clear();
+    },
+    onPointerUp: clear,
+    onPointerLeave: clear,
+    onPointerCancel: clear,
+    onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
+    onClickCapture: (e: React.MouseEvent) => { if (fired.current) { e.preventDefault(); e.stopPropagation(); fired.current = false; } },
+  });
+}
+
+/** Classes that stop the phone's own text-selection menu on a long press. */
+export const holdable = "select-none [-webkit-touch-callout:none]";
+
 export function CommunityRow({ c, onOpen, onJoin, joining, current }: {
   c: Community;
   onOpen: (c: Community) => void;
@@ -27,10 +81,12 @@ export function CommunityRow({ c, onOpen, onJoin, joining, current }: {
 }) {
   const tr = useTr();
   const members = useMembersLabel();
+  const hold = useCommunityShare();
   return (
     <li className="flex items-center">
-      <button type="button" onClick={() => onOpen(c)}
-        className="group min-w-0 flex-1 flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04] hover:bg-[var(--ink)]/[0.02]">
+      <button type="button" onClick={() => onOpen(c)} {...hold(c)}
+        className={`group min-w-0 flex-1 flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04] hover:bg-[var(--ink)]/[0.02] ${holdable}`}>
+        <CommunitySeal logo={c.logo} />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">{c.label}</span>
           <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">

@@ -1,4 +1,5 @@
 import { canonicalArea, isCityWide, PAIRED_COMMUNITIES } from "./area-match";
+import { BRANDED_COMMUNITIES } from "./branded-communities";
 import { LOCATION_PRESETS } from "./location-presets";
 import { decodeLocation, encodeLocation } from "./types";
 
@@ -21,6 +22,8 @@ export type Community = {
   label: string;
   members: number;
   mine: boolean;
+  /** Round seal for communities set up with their organiser. */
+  logo?: string;
 };
 export type DirectoryCity = { city: string; members: number; communities: Community[] };
 export type DirectoryCountry = { country: string; members: number; cities: DirectoryCity[] };
@@ -57,6 +60,17 @@ export function communityLocation(c: { country: string; city: string; area?: str
   return encodeLocation({ country: c.country, city: c.city, area: c.area });
 }
 
+/** Seal image for a community key, when it has one. */
+export function communityLogo(key: string | null | undefined): string | undefined {
+  if (!key) return undefined;
+  return BRANDED_COMMUNITIES.find((b) => communityOf(communityLocation(b))?.key === key)?.logo;
+}
+
+/** Public link that opens a community in the directory, ready to join. */
+export function communityShareUrl(location: string): string {
+  return `https://padelsetmatch.com/app/communities?c=${encodeURIComponent(location)}`;
+}
+
 /** Display name for a saved location ("La Moraleja", "Dubai"). */
 export function communityLabel(location: string | null | undefined): string | null {
   return location ? communityOf(location)?.label ?? null : null;
@@ -90,7 +104,7 @@ export function buildDirectory(members: Member[], myLocations: string[] | null |
   }
 
   // Curated communities always appear, even before anyone joins.
-  for (const p of LOCATION_PRESETS) {
+  for (const p of [...LOCATION_PRESETS, ...BRANDED_COMMUNITIES]) {
     const parsed = communityOf(communityLocation(p));
     if (parsed && !info.has(parsed.key)) info.set(parsed.key, { ...parsed, spellings: new Map([[parsed.label, 0]]) });
   }
@@ -108,7 +122,7 @@ export function buildDirectory(members: Member[], myLocations: string[] | null |
     const best = [...i.spellings.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? i.label;
     const area = i.area ? best : undefined;
     const label = i.area ? best : i.city;
-    return { key, location: communityLocation({ country: i.country, city: i.city, area }), country: i.country, city: i.city, area, label, members: countOf(i), mine: mineKeys.has(key) };
+    return { key, location: communityLocation({ country: i.country, city: i.city, area }), country: i.country, city: i.city, area, label, members: countOf(i), mine: mineKeys.has(key), ...(communityLogo(key) ? { logo: communityLogo(key) } : {}) };
   };
 
   // A whole-city entry is listed only where it is the community (city-wide

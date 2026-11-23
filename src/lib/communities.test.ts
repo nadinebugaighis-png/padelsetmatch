@@ -54,3 +54,21 @@ describe("starting a community", () => {
     expect(communityOf("Spain | Madrid | El Soto")?.key).toBe(communityOf("Spain | Madrid | La Moraleja")?.key);
   });
 });
+
+describe("Padelodontics", () => {
+  it("is listed under London with its seal, even before anyone joins", () => {
+    const d = buildDirectory([], []);
+    const london = d.countries.find((c) => c.country === "United Kingdom")?.cities.find((c) => c.city === "London");
+    const p = london?.communities.find((c) => c.label === "Padelodontics");
+    expect(p?.logo).toMatch(/padelodontics_seal\.png$/);
+    expect(p?.members).toBe(0);
+  });
+
+  it("counts a member who keeps another London community too", () => {
+    const tarik = { locations: ["United Kingdom | London | Chelsea & Battersea", "United Kingdom | London | Padelodontics"] };
+    const d = buildDirectory([tarik], tarik.locations);
+    const p = d.mine.find((c) => c.label === "Padelodontics");
+    expect(p?.members).toBe(1);
+    expect(d.mine.map((c) => c.label)).toEqual(["Chelsea & Battersea", "Padelodontics"]);
+  });
+});

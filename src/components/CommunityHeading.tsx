@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
-import { communityOf } from "@/lib/communities";
+import { communityLogo, communityOf } from "@/lib/communities";
+import { CommunitySeal } from "@/components/CommunityDirectory";
 import { setCommunityView } from "@/lib/community-view";
 import { useTr } from "@/lib/i18n";
 
@@ -38,6 +39,7 @@ export function CommunityHeading({ view, locations, world, fallbackTitle, subtit
   const visiting = !!viewing && !mine.some((c) => c.key === viewing.key);
   const label = viewing?.label ?? (world || mine.length === 0 ? fallbackTitle : mine[0]!.label);
   const others = !viewing && !world ? mine.slice(1) : [];
+  const logo = viewing ? communityLogo(viewing.key) : !world && mine[0] ? communityLogo(mine[0].key) : undefined;
 
   return (
     <div>
@@ -46,6 +48,7 @@ export function CommunityHeading({ view, locations, world, fallbackTitle, subtit
         aria-label={tr("Communities", "Comunidades", "Communautés")}
         className="group inline-flex items-end gap-2 text-left"
       >
+        <CommunitySeal logo={logo} className="size-8 sm:size-9 self-center mr-0.5" />
         <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[26px] sm:text-[30px] lg:text-[34px]">{label}</h1>
         <ChevronDown className="mb-[3px] w-4 h-4 shrink-0 text-[var(--ink)]/60 group-hover:text-[var(--ink)] transition" strokeWidth={1.5} aria-hidden />
       </Link>

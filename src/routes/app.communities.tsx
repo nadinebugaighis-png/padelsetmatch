@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
-import { CommunityDirectoryList, ConciergeNote, useMembersLabel } from "@/components/CommunityDirectory";
+import { CommunityDirectoryList, CommunityRow, CommunitySeal, ConciergeNote, holdable, useCommunityShare, useMembersLabel } from "@/components/CommunityDirectory";
 import { getCommunityDirectory, joinCommunity, leaveCommunity } from "@/lib/communities.functions";
 import { communityOf, type Community } from "@/lib/communities";
 import { setCommunityView, useCommunityView } from "@/lib/community-view";
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/app/communities")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { c?: string } => (typeof s.c === "string" && s.c.length <= 200 ? { c: s.c } : {}),
   component: CommunitiesPage,
 });
 
@@ -35,6 +36,8 @@ function CommunitiesPage() {
   const qc = useQueryClient();
   const members = useMembersLabel();
   const view = useCommunityView();
+  const { c: sharedLocation } = Route.useSearch();
+  const hold = useCommunityShare();
   const getDirectory = useServerFn(getCommunityDirectory);
   const join = useServerFn(joinCommunity);
   const leave = useServerFn(leaveCommunity);
@@ -69,6 +72,11 @@ function CommunitiesPage() {
   };
   const viewKey = view ? communityOf(view)?.key : null;
   const mine = dirQ.data?.mine ?? [];
+  // A community someone shared: shown first, ready to join.
+  const sharedKey = sharedLocation ? communityOf(sharedLocation)?.key ?? null : null;
+  const shared = sharedKey
+    ? dirQ.data?.countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities)).find((c) => c.key === sharedKey) ?? null
+    : null;
 
   return (
     <div className="programme-page min-h-[calc(100vh-4rem)]">
@@ -90,13 +98,23 @@ function CommunitiesPage() {
           </div>
         ) : (
           <>
+            {shared && (
+              <section className="mt-7">
+                <h2 className={smallCaps}>{tr("Shared with you", "Te la han compartido", "Partagée avec toi")}</h2>
+                <ul className="mt-3 overflow-hidden rounded-2xl card-pop">
+                  <CommunityRow c={shared} onOpen={(c) => open(c.location)} onJoin={(c) => joinM.mutate(c)} joining={joinM.isPending && joinM.variables?.key === shared.key} />
+                </ul>
+              </section>
+            )}
+
             {mine.length > 0 && (
               <section className="mt-7">
                 <h2 className={smallCaps}>{tr("Your communities", "Tus comunidades", "Tes communautés")}</h2>
                 <ul className="mt-3 overflow-hidden rounded-2xl card-pop divide-y divide-[var(--ink)]/[0.07]">
                   {mine.map((c) => (
                     <li key={c.key} className="flex items-center">
-                      <button type="button" onClick={() => open(c.location)} className="group min-w-0 flex-1 flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04]">
+                      <button type="button" onClick={() => open(c.location)} {...hold(c)} className={`group min-w-0 flex-1 flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04] ${holdable}`}>
+                        <CommunitySeal logo={c.logo} />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">{c.label}</span>
                           <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">

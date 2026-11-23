@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, resolveAgePreference, type AgeBracket } from "@/lib/age-bracket";
 import {
-  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, GENDERS, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
   PADEL_STYLES, PERSONAL_STRENGTHS,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { presetByKey } from "@/lib/location-presets";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
-import { Camera, Check, ChevronLeft, ChevronRight, Lock, Plus, X } from "lucide-react";
+import { Camera, Check, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
@@ -385,7 +385,7 @@ function Onboarding() {
     ([
       !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
       age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
-      !gender ? { key: "gender", label: tr("gender", "género", "genre") } : null,
+      !gender ? { key: "gender", label: tr("men's or women's", "masculino o femenino", "masculin ou féminin") } : null,
       null,
       null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
@@ -850,9 +850,9 @@ function Onboarding() {
       </Section>
 
       {/* Who you match with */}
-      <Section title={tr("Who you match with", "Con quién juegas", "Avec qui tu joues")} sub={tr("Private. Never shown on your profile.", "Privado. Nunca se muestra en tu perfil.", "Privé. Jamais affiché sur ton profil.")} icon={<Lock className="w-3 h-3" />}>
+      <Section title={tr("Your game", "Tu juego", "Ton jeu")} sub={tr("So your games are balanced.", "Para que tus partidos estén equilibrados.", "Pour des matchs équilibrés.")}>
         <div data-field="age" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("age")}`}>
-          <FieldLabel>{tr("Your age", "Tu edad", "Ton âge")}</FieldLabel>
+          <FieldLabel>{tr("Age group", "Edad", "Tranche d'âge")}</FieldLabel>
           <div className="mt-1 grid grid-cols-5 overflow-hidden rounded-xl border border-[var(--ink)]/22">
             {AGE_BRACKETS.map((b, idx) => {
               const mid = bracketMidpoint(b);
@@ -872,20 +872,22 @@ function Onboarding() {
             })}
           </div>
         </div>
-        <div data-field="gender" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("gender")}`}>
-          <FieldLabel>{t("ob.iAm")}</FieldLabel>
+        <div data-field="gender" className={`py-3 ${profileQ.data !== null ? "border-b border-[var(--ink)]/18" : ""} ${fieldCls("gender")}`}>
+          <FieldLabel>{tr("You play", "Juegas", "Tu joues")}</FieldLabel>
           <div className="mt-1 flex flex-wrap gap-2">
-            {GENDERS.map((g) => (
+            {/* Padel categories, not identity labels; legacy "non-binary" stays visible only to players who already chose it. */}
+            {(["man", "woman", "self-describe", ...(gender === "non-binary" ? ["non-binary"] as const : [])] as Gender[]).map((g) => (
               <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)} className={`h-9 px-4 rounded-full border text-[14px] first-letter:uppercase transition-colors ${gender === g ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/88"}`}>
-                {label(g)}
+                {g === "man" ? tr("Men's", "Masculino", "Masculin")
+                  : g === "woman" ? tr("Women's", "Femenino", "Féminin")
+                  : g === "self-describe" ? tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")
+                  : label(g)}
               </button>
             ))}
           </div>
-          {gender === "self-describe" && (
-            <Input className="mt-2 h-11 rounded-xl" value={genderCustom} onChange={(e) => setGenderCustom(e.target.value)} placeholder={tr("Describe yourself", "Descríbete", "Décris-toi")} maxLength={40} />
-          )}
         </div>
-        <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>
+        {/* New players start on any age; the range is tuned later from Home filters or here when editing. */}
+        {profileQ.data !== null && <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>
           <div className="flex items-center justify-between">
             <FieldLabel>{tr("Play with ages", "Jugar con edades", "Jouer avec des âges")}</FieldLabel>
             <span className="text-[14px] text-[var(--ink)]">{ageRangeText}</span>
@@ -911,7 +913,7 @@ function Onboarding() {
             <SliderPrimitive.Thumb aria-label={tr("Youngest", "Mínima", "Minimum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
             <SliderPrimitive.Thumb aria-label={tr("Oldest", "Máxima", "Maximum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
           </SliderPrimitive.Root>
-        </div>
+        </div>}
       </Section>
 
       {/* Background */}

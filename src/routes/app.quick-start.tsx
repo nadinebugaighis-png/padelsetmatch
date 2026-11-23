@@ -191,10 +191,10 @@ function QuickStart() {
 
           <div>
             <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
-              {tr("Gender", "Género", "Genre")}
+              {tr("You play", "Juegas", "Tu joues")}
             </label>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {(["woman", "man", "non-binary", "self-describe"] as Gender[]).map((g) => (
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {(["man", "woman", "self-describe"] as Gender[]).map((g) => (
                 <button
                   key={g}
                   type="button"
@@ -205,10 +205,9 @@ function QuickStart() {
                       : "border-[var(--ink)]/20 text-[var(--ink)]/84"
                   }`}
                 >
-                  {g === "woman" && tr("Woman", "Mujer", "Femme")}
-                  {g === "man" && tr("Man", "Hombre", "Homme")}
-                  {g === "non-binary" && tr("Non-binary", "No binario", "Non-binaire")}
-                  {g === "self-describe" && tr("Other", "Otro", "Autre")}
+                  {g === "woman" && tr("Women's", "Femenino", "Féminin")}
+                  {g === "man" && tr("Men's", "Masculino", "Masculin")}
+                  {g === "self-describe" && tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")}
                 </button>
               ))}
             </div>

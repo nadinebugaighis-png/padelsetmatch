@@ -1127,6 +1127,26 @@ export const confirmPlayed = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const reportNoShow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: me } = await context.supabase
+      .from("profiles" as never).select("id").eq("user_id", context.userId).maybeSingle();
+    const myId = (me as { id: string } | null)?.id;
+    if (!myId) throw new Error("No profile");
+    const { data: match } = await context.supabase
+      .from("matches" as never).select("*").eq("id", data.matchId).maybeSingle();
+    const mr = match as { profile_a: string; profile_b: string } | null;
+    if (!mr) throw new Error("Match not found");
+    const otherId = mr.profile_a === myId ? mr.profile_b : mr.profile_a;
+    const { error } = await context.supabase
+      .from("no_shows" as never)
+      .insert({ match_id: data.matchId, reporter_profile_id: myId, reported_profile_id: otherId } as never);
+    if (error && !error.message.includes("duplicate")) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const getPlayedStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ matchId: z.string().uuid() }).parse(d))

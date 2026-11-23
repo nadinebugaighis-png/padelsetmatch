@@ -297,7 +297,7 @@ function AuthShell() {
   // The + menu shows on the main tabs only, never over forms or chats.
   const cleanPath = path.replace(/\/+$/, "");
   const showQuickActions = ["/app/grid", "/app/events", "/app/competitions", "/app/connect", "/app/profile"].includes(cleanPath);
-  // Private chats open full screen on phones: no top bar, no bottom menu, just the conversation.
+  // Private chats size themselves to the screen, so top strips would push the message box behind the bottom bar.
   const inChat = /^\/app\/matches\/[^/]+$/.test(cleanPath);
 
   // In the iPhone app the page scrolls inside this frame instead of the whole window,
@@ -328,7 +328,7 @@ function AuthShell() {
       >
         <div className="h-full w-full origin-left bg-[var(--ink)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
-      <div id="app-top-bar" className={`sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur ${inChat ? "hidden lg:block" : ""}`}>
+      <div id="app-top-bar" className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/16 gap-3 max-w-7xl mx-auto w-full">
           <BrandMark size="sm" />
           {hasProfile && !onOnboarding && (
@@ -402,7 +402,7 @@ function AuthShell() {
 
       {hasProfile && !onOnboarding && showQuickActions && <QuickActions />}
 
-      {hasProfile && !onOnboarding && !inChat && (
+      {hasProfile && !onOnboarding && (
         <nav
           data-bottom-ui
           className="fixed inset-x-0 bottom-0 z-40 lg:hidden px-3 pointer-events-none"

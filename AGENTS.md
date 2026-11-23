@@ -42,4 +42,3 @@
 - Daily open games come only from open_game_slots via the hourly ensure_open_games job; open_game_runs stops cancelled/deleted games returning and app.house_games skips the host seat and alerts.
 - Game places come from matchCapacity (match-rules.ts), mirrored by public.match_event_capacity (4, or coach + class_students); a participant insert trigger enforces status, capacity and gender so direct inserts can't bypass them. Never hardcode 4.
 
-- Own chat messages and comments open Edit/Delete only through the shared HoldMenu (press and hold, click on desktop), never inline icon buttons, so chats stay clean like WhatsApp.

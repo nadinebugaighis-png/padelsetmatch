@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
-import { submitQaAnswer, getMyQuestionSlot } from "@/lib/app.functions";
+import { submitQaAnswer, getMyQuestionSlot, snoozeMyQuestions } from "@/lib/app.functions";
 import { Button } from "@/components/ui/button";
 import { useI18n, useTr } from "@/lib/i18n";
 import { dailyQuestionFor, slotKey, shouldShowQuestion, unlockQuestions, UNLOCK_MIN_ANSWERS, type CuratedQuestion } from "@/lib/daily-questions";
@@ -65,6 +65,17 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
   // New players answer their first three back to back, then see a short close.
   const [inFlow, setInFlow] = useState(false);
   const [flowClosed, setFlowClosed] = useState(false);
+  const qc = useQueryClient();
+  const snooze = useServerFn(snoozeMyQuestions);
+  const snoozeM = useMutation({
+    mutationFn: () => snooze(),
+    onSuccess: (r) => {
+      qc.setQueryData(["daily-answer-date", profileId], (old: { slot: string | null; snoozedUntil: number | null } | undefined) =>
+        ({ slot: old?.slot ?? null, snoozedUntil: r.snoozedUntil }));
+      toast(tr("We'll ask again next week.", "Te preguntaremos la semana que viene.", "On te reposera la question la semaine prochaine."));
+    },
+    onError: () => toast.error(tr("Couldn't save. Try again.", "No se pudo guardar. Reintenta.", "Impossible d’enregistrer. Réessaie.")),
+  });
   useEffect(() => {
     try {
       const raw = Number(window.localStorage.getItem(`${LAST_ANSWER_KEY}:${profileId}`));
@@ -99,8 +110,9 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
   }
 
   if (answeredSlot === slot && !isNew) return null;
+  if (snoozeM.isPending || snoozeM.isSuccess) return null;
   const continuing = inFlow && isNew;
-  if (!continuing && !shouldShowQuestion({ answeredCount: count, lastSlot: slotQ.data, lastAnsweredAt, now })) return null;
+  if (!continuing && !shouldShowQuestion({ answeredCount: count, lastSlot: slotQ.data.slot, lastAnsweredAt, snoozedUntil: slotQ.data.snoozedUntil, now })) return null;
   const q = dailyQuestionFor(done, now);
   if (!q) return null;
   const evening = slot.endsWith("-pm");
@@ -116,6 +128,17 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
       try { window.localStorage.setItem(`${LAST_ANSWER_KEY}:${profileId}`, String(at)); } catch { /* storage unavailable */ }
     },
   });
+
+  const noThanks = (
+    <button
+      type="button"
+      disabled={save.isPending}
+      onClick={() => snoozeM.mutate()}
+      className="shrink-0 text-[11px] text-[var(--ink)]/70 underline underline-offset-4 decoration-[var(--ink)]/20 hover:text-[var(--ink)] disabled:opacity-50"
+    >
+      {tr("No thanks", "No, gracias", "Non merci")}
+    </button>
+  );
 
   if (isNew) {
     return (
@@ -138,10 +161,13 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
         </div>
         <div className="mt-4 text-[15px] font-medium text-[var(--ink)] leading-snug">{q.q[lang] ?? q.q.en}</div>
         <Chips q={q} disabled={save.isPending} onPick={onPick} />
-        <p className="mt-3 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
-          <Lock className="w-3 h-3" />
-          {tr("Private. Never posted, only used to find players who suit you.", "Privado. Nunca se publica, solo sirve para encontrar jugadores afines.", "Privé. Jamais publié, sert uniquement à trouver des joueurs qui te correspondent.")}
-        </p>
+        <div className="mt-3 flex items-start justify-between gap-3">
+          <p className="flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
+            <Lock className="w-3 h-3 shrink-0" />
+            {tr("Private. Never posted, only used to find players who suit you.", "Privado. Nunca se publica, solo sirve para encontrar jugadores afines.", "Privé. Jamais publié, sert uniquement à trouver des joueurs qui te correspondent.")}
+          </p>
+          {noThanks}
+        </div>
       </div>
     );
   }
@@ -154,10 +180,13 @@ export function DailyQuestionCard({ answered, profileId }: { answered: string[] 
       <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/78">{title}</div>
       <div className="mt-1 text-[15px] font-medium text-[var(--ink)] leading-snug">{q.q[lang] ?? q.q.en}</div>
       <Chips q={q} disabled={save.isPending} onPick={onPick} />
-      <p className="mt-2 flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
-        <Lock className="w-3 h-3" />
-        {tr("Private. Never posted, only used to find players who suit you.", "Privado. Nunca se publica, solo sirve para encontrar jugadores afines.", "Privé. Jamais publié, sert uniquement à trouver des joueurs qui te correspondent.")}
-      </p>
+      <div className="mt-2 flex items-start justify-between gap-3">
+        <p className="flex items-center gap-1 text-[10.5px] text-[var(--ink)]/72">
+          <Lock className="w-3 h-3 shrink-0" />
+          {tr("Private. Never posted, only used to find players who suit you.", "Privado. Nunca se publica, solo sirve para encontrar jugadores afines.", "Privé. Jamais publié, sert uniquement à trouver des joueurs qui te correspondent.")}
+        </p>
+        {noThanks}
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   dailyQuestionFor, questionForDay, questionForSlot, slotKey, shouldShowQuestion,
-  unlockQuestions, CURATED_QUESTIONS, NEW_PLAYER_PAUSE_MS,
+  unlockQuestions, CURATED_QUESTIONS, NEW_PLAYER_PAUSE_MS, QUESTION_SNOOZE_MS,
 } from "./daily-questions";
 
 describe("padel question card", () => {
@@ -36,6 +36,16 @@ describe("padel question card", () => {
     expect(shouldShowQuestion({ answeredCount: 1, lastSlot: "2026-11-07-am", lastAnsweredAt: null, now })).toBe(true);
     expect(shouldShowQuestion({ answeredCount: 1, lastSlot: "2026-11-07-am", lastAnsweredAt: justAnswered, now })).toBe(false);
     expect(shouldShowQuestion({ answeredCount: 2, lastSlot: "2026-11-07-am", lastAnsweredAt: lastVisit, now })).toBe(true);
+  });
+  it("No thanks hides the card for exactly one week, for new and regular players", () => {
+    const tapped = new Date(2026, 10, 23, 21).getTime();
+    const sixDaysLater = new Date(tapped + 6 * 24 * 60 * 60_000);
+    const weekLater = new Date(tapped + 7 * 24 * 60 * 60_000);
+    const snoozedUntil = tapped + QUESTION_SNOOZE_MS;
+    expect(shouldShowQuestion({ answeredCount: 0, lastSlot: null, lastAnsweredAt: null, snoozedUntil, now: sixDaysLater })).toBe(false);
+    expect(shouldShowQuestion({ answeredCount: 5, lastSlot: null, lastAnsweredAt: null, snoozedUntil, now: sixDaysLater })).toBe(false);
+    expect(shouldShowQuestion({ answeredCount: 0, lastSlot: null, lastAnsweredAt: null, snoozedUntil, now: weekLater })).toBe(true);
+    expect(shouldShowQuestion({ answeredCount: 5, lastSlot: null, lastAnsweredAt: null, snoozedUntil, now: weekLater })).toBe(true);
   });
   it("bank has 58 questions: 22 padel, 17 personality, 19 lifestyle", () => {
     expect(CURATED_QUESTIONS).toHaveLength(58);

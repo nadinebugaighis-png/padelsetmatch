@@ -1174,14 +1174,28 @@ function normalizeAnswer(s: string): string {
   return s.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 200);
 }
 
-/** Last morning/evening question slot the player answered, e.g. "2026-11-07-am". */
+/**
+ * Last morning/evening question slot the player answered, e.g. "2026-11-07-am",
+ * and when a "No thanks" pause ends (ms), so both follow the account across devices.
+ */
 export const getMyQuestionSlot = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.from("profiles")
-      .select("daily_question_slot").eq("user_id", context.userId).maybeSingle();
+      .select("daily_question_slot, questions_snoozed_until").eq("user_id", context.userId).maybeSingle();
     if (error) throw new Error("Couldn't load today's answer status");
-    return data?.daily_question_slot ?? null;
+    const until = data?.questions_snoozed_until ? Date.parse(data.questions_snoozed_until) : NaN;
+    return { slot: data?.daily_question_slot ?? null, snoozedUntil: Number.isFinite(until) ? until : null };
+  });
+
+/** "No thanks" on the Home question card: pause questions for a week. */
+export const snoozeMyQuestions = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase.rpc("snooze_my_questions" as never);
+    if (error) throw new Error("Couldn't pause questions");
+    const until = Date.parse(String(data));
+    return { snoozedUntil: Number.isFinite(until) ? until : Date.now() };
   });
 
 export const getMyQaAnswers = createServerFn({ method: "GET" })

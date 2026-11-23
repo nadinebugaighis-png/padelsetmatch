@@ -1879,6 +1879,7 @@ export type Database = {
           play_frequency: string | null
           played_count: number
           priorities: string[]
+          questions_snoozed_until: string | null
           sexual_orientation: string | null
           story_hook_en: string | null
           story_hook_es: string | null
@@ -1940,6 +1941,7 @@ export type Database = {
           play_frequency?: string | null
           played_count?: number
           priorities?: string[]
+          questions_snoozed_until?: string | null
           sexual_orientation?: string | null
           story_hook_en?: string | null
           story_hook_es?: string | null
@@ -2001,6 +2003,7 @@ export type Database = {
           play_frequency?: string | null
           played_count?: number
           priorities?: string[]
+          questions_snoozed_until?: string | null
           sexual_orientation?: string | null
           story_hook_en?: string | null
           story_hook_es?: string | null
@@ -2528,6 +2531,7 @@ export type Database = {
         Returns: string
       }
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
+      snooze_my_questions: { Args: never; Returns: string }
       transfer_match_host: {
         Args: { _event: string; _new_host_profile_id: string }
         Returns: undefined

@@ -160,8 +160,12 @@ export function questionForSlot(d = new Date()): CuratedQuestion {
 /** After answering, a new player's next question waits this long (one app visit). */
 export const NEW_PLAYER_PAUSE_MS = 30 * 60_000;
 
+/** "No thanks" on the Home card pauses questions for this long. */
+export const QUESTION_SNOOZE_MS = 7 * 24 * 60 * 60_000;
+
 /**
  * Whether the Grid question card should show.
+ * A player who tapped "No thanks" sees nothing until their pause ends.
  * New players (under UNLOCK_MIN_ANSWERS answers) get one on every visit;
  * regular players get two a day — one in the morning, one in the evening.
  */
@@ -169,9 +173,11 @@ export function shouldShowQuestion(opts: {
   answeredCount: number;
   lastSlot: string | null;
   lastAnsweredAt: number | null;
+  snoozedUntil?: number | null;
   now?: Date;
 }): boolean {
   const now = opts.now ?? new Date();
+  if (opts.snoozedUntil != null && now.getTime() < opts.snoozedUntil) return false;
   if (opts.answeredCount < UNLOCK_MIN_ANSWERS) {
     return opts.lastAnsweredAt === null || now.getTime() - opts.lastAnsweredAt >= NEW_PLAYER_PAUSE_MS;
   }

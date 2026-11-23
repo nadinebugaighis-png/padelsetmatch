@@ -626,7 +626,7 @@ function EventDetail() {
               </>
             ) : (
               <div className="h-11 inline-flex items-center justify-center text-[13px] text-[var(--ink)]/82">
-                {tr("Match cancelled", "Partido cancelado", "Match annulé")}
+                {event.is_class ? tr("Class cancelled", "Clase cancelada", "Cours annulé") : tr("Match cancelled", "Partido cancelado", "Match annulé")}
               </div>
             )}
             {/* One option, like Playtomic: Delete while nobody else has joined, Cancel (which notifies them) once someone has. */}
@@ -638,7 +638,7 @@ function EventDetail() {
                 onClick={() => void onCancel()}
                 className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200 bg-white text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
               >
-                <X className="w-4 h-4" /> {tr("Cancel match", "Cancelar partido", "Annuler le match")}
+                <X className="w-4 h-4" /> {(event.is_class ? tr("Cancel class", "Cancelar clase", "Annuler le cours") : tr("Cancel match", "Cancelar partido", "Annuler le match"))}
               </button>
             ) : (
               <button
@@ -646,7 +646,7 @@ function EventDetail() {
                 onClick={() => void onDelete()}
                 className="h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-red-200 bg-white text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
               >
-                <Trash2 className="w-4 h-4" /> {event.status === "cancelled" ? tr("Remove match", "Quitar partido", "Retirer le match") : tr("Delete match", "Eliminar partido", "Supprimer le match")}
+                <Trash2 className="w-4 h-4" /> {event.status === "cancelled" ? (event.is_class ? tr("Remove class", "Quitar clase", "Retirer le cours") : tr("Remove match", "Quitar partido", "Retirer le match")) : (event.is_class ? tr("Delete class", "Eliminar clase", "Supprimer le cours") : tr("Delete match", "Eliminar partido", "Supprimer le match"))}
               </button>
             )}
           </div>
@@ -681,7 +681,7 @@ function EventDetail() {
                 type="button"
                 onClick={() => { if (isMe) onLeave(); }}
                 disabled={!isMe}
-                title={isMe ? tr("Tap to leave the match", "Pulsa para salir del partido", "Appuie pour quitter le match") : ""}
+                title={isMe ? (event.is_class ? tr("Tap to leave the class", "Pulsa para salir de la clase", "Appuie pour quitter le cours") : tr("Tap to leave the match", "Pulsa para salir del partido", "Appuie pour quitter le match")) : ""}
                 className={`flex items-center gap-2 border rounded-full pl-1 pr-3 py-1 ${
                   isMe
                     ? "bg-[var(--ink)]/5 border-[var(--ink)]/25 hover:bg-[var(--ink)]/10 cursor-pointer"
@@ -856,7 +856,7 @@ function EventDetail() {
             <LogOut className="w-3.5 h-3.5" />
             {me?.iAmHost && !event.auto_slot_id
               ? tr("Leave line-up (stay organiser)", "Salir de la alineación (sigues organizando)", "Quitter la composition (rester organisateur)")
-              : tr("Leave match", "Salir del partido", "Quitter le match")}
+              : (event.is_class ? tr("Leave class", "Salir de la clase", "Quitter le cours") : tr("Leave match", "Salir del partido", "Quitter le match"))}
           </button>
         )}
         {me?.iAmHost && event.status !== "cancelled" && (

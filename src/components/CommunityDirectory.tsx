@@ -1,5 +1,6 @@
-import { useRef } from "react";
-import { Check, ChevronRight, Mail, MessageCircle, Plus } from "lucide-react";
+import { createContext, useContext, useRef, useState, type ReactNode } from "react";
+import { Check, ChevronRight, Mail, MessageCircle, Plus, Share } from "lucide-react";
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "sonner";
 import { communityShareUrl, type Community, type Directory } from "@/lib/communities";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
@@ -26,28 +27,82 @@ export function CommunitySeal({ logo, className = "size-9" }: { logo?: string; c
   return <img src={logo} alt="" aria-hidden loading="lazy" decoding="async" draggable={false} className={`${className} shrink-0 rounded-full object-cover shadow-[0_1px_3px_rgba(0,0,0,0.18)]`} />;
 }
 
+type ShareTarget = (c: Community) => void;
+const ShareContext = createContext<ShareTarget | null>(null);
+
 /**
- * Press and hold a community to share it. Returns pointer handlers for the
- * row and a guard that swallows the tap that follows a long press.
+ * Press and hold a community to share it. Holding opens a small sheet whose
+ * Share button is a real tap, because phones only allow the share menu and
+ * clipboard straight after a tap, never from a timer during a hold.
  */
-export function useCommunityShare() {
+export function CommunityShareProvider({ children }: { children: ReactNode }) {
+  const [target, setTarget] = useState<Community | null>(null);
+  return (
+    <ShareContext.Provider value={setTarget}>
+      {children}
+      <CommunityShareSheet community={target} onClose={() => setTarget(null)} />
+    </ShareContext.Provider>
+  );
+}
+
+function CommunityShareSheet({ community, onClose }: { community: Community | null; onClose: () => void }) {
   const tr = useTr();
+  const members = useMembersLabel();
+  const [fallback, setFallback] = useState<string | null>(null);
+  const [last, setLast] = useState<Community | null>(null);
+  if (community && community !== last) { setLast(community); setFallback(null); }
+  const c = community ?? last;
+  const url = c ? communityShareUrl(c.location) : "";
+
+  const share = async () => {
+    if (!c) return;
+    const outcome = await nativeShare({
+      title: c.label,
+      text: tr(`Join ${c.label} on PadelSetMatch`, `Únete a ${c.label} en PadelSetMatch`, `Rejoins ${c.label} sur PadelSetMatch`),
+      url,
+    });
+    if (outcome === "shared") onClose();
+    else if (outcome === "copied") { toast.success(tr("Link copied", "Enlace copiado", "Lien copié")); onClose(); }
+    else if (outcome === "unavailable") setFallback(url);
+  };
+
+  return (
+    <Drawer open={!!community} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DrawerContent className="bg-[var(--paper)] border-[var(--ink)]/16">
+        <div className="mx-auto w-full max-w-md px-6 pt-4 pb-8 text-center">
+          {c && (
+            <>
+              {c.logo && <div className="flex justify-center"><CommunitySeal logo={c.logo} className="size-16" /></div>}
+              <DrawerTitle asChild>
+                <div className={`${c.logo ? "mt-3" : ""} text-serif text-[24px] leading-tight text-[var(--ink)] font-normal`}>{c.label}</div>
+              </DrawerTitle>
+              <DrawerDescription className="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">
+                {c.label !== c.city ? `${c.city} · ` : ""}{members(c.members)}
+              </DrawerDescription>
+              <button type="button" onClick={() => void share()}
+                className="mt-6 mx-auto w-full max-w-[260px] h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98]">
+                <Share className="size-3.5" strokeWidth={1.8} aria-hidden />{tr("Share community", "Compartir comunidad", "Partager")}
+              </button>
+              {fallback && (
+                <p className="mt-4 select-all break-all text-[13px] text-[var(--ink)]/80">{fallback}</p>
+              )}
+            </>
+          )}
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+/** Pointer handlers that open the share sheet after a press and hold. */
+export function useCommunityShare() {
+  const open = useContext(ShareContext);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fired = useRef(false);
   const start = useRef<{ x: number; y: number } | null>(null);
   const clear = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
 
-  const share = async (c: Community) => {
-    const outcome = await nativeShare({
-      title: c.label,
-      text: tr(`Join ${c.label} on PadelSetMatch`, `Únete a ${c.label} en PadelSetMatch`, `Rejoins ${c.label} sur PadelSetMatch`),
-      url: communityShareUrl(c.location),
-    });
-    if (outcome === "copied") toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
-    else if (outcome === "unavailable") toast.error(tr("Couldn't share right now", "No se pudo compartir", "Partage impossible"));
-  };
-
-  return (c: Community) => ({
+  return (c: Community) => open ? {
     onPointerDown: (e: React.PointerEvent) => {
       fired.current = false;
       start.current = { x: e.clientX, y: e.clientY };
@@ -55,8 +110,8 @@ export function useCommunityShare() {
       timer.current = setTimeout(() => {
         fired.current = true;
         try { navigator.vibrate?.(12); } catch { /* not supported */ }
-        void share(c);
-      }, 550);
+        open(c);
+      }, 500);
     },
     onPointerMove: (e: React.PointerEvent) => {
       if (start.current && Math.hypot(e.clientX - start.current.x, e.clientY - start.current.y) > 10) clear();
@@ -66,7 +121,7 @@ export function useCommunityShare() {
     onPointerCancel: clear,
     onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
     onClickCapture: (e: React.MouseEvent) => { if (fired.current) { e.preventDefault(); e.stopPropagation(); fired.current = false; } },
-  });
+  } : {};
 }
 
 /** Classes that stop the phone's own text-selection menu on a long press. */

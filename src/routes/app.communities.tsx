@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
-import { CommunityDirectoryList, CommunityRow, CommunitySeal, ConciergeNote, holdable, useCommunityShare, useMembersLabel } from "@/components/CommunityDirectory";
+import { CommunityDirectoryList, CommunityRow, CommunitySeal, CommunityShareProvider, ConciergeNote, holdable, useCommunityShare, useMembersLabel } from "@/components/CommunityDirectory";
 import { getCommunityDirectory, joinCommunity, leaveCommunity } from "@/lib/communities.functions";
 import { communityOf, type Community } from "@/lib/communities";
 import { setCommunityView, useCommunityView } from "@/lib/community-view";
@@ -79,6 +79,7 @@ function CommunitiesPage() {
     : null;
 
   return (
+    <CommunityShareProvider>
     <div className="programme-page min-h-[calc(100vh-4rem)]">
       <div className="max-w-md sm:max-w-2xl mx-auto px-5 sm:px-6 pt-2 sm:pt-4 pb-32">
         <button type="button" onClick={() => navigate({ to: "/app/grid" })} aria-label={tr("Back", "Atrás", "Retour")} className="-ml-2 grid size-10 place-items-center rounded-full text-[var(--ink)] active:opacity-60"><ArrowLeft className="size-5" strokeWidth={1.6} /></button>
@@ -154,6 +155,7 @@ function CommunitiesPage() {
 
       <StartCommunitySheet open={startOpen} onOpenChange={setStartOpen} onStarted={(location) => { refresh(); open(location); }} />
     </div>
+    </CommunityShareProvider>
   );
 }
 

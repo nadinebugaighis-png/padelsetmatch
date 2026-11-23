@@ -57,9 +57,9 @@ export function MemberGuide() {
     {
       title: t("shell.tab.me"),
       body: tr(
-        "Your profile, clubs and availability. Answer the Compatibility questions to meet players of your level and style.",
-        "Tu perfil, tus clubes y tu disponibilidad. Responde las preguntas de Compatibilidad para conocer jugadores de tu nivel y estilo.",
-        "Ton profil, tes clubs et tes disponibilités. Réponds aux questions de Compatibilité pour rencontrer des joueurs de ton niveau et de ton style.",
+        "Your profile, clubs and availability. Answer the Playing style questions to meet players of your level and style.",
+        "Tu perfil, tus clubes y tu disponibilidad. Responde las preguntas de Afinidad de juego para conocer jugadores de tu nivel y estilo.",
+        "Ton profil, tes clubs et tes disponibilités. Réponds aux questions de Style de jeu pour rencontrer des joueurs de ton niveau et de ton style.",
       ),
     },
     {

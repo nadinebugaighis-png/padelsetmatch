@@ -609,7 +609,7 @@ function QaRow() {
   const n = saved.size;
   return (
     <CollapsibleRow
-      title={tr("Compatibility", "Compatibilidad", "Compatibilité")}
+      title={tr("Playing style", "Afinidad de juego", "Style de jeu")}
       meta={query.isSuccess ? tr(`${n} of ${QA_TOTAL}`, `${n} de ${QA_TOTAL}`, `${n} sur ${QA_TOTAL}`) : undefined}
     >
       <QaAnswers />

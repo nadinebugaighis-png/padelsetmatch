@@ -693,8 +693,8 @@ const LINE_INPUT = "h-12 rounded-none border-0 border-b border-[var(--ink)]/18 b
 
 function OrDivider({ label }: { label: string }) {
   return (
-    <div className="my-7 flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/50">
-      <div className="h-px flex-1 bg-[var(--ink)]/12" /> {label} <div className="h-px flex-1 bg-[var(--ink)]/12" />
+    <div className="my-7 text-center text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/50">
+      {label}
     </div>
   );
 }

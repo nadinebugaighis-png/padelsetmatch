@@ -56,7 +56,7 @@ export function CommunityHeading({ view, locations, world, fallbackTitle, subtit
         <p className="mt-2 text-serif italic text-[var(--ink)]/82 text-[14px] sm:text-[15px]">
           {tr("Visiting", "De visita", "En visite")}
           {" · "}
-          <button type="button" onClick={() => setCommunityView(null)} className="underline underline-offset-4 decoration-[var(--ink)]/30 hover:decoration-[var(--ink)]">
+          <button type="button" onClick={() => setCommunityView(null)} className="text-[var(--ink)] hover:opacity-70 transition">
             {mine[0]
               ? tr(`Back to ${mine[0].label}`, `Volver a ${mine[0].label}`, `Retour à ${mine[0].label}`)
               : tr("Back home", "Volver", "Retour")}
@@ -64,7 +64,7 @@ export function CommunityHeading({ view, locations, world, fallbackTitle, subtit
         </p>
       ) : viewing && mine.length > 1 ? (
         <p className="mt-2 text-serif italic text-[var(--ink)]/82 text-[14px] sm:text-[15px]">
-          <button type="button" onClick={() => setCommunityView(null)} className="underline underline-offset-4 decoration-[var(--ink)]/30 hover:decoration-[var(--ink)]">
+          <button type="button" onClick={() => setCommunityView(null)} className="text-[var(--ink)] hover:opacity-70 transition">
             {tr("Show all my communities", "Ver todas mis comunidades", "Voir toutes mes communautés")}
           </button>
         </p>
@@ -90,7 +90,7 @@ export function CommunityVisitNote({ view, locations }: { view: string | null; l
     <p className="mt-2 text-serif italic text-[var(--ink)]/82 text-[14px]">
       {tr(`Visiting ${label}`, `De visita en ${label}`, `En visite à ${label}`)}
       {" · "}
-      <button type="button" onClick={() => setCommunityView(null)} className="underline underline-offset-4 decoration-[var(--ink)]/30 hover:decoration-[var(--ink)]">
+      <button type="button" onClick={() => setCommunityView(null)} className="text-[var(--ink)] hover:opacity-70 transition">
         {tr("Back to my communities", "Volver a mis comunidades", "Retour à mes communautés")}
       </button>
     </p>

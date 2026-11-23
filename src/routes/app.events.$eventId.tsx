@@ -30,6 +30,8 @@ import {
 import { toast } from "sonner";
 import { genderRuleAllows, genderRuleLabel, matchDuration, matchEndsAt, matchShareText, playtomicJoinLink } from "@/lib/match-rules";
 import { openExternal } from "@/lib/native";
+import { openMatchCalendar } from "@/components/AddToCalendar";
+import { canAddToCalendar } from "@/lib/match-calendar";
 import { Calendar, MapPin, Users, Send, ExternalLink, ArrowLeft, Share2, Pencil, Trash2, X, Check, UserPlus, Plus, Clock, MessageCircle, LogOut } from "lucide-react";
 import { useTr, useI18n } from "@/lib/i18n";
 
@@ -510,6 +512,11 @@ function EventDetail() {
               <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
                 <MapPin className="w-3.5 h-3.5" /> {tr("Directions", "Cómo llegar", "Itinéraire")}
               </a>
+              {(me?.iAmParticipant || iHost) && canAddToCalendar(event) && (
+                <button type="button" onClick={() => openMatchCalendar(event.id)} className="flex-1 h-10 inline-flex items-center justify-center gap-1.5 text-[var(--ink)] hover:bg-[var(--ink)]/5">
+                  <Calendar className="w-3.5 h-3.5" /> {tr("Add to calendar", "Al calendario", "Au calendrier")}
+                </button>
+              )}
               {showWhatsappBooking && (
                 <ClubWhatsAppBooking
                   clubName={event.club_name}

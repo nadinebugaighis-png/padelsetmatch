@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useTr } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 import { CourtIcon } from "@/components/CourtIcon";
+import wordmark from "@/assets/padel-set-match-wordmark.png.asset.json";
 
 const KEY = "member-guide-seen-v1";
 
@@ -9,9 +10,10 @@ export function openMemberGuide() {
   window.dispatchEvent(new Event("open-member-guide"));
 }
 
-/** First-visit "how to use the app" guide; reopen via openMemberGuide(). */
+/** First-visit "how to use the app" guide, one step per tab; reopen via openMemberGuide(). */
 export function MemberGuide() {
   const tr = useTr();
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -26,34 +28,77 @@ export function MemberGuide() {
     try { localStorage.setItem(KEY, "1"); } catch { /* ignore */ }
   };
 
-  const steps = [
-    [tr("Your area and clubs", "Tu zona y tus clubes", "Ton quartier et tes clubs"), tr("Add your neighbourhood and the club you play in, so you find and meet players there.", "Añade tu barrio y el club donde juegas para encontrar y conocer jugadores allí.", "Ajoute ton quartier et ton club pour trouver et rencontrer des joueurs sur place.")],
-    [tr("Connect", "Conecta", "Connecte-toi"), tr("Tap Connect on a player's card to invite them to play and to chat.", "Pulsa Conectar en la tarjeta de un jugador para invitarle a jugar y chatear.", "Touche Connecter sur la carte d'un joueur pour l'inviter à jouer et discuter.")],
-    [tr("The court symbol", "El símbolo de pista", "Le symbole du court"), tr("A small court on a player's card means they have access to free courts.", "Una pequeña pista en la tarjeta de un jugador significa que tiene acceso a pistas gratis.", "Un petit court sur la carte d'un joueur signifie qu'il a accès à des terrains gratuits.")],
-    [tr("Compatibility", "Compatibilidad", "Compatibilité"), tr("Answer a few questions to be paired with players of your level and vibe.", "Responde unas preguntas para emparejarte con jugadores de tu nivel y estilo.", "Réponds à quelques questions pour jouer avec des joueurs de ton niveau et de ton style.")],
-    [tr("Be the first", "Sé el primero", "Sois le premier"), tr("Be the first to join a match, so others can follow.", "Sé el primero en unirte a un partido, así los demás te siguen.", "Sois le premier à rejoindre un match, les autres suivront.")],
+  const steps: Array<{ title: string; body: string; court?: boolean }> = [
+    {
+      title: t("shell.tab.grid"),
+      body: tr(
+        "Players from your community. Each card shows how you match on court and off court. Tap Send a message to set up a game.",
+        "Jugadores de tu comunidad. Cada tarjeta muestra vuestra afinidad dentro y fuera de la pista. Pulsa Enviar un mensaje para organizar un partido.",
+        "Les joueurs de ta communauté. Chaque carte montre votre affinité sur le court et en dehors. Touche Envoyer un message pour organiser un match.",
+      ),
+    },
+    {
+      title: t("shell.tab.play"),
+      body: tr(
+        "Games at your own clubs and neighbourhood, nothing across town. Join in one tap or create your own, then add it to your calendar.",
+        "Partidos en tus clubes y tu zona, nada al otro lado de la ciudad. Únete con un toque o crea el tuyo, y añádelo a tu calendario.",
+        "Des matchs dans tes clubs et ton quartier, rien à l'autre bout de la ville. Rejoins en un geste ou crée le tien, puis ajoute-le à ton calendrier.",
+      ),
+    },
+    {
+      title: t("shell.tab.connect"),
+      body: tr(
+        "In Who can play?, tap the days and times you are free. Members nearby see you and can join. Community is the noticeboard for travel plans, coaches and questions.",
+        "En ¿Quién puede jugar?, marca los días y horas en que estás libre. Los miembros cercanos te ven y se apuntan. Comunidad es el tablón para viajes, entrenadores y preguntas.",
+        "Dans Qui peut jouer ?, choisis les jours et heures où tu es libre. Les membres proches te voient et te rejoignent. Communauté est le tableau pour les voyages, les coachs et les questions.",
+      ),
+    },
+    {
+      title: t("shell.tab.me"),
+      body: tr(
+        "Your profile, clubs and availability. Answer the Compatibility questions to meet players of your level and style.",
+        "Tu perfil, tus clubes y tu disponibilidad. Responde las preguntas de Compatibilidad para conocer jugadores de tu nivel y estilo.",
+        "Ton profil, tes clubs et tes disponibilités. Réponds aux questions de Compatibilité pour rencontrer des joueurs de ton niveau et de ton style.",
+      ),
+    },
+    {
+      title: tr("Free courts", "Pistas gratis", "Terrains gratuits"),
+      court: true,
+      body: tr(
+        "A small court on a player's card means they can host on a free court. Hosts can mark any game as Free court.",
+        "Una pequeña pista en la tarjeta de un jugador significa que puede organizar en una pista gratis. El anfitrión puede marcar cualquier partido como Pista gratis.",
+        "Un petit court sur la carte d'un joueur signifie qu'il peut organiser sur un terrain gratuit. L'hôte peut marquer n'importe quel match comme Terrain gratuit.",
+      ),
+    },
   ];
+
+  // The brand name is shown as the logo itself, inside the sentence.
+  const [before, after] =
+    lang === "es" ? ["Cómo funciona", ""] : lang === "fr" ? ["Comment fonctionne", ""] : ["How", "works"];
 
   return (
     <Dialog open={open} onOpenChange={(o) => (o ? setOpen(true) : close())}>
-      <DialogContent className="w-[88vw] max-w-sm sm:max-w-xl p-5 sm:p-10 gap-3 sm:gap-6 bg-[var(--paper)] border-[var(--gold)]/40 max-h-[75vh] sm:max-h-[88vh] overflow-y-auto rounded-2xl">
-        <DialogTitle className="text-serif text-[22px] sm:text-[32px] leading-tight text-[var(--ink)] font-normal">
-          {tr("How PadelSetMatch works", "Cómo funciona PadelSetMatch", "Comment fonctionne PadelSetMatch")}
+      <DialogContent className="w-[88vw] max-w-sm sm:max-w-xl p-6 sm:p-10 gap-4 sm:gap-6 bg-[var(--paper)] border-[var(--gold)]/40 max-h-[80vh] sm:max-h-[88vh] overflow-y-auto rounded-2xl">
+        <DialogTitle style={{ fontFamily: "var(--font-serif)", letterSpacing: "-0.01em" }} className="text-serif text-[21px] sm:text-[28px] leading-none text-[var(--ink)] font-normal flex flex-wrap items-center gap-x-2 gap-y-1.5 pr-6">
+          {before && <span>{before}</span>}
+          <img src={wordmark.url} alt="PadelSetMatch" className="h-[17px] sm:h-[24px] w-auto select-none" draggable={false} />
+          {after && <span>{after}</span>}
         </DialogTitle>
-        <ul className="space-y-3 sm:space-y-5">
-          {steps.map(([title, body], i) => (
-            <li key={i} >
-              <div>
-                <div className="flex items-center gap-2 text-[11px] sm:text-[13px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
-                  {title}
-                  {i === 2 && <CourtIcon className="w-5 h-3 sm:w-7 sm:h-4 shrink-0" strokeWidth={2} aria-hidden="true" />}
+        <ol className="divide-y divide-[var(--ink)]/14 border-y border-[var(--ink)]/14">
+          {steps.map((s, i) => (
+            <li key={s.title} className="flex gap-4 py-3 sm:py-4">
+              <span className="text-serif text-[15px] sm:text-[18px] leading-none text-[var(--ink)]/70 pt-0.5 w-4 shrink-0">{i + 1}</span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 text-[11px] sm:text-[12px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
+                  {s.title}
+                  {s.court && <CourtIcon className="w-5 h-3 sm:w-6 sm:h-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />}
                 </div>
-                <p className="text-[13px] sm:text-[16px] text-[var(--ink)]/84 leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">{body}</p>
+                <p className="text-[13.5px] sm:text-[15px] text-[var(--ink)]/86 leading-snug sm:leading-relaxed mt-1">{s.body}</p>
               </div>
             </li>
           ))}
-        </ul>
-        <button type="button" onClick={close} className="outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30 focus-visible:ring-offset-2 mt-1 sm:mt-2 w-full h-10 sm:h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] sm:text-[13px] uppercase tracking-[0.18em] font-semibold">
+        </ol>
+        <button type="button" onClick={close} className="outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30 focus-visible:ring-offset-2 w-full h-11 sm:h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[11px] sm:text-[13px] uppercase tracking-[0.18em] font-semibold">
           {tr("Enter the club", "Entrar al club", "Entrer dans le club")}
         </button>
       </DialogContent>

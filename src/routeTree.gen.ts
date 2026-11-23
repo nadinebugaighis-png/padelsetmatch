@@ -55,6 +55,7 @@ import { Route as AppEventsIndexRouteImport } from './routes/app.events.index'
 import { Route as AppEventsEventIdRouteImport } from './routes/app.events.$eventId'
 import { Route as AppEventsNewRouteImport } from './routes/app.events.new'
 import { Route as AppMatchesMatchIdRouteImport } from './routes/app.matches.$matchId'
+import { Route as ApiPublicCalendarEventIdRouteImport } from './routes/api/public/calendar.$eventId'
 import { Route as AppEventsEventIdEditRouteImport } from './routes/app.events.$eventId.edit'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -292,6 +293,12 @@ const AppMatchesMatchIdRoute = AppMatchesMatchIdRouteImport.update({
   path: '/$matchId',
   getParentRoute: () => AppMatchesRoute,
 } as any)
+const ApiPublicCalendarEventIdRoute =
+  ApiPublicCalendarEventIdRouteImport.update({
+    id: '/api/public/calendar/$eventId',
+    path: '/api/public/calendar/$eventId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppEventsEventIdEditRoute = AppEventsEventIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -355,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/competitions/': typeof AppCompetitionsIndexRoute
   '/app/events/': typeof AppEventsIndexRoute
+  '/api/public/calendar/$eventId': typeof ApiPublicCalendarEventIdRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -405,6 +413,7 @@ export interface FileRoutesByTo {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/competitions': typeof AppCompetitionsIndexRoute
   '/app/events': typeof AppEventsIndexRoute
+  '/api/public/calendar/$eventId': typeof ApiPublicCalendarEventIdRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -457,6 +466,7 @@ export interface FileRoutesById {
   '/app/matches/$matchId': typeof AppMatchesMatchIdRoute
   '/app/competitions/': typeof AppCompetitionsIndexRoute
   '/app/events/': typeof AppEventsIndexRoute
+  '/api/public/calendar/$eventId': typeof ApiPublicCalendarEventIdRoute
   '/app/events/$eventId/edit': typeof AppEventsEventIdEditRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -510,6 +520,7 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/competitions/'
     | '/app/events/'
+    | '/api/public/calendar/$eventId'
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -560,6 +571,7 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/competitions'
     | '/app/events'
+    | '/api/public/calendar/$eventId'
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -611,6 +623,7 @@ export interface FileRouteTypes {
     | '/app/matches/$matchId'
     | '/app/competitions/'
     | '/app/events/'
+    | '/api/public/calendar/$eventId'
     | '/app/events/$eventId/edit'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -642,6 +655,7 @@ export interface RootRouteChildren {
   SCodeRoute: typeof SCodeRoute
   PlayIndexRoute: typeof PlayIndexRoute
   ApiPublicPhotoRoute: typeof ApiPublicPhotoRoute
+  ApiPublicCalendarEventIdRoute: typeof ApiPublicCalendarEventIdRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -970,6 +984,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesMatchIdRouteImport
       parentRoute: typeof AppMatchesRoute
     }
+    '/api/public/calendar/$eventId': {
+      id: '/api/public/calendar/$eventId'
+      path: '/api/public/calendar/$eventId'
+      fullPath: '/api/public/calendar/$eventId'
+      preLoaderRoute: typeof ApiPublicCalendarEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/events/$eventId/edit': {
       id: '/app/events/$eventId/edit'
       path: '/edit'
@@ -1092,6 +1113,7 @@ const rootRouteChildren: RootRouteChildren = {
   SCodeRoute: SCodeRoute,
   PlayIndexRoute: PlayIndexRoute,
   ApiPublicPhotoRoute: ApiPublicPhotoRoute,
+  ApiPublicCalendarEventIdRoute: ApiPublicCalendarEventIdRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }

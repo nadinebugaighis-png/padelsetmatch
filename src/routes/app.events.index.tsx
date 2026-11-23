@@ -19,6 +19,8 @@ import { getMyProfile } from "@/lib/app.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, X, Trash2, Clock, Users, Send, Plus, SlidersHorizontal, ExternalLink } from "lucide-react";
 import { FriendSlot } from "@/components/FriendSlot";
+import { openMatchCalendar } from "@/components/AddToCalendar";
+import { canAddToCalendar } from "@/lib/match-calendar";
 import { CourtViewCard } from "@/components/CourtViewCard";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { photoSrc } from "@/lib/photo-src";
@@ -1056,6 +1058,15 @@ function MyMatchesList({
                       <div className="mt-1 text-[10.5px] uppercase tracking-[0.18em] text-[var(--ink)]/86">
                         {e.iAmHost ? tr("Host", "Anfitrión", "Hôte") : tr("Joined", "Unido", "Inscrit")} · {filled}/{e.capacity ?? 4}
                       </div>
+                      {canAddToCalendar(e) && (
+                        <button
+                          type="button"
+                          onClick={(ev) => { ev.stopPropagation(); openMatchCalendar(e.id); }}
+                          className="mt-1.5 text-[11px] text-[var(--ink)]/86 underline decoration-[var(--ink)]/30 underline-offset-[3px] hover:text-[var(--ink)]"
+                        >
+                          {tr("Add to calendar", "Añadir al calendario", "Ajouter au calendrier")}
+                        </button>
+                      )}
                     </div>
                     <div className="flex flex-col gap-1.5 shrink-0" onClick={(ev) => ev.stopPropagation()}>
                       {e.iAmHost ? (

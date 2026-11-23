@@ -48,9 +48,9 @@ export function MemberGuide() {
     {
       title: t("shell.tab.connect"),
       body: tr(
-        "In Who can play?, tap the days and times you are free. Members nearby see you and can join. Community is the noticeboard for travel plans, coaches and questions.",
-        "En ¿Quién puede jugar?, marca los días y horas en que estás libre. Los miembros cercanos te ven y se apuntan. Comunidad es el tablón para viajes, entrenadores y preguntas.",
-        "Dans Qui peut jouer ?, choisis les jours et heures où tu es libre. Les membres proches te voient et te rejoignent. Communauté est le tableau pour les voyages, les coachs et les questions.",
+        "In Who can play?, tap the days and times you are free. Members nearby see you and can join.",
+        "En ¿Quién puede jugar?, marca los días y horas en que estás libre. Los miembros cercanos te ven y se apuntan.",
+        "Dans Qui peut jouer ?, choisis les jours et heures où tu es libre. Les membres proches te voient et te rejoignent.",
       ),
     },
     {

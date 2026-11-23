@@ -1085,7 +1085,7 @@ function Discover() {
                                   {visible.map((r) => (
                                     <li key={r.q.id} className="flex items-baseline justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
                                       <span className="text-[13px] text-[var(--ink)]/66 leading-snug">{factLabel(r.q.id, r.q.q[lang], tr)}</span>
-                                      <span className="text-[13px] text-[var(--ink)] leading-snug text-right">{r.opt[lang]}</span>
+                                      <span className="text-[13px] text-[var(--ink)] leading-snug text-right">{noDash(r.opt[lang])}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -1097,7 +1097,7 @@ function Discover() {
                                 {label(tr("On court", "En pista", "Sur le court"))}
                                 <ul className="space-y-2">
                                   {complements.map((c) => (
-                                    <li key={c.key} className="text-[13px] text-[var(--ink)] leading-snug">{c.text[lang]}</li>
+                                    <li key={c.key} className="text-[13px] text-[var(--ink)] leading-snug">{noDash(c.text[lang])}</li>
                                   ))}
                                 </ul>
                               </div>
@@ -1335,4 +1335,9 @@ function factLabel(id: string, question: string, tr: (en: string, es: string, fr
     case "goal": return tr("This season", "Esta temporada", "Cette saison");
     default: return question.replace(/\s*(You|Tú|Vous|Toi|Tu)?\s*(…|\.\.\.)\s*$/u, "").replace(/[.,:?¿]\s*$/, "").trim();
   }
+}
+
+// Never show dashes in card copy; saved answer text keeps them, so swap at display time.
+function noDash(t: string): string {
+  return t.replace(/\s*[\u2014\u2013]\s*/g, ", ");
 }

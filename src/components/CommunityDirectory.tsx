@@ -220,7 +220,7 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
       </div>
 
       <button type="button" onClick={onStart}
-        className="mt-8 w-full flex items-center gap-4 rounded-2xl border border-dashed border-[var(--ink)]/35 px-5 py-4 text-left transition active:scale-[0.99] active:bg-[var(--ink)]/[0.03] hover:border-[var(--ink)]/55">
+        className="mt-8 w-full flex items-center gap-4 rounded-2xl bg-[var(--card)] shadow-[var(--shadow-card)] border border-dashed border-[var(--ink)]/35 px-5 py-4 text-left transition active:scale-[0.99] hover:border-[var(--ink)]/55">
         <span className="grid size-9 shrink-0 place-items-center rounded-full border border-[var(--ink)]/30">
           <Plus className="size-4 text-[var(--ink)]" strokeWidth={1.6} aria-hidden />
         </span>

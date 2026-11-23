@@ -512,7 +512,7 @@ function Composer({ post, onClose }: { post: ConnectPost | null; onClose: () => 
 
   return (
     <div className="fixed inset-0 z-50 bg-[var(--ink)]/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 max-h-[92vh] overflow-y-auto shadow-2xl">
+      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 max-h-[min(92vh,92%)] overflow-y-auto shadow-2xl">
         <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
         <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/16 px-5 py-3 flex items-center justify-between">
           <h2 className="text-serif text-xl text-[var(--ink)]">
@@ -621,7 +621,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
 
   return (
     <div className="fixed inset-0 z-50 bg-[var(--ink)]/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 max-h-[92vh] flex flex-col shadow-2xl">
+      <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-lg bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 max-h-[min(92vh,92%)] flex flex-col shadow-2xl">
         <div className="sm:hidden mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-[var(--ink)]/15" />
         <div className="sticky top-0 bg-[var(--paper)]/95 backdrop-blur border-b border-[var(--ink)]/16 px-5 py-3 flex items-center justify-between">
           <h2 className="text-serif text-lg text-[var(--ink)] truncate">{post.title}</h2>

@@ -52,7 +52,7 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
     <div role="dialog" aria-modal="true" aria-label={tr("Where are you playing?", "¿Dónde vas a jugar?", "Où vas-tu jouer ?")}
       className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-[var(--ink)]/45 backdrop-blur-[2px]" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()}
-        className="w-full sm:max-w-md rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 pt-5 animate-in slide-in-from-bottom-6 duration-200"
+        className="w-full sm:max-w-md max-h-[92%] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 pt-5 animate-in slide-in-from-bottom-6 duration-200"
         style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
         <div className="flex items-center justify-between">
           <h2 className="text-serif text-[20px] sm:text-[24px] text-[var(--ink)]">{tr("Where are you playing?", "¿Dónde vas a jugar?", "Où vas-tu jouer ?")}</h2>

@@ -1153,7 +1153,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full sm:max-w-lg max-h-[92vh] sm:max-h-[85vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 bg-[var(--paper)] shadow-2xl overflow-hidden"
+        className="w-full sm:max-w-lg max-h-[min(92vh,100%)] sm:max-h-[85vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-[var(--ink)]/16 bg-[var(--paper)] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

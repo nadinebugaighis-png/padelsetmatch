@@ -251,7 +251,7 @@ function CoachesPage() {
 
       {confirm && (
         <div role="dialog" aria-modal="true" data-state="open" className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-[var(--ink)]/45" onClick={() => setConfirm(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md max-h-[92vh] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 sm:px-6 pt-3" style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md max-h-[min(92vh,92%)] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 sm:px-6 pt-3" style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
             <div aria-hidden className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--ink)]/15 sm:hidden" />
             <div className="flex items-start gap-3">
               <PlayerPhoto src={person(confirm.coach_profile_id)?.photo_url ?? undefined} seed={confirm.coach_profile_id} alt="" className="size-12 shrink-0 rounded-full object-cover" />

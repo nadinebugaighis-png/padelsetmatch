@@ -98,7 +98,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
   return (
     <div className="fixed inset-0 z-[80] flex items-end sm:items-center sm:justify-center bg-black/50" onClick={onClose}>
       <div
-        className="w-full sm:max-w-md bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto text-[var(--ink)]"
+        className="w-full sm:max-w-md bg-[var(--paper)] rounded-t-3xl sm:rounded-3xl max-h-[min(92vh,92%)] overflow-y-auto text-[var(--ink)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-[var(--paper)] flex items-center justify-between px-5 pt-4 pb-3 border-b border-[var(--ink)]/16">

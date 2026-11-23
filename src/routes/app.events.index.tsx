@@ -1152,7 +1152,7 @@ function MyMatchSheet({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[var(--ink)]/40" onClick={onClose}>
       <div
         onClick={(ev) => ev.stopPropagation()}
-        className="w-full sm:max-w-md bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/22 p-5 space-y-4 max-h-[90vh] overflow-y-auto"
+        className="w-full sm:max-w-md bg-[var(--paper)] border-t sm:border sm:rounded-2xl border-[var(--ink)]/22 p-5 space-y-4 max-h-[min(90vh,92%)] overflow-y-auto"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">

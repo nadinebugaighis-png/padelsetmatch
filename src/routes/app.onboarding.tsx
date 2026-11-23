@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { presetByKey } from "@/lib/location-presets";
 import { COUNTRY_NAMES, citiesFor, areasFor } from "@/lib/locations";
 import { toast } from "sonner";
-import { Camera, Check, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
+import { Camera, Check, ChevronLeft, ChevronRight, Lock, Plus, X } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { loadGuestDraft, clearGuestDraft } from "@/lib/guest-draft";
 import { SearchableChips } from "@/components/SearchableChips";
@@ -385,7 +385,7 @@ function Onboarding() {
     ([
       !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
       age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
-      !gender ? { key: "gender", label: tr("men's or women's", "masculino o femenino", "masculin ou féminin") } : null,
+      !gender ? { key: "gender", label: tr("who you'd like to play", "con quién quieres jugar", "avec qui tu veux jouer") } : null,
       null,
       null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
@@ -850,9 +850,9 @@ function Onboarding() {
       </Section>
 
       {/* Who you match with */}
-      <Section title={tr("Your game", "Tu juego", "Ton jeu")} sub={tr("So your games are balanced.", "Para que tus partidos estén equilibrados.", "Pour des matchs équilibrés.")}>
+      <Section title={tr("Who you play with", "Con quién juegas", "Avec qui tu joues")} sub={tr("Only used to suggest games. Never shown on your profile.", "Solo para sugerirte partidos. Nunca se muestra en tu perfil.", "Uniquement pour te suggérer des matchs. Jamais affiché sur ton profil.")} icon={<Lock className="w-3 h-3" />}>
         <div data-field="age" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("age")}`}>
-          <FieldLabel>{tr("Age group", "Edad", "Tranche d'âge")}</FieldLabel>
+          <FieldLabel>{tr("Your age", "Tu edad", "Ton âge")}</FieldLabel>
           <div className="mt-1 grid grid-cols-5 overflow-hidden rounded-xl border border-[var(--ink)]/22">
             {AGE_BRACKETS.map((b, idx) => {
               const mid = bracketMidpoint(b);
@@ -872,24 +872,23 @@ function Onboarding() {
             })}
           </div>
         </div>
-        <div data-field="gender" className={`py-3 ${profileQ.data !== null ? "border-b border-[var(--ink)]/18" : ""} ${fieldCls("gender")}`}>
-          <FieldLabel>{tr("You play", "Juegas", "Tu joues")}</FieldLabel>
+        <div data-field="gender" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("gender")}`}>
+          <FieldLabel>{tr("I'd like to play", "Quiero jugar", "Je veux jouer")}</FieldLabel>
           <div className="mt-1 flex flex-wrap gap-2">
             {/* Padel categories, not identity labels; legacy "non-binary" stays visible only to players who already chose it. */}
-            {(["man", "woman", "self-describe", ...(gender === "non-binary" ? ["non-binary"] as const : [])] as Gender[]).map((g) => (
+            {(["woman", "man", "self-describe", ...(gender === "non-binary" ? ["non-binary"] as const : [])] as Gender[]).map((g) => (
               <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)} className={`h-9 px-4 rounded-full border text-[14px] first-letter:uppercase transition-colors ${gender === g ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/88"}`}>
-                {g === "man" ? tr("Men's", "Masculino", "Masculin")
-                  : g === "woman" ? tr("Women's", "Femenino", "Féminin")
-                  : g === "self-describe" ? tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")
+                {g === "man" ? tr("Men", "Masculino", "Masculin")
+                  : g === "woman" ? tr("Ladies", "Femenino", "Féminin")
+                  : g === "self-describe" ? tr("Any", "Cualquiera", "Peu importe")
                   : label(g)}
               </button>
             ))}
           </div>
         </div>
-        {/* New players start on any age; the range is tuned later from Home filters or here when editing. */}
-        {profileQ.data !== null && <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>
+        <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>
           <div className="flex items-center justify-between">
-            <FieldLabel>{tr("Play with ages", "Jugar con edades", "Jouer avec des âges")}</FieldLabel>
+            <FieldLabel>{tr("Players aged", "Edad de los jugadores", "Âge des joueurs")}</FieldLabel>
             <span className="text-[14px] text-[var(--ink)]">{ageRangeText}</span>
           </div>
           <SliderPrimitive.Root
@@ -905,7 +904,7 @@ function Onboarding() {
               setAgeMin(lo <= 18 ? null : lo);
               setAgeMax(hi >= 99 ? null : hi);
             }}
-            aria-label={tr("Play with ages", "Jugar con edades", "Jouer avec des âges")}
+            aria-label={tr("Players aged", "Edad de los jugadores", "Âge des joueurs")}
           >
             <SliderPrimitive.Track className="relative h-px w-full grow bg-[var(--ink)]/20">
               <SliderPrimitive.Range className="absolute h-full bg-[var(--ink)]" />
@@ -913,7 +912,7 @@ function Onboarding() {
             <SliderPrimitive.Thumb aria-label={tr("Youngest", "Mínima", "Minimum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
             <SliderPrimitive.Thumb aria-label={tr("Oldest", "Máxima", "Maximum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
           </SliderPrimitive.Root>
-        </div>}
+        </div>
       </Section>
 
       {/* Background */}

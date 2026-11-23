@@ -1,0 +1,1 @@
+- Private 1:1 chats (/app/matches/$matchId) open full screen on phones: the app shell hides its top bar and bottom menu via inChat, and safety actions live in the chat's ··· menu, so the conversation keeps the whole screen.

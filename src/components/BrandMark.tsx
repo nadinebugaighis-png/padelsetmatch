@@ -14,7 +14,7 @@ export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
       ? "h-5 md:h-6"
       : size === "lg"
       ? "h-9 md:h-11 lg:h-12"
-      : "h-7 md:h-8 lg:h-9";
+      : "h-8 md:h-9 lg:h-10";
 
   return (
     <Link

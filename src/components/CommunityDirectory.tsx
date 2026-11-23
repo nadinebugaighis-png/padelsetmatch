@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { Check, ChevronRight, Mail, MessageCircle, Plus, Search } from "lucide-react";
+import { Check, ChevronRight, Mail, MessageCircle, Plus } from "lucide-react";
 import type { Community, Directory } from "@/lib/communities";
 import { openExternal, openMailTo } from "@/lib/native";
 import { useTr } from "@/lib/i18n";
@@ -8,7 +7,6 @@ export const CONCIERGE_WHATSAPP = "34620296060";
 export const CONCIERGE_EMAIL = "Nadine@padelsetmatch.com";
 
 const smallCaps = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/76";
-const fold = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 export function useMembersLabel() {
   const tr = useTr();
@@ -58,7 +56,7 @@ export function CommunityRow({ c, onOpen, onJoin, joining, current }: {
   );
 }
 
-/** All communities grouped by country and city, biggest first, with search. */
+/** All communities grouped by country and city, biggest first. */
 export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, onStart, startLabel }: {
   directory: Directory;
   onOpen: (c: Community) => void;
@@ -68,35 +66,11 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
   startLabel: string;
 }) {
   const tr = useTr();
-  const [q, setQ] = useState("");
-  const countries = useMemo(() => {
-    const needle = fold(q.trim());
-    if (!needle) return directory.countries;
-    return directory.countries
-      .map((co) => ({
-        ...co,
-        cities: co.cities
-          .map((ci) => ({
-            ...ci,
-            communities: fold(`${co.country} ${ci.city}`).includes(needle)
-              ? ci.communities
-              : ci.communities.filter((c) => fold(c.label).includes(needle)),
-          }))
-          .filter((ci) => ci.communities.length > 0),
-      }))
-      .filter((co) => co.cities.length > 0);
-  }, [directory, q]);
+  const countries = directory.countries;
 
   return (
     <div>
-      <label className="flex items-center gap-2.5 border-b border-[var(--ink)]/22 h-11 focus-within:border-[var(--ink)]/45 transition">
-        <Search className="size-4 text-[var(--ink)]/70" strokeWidth={1.6} />
-        <input value={q} onChange={(e) => setQ(e.target.value)}
-          placeholder={tr("Search a country, city or area", "Busca un país, ciudad o zona", "Chercher un pays, une ville ou un quartier")}
-          className="w-full bg-transparent text-[15px] text-[var(--ink)] placeholder:text-[var(--ink)]/55 placeholder:italic outline-none" />
-      </label>
-
-      <div className="mt-6 space-y-8">
+      <div className="space-y-8">
         {countries.map((co) => (
           <section key={co.country}>
             <h3 className={smallCaps}>{co.country}</h3>
@@ -121,11 +95,6 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
             </div>
           </section>
         ))}
-        {countries.length === 0 && (
-          <p className="py-6 text-center text-serif italic text-[15px] text-[var(--ink)]/76">
-            {tr("No community there yet. Start the first one.", "Aún no hay comunidad ahí. Crea la primera.", "Pas encore de communauté ici. Lance la première.")}
-          </p>
-        )}
       </div>
 
       <button type="button" onClick={onStart}
@@ -135,9 +104,6 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-serif text-[18px] leading-tight text-[var(--ink)]">{startLabel}</span>
-          <span className="mt-1 block text-serif italic text-[13.5px] text-[var(--ink)]/78">
-            {tr("Your neighbourhood, club or city. You become its founder.", "Tu barrio, club o ciudad. Serás su fundador.", "Ton quartier, club ou ville. Tu en deviens le fondateur.")}
-          </span>
         </span>
       </button>
 
@@ -155,9 +121,6 @@ export function ConciergeNote({ community }: { community?: string }) {
   return (
     <div className="mt-10 border-t border-[var(--ink)]/16 pt-6 text-center">
       <p className={smallCaps}>{tr("Founders and organisers", "Fundadores y organizadores", "Fondateurs et organisateurs")}</p>
-      <p className="mt-2 text-serif italic text-[15px] text-[var(--ink)]/82">
-        {tr("Speak to Nadine directly. She will help you launch.", "Habla directamente con Nadine. Te ayudará a lanzarla.", "Parle directement à Nadine. Elle t'aidera à la lancer.")}
-      </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2.5">
         <button type="button" className={pill} onClick={() => void openExternal(`https://wa.me/${CONCIERGE_WHATSAPP}?text=${encodeURIComponent(text)}`)}>
           <MessageCircle className="size-3.5" strokeWidth={1.6} aria-hidden />WhatsApp

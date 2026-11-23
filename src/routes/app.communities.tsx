@@ -78,9 +78,6 @@ function CommunitiesPage() {
         <header className="mt-1">
           <div className={smallCaps}>PadelSetMatch</div>
           <h1 className="mt-2 text-serif text-[28px] sm:text-5xl leading-none text-[var(--ink)]">{tr("Communities", "Comunidades", "Communautés")}</h1>
-          <p className="mt-2 text-serif italic text-[14px] sm:text-[17px] text-[var(--ink)]/78">
-            {tr("Your people at home, and wherever you travel.", "Tu gente en casa y allá donde viajes.", "Tes partenaires chez toi, et partout où tu voyages.")}
-          </p>
         </header>
 
         {dirQ.isPending ? (
@@ -136,10 +133,7 @@ function CommunitiesPage() {
             )}
 
             <section className="mt-10">
-              <div className="flex items-baseline justify-between">
-                <h2 className={smallCaps}>{tr("All communities", "Todas las comunidades", "Toutes les communautés")}</h2>
-                <span className="text-serif italic text-[12.5px] text-[var(--ink)]/72">{tr("Tap to visit", "Toca para visitar", "Touche pour visiter")}</span>
-              </div>
+              <h2 className={smallCaps}>{tr("All communities", "Todas las comunidades", "Toutes les communautés")}</h2>
               <div className="mt-3">
                 <CommunityDirectoryList
                   directory={dirQ.data}
@@ -196,9 +190,7 @@ function StartCommunitySheet({ open, onOpenChange, onStarted }: { open: boolean;
                     : tr(`${started.label} is live`, `${started.label} ya está en marcha`, `${started.label} est lancée`)}
                 </div>
               </DrawerTitle>
-              <DrawerDescription className="mt-1.5 text-center text-serif italic text-[15px] leading-relaxed text-[var(--ink)]/80">
-                {tr("Invite your padel circle to join you.", "Invita a tu círculo de pádel a unirse.", "Invite ton cercle de padel à te rejoindre.")}
-              </DrawerDescription>
+              <DrawerDescription className="sr-only">{started.label}</DrawerDescription>
               <button type="button" onClick={() => { const l = started.location; close(false); onStarted(l); }}
                 className="mt-6 mx-auto w-full max-w-[260px] h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] flex items-center justify-center transition active:scale-[0.98]">
                 {tr("Open my community", "Abrir mi comunidad", "Ouvrir ma communauté")}
@@ -210,9 +202,7 @@ function StartCommunitySheet({ open, onOpenChange, onStarted }: { open: boolean;
               <DrawerTitle asChild>
                 <div className="text-serif text-[24px] leading-tight text-[var(--ink)] font-normal text-center">{tr("Start a community", "Crea una comunidad", "Lance une communauté")}</div>
               </DrawerTitle>
-              <DrawerDescription className="mt-1.5 text-center text-serif italic text-[15px] leading-relaxed text-[var(--ink)]/80">
-                {tr("Where do you and your friends play?", "¿Dónde jugáis tú y tus amigos?", "Où jouez-vous, tes amis et toi ?")}
-              </DrawerDescription>
+              <DrawerDescription className="sr-only">{tr("Start a community", "Crea una comunidad", "Lance une communauté")}</DrawerDescription>
               <div className="mt-6 space-y-5">
                 <label className="block">
                   <span className={label}>{tr("Country", "País", "Pays")}</span>
@@ -234,9 +224,6 @@ function StartCommunitySheet({ open, onOpenChange, onStarted }: { open: boolean;
                 className="mt-7 mx-auto w-full max-w-[260px] h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] flex items-center justify-center transition active:scale-[0.98] disabled:opacity-45">
                 {startM.isPending ? tr("Starting…", "Creando…", "Lancement…") : tr("Start community", "Crear comunidad", "Lancer")}
               </button>
-              <p className="mt-3 text-center text-serif italic text-[13px] text-[var(--ink)]/72">
-                {tr("If it already exists, you simply join it.", "Si ya existe, simplemente te unes.", "Si elle existe déjà, tu la rejoins.")}
-              </p>
             </form>
           )}
         </div>

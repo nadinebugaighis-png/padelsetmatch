@@ -6,18 +6,18 @@ import { CourtViewCard } from "@/components/CourtViewCard";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { CURATED_QUESTIONS } from "@/lib/daily-questions";
-import { offCourtScore, pairLabel } from "@/lib/pair-label";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, MessageCircle, ChevronDown, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus } from "lucide-react";
+import { X, Flag, Shield, ChevronDown, MoreHorizontal, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
 import { CourtIcon } from "@/components/CourtIcon";
 import { MemberGuide } from "@/components/MemberGuide";
 import { GearShelf } from "@/components/GearShelf";
-import { DailyQuestionCard, UnlockMatchQuestions } from "@/components/PadelQuestions";
+import { DailyQuestionCard } from "@/components/PadelQuestions";
 import { UNLOCK_MIN_ANSWERS } from "@/lib/daily-questions";
 
 import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venues.functions";
@@ -188,7 +188,8 @@ function Discover() {
   const compatQ = useQuery({
     queryKey: ["ai-compat", preview?.id, lang],
     queryFn: () => compatFn({ data: { otherProfileId: preview!.id, lang } }),
-    enabled: !!preview?.id && preview?.id !== feedQ.data?.me?.id && !!qaQ.data && !needsUnlock,
+    // The player card no longer shows the AI read (padel facts only), so it is not fetched here.
+    enabled: SHOW_AI_READ && !!preview?.id && preview?.id !== feedQ.data?.me?.id && !!qaQ.data && !needsUnlock,
     staleTime: 1000 * 60 * 60,
     retry: false,
   });
@@ -196,7 +197,7 @@ function Discover() {
   // so tapping a card shows the read instantly instead of waiting on the AI.
   const warmIds = (feedQ.data?.candidates ?? []).slice(0, 12).map((c) => c.id).join(",");
   useEffect(() => {
-    if (!warmIds || !qaQ.data || needsUnlock) return;
+    if (!SHOW_AI_READ || !warmIds || !qaQ.data || needsUnlock) return;
     let cancelled = false;
     const ids = warmIds.split(",");
     const run = async () => {
@@ -969,6 +970,24 @@ function Discover() {
             return (
               <>
                 <DialogTitle className="sr-only">{preview.first_name}</DialogTitle>
+                {!isSelf && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      className="absolute right-11 top-3 z-10 w-7 h-7 rounded-full bg-[var(--paper)]/90 flex items-center justify-center text-[var(--ink)]/70 hover:text-[var(--ink)] focus:outline-none"
+                      aria-label={tr("More options", "Más opciones", "Plus d'options")}
+                    >
+                      <MoreHorizontal className="w-4 h-4" strokeWidth={1.6} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="min-w-[140px] bg-[var(--paper)] border-[var(--card-edge)] text-[var(--ink)]">
+                      <DropdownMenuItem onSelect={() => handleBlock(preview.id, preview.first_name)} className="gap-2 text-[13px]">
+                        <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => handleReport(preview.id, preview.first_name)} className="gap-2 text-[13px]">
+                        <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
                   {/* Photo — polaroid-style white frame, previous size, no gold */}
                   <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
@@ -991,7 +1010,7 @@ function Discover() {
 
                   {/* Body — scrollable on desktop */}
                   <div className="lg:w-[58%] lg:overflow-y-auto">
-                    <div className="px-5 pt-5 pb-28 lg:px-8 lg:pt-8 lg:pb-24 space-y-4">
+                    <div className="px-5 pt-5 pb-8 lg:px-8 lg:pt-8 lg:pb-10 space-y-4">
                       {/* Programme header */}
                       <div className="text-center lg:text-left">
                         <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{[preview.zone, playerLevel(preview.level, preview.level_rating, tr)].filter(Boolean).join(" · ")}</div>
@@ -1031,164 +1050,69 @@ function Discover() {
                         <CoachBadgePanel coachName={preview.first_name} />
                       )}
 
-                      {isSelf ? (
-                        <Link
-                          to="/app/profile"
-                          onClick={closePreview}
-                          className="w-full h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.12em] text-[11px] flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110 shadow-[0_12px_40px_-8px_rgba(15,62,46,0.35)]"
-                        >
-                          {tr("Edit profile", "Editar perfil", "Modifier le profil")}
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
-                            setIntroText(""); setIntroOpen(true);
-                          }}
-                          className="mx-auto lg:mx-0 w-full max-w-[260px] h-10 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] whitespace-nowrap flex items-center justify-center gap-2 transition active:scale-[0.98] hover:brightness-110"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.6} />
-                          {tr("Send a message", "Enviar un mensaje", "Envoyer un message")}
-                        </button>
-                      )}
-
-                      {/* Playing style: on/off court scores, a sporty pair label and shared answers as plain rows; pairings and AI notes behind More. No AI headline, it read too poetic. */}
+                      {/* Tu partida: one game-fit line, then padel facts as plain rows (three, rest behind More). No off-court score, no AI prose: it read like a dating profile. */}
                       {!isSelf && (() => {
-                        const all = cardsQ.data?.cards ?? [];
-                        const complements = (cardsQ.data?.complements ?? []).slice(0, 2);
                         const resolve = (c: { id: string; option: number }) => {
                           const q = CURATED_QUESTIONS.find((x) => x.id === c.id);
                           const opt = q?.options[c.option];
-                          return q && opt ? { q, opt } : null;
+                          return q && opt ? { q, opt, shared: (c as { shared?: boolean }).shared } : null;
                         };
-                        const shared = all.filter((c) => c.shared).map(resolve).filter((r): r is NonNullable<typeof r> => !!r).slice(0, 2);
-                        const character = all.filter((c) => !c.shared).map(resolve).filter((r): r is NonNullable<typeof r> => !!r);
+                        const facts = (cardsQ.data?.cards ?? []).map(resolve).filter((r): r is NonNullable<typeof r> => !!r)
+                          .sort((x, y) => Number(!!y.shared) - Number(!!x.shared));
+                        const complements = (cardsQ.data?.complements ?? []).slice(0, 2);
                         const showFull = fullReadFor === preview.id;
-                        const data = compatQ.data;
-                        const noEmoji = (t: string) => t.replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{1F3FB}-\u{1F3FF}]/gu, "").replace(/\s{2,}/g, " ").trim();
-                        const bullets = (data ? (data.sub_scores?.highlights?.length ? data.sub_scores.highlights : data.reasons) ?? [] : []).map(noEmoji).filter(Boolean);
-                        const hasMore = complements.length > 0 || (!!data && (bullets.length > 0 || !!data.friction)) || character.length > 0;
-                        const offCourtRaw = data?.sub_scores?.personality ?? null;
-                        const offCourt = offCourtScore(offCourtRaw, (data as { their_answers?: number } | undefined)?.their_answers);
-                        const offCourtWaiting = !!data && offCourtRaw != null && offCourt == null;
-                        const pairKind = pairLabel(preview.score, offCourt);
-                        const pairTag = pairKind === "full_set" ? tr("The full set", "El set completo", "Le set complet")
-                          : pairKind === "kindred" ? tr("Great company", "Buena compañía", "Bonne compagnie")
-                          : pairKind === "court" ? tr("Strong on court", "Fuertes en pista", "Solides sur le court")
-                          : null;
-                        // Question prompts end with "You…" or "…"; drop that tail so each row reads as a plain label.
-                        const prompt = (t: string) => t.replace(/\s*(You|Tú|Vous|Tu)?\s*(…|\.\.\.)\s*$/u, "").replace(/[.,:]\s*$/, "").trim();
-                        const heading = (children: string) => (
-                          <div className="mb-3 text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/70">{children}</div>
+                        const visible = showFull ? facts : facts.slice(0, 3);
+                        const hasMore = facts.length > 3 || complements.length > 0;
+                        const label = (children: string) => (
+                          <div className="mb-3 text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/62">{children}</div>
                         );
-                        const row = (label: string, value: string, key: string) => (
-                          <li key={key} className="flex items-baseline justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
-                            <span className="text-[12px] text-[var(--ink)]/70 leading-snug">{label}</span>
-                            <span className="text-[13px] font-medium text-[var(--ink)] leading-snug text-right">{value}</span>
-                          </li>
-                        );
-                        const section = "border-t border-[var(--card-edge)] py-5";
+                        const section = "border-t border-[var(--card-edge)] pt-5";
                         return (
-                          <div className="mt-2 rounded-2xl border border-[var(--card-edge)] shadow-[var(--shadow-card)] px-5">
-                            <div className="pt-5 pb-5 text-center">
-                              <span className="block leading-none text-[10px] uppercase tracking-[0.32em] text-[var(--ink)]/70">{tr("Playing style", "Afinidad de juego", "Style de jeu")}</span>
-                              {!needsUnlock && (
-                                <div className="mt-4 grid grid-cols-2 divide-x divide-[var(--card-edge)]">
-                                  {[
-                                    { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
-                                    { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
-                                  ].map((s) => (
-                                    <div key={s.key} className="px-3">
-                                      {s.value != null ? (
-                                        <div className="text-serif text-[34px] leading-none text-[var(--ink)] tabular-nums">
-                                          {s.value}<span className="text-[15px] text-[var(--ink)]/70 ml-0.5">%</span>
-                                        </div>
-                                      ) : s.key === "off" && offCourtWaiting ? (
-                                        <div className="text-[12px] text-[var(--ink)]/78 leading-snug">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
-                                      ) : s.key === "off" && compatQ.isLoading ? (
-                                        <div className="text-serif text-[34px] leading-none text-[var(--ink)]/30">·</div>
-                                      ) : null}
-                                      <div className="mt-2 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/70">{s.label}</div>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-                              {!needsUnlock && pairTag && (
-                                <div className="mt-4 inline-flex items-center rounded-full border border-[var(--ink)]/20 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/84">{pairTag}</div>
-                              )}
-                            </div>
-
-                            {needsUnlock && (
-                              <div className={section + " text-center"}>
-                                <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
+                          <div className="space-y-6 pt-2">
+                            {preview.score != null && (
+                              <div className={section}>
+                                {label(tr("Your game", "Tu partida", "Ta partie"))}
+                                <p className="text-[14px] text-[var(--ink)]">
+                                  {tr("Game fit", "Nivel de juego compatible", "Jeu compatible")}<span className="text-[var(--ink)]/50"> · </span><span className="tabular-nums font-medium">{preview.score}%</span>
+                                </p>
                               </div>
                             )}
 
-                            {!needsUnlock && shared.length > 0 && (
+                            {visible.length > 0 && (
                               <div className={section}>
-                                {heading(tr("In common", "En común", "En commun"))}
+                                {label(tr("Playing style", "Estilo de juego", "Style de jeu"))}
                                 <ul className="divide-y divide-[var(--card-edge)]">
-                                  {shared.map((r) => row(prompt(r.q.q[lang]), r.opt[lang], r.q.id))}
+                                  {visible.map((r) => (
+                                    <li key={r.q.id} className="flex items-baseline justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
+                                      <span className="text-[13px] text-[var(--ink)]/66 leading-snug">{factLabel(r.q.id, r.q.q[lang], tr)}</span>
+                                      <span className="text-[13px] text-[var(--ink)] leading-snug text-right">{r.opt[lang]}</span>
+                                    </li>
+                                  ))}
                                 </ul>
                               </div>
                             )}
 
-                            {!needsUnlock && hasMore && (
-                              <div className="border-t border-[var(--card-edge)]">
-                                {showFull && (
-                                  <div className="pt-5 space-y-5">
-                                    {complements.length > 0 && (
-                                      <div>
-                                        {heading(tr("On court together", "Juntos en pista", "Ensemble sur le court"))}
-                                        <ul className="space-y-2">
-                                          {complements.map((c) => (
-                                            <li key={c.key} className="flex gap-3 text-[13px] text-[var(--ink)]/88 leading-snug">
-                                              <span aria-hidden className="mt-[0.65em] h-px w-3 shrink-0 bg-[var(--ink)]/40" />
-                                              <span>{c.text[lang]}</span>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-                                    )}
-                                    {data && bullets.length > 0 && (
-                                      <div>
-                                        {heading(tr("Good to know", "Para saber", "Bon à savoir"))}
-                                        <ul className="space-y-2">
-                                          {bullets.slice(0, 3).map((b, i) => (
-                                            <li key={i} className="flex gap-3 text-[13px] text-[var(--ink)]/88 leading-snug">
-                                              <span aria-hidden className="mt-[0.65em] h-px w-3 shrink-0 bg-[var(--ink)]/40" />
-                                              <span>{b}</span>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                        {data.friction && (
-                                          <p className="mt-3 text-[13px] text-[var(--ink)]/84 leading-snug">
-                                            <span className="font-medium">{tr("Worth knowing:", "A tener en cuenta:", "À savoir :")}</span> {noEmoji(data.friction)}
-                                          </p>
-                                        )}
-                                      </div>
-                                    )}
-                                    {character.length > 0 && (
-                                      <div>
-                                        {heading(tr(`${preview.first_name} on court`, `${preview.first_name} en pista`, `${preview.first_name} sur le court`))}
-                                        <ul className="divide-y divide-[var(--card-edge)]">
-                                          {character.map((r) => row(prompt(r.q.q[lang]), r.opt[lang], r.q.id))}
-                                        </ul>
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() => setFullReadFor(showFull ? null : preview.id)}
-                                  aria-expanded={showFull}
-                                  className="w-full py-4 flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/78 hover:text-[var(--ink)] transition"
-                                >
-                                  {showFull ? tr("Show less", "Ver menos", "Voir moins") : tr("More", "Más", "Plus")}
-                                  <ChevronDown className={"w-3.5 h-3.5 transition-transform " + (showFull ? "rotate-180" : "")} strokeWidth={1.6} />
-                                </button>
+                            {showFull && complements.length > 0 && (
+                              <div className={section}>
+                                {label(tr("On court", "En pista", "Sur le court"))}
+                                <ul className="space-y-2">
+                                  {complements.map((c) => (
+                                    <li key={c.key} className="text-[13px] text-[var(--ink)] leading-snug">{c.text[lang]}</li>
+                                  ))}
+                                </ul>
                               </div>
+                            )}
+
+                            {hasMore && (
+                              <button
+                                type="button"
+                                onClick={() => setFullReadFor(showFull ? null : preview.id)}
+                                aria-expanded={showFull}
+                                className="w-full border-t border-[var(--card-edge)] pt-4 flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/70 hover:text-[var(--ink)] transition"
+                              >
+                                {showFull ? tr("Show less", "Ver menos", "Voir moins") : tr("See more", "Ver más", "Voir plus")}
+                                <ChevronDown className={"w-3.5 h-3.5 transition-transform " + (showFull ? "rotate-180" : "")} strokeWidth={1.6} />
+                              </button>
                             )}
                           </div>
                         );
@@ -1197,28 +1121,31 @@ function Discover() {
                       {/* Lifestyle chips removed per Nadine's request */}
 
 
-                      {!isSelf && (
-                      <div className="flex items-center justify-center gap-4 pt-2 pb-6">
-                        <button
-                          type="button"
-                          onClick={() => { if (preview) handleBlock(preview.id, preview.first_name); }}
-                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/76 hover:text-[var(--ink)]/88 transition"
-                          aria-label={`Block ${preview?.first_name ?? ""}`}
-                        >
-                          <Shield className="w-3.5 h-3.5" /> {t("disc.blockTitle")}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { if (preview) handleReport(preview.id, preview.first_name); }}
-                          className="flex items-center gap-1.5 text-[11px] text-[var(--ink)]/76 hover:text-red-500/80 transition"
-                          aria-label={`Report ${preview?.first_name ?? ""}`}
-                        >
-                          <Flag className="w-3.5 h-3.5" /> {t("disc.reportTitle")}
-                        </button>
-                      </div>
-                      )}
                     </div>
                   </div>
+                </div>
+                {/* One fixed action at the bottom of the sheet */}
+                <div className="shrink-0 border-t border-[var(--card-edge)] bg-[var(--paper)] px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                  {isSelf ? (
+                    <Link
+                      to="/app/profile"
+                      onClick={closePreview}
+                      className="mx-auto w-full max-w-[320px] h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] flex items-center justify-center transition active:scale-[0.98] hover:brightness-110"
+                    >
+                      {tr("Edit profile", "Editar perfil", "Modifier le profil")}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (match) { navigate({ to: "/app/matches/$matchId", params: { matchId: match.match_id } }); return; }
+                        setIntroText(""); setIntroOpen(true);
+                      }}
+                      className="mx-auto w-full max-w-[320px] h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] whitespace-nowrap flex items-center justify-center transition active:scale-[0.98] hover:brightness-110"
+                    >
+                      {tr("Invite to play", "Invitar a jugar", "Inviter à jouer")}
+                    </button>
+                  )}
                 </div>
               </>
             );
@@ -1373,4 +1300,39 @@ function GridSkeleton() {
       </div>
     </div>
   );
+}
+
+// Card rendering no longer uses the AI read, so the grid does not request it.
+const SHOW_AI_READ = false;
+
+// Short padel labels for the card rows; questions themselves stay unchanged in the bank.
+function factLabel(id: string, question: string, tr: (en: string, es: string, fr: string) => string): string {
+  switch (id) {
+    case "side": return tr("Side", "Lado", "Côté");
+    case "deuce": return tr("Big points", "Puntos clave", "Points clés");
+    case "shot": return tr("Signature shot", "Golpe estrella", "Coup signature");
+    case "weapon": return tr("Strength", "Punto fuerte", "Point fort");
+    case "tiebreak": return tr("Tie-break", "Tie-break", "Tie-break");
+    case "comeback": return tr("When behind", "Cuando vas perdiendo", "Mené au score");
+    case "talk": return tr("Role", "Rol", "Rôle");
+    case "voice": return tr("During the point", "Durante el punto", "Pendant le point");
+    case "time": return tr("Schedule", "Horario", "Horaire");
+    case "net": return tr("Favourite spot", "Sitio favorito", "Endroit préféré");
+    case "format": return tr("Format", "Formato", "Format");
+    case "sitter": return tr("Partner misses", "Si tu compañero falla", "Si le partenaire rate");
+    case "outside": return tr("Ball out of court", "Bola fuera", "Balle sortie");
+    case "lob": return tr("Lob over partner", "Globo al compañero", "Lob sur le partenaire");
+    case "warmup": return tr("Warm-up", "Calentamiento", "Échauffement");
+    case "rules": return tr("Close calls", "Bolas dudosas", "Balles litigieuses");
+    case "pace": return tr("Rhythm", "Ritmo", "Rythme");
+    case "surface": return tr("Court", "Pista", "Court");
+    case "racket": return tr("Racket", "Pala", "Raquette");
+    case "stronger": return tr("Higher level", "Nivel más alto", "Niveau supérieur");
+    case "lessons": return tr("Lessons", "Clases", "Cours");
+    case "balls": return tr("Balls", "Pelotas", "Balles");
+    case "wind": return tr("Wind", "Viento", "Vent");
+    case "watch": return tr("Watching pros", "Ver profesionales", "Regarder les pros");
+    case "goal": return tr("This season", "Esta temporada", "Cette saison");
+    default: return question.replace(/\s*(You|Tú|Vous|Toi|Tu)?\s*(…|\.\.\.)\s*$/u, "").replace(/[.,:?¿]\s*$/, "").trim();
+  }
 }

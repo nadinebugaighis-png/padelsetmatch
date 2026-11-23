@@ -12,20 +12,20 @@ describe("personality cards", () => {
   it("shows on-court answers to anyone", () => {
     expect(buildPersonalityCards([deuce], [])).toEqual([{ id: "deuce", option: 0, shared: false }]);
   });
-  it("shows the after-match plan to anyone", () => {
-    expect(buildPersonalityCards([afterBeer], [afterHome])).toEqual([{ id: "after", option: 1, shared: false }]);
-    expect(buildPersonalityCards([afterBeer], [])).toEqual([{ id: "after", option: 1, shared: false }]);
+  it("never shows the after-match plan on the card", () => {
+    expect(buildPersonalityCards([afterBeer], [afterHome])).toEqual([]);
+    expect(buildPersonalityCards([afterBeer], [afterBeer], true)).toEqual([]);
   });
   it("hides private answers when the viewer answered differently", () => {
     const late = row("Running 10 minutes late, you…", "x");
     expect(buildPersonalityCards([late], [])).toEqual([]);
   });
-  it("marks the after-match plan as shared when both picked the same", () => {
-    expect(buildPersonalityCards([afterBeer], [afterBeer])).toEqual([{ id: "after", option: 1, shared: true }]);
+  it("marks an on-court answer as shared when both picked the same", () => {
+    expect(buildPersonalityCards([deuce], [deuce])).toEqual([{ id: "deuce", option: 0, shared: true }]);
   });
-  it("shows at most 3 on-court cards", () => {
+  it("lists several on-court facts so three can show with more behind a tap", () => {
     const rows = [deuce, row("Your favourite side of the court?", "Either, I adapt"), row("Your signature move?", "The smash"), row("Your biggest weapon?", "Never missing")];
-    expect(buildPersonalityCards(rows, []).length).toBe(3);
+    expect(buildPersonalityCards(rows, []).length).toBe(4);
   });
 });
 
@@ -49,7 +49,7 @@ describe("complements", () => {
 describe("private answers between strangers", () => {
   // A real non-public question from the curated bank.
   const priv = (() => {
-    const q = CURATED_QUESTIONS.find((c) => !(PUBLIC_CARD_IDS as readonly string[]).includes(c.id))!;
+    const q = CURATED_QUESTIONS.find((c) => c.category === "padel" && !(PUBLIC_CARD_IDS as readonly string[]).includes(c.id))!;
     return { id: q.id, a: row(q.q.en, q.options[0].en), b: row(q.q.en, q.options[1].en) };
   })();
   it("a stranger who picked the same option sees nothing private", () => {

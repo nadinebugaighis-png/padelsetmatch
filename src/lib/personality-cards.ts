@@ -3,6 +3,15 @@ import { CURATED_QUESTIONS } from "./daily-questions";
 // After-match plans plus fun, flattering on-court answers that are safe to show anyone.
 export const PUBLIC_CARD_IDS = ["after", "deuce", "talk", "side", "shot", "weapon", "tiebreak", "comeback", "voice"] as const;
 
+// The player card shows padel facts only; the after-match plan and other
+// off-court answers stay out of it so the card never reads like a dating profile.
+const OFF_CARD_IDS = new Set(["after"]);
+const isPadelFact = (id: string) => {
+  if (OFF_CARD_IDS.has(id)) return false;
+  const q = CURATED_QUESTIONS.find((c) => c.id === id);
+  return !!q && (q.category === "padel" || id === "talk" || id === "tiebreak" || id === "time");
+};
+
 export type PersonalityCard = { id: string; option: number; shared: boolean };
 type Row = { question: string; answer: string };
 
@@ -26,15 +35,16 @@ export function buildPersonalityCards(theirs: Row[], mine: Row[], verified = fal
   const me = index(mine);
   const pub: PersonalityCard[] = [];
   for (const id of PUBLIC_CARD_IDS) {
+    if (!isPadelFact(id)) continue;
     const opt = t.get(id);
     if (opt != null) pub.push({ id, option: opt, shared: me.get(id) === opt });
   }
   const shared: PersonalityCard[] = [];
   for (const [id, opt] of t) {
-    if ((PUBLIC_CARD_IDS as readonly string[]).includes(id)) continue;
+    if ((PUBLIC_CARD_IDS as readonly string[]).includes(id) || !isPadelFact(id)) continue;
     if (verified && me.get(id) === opt) shared.push({ id, option: opt, shared: true });
   }
-  return [...pub.slice(0, 3), ...shared.slice(0, 2)];
+  return [...pub.slice(0, 6), ...shared.slice(0, 2)];
 }
 
 /**

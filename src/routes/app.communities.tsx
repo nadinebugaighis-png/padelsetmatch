@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { CommunityDirectoryList, ConciergeNote, useMembersLabel } from "@/components/CommunityDirectory";
@@ -95,19 +95,6 @@ function CommunitiesPage() {
               <section className="mt-7">
                 <h2 className={smallCaps}>{tr("Your communities", "Tus comunidades", "Tes communautés")}</h2>
                 <ul className="mt-3 overflow-hidden rounded-2xl card-pop divide-y divide-[var(--ink)]/[0.07]">
-                  {mine.length > 1 && (
-                    <li>
-                      <button type="button" onClick={() => open(null)} className="group w-full flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04]">
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">{tr("All my communities", "Todas mis comunidades", "Toutes mes communautés")}</span>
-                          <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">
-                            {mine.map((c) => c.label).join(" · ")}{!view && <> · {tr("Viewing", "Viendo", "Affichée")}</>}
-                          </span>
-                        </span>
-                        <ChevronRight className="size-4 shrink-0 text-[var(--ink)]/45" strokeWidth={1.5} aria-hidden />
-                      </button>
-                    </li>
-                  )}
                   {mine.map((c) => (
                     <li key={c.key} className="flex items-center">
                       <button type="button" onClick={() => open(c.location)} className="group min-w-0 flex-1 flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04]">

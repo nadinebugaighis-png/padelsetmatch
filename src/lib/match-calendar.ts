@@ -23,6 +23,55 @@ export function matchCalendarPath(id: string): string {
   return `/api/public/calendar/${encodeURIComponent(id)}`;
 }
 
+/** Live site address: phone calendars and the iPhone app must fetch from here, never a preview. */
+export const CALENDAR_ORIGIN = "https://padelsetmatch.com";
+
+export function matchCalendarUrl(id: string): string {
+  return `${CALENDAR_ORIGIN}${matchCalendarPath(id)}`;
+}
+
+function matchTitle(m: CalendarMatch): string {
+  const club = (m.club_name ?? "").trim();
+  return `${m.is_class ? "Padel class" : "Padel"}${club ? ` · ${club}` : ""}`;
+}
+
+function matchPlace(m: CalendarMatch): string {
+  const club = (m.club_name ?? "").trim();
+  return [club, m.club_address && m.club_address !== club ? m.club_address : m.city].filter(Boolean).join(", ");
+}
+
+/** Opens Google Calendar with the match already filled in (works in the Google app and on the web). */
+export function googleCalendarUrl(m: CalendarMatch): string {
+  const start = new Date(m.starts_at);
+  const end = matchEndsAt(start, m.duration_minutes);
+  const link = `${CALENDAR_ORIGIN}/m/${m.id}`;
+  const q = new URLSearchParams({
+    action: "TEMPLATE",
+    text: matchTitle(m),
+    dates: `${icsDate(start)}/${icsDate(end)}`,
+    details: `Your PadelSetMatch game. Details and chat: ${link}`,
+    location: matchPlace(m),
+  });
+  return `https://calendar.google.com/calendar/render?${q.toString()}`;
+}
+
+/** Opens Outlook on the web with the match already filled in. */
+export function outlookCalendarUrl(m: CalendarMatch): string {
+  const start = new Date(m.starts_at);
+  const end = matchEndsAt(start, m.duration_minutes);
+  const link = `${CALENDAR_ORIGIN}/m/${m.id}`;
+  const q = new URLSearchParams({
+    path: "/calendar/action/compose",
+    rru: "addevent",
+    subject: matchTitle(m),
+    startdt: start.toISOString(),
+    enddt: end.toISOString(),
+    body: `Your PadelSetMatch game. Details and chat: ${link}`,
+    location: matchPlace(m),
+  });
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${q.toString()}`;
+}
+
 function icsDate(d: Date): string {
   return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 }
@@ -50,9 +99,8 @@ function fold(line: string): string {
 export function matchIcs(m: CalendarMatch, link: string, now: Date = new Date()): string {
   const start = new Date(m.starts_at);
   const end = matchEndsAt(start, m.duration_minutes);
-  const club = (m.club_name ?? "").trim();
-  const title = `${m.is_class ? "Padel class" : "Padel"}${club ? ` · ${club}` : ""}`;
-  const place = [club, m.club_address && m.club_address !== club ? m.club_address : m.city].filter(Boolean).join(", ");
+  const title = matchTitle(m);
+  const place = matchPlace(m);
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",

@@ -28,3 +28,17 @@ describe("add to calendar", () => {
     expect(canAddToCalendar({ status: "cancelled" })).toBe(false);
   });
 });
+
+describe("calendar links", () => {
+  it("the calendar file always comes from the live site", async () => {
+    const { matchCalendarUrl } = await import("../src/lib/match-calendar");
+    expect(matchCalendarUrl(base.id)).toBe(`https://padelsetmatch.com/api/public/calendar/${base.id}`);
+  });
+
+  it("Google Calendar opens with the match's real start and end", async () => {
+    const { googleCalendarUrl } = await import("../src/lib/match-calendar");
+    const url = new URL(googleCalendarUrl({ ...base, duration_minutes: 90 }));
+    expect(url.searchParams.get("dates")).toBe("20261124T180000Z/20261124T193000Z");
+    expect(url.searchParams.get("location")).toBe("La Moraleja Padel Club, Madrid");
+  });
+});

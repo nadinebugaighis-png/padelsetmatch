@@ -88,7 +88,7 @@ export function PublicPlayFeed({
     const list = (q.data ?? []) as PublicMatch[];
     // Games that already started without a full four are no longer joinable; hide them.
     const now = Date.now();
-    const live = list.filter((m) => new Date(m.starts_at).getTime() > now || (m.filled ?? 0) >= 4);
+    const live = list.filter((m) => new Date(m.starts_at).getTime() > now || (m.filled ?? 0) >= (m.capacity ?? 4));
     if (!city) return live;
     return live.filter((m) => matchesPublicCity(m, city));
   }, [q.data, city]);
@@ -157,7 +157,8 @@ export function PublicPlayFeed({
               <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{day}</div>
               <div className="grid grid-cols-1 gap-2">
                 {list.map((m) => {
-                  const open = Math.max(0, 4 - (m.filled ?? 0));
+                  const capacity = m.capacity ?? 4;
+                  const open = Math.max(0, capacity - (m.filled ?? 0));
                   const names = m.participant_names ?? [];
                   const started = new Date(m.starts_at).getTime() <= Date.now();
                   return (
@@ -169,7 +170,7 @@ export function PublicPlayFeed({
                           <div className="text-xs text-[var(--cream)]/60 mt-0.5 flex items-center gap-2 flex-wrap">
                             <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> {m.time_tbd ? tr("Time", "Hora", "Heure") : fmtTime(m)}</span>
                             {m.city && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" /> {m.city}</span>}
-                            <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {m.filled}/4</span>
+                            <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {m.filled}/{capacity}</span>
                           </div>
                           {m.host_name && <div className="text-[10px] text-[var(--cream)]/50 mt-1 uppercase tracking-widest">{tr("Host", "Anfitrión", "Hôte")}: {m.host_name}</div>}
                         </div>

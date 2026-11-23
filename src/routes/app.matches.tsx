@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { Check, X, Trash2 } from "lucide-react";
 import { getMyMatches, respondToIntro, deleteMatchThread } from "@/lib/app.functions";
 import { useI18n, useTr } from "@/lib/i18n";
+import { CourtViewCard } from "@/components/CourtViewCard";
+import { PlayerPhoto } from "@/components/PlayerPhoto";
+import { photoSrc } from "@/lib/photo-src";
 
 
 export const Route = createFileRoute("/app/matches")({
@@ -101,7 +104,9 @@ function Matches() {
                     <li key={m.match_id} className="programme-card p-3 sm:p-4 border-l-4 border-[var(--ink)]">
                       <div className="flex items-center gap-3">
                         <div className="w-14 h-14 rounded-xl overflow-hidden bg-[var(--paper-2)] shrink-0">
-                          {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
+                          {m.other.photo_url
+                            ? <PlayerPhoto src={photoSrc(m.other.photo_url, 240)} seed={m.other.id} alt={m.other.first_name ?? ""} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                            : <CourtViewCard seed={m.other.id} name={m.other.first_name} role="img" className="w-full h-full" letterClassName="text-[18px]" />}
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-serif text-2xl text-[var(--ink)] truncate">{m.other.first_name}</div>
@@ -149,7 +154,9 @@ function Matches() {
                   <li key={m.match_id} className="relative">
                     <Link to="/app/matches/$matchId" params={{ matchId: m.match_id }} className="flex items-center gap-3 sm:gap-4 programme-card p-3 sm:p-4 pr-11 hover:bg-[var(--ink)]/[0.03] relative h-full">
                       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[var(--paper-2)] shrink-0 relative">
-                        {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
+                        {m.other.photo_url
+                            ? <PlayerPhoto src={photoSrc(m.other.photo_url, 240)} seed={m.other.id} alt={m.other.first_name ?? ""} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                            : <CourtViewCard seed={m.other.id} name={m.other.first_name} role="img" className="w-full h-full" letterClassName="text-[18px]" />}
                         {m.unread > 0 && (
                           <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--ink)] text-white text-[11px] font-bold flex items-center justify-center ink-ring">{m.unread > 9 ? "9+" : m.unread}</span>
                         )}

@@ -287,6 +287,7 @@ function PublicMatchPage() {
 
                   {/* Players + action */}
                   <div className="mt-3 flex items-center gap-2">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
                     {match.participant_names.map((name, i) => (
                       <div
                         key={`p-${i}`}
@@ -311,6 +312,7 @@ function PublicMatchPage() {
                         <Plus className="w-4 h-4" />
                       </button>
                     ))}
+                    </div>
                     <button
                       type="button"
                       onClick={onJoinClick}

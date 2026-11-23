@@ -142,6 +142,8 @@ export const listPublicUpcomingMatches = createServerFn({ method: "GET" })
       court_booked: boolean | null;
       free_court?: boolean | null;
       note: string | null;
+      /** Places in the game: 4, or coach + students for a class (public.match_event_capacity). */
+      capacity?: number | null;
       filled: number;
       participant_names: string[];
       host_name: string | null;

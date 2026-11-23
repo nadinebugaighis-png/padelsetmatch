@@ -8,7 +8,7 @@ import { claimMatchInviteByToken, getPublicMatch } from "@/lib/match-events.func
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
-import { levelRangeLabel } from "@/lib/level-label";
+import { levelRangeWithRating } from "@/lib/level-label";
 import { genderRuleLabel, matchDuration, matchPreviewMeta, playtomicJoinLink } from "@/lib/match-rules";
 import { openExternal } from "@/lib/native";
 
@@ -262,7 +262,7 @@ function PublicMatchPage() {
 
                   {/* Meta row */}
                   <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] text-[var(--ink)]/82">
-                    <span className="font-semibold text-[var(--ink)]/88">{levelRangeLabel(match.level_min, match.level_max, tr)}</span>
+                    <span className="font-semibold text-[var(--ink)]/88">{levelRangeWithRating(match.level_min, match.level_max, tr)}</span>
                     <span className="text-[var(--ink)]/25">·</span>
                     <span>{genderLabel}</span>
                     <span className="text-[var(--ink)]/25">·</span>

@@ -1,6 +1,6 @@
 import { askForPushAfterMatch } from "@/lib/ask-push";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { levelRangeLabel } from "@/lib/level-label";
+import { levelRangeWithRating } from "@/lib/level-label";
 import { genderRuleLabel, matchCardAction, matchDuration, playtomicJoinLink } from "@/lib/match-rules";
 import { openExternal } from "@/lib/native";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -675,7 +675,7 @@ function MatchCard({
     : lvlLo <= 1 ? tr("Casual", "Iniciación", "Loisir")
     : lvlLo === 2 ? tr("Inter.", "Intermedio", "Inter.")
     : lvlName(e.level_min);
-  const levelLabel = levelRangeLabel(e.level_min, e.level_max, tr);
+  const levelLabel = levelRangeWithRating(e.level_min, e.level_max, tr);
   const mine = e.iAmHost || e.iAmParticipant;
   // Your own matches are managed only from the Manage button, so a stray tap
   // on the card never takes you somewhere you didn't mean to go.

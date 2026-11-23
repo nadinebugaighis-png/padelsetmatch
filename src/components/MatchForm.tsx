@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { levelRangeRating } from "@/lib/level-label";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ChevronDown, ExternalLink, Minus, Plus } from "lucide-react";
 import { clubBookingLink, clubWhatsappBooking } from "@/lib/club-booking";
@@ -461,7 +462,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         </div>
         <div className={rowDivider} />
         <div className={rowCls}>
-          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}</span>
+          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}<span className="block mt-0.5 text-[11px] font-normal normal-case tracking-normal text-[var(--ink)]/70 tabular-nums">{levelRangeRating(levelMin, levelMax)}</span></span>
           <div className="flex items-center gap-1 text-sm text-[var(--ink)]">
             <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
               {PADEL_LEVELS.map((l) => <option key={l} value={l}>{levelName(l)}</option>)}

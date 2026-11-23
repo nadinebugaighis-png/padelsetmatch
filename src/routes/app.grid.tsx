@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { levelRating, withRating } from "@/lib/level-label";
 import { photoSrc, prefetchPhoto } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { CourtViewCard } from "@/components/CourtViewCard";
@@ -575,7 +576,7 @@ function Discover() {
               >
                 <option value="all">{tr("Any level", "Cualquier nivel", "Tous niveaux")}</option>
                 {PADEL_LEVELS.map((lv) => (
-                  <option key={lv} value={lv}>{label(lv)}</option>
+                  <option key={lv} value={lv}>{withRating(label(lv), lv)}</option>
                 ))}
               </select>
             </div>
@@ -797,9 +798,10 @@ function Discover() {
                   </div>
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
-                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
-                      {me.zone} · {label(me.level)}
+                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/82 tracking-[0.08em] font-semibold uppercase truncate">
+                      {withRating(label(me.level), me.level)}
                     </p>
+                    {me.zone && <p className="mt-0.5 text-[11px] text-[var(--ink)]/70 truncate">{me.zone}</p>}
                     {me.free_court_access && (
                       <div className="mt-2 flex items-center justify-between">
                         <span className="inline-flex items-center justify-center" title={tr("Free court access", "Pista gratis", "Terrain gratuit")}>
@@ -889,9 +891,10 @@ function Discover() {
 
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
-                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
-                      {c.zone} · {label(c.level)}
+                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/82 tracking-[0.08em] font-semibold uppercase truncate">
+                      {withRating(label(c.level), c.level)}
                     </p>
+                    {c.zone && <p className="mt-0.5 text-[11px] text-[var(--ink)]/70 truncate">{c.zone}</p>}
                     {(c as any).is_coach && (
                       <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[11px] font-semibold uppercase tracking-wider">
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
@@ -991,7 +994,7 @@ function Discover() {
                     <div className="px-5 pt-5 pb-28 lg:px-8 lg:pt-8 lg:pb-24 space-y-4">
                       {/* Programme header */}
                       <div className="text-center lg:text-left">
-                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{preview.zone} · {label(preview.level)}</div>
+                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{[preview.zone, withRating(label(preview.level), preview.level)].filter(Boolean).join(" · ")}</div>
                         <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
                         <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-1 text-[11px] uppercase tracking-normal">
                           <span className="text-[var(--ink)] font-semibold">{(preview.score ?? 0) >= 75 ? tr("Great match", "Gran afinidad", "Grande affinité") : (preview.score ?? 0) >= 55 ? tr("Good match", "Buena afinidad", "Bonne affinité") : tr("Worth a game", "Para un partido", "À essayer")}</span>

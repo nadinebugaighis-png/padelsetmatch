@@ -28,3 +28,55 @@ export function levelRangeLabel(min: string | null | undefined, max: string | nu
   if (min === hiKey) return levelName(min, tr);
   return `${levelName(min, tr)} ${tr("to", "a", "à")} ${levelName(hiKey, tr)}`;
 }
+
+/**
+ * The familiar padel rating scale (1.0 to 6.0, as on Playtomic) shown next to
+ * each self-declared level so players can judge a game at a glance. Players
+ * still pick one of the five levels; numbers are never typed or scored.
+ */
+const RATING: Record<string, [number, number | null]> = {
+  "just starting": [1.5, 2.5],
+  casual: [2.5, 3.5],
+  intermediate: [3.5, 4.5],
+  advanced: [4.5, 5.5],
+  competitive: [5.5, null],
+};
+
+const fmt = (n: number) => n.toFixed(1);
+
+function span(lo: number, hi: number | null): string {
+  return hi == null ? `${fmt(lo)}+` : `${fmt(lo)}–${fmt(hi)}`;
+}
+
+/** "3.5–4.5" for one level, "5.5+" for competitive, "" when unknown. */
+export function levelRating(level: string | null | undefined): string {
+  const r = level ? RATING[level] : undefined;
+  return r ? span(r[0], r[1]) : "";
+}
+
+/** Rating span covering a match's whole level range, e.g. "3.5–5.5". */
+export function levelRangeRating(min: string | null | undefined, max: string | null | undefined): string {
+  const lo = min ? RATING[min] : undefined;
+  const hi = RATING[max ?? min ?? ""];
+  if (!lo || !hi) return "";
+  return span(lo[0], hi[1]);
+}
+
+/** "Intermedio · 3.5–4.5": a level word followed by its rating. */
+export function withRating(word: string, level: string | null | undefined): string {
+  const r = levelRating(level);
+  if (!word) return r;
+  return r ? `${word} · ${r}` : word;
+}
+
+/**
+ * Match-card wording with the rating span: "Intermediate to Advanced · 3.5–5.5".
+ * "All levels" stays plain, since a number there adds nothing.
+ */
+export function levelRangeWithRating(min: string | null | undefined, max: string | null | undefined, tr: Tr): string {
+  const words = levelRangeLabel(min, max, tr);
+  if (!words) return "";
+  if (words === tr("All levels", "Todos los niveles", "Tous niveaux")) return words;
+  const r = levelRangeRating(min, max);
+  return r ? `${words} · ${r}` : words;
+}

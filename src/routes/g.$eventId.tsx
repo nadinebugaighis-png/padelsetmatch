@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { levelRangeLabel } from "@/lib/level-label";
+import { levelName, levelRangeWithRating, levelRating } from "@/lib/level-label";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
@@ -256,7 +256,7 @@ function GuestMatchRoom() {
                 <label className="text-xs uppercase tracking-widest text-[var(--ink)]/82">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
                 {preview && (
                   <span className="text-[10px] uppercase tracking-widest text-[var(--gold)] font-semibold">
-                    {tr("Match level", "Nivel del partido", "Niveau du match")}: {levelRangeLabel(preview.level_min, preview.level_max, tr)}
+                    {tr("Match level", "Nivel del partido", "Niveau du match")}: {levelRangeWithRating(preview.level_min, preview.level_max, tr)}
                   </span>
                 )}
               </div>
@@ -264,7 +264,8 @@ function GuestMatchRoom() {
                 {PADEL_LEVELS.map((lvl) => (
                   <button key={lvl} type="button" onClick={() => setLevel(lvl)}
                     className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${level === lvl ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/88"}`}>
-                    {lvl}
+                    {levelName(lvl, tr)}
+                  <span className="block mt-0.5 text-[10px] tracking-normal normal-case opacity-70 tabular-nums">{levelRating(lvl)}</span>
                   </button>
                 ))}
               </div>

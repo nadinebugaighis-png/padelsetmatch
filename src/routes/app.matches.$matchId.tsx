@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { withRating } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMatchDetail, sendMessage, blockProfile, reportProfile, confirmPlayed, reportNoShow, getPlayedStatus, markMatchRead, editMessage, deleteMessage, submitMatchRating, getMyMatchRating } from "@/lib/app.functions";
@@ -157,7 +158,7 @@ function ChatRoom() {
             <div className="text-display text-xl leading-none">{other.first_name}</div>
           </div>
 
-          <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{other.zone} · {label(other.level)}</div>
+          <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{other.zone} · {withRating(label(other.level), other.level)}</div>
         </div>
 
         {statusQ.data && statusQ.data.count >= 2 && (

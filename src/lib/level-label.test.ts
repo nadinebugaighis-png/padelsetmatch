@@ -20,3 +20,26 @@ describe("levelRangeLabel", () => {
     expect(levelRangeLabel("intermediate", "intermediate", en)).toBe("Intermediate");
   });
 });
+
+import { levelRating, levelRangeRating, levelRangeWithRating, withRating } from "./level-label";
+
+describe("padel rating numbers", () => {
+  it("maps each level to the familiar 1.0 to 6.0 scale", () => {
+    expect(levelRating("just starting")).toBe("1.5–2.5");
+    expect(levelRating("casual")).toBe("2.5–3.5");
+    expect(levelRating("intermediate")).toBe("3.5–4.5");
+    expect(levelRating("advanced")).toBe("4.5–5.5");
+    expect(levelRating("competitive")).toBe("5.5+");
+  });
+  it("shows a player's level word with its rating", () => {
+    expect(withRating("Intermedio", "intermediate")).toBe("Intermedio · 3.5–4.5");
+  });
+  it("covers a match's whole range", () => {
+    expect(levelRangeRating("intermediate", "advanced")).toBe("3.5–5.5");
+    expect(levelRangeRating("advanced", "competitive")).toBe("4.5+");
+    expect(levelRangeWithRating("intermediate", "advanced", en)).toBe("Intermediate to Advanced · 3.5–5.5");
+  });
+  it("keeps All levels without numbers", () => {
+    expect(levelRangeWithRating("just starting", "advanced", es)).toBe("Todos los niveles");
+  });
+});

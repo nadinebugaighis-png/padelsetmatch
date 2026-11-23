@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { levelRating } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -812,6 +813,7 @@ function Onboarding() {
                   <button key={l} type="button" role="radio" aria-checked={sel} onClick={() => setLevel(l)} className="relative flex flex-col items-center gap-1.5 pt-3 pb-1 active:scale-95 transition-transform">
                     <span className={`w-[18px] h-[18px] rounded-full border transition-colors ${sel ? "bg-[var(--ink)] border-[var(--ink)]" : "bg-[var(--paper)] border-[var(--ink)]/30"}`} />
                     <span className={`block text-[11px] leading-tight text-center first-letter:uppercase ${sel ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/78"}`}>{label(l)}</span>
+                    <span className={`block text-[10px] leading-none tabular-nums ${sel ? "text-[var(--ink)]" : "text-[var(--ink)]/62"}`}>{levelRating(l)}</span>
                   </button>
                 );
               })}

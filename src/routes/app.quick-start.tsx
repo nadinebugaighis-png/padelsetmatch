@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { levelName, levelRating } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -129,8 +130,6 @@ function QuickStart() {
     }
   };
 
-  const levelLabel = (l: string) => l;
-
   return (
     <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md programme-card p-7 sm:p-9">
@@ -205,7 +204,8 @@ function QuickStart() {
                       : "border-[var(--ink)]/20 text-[var(--ink)]/84"
                   }`}
                 >
-                  {levelLabel(lvl)}
+                  {levelName(lvl, tr)}
+                  <span className="block mt-0.5 text-[10px] tracking-normal normal-case opacity-70 tabular-nums">{levelRating(lvl)}</span>
                 </button>
               ))}
             </div>

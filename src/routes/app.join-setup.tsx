@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { levelName, levelRating } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -143,7 +144,8 @@ function JoinSetupPage() {
                       : "border-[var(--cream)]/20 text-[var(--cream)]/80"
                   }`}
                 >
-                  {lvl}
+                  {levelName(lvl, tr)}
+                  <span className="block mt-0.5 text-[10px] tracking-normal normal-case opacity-70 tabular-nums">{levelRating(lvl)}</span>
                 </button>
               ))}
             </div>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { withRating } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
@@ -104,7 +105,7 @@ function Matches() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-serif text-2xl text-[var(--ink)] truncate">{m.other.first_name}</div>
-                          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {label(m.other.level)}</div>
+                          <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {withRating(label(m.other.level), m.other.level)}</div>
                         </div>
                       </div>
                       {m.last_message && (
@@ -163,7 +164,7 @@ function Matches() {
                           )}
                           {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--ink)] ink-ring" />}
                         </div>
-                        <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {label(m.other.level)}</div>
+                        <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {withRating(label(m.other.level), m.other.level)}</div>
                         <div className={`text-xs sm:text-sm mt-1 line-clamp-2 ${m.unread > 0 ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>
                           {m.last_message ? `${m.last_message.from_me ? tr("You: ", "Tú: ", "Toi : ") : ""}${m.last_message.body}` : m.other.bio}
                         </div>

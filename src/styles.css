@@ -508,10 +508,11 @@ html.native-shell [role="alertdialog"][id^="radix-"] {
 }
 
 /* Private player chat: calm club-style bubbles */
+:root { --chat-mine: #EDE8DF; }
 .chat-bubble-mine {
-  background: var(--ink);
-  color: var(--paper);
-  box-shadow: 0 1px 1px color-mix(in oklab, var(--ink) 18%, transparent);
+  background: var(--chat-mine);
+  color: var(--ink);
+  border: 1px solid color-mix(in oklab, var(--ink) 7%, transparent);
 }
 .chat-bubble-theirs {
   background: #ffffff;

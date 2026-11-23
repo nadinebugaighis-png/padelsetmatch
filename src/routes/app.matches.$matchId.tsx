@@ -314,15 +314,15 @@ function ChatRoom() {
                         <textarea
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full bg-[var(--paper)]/15 text-[var(--paper)] rounded-xl px-2.5 py-1.5 text-base resize-none placeholder:text-[var(--paper)]/50 outline-none"
+                          className="w-full bg-white/70 text-[var(--ink)] rounded-xl px-2.5 py-1.5 text-base resize-none placeholder:text-[var(--ink)]/45 outline-none"
                           rows={2}
                           autoFocus
                         />
                         <div className="flex gap-1 justify-end">
-                          <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded-full hover:bg-[var(--paper)]/15" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
+                          <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded-full hover:bg-[var(--ink)]/8" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
                             <X className="w-3.5 h-3.5" />
                           </button>
-                          <button type="submit" disabled={editM.isPending} className="p-1 rounded-full hover:bg-[var(--paper)]/15" aria-label={tr("Save", "Guardar", "Enregistrer")}>
+                          <button type="submit" disabled={editM.isPending} className="p-1 rounded-full hover:bg-[var(--ink)]/8" aria-label={tr("Save", "Guardar", "Enregistrer")}>
                             <Check className="w-3.5 h-3.5" />
                           </button>
                         </div>

@@ -1859,6 +1859,7 @@ export type Database = {
           languages: string[]
           level: string
           level_detail: string | null
+          level_rating: number | null
           locations: string[]
           looking_for: string
           looking_for_tags: string[]
@@ -1919,6 +1920,7 @@ export type Database = {
           languages?: string[]
           level: string
           level_detail?: string | null
+          level_rating?: number | null
           locations?: string[]
           looking_for?: string
           looking_for_tags?: string[]
@@ -1979,6 +1981,7 @@ export type Database = {
           languages?: string[]
           level?: string
           level_detail?: string | null
+          level_rating?: number | null
           locations?: string[]
           looking_for?: string
           looking_for_tags?: string[]

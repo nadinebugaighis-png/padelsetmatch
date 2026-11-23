@@ -221,6 +221,7 @@ export type Profile = {
   locations: string[];
   languages: string[];
   level: PadelLevel;
+  level_rating?: number | null;
   priorities: string[];
   looking_for: LookingFor;
   intents?: string[];

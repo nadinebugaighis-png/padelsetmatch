@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { levelRating } from "@/lib/level-label";
+import { levelFromRating, ratingForLevel } from "@/lib/level-label";
+import { LevelScale } from "@/components/LevelScale";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -8,7 +9,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
 import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, resolveAgePreference, type AgeBracket } from "@/lib/age-bracket";
 import {
-  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES, PADEL_LEVELS,
+  AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES,
   PADEL_STYLES, PERSONAL_STRENGTHS,
   PRIORITY_TRAITS,
   decodeLocation, encodeLocation,
@@ -82,6 +83,8 @@ function Onboarding() {
   const [langQuery, setLangQuery] = useState("");
   const [langOpen, setLangOpen] = useState(false);
   const [level, setLevel] = useState<PadelLevel | "">("");
+  const [levelRatingValue, setLevelRatingValue] = useState<number | null>(null);
+  const pickRating = (n: number) => { setLevelRatingValue(n); setLevel(levelFromRating(n) as PadelLevel); };
   const [priorities, setPriorities] = useState<string[]>([]);
   const [looking_for, setLookingFor] = useState<LookingFor>("both");
   const [goals, setGoals] = useState<string[]>(["padel"]);
@@ -126,6 +129,7 @@ function Onboarding() {
       setNationality(p.nationality ? p.nationality : "__none__");
       setNationality2(p.nationality_2 ?? "");
       setLevel((p.level ?? "") as PadelLevel | "");
+      setLevelRatingValue(p.level_rating != null ? Number(p.level_rating) : null);
       setPriorities(Array.isArray(p.priorities) ? p.priorities : []);
       setLookingFor((p.looking_for ?? "both") as LookingFor);
       // Derive simple goals + meetPref from stored intents (fallback to legacy looking_for)
@@ -352,7 +356,7 @@ function Onboarding() {
         nationality_2: nationality !== "__none__" && nationality !== "" && nationality !== "Other" && nationality2 !== nationality ? nationality2 : "",
         zone: first ? first.city : "",
         locations: encodedLocations, languages,
-        level, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
+        level, level_rating: levelRatingValue, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
         bio: bio || null, photo_url: photoUrl,
         availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
         free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
@@ -803,22 +807,14 @@ function Onboarding() {
       {/* Your game */}
       <Section title={tr("Your game", "Tu juego", "Ton jeu")}>
         <div data-field="level" className={`py-3 ${fieldCls("level")}`}>
-          <FieldLabel>{t("ob.padelLevel")}</FieldLabel>
-          <div className="relative mt-2" role="radiogroup" aria-label={t("ob.padelLevel")}>
-            <div className="absolute left-[10%] right-[10%] top-[21px] h-px bg-[var(--ink)]/20" aria-hidden="true" />
-            <div className="grid grid-cols-5">
-              {PADEL_LEVELS.map((l) => {
-                const sel = level === l;
-                return (
-                  <button key={l} type="button" role="radio" aria-checked={sel} onClick={() => setLevel(l)} className="relative flex flex-col items-center gap-1.5 pt-3 pb-1 active:scale-95 transition-transform">
-                    <span className={`w-[18px] h-[18px] rounded-full border transition-colors ${sel ? "bg-[var(--ink)] border-[var(--ink)]" : "bg-[var(--paper)] border-[var(--ink)]/30"}`} />
-                    <span className={`block text-[11px] leading-tight text-center first-letter:uppercase ${sel ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/78"}`}>{label(l)}</span>
-                    <span className={`block text-[10px] leading-none tabular-nums ${sel ? "text-[var(--ink)]" : "text-[var(--ink)]/62"}`}>{levelRating(l)}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          <LevelScale
+            value={levelRatingValue}
+            fallback={ratingForLevel(level || null)}
+            onChange={pickRating}
+            tr={tr}
+            label={t("ob.padelLevel")}
+            plainLabel
+          />
         </div>
         <SummaryRow label={tr("Style", "Estilo", "Style")} value={padelStyle.map((s) => label(s)).join(", ")} onClick={() => setSheet({ kind: "style" })} />
         <ToggleRow

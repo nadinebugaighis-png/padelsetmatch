@@ -25,6 +25,7 @@ const ProfileInput = z.object({
   locations: z.array(z.string().min(1).max(240)).max(15).default([]),
   languages: z.array(z.string().min(1).max(30)).max(10).default([]),
   level: z.enum(PADEL_LEVELS),
+  level_rating: z.number().min(0).max(7).nullable().optional(),
   priorities: z.array(z.string().min(1).max(40)).max(8).default([]),
   looking_for: z.enum(LOOKING_FOR),
   intents: z.array(z.enum(["padel", "friend", "relationship"])).default([]),
@@ -1330,7 +1331,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     }
 
     const summarizeProfile = (p: Profile, tag: string) => `${tag}: ${p.first_name}, ${p.age}, ${p.gender}${p.gender_custom ? ` (${p.gender_custom})` : ""}
-- Padel level: ${p.level}
+- Padel level: ${p.level}${p.level_rating != null ? ` (Playtomic-scale ${p.level_rating})` : ""}
 - Nationality: ${formatNationalities(p) || "n/a"}
 - Languages: ${(p.languages ?? []).join(", ") || "n/a"}
 - Looking for: padel partners

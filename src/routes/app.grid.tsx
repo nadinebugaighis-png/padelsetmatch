@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { levelRating, withRating } from "@/lib/level-label";
+import { levelName, playerLevel, withRating } from "@/lib/level-label";
 import { photoSrc, prefetchPhoto } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { CourtViewCard } from "@/components/CourtViewCard";
@@ -127,7 +127,7 @@ function Discover() {
     // (e.g. after toggling World), leaving the observer on a stale node.
   }, [shown, world, feedTick, levelFilter, zoneFilter, searchQuery]);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
-  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; nationality_2?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
+  const [preview, setPreview] = useState<null | { id: string; first_name: string; photo_url: string | null; bio: string | null; zone: string; level: string; level_rating?: number | null; reasons: string[]; liked: boolean; free_court_access?: boolean; free_court_note?: string | null; score: number; categories?: CategoryScores; personal_traits?: string[]; padel_style?: string[]; priorities?: string[]; nationality?: string | null; nationality_2?: string | null; gender?: string | null; gender_custom?: string | null; languages?: string[]; locations?: string[]; is_coach?: boolean; founding_number?: number | null }>(null);
   const search = useSearch({ from: "/app/grid" }) as { previewId?: string };
 
 
@@ -576,7 +576,7 @@ function Discover() {
               >
                 <option value="all">{tr("Any level", "Cualquier nivel", "Tous niveaux")}</option>
                 {PADEL_LEVELS.map((lv) => (
-                  <option key={lv} value={lv}>{withRating(label(lv), lv)}</option>
+                  <option key={lv} value={lv}>{withRating(levelName(lv, tr), lv)}</option>
                 ))}
               </select>
             </div>
@@ -799,7 +799,7 @@ function Discover() {
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
                     <p className="mt-1.5 text-[11px] text-[var(--ink)]/82 tracking-[0.08em] font-semibold uppercase truncate">
-                      {withRating(label(me.level), me.level)}
+                      {playerLevel(me.level, me.level_rating, tr)}
                     </p>
                     {me.zone && <p className="mt-0.5 text-[11px] text-[var(--ink)]/70 truncate">{me.zone}</p>}
                     {me.free_court_access && (
@@ -892,7 +892,7 @@ function Discover() {
                   <div className="p-3 bg-white">
                     <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
                     <p className="mt-1.5 text-[11px] text-[var(--ink)]/82 tracking-[0.08em] font-semibold uppercase truncate">
-                      {withRating(label(c.level), c.level)}
+                      {playerLevel(c.level, c.level_rating, tr)}
                     </p>
                     {c.zone && <p className="mt-0.5 text-[11px] text-[var(--ink)]/70 truncate">{c.zone}</p>}
                     {(c as any).is_coach && (
@@ -994,7 +994,7 @@ function Discover() {
                     <div className="px-5 pt-5 pb-28 lg:px-8 lg:pt-8 lg:pb-24 space-y-4">
                       {/* Programme header */}
                       <div className="text-center lg:text-left">
-                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{[preview.zone, withRating(label(preview.level), preview.level)].filter(Boolean).join(" · ")}</div>
+                        <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{[preview.zone, playerLevel(preview.level, preview.level_rating, tr)].filter(Boolean).join(" · ")}</div>
                         <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
                         <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-1 text-[11px] uppercase tracking-normal">
                           <span className="text-[var(--ink)] font-semibold">{(preview.score ?? 0) >= 75 ? tr("Great match", "Gran afinidad", "Grande affinité") : (preview.score ?? 0) >= 55 ? tr("Good match", "Buena afinidad", "Bonne affinité") : tr("Worth a game", "Para un partido", "À essayer")}</span>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { withRating } from "@/lib/level-label";
+import { playerLevel } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteMyAccount, getMyMatches, getMyProfile, setAwayStatus, setMyAvailability, submitFeedback, updateMyPhoto } from "@/lib/app.functions";
@@ -165,7 +165,7 @@ function ProfilePage() {
     const l = decodeLocation(first);
     return l.area || l.city || "";
   })();
-  const metaLine = [withRating(label(p.level), p.level), formatNationalities(p), firstArea].filter(Boolean).join(" · ");
+  const metaLine = [playerLevel(p.level, p.level_rating, tr), formatNationalities(p), firstArea].filter(Boolean).join(" · ");
 
   return (
     <main className="programme-page px-5 sm:px-8 pt-4 sm:pt-8 pb-10 max-w-md sm:max-w-xl lg:max-w-2xl mx-auto min-h-[calc(100vh-4rem)]">

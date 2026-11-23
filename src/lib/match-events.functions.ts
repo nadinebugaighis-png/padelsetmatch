@@ -949,6 +949,7 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
   .inputValidator((d: {
     first_name: string;
     level: (typeof PADEL_LEVELS)[number];
+    level_rating?: number | null;
     city?: string | null;
     gender?: "woman" | "man" | "non-binary" | "self-describe" | null;
     photo_url?: string | null;
@@ -956,6 +957,7 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
     z.object({
       first_name: z.string().trim().min(1).max(40),
       level: z.enum(PADEL_LEVELS),
+      level_rating: z.number().min(0).max(7).nullable().optional(),
       city: z.string().trim().max(120).nullable().optional(),
       gender: z.enum(["woman", "man", "non-binary", "self-describe"]).nullable().optional(),
       photo_url: z.string().trim().max(2000).nullable().optional(),
@@ -975,6 +977,7 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
         level: data.level,
         onboarding_stage: nextStage,
       };
+      if (data.level_rating != null) patch.level_rating = Math.round(data.level_rating * 10) / 10;
       if (data.city) patch.locations = [data.city];
       if (data.gender) patch.gender = data.gender;
       if (data.photo_url) patch.photo_url = data.photo_url;
@@ -988,6 +991,7 @@ export const saveLiteProfile = createServerFn({ method: "POST" })
         onboarding_stage: "lite",
         is_seed: false,
       };
+      if (data.level_rating != null) row.level_rating = Math.round(data.level_rating * 10) / 10;
       if (data.city) row.locations = [data.city];
       if (data.gender) row.gender = data.gender;
       if (data.photo_url) row.photo_url = data.photo_url;

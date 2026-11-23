@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { levelRangeRating } from "@/lib/level-label";
+import { levelRangeLabel, levelRating } from "@/lib/level-label";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ChevronDown, ExternalLink, Minus, Plus } from "lucide-react";
 import { clubBookingLink, clubWhatsappBooking } from "@/lib/club-booking";
@@ -112,8 +112,8 @@ function SegButton({
 }
 
 export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode, startWhen }: Props) {
-  const { label: levelLabelFor } = useI18n();
-  const levelName = (l: string) => { const v = levelLabelFor(l); return v.charAt(0).toUpperCase() + v.slice(1); };
+  // Playtomic numbers: the min picker shows where a band starts, the max where it ends.
+  const bandEnd = (l: string, end: "lo" | "hi") => { const r = levelRating(l); const [lo, hi] = r.replace("+", "–7.0").split("–"); return (end === "lo" ? lo : hi) ?? r; };
   const tr = useTr();
   // People already in the lineup (0 when the host stepped out); a new match starts with the host.
   const appPlayersCount = Math.min(5, Math.max(0, initial?.app_players_count ?? 1));
@@ -462,14 +462,14 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
         </div>
         <div className={rowDivider} />
         <div className={rowCls}>
-          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}<span className="block mt-0.5 text-[11px] font-normal normal-case tracking-normal text-[var(--ink)]/70 tabular-nums">{levelRangeRating(levelMin, levelMax)}</span></span>
+          <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}<span className="block mt-0.5 text-[11px] font-normal normal-case tracking-normal text-[var(--ink)]/70">{levelRangeLabel(levelMin, levelMax, tr)}</span></span>
           <div className="flex items-center gap-1 text-sm text-[var(--ink)]">
             <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
-              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{levelName(l)}</option>)}
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{bandEnd(l, "lo")}</option>)}
             </select>
             <span className="text-[var(--ink)]/70">–</span>
             <select aria-label={tr("Level max", "Nivel máx.", "Niveau max.")} value={levelMax} onChange={(e) => setLevelMax(e.target.value as any)} className={selectCls}>
-              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{levelName(l)}</option>)}
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{bandEnd(l, "hi")}</option>)}
             </select>
           </div>
         </div>

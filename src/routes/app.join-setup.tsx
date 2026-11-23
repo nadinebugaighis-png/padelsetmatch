@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { levelName, levelRating } from "@/lib/level-label";
+import { levelFromRating, ratingForLevel } from "@/lib/level-label";
+import { LevelScale } from "@/components/LevelScale";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -36,15 +37,17 @@ function JoinSetupPage() {
 
   const [firstName, setFirstName] = useState("");
   const [level, setLevel] = useState<(typeof PADEL_LEVELS)[number] | "">("");
+  const [rating, setRating] = useState<number | null>(null);
   const [city, setCity] = useState("");
   const [busy, setBusy] = useState(false);
   const autoStarted = useRef(false);
   const [autoJoining, setAutoJoining] = useState(false);
 
   useEffect(() => {
-    const me = meQ.data as { first_name?: string | null; level?: string | null; locations?: string[] | null } | null;
+    const me = meQ.data as { first_name?: string | null; level?: string | null; level_rating?: number | null; locations?: string[] | null } | null;
     if (me?.first_name) setFirstName(me.first_name);
     if (me?.level) setLevel(me.level as (typeof PADEL_LEVELS)[number]);
+    if (me?.level_rating != null) setRating(Number(me.level_rating));
     if (me?.locations?.[0]) setCity(me.locations[0]);
   }, [meQ.data]);
 
@@ -56,7 +59,7 @@ function JoinSetupPage() {
     }
     setBusy(true);
     try {
-      await saveLite({ data: { first_name: firstName.trim(), level, city: city.trim() || null } });
+      await saveLite({ data: { first_name: firstName.trim(), level, level_rating: rating, city: city.trim() || null } });
       await joinAndGo();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not save", "No se pudo guardar", "Impossible d'enregistrer"));
@@ -130,26 +133,14 @@ function JoinSetupPage() {
             />
           </div>
 
-          <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Padel level", "Nivel de pádel", "Niveau de padel")}</label>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {PADEL_LEVELS.map((lvl) => (
-                <button
-                  key={lvl}
-                  type="button"
-                  onClick={() => setLevel(lvl)}
-                  className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
-                    level === lvl
-                      ? "bg-[var(--ball)] text-[var(--court-deep)] border-[var(--ball)]"
-                      : "border-[var(--cream)]/20 text-[var(--cream)]/80"
-                  }`}
-                >
-                  {levelName(lvl, tr)}
-                  <span className="block mt-0.5 text-[10px] tracking-normal normal-case opacity-70 tabular-nums">{levelRating(lvl)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <LevelScale
+            value={rating}
+            fallback={ratingForLevel(level || null)}
+            onChange={(n) => { setRating(n); setLevel(levelFromRating(n) as (typeof PADEL_LEVELS)[number]); }}
+            tr={tr}
+            label={tr("Padel level", "Nivel de pádel", "Niveau de padel")}
+            tone="dark"
+          />
 
           <div>
             <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("City (optional)", "Ciudad (opcional)", "Ville (optionnel)")}</label>

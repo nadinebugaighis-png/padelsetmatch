@@ -32,9 +32,9 @@ export function MemberGuide() {
     {
       title: t("shell.tab.grid"),
       body: tr(
-        "Players from your community. Each card shows how you match on court and off court. Tap Send a message to set up a game.",
-        "Jugadores de tu comunidad. Cada tarjeta muestra vuestra afinidad dentro y fuera de la pista. Pulsa Enviar un mensaje para organizar un partido.",
-        "Les joueurs de ta communauté. Chaque carte montre votre affinité sur le court et en dehors. Touche Envoyer un message pour organiser un match.",
+        "Players strictly from your community/ neighborhood and are matched based on level and vibe on court & off court for long lasting padel friendships.",
+        "Jugadores estrictamente de tu comunidad o barrio, emparejados por nivel y afinidad dentro y fuera de la pista, para amistades de pádel duraderas.",
+        "Des joueurs strictement de ta communauté ou de ton quartier, associés selon le niveau et l'affinité sur le court et en dehors, pour des amitiés padel durables.",
       ),
     },
     {

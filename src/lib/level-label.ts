@@ -30,9 +30,11 @@ export function levelRangeLabel(min: string | null | undefined, max: string | nu
 }
 
 /**
- * The familiar padel rating scale (1.0 to 6.0, as on Playtomic) shown next to
- * each self-declared level so players can judge a game at a glance. Players
- * still pick one of the five levels; numbers are never typed or scored.
+ * The familiar 1.0 to 7.0 padel rating scale, the NTRP-derived self-rating used
+ * across padel (USPA, LTA Padel, most club scales). It is NOT a Playtomic level:
+ * theirs is algorithmic, moves with match results and publishes bands ending at
+ * .4 (1.5-2.4, 2.5-3.4, 3.5-4.4, 4.5-5.4). Players here still pick one of the
+ * five levels; numbers are never typed, never computed from results, never move.
  */
 const RATING: Record<string, [number, number | null]> = {
   "just starting": [1.5, 2.5],

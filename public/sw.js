@@ -1,4 +1,4 @@
-/* PadelMatch service worker — push notifications only, no offline caching */
+/* PadelMatch service worker, push notifications only, no offline caching */
 self.addEventListener("install", (e) => { self.skipWaiting(); });
 self.addEventListener("activate", (e) => { e.waitUntil(self.clients.claim()); });
 

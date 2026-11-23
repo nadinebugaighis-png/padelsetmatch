@@ -17,7 +17,7 @@ export function pairLabel(onCourt: number | null | undefined, offCourt: number |
 /** The other player must have answered this many questions before an off-court score is shown. */
 export const OFF_COURT_MIN_ANSWERS = 3;
 
-/** Off-court score only when it rests on real answers, otherwise null (shown as "—"). */
+/** Off-court score only when it rests on real answers, otherwise null (shown as "·"). */
 export function offCourtScore(score: number | null | undefined, theirAnswers: number | null | undefined): number | null {
   if (score == null || (theirAnswers ?? 0) < OFF_COURT_MIN_ANSWERS) return null;
   return score;

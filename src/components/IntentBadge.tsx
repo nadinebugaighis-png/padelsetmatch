@@ -1,4 +1,4 @@
-// (i18n import removed — component is now a no-op)
+// (i18n import removed, component is now a no-op)
 
 export function deriveIntentsFromProfile(p: {
   intents?: string[] | null;
@@ -22,6 +22,6 @@ export function IntentBadges(_props: {
   looking_for?: string | null;
   compact?: boolean;
 }) {
-  // Intent badges hidden — the app treats everyone as a padel player.
+  // Intent badges hidden, the app treats everyone as a padel player.
   return null;
 }

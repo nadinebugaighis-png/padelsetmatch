@@ -75,7 +75,7 @@ export type Complement = { key: string; text: L };
 // Pairings where two different answers make a stronger team. Only questions
 // whose answers are already public are used, so nothing private is inferred.
 const COMPLEMENTS: Array<{ id: string; a: number; b: number; key: string; text: L }> = [
-  { id: "side", a: 0, b: 1, key: "side-lr", text: { en: "Left and right — a natural pairing", es: "Revés y drive — la pareja natural", fr: "Gauche et droite — la paire naturelle" } },
+  { id: "side", a: 0, b: 1, key: "side-lr", text: { en: "Left and right, a natural pairing", es: "Revés y drive, la pareja natural", fr: "Gauche et droite, la paire naturelle" } },
   { id: "side", a: 2, b: 0, key: "side-adapt", text: { en: "One holds the left, the other adapts", es: "Uno se queda el revés, el otro se adapta", fr: "L'un tient la gauche, l'autre s'adapte" } },
   { id: "side", a: 2, b: 1, key: "side-adapt", text: { en: "One holds the right, the other adapts", es: "Uno se queda el drive, el otro se adapta", fr: "L'un tient la droite, l'autre s'adapte" } },
   { id: "talk", a: 0, b: 2, key: "talk-calm", text: { en: "One calls the play, one keeps the calm", es: "Uno dirige el juego, el otro pone la calma", fr: "L'un dirige le jeu, l'autre garde son calme" } },

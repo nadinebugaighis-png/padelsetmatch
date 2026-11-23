@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-// Public (anon) Supabase client for guest RPCs — no session persistence.
+// Public (anon) Supabase client for guest RPCs, no session persistence.
 function guestClient() {
   return createClient<Database>(
     process.env.SUPABASE_URL!,

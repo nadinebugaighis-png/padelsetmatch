@@ -31,7 +31,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
 }
 
 /*
- * "Court at Dusk" — Madrid padel-dating, anonymous-first.
+ * "Court at Dusk", Madrid padel-dating, anonymous-first.
  * Deep court teal, warm Madrid clay, cream paper, padel-ball glow.
  */
 
@@ -91,7 +91,7 @@ html.native-app:has([data-native-entry="pending"]) .native-entry-cover {
   --clay: oklch(0.6 0.13 35);               /* Madrid clay */
   --clay-deep: oklch(0.5 0.13 32);
   --cream: oklch(1 0 0);             /* bright white text */
-  --ball: #A5E358;             /* grass green — unified accent */
+  --ball: #A5E358;             /* grass green, unified accent */
 
   /* Wimbledon "Programme" palette (light editorial pages) */
   --paper: #FDFCFA;

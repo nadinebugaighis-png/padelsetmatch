@@ -61,7 +61,7 @@ export function PhotoCropDialog({ file, onCancel, onConfirm }: Props) {
     setArea(null);
     setLoadError(null);
     setNaturalSize(null);
-    // Probe the image so we can pre-compute a default crop area — that way
+    // Probe the image so we can pre-compute a default crop area, that way
     // the "Use photo" button works immediately without requiring the user to
     // pan/zoom first, and we can surface unreadable files (e.g. iOS HEIC) with
     // a clear message instead of a silent failure.

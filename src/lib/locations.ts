@@ -1,4 +1,4 @@
-// Curated cascading location data — countries with strong padel scenes,
+// Curated cascading location data, countries with strong padel scenes,
 // their main padel cities, and well-known barrios/areas within each city.
 // Keep lists tight so users connect on the same actual courts.
 

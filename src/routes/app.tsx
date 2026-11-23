@@ -30,7 +30,7 @@ export const Route = createFileRoute("/app")({
   head: () => ({ meta: [{ title: "Padel community hub \u00b7 PadelSetMatch" }, { name: "description", content: "Find players, matches and community conversations." }, { property: "og:title", content: "Padel community hub \u00b7 PadelSetMatch" }, { property: "og:description", content: "Find players, matches and community conversations." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   ssr: false,
   beforeLoad: async () => {
-    // Read the stored session first — it lives on the device and works offline.
+    // Read the stored session first, it lives on the device and works offline.
     const { data: sessionData, error: sessionError } = await withTimeout(supabase.auth.getSession(), 8000);
     if (sessionError || !sessionData.session) {
       throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
@@ -54,7 +54,7 @@ export const Route = createFileRoute("/app")({
       return { user: data.user };
     } catch (err) {
       if (isRedirect(err)) throw err;
-      // getUser() itself threw (offline, DNS failure, ...) — same rule: stay signed in.
+      // getUser() itself threw (offline, DNS failure, ...), same rule: stay signed in.
       return { user: sessionData.session.user };
     }
   },
@@ -374,9 +374,9 @@ function AuthShell() {
                     <span className="font-semibold text-[var(--ink)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
                     <span className="text-[var(--ink)]/88">
                       {tr(
-                        `by ${host} · ${when}${where ? " · " + where : ""} — tap to view`,
-                        `por ${host} · ${when}${where ? " · " + where : ""} — toca para ver`,
-                        `par ${host} · ${when}${where ? " · " + where : ""} — appuie pour voir`,
+                        `by ${host} · ${when}${where ? " · " + where : ""} · tap to view`,
+                        `por ${host} · ${when}${where ? " · " + where : ""} · toca para ver`,
+                        `par ${host} · ${when}${where ? " · " + where : ""} · appuie pour voir`,
                       )}
                     </span>
                   </Link>

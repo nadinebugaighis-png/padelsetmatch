@@ -41,7 +41,7 @@ export const PRIORITY_TRAITS = [
 export type PriorityTrait = (typeof PRIORITY_TRAITS)[number];
 
 // Curated from the Big Five personality model (Openness, Conscientiousness,
-// Extraversion, Agreeableness, Emotional Stability) plus humor — traits
+// Extraversion, Agreeableness, Emotional Stability) plus humor, traits
 // most consistently linked to good on-court chemistry and easy teamwork.
 
 export const PERSONAL_STRENGTHS = [
@@ -95,7 +95,7 @@ export const REPORT_REASONS = [
   "Other",
 ] as const;
 
-// Madrid zones / barrios — v1 focuses on Madrid only.
+// Madrid zones / barrios, v1 focuses on Madrid only.
 export const MADRID_ZONES = [
   "Centro", "Salamanca", "Chamberí", "Chamartín", "Retiro",
   "Moncloa-Aravaca", "Aravaca", "Mirasierra", "Tetuán", "Arganzuela",

@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { listPublicUpcomingMatches } from "@/lib/guest.functions";
 import { PublicPlayFeed } from "@/components/PublicPlayFeed";
 
-const TITLE = "Open padel matches near you — PadelSetMatch";
-const DESC = "Browse open padel matches in your city. Join a spot in one tap — no account required.";
+const TITLE = "Open padel matches near you · PadelSetMatch";
+const DESC = "Browse open padel matches in your city. Join a spot in one tap, no account required.";
 const URL = "https://padelsetmatch.com/play";
 
 export const Route = createFileRoute("/play/")({

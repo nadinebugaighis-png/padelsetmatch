@@ -3,7 +3,7 @@ import { ArrowRight, MapPin, Users, KeyRound, CalendarCheck } from "lucide-react
 import { BrandMark } from "@/components/BrandMark";
 import { LangSwitch } from "@/lib/i18n";
 
-const TITLE = "Pistas de pádel gratis — dónde jugar sin pagar pista";
+const TITLE = "Pistas de pádel gratis: dónde jugar sin pagar pista";
 const DESC =
   "Cómo encontrar pistas de pádel gratis cerca de ti: pistas municipales, pistas de urbanización y comunidad, horas valle en clubes y jugadores con pista propia. Encuéntralos en PadelSetMatch.";
 const URL = "https://padelsetmatch.com/pistas-de-padel-gratis";
@@ -117,7 +117,7 @@ function PistasGratisPage() {
         </h1>
         <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/84">
           El precio de la pista es el principal motivo por el que se juega menos al pádel de lo que se
-          querría. Pero una gran parte de las pistas —municipales, de comunidad, de urbanización— se pueden
+          querría. Pero una gran parte de las pistas (municipales, de comunidad, de urbanización) se pueden
           usar gratis y están vacías ahora mismo. Lo difícil nunca fue la pista: es encontrar a los otros
           tres jugadores.
         </p>

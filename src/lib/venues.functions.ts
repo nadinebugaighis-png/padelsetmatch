@@ -85,7 +85,7 @@ export const createVenue = createServerFn({ method: "POST" })
       .single();
 
     if (error) {
-      // Race on the unique index — refetch and return the existing row.
+      // Race on the unique index, refetch and return the existing row.
       let refetch = context.supabase
         .from("venues" as never)
         .select("id, name, city, country, venue_type")

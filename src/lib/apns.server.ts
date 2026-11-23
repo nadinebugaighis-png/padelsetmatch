@@ -71,7 +71,7 @@ export async function sendNativePush(
     const invalidToken = res.status === 410 || (res.status === 400 && result?.reason === "BadDeviceToken");
     return { ok: res.ok, status: res.status, invalidToken };
   } catch {
-    // Local dev cannot open an HTTP/2 connection to APNs — expected there.
+    // Local dev cannot open an HTTP/2 connection to APNs, expected there.
     console.warn("Apple notification delivery unavailable");
     return { ok: false, status: 0, invalidToken: false };
   }

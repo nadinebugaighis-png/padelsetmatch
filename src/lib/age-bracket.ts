@@ -2,7 +2,7 @@
 //
 // Signup asks for an age BRACKET (18-24, 25-34, 35-45, 46-55, 56+), never an
 // exact age. The stored `age` is only the bracket's midpoint (e.g. 56+ → 78),
-// so age preferences must be compared as bracket spans, not raw numbers —
+// so age preferences must be compared as bracket spans, not raw numbers,
 // otherwise every 56+ player is invisible to anyone whose preferred range ends
 // below 78.
 
@@ -48,7 +48,7 @@ export type AgePreference = { age_min: number; age_max: number };
 
 /**
  * True when the player's age span overlaps the given preferred range at all.
- * Players who never gave an age (quick sign-ups) are never hidden by age —
+ * Players who never gave an age (quick sign-ups) are never hidden by age,
  * otherwise they vanish from every grid, even in their own neighbourhood.
  */
 export function ageMatchesPreference(preference: AgePreference, player: BracketedAge): boolean {

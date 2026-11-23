@@ -35,7 +35,7 @@ function QuickStart() {
   const saveLite = useServerFn(saveLiteProfile);
   const meQ = useQuery({ queryKey: ["my-profile"], queryFn: () => getMe(), retry: false });
 
-  // Legacy route — send everyone to the unified onboarding page.
+  // Legacy route, send everyone to the unified onboarding page.
   useEffect(() => { navigate({ to: "/app/onboarding", replace: true }); }, [navigate]);
 
   const [firstName, setFirstName] = useState("");
@@ -92,9 +92,9 @@ function QuickStart() {
             : tr("Welcome aboard! 🎾", "¡Bienvenido a la pista! 🎾", "Bienvenue sur le court ! 🎾"),
           {
             description: tr(
-              "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
-              "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
-              "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+              "Hope you love it. Share with a padel friend or two, it plays better with more of us on the court.",
+              "Esperamos que te encante. Compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+              "On espère que ça te plaira. Partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
             ),
             duration: 8000,
           },
@@ -158,7 +158,7 @@ function QuickStart() {
         )}
 
         <form onSubmit={submit} className="mt-6 space-y-5">
-          {/* Photo — optional, from Google or fallback initial */}
+          {/* Photo, optional, from Google or fallback initial */}
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 flex items-center justify-center text-lg font-medium text-[var(--ink)]/82">
               {photoUrl ? (

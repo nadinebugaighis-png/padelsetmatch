@@ -45,9 +45,9 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
             </DrawerTitle>
             <DrawerDescription className="mt-2 text-center text-[13px] leading-relaxed text-[var(--ink)]/76">
               {tr(
-                "Choose the court you'd like. WhatsApp opens with your request already written — just tap Send.",
+                "Choose the court you'd like. WhatsApp opens with your request already written. Just tap Send.",
                 "Elige la pista que prefieres. WhatsApp se abre con tu solicitud ya escrita: solo pulsa Enviar.",
-                "Choisis le terrain souhaité. WhatsApp s'ouvre avec ta demande déjà rédigée — appuie simplement sur Envoyer.",
+                "Choisis le terrain souhaité. WhatsApp s'ouvre avec ta demande déjà rédigée. Appuie simplement sur Envoyer.",
               )}
             </DrawerDescription>
 
@@ -101,7 +101,7 @@ export function ClubWhatsAppBooking({ clubName, startsAt, hostName, placement, t
                 onClick={async () => { await onConfirmed(); setOpen(false); }}
                 className="mt-3 w-full h-11 rounded-full border border-[var(--ink)]/20 text-[var(--ink)] text-xs font-semibold uppercase tracking-[0.2em]"
               >
-                {tr("Club confirmed — mark court booked", "Club confirmado — marcar pista reservada", "Club confirmé — marquer réservée")}
+                {tr("Club confirmed · mark court booked", "Club confirmado · marcar pista reservada", "Club confirmé · marquer réservée")}
               </button>
             ) : (
               <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink)]/76">

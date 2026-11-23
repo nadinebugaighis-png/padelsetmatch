@@ -3,7 +3,7 @@ import { listPublicUpcomingMatches } from "@/lib/guest.functions";
 import { PublicPlayFeed, matchesPublicCity } from "@/components/PublicPlayFeed";
 
 const CITY = "madrid";
-const TITLE = "Partidos de pádel abiertos en Madrid — PadelSetMatch";
+const TITLE = "Partidos de pádel abiertos en Madrid · PadelSetMatch";
 const DESC =
   "Partidos de pádel abiertos hoy en Madrid: mira quién juega, la hora y el club, y únete a una plaza libre en un toque. Sin cuenta.";
 const URL = "https://padelsetmatch.com/play/madrid";
@@ -41,7 +41,7 @@ function PlayMadridPage() {
       initialData={matches}
       city={CITY}
       heading="Partidos de pádel abiertos en Madrid"
-      intro="Mira los partidos con plazas libres hoy en Madrid y únete como invitado — sin cuenta."
+      intro="Mira los partidos con plazas libres hoy en Madrid y únete como invitado, sin cuenta."
     />
   );
 }

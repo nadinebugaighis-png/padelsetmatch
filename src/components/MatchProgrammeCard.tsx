@@ -104,7 +104,7 @@ export function MatchProgrammeCard({
               </h2>
               <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/82 min-w-0">
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{match.club_address || match.city || "—"}</span>
+                <span className="truncate">{match.club_address || match.city || "·"}</span>
               </div>
             </div>
             <span

@@ -52,7 +52,7 @@ export const Route = createFileRoute("/app/events/")({
   errorComponent: ({ error }) => (
     <div className="p-6 text-center text-[var(--cream)]/70">{error instanceof Error ? error.message : String(error)}</div>
   ),
-  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">—</div>,
+  notFoundComponent: () => <div className="p-6 text-center text-[var(--cream)]/70">·</div>,
 });
 
 const LEVEL_INDEX: Record<string, number> = {
@@ -338,7 +338,7 @@ function EventsPage() {
       toast(tr("You left the match", "Has salido del partido", "Tu as quitté le match"), {
         duration: 8000,
         action: {
-          label: tr("Undo — rejoin", "Deshacer — volver", "Annuler — rejoindre"),
+          label: tr("Undo · rejoin", "Deshacer · volver", "Annuler · rejoindre"),
           onClick: async () => { try { await join({ data: { id: e.id } }); refetch(); } catch {/* ignore */} },
         },
       });
@@ -732,7 +732,7 @@ function MatchCard({
       key={i}
       slot={s}
       tr={tr}
-      // A "+" only ever joins — hosts who stepped out included.
+      // A "+" only ever joins, hosts who stepped out included.
       onJoin={() => {
         if (playing) { toast(tr("You're already in this match", "Ya estás en este partido", "Tu es déjà dans ce match")); return; }
         if (!full) joinCard();

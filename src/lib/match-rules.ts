@@ -54,15 +54,15 @@ export function matchShareText(
   }
   if (opts.freeCourt) {
     return tr(
-      `🎾 Free court! Join my padel match on PadelSetMatch — ${tail}`,
-      `🎾 ¡Pista gratis! Únete a mi partido de pádel en PadelSetMatch — ${tail}`,
-      `🎾 Terrain gratuit ! Rejoins mon match de padel sur PadelSetMatch — ${tail}`,
+      `🎾 Free court! Join my padel match on PadelSetMatch: ${tail}`,
+      `🎾 ¡Pista gratis! Únete a mi partido de pádel en PadelSetMatch: ${tail}`,
+      `🎾 Terrain gratuit ! Rejoins mon match de padel sur PadelSetMatch: ${tail}`,
     );
   }
   return tr(
-    `Join my padel match on PadelSetMatch — ${tail}`,
-    `Únete a mi partido de pádel en PadelSetMatch — ${tail}`,
-    `Rejoins mon match de padel sur PadelSetMatch — ${tail}`,
+    `Join my padel match on PadelSetMatch: ${tail}`,
+    `Únete a mi partido de pádel en PadelSetMatch: ${tail}`,
+    `Rejoins mon match de padel sur PadelSetMatch: ${tail}`,
   );
 }
 
@@ -70,12 +70,12 @@ export function matchShareText(
 export function matchPreviewMeta(freeCourt: boolean | null | undefined): { title: string; description: string } {
   if (freeCourt) {
     return {
-      title: "🎾 Pista gratis · Join my padel match — PadelSetMatch",
-      description: "Free court — joining costs nothing. Tap to grab an open spot. / Pista gratis: unirte no cuesta nada.",
+      title: "🎾 Pista gratis · Join my padel match · PadelSetMatch",
+      description: "Free court: joining costs nothing. Tap to grab an open spot. / Pista gratis: unirte no cuesta nada.",
     };
   }
   return {
-    title: "Join my padel match — PadelSetMatch",
+    title: "Join my padel match · PadelSetMatch",
     description: "You're invited to a padel match on PadelSetMatch. Tap to grab an open spot.",
   };
 }

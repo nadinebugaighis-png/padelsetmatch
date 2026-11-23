@@ -18,7 +18,7 @@ export const Route = createFileRoute("/app/events/$eventId/edit")({
   ] }),
   component: EditEvent,
   errorComponent: ({ error }) => <div className="p-6 text-[var(--cream)]/70">{error instanceof Error ? error.message : String(error)}</div>,
-  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">—</div>,
+  notFoundComponent: () => <div className="p-6 text-[var(--cream)]/70">·</div>,
 });
 
 

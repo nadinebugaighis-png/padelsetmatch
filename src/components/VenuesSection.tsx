@@ -53,7 +53,7 @@ export function VenuesSection() {
       invalidate();
       setQ("");
       setShowAdd(false);
-      toast.success(tr("Added — kept private by default", "Añadido — privado por defecto", "Ajouté — privé par défaut"));
+      toast.success(tr("Added, kept private by default", "Añadido, privado por defecto", "Ajouté, privé par défaut"));
     },
     onError: (e: any) => toast.error(e?.message ?? "Failed"),
   });
@@ -76,7 +76,7 @@ export function VenuesSection() {
       setQ("");
       setNewCity("");
       setShowAdd(false);
-      toast.success(tr("Added — kept private by default", "Añadido — privado por defecto", "Ajouté — privé par défaut"));
+      toast.success(tr("Added, kept private by default", "Añadido, privado por defecto", "Ajouté, privé par défaut"));
     },
     onError: (e: any) => toast.error(e?.message ?? "Failed"),
   });
@@ -103,9 +103,9 @@ export function VenuesSection() {
           </h3>
           <p className="text-xs text-[var(--ink)]/82 mt-1">
             {tr(
-              "Your clubs & compounds. Private by default — we only match you with people who play there.",
-              "Tus clubs y urbanizaciones. Privado por defecto — solo emparejamos con quien juega ahí.",
-              "Tes clubs & résidences. Privé par défaut — on te matche avec ceux qui jouent au même endroit.",
+              "Your clubs & compounds. Private by default: we only match you with people who play there.",
+              "Tus clubs y urbanizaciones. Privado por defecto: solo emparejamos con quien juega ahí.",
+              "Tes clubs & résidences. Privé par défaut : on te matche avec ceux qui jouent au même endroit.",
             )}
           </p>
         </div>

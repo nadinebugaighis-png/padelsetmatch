@@ -255,7 +255,7 @@ function scoreCandidate(me: Profile, c: Profile) {
   const intentOverlapRaw = sharedIntents(me, c);
   if (intentOverlapRaw.length === 0) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
   // For each social intent (relationship/friend), check gender-audience both ways.
-  // If it fails, drop just that intent — don't reject the whole person, because they may
+  // If it fails, drop just that intent, don't reject the whole person, because they may
   // still be a great padel partner or friend.
   const passesAudience = (kind: "relationship" | "friend") => {
     const myAudience = kind === "relationship" ? me.partner_interested_in : me.friend_interested_in;
@@ -283,7 +283,7 @@ function scoreCandidate(me: Profile, c: Profile) {
   else { score += 8; }
 
   const levelGap = Math.abs((LEVEL_IDX[me.level] ?? 0) - (LEVEL_IDX[c.level] ?? 0));
-  if (levelGap === 0) { score += 18; reasons.push("Same padel level — fair match"); playingStyle += 40; }
+  if (levelGap === 0) { score += 18; reasons.push("Same padel level, fair match"); playingStyle += 40; }
   else if (levelGap === 1) { score += 12; reasons.push("Close padel levels"); playingStyle += 28; }
   else if (levelGap === 2) { score += 4; playingStyle += 12; }
   else { playingStyle += 5; }
@@ -299,7 +299,7 @@ function scoreCandidate(me: Profile, c: Profile) {
     reasons.push(`Both in ${me.zone}`);
     lifestyle += 26;
   } else {
-    // No shared city or zone — still show them, just no location bonus.
+    // No shared city or zone, still show them, just no location bonus.
     // (Previously we hard-filtered these out, which hid people you actually know.)
     score += 2;
     lifestyle += 8;
@@ -369,13 +369,13 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       .select("*")
       .eq("user_id", context.userId)
       .maybeSingle();
-    // Never treat a transient read failure as "no profile" — that would bounce
+    // Never treat a transient read failure as "no profile", that would bounce
     // an existing user back into onboarding.
     if (meErr) throw new Error(meErr.message);
     const me = meRow as Profile | null;
     if (!me) return { me: null, candidates: [] as Array<Profile & { score: number; reasons: string[]; liked: boolean }> };
 
-    // Run all six independent lookups in parallel — previously sequential, which
+    // Run all six independent lookups in parallel, previously sequential, which
     // stacked 5+ round-trips on top of each other on every grid load.
     const [
       { data: candRows },
@@ -461,7 +461,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
     // QA affinity: compute in the database via SECURITY DEFINER RPC.
     // Previously we shipped every candidate's 1536-dim answer embeddings (~6KB each)
-    // to the app, then scored client-side — the single largest slow query.
+    // to the app, then scored client-side, the single largest slow query.
     // Now the DB returns just numeric summaries per candidate.
     const candIdList = candidates.map((c) => c.id);
     type QaScore = { profile_id: string; qa_bonus: number; q_same: number; q_close: number; q_shared: number };
@@ -581,7 +581,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
       })
 
       // Never drop someone who plays in my own city, even if the heuristic
-      // score lands at zero — they must stay visible in both modes.
+      // score lands at zero, they must stay visible in both modes.
       // World mode lists everyone; otherwise drop zero-score non-neighbours.
       .filter((c) => world || c.score > 0 || c.near_me)
       .sort((a, b) => {
@@ -590,7 +590,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
         const bAway = (b as any).away_until && (b as any).away_until >= today ? 1 : 0;
         if (aAway !== bAway) return aAway - bAway;
         // Players in my city always rank above far-away ones, so turning World
-        // mode on only adds people — it never pushes neighbours out of sight.
+        // mode on only adds people, it never pushes neighbours out of sight.
         if (a.near_me !== b.near_me) return a.near_me ? -1 : 1;
         return b.score - a.score;
       });
@@ -873,7 +873,7 @@ export const sendMessage = createServerFn({ method: "POST" })
       if (o?.is_seed) {
         const replies = [
           `Nice to meet you! When works to play?`,
-          `Hola! I'm free Tuesday or Thursday evening — courts in your zone?`,
+          `Hola! I'm free Tuesday or Thursday evening, courts in your zone?`,
           `Let's book on Playtomic 👌`,
           `Game on. Level honest, I warn you 😅`,
           `Saturday morning? I know a good club.`,
@@ -1235,7 +1235,7 @@ export const submitQaAnswer = createServerFn({ method: "POST" })
       _slot: data.slot ?? null,
     } as never);
     if (error) throw new Error(error.message);
-    // Any cached AI compatibility involving me is stale — clear it.
+    // Any cached AI compatibility involving me is stale, clear it.
     await context.supabase.rpc("clear_my_compat_scores" as never, {} as never);
     return { ok: true };
   });
@@ -1296,7 +1296,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const [a, b] = me.id < data.otherProfileId ? [me.id, data.otherProfileId] : [data.otherProfileId, me.id];
     const otherId = data.otherProfileId;
 
-    // Load everything in parallel — this card opens on every profile tap.
+    // Load everything in parallel, this card opens on every profile tap.
     // Raw answers stay server-only; caller is authenticated and the target is
     // checked through user-scoped profile access + block check below.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -1361,7 +1361,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
-      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now — try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as null | { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string }, model_version: "fallback", created_at: new Date().toISOString() };
+      const fallback = { score: 60, blurb: "Not enough signal to run AI compatibility right now, try again later.", reasons: [] as string[], friction: null as string | null, sub_scores: null as null | { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string }, model_version: "fallback", created_at: new Date().toISOString() };
       return fallback;
     }
 
@@ -1370,10 +1370,10 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const provider = createLovableAiGatewayProvider(apiKey);
     const model = provider("google/gemini-3.8-flash");
 
-    // App is a padel player directory only — always use teammate/friendship focus.
+    // App is a padel player directory only, always use teammate/friendship focus.
     void myIntentsArr; void theirIntentsArr;
     const sharedIntents: string[] = ["padel"];
-    const intentGuidance = `TEAMMATE FOCUS — both want a padel partner. Weight (but do not limit to): skill level, competitiveness, schedule/availability, reliability, communication, on-court role balance (e.g. right/left side, aggressive/defensive). Also consider easy off-court rapport: shared interests, humor, values, communication style — the kind of things that make a padel friendship enjoyable over time. People with very different life situations (income, marital status, kids, career stage) can be excellent padel partners and friends — personality, shared interests, and shared experiences matter far more than surface life-stage differences.`;
+    const intentGuidance = `TEAMMATE FOCUS: both want a padel partner. Weight (but do not limit to): skill level, competitiveness, schedule/availability, reliability, communication, on-court role balance (e.g. right/left side, aggressive/defensive). Also consider easy off-court rapport: shared interests, humor, values, communication style, the kind of things that make a padel friendship enjoyable over time. People with very different life situations (income, marital status, kids, career stage) can be excellent padel partners and friends, personality, shared interests, and shared experiences matter far more than surface life-stage differences.`;
     const asymNote = "";
     const extraSubs: string[] = [];
 
@@ -1384,7 +1384,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
         ? "Réponds TOUJOURS en français."
         : "Always reply in English.";
 
-    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel player directory app that helps players find good on-court partners and easy padel friendships. Give the reader a clear, accurate, useful read — honest, warm, diplomatic, wise and kind.
+    const prompt = `You are a thoughtful, respectful compatibility analyst for a padel player directory app that helps players find good on-court partners and easy padel friendships. Give the reader a clear, accurate, useful read, honest, warm, diplomatic, wise and kind.
 
 ${langInstruction}
 
@@ -1394,28 +1394,28 @@ ${asymNote}
 
 Rules for judgment:
 - Most people can enjoy padel together and even become good friends despite different lifestyles, life stages, ages, incomes, or family situations (single, married, with or without kids). Treat differences as normal and often enriching, not as problems. Personality, shared interests, background and shared experiences matter more than surface life-stage differences.
-- Only flag something as a real consideration when the answers themselves point to a concrete thing that would actually affect playing together, getting along, or (if both want dating) building a relationship — e.g. very different available time slots, very different on-court intensity, one wants competitive tournaments and the other purely social hits.
+- Only flag something as a real consideration when the answers themselves point to a concrete thing that would actually affect playing together, getting along, or (if both want dating) building a relationship, e.g. very different available time slots, very different on-court intensity, one wants competitive tournaments and the other purely social hits.
 - Distinguish COMPLEMENTARY differences (introvert + extrovert who both value calm; aggressive + defensive on court) from actual mismatches. When unsure, treat as complementary or neutral.
-- Same nationality, same city, or both "open-minded / friendly / flexible" are filler — skip them.
+- Same nationality, same city, or both "open-minded / friendly / flexible" are filler, skip them.
 - ANTI-HALLUCINATION: Only cite a trait, answer, or bio detail if it actually appears in the profile data above. Never invent hobbies, jobs, family status, preferences or life details. If evidence is thin, say so gently and score in the 60-70 range.
 - Grade fairly on this curve: 85-100 rare and truly strong, 70-84 solid fit, 55-69 good with a couple of things to be aware of, 40-54 mixed, 0-39 poor fit.
-- CRITICAL — the two sub-scores MUST match the tone of their analysis paragraphs. A 90+ score requires a genuinely enthusiastic paragraph; a 60 score requires a paragraph that explicitly names what's mixed. The blurb, reasons, and both analyses must all point at the same overall picture. Do not write a warm paragraph and then a low score, or a lukewarm paragraph and then a high score.
+- CRITICAL: the two sub-scores MUST match the tone of their analysis paragraphs. A 90+ score requires a genuinely enthusiastic paragraph; a 60 score requires a paragraph that explicitly names what's mixed. The blurb, reasons, and both analyses must all point at the same overall picture. Do not write a warm paragraph and then a low score, or a lukewarm paragraph and then a high score.
 - The overall picture is a blend of on-court fit (padel) and off-court fit (personality). Weight them roughly equally.
-- OFF-COURT DEPTH: answers to "An unexpected free afternoon…", "Over a caña after the match, you love talking about…" and "What draws you to someone in conversation?" show curiosity and conversational taste. When both lean the same way — e.g. both choose a gallery or bookshop, big ideas and debate, or being challenged in how they think — weigh it strongly in "personality": two curious minds can reach 90+ off court even when on-court fit is moderate. Shared light-hearted or lively answers are also a genuine off-court fit. Never describe either person as more or less intelligent, deep or shallow; name it as a shared taste (e.g. "both happiest debating big ideas over a caña").
-- Score "padel" and "personality" independently. A pair can be excellent company and casual on court, or fierce partners who keep socialising light — let each score show that honestly.
+- OFF-COURT DEPTH: answers to "An unexpected free afternoon…", "Over a caña after the match, you love talking about…" and "What draws you to someone in conversation?" show curiosity and conversational taste. When both lean the same way, e.g. both choose a gallery or bookshop, big ideas and debate, or being challenged in how they think, weigh it strongly in "personality": two curious minds can reach 90+ off court even when on-court fit is moderate. Shared light-hearted or lively answers are also a genuine off-court fit. Never describe either person as more or less intelligent, deep or shallow; name it as a shared taste (e.g. "both happiest debating big ideas over a caña").
+- Score "padel" and "personality" independently. A pair can be excellent company and casual on court, or fierce partners who keep socialising light, let each score show that honestly.
 - The "watch_out" field is OPTIONAL and should usually be null. Only fill it when there is a concrete, evidence-based thing to gently be aware of. Never fill it for lifestyle / life-stage / personality differences alone.
-- Blurb should be warm, grounded, diplomatic and accurate — no flattery, no empty praise, no verdicts about their lives.
+- Blurb should be warm, grounded, diplomatic and accurate, no flattery, no empty praise, no verdicts about their lives.
 
 RESPECT & TONE RULES (very important):
-- Language must be truthful but diplomatic, wise, and kind. Avoid strong or harsh words entirely — they are often misleading and always feel bad to read.
+- Language must be truthful but diplomatic, wise, and kind. Avoid strong or harsh words entirely, they are often misleading and always feel bad to read.
 - Never compare one person's life situation to the other's in a way that could feel like a value judgment. Do NOT say things like "unlike them, you are single / have no kids / are not married / don't have a family". Never imply someone's life is lesser, emptier, behind, or missing something.
-- Life-stage or lifestyle topics (relationship status, kids, family, religion, income, career stage, living situation, age gap) should generally NOT be mentioned. Only mention them if BOTH people clearly signalled them AND it directly affects whether they can play padel together or hang out (e.g. very different available time slots). Frame it neutrally as "your available time slots differ" — never as one being better than the other.
+- Life-stage or lifestyle topics (relationship status, kids, family, religion, income, career stage, living situation, age gap) should generally NOT be mentioned. Only mention them if BOTH people clearly signalled them AND it directly affects whether they can play padel together or hang out (e.g. very different available time slots). Frame it neutrally as "your available time slots differ", never as one being better than the other.
 - Do not moralize about drinking, smoking, partying, dating history, body, appearance, career choices, or income.
 - Address the reader plainly as "you both" or "both of you" (never "you two") and never single out one person as the problem.
 - BANNED words and phrasings: "friction", "clash", "clashing", "conflict", "mismatch" (as a label), "incompatible", "problem", "issue", "red flag", "warning", "sadly", "unfortunately", "shame", "wasted", "behind", "missing out". Use gentle phrasing like "worth being aware of", "something to check together", "differs from yours", "keep in mind".
 - Also avoid empty praise: "wonderful", "amazing", "great connection", "click", "beautiful".
 
-VOICE — FUN, PUNCHY, DISTINCTIVE (very important):
+VOICE: FUN, PUNCHY, DISTINCTIVE (very important):
 - Write like a witty padel commentator or a sharp club captain, not a therapist or a dating app. Short, vivid, a little playful.
 - Use padel imagery: the glass, the bandeja, the vibora, lobs, the net, deuce, golden point, the post-match caña, tapas, early courts, floodlights.
 - NEVER use romantic or dating language: no "chemistry", "click", "spark", "match made", "soulmate", "perfect pair", "connection", "love", "you two", "kindred", "duo", "together forever". Talk about padel and the post-match social, like a club captain would.
@@ -1424,22 +1424,22 @@ VOICE — FUN, PUNCHY, DISTINCTIVE (very important):
 Return ONLY valid JSON with this exact shape:
 {
   "sub_scores": {
-    "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
-    "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
+    "padel": <0-100 integer, on-court fit: level, style, intensity, availability, reliability>,
+    "personality": <0-100 integer, off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
   "headline": "<A short, warm club story, one or two complete sentences, max 180 chars, like a club host introducing two players at the bar. Sociable and specific, grounded in real details (time of day, side, rhythm, the post-match caña or coffee). Friendly and sporty, never romantic, no nicknames, no flowery poetry, never an em dash. Example tone: 'Early courts suit you both, one covers the left, the other the right, and you both stay for a coffee after.'>",
   "highlights": [
-    "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). No emojis — plain, refined wording.>",
+    "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). No emojis or long dashes, plain, refined wording.>",
     "<second bullet, different angle, same rules>",
     "<third bullet, different angle, same rules>"
   ],
-  "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none — usually null.>"
+  "watch_out": "<one short, respectful line naming a concrete thing to gently be aware of, grounded in their answers. Null if none, usually null.>"
 }
 
 Rules for the fields:
-- headline + 3 highlights REPLACE long paragraphs. Be specific, never generic. If you cannot ground a bullet in real data, drop it (return 2 bullets instead of 3) — never pad with filler.
+- headline + 3 highlights REPLACE long paragraphs. Be specific, never generic. If you cannot ground a bullet in real data, drop it (return 2 bullets instead of 3), never pad with filler.
 - Every bullet must reference something a reader can point to in the profile. Bad: "you both love padel". Good: "🎾 Both intermediate, both play the backhand side".
-- Do NOT restate the same idea across headline and bullets — each says something new.
+- Do NOT restate the same idea across headline and bullets, each says something new.
 
 ${summarizeProfile(me, "PERSON A (the viewer)")}
 Q&A:
@@ -1450,7 +1450,7 @@ Q&A:
 ${qaBlock(theirQA)}`;
 
     let score = 60;
-    let blurb = "Not enough signal yet — answer more questions to sharpen this.";
+    let blurb = "Not enough signal yet, answer more questions to sharpen this.";
     let reasons: string[] = [];
     let friction: string | null = null;
     type SubScoresShape = { padel?: number; personality?: number; friend?: number; relationship?: number; headline?: string; highlights?: string[]; padel_analysis?: string; personality_analysis?: string };
@@ -1505,7 +1505,7 @@ ${qaBlock(theirQA)}`;
       }
     } catch (e) {
       blurb = e instanceof Error && e.message.includes("402")
-        ? "AI credits exhausted — top up in Settings to unlock this."
+        ? "AI credits exhausted, top up in Settings to unlock this."
         : blurb;
     }
 
@@ -1645,7 +1645,7 @@ export const reportPhoto = createServerFn({ method: "POST" })
 /**
  * Report a piece of user-generated content (post, comment or message).
  * Stored in the same moderation queue as profile reports so admins see everything
- * in one place — required by App Store guideline 1.2.
+ * in one place, required by App Store guideline 1.2.
  */
 export const reportContent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

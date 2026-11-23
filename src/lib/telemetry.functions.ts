@@ -17,7 +17,7 @@ const EventSchema = z.object({
   at: z.string().max(40).optional().nullable(),
 });
 
-/** Public ingest endpoint — crashes also happen while signed out. */
+/** Public ingest endpoint, crashes also happen while signed out. */
 export const ingestAppEvents = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ events: z.array(EventSchema).min(1).max(25) }).parse(d),

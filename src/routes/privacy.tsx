@@ -49,13 +49,13 @@ function Privacy() {
         <li>{tr("Account: email, hashed password (or Google/Apple sign-in identifier).", "Cuenta: correo electrónico, contraseña cifrada (o identificador de acceso con Google/Apple).", "Compte : e-mail, mot de passe haché (ou identifiant de connexion Google/Apple).")}</li>
         <li>{tr("Profile you enter: first name, age bracket, gender, cities/clubs you play at, languages, padel level, photo, short bio, ranked traits and availability windows.", "Perfil que introduces: nombre, franja de edad, género, ciudades/clubes donde juegas, idiomas, nivel de pádel, foto, biografía breve, rasgos ordenados y franjas de disponibilidad.", "Profil que vous renseignez : prénom, tranche d'âge, genre, villes/clubs où vous jouez, langues, niveau de padel, photo, courte bio, traits classés et créneaux de disponibilité.")}</li>
         <li>{tr("Activity needed to run the service: matches you host or join, invites, ratings, reports and blocks.", "Actividad necesaria para el servicio: partidos que organizas o a los que te apuntas, invitaciones, valoraciones, reportes y bloqueos.", "Activité nécessaire au service : matchs que vous organisez ou rejoignez, invitations, évaluations, signalements et blocages.")}</li>
-        <li>{tr("Messages you send to other players inside the app (stored so the chat works — see §5).", "Mensajes que envías a otros jugadores dentro de la app (se almacenan para que el chat funcione — ver §5).", "Messages envoyés aux autres joueurs dans l'app (stockés pour que le chat fonctionne — voir §5).")}</li>
+        <li>{tr("Messages you send to other players inside the app (stored so the chat works, see §5).", "Mensajes que envías a otros jugadores dentro de la app (se almacenan para que el chat funcione, ver §5).", "Messages envoyés aux autres joueurs dans l'app (stockés pour que le chat fonctionne, voir §5).")}</li>
       </ul>
 
       <h2 className="text-display text-2xl mt-6">3. {tr("What we do NOT collect", "Qué NO recogemos", "Ce que nous ne collectons PAS")}</h2>
       <ul className="list-disc pl-6 space-y-1">
         <li>{tr("Your last name (unless you choose to type it).", "Tus apellidos (salvo que decidas escribirlos).", "Votre nom de famille (sauf si vous le saisissez).")}</li>
-        <li>{tr("Payment data — the app is currently free.", "Datos de pago: la app es gratuita por ahora.", "Données de paiement — l'app est gratuite actuellement.")}</li>
+        <li>{tr("Payment data: the app is currently free.", "Datos de pago: la app es gratuita por ahora.", "Données de paiement : l'app est gratuite actuellement.")}</li>
         <li>{tr("Precise GPS location. You type your cities/clubs yourself.", "Ubicación GPS precisa. Tú mismo escribes tus ciudades/clubes.", "Localisation GPS précise. Vous saisissez vous-même vos villes/clubs.")}</li>
         <li>{tr("Advertising identifiers or third-party analytics tracking.", "Identificadores publicitarios ni rastreo analítico de terceros.", "Identifiants publicitaires ou traceurs analytiques tiers.")}</li>
       </ul>
@@ -63,9 +63,9 @@ function Privacy() {
       <h2 className="text-display text-2xl mt-6">4. {tr("Who can see what", "Quién ve qué", "Qui voit quoi")}</h2>
       <p>
         {tr(
-          "Your first name, photo, age bracket, gender, level, cities/clubs, languages, bio, ranked traits and availability are visible to other signed-in padel players — this is what makes the directory work. Your email, exact age, blocks, reports, personality Q&A answers and feedback are private and never shown to other users.",
+          "Your first name, photo, age bracket, gender, level, cities/clubs, languages, bio, ranked traits and availability are visible to other signed-in padel players: this is what makes the directory work. Your email, exact age, blocks, reports, personality Q&A answers and feedback are private and never shown to other users.",
           "Tu nombre, foto, franja de edad, género, nivel, ciudades/clubes, idiomas, biografía, rasgos y disponibilidad son visibles para otros jugadores registrados: así funciona el directorio. Tu correo, edad exacta, bloqueos, reportes, respuestas del cuestionario de personalidad y comentarios son privados y nunca se muestran a otros usuarios.",
-          "Votre prénom, photo, tranche d'âge, genre, niveau, villes/clubs, langues, bio, traits et disponibilités sont visibles par les autres joueurs connectés — c'est ce qui fait fonctionner l'annuaire. Votre e-mail, âge exact, blocages, signalements, réponses au questionnaire de personnalité et retours sont privés et jamais montrés aux autres.",
+          "Votre prénom, photo, tranche d'âge, genre, niveau, villes/clubs, langues, bio, traits et disponibilités sont visibles par les autres joueurs connectés : c'est ce qui fait fonctionner l'annuaire. Votre e-mail, âge exact, blocages, signalements, réponses au questionnaire de personnalité et retours sont privés et jamais montrés aux autres.",
         )}
       </p>
 
@@ -77,9 +77,9 @@ function Privacy() {
           "Vos réponses sont traitées automatiquement pour la compatibilité. Les chats privés ne sont examinés que pour la sécurité ou des demandes légales.",
         )}</b>{" "}
         {tr(
-          "We are not interested in the content of your conversations — it's yours.",
+          "We are not interested in the content of your conversations. It's yours.",
           "No nos interesa el contenido de tus conversaciones: es tuyo.",
-          "Le contenu de vos conversations ne nous intéresse pas — il vous appartient.",
+          "Le contenu de vos conversations ne nous intéresse pas. Il vous appartient.",
         )}
       </p>
       <p>
@@ -116,11 +116,11 @@ function Privacy() {
         <li>{tr("Server logs: up to 30 days for security and debugging.", "Registros del servidor: hasta 30 días por seguridad y depuración.", "Journaux serveur : jusqu'à 30 jours pour la sécurité et le débogage.")}</li>
       </ul>
 
-      <h2 className="text-display text-2xl mt-6">8. {tr("Where data is stored — subprocessors", "Dónde se almacenan los datos — subencargados", "Où sont stockées les données — sous-traitants")}</h2>
+      <h2 className="text-display text-2xl mt-6">8. {tr("Where data is stored: subprocessors", "Dónde se almacenan los datos: subencargados", "Où sont stockées les données : sous-traitants")}</h2>
       <p>{tr("Data is stored inside the European Union with the following subprocessors:", "Los datos se almacenan en la Unión Europea con los siguientes subencargados:", "Les données sont stockées dans l'Union européenne chez les sous-traitants suivants :")}</p>
       <ul className="list-disc pl-6 space-y-1">
-        <li>{tr("Lovable Cloud (built on Supabase) — hosting, database, authentication, storage (EU region).", "Lovable Cloud (sobre Supabase): alojamiento, base de datos, autenticación y almacenamiento (región UE).", "Lovable Cloud (basé sur Supabase) — hébergement, base de données, authentification, stockage (région UE).")}</li>
-        <li>{tr('Google / Apple — only if you choose "Sign in with Google" or "Sign in with Apple" (verifies your identity).', 'Google / Apple: solo si eliges "Iniciar sesión con Google" o "Iniciar sesión con Apple" (verifica tu identidad).', 'Google / Apple — uniquement si vous choisissez « Se connecter avec Google » ou « Se connecter avec Apple » (vérification d\'identité).')}</li>
+        <li>{tr("Lovable Cloud (built on Supabase): hosting, database, authentication, storage (EU region).", "Lovable Cloud (sobre Supabase): alojamiento, base de datos, autenticación y almacenamiento (región UE).", "Lovable Cloud (basé sur Supabase), hébergement, base de données, authentification, stockage (région UE).")}</li>
+        <li>{tr('Google / Apple: only if you choose "Sign in with Google" or "Sign in with Apple" (verifies your identity).', 'Google / Apple: solo si eliges "Iniciar sesión con Google" o "Iniciar sesión con Apple" (verifica tu identidad).', 'Google / Apple, uniquement si vous choisissez « Se connecter avec Google » ou « Se connecter avec Apple » (vérification d\'identité).')}</li>
       </ul>
       <p>
         {tr(

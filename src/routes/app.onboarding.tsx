@@ -176,12 +176,12 @@ function Onboarding() {
       if (p.personal_traits?.length) setPersonalTraits(p.personal_traits);
       if (p.padel_style?.length) setPadelStyle(p.padel_style);
     } else if (profileQ.data === null) {
-      // New user — hydrate from the pre-signup guest draft if present
+      // New user, hydrate from the pre-signup guest draft if present
       const draft = loadGuestDraft();
       if (draft) {
         if (draft.priorities?.length) setPriorities((cur) => cur.length ? cur : draft.priorities!);
         if (draft.level) setLevel(draft.level as PadelLevel);
-        // Legacy looking_for hydration removed — app is now padel-only.
+        // Legacy looking_for hydration removed, app is now padel-only.
         clearGuestDraft();
         toast.success("We pre-filled your answers from the preview.");
       }
@@ -213,7 +213,7 @@ function Onboarding() {
     navigate({ to: "/auth", search: { redirect: undefined, join: undefined }, replace: true });
   };
 
-  // Welcome toast — fires once for brand-new users (no profile yet).
+  // Welcome toast, fires once for brand-new users (no profile yet).
   // Covers OAuth signups that bypass the auth.tsx toast path.
   const [welcomed, setWelcomed] = useState(false);
   useEffect(() => {
@@ -237,9 +237,9 @@ function Onboarding() {
           : tr("Welcome aboard! 🎾", "¡Bienvenido a la pista! 🎾", "Bienvenue sur le court ! 🎾"),
         {
           description: tr(
-            "Hope you love it, share with a padel friend or two, it plays better with more of us on the court.",
-            "Esperamos que te encante, compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
-            "On espère que ça te plaira, partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+            "Hope you love it. Share with a padel friend or two, it plays better with more of us on the court.",
+            "Esperamos que te encante. Compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+            "On espère que ça te plaira. Partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
           ),
           duration: 8000,
         },

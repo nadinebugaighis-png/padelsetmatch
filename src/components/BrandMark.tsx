@@ -20,7 +20,7 @@ export function BrandMark({ size = "md", to = "/", className = "" }: Props) {
     <Link
       to={to}
       className={`inline-flex items-center ${className}`}
-      aria-label="Padel Set Match — home"
+      aria-label="Padel Set Match, home"
     >
       <img
         src={wordmark.url}

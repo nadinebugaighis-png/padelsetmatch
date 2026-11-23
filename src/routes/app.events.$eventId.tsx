@@ -111,7 +111,7 @@ function EventDetail() {
     (async () => {
       try {
         await claimInvite({ data: { token: inviteToken } });
-      } catch { /* ignore — token may be already claimed or invalid */ }
+      } catch { /* ignore, token may be already claimed or invalid */ }
       if (cancelled) return;
       qc.invalidateQueries({ queryKey: ["event", eventId] });
       navigate({ to: "/app/events/$eventId", params: { eventId }, search: {}, replace: true });
@@ -295,7 +295,7 @@ function EventDetail() {
       qc.invalidateQueries({ queryKey: ["open-events"] });
       qc.invalidateQueries({ queryKey: ["my-events"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tr("Could not leave — please try again.", "No se pudo salir — inténtalo de nuevo.", "Impossible de quitter — réessaie."));
+      toast.error(e instanceof Error ? e.message : tr("Could not leave, please try again.", "No se pudo salir, inténtalo de nuevo.", "Impossible de quitter, réessaie."));
     }
   };
 
@@ -589,9 +589,9 @@ function EventDetail() {
             {event.is_private_court && me?.id !== event.host_profile_id && (
               <div className="border-t border-[var(--ink)]/16 bg-amber-50 px-4 py-2.5 text-xs text-amber-950 leading-relaxed">
                 ⚠️ {tr(
-                  "Private residence — confirm with the host in chat before heading over and share your location with a friend.",
-                  "Domicilio privado — confirma con el organizador por chat antes de ir y comparte tu ubicación con alguien de confianza.",
-                  "Résidence privée — confirme avec l'hôte par chat avant d'y aller et partage ta position avec un proche.",
+                  "Private residence: confirm with the host in chat before heading over and share your location with a friend.",
+                  "Domicilio privado: confirma con el organizador por chat antes de ir y comparte tu ubicación con alguien de confianza.",
+                  "Résidence privée : confirme avec l'hôte par chat avant d'y aller et partage ta position avec un proche.",
                 )}
               </div>
             )}
@@ -806,7 +806,7 @@ function EventDetail() {
               onClick={async () => {
                 try {
                   await respondInvite({ data: { inviteId: me!.myInvite!.id, accept: false } });
-                  toast(tr("No worries — thanks for letting the host know", "Sin problema — gracias por avisar", "Pas de souci — merci d'avoir prévenu l'hôte"));
+                  toast(tr("No worries, thanks for letting the host know", "Sin problema, gracias por avisar", "Pas de souci, merci d'avoir prévenu l'hôte"));
                   qc.invalidateQueries({ queryKey: ["event", eventId] });
                 } catch (e) { toast.error(e instanceof Error ? e.message : "Error"); }
               }}
@@ -943,7 +943,7 @@ function EventDetail() {
 
 
 
-      {/* Chat — auto-opens for participants once at least 2 players joined */}
+      {/* Chat, auto-opens for participants once at least 2 players joined */}
       {me?.iAmParticipant && (
 
         <div id="event-chat" className="mt-6 scroll-mt-6">
@@ -1147,7 +1147,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
 
   const displayLink = shortLinkUrl || linkUrl;
   const whatsappUrl = displayLink
-    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match — tap to join: ${displayLink}`, `Estás invitado a mi partido de pádel — toca para unirte: ${displayLink}`))}`
+    ? `https://wa.me/?text=${encodeURIComponent(tr(`You're invited to my padel match, tap to join: ${displayLink}`, `Estás invitado a mi partido de pádel, toca para unirte: ${displayLink}`))}`
     : null;
 
   const copyLink = async () => {
@@ -1186,7 +1186,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                 {tr("Invite players", "Invitar jugadores", "Inviter des joueurs")}
               </h2>
               <p className="mt-1.5 text-xs text-[var(--ink)]/82 leading-relaxed max-w-sm">
-                {tr("First come, first served — anyone can still join.", "Por orden de llegada — cualquiera puede unirse.", "Premier arrivé, premier servi — tout le monde peut rejoindre.")}
+                {tr("First come, first served. Anyone can still join.", "Por orden de llegada: cualquiera puede unirse.", "Premier arrivé, premier servi : tout le monde peut rejoindre.")}
               </p>
             </div>
             <button
@@ -1221,9 +1221,9 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
               <div className="rounded-2xl border border-dashed border-[var(--ink)]/22 bg-[var(--paper-2)]/60 px-4 py-6 text-center">
                 <p className="text-xs text-[var(--ink)]/82 leading-relaxed">
                   {tr(
-                    "No connections yet — share the invite link below on WhatsApp.",
-                    "Aún no tienes conexiones — comparte el enlace de abajo por WhatsApp.",
-                    "Pas encore de connexions — partage le lien ci-dessous sur WhatsApp.",
+                    "No connections yet. Share the invite link below on WhatsApp.",
+                    "Aún no tienes conexiones. Comparte el enlace de abajo por WhatsApp.",
+                    "Pas encore de connexions. Partage le lien ci-dessous sur WhatsApp.",
                   )}
                 </p>
               </div>
@@ -1263,7 +1263,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                         )}
                       </div>
                       <div className="w-full truncate text-xs font-medium text-[var(--ink)]">
-                        {p.first_name ?? "—"}
+                        {p.first_name ?? "·"}
                       </div>
                       <div className="text-[9px] uppercase tracking-widest text-[var(--ink)]/76 -mt-1">
                         {p.joined
@@ -1342,7 +1342,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-sm text-[var(--ink)] truncate">
-                        {inv.invitee?.first_name ?? "—"}
+                        {inv.invitee?.first_name ?? "·"}
                       </span>
                       <span
                         className={`text-[9px] uppercase tracking-widest px-2 py-0.5 rounded-full ${

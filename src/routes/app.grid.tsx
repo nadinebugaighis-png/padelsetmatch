@@ -124,7 +124,7 @@ function Discover() {
     );
     io.observe(el);
     return () => io.disconnect();
-    // Re-attach whenever the list or mode changes — the sentinel can remount
+    // Re-attach whenever the list or mode changes, the sentinel can remount
     // (e.g. after toggling World), leaving the observer on a stale node.
   }, [shown, world, feedTick, levelFilter, zoneFilter, searchQuery]);
   type CategoryScores = { playingStyle: number; personality: number; lifestyle: number };
@@ -246,8 +246,8 @@ function Discover() {
     mutationFn: (v: { thumbs: 1 | -1; reason?: string }) => rateCompat({ data: { otherProfileId: preview!.id, thumbs: v.thumbs, reason: v.reason } }),
     onSuccess: (_r, v) => {
       qc.setQueryData(["ai-compat-fb", preview?.id], { thumbs: v.thumbs });
-      if (!v.reason) toast.success(v.thumbs === 1 ? "Thanks — we'll surface more like this" : "Got it — tell us why?");
-      else toast.success("Thanks — we'll adjust");
+      if (!v.reason) toast.success(v.thumbs === 1 ? "Thanks, we'll surface more like this" : "Got it, tell us why?");
+      else toast.success("Thanks, we'll adjust");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save"),
   });
@@ -295,7 +295,7 @@ function Discover() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : t("disc.likeFail")),
   });
-  // Quick variant used by the tiny thumbs-up on the card — silent connect, never navigates away.
+  // Quick variant used by the tiny thumbs-up on the card, silent connect, never navigates away.
   const likeSilentM = useMutation({
     mutationFn: (id: string) => like({ data: { likedProfileId: id } }),
     onSuccess: (res) => {
@@ -346,7 +346,7 @@ function Discover() {
     mutationFn: (vars: { id: string; category: "padel" | "friend" | "relationship" | "all" }) => hide({ data: { hiddenProfileId: vars.id, category: vars.category } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast(tr("Hidden from your Home grid — manage in Profile → Hidden & blocked", "Oculto en tu Inicio — puedes gestionarlo en Perfil → Ocultos y bloqueados", "Masqué de ton accueil — gère-le dans Profil → Masqués et bloqués"), { duration: 2400 });
+      toast(tr("Hidden from your Home grid. Manage in Profile → Hidden & blocked", "Oculto en tu Inicio. Puedes gestionarlo en Perfil → Ocultos y bloqueados", "Masqué de ton accueil. Gère-le dans Profil → Masqués et bloqués"), { duration: 2400 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not hide", "No se pudo ocultar", "Impossible de masquer")),
   });
@@ -364,7 +364,7 @@ function Discover() {
     mutationFn: (id: string) => reportPhotoFn({ data: { reportedProfileId: id, reason: "Inappropriate photo" } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["discover"] });
-      toast.success(tr("Reported — thanks 🙏", "Reportado — gracias 🙏", "Signalé — merci 🙏"));
+      toast.success(tr("Reported, thanks 🙏", "Reportado, gracias 🙏", "Signalé, merci 🙏"));
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Could not send report", "No se pudo enviar el reporte", "Impossible d'envoyer le signalement")),
   });
@@ -641,7 +641,7 @@ function Discover() {
 
         {list.length === 0 ? (
           (() => {
-            // Smart empty state — infer WHY the grid is empty and offer a fix.
+            // Smart empty state, infer WHY the grid is empty and offer a fix.
             const totalInFeed = all.length;
             const hasSearch = !!searchQuery.trim();
             const hasSideFilters = activeFilterCount > 0;
@@ -705,15 +705,15 @@ function Discover() {
                 primary: true,
               });
             } else {
-              // World is on OR feed has people but everything filtered — offer invite.
+              // World is on OR feed has people but everything filtered, offer invite.
               actions.push({
                 label: tr("Invite a friend", "Invitar a un amigo", "Inviter un ami"),
                 onClick: () => {
                   const url = typeof window !== "undefined" ? window.location.origin : "";
                   const text = tr(
-                    `Join me on PadelSetMatch — social padel by zone. ${url}`,
-                    `Únete a mí en PadelSetMatch — pádel social por comunidad. ${url}`,
-                    `Rejoins-moi sur PadelSetMatch — padel social par zone. ${url}`,
+                    `Join me on PadelSetMatch, social padel by zone. ${url}`,
+                    `Únete a mí en PadelSetMatch, pádel social por comunidad. ${url}`,
+                    `Rejoins-moi sur PadelSetMatch, padel social par zone. ${url}`,
                   );
                   const nav2 = (navigator as unknown as { share?: (d: { text: string }) => Promise<void> });
                   if (nav2.share) nav2.share({ text }).catch(() => {});
@@ -843,7 +843,7 @@ function Discover() {
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
                           className="w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center text-[var(--ink)] hover:bg-white"
                           aria-label={tr(`Hide ${c.first_name}`, `Ocultar a ${c.first_name}`, `Masquer ${c.first_name}`)}
-                          title={tr("Not interested — hide from my Home grid", "No me interesa — ocultar de mi Inicio", "Pas intéressé·e — masquer de mon accueil")}
+                          title={tr("Not interested, hide from my Home grid", "No me interesa, ocultar de mi Inicio", "Pas intéressé·e, masquer de mon accueil")}
                         >
                           <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
                         </button>
@@ -990,7 +990,7 @@ function Discover() {
                   </DropdownMenu>
                 )}
                 <div className="overflow-y-auto flex-1 lg:flex lg:overflow-hidden">
-                  {/* Photo — polaroid-style white frame, previous size, no gold */}
+                  {/* Photo, polaroid-style white frame, previous size, no gold */}
                   <div className="relative lg:w-[40%] lg:shrink-0 lg:h-full bg-[var(--paper)] p-4 lg:p-5 flex flex-col justify-center items-center lg:items-stretch">
                     <div className="relative bg-white p-2 sm:p-2.5 pb-3 lg:p-3 lg:pb-3 shadow-[0_14px_42px_-10px_rgba(31,58,46,0.22)] lg:shadow-[0_18px_48px_-12px_rgba(31,58,46,0.28)] rounded-sm lg:rounded-md w-[62%] max-w-[240px] lg:w-auto lg:max-w-[300px] xl:max-w-[330px] lg:mx-auto">
                       {preview.photo_url ? (
@@ -1009,7 +1009,7 @@ function Discover() {
                     </div>
                   </div>
 
-                  {/* Body — scrollable on desktop */}
+                  {/* Body, scrollable on desktop */}
                   <div className="lg:w-[58%] lg:overflow-y-auto">
                     <div className="px-5 pt-5 pb-8 lg:px-8 lg:pt-8 lg:pb-10 space-y-4">
                       {/* Programme header */}
@@ -1046,7 +1046,7 @@ function Discover() {
                       <GearShelf profileId={preview.id} />
 
 
-                      {/* Primary actions — coach card + message/like button placed above the fold */}
+                      {/* Primary actions, coach card + message/like button placed above the fold */}
                       {preview.is_coach && (
                         <CoachBadgePanel coachName={preview.first_name} />
                       )}
@@ -1178,7 +1178,7 @@ function Discover() {
             value={introText}
             onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
             rows={4}
-            placeholder={tr("Hey! We played at Padel Now last month — up for another game?", "¡Hola! Jugamos en Padel Now el mes pasado — ¿otro partido?", "Salut ! On a joué à Padel Now le mois dernier — on rejoue ?")}
+            placeholder={tr("Hey! We played at Padel Now last month. Up for another game?", "¡Hola! Jugamos en Padel Now el mes pasado, ¿otro partido?", "Salut ! On a joué à Padel Now le mois dernier, on rejoue ?")}
             className="w-full rounded-2xl border border-[var(--ink)]/20 bg-white p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] resize-none"
           />
           <div className="flex items-center justify-between text-[11px] text-[var(--ink)]/78">
@@ -1267,7 +1267,7 @@ function PhotoReminderBanner({ me }: { me: { photo_url: string | null; created_a
       <div className="w-9 h-9 rounded-full bg-[var(--paper-2)] flex items-center justify-center text-lg">📸</div>
       <div className="flex-1 min-w-0">
         <div className="text-serif text-[15px] text-[var(--ink)]">
-          {strong ? tr("Add a photo — you'll get 3× more matches", "Añade una foto — tendrás 3× más matches", "Ajoute une photo — tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
+          {strong ? tr("Add a photo: you'll get 3× more matches", "Añade una foto: tendrás 3× más matches", "Ajoute une photo : tu auras 3× plus de matches") : tr("Add a profile photo when you're ready", "Añade una foto de perfil cuando quieras", "Ajoute une photo de profil quand tu es prêt·e")}
         </div>
         <div className="text-xs text-[var(--ink)]/76">{tr("Tip: a photo with your racket works best.", "Consejo: una foto con tu pala funciona mejor.", "Astuce : une photo avec ta raquette marche le mieux.")}</div>
       </div>

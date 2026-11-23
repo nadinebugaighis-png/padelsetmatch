@@ -90,10 +90,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { title: "PadelSetMatch — Find Padel Players Near You" },
+      { title: "PadelSetMatch · Find Padel Players Near You" },
       { name: "description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
       { property: "og:site_name", content: "PadelSetMatch" },
-      { property: "og:title", content: "PadelSetMatch — Find Padel Players Near You" },
+      { property: "og:title", content: "PadelSetMatch · Find Padel Players Near You" },
       { property: "og:description", content: "Connect with Padel players nearby you, join games, discover courts, and build your community." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -173,7 +173,7 @@ function RootComponent() {
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
-    // Native shell (iOS/Android via Capacitor) — no-op on the web
+    // Native shell (iOS/Android via Capacitor), no-op on the web
     void import("@/lib/native").then((m) => m.initNativeShell()).catch(() => {});
     let removeTap: (() => void) | undefined;
     let removeMatchLink: (() => void) | undefined;

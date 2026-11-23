@@ -140,7 +140,7 @@ function PublicMatchPage() {
       try {
         await claimInvite({ data: { token: inviteToken } });
         navigate({ to: "/app/events/$eventId", params: { eventId } });
-      } catch { /* ignore — fall through to public view */ }
+      } catch { /* ignore, fall through to public view */ }
     })();
   }, [inviteToken, hasSession, claimInvite, navigate, eventId]);
 
@@ -223,13 +223,13 @@ function PublicMatchPage() {
                     🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}
                   </span>
                   <p className="mt-2 text-xs text-[var(--ink)]/80">
-                    {tr("Joining costs nothing — just bring your racket and play.", "Sin coste alguno — solo ven con tu pala y a jugar.", "Aucun frais — viens avec ta raquette et joue.")}
+                    {tr("Joining costs nothing, just bring your racket and play.", "Sin coste alguno, solo ven con tu pala y a jugar.", "Aucun frais, viens avec ta raquette et joue.")}
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Match card — same style as Play page */}
+            {/* Match card, same style as Play page */}
             <div className="rounded-2xl bg-white overflow-hidden shadow-[0_1px_0_rgba(15,62,46,0.04),0_6px_18px_-12px_rgba(15,62,46,0.16)] border border-[var(--ink)]/16">
               <div className="flex">
                 {/* Date / time block */}
@@ -244,7 +244,7 @@ function PublicMatchPage() {
                       </h1>
                       <div className="mt-0.5 flex items-center gap-1 text-[12px] text-[var(--ink)]/82 min-w-0">
                         <MapPin className="w-3.5 h-3.5 shrink-0" />
-                        <span className="truncate">{match.club_address || match.city || "—"}</span>
+                        <span className="truncate">{match.club_address || match.city || "·"}</span>
                       </div>
                     </div>
                     <span
@@ -368,14 +368,14 @@ function PublicMatchPage() {
                   params={{ eventId }}
                   className="block w-full py-3 rounded-full border-2 border-[var(--ink)] text-[var(--ink)] text-sm uppercase tracking-widest font-semibold text-center"
                 >
-                  {tr("Join as guest — no account", "Unirme como invitado — sin cuenta", "Rejoindre en invité — sans compte")}
+                  {tr("Join as guest · no account", "Unirme como invitado · sin cuenta", "Rejoindre en invité · sans compte")}
                 </Link>
               )}
               <button onClick={() => setShareOpen(true)} className="w-full py-3 rounded-full border border-[var(--ink)]/25 text-[var(--ink)] text-sm uppercase tracking-widest inline-flex items-center justify-center gap-2">
                 <Share2 className="w-4 h-4" /> {tr("Share", "Compartir", "Partager")}
               </button>
               {!ptLink && <p className="text-[11px] text-[var(--ink)]/76 text-center pt-1">
-                {tr("No long profile needed to join — just your name and padel level.", "No necesitas un perfil largo para unirte — solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre — juste ton prénom et ton niveau de padel.")}
+                {tr("No long profile needed to join, just your name and padel level.", "No necesitas un perfil largo para unirte, solo tu nombre y nivel de pádel.", "Pas besoin d'un long profil pour rejoindre, juste ton prénom et ton niveau de padel.")}
               </p>}
             </div>
           </>

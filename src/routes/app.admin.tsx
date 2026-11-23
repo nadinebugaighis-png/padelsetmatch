@@ -82,7 +82,7 @@ function AdminPage() {
         )}
       </header>
 
-      {/* Key stats — hero row */}
+      {/* Key stats, hero row */}
       <section className="grid grid-cols-3 gap-2">
         <BigStat label="Members" value={counts.users} accent />
         <BigStat label="Matches" value={counts.matches} />
@@ -234,7 +234,7 @@ function AdminPage() {
 
           {incomplete.length > 0 && (
             <Card title={`Incomplete (${incomplete.length})`} tone="warn">
-              <p className="text-xs text-[var(--ink)]/82 mb-2">Signed up but never finished onboarding — not visible in the Home grid.</p>
+              <p className="text-xs text-[var(--ink)]/82 mb-2">Signed up but never finished onboarding, not visible in the Home grid.</p>
               <div className="space-y-1.5">
                 {incomplete.map((u) => {
                   const stalled = u.onboarding_stage === "lite";
@@ -275,7 +275,7 @@ function AdminPage() {
                         <span className="font-semibold">{u.first_name}</span>
                         {u.age ? <span className="text-[var(--ink)]/82">, {u.age}</span> : null}
                         <span className="text-[var(--ink)]/70"> · </span>
-                        <span className="text-[var(--ink)]/80">{u.zone ?? "—"}</span>
+                        <span className="text-[var(--ink)]/80">{u.zone ?? "·"}</span>
                       </div>
                       <div className="text-xs text-[var(--ink)]/76 truncate">{u.email}</div>
                     </div>
@@ -383,7 +383,7 @@ function ModerateTab() {
               <div key={p.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/16 bg-[var(--ink)]/5">
                 <img src={p.photo_url ?? ""} alt={p.first_name ?? "member"} className="w-full aspect-square object-cover" loading="lazy" />
                 <div className="p-1.5 space-y-1">
-                  <div className="text-[11px] font-semibold truncate">{p.first_name ?? "—"}</div>
+                  <div className="text-[11px] font-semibold truncate">{p.first_name ?? "·"}</div>
                   <RemoveBtn kind="photo" id={p.id} label={`Remove ${p.first_name ?? "this"} photo`} />
                 </div>
               </div>
@@ -403,7 +403,7 @@ function ModerateTab() {
                   : <div className="w-full aspect-square grid place-items-center text-[10px] text-[var(--ink)]/70">no photo</div>}
                 <div className="p-1.5 space-y-1">
                   <div className="text-[11px] font-semibold truncate">{g.title}</div>
-                  <div className="text-[10px] text-[var(--ink)]/78 truncate">{g.author_name ?? "—"}</div>
+                  <div className="text-[10px] text-[var(--ink)]/78 truncate">{g.author_name ?? "·"}</div>
                   <RemoveBtn kind="gear" id={g.id} label={`Remove kit item "${g.title}"`} />
                 </div>
               </div>

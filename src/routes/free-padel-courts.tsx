@@ -3,7 +3,7 @@ import { ArrowRight, MapPin, Users, KeyRound, CalendarCheck } from "lucide-react
 import { BrandMark } from "@/components/BrandMark";
 import { LangSwitch } from "@/lib/i18n";
 
-const TITLE = "Free Padel Courts — Find Free & Private Courts Near You";
+const TITLE = "Free Padel Courts: Find Free & Private Courts Near You";
 const DESC =
   "How to find free padel courts near you: community courts, urbanisation and private courts opened up by neighbours, and off-peak club slots. Join players with free court access on PadelSetMatch.";
 const URL = "https://padelsetmatch.com/free-padel-courts";
@@ -68,7 +68,7 @@ const WAYS = [
   {
     icon: MapPin,
     title: "Municipal courts",
-    body: "Councils across Spain run public padel courts that are free or a few euros off-peak. Check your town hall's sports page — availability is rarely advertised anywhere else.",
+    body: "Councils across Spain run public padel courts that are free or a few euros off-peak. Check your town hall's sports page: availability is rarely advertised anywhere else.",
   },
   {
     icon: KeyRound,
@@ -114,7 +114,7 @@ function FreeCourtsPage() {
         </h1>
         <p className="mt-5 text-[17px] leading-[1.6] text-[var(--ink)]/84">
           Court fees are the main reason people play less padel than they want to. But a huge share of
-          courts — municipal, community, urbanisation — are free to use and sitting empty right now. The
+          courts (municipal, community, urbanisation) are free to use and sitting empty right now. The
           hard part was never the court. It is finding the other three players.
         </p>
         <div className="mt-7">

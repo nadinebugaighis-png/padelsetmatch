@@ -4,7 +4,7 @@ type Loc = { locations?: string[] | null; zone?: string | null };
 const norm = (s: string) => s.trim().toLowerCase();
 
 /**
- * Greater La Moraleja: the surrounding communities count as one — El Soto,
+ * Greater La Moraleja: the surrounding communities count as one, El Soto,
  * El Encinar (officially Hortaleza, by the airport), Arroyo de la Vega,
  * La Solana and the Diversia / Brains school side. Hortaleza and Alcobendas
  * as wholes are NOT included.
@@ -87,8 +87,8 @@ export function sharesMyArea(me: Loc, them: Loc): boolean {
 }
 
 /**
- * Roster heading: true when the viewer has chosen La Moraleja — or one of the
- * surrounding communities that count as it — as one of their areas. Only
+ * Roster heading: true when the viewer has chosen La Moraleja, or one of the
+ * surrounding communities that count as it, as one of their areas. Only
  * La Moraleja gets its own heading for now; other places keep the plain one.
  */
 export function isMoralejaMember(p: Loc): boolean {

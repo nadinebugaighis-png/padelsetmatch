@@ -27,7 +27,7 @@ export function NotificationBell() {
   const boxRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [viewedList, setViewedList] = useState<NotificationItem[]>([]);
-  // These server fns require auth — never call them while signed out.
+  // These server fns require auth, never call them while signed out.
   const [signedIn, setSignedIn] = useState(false);
 
   useEffect(() => {

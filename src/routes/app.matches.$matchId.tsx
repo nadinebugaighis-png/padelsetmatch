@@ -104,7 +104,7 @@ function ChatRoom() {
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success(tr("Reported — thanks 🙏", "Reportado — gracias 🙏", "Signalé — merci 🙏")),
+    onSuccess: () => toast.success(tr("Reported, thanks 🙏", "Reportado, gracias 🙏", "Signalé, merci 🙏")),
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar", "Impossible de signaler")),
   });
   const editM = useMutation({

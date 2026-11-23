@@ -118,7 +118,7 @@ export async function flush() {
   try {
     await ingestAppEvents({ data: { events: batch } });
   } catch {
-    // Offline or server down — keep them for the next attempt.
+    // Offline or server down, keep them for the next attempt.
     queue = [...batch, ...queue].slice(-MAX_QUEUE);
     persist();
   }
@@ -265,7 +265,7 @@ export function initTelemetry() {
     });
   });
 
-  // iOS suspends WebViews without firing unload — pagehide/visibilitychange are the reliable hooks.
+  // iOS suspends WebViews without firing unload, pagehide/visibilitychange are the reliable hooks.
   const drain = () => { void flush(); };
   window.addEventListener("pagehide", drain);
   document.addEventListener("visibilitychange", () => {

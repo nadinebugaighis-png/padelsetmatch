@@ -12,7 +12,7 @@ import { readResetLink } from "@/lib/reset-link";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [
-      { title: "Reset password — PadelSetMatch" },
+      { title: "Reset password · PadelSetMatch" },
       { name: "description", content: "Set a new password for your PadelSetMatch account." },
       { property: "og:title", content: "Reset your password \u00b7 PadelSetMatch" },
       { property: "og:description", content: "Set a new password for your PadelSetMatch account." },

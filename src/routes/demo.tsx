@@ -21,7 +21,7 @@ import p11 from "@/assets/seed/p11.jpg.asset.json";
 import p12 from "@/assets/seed/p12.jpg.asset.json";
 import mePhoto from "@/assets/seed/me.jpg.asset.json";
 
-const TITLE = "PadelSetMatch demo — players, matches and courts";
+const TITLE = "PadelSetMatch demo · players, matches and courts";
 const DESC =
   "A no-signup tour of PadelSetMatch: find padel players near you, join open matches, chat with your four, and track your court time.";
 
@@ -144,7 +144,7 @@ function DemoPage() {
     <main className="programme-page min-h-screen bg-[var(--paper)] pb-28">
       {!clean && (
         <div className="sticky top-0 z-40 bg-[var(--ink)] text-[var(--paper)] px-4 py-2.5 flex items-center justify-between gap-3 shadow-md">
-          <span className="text-[13px] font-medium truncate">Demo preview — sample players</span>
+          <span className="text-[13px] font-medium truncate">Demo preview · sample players</span>
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={() => setClean(true)}
@@ -220,7 +220,7 @@ function DemoPage() {
                   key={p.name}
                   className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md"
                 >
-                  {/* Polaroid-style photo frame — same as Home */}
+                  {/* Polaroid-style photo frame, same as Home */}
                   <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
                     <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       <img

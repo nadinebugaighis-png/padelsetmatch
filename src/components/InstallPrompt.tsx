@@ -102,7 +102,7 @@ export function InstallModal({ open, onClose }: { open: boolean; onClose: () => 
         <div className="flex items-start justify-between gap-3 mb-6">
           <div>
             <h3 className="text-display text-3xl text-[var(--cream)] leading-none">{tr("Put it on your phone", "Instálala en tu móvil", "Installe-la sur ton téléphone")}</h3>
-            <p className="mt-2 text-sm text-[var(--cream)]/70">{tr("It's on the App Store — or add it to your home screen straight from here in 10 seconds.", "Ya está en la App Store — o añádela a tu pantalla de inicio directamente desde aquí en 10 segundos.", "Elle est sur l’App Store — ou ajoute-la à ton écran d’accueil directement d’ici en 10 secondes.")}</p>
+            <p className="mt-2 text-sm text-[var(--cream)]/70">{tr("It's on the App Store, or add it to your home screen straight from here in 10 seconds.", "Ya está en la App Store, o añádela a tu pantalla de inicio directamente desde aquí en 10 segundos.", "Elle est sur l’App Store, ou ajoute-la à ton écran d’accueil directement d’ici en 10 secondes.")}</p>
           </div>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-[var(--cream)]/10 text-[var(--cream)]/60" aria-label="Close">
             <X className="w-5 h-5" />

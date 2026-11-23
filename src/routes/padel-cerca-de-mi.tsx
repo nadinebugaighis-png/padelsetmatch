@@ -3,7 +3,7 @@ import { ArrowRight, MapPin, Users, KeyRound, CalendarCheck } from "lucide-react
 import { BrandMark } from "@/components/BrandMark";
 import { LangSwitch } from "@/lib/i18n";
 
-const TITLE = "Pádel cerca de mí — Encuentra jugadores en Madrid | PadelSetMatch";
+const TITLE = "Pádel cerca de mí · Encuentra jugadores en Madrid | PadelSetMatch";
 const DESC =
   "¿Buscas pádel cerca de ti en Madrid? Encuentra jugadores de tu nivel, únete a partidos abiertos y descubre pistas municipales, de urbanización y gratuitas. Perfil gratis.";
 const URL = "https://padelsetmatch.com/padel-cerca-de-mi";

@@ -6,9 +6,9 @@ export const Route = createFileRoute("/terms")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { title: "Terms of Service · PadelSetMatch" },
-      { name: "description", content: "Terms of Service for PadelSetMatch — the padel player directory." },
+      { name: "description", content: "Terms of Service for PadelSetMatch, the padel player directory." },
       { property: "og:title", content: "Terms of Service · PadelSetMatch" },
-      { property: "og:description", content: "Terms of Service for PadelSetMatch — the padel player directory." },
+      { property: "og:description", content: "Terms of Service for PadelSetMatch, the padel player directory." },
       { property: "og:url", content: "https://padelsetmatch.com/terms" },
     ],
     links: [{ rel: "canonical", href: "https://padelsetmatch.com/terms" }],
@@ -32,7 +32,7 @@ function Terms() {
       <p>
         PadelSetMatch helps padel players find other padel players of a similar level in their city or
         club, and organise casual matches. It is <b>not</b> a dating, romantic or friendship app, and
-        it is <b>not</b> a court-booking service — you should book courts through Playtomic or your
+        it is <b>not</b> a court-booking service: you should book courts through Playtomic or your
         club as usual.
       </p>
 
@@ -67,7 +67,7 @@ function Terms() {
       <p>
         Matches should be played at public padel clubs, ideally booked through Playtomic or another
         legitimate court-booking service so the meeting is at a supervised venue. PadelSetMatch is a
-        discovery and chat platform — <b>we are not responsible for what happens off-platform</b>.
+        discovery and chat platform: <b>we are not responsible for what happens off-platform</b>.
         Meet in public, tell a friend, and trust your instincts. If a match is at a private or
         residential court, hosts must flag it as "Private" so other players know before joining.
       </p>
@@ -83,7 +83,7 @@ function Terms() {
       <p>
         You keep ownership of your photos, bio and messages. You grant Moorish Arches S.L. a limited,
         non-exclusive licence to display them inside the app for the sole purpose of running the
-        service. <b>We do not read your private messages or your personality Q&amp;A answers</b> — the
+        service. <b>We do not read your private messages or your personality Q&amp;A answers</b>. The
         only exception is when you or the other party report a specific conversation for abuse, or if
         we receive a lawful request from an authority. See our{" "}
         <Link to="/privacy" className="underline">Privacy Policy</Link> for the full detail.
@@ -127,7 +127,7 @@ function Terms() {
 
       <h2 className="text-display text-2xl mt-6">12. Contact</h2>
       <p>
-        Moorish Arches S.L. — for questions or to exercise your privacy rights, contact us via the
+        Moorish Arches S.L. For questions or to exercise your privacy rights, contact us via the
         "Make this app better" box on your Profile screen.
       </p>
 

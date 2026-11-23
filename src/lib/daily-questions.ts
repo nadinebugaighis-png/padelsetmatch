@@ -167,7 +167,7 @@ export const QUESTION_SNOOZE_MS = 7 * 24 * 60 * 60_000;
  * Whether the Grid question card should show.
  * A player who tapped "No thanks" sees nothing until their pause ends.
  * New players (under UNLOCK_MIN_ANSWERS answers) get one on every visit;
- * regular players get two a day — one in the morning, one in the evening.
+ * regular players get two a day, one in the morning, one in the evening.
  */
 export function shouldShowQuestion(opts: {
   answeredCount: number;

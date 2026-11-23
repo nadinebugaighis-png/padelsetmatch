@@ -18,4 +18,8 @@ describe("tidyHeadline", () => {
     expect(out.length).toBeLessThanOrEqual(220);
     expect(out.endsWith(".")).toBe(true);
   });
+
+  it("never shows a long dash, swapping it for a comma", () => {
+    expect(tidyHeadline("Both love the left side \u2014 a natural pairing.")).toBe("Both love the left side, a natural pairing.");
+  });
 });

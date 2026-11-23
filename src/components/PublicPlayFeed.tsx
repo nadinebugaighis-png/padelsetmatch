@@ -128,7 +128,7 @@ export function PublicPlayFeed({
             {heading ?? tr("Find a padel match near you.", "Encuentra un partido cerca.", "Trouve un match près de toi.")}
           </h1>
           <p className="text-sm text-[var(--cream)]/70 mt-2">
-            {intro ?? tr("Tap any match to join a spot as a guest — no account needed.", "Toca un partido para unirte como invitado — sin cuenta.", "Touche un match pour rejoindre en invité — sans compte.")}
+            {intro ?? tr("Tap any match to join a spot as a guest, no account needed.", "Toca un partido para unirte como invitado, sin cuenta.", "Touche un match pour rejoindre en invité, sans compte.")}
           </p>
         </div>
 

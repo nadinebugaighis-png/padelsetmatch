@@ -19,7 +19,7 @@ export const Route = createFileRoute("/g/$eventId")({
       { property: "og:title", content: "Guest match invitation \u00b7 PadelSetMatch" },
       { property: "og:description", content: "Join a PadelSetMatch invitation and coordinate with the match host." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },{ title: "Join match as guest — PadelSetMatch" }] }),
+      { name: "twitter:card", content: "summary" },{ title: "Join match as guest · PadelSetMatch" }] }),
   component: GuestMatchRoom,
 });
 
@@ -238,7 +238,7 @@ function GuestMatchRoom() {
 
           <div className="mt-7 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("Join as guest", "Unirse como invitado", "Rejoindre en invité")}</div>
           <h1 className="text-2xl text-serif text-[var(--ink)] font-medium mt-1 leading-tight">
-            {tr("No account needed — just three quick things.", "Sin cuenta — solo tres cosas rápidas.", "Sans compte — juste trois infos rapides.")}
+            {tr("No account needed, just three quick things.", "Sin cuenta, solo tres cosas rápidas.", "Sans compte, juste trois infos rapides.")}
           </h1>
           <p className="text-sm text-[var(--ink)]/80 mt-2">
             {tr("The host will see your name and level so they know who's showing up.", "El anfitrión verá tu nombre y nivel para saber quién viene.", "L'hôte verra ton prénom et ton niveau pour savoir qui vient.")}
@@ -275,7 +275,7 @@ function GuestMatchRoom() {
               <input value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={32} inputMode="tel" required
                 className="w-full mt-1 bg-[var(--paper-2)] border border-[var(--ink)]/22 rounded-xl px-4 py-3 text-[var(--ink)] placeholder:text-[var(--ink)]/55"
                 placeholder="+34 600 000 000" />
-              <p className="text-[10px] text-[var(--ink)]/76 mt-1">{tr("Only visible to the host — for last-minute changes.", "Solo lo ve el anfitrión — para cambios de última hora.", "Visible uniquement par l'hôte — pour les changements de dernière minute.")}</p>
+              <p className="text-[10px] text-[var(--ink)]/76 mt-1">{tr("Only visible to the host, for last-minute changes.", "Solo lo ve el anfitrión, para cambios de última hora.", "Visible uniquement par l'hôte, pour les changements de dernière minute.")}</p>
             </div>
             <button type="submit" disabled={busy}
               className="w-full py-3 rounded-full bg-[var(--ink)] text-[var(--paper)] text-sm uppercase tracking-widest font-semibold disabled:opacity-50 shadow-[0_10px_28px_-12px_color-mix(in_oklab,var(--ink)_55%,transparent)]">
@@ -325,9 +325,9 @@ function GuestMatchRoom() {
         </div>
         <p className="text-xs text-[var(--ink)]/78 -mt-2">
           {tr(
-            "Come back anytime with this link — save it or send it to yourself below.",
-            "Vuelve cuando quieras con este enlace — guárdalo o envíatelo abajo.",
-            "Reviens quand tu veux avec ce lien — garde-le ou envoie-le-toi ci-dessous.",
+            "Come back anytime with this link. Save it or send it to yourself below.",
+            "Vuelve cuando quieras con este enlace. Guárdalo o envíatelo abajo.",
+            "Reviens quand tu veux avec ce lien. Garde-le ou envoie-le-toi ci-dessous.",
           )}
         </p>
 
@@ -337,7 +337,7 @@ function GuestMatchRoom() {
             const link = typeof window !== "undefined" ? window.location.href : "";
             try {
               if (navigator.share) await navigator.share({ url: link });
-              else { await navigator.clipboard.writeText(link); toast.success(tr("Link copied — keep it to come back anytime.", "Enlace copiado — guárdalo para volver cuando quieras.", "Lien copié — garde-le pour revenir quand tu veux.")); }
+              else { await navigator.clipboard.writeText(link); toast.success(tr("Link copied. Keep it to come back anytime.", "Enlace copiado. Guárdalo para volver cuando quieras.", "Lien copié. Garde-le pour revenir quand tu veux.")); }
             } catch { /* cancelled */ }
           }}
           className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-[var(--ink)]/22 bg-white px-4 py-2.5 text-[11px] uppercase tracking-widest font-semibold text-[var(--ink)]/88 hover:bg-[var(--paper-2)] transition"

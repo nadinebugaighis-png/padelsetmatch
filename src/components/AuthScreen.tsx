@@ -172,9 +172,9 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
                 ),
             {
               description: tr(
-                "Hope you love it — share with a padel friend or two, it plays better with more of us on the court.",
-                "Esperamos que te encante — compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
-                "On espère que ça te plaira — partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
+                "Hope you love it. Share with a padel friend or two, it plays better with more of us on the court.",
+                "Esperamos que te encante. Compártela con uno o dos amigos del pádel, funciona mejor entre más seamos en la pista.",
+                "On espère que ça te plaira. Partage-la avec un ou deux copains de padel, c'est mieux quand on est plus nombreux sur le court.",
               ),
               duration: 7000,
             },
@@ -251,9 +251,9 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
           ),
           {
             description: tr(
-              "Please choose a stronger password — mix letters, numbers and a symbol.",
-              "Elige una contraseña más segura — combina letras, números y un símbolo.",
-              "Choisis un mot de passe plus fort — mélange lettres, chiffres et un symbole.",
+              "Please choose a stronger password: mix letters, numbers and a symbol.",
+              "Elige una contraseña más segura: combina letras, números y un símbolo.",
+              "Choisis un mot de passe plus fort : mélange lettres, chiffres et un symbole.",
             ),
             duration: 8000,
           },
@@ -297,9 +297,9 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
         if (!signInErr) {
           toast.success(
             tr(
-              "You already had an account — you're signed in.",
-              "Ya tenías cuenta — has iniciado sesión.",
-              "Tu avais déjà un compte — tu es connecté·e.",
+              "You already had an account. You're signed in.",
+              "Ya tenías cuenta. Has iniciado sesión.",
+              "Tu avais déjà un compte. Tu es connecté·e.",
             ),
           );
           navigate(afterAuthTarget() as never);
@@ -323,7 +323,7 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
         setMode("signin");
 
       } else if (isInvalidCreds && mode === "signin") {
-        // Generic message on purpose — never reveal whether an account exists
+        // Generic message on purpose, never reveal whether an account exists
         // or which provider it uses (account enumeration).
         toast.warning(
           tr(
@@ -341,7 +341,7 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
           },
         );
       } else {
-        // Generic fallback — never silently swallow an auth error.
+        // Generic fallback, never silently swallow an auth error.
         toast.error(
           tr(
             "Something went wrong.",
@@ -374,7 +374,7 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
     }
   };
 
-  // Native iOS/iPadOS: Sign in with Apple via the system sheet — never leaves
+  // Native iOS/iPadOS: Sign in with Apple via the system sheet, never leaves
   // the app. If the native plugin is unavailable for any reason we fall back to
   // the standard OAuth flow so the button always does something.
   const appleNative = async () => {
@@ -491,7 +491,7 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
           ))}
         </div>
 
-        {/* EULA / terms acceptance — required to create an account
+        {/* EULA / terms acceptance, required to create an account
             (App Store guideline 1.2, user-generated content). */}
         {mode === "signup" ? (
           <label className="mt-7 flex items-start gap-3 cursor-pointer">

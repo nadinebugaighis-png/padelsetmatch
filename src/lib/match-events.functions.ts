@@ -368,7 +368,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level, is_coach))";
 
     // Always include events the user is involved in (host, participant, or invited),
-    // regardless of city filter — otherwise a match joined via share link outside
+    // regardless of city filter, otherwise a match joined via share link outside
     // their areas would disappear from their Play page.
     const involvedIds = new Set<string>();
     if (profile) {
@@ -397,7 +397,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
         .limit(500);
       if (data.myLocations && myKeywords.length > 0) {
         // Match against BOTH city and club_address so nearby suburbs surface
-        // (e.g. user stored "Madrid" and event city is "Alcobendas" — the
+        // (e.g. user stored "Madrid" and event city is "Alcobendas", the
         // address usually contains "Madrid").
         const safe = (s: string) => s.replace(/[,()]/g, " ").trim();
         const ors = myKeywords.flatMap((c) => {
@@ -642,7 +642,7 @@ export const deleteMatchEvent = createServerFn({ method: "POST" })
         supabase.from("guest_participants").select("id", { count: "exact", head: true }).eq("match_event_id", data.id),
       ]);
       if ((others ?? 0) + (guests ?? 0) > 0) {
-        throw new Error("Players have joined — cancel the match instead so they're notified.");
+        throw new Error("Players have joined. Cancel the match instead so they're notified.");
       }
     }
     const { error } = await supabase
@@ -672,7 +672,7 @@ export const transferMatchHost = createServerFn({ method: "POST" })
 
 
 
-// ---------- Duplicate (host) — copy match to another slot, keep participants ----------
+// ---------- Duplicate (host), copy match to another slot, keep participants ----------
 export const duplicateMatchEvent = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string; starts_at: string }) =>
@@ -1161,7 +1161,7 @@ export const claimMatchInviteByToken = createServerFn({ method: "POST" })
         .eq("invitee_profile_id", profile.id)
         .maybeSingle();
       if (existing) {
-        // Already have a direct invite — remove token row
+        // Already have a direct invite, remove token row
         await supabase.from("match_event_invites").delete().eq("id", invite.id);
         return { ok: true, eventId: invite.match_event_id, inviteId: existing.id };
       }

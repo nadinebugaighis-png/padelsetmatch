@@ -1,7 +1,7 @@
 import type { SVGProps } from "react";
 
 /**
- * Padel "Play" tab icon — tilted teardrop racket with a long handle,
+ * Padel "Play" tab icon, tilted teardrop racket with a long handle,
  * perforated head, and a seamed tennis ball at the bottom-right.
  * Composed from geometric primitives inside a mask so the perforations
  * and grip lines always align with the head/handle.

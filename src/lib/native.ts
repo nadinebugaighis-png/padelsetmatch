@@ -72,7 +72,7 @@ export async function openMailTo(email: string, subject?: string): Promise<void>
     try {
       await navigator.clipboard.writeText(email);
     } catch {
-      /* clipboard blocked — the toast still shows the address */
+      /* clipboard blocked, the toast still shows the address */
     }
   }
 }
@@ -187,7 +187,7 @@ export async function initNativeShell() {
       else void App.exitApp();
     });
   } catch {
-    /* plugin missing in this build — ignore */
+    /* plugin missing in this build, ignore */
   }
 }
 

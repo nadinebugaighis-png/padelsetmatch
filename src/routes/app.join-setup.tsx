@@ -16,7 +16,7 @@ export const Route = createFileRoute("/app/join-setup")({
       { property: "og:title", content: "Invitation setup \u00b7 PadelSetMatch" },
       { property: "og:description", content: "Complete your player details to join a padel invitation." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },{ title: "Quick setup — PadelSetMatch" }] }),
+      { name: "twitter:card", content: "summary" },{ title: "Quick setup · PadelSetMatch" }] }),
   validateSearch: (s: Record<string, unknown>) => ({
     join: typeof s.join === "string" ? s.join : undefined,
     i: typeof s.i === "string" ? s.i : undefined,
@@ -117,7 +117,7 @@ function JoinSetupPage() {
         <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]">{tr("Quick setup", "Configuración rápida", "Configuration rapide")}</div>
         <h1 className="text-3xl text-[var(--cream)] font-medium mt-1">{tr("Just two things and you're in.", "Solo dos cosas y estás dentro.", "Deux choses et tu es dedans.")}</h1>
         <p className="text-sm text-[var(--cream)]/70 mt-2">
-          {tr("You can complete your full profile later — this is enough to join a match.", "Puedes completar tu perfil después — con esto ya puedes unirte a un partido.", "Tu peux compléter ton profil entier plus tard — c'est suffisant pour rejoindre un match.")}
+          {tr("You can complete your full profile later. This is enough to join a match.", "Puedes completar tu perfil después. Con esto ya puedes unirte a un partido.", "Tu peux compléter ton profil entier plus tard, c'est suffisant pour rejoindre un match.")}
         </p>
 
         <form onSubmit={submit} className="mt-6 space-y-4">

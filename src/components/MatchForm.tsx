@@ -161,7 +161,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
   const [isClass, setIsClass] = useState<boolean>(!onPlaytomic && (initial?.is_class ?? false));
   const [classStudents, setClassStudents] = useState<number>(initial?.class_students ?? NEW_CLASS_STUDENTS);
   const classFee = initial?.class_fee ?? "";
-  // Students already in (everyone except the coach) — the class can't be made smaller than that.
+  // Students already in (everyone except the coach), the class can't be made smaller than that.
   const minStudents = Math.max(1, appPlayersCount - 1);
   const [levelMin, setLevelMin] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_min ?? "casual");
   const [levelMax, setLevelMax] = useState<(typeof PADEL_LEVELS)[number]>(initial?.level_max ?? "advanced");
@@ -315,7 +315,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
       </div>
       )}
 
-      {/* Card 1 — Where & when */}
+      {/* Card 1, Where & when */}
       <div className={cardCls}>
       <section className="py-2.5">
         <div className="grid grid-cols-2 gap-2 mb-2">

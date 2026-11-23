@@ -176,7 +176,7 @@ function ChatRoom() {
           {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-display text-[20px] leading-tight truncate">{other.first_name}</div>
+          <div className="text-serif text-[22px] leading-tight truncate">{other.first_name}</div>
           <div className="mt-0.5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--ink)]/70 truncate">
             {[other.zone, playerLevel(other.level, other.level_rating, tr)].filter(Boolean).join(" · ")}
           </div>
@@ -253,8 +253,8 @@ function ChatRoom() {
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4">
         {messages.length === 0 && (
           <div className="mt-14 text-center">
-            <div className="text-display text-[22px] leading-tight">{tr(`Say hello to ${other.first_name}`, `Saluda a ${other.first_name}`, `Dites bonjour à ${other.first_name}`)}</div>
-            <p className="mt-1.5 text-[13px] text-[var(--ink)]/70">{tr("A good start: suggest a day and a club.", "Un buen comienzo: propón un día y un club.", "Un bon début : proposez un jour et un club.")}</p>
+            <div className="text-serif text-[24px] leading-tight">{tr(`Say hello to ${other.first_name}`, `Saluda a ${other.first_name}`, `Dites bonjour à ${other.first_name}`)}</div>
+            <p className="mt-1.5 text-serif italic text-[15px] text-[var(--ink)]/70">{tr("A good start: suggest a day and a club.", "Un buen comienzo: propón un día y un club.", "Un bon début : proposez un jour et un club.")}</p>
           </div>
         )}
         {messages.map((m, i) => {
@@ -277,7 +277,7 @@ function ChatRoom() {
               {newDay && (
                 <div className="flex items-center gap-3 my-5 first:mt-2">
                   <span className="h-px flex-1 bg-[var(--card-edge)]" />
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{dayLabel(at)}</span>
+                  <span className="text-serif italic text-[13px] text-[var(--ink)]/65">{dayLabel(at)}</span>
                   <span className="h-px flex-1 bg-[var(--card-edge)]" />
                 </div>
               )}
@@ -343,7 +343,7 @@ function ChatRoom() {
         })}
         {played && !hasRated && messages.length > 0 && (
           <div className="mt-6 text-center">
-            <button type="button" onClick={() => setRatingOpen(true)} className="text-[12px] tracking-[0.04em] text-[var(--ink)]/75 underline decoration-[var(--gold)] decoration-1 underline-offset-4 hover:text-[var(--ink)]">
+            <button type="button" onClick={() => setRatingOpen(true)} className="text-serif italic text-[15px] text-[var(--ink)]/75 underline decoration-[var(--gold)] decoration-1 underline-offset-4 hover:text-[var(--ink)]">
               {tr(`How was your match with ${other.first_name}?`, `¿Qué tal el partido con ${other.first_name}?`, `Comment s'est passé le match avec ${other.first_name} ?`)}
             </button>
           </div>
@@ -355,13 +355,13 @@ function ChatRoom() {
         onSubmit={(e) => { e.preventDefault(); if (text.trim()) sendM.mutate(text.trim()); }}
         className="px-3 pt-2 pb-3"
       >
-        <div className="flex items-center gap-1.5 rounded-full bg-white border border-[var(--card-edge)] pl-4 pr-1.5 py-1.5 shadow-[0_6px_20px_-12px_color-mix(in_oklab,var(--ink)_30%,transparent)] focus-within:border-[var(--ink)]/30 transition-colors">
+        <div className="flex items-center gap-1.5 rounded-full bg-white border border-[var(--card-edge)] pl-5 pr-1.5 py-1.5 shadow-[0_6px_20px_-12px_color-mix(in_oklab,var(--ink)_30%,transparent)] focus-within:border-[var(--ink)]/30 transition-colors">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={tr("Message", "Mensaje", "Message")}
             aria-label={tr("Message", "Mensaje", "Message")}
-            className="flex-1 min-w-0 bg-transparent text-[16px] leading-6 py-1 !outline-none !ring-0 !shadow-none !border-0 placeholder:text-[var(--ink)]/45"
+            className="flex-1 min-w-0 bg-transparent text-[16px] leading-6 py-1.5 !outline-none !ring-0 !shadow-none !border-0 placeholder:text-[var(--ink)]/45"
             enterKeyHint="send"
           />
           <button

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n, useTr } from "@/lib/i18n";
 import { CourtIcon } from "@/components/CourtIcon";
+import { GraduationCap } from "lucide-react";
 import wordmark from "@/assets/padel-set-match-wordmark.png.asset.json";
 
 const KEY = "member-guide-seen-v1";
@@ -28,7 +29,7 @@ export function MemberGuide() {
     try { localStorage.setItem(KEY, "1"); } catch { /* ignore */ }
   };
 
-  const steps: Array<{ title: string; body: string; court?: boolean }> = [
+  const steps: Array<{ title: string; body: string; court?: boolean; coach?: boolean }> = [
     {
       title: t("shell.tab.grid"),
       body: tr(
@@ -70,6 +71,15 @@ export function MemberGuide() {
         "Un petit court sur la carte d'un joueur signifie qu'il peut organiser sur un terrain gratuit. L'hôte peut marquer n'importe quel match comme Terrain gratuit.",
       ),
     },
+    {
+      title: tr("Courtside coaches", "Entrenador a tu pista", "Coach sur ton terrain"),
+      coach: true,
+      body: tr(
+        "Find a coach who comes to your court, at home or at your club. Book a private lesson or a small group class from the + menu.",
+        "Encuentra un entrenador que viene a tu pista, en casa o en tu club. Reserva una clase privada o en grupo desde el menú +.",
+        "Trouve un coach qui vient sur ton terrain, chez toi ou à ton club. Réserve un cours privé ou en petit groupe depuis le menu +.",
+      ),
+    },
   ];
 
   // The brand name is shown as the logo itself, inside the sentence.
@@ -92,6 +102,7 @@ export function MemberGuide() {
                 <div className="flex items-center gap-2 text-[11px] sm:text-[12px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
                   {s.title}
                   {s.court && <CourtIcon className="w-5 h-3 sm:w-6 sm:h-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />}
+                  {s.coach && <GraduationCap className="w-4 h-4 sm:w-[18px] sm:h-[18px] shrink-0 fill-[var(--plum)]/25 text-[var(--plum)]/60" strokeWidth={1.5} aria-hidden="true" />}
                 </div>
                 <p className="text-[13.5px] sm:text-[15px] text-[var(--ink)]/86 leading-snug sm:leading-relaxed mt-1">{s.body}</p>
               </div>

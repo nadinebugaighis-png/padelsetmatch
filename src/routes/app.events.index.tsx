@@ -588,13 +588,13 @@ function FeedSection({
                 <span className="text-serif text-[20px] sm:text-[26px] leading-none text-[var(--ink)]">{heading.main}</span>
                 <span className="font-sans font-normal text-[10.5px] uppercase tracking-[0.2em] text-[var(--ink)]/86 truncate">{heading.sub}</span>
               </h2>
-              <ul className="mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2 lg:items-start">
+              <ul className="mt-4 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 lg:items-start">
                 {group.items.map((e, i) => {
                   const prev = i > 0 ? group.items[i - 1] : null;
                   const slotChanged = prev !== null && !e.time_tbd && !prev.time_tbd &&
                     Math.floor(new Date(prev.starts_at).getHours() / 12) !== Math.floor(new Date(e.starts_at).getHours() / 12);
                   return (
-                    <li key={e.id} className={`lazy-row -mx-3 -mt-2 -mb-5 px-3 pb-5 ${slotChanged ? "pt-3 lg:pt-2" : "pt-2"}`}>
+                    <li key={e.id} className={`lazy-row min-w-0 -mx-3 -mt-2 -mb-5 px-3 pb-5 ${slotChanged ? "pt-3 lg:pt-2" : "pt-2"}`}>
                       <MatchCard
                         e={e}
                         locale={locale}
@@ -829,7 +829,7 @@ function MatchCard({
           <div className="mx-auto flex max-w-[420px] items-start justify-center">
             <div className="flex shrink-0 justify-center pr-2 sm:pr-3">{renderSlot(slots[0] ?? null, 0)}</div>
             <span aria-hidden className="mt-1 h-11 w-px shrink-0 bg-[var(--ink)]/25" />
-            <div className="flex flex-1 justify-center gap-1 sm:gap-2 pl-2 sm:pl-3">{slots.slice(1).map((s, i) => renderSlot(s, i + 1))}</div>
+            <div className="flex min-w-0 flex-1 justify-center gap-1 sm:gap-2 pl-2 sm:pl-3">{slots.slice(1).map((s, i) => renderSlot(s, i + 1))}</div>
           </div>
         ) : (
           <div className="mx-auto flex max-w-[420px] items-start justify-center gap-2 sm:gap-3">{slots.map((s, i) => renderSlot(s, i))}</div>
@@ -896,11 +896,11 @@ function SlotAvatar({
   const photo = slot?.participant?.profiles?.photo_url;
   const isCoach = !!slot?.participant?.profiles?.is_coach;
   const seed = slot?.participant?.profile_id ?? slot?.guest?.id ?? name;
-  const caption = "mt-1.5 block w-[58px] truncate text-center text-[12px] leading-tight";
+  const caption = "mt-1.5 block w-full truncate text-center text-[12px] leading-tight";
 
   if (slot?.friend) {
     return (
-      <div className="flex w-[58px] flex-col items-center">
+      <div className="flex w-[58px] min-w-[46px] shrink flex-col items-center">
         <FriendSlot size="xl" label={playtomic ? tr("Taken on Playtomic", "Ocupada en Playtomic", "Prise sur Playtomic") : tr("Friend already coming", "Amigo ya confirmado", "Ami déjà confirmé")} />
         <span className={`${caption} text-[var(--ink)]/82`}>{playtomic ? tr("Taken", "Ocupada", "Prise") : tr("Friend", "Amigo", "Ami")}</span>
       </div>
@@ -915,7 +915,7 @@ function SlotAvatar({
         onClick={(ev) => { ev.stopPropagation(); onJoin(); }}
         aria-label={tr("Player needed", "Falta jugador", "Joueur recherché")}
         title={tr("Player needed", "Falta jugador", "Joueur recherché")}
-        className={`group flex w-[58px] flex-col items-center ${isPending ? "opacity-50" : ""}`}
+        className={`group flex w-[58px] min-w-[46px] shrink flex-col items-center ${isPending ? "opacity-50" : ""}`}
       >
         <span
           className={`w-[46px] h-[46px] rounded-full border border-dashed grid place-items-center transition ${
@@ -935,7 +935,7 @@ function SlotAvatar({
 
   return (
     <div
-      className="flex w-[58px] flex-col items-center"
+      className="flex w-[58px] min-w-[46px] shrink flex-col items-center"
       title={isCoach ? `${name ?? ""} · ${tr("Coach", "Profesor", "Coach")}` : name ?? ""}
     >
       <div

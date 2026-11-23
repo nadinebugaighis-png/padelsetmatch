@@ -282,15 +282,6 @@ function ChatRoom() {
                 </div>
               )}
               <div className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"} ${joinsPrev ? "mt-[3px]" : newDay ? "" : "mt-4"}`}>
-                {!mine && (
-                  <div className="w-7 shrink-0">
-                    {!joinsNext && (
-                      <div className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/8 ring-1 ring-[var(--card-edge)]">
-                        {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
-                      </div>
-                    )}
-                  </div>
-                )}
                 <div className={`flex flex-col max-w-[78%] sm:max-w-[65%] ${mine ? "items-end" : "items-start"}`}>
                   <HoldMenu
                     disabled={!mine || isEditing}

@@ -956,7 +956,7 @@ function Discover() {
 
 
       <Dialog open={!!preview} onOpenChange={(o) => !o && closePreview()}>
-        <DialogContent className="max-w-sm sm:max-w-md lg:max-w-3xl xl:max-w-4xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/16 text-[var(--ink)] max-h-[92vh] flex flex-col rounded-3xl">
+        <DialogContent className="w-[calc(100%-1.75rem)] max-w-sm sm:max-w-md lg:max-w-3xl xl:max-w-4xl p-0 overflow-hidden bg-[var(--paper)] border-[var(--ink)]/16 text-[var(--ink)] max-h-[92dvh] flex flex-col rounded-3xl">
           {preview && (() => {
             const mine = feedQ.data?.me;
             const mineTraits = new Set([...(mine?.personal_traits ?? []), ...(mine?.padel_style ?? []), ...(mine?.priorities ?? [])]);

@@ -498,3 +498,11 @@ html.native-shell #app-top-bar {
   left: 0;
   right: 0;
 }
+
+/* iPhone app: the screen's clock and home-bar strips sit outside the page, but "vh" still
+   counts them, so a 92vh sheet ran past both edges and lost its rounded corners.
+   Size pop-up cards from the visible page instead, with breathing room top and bottom. */
+html.native-shell [role="dialog"],
+html.native-shell [role="alertdialog"] {
+  max-height: calc(100% - 2.5rem);
+}

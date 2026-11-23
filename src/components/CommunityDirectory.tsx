@@ -5,7 +5,7 @@ import { openExternal, openMailTo } from "@/lib/native";
 import { useTr } from "@/lib/i18n";
 
 export const CONCIERGE_WHATSAPP = "34620296060";
-export const CONCIERGE_EMAIL = "hello@padelmatchapp.lovable.app";
+export const CONCIERGE_EMAIL = "Nadine@padelsetmatch.com";
 
 const smallCaps = "text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/76";
 const fold = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();

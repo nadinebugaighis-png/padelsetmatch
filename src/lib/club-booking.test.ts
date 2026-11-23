@@ -111,3 +111,23 @@ describe("clubBookingLink", () => {
     expect(clubBookingLink({ club_name: "Rocket Padel Battersea Power Station", club_place_id: "abc" })?.club).toBe("rocket_padel_battersea");
   });
 });
+
+describe("Book a court in every community", async () => {
+  const { bookCourtClubs, bookCourtRegionFor, BOOK_COURT_REGIONS } = await import("./club-booking");
+  it("every city tab has clubs", () => {
+    const clubs = bookCourtClubs();
+    for (const r of BOOK_COURT_REGIONS) expect(clubs.filter((c) => c.region === r).length).toBeGreaterThanOrEqual(8);
+  });
+  it("opens on the player's own city", () => {
+    expect(bookCourtRegionFor(["United Arab Emirates | Dubai | "])).toBe("dubai");
+    expect(bookCourtRegionFor(["United States | Miami | Coconut Grove & Brickell"])).toBe("miami");
+    expect(bookCourtRegionFor(["Spain | Marbella | "])).toBe("marbella");
+    expect(bookCourtRegionFor(["United Kingdom | London | Chelsea & Battersea"])).toBe("london");
+    expect(bookCourtRegionFor(["Spain | Madrid | La Moraleja"])).toBe("madrid");
+  });
+  it("Ultra Aventura and Magic City get their own pages", () => {
+    expect(clubBookingLink({ club_name: "Ultra Padel Aventura", club_place_id: "x" })?.club).toBe("ultra_padel_aventura");
+    expect(clubBookingLink({ club_name: "Ultra Padel Miami - Magic City", club_place_id: "x" })?.club).toBe("ultra_padel_magic_city");
+    expect(clubBookingLink({ club_name: "Los Naranjos Padel Club", club_place_id: "x" })?.club).toBe("los_naranjos_marbella");
+  });
+});

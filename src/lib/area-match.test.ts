@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sharesMyArea, isMoralejaMember } from "./area-match";
+import { sharesMyArea, sharesMyCity, isMoralejaMember } from "./area-match";
 import { presetByKey } from "./location-presets";
 
 const loc = (city: string, ...areas: string[]) => ({
@@ -103,5 +103,14 @@ describe("sharesMyArea across communities", () => {
   it("Madrid city-only next to La Moraleja keeps La Moraleja exclusive", () => {
     expect(sharesMyArea(loc("Madrid", "La Moraleja"), loc("Madrid", "Chamartín"))).toBe(false);
     expect(sharesMyArea({ locations: ["Spain | Madrid | La Moraleja", "Spain | Madrid | "] }, loc("Madrid", "Chamartín"))).toBe(false);
+  });
+});
+
+describe("coaches by city", () => {
+  it("a Salamanca player sees a La Moraleja coach, a Dubai player does not", () => {
+    const coach = { locations: ["Spain | Madrid | La Moraleja"] };
+    expect(sharesMyCity({ locations: ["Spain | Madrid | Salamanca & Chamberí"] }, coach)).toBe(true);
+    expect(sharesMyCity({ locations: ["United Arab Emirates | Dubai | "] }, coach)).toBe(false);
+    expect(sharesMyCity({ locations: ["United Kingdom | London | Chelsea & Battersea"] }, coach)).toBe(false);
   });
 });

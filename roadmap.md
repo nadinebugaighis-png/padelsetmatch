@@ -87,3 +87,10 @@
 - [x] Confirm the organiser contact email.
 - [x] Padelodontics (dentists) under London with its gold seal; Tarik in it, keeping Chelsea & Battersea.
 - [x] Press and hold a community to share it; the shared link shows that community first with Join.
+
+## Same experience in every community
+- [x] Dubai/Marbella neighbourhoods count as the whole city on Play and Connect.
+- [x] Coaches and classes shown only from the player's own city.
+- [x] App invite names the sharer's own community.
+- [x] Daily open game for Salamanca & Chamberí, Miami and Marbella.
+- [x] Book a court: real clubs and tabs for Marbella, Dubai and Miami; open on the player's own city.

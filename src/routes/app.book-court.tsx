@@ -3,14 +3,14 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ArrowUpRight, Search } from "lucide-react";
 import { useTr } from "@/lib/i18n";
-import { bookCourtClubs, type BookCourtRegion } from "@/lib/club-booking";
+import { BOOK_COURT_REGIONS, bookCourtClubs, bookCourtRegionFor, type BookCourtRegion } from "@/lib/club-booking";
 
 export const Route = createFileRoute("/app/book-court")({
   head: () => ({ meta: [
     { title: "Book a Padel Court | PadelSetMatch" },
-    { name: "description", content: "Reserve a court at padel clubs in Madrid and London in one tap." },
+    { name: "description", content: "Reserve a court at padel clubs in Madrid, London, Marbella, Dubai and Miami in one tap." },
     { property: "og:title", content: "Book a Padel Court | PadelSetMatch" },
-    { property: "og:description", content: "Reserve a court at padel clubs in Madrid and London in one tap." },
+    { property: "og:description", content: "Reserve a court at padel clubs in Madrid, London, Marbella, Dubai and Miami in one tap." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -26,8 +26,7 @@ function BookCourtPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const profile = qc.getQueryData<{ locations?: string[] }>(["my-profile"]);
-  const inLondon = (profile?.locations ?? []).some((l) => /london|londres/i.test(l));
-  const [region, setRegion] = useState<BookCourtRegion>(inLondon ? "london" : "madrid");
+  const [region, setRegion] = useState<BookCourtRegion>(() => bookCourtRegionFor(profile?.locations));
   const [q, setQ] = useState("");
   const clubs = useMemo(() => bookCourtClubs(), []);
   const shown = clubs.filter((c) => c.region === region && (!q.trim() || norm(c.name).includes(norm(q.trim()))));
@@ -47,13 +46,13 @@ function BookCourtPage() {
         </header>
 
         {/* City tabs, same style as Matches */}
-        <div role="tablist" aria-label={tr("City", "Ciudad", "Ville")} className="mt-6 flex gap-6 border-b border-[var(--ink)]/16">
-          {(["madrid", "london"] as const).map((r) => {
+        <div role="tablist" aria-label={tr("City", "Ciudad", "Ville")} className="mt-6 flex gap-5 sm:gap-6 overflow-x-auto [scrollbar-width:none] border-b border-[var(--ink)]/16">
+          {BOOK_COURT_REGIONS.map((r) => {
             const on = region === r;
             return (
               <button key={r} type="button" role="tab" aria-selected={on} onClick={() => setRegion(r)}
-                className={`-mb-px h-10 border-b-[1.5px] text-[14px] sm:text-[15px] transition ${on ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/72"}`}>
-                {r === "madrid" ? "Madrid" : tr("London", "Londres", "Londres")}
+                className={`-mb-px h-10 shrink-0 border-b-[1.5px] text-[14px] sm:text-[15px] transition ${on ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/72"}`}>
+                {r === "london" ? tr("London", "Londres", "Londres") : r === "madrid" ? "Madrid" : r === "marbella" ? "Marbella" : r === "dubai" ? tr("Dubai", "Dubái", "Dubaï") : "Miami"}
               </button>
             );
           })}

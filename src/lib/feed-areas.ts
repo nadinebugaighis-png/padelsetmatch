@@ -1,12 +1,13 @@
 import { LOCATION_DATA } from "./locations";
-import { canonicalArea, PAIRED_COMMUNITIES } from "./area-match";
+import { canonicalArea, isCityWide, PAIRED_COMMUNITIES } from "./area-match";
 
 /**
  * The Play feed aggregates games by the player's own areas: every game at a
  * club or address in one of their areas shows, nothing from elsewhere.
  * A player with La Moraleja sees only Greater La Moraleja; a player with
  * Salamanca and La Moraleja sees both. A city chosen without an area covers
- * the whole city.
+ * the whole city, and so does any neighbourhood in a city-wide community
+ * (Dubai, Marbella), matching the grid gate in area-match.ts.
  */
 export type FeedArea = { key: string; label: string; keywords: string[] };
 
@@ -42,7 +43,7 @@ export function feedAreas(rawLocations: unknown): FeedArea[] {
       const country = parts[i] ?? "";
       const city = parts[i + 1] ?? "";
       const area = parts[i + 2] ?? "";
-      if (area) {
+      if (area && !isCityWide(city)) {
         const canon = canonicalArea(area);
         if (canon === "la moraleja") add({ key: "area:la moraleja", label: "La Moraleja", keywords: MORALEJA_WORDS });
         else {

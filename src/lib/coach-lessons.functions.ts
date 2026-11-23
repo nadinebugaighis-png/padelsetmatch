@@ -28,8 +28,8 @@ async function classStates(sb: Sb, ids: (string | null)[]): Promise<Record<strin
 
 type Sb = { from: (t: string) => any; rpc: (fn: string, args: Record<string, unknown>) => any };
 
-async function me(sb: Sb, userId: string): Promise<{ id: string; is_coach: boolean } | null> {
-  const { data } = await sb.from("profiles").select("id, is_coach").eq("user_id", userId).maybeSingle();
+async function me(sb: Sb, userId: string): Promise<{ id: string; is_coach: boolean; locations?: string[] | null; zone?: string | null } | null> {
+  const { data } = await sb.from("profiles").select("id, is_coach, locations, zone").eq("user_id", userId).maybeSingle();
   return data ?? null;
 }
 
@@ -60,10 +60,22 @@ export const getCoachBoard = createServerFn({ method: "GET" })
         .eq("is_class", true).eq("status", "open").gt("starts_at", nowIso).lt("starts_at", until).order("starts_at").limit(40),
     ]);
     if (open.error) throw new Error(open.error.message);
-    const slots = (open.data ?? []) as CoachSlot[];
+    const allSlots = (open.data ?? []) as CoachSlot[];
     const lessons = (mine.data ?? []) as CoachSlot[];
-    const openClasses: OpenClass[] = ((classes.data ?? []) as (Omit<OpenClass, "people"> & { match_event_participants: { count: number }[] })[])
+    const allClasses: OpenClass[] = ((classes.data ?? []) as (Omit<OpenClass, "people"> & { match_event_participants: { count: number }[] })[])
       .map(({ match_event_participants, ...e }) => ({ ...e, people: match_event_participants?.[0]?.count ?? 0 }));
+    // Only coaches in my own city (lessons I already asked for always stay).
+    const coachIds = [...new Set([...allSlots.map((s) => s.coach_profile_id), ...allClasses.map((c) => c.host_profile_id)])];
+    const { sharesMyCity } = await import("./area-match");
+    const near = new Set<string>();
+    if (coachIds.length) {
+      const { data: coaches } = await sb.from("profiles").select("id, locations, zone").in("id", coachIds);
+      for (const c of (coaches as { id: string; locations: string[] | null; zone: string | null }[] | null) ?? []) {
+        if (!profile || sharesMyCity(profile, c)) near.add(c.id);
+      }
+    }
+    const slots = allSlots.filter((s) => near.has(s.coach_profile_id) || s.coach_profile_id === profile?.id);
+    const openClasses = allClasses.filter((c) => near.has(c.host_profile_id) || c.host_profile_id === profile?.id);
     const [byId, states] = await Promise.all([
       people(sb, [...slots.map((s) => s.coach_profile_id), ...lessons.map((s) => s.coach_profile_id), ...openClasses.map((c) => c.host_profile_id)]),
       classStates(sb, lessons.map((s) => s.match_event_id)),

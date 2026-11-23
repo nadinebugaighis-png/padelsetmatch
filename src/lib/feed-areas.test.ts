@@ -53,4 +53,33 @@ describe("Play feed areas", () => {
     expect(feedKeywords([])).toEqual([]);
     expect(feedKeywords(null)).toEqual([]);
   });
+
+  it("a Dubai or Marbella neighbourhood still covers the whole city", () => {
+    const [dubai] = feedAreas(["United Arab Emirates | Dubai | Arabian Ranches"]);
+    expect(dubai?.key).toBe("city:dubai");
+    expect(eventInArea({ city: "Dubai", club_name: "Dubai · Club to be decided" }, dubai!)).toBe(true);
+    const [marbella] = feedAreas(["Spain | Marbella | Nueva Andalucía"]);
+    expect(eventInArea({ city: "Marbella", club_name: "Marbella · Club por decidir" }, marbella!)).toBe(true);
+  });
+
+  it("each community sees its own daily game and not La Moraleja's", () => {
+    const games = {
+      salamanca: { city: "Madrid", club_name: "Salamanca & Chamberí · Club por decidir" },
+      miami: { city: "Miami", club_name: "Coconut Grove & Brickell · Club to be decided" },
+      marbella: { city: "Marbella", club_name: "Marbella · Club por decidir" },
+    };
+    const moraleja = { city: "La Moraleja", club_name: "La Moraleja · Club por decidir" };
+    const cases: Array<[string, keyof typeof games]> = [
+      ["Spain | Madrid | Salamanca & Chamberí", "salamanca"],
+      ["United States | Miami | Coconut Grove & Brickell", "miami"],
+      ["Spain | Marbella | ", "marbella"],
+    ];
+    for (const [loc, key] of cases) {
+      const [area] = feedAreas([loc]);
+      expect(eventInArea(games[key], area!)).toBe(true);
+      expect(eventInArea(moraleja, area!)).toBe(false);
+    }
+    const [mor] = feedAreas(["Spain | Madrid | La Moraleja"]);
+    expect(eventInArea(games.salamanca, mor!)).toBe(false);
+  });
 });

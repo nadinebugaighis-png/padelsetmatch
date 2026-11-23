@@ -5,6 +5,8 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { nativeShare } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
 import { DOWNLOAD_URL, QR_TARGET_URL, shareAppText } from "@/lib/store-link";
+import { useQueryClient } from "@tanstack/react-query";
+import { communityLabel } from "@/lib/communities";
 
 // Printed and in-app QR codes both point at the smart download link, so a scan
 // opens the phone's own store instead of stopping at the website home page.
@@ -24,8 +26,10 @@ export function ShareAppDialog({ open, onClose }: { open: boolean; onClose: () =
     } catch { /* ignore */ }
   };
 
+  const qc = useQueryClient();
   const shareApp = async () => {
-    const outcome = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang), url: DOWNLOAD_URL });
+    const home = qc.getQueryData<{ locations?: string[] | null }>(["my-profile"])?.locations?.[0];
+    const outcome = await nativeShare({ title: "PadelSetMatch", text: shareAppText(lang, communityLabel(home)), url: DOWNLOAD_URL });
     if (outcome === "shared" || outcome === "copied") recordAppShare(outcome === "shared" ? "share_sheet" : "copy_link");
     if (outcome === "copied") {
       setCopied(true);

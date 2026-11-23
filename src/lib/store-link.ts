@@ -26,12 +26,18 @@ export function pickStore(userAgent: string, maxTouchPoints = 0): StorePlatform 
   return null;
 }
 
-export function shareAppText(lang: "en" | "es" | "fr"): string {
+/**
+ * The invite a player sends when sharing the app. It names the sharer's own
+ * community ("Dubai", "Chelsea & Battersea") so every place gets its own
+ * invite; without one it stays general.
+ */
+export function shareAppText(lang: "en" | "es" | "fr", place?: string | null): string {
+  const where = place?.trim();
   if (lang === "es") {
-    return "🎾 ¡Únete a PadelSetMatch! Encuentra jugadores y partidos de pádel en La Moraleja y Madrid. Descárgala gratis:";
+    return `🎾 ¡Únete a PadelSetMatch! Encuentra jugadores y partidos de pádel ${where ? `en ${where}` : "cerca de ti"}. Descárgala gratis:`;
   }
   if (lang === "fr") {
-    return "🎾 Rejoins PadelSetMatch ! Trouve des joueurs et des matchs de padel à La Moraleja et Madrid. Télécharge-la gratuitement :";
+    return `🎾 Rejoins PadelSetMatch ! Trouve des joueurs et des matchs de padel ${where ? `à ${where}` : "près de chez toi"}. Télécharge-la gratuitement :`;
   }
-  return "🎾 Join PadelSetMatch! Find padel players and matches in La Moraleja and Madrid. Download it free:";
+  return `🎾 Join PadelSetMatch! Find padel players and matches ${where ? `in ${where}` : "near you"}. Download it free:`;
 }

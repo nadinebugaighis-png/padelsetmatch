@@ -10,6 +10,7 @@ import { formatNationalities } from "@/lib/affinity";
 import { Camera, ChevronRight, Mail, MessageCircle } from "lucide-react";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { recordAppShare } from "@/lib/app-shares";
+import { communityLabel } from "@/lib/communities";
 import { DOWNLOAD_URL, shareAppText } from "@/lib/store-link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -570,8 +571,10 @@ function AnalyticsConsent() {
 function InviteFriendsRow() {
   const tr = useTr();
   const { lang } = useI18n();
+  const qc = useQueryClient();
   const onShare = async () => {
-    const text = shareAppText(lang);
+    const home = qc.getQueryData<{ locations?: string[] | null }>(["my-profile"])?.locations?.[0];
+    const text = shareAppText(lang, communityLabel(home));
     const outcome = await nativeShare({ title: "PadelSetMatch", text, url: DOWNLOAD_URL });
     if (outcome === "shared") {
       recordAppShare("share_sheet");

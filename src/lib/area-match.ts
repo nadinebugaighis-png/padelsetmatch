@@ -87,6 +87,20 @@ export function sharesMyArea(me: Loc, them: Loc): boolean {
 }
 
 /**
+ * Coaches and their classes, one city at a time: coaches travel across their
+ * city, so a shared city is enough (a Salamanca player still sees a
+ * La Moraleja coach, a Dubai player never sees Madrid ones). Anyone without
+ * a city on either side stays visible, so nobody gets an empty page.
+ */
+export function sharesMyCity(me: Loc, them: Loc): boolean {
+  const mine = placesOf(me).cities;
+  const theirs = placesOf(them).cities;
+  if (mine.size === 0 || theirs.size === 0) return true;
+  for (const c of mine) if (theirs.has(c)) return true;
+  return false;
+}
+
+/**
  * Roster heading: true when the viewer has chosen La Moraleja, or one of the
  * surrounding communities that count as it, as one of their areas. Only
  * La Moraleja gets its own heading for now; other places keep the plain one.

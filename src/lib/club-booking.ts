@@ -90,6 +90,46 @@ const KNOWN_CLUBS: KnownClub[] = [
   // London. ParkSports sites aren't on Playtomic; the page opens on today's date.
   { key: "parksports_lammas", url: "https://lammas.parksports.co.uk/Booking/BookByDate#?role=guest&resource-group-id=2f693518-ea79-40ef-8f53-13cb83bf211f", words: [["lammas"]] },
   { key: "parque_santander", url: "https://www.ocioydeportecanal.es/es/signin", words: [["parque", "santander"], ["canal", "ocio", "deporte"], ["tercer", "deposito"]] },
+  // Marbella. Nueva Alcántara books on Taykus, the rest on Playtomic.
+  { key: "los_naranjos_marbella", url: "https://playtomic.com/clubs/los-naranjos-padel-club", words: [["naranjos", "padel"], ["naranjos", "marbella"]] },
+  { key: "puente_romano", url: "https://playtomic.com/clubs/puente-romano", words: [["puente", "romano"]] },
+  { key: "manolo_santana_marbella", url: "https://playtomic.com/clubs/new-manolo-santana", words: [["manolo", "santana"]] },
+  { key: "padel_center_banus", url: "https://playtomic.com/clubs/padel-center-banus", words: [["padel", "banus"], ["center", "banus"], ["centre", "banus"]] },
+  { key: "el_mirador_marbella", url: "https://playtomic.com/clubs/club-de-tenis-y-padel-el-mirador", words: [["mirador", "marbella"], ["tenis", "padel", "mirador"], ["tennis", "padel", "mirador"]] },
+  { key: "los_granados_marbella", url: "https://playtomic.com/clubs/club-de-padel-los-granados", words: [["granados", "padel"], ["granados", "marbella"], ["racket", "club", "granados"]] },
+  { key: "royal_tennis_marbella", url: "https://playtomic.com/clubs/royal-tennis-club-marbella", words: [["royal", "tennis", "marbella"]] },
+  { key: "cap_racket_club", url: "https://playtomic.com/clubs/cap-racket-club", words: [["cap", "racket"]] },
+  { key: "rafa_nadal_marbella", url: "https://playtomic.com/clubs/rafa-nadal-tennis-center-marbella", words: [["rafa", "nadal", "marbella"]] },
+  { key: "nueva_alcantara_club", url: "https://nac.taykus.com/bookingtypes?bookings=true", words: [["nueva", "alcantara"]] },
+  // Dubai, all on Playtomic.
+  { key: "sab_padel_difc", url: "https://playtomic.com/clubs/sab-padel", words: [["sab", "padel"]] },
+  { key: "padel_pro_one_central", url: "https://playtomic.com/clubs/padel-pro-one-central", words: [["padel", "pro", "central"]] },
+  { key: "club_padel_dubai", url: "https://playtomic.com/clubs/club-padel-dubai", words: [["club", "padel", "dubai"]] },
+  { key: "casa_padel_ripe", url: "https://playtomic.com/clubs/casa-padel-ripe-market", words: [["casa", "padel"]] },
+  { key: "padel_park_dubai", url: "https://playtomic.com/clubs/padelpark-dubai", words: [["padel", "park", "ripe"], ["padel", "park", "dubai"], ["padelpark"]] },
+  { key: "padel_islands_dubai", url: "https://playtomic.com/clubs/padelx-floating-club", words: [["padel", "islands"]] },
+  { key: "playce_dubai", url: "https://playtomic.com/clubs/playce", words: [["playce"]] },
+  { key: "dock_and_court", url: "https://playtomic.com/clubs/dock-and-court", words: [["dock", "court"]] },
+  { key: "matcha_club_al_quoz", url: "https://playtomic.com/clubs/matcha-club-alquoz", words: [["matcha"]] },
+  { key: "padel_kingdom_dubai", url: "https://playtomic.com/clubs/padel-kingdom-dubai", words: [["padel", "kingdom"]] },
+  { key: "club_15_dubai", url: "https://playtomic.com/clubs/club-15", words: [["club", "15", "quoz"], ["club", "15", "dubai"]] },
+  { key: "premier_padel_al_quoz", url: "https://playtomic.com/clubs/premier-padel", words: [["premier", "padel", "quoz"]] },
+  { key: "al_habtoor_sports_hub", url: "https://playtomic.com/clubs/al-habtoor-sports-hub", words: [["habtoor"]] },
+  // Miami. Reserve Seaplane books on Reserve's own site, the rest on Playtomic.
+  { key: "ultra_padel_aventura", url: "https://playtomic.com/clubs/ultra-padel-aventura", words: [["ultra", "padel", "aventura"]] },
+  { key: "ultra_padel_magic_city", url: "https://playtomic.com/clubs/ultra-padel-miami", words: [["ultra", "padel", "magic"], ["ultra", "padel", "miami"], ["ultra", "club", "magic"]] },
+  { key: "padel_x_lincoln_road", url: "https://playtomic.com/clubs/padel-x-summer-club", words: [["padel", "x", "lincoln"]] },
+  { key: "padel_x_miami", url: "https://playtomic.com/clubs/padel-x-miami", words: [["padel", "x", "miami"]] },
+  { key: "real_padel_miami", url: "https://playtomic.com/clubs/real-padel-miami", words: [["real", "padel", "miami"]] },
+  { key: "reserve_sole_mia", url: "https://playtomic.com/clubs/reserve-sole-mia", words: [["reserve", "sole"]] },
+  { key: "reserve_seaplane", url: "https://book.reservepadel.com/", words: [["reserve", "seaplane"]] },
+  { key: "point_miami_beach", url: "https://playtomic.com/clubs/point-miami-beach", words: [["point", "miami", "beach"], ["padel", "point", "miami"]] },
+  { key: "midtown_padel_miami", url: "https://playtomic.com/clubs/midtown-padel", words: [["midtown", "padel"]] },
+  { key: "the_gables_padel", url: "https://playtomic.com/clubs/the-gables-padel", words: [["gables", "padel"]] },
+  { key: "icon_padel_club", url: "https://playtomic.com/clubs/icon-padel", words: [["icon", "padel"]] },
+  { key: "platinum_padel_miami", url: "https://playtomic.com/clubs/platinum-padel", words: [["platinum", "padel"]] },
+  { key: "pulse_padel_hub", url: "https://playtomic.com/clubs/pulse-padel-hub", words: [["pulse", "padel"]] },
+  { key: "one_indoor_club", url: "https://playtomic.com/clubs/one-padel-indoor-club", words: [["one", "indoor", "club"]] },
 ];
 
 const PLACEHOLDER_WORDS = ["tbd", "por decidir", "to be decided", "a decider", "club por definir"];
@@ -234,7 +274,9 @@ export function clubWhatsappBookingUrl(input: {
 /* ------------------------------------------------------------------ */
 /* Book a court: curated clubs players can reserve directly            */
 /* ------------------------------------------------------------------ */
-export type BookCourtRegion = "madrid" | "london";
+export type BookCourtRegion = "madrid" | "london" | "marbella" | "dubai" | "miami";
+/** Book a court city tabs, in order. */
+export const BOOK_COURT_REGIONS: BookCourtRegion[] = ["madrid", "london", "marbella", "dubai", "miami"];
 const BOOK_COURT_NAMES: Array<[string, string, BookCourtRegion]> = [
   ["club_padel_la_moraleja", "Club de Pádel La Moraleja", "madrid"],
   ["riber_padel_moraleja", "Riber Pádel Moraleja", "madrid"],
@@ -282,6 +324,43 @@ const BOOK_COURT_NAMES: Array<[string, string, BookCourtRegion]> = [
   ["house_of_racquet", "House of Racquet", "london"],
   ["playtime_padel_kingston", "Playtime Padel Kingston", "london"],
   ["parksports_lammas", "Lammas Park, Ealing", "london"],
+  ["los_naranjos_marbella", "Los Naranjos Padel Club", "marbella"],
+  ["puente_romano", "Puente Romano", "marbella"],
+  ["manolo_santana_marbella", "Manolo Santana Racquets Club", "marbella"],
+  ["padel_center_banus", "Padel Center Banús", "marbella"],
+  ["el_mirador_marbella", "Club de Tenis y Pádel El Mirador", "marbella"],
+  ["los_granados_marbella", "Club de Pádel Los Granados", "marbella"],
+  ["royal_tennis_marbella", "Royal Tennis Club Marbella", "marbella"],
+  ["cap_racket_club", "CAP Racket Club", "marbella"],
+  ["rafa_nadal_marbella", "Rafa Nadal Tennis Center Marbella", "marbella"],
+  ["nueva_alcantara_club", "Nueva Alcántara Club", "marbella"],
+  ["sab_padel_difc", "SAB Padel, DIFC", "dubai"],
+  ["padel_pro_one_central", "Padel Pro One Central", "dubai"],
+  ["club_padel_dubai", "Club Padel Dubai", "dubai"],
+  ["casa_padel_ripe", "Casa Padel Ripe Market", "dubai"],
+  ["padel_park_dubai", "Padel Park Dubai, Ripe Market", "dubai"],
+  ["padel_islands_dubai", "Padel Islands Floating Club", "dubai"],
+  ["playce_dubai", "Playce", "dubai"],
+  ["dock_and_court", "Dock and Court", "dubai"],
+  ["matcha_club_al_quoz", "Matcha Club Al Quoz", "dubai"],
+  ["padel_kingdom_dubai", "Padel Kingdom Dubai", "dubai"],
+  ["club_15_dubai", "Club 15", "dubai"],
+  ["premier_padel_al_quoz", "Premier Padel, Al Quoz", "dubai"],
+  ["al_habtoor_sports_hub", "Al Habtoor Sports Hub", "dubai"],
+  ["ultra_padel_magic_city", "Ultra Padel Miami, Magic City", "miami"],
+  ["padel_x_miami", "Padel X Miami", "miami"],
+  ["real_padel_miami", "Real Padel Miami", "miami"],
+  ["reserve_seaplane", "Reserve Seaplane", "miami"],
+  ["reserve_sole_mia", "Reserve Sole Mia", "miami"],
+  ["point_miami_beach", "Point Miami Beach", "miami"],
+  ["padel_x_lincoln_road", "Padel X Lincoln Road", "miami"],
+  ["midtown_padel_miami", "Midtown Padel", "miami"],
+  ["the_gables_padel", "The Gables Padel", "miami"],
+  ["icon_padel_club", "Icon Padel Club", "miami"],
+  ["platinum_padel_miami", "Platinum Padel", "miami"],
+  ["pulse_padel_hub", "Pulse Padel Hub", "miami"],
+  ["ultra_padel_aventura", "Ultra Padel Aventura", "miami"],
+  ["one_indoor_club", "One Indoor Club", "miami"],
 ];
 
 export type BookCourtClub = { key: string; name: string; region: BookCourtRegion; url: string; via: "playtomic" | "padelmates" | "club" };
@@ -296,4 +375,17 @@ export function bookCourtClubs(): BookCourtClub[] {
     out.push({ key, name, region, url: tagBookingUrl(known.url), via });
   }
   return out;
+}
+
+/** The Book a court tab a player lands on: their first place that has a club list, else Madrid. */
+export function bookCourtRegionFor(locations: readonly string[] | null | undefined): BookCourtRegion {
+  for (const raw of locations ?? []) {
+    const t = norm(raw);
+    if (/\b(london|londres)\b/.test(t)) return "london";
+    if (/\bmarbella\b/.test(t)) return "marbella";
+    if (/\bdubai\b/.test(t)) return "dubai";
+    if (/\bmiami\b/.test(t)) return "miami";
+    if (/\bmadrid\b/.test(t)) return "madrid";
+  }
+  return "madrid";
 }

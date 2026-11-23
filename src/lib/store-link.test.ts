@@ -35,4 +35,11 @@ describe("shareAppText", () => {
     expect(shareAppText("es")).toContain("PadelSetMatch");
     expect(shareAppText("es")).toContain("pádel");
   });
+
+  it("names the sharer's own community, or stays general", () => {
+    expect(shareAppText("en", "Dubai")).toContain("in Dubai");
+    expect(shareAppText("en", "Dubai")).not.toContain("Moraleja");
+    expect(shareAppText("es", "Chelsea & Battersea")).toContain("en Chelsea & Battersea");
+    expect(shareAppText("en")).toContain("near you");
+  });
 });

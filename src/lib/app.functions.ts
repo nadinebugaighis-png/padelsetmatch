@@ -440,6 +440,9 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
     // Area gate: La Moraleja players see only La Moraleja players (World shows all).
     const gateFrom = visit ? { locations: [visit] } : me;
     const sharesMyCity = (c: Profile) => sharesMyArea(gateFrom, c);
+    // Visiting someone else's community lists all its members, matching the directory count.
+    const { isVisitingOther } = await import("./communities");
+    const visitingOther = isVisitingOther(visit, me.locations);
 
     const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
       if (blockedSet.has(c.id)) return false;
@@ -554,7 +557,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
 
     const scored = candidates
-      .filter((c) => world || ageMatchesPreference(me, c))
+      .filter((c) => world || visitingOther || ageMatchesPreference(me, c))
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
         const qa = qaScoreByProfile.get(c.id);

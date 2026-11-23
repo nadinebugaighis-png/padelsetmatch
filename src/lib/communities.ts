@@ -157,6 +157,17 @@ export function buildDirectory(members: Member[], myLocations: string[] | null |
   return { mine: myParsed.map((p) => toCommunity(p.key)), countries, total: members.length };
 }
 
+/**
+ * True when the player is looking at a community they don't belong to. The
+ * grid then lists every member of it (no personal age filter), so a visitor
+ * sees exactly the people the directory counted.
+ */
+export function isVisitingOther(visit: string | null | undefined, myLocations: string[] | null | undefined): boolean {
+  const target = visit ? communityOf(visit)?.key : null;
+  if (!target) return false;
+  return !(myLocations ?? []).some((l) => communityOf(l)?.key === target);
+}
+
 /** A city that is one whole-city community (players chose no neighbourhood), listed once without a repeated heading. */
 export const isCityOnly = (ci: DirectoryCity) => ci.communities.length === 1 && !ci.communities[0]!.area;
 

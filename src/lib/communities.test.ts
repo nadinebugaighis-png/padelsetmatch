@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDirectory, communityOf, isCityOnly, newCommunityLocation } from "./communities";
+import { buildDirectory, communityOf, isCityOnly, isVisitingOther, newCommunityLocation } from "./communities";
 
 const p = (...locations: string[]) => ({ locations });
 const find = (d: ReturnType<typeof buildDirectory>, label: string) =>
@@ -88,5 +88,17 @@ describe("city-only communities", () => {
     const dubai = d.countries.find((c) => c.country === "United Arab Emirates")!.cities[0]!;
     expect(isCityOnly(dubai)).toBe(true);
     expect(dubai.communities[0]!.members).toBe(2);
+  });
+});
+
+describe("visiting another community", () => {
+  it("counts a visit to Benghazi from Madrid as visiting", () => {
+    expect(isVisitingOther("Libya | Benghazi | ", ["Spain | Madrid | La Moraleja"])).toBe(true);
+  });
+  it("is not visiting when the community is one of mine", () => {
+    expect(isVisitingOther("Spain | Madrid | La Moraleja", ["Spain | Madrid | La Moraleja"])).toBe(false);
+  });
+  it("is not visiting with no community chosen", () => {
+    expect(isVisitingOther(null, ["Spain | Madrid | La Moraleja"])).toBe(false);
   });
 });

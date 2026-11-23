@@ -24,6 +24,8 @@ import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES } from "@/lib/types";
 import { useCommunityView } from "@/lib/community-view";
+import { communityLabel, communityOf, communityShareUrl, isVisitingOther } from "@/lib/communities";
+import { nativeShare } from "@/lib/native";
 import { CommunityHeading } from "@/components/CommunityHeading";
 
 
@@ -430,6 +432,11 @@ function Discover() {
       return true;
     });
   const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
+  const myLocations = ((feedQ.data.me as unknown as { locations?: string[] | null }).locations) ?? [];
+  const visitingOther = isVisitingOther(communityView, myLocations);
+  const myCommunityKeys = new Set(myLocations.map((l) => communityOf(l)?.key).filter(Boolean));
+  // The one community on screen: the one being viewed, or my only one.
+  const startingCommunity = communityView ?? (myCommunityKeys.size === 1 ? myLocations.find((l) => communityOf(l)) ?? null : null);
 
   return (
     <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
@@ -641,6 +648,25 @@ function Discover() {
                 onClick: () => { setLevelFilter("all"); setZoneFilter("all"); },
                 primary: true,
               });
+            } else if (totalInFeed === 0 && !world && startingCommunity) {
+              // A brand-new or tiny community: say so plainly and offer to share it.
+              const label = communityLabel(startingCommunity) ?? "";
+              title = tr(`${label} is just starting`, `${label} acaba de empezar`, `${label} démarre`);
+              hint = visitingOther
+                ? tr("No members yet. Join and share it to bring players in.", "Aún no hay miembros. Únete y compártela para atraer jugadores.", "Pas encore de membres. Rejoins-la et partage-la pour attirer des joueurs.")
+                : tr("You're the first member. Share it with your padel friends.", "Eres el primer miembro. Compártela con tus amigos de pádel.", "Tu es le premier membre. Partage-la avec tes amis de padel.");
+              actions.push({
+                label: tr("Share community", "Compartir comunidad", "Partager la communauté"),
+                onClick: async () => {
+                  const outcome = await nativeShare({
+                    title: label,
+                    text: tr(`Join ${label} on PadelSetMatch`, `Únete a ${label} en PadelSetMatch`, `Rejoins ${label} sur PadelSetMatch`),
+                    url: communityShareUrl(startingCommunity),
+                  });
+                  if (outcome === "copied") toast.success(tr("Link copied", "Enlace copiado", "Lien copié"));
+                },
+                primary: true,
+              });
             } else if (totalInFeed === 0 && !world && !communityView) {
               title = tr("Nobody in your zone yet", "Aún nadie en tu zona", "Personne dans ta zone pour l'instant");
               hint = tr(
@@ -701,7 +727,8 @@ function Discover() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
             {(() => {
               const me = feedQ.data.me as any;
-              if (!me) return null;
+              // Visiting another community: show its members only, not me.
+              if (!me || visitingOther) return null;
               const openSelf = () => {
                 closedIdRef.current = null;
                 setPreview({

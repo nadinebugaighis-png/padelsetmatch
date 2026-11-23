@@ -15,7 +15,7 @@ export const Route = createFileRoute("/support")({
   component: SupportPage,
 });
 
-const CONTACT = "hello@padelmatchapp.lovable.app";
+const CONTACT = "Nadine@padelsetmatch.com";
 
 function SupportPage() {
   const tr = useTr();

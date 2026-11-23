@@ -155,7 +155,7 @@ export function PublicPlayFeed({
           {byDay.map(([day, list]) => (
             <section key={day}>
               <div className="text-[10px] uppercase tracking-widest text-[var(--cream)]/50 mb-2">{day}</div>
-              <div className="grid gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 {list.map((m) => {
                   const open = Math.max(0, 4 - (m.filled ?? 0));
                   const names = m.participant_names ?? [];

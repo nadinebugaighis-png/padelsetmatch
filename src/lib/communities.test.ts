@@ -117,22 +117,21 @@ describe("publicDirectory", () => {
     ],
   };
   it("hides one-member communities from others", () => {
-    const r = publicDirectory(dir, { world: true });
+    const r = publicDirectory(dir);
     const labels = r.countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities.map((x) => x.label)));
     expect(labels).not.toContain("Lonely");
     expect(labels).not.toContain("Benghazi");
   });
   it("keeps a one-member community visible to its founder", () => {
     const own = { ...dir, countries: [{ country: "Libya", members: 0, cities: [{ city: "Benghazi", members: 0, communities: [c("Libya", "Benghazi", "Benghazi", 1, true)] }] }] };
-    expect(publicDirectory(own, { world: true }).countries).toHaveLength(1);
+    expect(publicDirectory(own).countries).toHaveLength(1);
   });
   it("keeps branded communities even before members join", () => {
-    const labels = publicDirectory(dir, { world: true }).countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities.map((x) => x.label)));
+    const labels = publicDirectory(dir).countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities.map((x) => x.label)));
     expect(labels).toContain("Padelodontics");
   });
-  it("shows only my country until I ask for the world", () => {
-    const r = publicDirectory(dir, { world: false });
-    expect(r.countries.map((co) => co.country)).toEqual(["Spain"]);
-    expect(r.hiddenElsewhere).toBe(true);
+  it("lists the whole world with my country first", () => {
+    const flipped = { ...dir, countries: [...dir.countries].reverse() };
+    expect(publicDirectory(flipped).countries.map((co) => co.country)).toEqual(["Spain", "United Kingdom"]);
   });
 });

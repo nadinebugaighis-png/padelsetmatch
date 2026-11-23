@@ -41,8 +41,8 @@ const en: Dict = {
   "auth.apple": "Continue with Apple",
 
   "auth.or": "or",
-  "auth.email": "email",
-  "auth.password": "password (min 8)",
+  "auth.email": "Email",
+  "auth.password": "Password",
   "auth.create": "Create account",
   "auth.signin": "Sign in",
   "auth.toggleToSignin": "Already have an account? Sign in",
@@ -323,8 +323,8 @@ const es: Dict = {
   "auth.apple": "Continuar con Apple",
 
   "auth.or": "o",
-  "auth.email": "correo electrónico",
-  "auth.password": "contraseña (mín. 8)",
+  "auth.email": "Correo electrónico",
+  "auth.password": "Contraseña",
   "auth.create": "Crear cuenta",
   "auth.signin": "Entrar",
   "auth.toggleToSignin": "¿Ya tienes cuenta? Inicia sesión",
@@ -600,8 +600,8 @@ const fr: Dict = {
   "auth.apple": "Continuer avec Apple",
 
   "auth.or": "ou",
-  "auth.email": "email",
-  "auth.password": "mot de passe (min. 8)",
+  "auth.email": "Email",
+  "auth.password": "Mot de passe",
   "auth.create": "Créer un compte",
   "auth.signin": "Se connecter",
   "auth.toggleToSignin": "Déjà un compte ? Se connecter",

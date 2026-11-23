@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { safeInternalPath } from "@/lib/safe-redirect";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Check, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
@@ -468,86 +468,89 @@ function AuthPage() {
   if (checkingSession) return <SessionLoading />;
 
   return (
-    <main className="programme-page min-h-screen flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-md programme-card p-8 sm:p-10">
+    <main className="programme-page min-h-screen flex justify-center px-6 pt-[max(env(safe-area-inset-top),1.25rem)] pb-12 sm:items-center sm:px-4 sm:py-12">
+      <div className="w-full max-w-[400px] sm:programme-card sm:max-w-md sm:p-10">
 
         <div className="flex items-center justify-between gap-3">
           <BrandMark size="sm" />
           <LangSwitch />
         </div>
-        <Link to="/" className="native-hide mt-4 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/78 hover:text-[var(--ink)] transition">← {t("auth.back")}</Link>
-        <h1 className="text-serif mt-4 text-3xl uppercase text-[var(--ink)] leading-[0.95]">
-          {tr("Join PadelSetMatch", "Únete a PadelSetMatch", "Rejoignez PadelSetMatch")}
+
+        <Link to="/" className="native-hide mt-8 inline-flex items-center text-[13px] text-[var(--ink)]/72 hover:text-[var(--ink)] transition">{t("auth.back")}</Link>
+
+        <h1 className="text-serif mt-6 text-[34px] font-normal leading-[1.05] text-[var(--ink)]">
+          {mode === "signup"
+            ? tr("Join PadelSetMatch", "Únete a PadelSetMatch", "Rejoignez PadelSetMatch")
+            : tr("Welcome back", "Bienvenido de nuevo", "Bon retour")}
         </h1>
 
         <div
           role="tablist"
           aria-label={tr("Authentication mode", "Modo de autenticación", "Mode d'authentification")}
-          className="mt-6 grid grid-cols-2 gap-1 p-1 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/16"
+          className="mt-8 flex gap-7 border-b border-[var(--ink)]/14"
         >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "signup"}
-            onClick={() => { setMode("signup"); setConfirmPassword(""); setAgreed(false); }}
-            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signup" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/82 hover:text-[var(--ink)]"}`}
-          >
-            {tr("Create account", "Crear cuenta", "Créer un compte")}
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "signin"}
-            onClick={() => { setMode("signin"); setConfirmPassword(""); setAgreed(false); }}
-
-            className={`h-10 rounded-full text-[12px] font-semibold uppercase tracking-[0.15em] transition ${mode === "signin" ? "bg-[var(--ink)] text-[var(--paper)] shadow-[0_8px_20px_-12px_rgba(15,62,46,0.55)]" : "text-[var(--ink)]/82 hover:text-[var(--ink)]"}`}
-          >
-            {tr("Sign in", "Iniciar sesión", "Se connecter")}
-          </button>
+          {(["signup", "signin"] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              role="tab"
+              aria-selected={mode === m}
+              onClick={() => { setMode(m); setConfirmPassword(""); setAgreed(false); }}
+              className={`-mb-px pb-3 text-[15px] transition border-b-[1.5px] ${mode === m ? "border-[var(--ink)] text-[var(--ink)] font-medium" : "border-transparent text-[var(--ink)]/55 hover:text-[var(--ink)]"}`}
+            >
+              {m === "signup"
+                ? tr("Create account", "Crear cuenta", "Créer un compte")
+                : tr("Sign in", "Iniciar sesión", "Se connecter")}
+            </button>
+          ))}
         </div>
 
         {/* EULA / terms acceptance — required to create an account
             (App Store guideline 1.2, user-generated content). */}
         {mode === "signup" ? (
-          <label className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--ink)]/22 bg-[var(--ink)]/[0.03] p-3 cursor-pointer">
+          <label className="mt-7 flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={agreed}
               onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--ink)]"
+              className="peer sr-only"
               aria-label={tr("Accept the Terms", "Aceptar los Términos", "Accepter les Conditions")}
             />
-            <span className="text-[12px] leading-snug text-[var(--ink)]/84">
+            <span
+              aria-hidden
+              className={`mt-[1px] grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border transition peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ink)]/30 ${agreed ? "border-[var(--ink)] bg-[var(--ink)]" : "border-[var(--ink)]/40 bg-card"}`}
+            >
+              {agreed && <Check className="h-3 w-3 text-[var(--paper)]" strokeWidth={3} />}
+            </span>
+            <span className="text-[12.5px] leading-[1.5] text-[var(--ink)]/72">
               {tr("I agree to the ", "Acepto los ", "J'accepte les ")}
-              <Link to="/terms" className="underline font-semibold">
-                {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
+              <Link to="/terms" className="text-[var(--ink)] underline decoration-[var(--ink)]/30 underline-offset-[3px]">
+                {tr("Terms of Use", "Términos de uso", "Conditions d'utilisation")}
               </Link>
               {tr(" and ", " y la ", " et la ")}
-              <Link to="/privacy" className="underline font-semibold">
+              <Link to="/privacy" className="text-[var(--ink)] underline decoration-[var(--ink)]/30 underline-offset-[3px]">
                 {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
               </Link>
               {tr(
-                ", and I understand there is zero tolerance for objectionable content or abusive users.",
-                ", y entiendo que hay tolerancia cero con el contenido objetable y los usuarios abusivos.",
-                ", et je comprends qu'aucune tolérance n'est accordée aux contenus répréhensibles ou aux utilisateurs abusifs.",
+                ". Zero tolerance for abusive content or users.",
+                ". Tolerancia cero con contenido o usuarios abusivos.",
+                ". Tolérance zéro pour les contenus ou utilisateurs abusifs.",
               )}
             </span>
           </label>
         ) : (
-          <p className="mt-6 text-[11px] leading-snug text-[var(--ink)]/82">
+          <p className="mt-7 text-[12.5px] leading-[1.5] text-[var(--ink)]/72">
             {tr("By signing in you agree to the ", "Al iniciar sesión aceptas los ", "En vous connectant, vous acceptez les ")}
-            <Link to="/terms" className="underline font-semibold">
-              {tr("Terms of Use (EULA)", "Términos de uso (EULA)", "Conditions d'utilisation (CLUF)")}
+            <Link to="/terms" className="text-[var(--ink)] underline decoration-[var(--ink)]/30 underline-offset-[3px]">
+              {tr("Terms of Use", "Términos de uso", "Conditions d'utilisation")}
             </Link>
             {tr(" and ", " y la ", " et la ")}
-            <Link to="/privacy" className="underline font-semibold">
+            <Link to="/privacy" className="text-[var(--ink)] underline decoration-[var(--ink)]/30 underline-offset-[3px]">
               {tr("Privacy Policy", "Política de privacidad", "Politique de confidentialité")}
             </Link>
             .
           </p>
         )}
-
-
 
         {/* Native iOS: Sign in with Apple uses the system sheet and never
             leaves the app (App Store guideline 4 compliant). */}
@@ -556,23 +559,18 @@ function AuthPage() {
             <Button
               onClick={appleNative}
               disabled={loading}
-              variant="secondary"
-              className="w-full mt-4 bg-black text-white hover:bg-black/90"
+              className={`${APPLE_BTN} mt-6`}
             >
-               {t("auth.apple")}
+              <AppleLogo />
+              {t("auth.apple")}
             </Button>
-            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/70 uppercase tracking-widest">
-              <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
-            </div>
+            <OrDivider label={t("auth.or")} />
           </>
         )}
 
         {/* On web, social sign-in goes through the OAuth redirect flow. */}
         {hydrated && !isNative() && (
           <>
-            <Button onClick={google} disabled={loading} variant="secondary" className="w-full mt-4">
-               {t("auth.google")}
-            </Button>
             <Button
               onClick={async () => {
                 if (!requireAgreement()) return;
@@ -590,30 +588,31 @@ function AuthPage() {
                 navigate(afterAuthTarget() as never);
               }}
               disabled={loading}
-              variant="secondary"
-              className="w-full mt-2 bg-black text-white hover:bg-black/90"
+              className={`${APPLE_BTN} mt-6`}
             >
-               {t("auth.apple")}
+              <AppleLogo />
+              {t("auth.apple")}
             </Button>
-
-            <div className="my-5 flex items-center gap-3 text-xs text-[var(--ink)]/70 uppercase tracking-widest">
-              <div className="flex-1 h-px bg-[var(--ink)]/15" /> {t("auth.or")} <div className="flex-1 h-px bg-[var(--ink)]/15" />
-            </div>
+            <Button onClick={google} disabled={loading} variant="outline" className={`${SOCIAL_BTN} mt-3 bg-card border-[var(--ink)]/18 text-[var(--ink)] hover:bg-card hover:border-[var(--ink)]/35`}>
+              <GoogleLogo />
+              {t("auth.google")}
+            </Button>
+            <OrDivider label={t("auth.or")} />
           </>
         )}
 
-        <form onSubmit={submit} className="space-y-3">
-          <Input type="email" required autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} inputMode="email" placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setEmail((v) => normalizeEmail(v))} />
+        <form onSubmit={submit} className="space-y-1">
+          <Input type="email" required autoComplete="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} inputMode="email" placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setEmail((v) => normalizeEmail(v))} className={LINE_INPUT} />
           <div className="relative">
-            <Input type={showPassword ? "text" : "password"} required minLength={8} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-11" />
+            <Input type={showPassword ? "text" : "password"} required minLength={8} autoComplete={mode === "signup" ? "new-password" : "current-password"} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} className={`${LINE_INPUT} pr-10`} />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute inset-y-0 right-0 flex items-center px-3 text-[var(--ink)]/76 hover:text-[var(--ink)]"
+              className="absolute inset-y-0 right-0 flex items-center pl-3 text-[var(--ink)]/55 hover:text-[var(--ink)]"
               tabIndex={-1}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? <EyeOff className="h-[18px] w-[18px]" strokeWidth={1.5} /> : <Eye className="h-[18px] w-[18px]" strokeWidth={1.5} />}
             </button>
           </div>
           {mode === "signup" && (
@@ -621,25 +620,34 @@ function AuthPage() {
               type={showPassword ? "text" : "password"}
               required
               minLength={8}
+              autoComplete="new-password"
               placeholder={tr("Confirm password", "Confirma la contraseña", "Confirme le mot de passe")}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               aria-invalid={confirmPassword.length > 0 && confirmPassword !== password}
+              className={LINE_INPUT}
             />
           )}
-          <Button type="submit" disabled={loading} className="w-full h-11 bg-[var(--ink)] text-[var(--paper)] hover:brightness-110 font-semibold uppercase tracking-[0.15em] shadow-[0_10px_30px_-12px_rgba(15,62,46,0.45)]">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
+          {mode === "signup" && (
+            <p className="pt-2 text-[11.5px] text-[var(--ink)]/60">
+              {tr("At least 8 characters", "Mínimo 8 caracteres", "Au moins 8 caractères")}
+            </p>
+          )}
+          <div className="pt-6">
+            <Button type="submit" disabled={loading} className="w-full h-12 rounded-full bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--ink)] hover:brightness-110 text-[14.5px] font-medium tracking-[0.02em] shadow-none">{mode === "signup" ? t("auth.create") : t("auth.signin")}</Button>
+          </div>
         </form>
 
         {mode === "signup" && (
-          <p className="mt-3 text-center text-[13px] text-[var(--ink)]/82">
-            <Link to="/demo" className="text-[var(--plum)] font-semibold underline underline-offset-2 hover:brightness-110">
-              {tr("Take a quick tour →", "Haz un tour rápido →", "Fais un tour rapide →")}
+          <p className="mt-6 text-center">
+            <Link to="/demo" className="text-[13px] text-[var(--ink)]/72 underline decoration-[var(--ink)]/25 underline-offset-4 hover:text-[var(--ink)]">
+              {tr("Take a quick tour", "Haz un tour rápido", "Fais un tour rapide")}
             </Link>
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-end text-sm">
-          {mode === "signin" && (
+        {mode === "signin" && (
+          <div className="mt-6 text-center">
             <button
               type="button"
               onClick={async () => {
@@ -660,14 +668,47 @@ function AuthPage() {
                 }
               }}
               disabled={resetSending}
-              className="text-[var(--ink)]/82 hover:text-[var(--ink)]"
+              className="text-[13px] text-[var(--ink)]/72 underline decoration-[var(--ink)]/25 underline-offset-4 hover:text-[var(--ink)]"
             >
               {t("auth.forgot")}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </main>
   );
 }
 // trigger
+
+const SOCIAL_BTN = "w-full h-12 rounded-full gap-2.5 text-[14.5px] font-medium shadow-none";
+// Apple's sign-in button rules allow only black, white or white-outlined buttons.
+const APPLE_BTN = `${SOCIAL_BTN} bg-black text-white hover:bg-black/90`;
+const LINE_INPUT = "h-12 rounded-none border-0 border-b border-[var(--ink)]/18 bg-transparent px-0 text-[16px] text-[var(--ink)] shadow-none placeholder:text-[var(--ink)]/50 focus-visible:ring-0 focus-visible:border-[var(--ink)] md:text-[15px]";
+
+function OrDivider({ label }: { label: string }) {
+  return (
+    <div className="my-7 flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/50">
+      <div className="h-px flex-1 bg-[var(--ink)]/12" /> {label} <div className="h-px flex-1 bg-[var(--ink)]/12" />
+    </div>
+  );
+}
+
+function AppleLogo() {
+  return (
+    <svg viewBox="0 0 17 20" aria-hidden className="h-[17px] w-[15px] -mt-0.5" fill="currentColor">
+      <path d="M14.06 10.62c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.59 1.1 8.75.73 1.05 1.6 2.24 2.73 2.2 1.1-.05 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.32-3.5ZM11.88 4.18c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.22Z" />
+    </svg>
+  );
+}
+
+function GoogleLogo() {
+  // Google's brand mark must keep its own four colours.
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden className="h-[17px] w-[17px]">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z" />
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18Z" />
+      <path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.33Z" />
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58Z" />
+    </svg>
+  );
+}

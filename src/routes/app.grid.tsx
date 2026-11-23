@@ -10,7 +10,7 @@ import { offCourtScore, pairLabel } from "@/lib/pair-label";
 import { getDiscoverFeed, likeProfile, unlikeProfile, blockProfile, hideProfile, reportProfile, reportPhoto, getMyQaAnswers, getMyMatches, getAiCompatibility, rateAiCompatibility, getMyAiCompatibilityFeedback, getPersonalityCards, setWorldMode, sendIntroMessage } from "@/lib/app.functions";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { X, Flag, Shield, MessageCircle, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus } from "lucide-react";
+import { X, Flag, Shield, MessageCircle, ChevronDown, ArrowLeft, EyeOff, Search, Zap, Globe, GraduationCap, Check, UserPlus } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CoachBadgePanel } from "@/components/CoachBadgePanel";
@@ -1078,54 +1078,57 @@ function Discover() {
                           : pairKind === "court" ? tr("Court partners", "Pareja de pista", "Partenaires de court")
                           : null;
                         const heading = (children: string) => (
-                          <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/78">{children}</div>
+                          <div className="mb-3 text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/70">{children}</div>
                         );
+                        const section = "border-t border-[var(--card-edge)] py-5";
                         return (
-                          <div className="border-t border-[var(--ink)]/16 pt-2">
-                            <span className="block leading-none text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{tr("You two", "Vosotros dos", "Vous deux")}</span>
-                            {!needsUnlock && (
-                              <div className="mt-3 grid grid-cols-2">
-                                {[
-                                  { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
-                                  { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
-                                ].map((s, i) => (
-                                  <div key={s.key} className={i === 1 ? "px-3 text-center" : "px-3 text-center"}>
-                                    <div className="text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/76">{s.label}</div>
-                                    {s.value != null && (
-                                      <div className="text-serif text-[34px] leading-none text-[var(--ink)] tabular-nums mt-2">
-                                        {s.value}<span className="text-[17px] text-[var(--ink)]/78 ml-0.5">%</span>
-                                      </div>
-                                    )}
-                                    {s.key === "off" && offCourtWaiting && (
-                                      <div className="text-[12px] italic text-[var(--ink)]/78 leading-snug mt-1.5">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            {!needsUnlock && pairTag && (
-                              <div className="mt-3 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/84">{pairTag}</div>
-                            )}
-                            <div className="h-5" />
+                          <div className="mt-2 rounded-2xl border border-[var(--card-edge)] shadow-[var(--shadow-card)] px-5">
+                            <div className="pt-5 pb-5 text-center">
+                              <span className="block leading-none text-[10px] uppercase tracking-[0.32em] text-[var(--ink)]/70">{tr("You two", "Vosotros dos", "Vous deux")}</span>
+                              {!needsUnlock && (
+                                <div className="mt-4 grid grid-cols-2 divide-x divide-[var(--card-edge)]">
+                                  {[
+                                    { key: "on", label: tr("On court", "En pista", "Sur le court"), value: preview.score as number | null | undefined },
+                                    { key: "off", label: tr("Off court", "Fuera de pista", "Hors court"), value: offCourt },
+                                  ].map((s) => (
+                                    <div key={s.key} className="px-3">
+                                      {s.value != null ? (
+                                        <div className="text-serif text-[38px] leading-none text-[var(--ink)] tabular-nums">
+                                          {s.value}<span className="text-[16px] text-[var(--ink)]/70 ml-0.5">%</span>
+                                        </div>
+                                      ) : s.key === "off" && offCourtWaiting ? (
+                                        <div className="text-[12px] italic text-[var(--ink)]/78 leading-snug">{tr(`Once ${preview.first_name} answers a few questions`, `Cuando ${preview.first_name} responda unas preguntas`, `Quand ${preview.first_name} aura répondu à quelques questions`)}</div>
+                                      ) : null}
+                                      <div className="mt-2 text-[10px] uppercase tracking-[0.26em] text-[var(--ink)]/70">{s.label}</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {!needsUnlock && pairTag && (
+                                <div className="mt-4 inline-flex items-center rounded-full border border-[var(--ink)]/20 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[var(--ink)]/84">{pairTag}</div>
+                              )}
+                            </div>
 
-                            {needsUnlock ? (
-                              <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
-                            ) : compatQ.isLoading ? (
-                              <p className="text-serif italic text-[17px] text-[var(--ink)]/78">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
-                            ) : data ? (
-                              <p className="text-serif text-[19px] text-[var(--ink)] leading-snug">{noEmoji(data.sub_scores?.headline || data.blurb)}</p>
-                            ) : (
-                              <p className="text-sm text-[var(--ink)]/76 italic">{tr("The court read isn't available right now.", "La lectura de pista no está disponible ahora.", "La lecture du court n'est pas disponible pour le moment.")}</p>
-                            )}
+                            <div className={section + " text-center"}>
+                              {needsUnlock ? (
+                                <UnlockMatchQuestions answered={(qaQ.data ?? []).map((a) => a.question)} name={preview.first_name} />
+                              ) : compatQ.isLoading ? (
+                                <p className="text-serif italic text-[17px] text-[var(--ink)]/78">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
+                              ) : data ? (
+                                <p className="text-serif italic text-[18px] text-[var(--ink)] leading-snug text-balance">{noEmoji(data.sub_scores?.headline || data.blurb)}</p>
+                              ) : (
+                                <p className="text-sm text-[var(--ink)]/76 italic">{tr("The court read isn't available right now.", "La lectura de pista no está disponible ahora.", "La lecture du court n'est pas disponible pour le moment.")}</p>
+                              )}
+                            </div>
 
                             {shared.length > 0 && (
-                              <div className="mt-5">
+                              <div className={section}>
                                 {heading(tr("What you share", "Lo que compartís", "Ce que vous partagez"))}
-                                <ul className="space-y-2.5">
+                                <ul className="space-y-3.5">
                                   {shared.map((r) => (
                                     <li key={r.q.id}>
-                                      <div className="text-[11px] text-[var(--ink)]/76 leading-snug">{r.q.q[lang]}</div>
-                                      <div className="text-serif text-[16px] text-[var(--ink)] leading-snug mt-0.5">{tr("You both:", "Los dos:", "Vous deux :")} <span className="italic">{r.opt[lang]}</span></div>
+                                      <div className="text-[12px] text-[var(--ink)]/70 leading-snug">{r.q.q[lang]}</div>
+                                      <div className="text-serif text-[16px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
                                     </li>
                                   ))}
                                 </ul>
@@ -1133,48 +1136,46 @@ function Discover() {
                             )}
 
                             {complements.length > 0 && (
-                              <div className="mt-5">
+                              <div className={section}>
                                 {heading(tr("How you pair up", "Cómo os complementáis", "Comment vous vous complétez"))}
-                                <ul className="space-y-1.5">
+                                <ul className="space-y-2.5">
                                   {complements.map((c) => (
-                                    <li key={c.key} className="text-serif text-[16px] text-[var(--ink)] leading-snug">{c.text[lang]}</li>
+                                    <li key={c.key} className="flex gap-3 text-serif text-[16px] text-[var(--ink)] leading-snug">
+                                      <span aria-hidden className="mt-[0.7em] h-px w-3 shrink-0 bg-[var(--ink)]/40" />
+                                      <span>{c.text[lang]}</span>
+                                    </li>
                                   ))}
                                 </ul>
                               </div>
                             )}
 
                             {hasMore && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => setFullReadFor(showFull ? null : preview.id)}
-                                  aria-expanded={showFull}
-                                  className="mt-5 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/78 hover:text-[var(--ink)] transition"
-                                >
-                                  {showFull ? tr("Hide full read", "Ocultar lectura completa", "Masquer la lecture complète") : tr("Read the full court read", "Leer el análisis completo", "Lire l'analyse complète")}
-                                </button>
+                              <div className="border-t border-[var(--card-edge)]">
                                 {showFull && data && (
-                                  <div className="mt-4 space-y-4">
+                                  <div className="pt-5 space-y-4">
                                     {bullets.length > 0 && (
-                                      <ul className="space-y-1.5">
+                                      <ul className="space-y-2">
                                         {bullets.slice(0, 3).map((b, i) => (
-                                          <li key={i} className="text-[13px] text-[var(--ink)]/88 leading-snug">{b}</li>
+                                          <li key={i} className="flex gap-3 text-[13px] text-[var(--ink)]/88 leading-snug">
+                                            <span aria-hidden className="mt-[0.65em] h-px w-3 shrink-0 bg-[var(--ink)]/40" />
+                                            <span>{b}</span>
+                                          </li>
                                         ))}
                                       </ul>
                                     )}
                                     {data.friction && (
-                                      <p className="text-[12px] text-[var(--ink)]/84 leading-snug">
+                                      <p className="text-[13px] text-[var(--ink)]/84 leading-snug">
                                         <span className="font-medium">{tr("Worth knowing:", "A tener en cuenta:", "À savoir :")}</span> {noEmoji(data.friction)}
                                       </p>
                                     )}
                                     {character.length > 0 && (
-                                      <div>
+                                      <div className="pt-1">
                                         {heading(tr(`${preview.first_name} on court`, `${preview.first_name} en pista`, `${preview.first_name} sur le court`))}
-                                        <ul className="space-y-2">
+                                        <ul className="space-y-3">
                                           {character.map((r) => (
                                             <li key={r.q.id}>
-                                              <div className="text-[11px] text-[var(--ink)]/76 leading-snug">{r.q.q[lang]}</div>
-                                              <div className="text-serif italic text-[15px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
+                                              <div className="text-[12px] text-[var(--ink)]/70 leading-snug">{r.q.q[lang]}</div>
+                                              <div className="text-serif text-[15px] text-[var(--ink)] leading-snug mt-0.5">{r.opt[lang]}</div>
                                             </li>
                                           ))}
                                         </ul>
@@ -1182,7 +1183,16 @@ function Discover() {
                                     )}
                                   </div>
                                 )}
-                              </>
+                                <button
+                                  type="button"
+                                  onClick={() => setFullReadFor(showFull ? null : preview.id)}
+                                  aria-expanded={showFull}
+                                  className="w-full py-4 flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/78 hover:text-[var(--ink)] transition"
+                                >
+                                  {showFull ? tr("Show less", "Ver menos", "Voir moins") : tr("Read more", "Leer más", "Lire la suite")}
+                                  <ChevronDown className={"w-3.5 h-3.5 transition-transform " + (showFull ? "rotate-180" : "")} strokeWidth={1.6} />
+                                </button>
+                              </div>
                             )}
                           </div>
                         );

@@ -1072,13 +1072,12 @@ function Discover() {
                           <div className="space-y-6 pt-2">
                             {(preview.score != null || story || compatQ.isLoading) && (
                               <div className={section}>
-                                {label(tr("Your game", "Tu partida", "Ta partie"))}
-                                {preview.score != null && (
-                                  <div className="mb-4 flex items-baseline gap-3">
-                                    <span className="text-serif text-[28px] leading-none tabular-nums text-[var(--ink)]">{preview.score}%</span>
-                                    <span className="text-[12px] tracking-[0.06em] text-[var(--ink)]/70">{tr("Game fit", "Afinidad de juego", "Jeu compatible")}</span>
-                                  </div>
-                                )}
+                                <div className="mb-4 flex items-baseline justify-between gap-4">
+                                  <span className="text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/62">{tr("Your game", "Tu partida", "Ta partie")}</span>
+                                  {preview.score != null && (
+                                    <span className="inline-flex items-baseline gap-2 text-[12px] tracking-[0.04em] text-[var(--ink)]/75">{tr("Game fit", "Afinidad de juego", "Jeu compatible")}<span className="tabular-nums font-medium text-[var(--ink)]">{preview.score}%</span></span>
+                                  )}
+                                </div>
                                 {story ? (
                                   <p className="text-serif text-[18px] leading-relaxed text-[var(--ink)] text-balance">{story}</p>
                                 ) : compatQ.isLoading ? (

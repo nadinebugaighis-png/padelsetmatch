@@ -41,6 +41,7 @@ import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as PlayIndexRouteImport } from './routes/play.index'
@@ -223,6 +224,11 @@ const AppQuickStartRoute = AppQuickStartRouteImport.update({
   path: '/quick-start',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const GEventIdRoute = GEventIdRouteImport.update({
   id: '/g/$eventId',
   path: '/g/$eventId',
@@ -353,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/quick-start': typeof AppQuickStartRoute
+  '/app/settings': typeof AppSettingsRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/play/madrid': typeof PlayMadridRoute
@@ -405,6 +412,7 @@ export interface FileRoutesByTo {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/quick-start': typeof AppQuickStartRoute
+  '/app/settings': typeof AppSettingsRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/play/madrid': typeof PlayMadridRoute
@@ -459,6 +467,7 @@ export interface FileRoutesById {
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/profile': typeof AppProfileRoute
   '/app/quick-start': typeof AppQuickStartRoute
+  '/app/settings': typeof AppSettingsRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/play/madrid': typeof PlayMadridRoute
@@ -514,6 +523,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/quick-start'
+    | '/app/settings'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/play/madrid'
@@ -566,6 +576,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/quick-start'
+    | '/app/settings'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/play/madrid'
@@ -619,6 +630,7 @@ export interface FileRouteTypes {
     | '/app/onboarding'
     | '/app/profile'
     | '/app/quick-start'
+    | '/app/settings'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/play/madrid'
@@ -898,6 +910,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppQuickStartRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/g/$eventId': {
       id: '/g/$eventId'
       path: '/g/$eventId'
@@ -1072,6 +1091,7 @@ interface AppRouteChildren {
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppProfileRoute: typeof AppProfileRoute
   AppQuickStartRoute: typeof AppQuickStartRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppCompetitionsCompetitionIdRoute: typeof AppCompetitionsCompetitionIdRoute
   AppCompetitionsNewRoute: typeof AppCompetitionsNewRoute
@@ -1096,6 +1116,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnboardingRoute: AppOnboardingRoute,
   AppProfileRoute: AppProfileRoute,
   AppQuickStartRoute: AppQuickStartRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppIndexRoute: AppIndexRoute,
   AppCompetitionsCompetitionIdRoute: AppCompetitionsCompetitionIdRoute,
   AppCompetitionsNewRoute: AppCompetitionsNewRoute,

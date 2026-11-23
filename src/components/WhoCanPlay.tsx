@@ -122,7 +122,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
             <DropdownMenuTrigger asChild>
               <button type="button" className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-[var(--ink)] transition hover:text-[var(--ink)]/76">
                 <MapPin className="w-3.5 h-3.5 text-[var(--pitch)]" strokeWidth={1.75} />
-                {area?.label ?? tr("Choose area", "Elige zona", "Choisir une zone")}
+                {area?.label ?? tr("Choose area", "Elige comunidad", "Choisir une zone")}
                 <ChevronDown className="w-3 h-3 text-[var(--ink)]/70" />
               </button>
             </DropdownMenuTrigger>
@@ -130,7 +130,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
               <DropdownMenuRadioGroup value={area?.key ?? ""} onValueChange={(v) => { setAreaKey(v === q.data?.mine[0]?.key ? undefined : v); }}>
                 {q.data.mine.length > 0 && (
                   <>
-                    <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/76 font-medium">{tr("Your areas", "Tus zonas", "Tes zones")}</DropdownMenuLabel>
+                    <DropdownMenuLabel className="text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/76 font-medium">{tr("Your areas", "Tus comunidades", "Tes zones")}</DropdownMenuLabel>
                     {q.data.mine.map((a) => (
                       <DropdownMenuRadioItem key={a.key} value={a.key} className="text-sm">{a.label}</DropdownMenuRadioItem>
                     ))}
@@ -210,7 +210,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
                 {pickedIn
                   ? tr("You're available · Remove", "Estás disponible · Quitarme", "Tu es disponible · Me retirer")
                   : elsewhereMine
-                  ? tr(`Available in ${elsewhereMine.areaLabel ?? "another area"} · Remove`, `Disponible en ${elsewhereMine.areaLabel ?? "otra zona"} · Quitar`, `Disponible à ${elsewhereMine.areaLabel ?? "une autre zone"} · Retirer`)
+                  ? tr(`Available in ${elsewhereMine.areaLabel ?? "another area"} · Remove`, `Disponible en ${elsewhereMine.areaLabel ?? "otra comunidad"} · Quitar`, `Disponible à ${elsewhereMine.areaLabel ?? "une autre zone"} · Retirer`)
                   : tr("I can play", "Puedo jugar", "Je peux jouer")}
               </button>
               {area && !pickedIn && !elsewhereMine && (
@@ -221,7 +221,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
             </div>
           ) : (
             <p className="mt-5 text-sm text-[var(--ink)]/80">
-              {tr("Add your area to see who can play near you.", "Añade tu zona para ver quién puede jugar cerca.", "Ajoute ta zone pour voir qui peut jouer près de toi.")}{" "}
+              {tr("Add your area to see who can play near you.", "Añade tu comunidad para ver quién puede jugar cerca.", "Ajoute ta zone pour voir qui peut jouer près de toi.")}{" "}
               <Link to="/app/profile" className="font-semibold text-[var(--ink)] underline underline-offset-2">{tr("Open Me", "Abrir Yo", "Ouvrir Moi")}</Link>
             </p>
           )}
@@ -249,7 +249,7 @@ export function WhoCanPlay({ focusDay, focusSlot, focusArea }: Props) {
           ) : groups.length === 0 ? (
             <div className="py-8">
               <p className="text-serif italic text-[18px] sm:text-[22px] text-[var(--ink)]">{tr("Nobody yet this week", "Nadie todavía esta semana", "Personne encore cette semaine")}</p>
-              <p className="mt-2 text-[14px] text-[var(--ink)]/82">{tr("Say when you're free and players near you can join.", "Di cuándo puedes y los jugadores de tu zona se unirán.", "Dis quand tu es libre et les joueurs du coin te rejoindront.")}</p>
+              <p className="mt-2 text-[14px] text-[var(--ink)]/82">{tr("Say when you're free and players near you can join.", "Di cuándo puedes y los jugadores de tu comunidad se unirán.", "Dis quand tu es libre et les joueurs du coin te rejoindront.")}</p>
             </div>
           ) : (
             <ul className="space-y-4">
@@ -292,7 +292,7 @@ function GroupCard({ group, areaKey, title, slotLabel, focused, busy, onJoin, on
           <div className="text-serif text-[20px] sm:text-[28px] leading-none text-[var(--ink)] capitalize truncate">{title}</div>
           <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-[var(--ink)]/78">{slotLabel}</div>
         </div>
-        <div className="shrink-0 pt-0.5 text-serif italic text-[14px] text-[var(--plum)]">{countLabel}</div>
+        <div className="shrink-0 pt-0.5 text-serif italic text-[14px] text-[var(--ink)]">{countLabel}</div>
       </div>
 
       <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-4">

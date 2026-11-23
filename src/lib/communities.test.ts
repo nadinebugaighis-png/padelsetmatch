@@ -102,3 +102,37 @@ describe("visiting another community", () => {
     expect(isVisitingOther(null, ["Spain | Madrid | La Moraleja"])).toBe(false);
   });
 });
+
+import { publicDirectory } from "./communities";
+describe("publicDirectory", () => {
+  const c = (country: string, city: string, label: string, members: number, mine = false, logo?: string) =>
+    ({ key: `${country}|${city}|${label}`, location: "", country, city, area: label, label, members, mine, ...(logo ? { logo } : {}) });
+  const dir = {
+    mine: [c("Spain", "Madrid", "La Moraleja", 58, true)],
+    total: 0,
+    countries: [
+      { country: "Spain", members: 0, cities: [{ city: "Madrid", members: 0, communities: [c("Spain", "Madrid", "La Moraleja", 58, true), c("Spain", "Madrid", "Lonely", 1)] }] },
+      { country: "Libya", members: 0, cities: [{ city: "Benghazi", members: 0, communities: [c("Libya", "Benghazi", "Benghazi", 1)] }] },
+      { country: "United Kingdom", members: 0, cities: [{ city: "London", members: 0, communities: [c("United Kingdom", "London", "Chelsea", 7), c("United Kingdom", "London", "Padelodontics", 0, false, "logo.png")] }] },
+    ],
+  };
+  it("hides one-member communities from others", () => {
+    const r = publicDirectory(dir, { world: true });
+    const labels = r.countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities.map((x) => x.label)));
+    expect(labels).not.toContain("Lonely");
+    expect(labels).not.toContain("Benghazi");
+  });
+  it("keeps a one-member community visible to its founder", () => {
+    const own = { ...dir, countries: [{ country: "Libya", members: 0, cities: [{ city: "Benghazi", members: 0, communities: [c("Libya", "Benghazi", "Benghazi", 1, true)] }] }] };
+    expect(publicDirectory(own, { world: true }).countries).toHaveLength(1);
+  });
+  it("keeps branded communities even before members join", () => {
+    const labels = publicDirectory(dir, { world: true }).countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities.map((x) => x.label)));
+    expect(labels).toContain("Padelodontics");
+  });
+  it("shows only my country until I ask for the world", () => {
+    const r = publicDirectory(dir, { world: false });
+    expect(r.countries.map((co) => co.country)).toEqual(["Spain"]);
+    expect(r.hiddenElsewhere).toBe(true);
+  });
+});

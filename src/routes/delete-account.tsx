@@ -32,7 +32,7 @@ function DeletionPage() {
           <h2 className="text-display text-2xl">{tr("Delete your account", "Eliminar tu cuenta", "Supprimer votre compte")}</h2>
           <ol className="list-decimal pl-5 space-y-2">
             <li>{tr("Open your profile using the button below. Sign in with your existing account if asked.", "Abre tu perfil con el botón de abajo. Inicia sesión con tu cuenta si se solicita.", "Ouvrez votre profil avec le bouton ci-dessous. Connectez-vous à votre compte si nécessaire.")}</li>
-            <li>{tr('Scroll down and select “Delete my account”.', 'Baja y selecciona «Eliminar mi cuenta».', 'Descendez et sélectionnez «Supprimer mon compte».')}</li>
+            <li>{tr('Open “Settings” and select “Delete my account”.', 'Abre «Ajustes» y selecciona «Eliminar mi cuenta».', 'Ouvrez «Réglages» et sélectionnez «Supprimer mon compte».')}</li>
             <li>{tr("Confirm the deletion. This is permanent and cannot be undone.", "Confirma la eliminación. Es permanente y no se puede deshacer.", "Confirmez la suppression. Elle est définitive et irréversible.")}</li>
           </ol>
           <Button asChild variant="destructive"><Link to="/auth" search={{ mode: "signin", redirect: "/app/profile" }}><Trash2 />{tr("Open my profile", "Abrir mi perfil", "Ouvrir mon profil")}</Link></Button>

@@ -153,7 +153,7 @@ function ProfilePage() {
     return (
       <main className="programme-page px-4 py-10 max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto text-center min-h-screen">
         <p className="text-[var(--ink)]/80">{t("prof.noProfile")}</p>
-        <Link to="/app/onboarding" className="mt-4 inline-block underline text-[var(--plum)]">{t("prof.createLink")}</Link>
+        <Link to="/app/onboarding" className="mt-4 inline-block underline text-[var(--ink)]">{t("prof.createLink")}</Link>
         <Button variant="outline" className="mt-5" onClick={onDelete}>{t("prof.delete")}</Button>
       </main>
     );
@@ -285,26 +285,10 @@ function ProfilePage() {
           <AnalyticsConsent />
         </CollapsibleRow>
 
-        <LinkRow to="/app/hidden" title={tr("Hidden & blocked", "Ocultos y bloqueados", "Masqué et bloqué")} />
+        <LinkRow to="/app/settings" title={tr("Settings", "Ajustes", "Réglages")} />
       </div>
 
       <MemberGuide />
-
-      <div className="mt-10 text-center">
-        <button
-          onClick={onDelete}
-          className="text-[11px] uppercase tracking-[0.2em] text-[var(--destructive)] hover:underline underline-offset-4"
-        >
-          {t("prof.delete")}
-        </button>
-        <p className="mt-1.5 text-[11px] text-[var(--ink)]/72">
-          {tr(
-            "Permanently deletes your account and all your data.",
-            "Elimina tu cuenta y todos tus datos de forma permanente.",
-            "Supprime définitivement votre compte et toutes vos données.",
-          )}
-        </p>
-      </div>
 
       <PhotoCropDialog
         file={pendingFile}
@@ -334,7 +318,7 @@ function RowInner({ title, meta, dot = false, open }: { title: string; meta?: Re
 
 const ROW_CLASS = "w-full min-h-[60px] flex items-center justify-between gap-3 py-4 text-left border-b border-[var(--ink)]/18 active:bg-[var(--ink)]/[0.03] transition-colors";
 
-function LinkRow({ to, title, meta, dot }: { to: "/app/hidden" | "/app/matches" | "/app/coach"; title: string; meta?: ReactNode; dot?: boolean }) {
+function LinkRow({ to, title, meta, dot }: { to: "/app/hidden" | "/app/matches" | "/app/coach" | "/app/settings"; title: string; meta?: ReactNode; dot?: boolean }) {
   return (
     <Link to={to} className={ROW_CLASS}>
       <RowInner title={title} meta={meta} dot={dot} />
@@ -614,7 +598,7 @@ function MessagesRow() {
   const meta = unread > 0
     ? tr(`${unread > 9 ? "9+" : unread} new`, `${unread > 9 ? "9+" : unread} nuevos`, `${unread > 9 ? "9+" : unread} nouveaux`)
     : count > 0
-      ? tr(`${count} conversation${count > 1 ? "s" : ""}`, `${count} conversación${count > 1 ? "es" : ""}`, `${count} conversation${count > 1 ? "s" : ""}`)
+      ? tr(`${count} conversation${count > 1 ? "s" : ""}`, (count > 1 ? `${count} conversaciones` : `${count} conversación`), `${count} conversation${count > 1 ? "s" : ""}`)
       : undefined;
   return <LinkRow to="/app/matches" title={tr("Messages", "Mensajes", "Messages")} meta={meta} dot={unread > 0} />;
 }

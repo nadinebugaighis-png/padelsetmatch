@@ -98,6 +98,8 @@ function Discover() {
   }, []);
 
   const [levelFilter, setLevelFilter] = useState<string>("all");
+  // Age range for Home; null = the range saved on my profile.
+  const [ageRange, setAgeRange] = useState<{ min: number; max: number } | null>(null);
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -133,8 +135,8 @@ function Discover() {
   // Community chosen in the directory (null = all my communities together).
   const communityView = useCommunityView();
   const feedQ = useQuery({
-    queryKey: ["discover", world, communityView],
-    queryFn: () => getFeed({ data: communityView ? { world, visit: communityView } : { world } }),
+    queryKey: ["discover", world, communityView, ageRange],
+    queryFn: () => getFeed({ data: { world, ...(communityView ? { visit: communityView } : {}), ...(ageRange ? { ages: ageRange } : {}) } }),
     staleTime: 60_000,
     placeholderData: keepPreviousData,
   });
@@ -431,7 +433,7 @@ function Discover() {
       }
       return true;
     });
-  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0) + (ageRange ? 1 : 0);
   const myLocations = ((feedQ.data.me as unknown as { locations?: string[] | null }).locations) ?? [];
   const visitingOther = isVisitingOther(communityView, myLocations);
   const myCommunityKeys = new Set(myLocations.map((l) => communityOf(l)?.key).filter(Boolean));
@@ -490,7 +492,7 @@ function Discover() {
                   <circle
                     cx="18" cy="18" r={r} fill="none"
                     stroke="currentColor"
-                    className="text-[var(--plum)]"
+                    className="text-[var(--ink)]"
                     strokeWidth="3"
                     strokeDasharray={`${dash} ${c}`}
                     strokeLinecap="round"
@@ -508,7 +510,7 @@ function Discover() {
                   {tr("Next:", "Siguiente:", "Ensuite :")} {next.label}
                 </div>
               </div>
-              <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[var(--plum)]">→</span>
+              <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[var(--ink)]">→</span>
             </button>
           );
         })()}
@@ -526,8 +528,8 @@ function Discover() {
               }}
               className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
                 world
-                  ? "bg-[var(--plum)] text-[var(--paper)] border border-[var(--plum)] shadow-sm"
-                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--plum)]/5 hover:border-[var(--plum)]/40"
+                  ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
+                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
@@ -578,13 +580,33 @@ function Discover() {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("City / barrio / zone", "Ciudad / barrio / zona", "Ville / quartier / zone")}</label>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("Age", "Edad", "Âge")}</label>
+              {(() => {
+                const meAge = feedQ.data?.me as { age_min?: number | null; age_max?: number | null } | undefined;
+                const cur = ageRange ?? { min: meAge?.age_min ?? 18, max: meAge?.age_max ?? 99 };
+                const opts = [18, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 99];
+                const sel = "flex-1 h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm";
+                return (
+                  <div className="flex items-center gap-2">
+                    <select aria-label={tr("Youngest", "Desde", "De")} value={opts.includes(cur.min) ? cur.min : 18} onChange={(e) => { const min = Number(e.target.value); setAgeRange({ min, max: Math.max(min, cur.max) }); }} className={sel}>
+                      {opts.filter((o) => o < 99).map((o) => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                    <span className="text-[var(--ink)]/70">–</span>
+                    <select aria-label={tr("Oldest", "Hasta", "À")} value={opts.includes(cur.max) ? cur.max : 99} onChange={(e) => { const max = Number(e.target.value); setAgeRange({ min: Math.min(cur.min, max), max }); }} className={sel}>
+                      {opts.filter((o) => o > 18).map((o) => <option key={o} value={o}>{o === 99 ? "70+" : o}</option>)}
+                    </select>
+                  </div>
+                );
+              })()}
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("City / community", "Ciudad / comunidad", "Ville / communauté")}</label>
               <input
                 type="text"
                 list="zone-suggestions"
                 value={zoneFilter === "all" ? "" : zoneFilter}
                 onChange={(e) => setZoneFilter(e.target.value.trim() ? e.target.value : "all")}
-                placeholder={tr("Any city or zone (e.g. Dubai, Madrid, Chamberí)", "Cualquier ciudad o zona (p. ej. Dubái, Madrid, Chamberí)", "N'importe quelle ville ou zone (ex. Dubaï, Madrid, Chamberí)")}
+                placeholder={tr("Any city or zone (e.g. Dubai, Madrid, Chamberí)", "Cualquier ciudad o comunidad (p. ej. Dubái, Madrid, Chamberí)", "N'importe quelle ville ou zone (ex. Dubaï, Madrid, Chamberí)")}
                 className="w-full h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm"
               />
               <datalist id="zone-suggestions">
@@ -601,8 +623,8 @@ function Discover() {
             {activeFilterCount > 0 && (
               <button
                 type="button"
-                onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
-                className="text-[11px] text-[var(--plum)] underline font-semibold"
+                onClick={() => { setLevelFilter("all"); setZoneFilter("all"); setAgeRange(null); }}
+                className="text-[11px] text-[var(--ink)] underline font-semibold"
               >
                 Clear filters
               </button>
@@ -640,12 +662,12 @@ function Discover() {
               title = tr("No matches with these filters", "Sin resultados con estos filtros", "Aucun résultat avec ces filtres");
               hint = tr(
                 "Loosen level or zone to see more players.",
-                "Relaja el nivel o la zona para ver más jugadores.",
+                "Relaja el nivel o la comunidad para ver más jugadores.",
                 "Assouplis le niveau ou la zone pour voir plus de joueurs.",
               );
               actions.push({
                 label: tr("Clear filters", "Borrar filtros", "Effacer les filtres"),
-                onClick: () => { setLevelFilter("all"); setZoneFilter("all"); },
+                onClick: () => { setLevelFilter("all"); setZoneFilter("all"); setAgeRange(null); },
                 primary: true,
               });
             } else if (totalInFeed === 0 && !world && startingCommunity) {
@@ -668,7 +690,7 @@ function Discover() {
                 primary: true,
               });
             } else if (totalInFeed === 0 && !world && !communityView) {
-              title = tr("Nobody in your zone yet", "Aún nadie en tu zona", "Personne dans ta zone pour l'instant");
+              title = tr("Nobody in your zone yet", "Aún nadie en tu comunidad", "Personne dans ta zone pour l'instant");
               hint = tr(
                 "Turn on World mode to see players everywhere, or invite friends from your club.",
                 "Activa el modo Mundo para ver jugadores en todas partes, o invita a amigos de tu club.",
@@ -687,7 +709,7 @@ function Discover() {
                   const url = typeof window !== "undefined" ? window.location.origin : "";
                   const text = tr(
                     `Join me on PadelSetMatch — social padel by zone. ${url}`,
-                    `Únete a mí en PadelSetMatch — pádel social por zona. ${url}`,
+                    `Únete a mí en PadelSetMatch — pádel social por comunidad. ${url}`,
                     `Rejoins-moi sur PadelSetMatch — padel social par zone. ${url}`,
                   );
                   const nav2 = (navigator as unknown as { share?: (d: { text: string }) => Promise<void> });
@@ -724,7 +746,7 @@ function Discover() {
             );
           })()
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
             {(() => {
               const me = feedQ.data.me as any;
               // Visiting another community: show its members only, not me.
@@ -774,8 +796,8 @@ function Discover() {
                     </div>
                   </div>
                   <div className="p-3 bg-white">
-                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
-                    <p className="mt-1 text-[9px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
+                    <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
+                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
                       {me.zone} · {label(me.level)}
                     </p>
                     {me.free_court_access && (
@@ -866,18 +888,18 @@ function Discover() {
                   </div>
 
                   <div className="p-3 bg-white">
-                    <h3 className="text-serif text-[17px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
-                    <p className="mt-1 text-[9px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
+                    <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
+                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/78 tracking-[0.18em] font-semibold uppercase truncate">
                       {c.zone} · {label(c.level)}
                     </p>
                     {(c as any).is_coach && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] font-bold uppercase tracking-wider">
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[11px] font-semibold uppercase tracking-wider">
                         <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
                       </div>
                     )}
                     {away && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/22 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider">
-                        ✈ On holidays
+                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/22 text-[var(--ink)] text-[11px] font-semibold uppercase tracking-wider">
+                        ✈ {tr("On holidays", "De vacaciones", "En vacances")}
                       </div>
                     )}
                     {(() => {
@@ -891,7 +913,7 @@ function Discover() {
                           : tr(`${s.count} shared`, `${s.count} en común`, `${s.count} en commun`);
                       return (
                         <div
-                          className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[8px] font-bold uppercase tracking-wider max-w-full"
+                          className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[11px] font-semibold uppercase tracking-wider max-w-full"
                           title={s.names?.length ? s.names.join(" · ") : tr("You share a venue", "Compartís un lugar", "Vous partagez un lieu")}
                         >
                           <MapPin className="w-2.5 h-2.5 shrink-0" />
@@ -910,13 +932,6 @@ function Discover() {
                           <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
                         </span>
                       ) : <span />}
-
-                      <div
-                        className="w-6 h-6 rounded-full bg-white text-[var(--ink)] text-[10px] flex items-center justify-center font-bold border border-[var(--ink)]/20"
-                        title={t("disc.scoreTooltip")}
-                      >
-                        {c.score}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -929,7 +944,7 @@ function Discover() {
           <div ref={loadMoreRef} className="h-10 mt-4" aria-hidden="true" />
         )}
 
-        <Link to="/app/matches" className="mt-10 block text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--plum)] hover:opacity-80">
+        <Link to="/app/matches" className="mt-10 block text-center text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--ink)] hover:opacity-80">
           {t("disc.seeChats")} →
         </Link>
       </div>
@@ -979,7 +994,7 @@ function Discover() {
                         <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{preview.zone} · {label(preview.level)}</div>
                         <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
                         <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-1 text-[11px] uppercase tracking-normal">
-                          <span className="text-[var(--ink)] font-semibold">{preview.score}% {tr("match", "afinidad", "affinité")}</span>
+                          <span className="text-[var(--ink)] font-semibold">{(preview.score ?? 0) >= 75 ? tr("Great match", "Gran afinidad", "Grande affinité") : (preview.score ?? 0) >= 55 ? tr("Good match", "Buena afinidad", "Bonne affinité") : tr("Worth a game", "Para un partido", "À essayer")}</span>
                         </div>
                         {preview.bio && (
                           <blockquote className="mt-4 text-serif italic text-[19px] leading-snug text-[var(--ink)]/90 whitespace-pre-wrap">“{preview.bio.trim()}”</blockquote>
@@ -1219,7 +1234,7 @@ function Discover() {
             onChange={(e) => setIntroText(e.target.value.slice(0, 300))}
             rows={4}
             placeholder={tr("Hey! We played at Padel Now last month — up for another game?", "¡Hola! Jugamos en Padel Now el mes pasado — ¿otro partido?", "Salut ! On a joué à Padel Now le mois dernier — on rejoue ?")}
-            className="w-full rounded-2xl border border-[var(--ink)]/20 bg-white p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--plum)] resize-none"
+            className="w-full rounded-2xl border border-[var(--ink)]/20 bg-white p-3 text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--ink)] resize-none"
           />
           <div className="flex items-center justify-between text-[11px] text-[var(--ink)]/78">
             <span>{introText.length}/300</span>

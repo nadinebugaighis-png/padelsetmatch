@@ -329,7 +329,7 @@ function MatchRatingTrigger({ matchId, otherName }: { matchId: string; otherName
         className="relative p-1.5 rounded-full hover:bg-[var(--ink)]/10 transition"
       >
         <Star className={`w-4 h-4 ${hasRated ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]"}`} />
-        {!hasRated && <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--plum)]" />}
+        {!hasRated && <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--ink)]" />}
       </button>
 
       {open && (

@@ -10,7 +10,7 @@ import { MatchDateTimePicker } from "@/components/MatchDateTimePicker";
 import { PADEL_LEVELS } from "@/lib/types";
 import type { ClubResult } from "@/lib/match-events.functions";
 import { normalizePlaytomicLink } from "@/lib/affinity";
-import { useTr } from "@/lib/i18n";
+import { useI18n, useTr } from "@/lib/i18n";
 import { CLASS_STUDENT_OPTIONS, NEW_CLASS_STUDENTS, DEFAULT_GENDER_RULE, DEFAULT_MATCH_DURATION, MATCH_DURATIONS, matchEndsAt, startFromFormValue, type GenderRule, type MatchDuration } from "@/lib/match-rules";
 
 export type MatchFormValues = {
@@ -111,6 +111,8 @@ function SegButton({
 }
 
 export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode, startWhen }: Props) {
+  const { label: levelLabelFor } = useI18n();
+  const levelName = (l: string) => { const v = levelLabelFor(l); return v.charAt(0).toUpperCase() + v.slice(1); };
   const tr = useTr();
   // People already in the lineup (0 when the host stepped out); a new match starts with the host.
   const appPlayersCount = Math.min(5, Math.max(0, initial?.app_players_count ?? 1));
@@ -462,11 +464,11 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           <span className={rowLabel}>{tr("Level", "Nivel", "Niveau")}</span>
           <div className="flex items-center gap-1 text-sm text-[var(--ink)]">
             <select aria-label={tr("Level min", "Nivel mín.", "Niveau min.")} value={levelMin} onChange={(e) => setLevelMin(e.target.value as any)} className={selectCls}>
-              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{levelName(l)}</option>)}
             </select>
             <span className="text-[var(--ink)]/70">–</span>
             <select aria-label={tr("Level max", "Nivel máx.", "Niveau max.")} value={levelMax} onChange={(e) => setLevelMax(e.target.value as any)} className={selectCls}>
-              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+              {PADEL_LEVELS.map((l) => <option key={l} value={l}>{levelName(l)}</option>)}
             </select>
           </div>
         </div>

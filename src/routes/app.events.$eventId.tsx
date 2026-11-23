@@ -1,3 +1,4 @@
+import { askForPushAfterMatch } from "@/lib/ask-push";
 import { useEffect, useRef, useState } from "react";
 import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
@@ -263,6 +264,7 @@ function EventDetail() {
   const onJoin = async () => {
     try {
       const res = await join({ data: { id: eventId } });
+      askForPushAfterMatch(tr);
       if (res?.becameHost) {
         toast.success(tr("You're in, and you're the host", "Estás dentro y organizas tú", "Tu es inscrit·e et tu organises"), {
           description: tr("You joined first, so you can edit it and share it.", "Llegaste primero, así que puedes editarlo y compartirlo.", "Tu es arrivé·e en premier : tu peux le modifier et le partager."),

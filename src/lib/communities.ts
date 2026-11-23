@@ -178,3 +178,27 @@ export function newCommunityLocation(country: string, city: string, area: string
   if ([c, ci, a].some((s) => s.includes("|"))) return null;
   return communityLocation({ country: c, city: ci, area: a || undefined });
 }
+
+/**
+ * Public browse list: hides one-member communities (unless mine or branded)
+ * so the list never looks abandoned, and narrows to my home country unless
+ * the player asks for the whole world. Founders still see and share theirs.
+ */
+export function publicDirectory(dir: Directory, opts: { world: boolean }): { countries: DirectoryCountry[]; homeCountry: string | null; hiddenElsewhere: boolean } {
+  const visible = (c: Community) => c.mine || !!c.logo || c.members > 1;
+  const countries = dir.countries
+    .map((co) => {
+      const cities = co.cities
+        .map((ci) => ({ ...ci, communities: ci.communities.filter(visible) }))
+        .filter((ci) => ci.communities.length > 0);
+      return { ...co, cities };
+    })
+    .filter((co) => co.cities.length > 0);
+  const homeCountry = dir.mine[0]?.country ?? null;
+  const home = homeCountry ? fold(homeCountry) : null;
+  if (opts.world || !home || !countries.some((co) => fold(co.country) === home)) {
+    return { countries, homeCountry, hiddenElsewhere: false };
+  }
+  const mineFirst = countries.filter((co) => fold(co.country) === home);
+  return { countries: mineFirst, homeCountry, hiddenElsewhere: countries.length > mineFirst.length };
+}

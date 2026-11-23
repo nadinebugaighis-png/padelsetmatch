@@ -33,7 +33,7 @@ export function MemberGuide() {
       title: t("shell.tab.grid"),
       body: tr(
         "Players strictly from your community/ neighborhood and are matched based on level and vibe on court & off court for long lasting padel friendships.",
-        "Jugadores estrictamente de tu comunidad o barrio, emparejados por nivel y afinidad dentro y fuera de la pista, para amistades de pádel duraderas.",
+        "Jugadores estrictamente de tu comunidad, emparejados por nivel y afinidad dentro y fuera de la pista, para amistades de pádel duraderas.",
         "Des joueurs strictement de ta communauté ou de ton quartier, associés selon le niveau et l'affinité sur le court et en dehors, pour des amitiés padel durables.",
       ),
     },
@@ -41,7 +41,7 @@ export function MemberGuide() {
       title: t("shell.tab.play"),
       body: tr(
         "Games in your neighbourhood and your own clubs, nothing across town. Join a match in one tap or create your own.",
-        "Partidos en tu zona y tus clubes, nada al otro lado de la ciudad. Únete a un partido con un toque o crea el tuyo.",
+        "Partidos en tu comunidad y tus clubes, nada al otro lado de la ciudad. Únete a un partido con un toque o crea el tuyo.",
         "Des matchs dans ton quartier et tes clubs, rien à l'autre bout de la ville. Rejoins un match en un geste ou crée le tien.",
       ),
     },

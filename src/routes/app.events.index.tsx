@@ -1,3 +1,4 @@
+import { askForPushAfterMatch } from "@/lib/ask-push";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { levelRangeLabel } from "@/lib/level-label";
 import { genderRuleLabel, matchCardAction, matchDuration, playtomicJoinLink } from "@/lib/match-rules";
@@ -302,6 +303,7 @@ function EventsPage() {
     try {
       const res = await join({ data: { id: e.id } });
       await refetch();
+      askForPushAfterMatch(tr);
       toast.success(tr("You're in!", "¡Estás dentro!", "C'est bon !"), {
         duration: 10000,
         description: res?.becameHost
@@ -446,7 +448,7 @@ function EventsPage() {
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pt-1 pb-1" aria-label={tr("Areas", "Zonas", "Zones")}>
             <button type="button" aria-pressed={areaKeys.size === 0} onClick={() => setAreaKeys(new Set())}
               className={`shrink-0 h-9 text-[13px] border-b transition ${areaKeys.size === 0 ? "border-[var(--ink)] text-[var(--ink)]" : "border-transparent text-[var(--ink)]/86"}`}>
-              {tr("All my areas", "Todas mis zonas", "Toutes mes zones")}
+              {tr("All my areas", "Todas mis comunidades", "Toutes mes zones")}
             </button>
             {areas.map((a) => {
               const on = areaKeys.has(a.key);
@@ -657,7 +659,7 @@ function MatchCard({
       ? { bar: "bg-[var(--ball)]", chip: "bg-[var(--ball)]/25 text-[var(--ink)]", label: tr("Morning", "Mañana", "Matin") }
       : timeOfDay === "afternoon"
         ? { bar: "bg-[var(--clay)]", chip: "bg-[var(--clay)]/25 text-[var(--ink)]", label: tr("Afternoon", "Tarde", "Après-midi") }
-        : { bar: "bg-[var(--plum)]", chip: "bg-[var(--plum)]/15 text-[var(--plum)]", label: tr("Evening", "Noche", "Soir") };
+        : { bar: "bg-[var(--ink)]", chip: "bg-[var(--ink)]/15 text-[var(--ink)]", label: tr("Evening", "Noche", "Soir") };
 
   // Open matches carry no gender tag on the card; only deliberate restrictions show.
   const genderLabel = e.gender_rule === "open" ? null : genderRuleLabel(e.gender_rule, tr);
@@ -746,8 +748,16 @@ function MatchCard({
   const rawPlace = e.city || e.club_address || "";
   const placeLine = rawPlace.trim() && (e.club_name ?? "").toLowerCase().includes(rawPlace.trim().toLowerCase()) ? "" : rawPlace;
 
+  // A ready-made game nobody has joined yet reads as an invitation, not empty seats.
+  const openInvite = !!e.time_tbd && playerSlots.length === 0 && !ptLink;
+  const coachIn = orderedParticipants.some((p) => !!p?.profiles?.is_coach);
   const details: ReactNode[] = [];
-  if (e.is_class) details.push(<span key="class" className="text-[var(--ink)]">{tr("Class", "Clase", "Cours")}{e.class_fee ? ` ${e.class_fee}` : ""}</span>);
+  if (e.is_class) {
+    details.push(<span key="class" className="text-[var(--plum)] font-semibold">{tr("Class", "Clase", "Cours")}{e.class_fee ? ` ${e.class_fee}` : ""}</span>);
+    details.push(<span key="cap" className="text-[var(--ink)]">{tr("Coach", "Coach", "Coach")} + {Math.max(0, e.filled - (coachIn ? 1 : 0))}/{capacity - 1}</span>);
+  } else if (!openInvite && !ptLink) {
+    details.push(<span key="cap" className="text-[var(--ink)]">{Math.min(e.filled, capacity)}/{capacity}</span>);
+  }
   if (levelLabel) details.push(<span key="lvl">{levelLabel.charAt(0).toUpperCase() + levelLabel.slice(1).toLowerCase()}</span>);
   if (genderLabel) details.push(<span key="g">{genderLabel}</span>);
   if (e.free_court) details.push(<span key="fc" className="text-[var(--ink)]">🎾 {tr("Free court", "Pista gratis", "Terrain gratuit")}</span>);
@@ -759,7 +769,7 @@ function MatchCard({
   return (
     <div
       className={`relative h-full rounded-2xl card-pop overflow-hidden ${
-        highlight ? "ring-1 ring-[var(--plum)]/45" : ""
+        highlight ? "ring-1 ring-[var(--ink)]/45" : ""
       }`}
     >
       {/* The day's colour lives only in a thin edge */}
@@ -769,12 +779,18 @@ function MatchCard({
       <button type="button" onClick={openFromCard} className="block w-full text-left pl-4 pr-3.5 pt-3 sm:pl-5 sm:pr-4">
         <div className="flex items-baseline justify-between gap-3">
           <div className="flex items-baseline gap-2 min-w-0">
+            {openInvite ? (
+              <span className="text-serif text-[18px] sm:text-[22px] leading-none text-[var(--ink)] truncate">
+                {tr("Open game", "Partida abierta", "Partie ouverte")}<span className="text-[var(--ink)]/60"> · </span><span className="italic">{tr("pick the time", "elige la hora", "choisis l'heure")}</span>
+              </span>
+            ) : (<>
             <span className="text-serif text-[19px] sm:text-[24px] leading-none text-[var(--ink)] whitespace-nowrap">
               {e.time_tbd ? time : <>{time}<span className="text-[var(--ink)]/70"> – </span>{endTime}</>}
             </span>
             <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--ink)]/84 whitespace-nowrap">
               {e.time_tbd ? tr("To be set", "Por fijar", "À fixer") : `${matchDuration(e)} min`}
             </span>
+            </>)}
           </div>
         </div>
         <div className="mt-1.5 flex items-baseline gap-2 min-w-0">
@@ -792,7 +808,11 @@ function MatchCard({
 
       {/* Players: two pairs facing each other, kept close together */}
       <div className="ml-4 mr-3.5 sm:ml-5 sm:mr-4 mt-2.5 border-t border-[var(--ink)]/[0.2] pt-2 pb-2">
-        {asPairs ? (
+        {openInvite ? (
+          <p className="py-2 text-center text-serif italic text-[15px] text-[var(--ink)]/84">
+            {tr("Be the first to join", "Sé el primero en unirte", "Sois le premier à rejoindre")}
+          </p>
+        ) : asPairs ? (
           <div className="mx-auto grid max-w-[380px] grid-cols-[1fr_auto_1fr] items-start">
             <div>
               <div className="mb-1 text-center text-[9.5px] uppercase tracking-[0.22em] text-[var(--ink)]/82">{tr("Team A", "Equipo A", "Équipe A")}</div>
@@ -906,7 +926,7 @@ function SlotAvatar({
         >
           <Plus className="w-4 h-4" strokeWidth={1.25} />
         </span>
-        <span className={`${caption} text-[9.5px] uppercase tracking-[0.18em] ${canJoin ? "text-[var(--plum)]/80" : "text-[var(--ink)]/82"}`}>
+        <span className={`${caption} text-[9.5px] uppercase tracking-[0.18em] ${canJoin ? "text-[var(--ink)]/80" : "text-[var(--ink)]/82"}`}>
           {tr("Open", "Libre", "Libre")}
         </span>
       </button>
@@ -976,7 +996,7 @@ function EmptyFeed({
         <button
           type="button"
           onClick={onCreate}
-          className="rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-widest font-bold px-4 py-2"
+          className="rounded-full bg-[var(--ink)] text-white text-[11px] uppercase tracking-widest font-bold px-4 py-2"
         >
           {tr("Start a match", "Convocar partido", "Lancer un match")}
         </button>
@@ -1136,7 +1156,7 @@ function MyMatchSheet({
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-widest text-[var(--plum)]">
+            <div className="text-[10px] uppercase tracking-widest text-[var(--ink)]">
               {event.iAmHost ? tr("Your match", "Tu partido", "Ton match") : tr("You're in", "Estás dentro", "Vous êtes dedans")}
             </div>
             <div className="text-serif text-2xl tracking-tight text-[var(--ink)] mt-0.5">{when}</div>
@@ -1168,7 +1188,7 @@ function MyMatchSheet({
                   key={h}
                   onClick={() => onExtend(h)}
                   disabled={busy}
-                  className="rounded-full border border-[var(--plum)]/50 text-[var(--plum)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
+                  className="rounded-full border border-[var(--ink)]/50 text-[var(--ink)] text-[11px] uppercase tracking-widest font-bold py-2.5 disabled:opacity-50"
                 >
                   +{h}h
                 </button>

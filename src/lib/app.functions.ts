@@ -357,7 +357,7 @@ function scoreCandidate(me: Profile, c: Profile) {
 
 export const getDiscoverFeed = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ world: z.boolean().optional(), visit: z.string().min(3).max(200).optional() }).optional().parse(d) ?? {})
+  .inputValidator((d: unknown) => z.object({ world: z.boolean().optional(), visit: z.string().min(3).max(200).optional(), ages: z.object({ min: z.number().int().min(18).max(99), max: z.number().int().min(18).max(99) }).optional() }).optional().parse(d) ?? {})
   .handler(async ({ data, context }) => {
     // Viewing one community (one of mine, or one I'm visiting) replaces World.
     const visit = data?.visit;
@@ -557,7 +557,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
 
     const scored = candidates
-      .filter((c) => world || visitingOther || ageMatchesPreference(me, c))
+      .filter((c) => data?.ages ? ageMatchesPreference({ age_min: data.ages.min, age_max: data.ages.max }, c) : (world || visitingOther || ageMatchesPreference(me, c)))
       .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
         const qa = qaScoreByProfile.get(c.id);

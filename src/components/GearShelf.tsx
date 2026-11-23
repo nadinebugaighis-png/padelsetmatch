@@ -149,7 +149,7 @@ export function GearShelf({ profileId, title }: { profileId: string; title?: str
                 <div className="text-[10px] text-[var(--ink)]/78 truncate">{it.brand}</div>
               )}
               {it.link_url && (
-                <span className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-[var(--plum)] font-semibold">
+                <span className="mt-0.5 inline-flex items-center gap-1 text-[10px] text-[var(--ink)] font-semibold">
                   <ExternalLink className="w-3 h-3" />
                   {tr("View", "Ver", "Voir")}
                 </span>

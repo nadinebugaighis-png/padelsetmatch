@@ -344,9 +344,9 @@ const es: Dict = {
   "shell.tab.questions": "Código de afinidad",
   "shell.tab.questions.short": "Código",
   "shell.tab.matches": "Matchat",
-  "shell.tab.connect": "Connect",
+  "shell.tab.connect": "Conectar",
   "shell.tab.me": "Yo",
-  "shell.tab.grid": "Home",
+  "shell.tab.grid": "Club",
   "shell.tab.play": "Jugar",
   "shell.back.home": "Volver al inicio",
   "shell.back.grid": "Volver al Home",
@@ -389,7 +389,7 @@ const es: Dict = {
   "disc.scoreA": "La",
   "disc.scoreB": "mide cuánto encajan —",
   "disc.scoreBold": "puntuación de compatibilidad",
-  "disc.scoreC": "edad, nivel, zona, valores. A mayor puntuación, mejor encaje.",
+  "disc.scoreC": "edad, nivel, comunidad, valores. A mayor puntuación, mejor encaje.",
   "disc.filter.all": "Todos",
   "disc.filter.partner": "Pareja",
   "disc.filter.friend": "Amistad",
@@ -397,7 +397,7 @@ const es: Dict = {
   "disc.filter.relationship": "Relación",
   "disc.world.on": "Mundo activado",
   "disc.world.off": "Mundo desactivado",
-  "disc.world.note": "Mostrando a todo el mundo (excepto a quienes has ocultado). Desactívalo para volver a tu zona.",
+  "disc.world.note": "Mostrando a todo el mundo (excepto a quienes has ocultado). Desactívalo para volver a tu comunidad.",
   "disc.empty": "Aún no hay matches con estos filtros.",
   "disc.liked": "Te gusta",
   "disc.undo": "Pulsa para deshacer",
@@ -560,11 +560,11 @@ const es: Dict = {
   "welcome.bonjourSub": "Continuer en français",
 
   // Events
-  "events.myAreas": "Solo mis zonas",
-  "events.noAreasTitle": "No has seleccionado ninguna zona",
+  "events.myAreas": "Solo mis comunidades",
+  "events.noAreasTitle": "No has elegido ninguna comunidad",
   "events.noAreasBody": "Añade en tu perfil las ciudades donde juegas para ver partidos cerca de ti.",
   "events.noAreasCta": "Ir al perfil →",
-  "events.noMatchesMyAreas": "No hay partidos próximos en tus zonas.",
+  "events.noMatchesMyAreas": "No hay partidos próximos en tus comunidades.",
 };
 
 const fr: Dict = {

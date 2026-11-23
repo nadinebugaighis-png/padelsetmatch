@@ -672,7 +672,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                         <div className="ml-auto flex items-center gap-1">
                           <button
                             onClick={() => setEditingComment({ id: c.id, body: c.body })}
-                            className="text-[var(--ink)]/76 hover:text-[var(--plum)] transition p-1"
+                            className="text-[var(--ink)]/76 hover:text-[var(--ink)] transition p-1"
                             aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
                           >
                             <Pencil className="w-3 h-3" />

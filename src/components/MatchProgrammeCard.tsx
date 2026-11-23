@@ -63,7 +63,7 @@ export function MatchProgrammeCard({
       ? "color-mix(in oklab, var(--grass) 26%, transparent)"
       : tod === "afternoon"
         ? "color-mix(in oklab, #E8B84B 30%, transparent)"
-        : "color-mix(in oklab, var(--plum) 20%, transparent)";
+        : "color-mix(in oklab, var(--ink) 20%, transparent)";
   const parts = whenParts(match.starts_at, locale);
   const today = startOfDay(new Date());
   const dayMs = 24 * 60 * 60 * 1000;
@@ -109,7 +109,7 @@ export function MatchProgrammeCard({
             </div>
             <span
               className={`text-[10px] uppercase tracking-[0.16em] rounded-full px-2 py-1 font-semibold whitespace-nowrap ${
-                openSpots === 0 ? "bg-[var(--ink)]/8 text-[var(--ink)]/78" : "bg-[var(--plum)]/12 text-[var(--plum)]"
+                openSpots === 0 ? "bg-[var(--ink)]/8 text-[var(--ink)]/78" : "bg-[var(--ink)]/12 text-[var(--ink)]"
               }`}
             >
               {openSpots === 0
@@ -191,7 +191,7 @@ export function MatchProgrammeCard({
               <div
                 key={`o-${i}`}
                 aria-hidden
-                className="w-11 h-11 shrink-0 rounded-full border-2 border-dashed grid place-items-center border-[var(--plum)]/45 text-[var(--plum)]"
+                className="w-11 h-11 shrink-0 rounded-full border-2 border-dashed grid place-items-center border-[var(--ink)]/45 text-[var(--ink)]"
               >
                 <Plus className="w-5 h-5" />
               </div>

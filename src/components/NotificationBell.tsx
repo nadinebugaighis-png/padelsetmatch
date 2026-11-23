@@ -174,7 +174,7 @@ export function NotificationBell() {
       >
         <Bell className="w-5 h-5" strokeWidth={2} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[var(--ink)] text-white text-[10px] font-bold flex items-center justify-center">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -188,8 +188,8 @@ export function NotificationBell() {
           </div>
           <div ref={scrollRef} className="max-h-[60vh] overflow-y-auto">
             {activeInvites.length > 0 && (
-              <div className="border-b border-[var(--ink)]/16 bg-[var(--plum)]/5">
-                <div className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-[var(--plum)] font-semibold">
+              <div className="border-b border-[var(--ink)]/16 bg-[var(--ink)]/5">
+                <div className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-[0.18em] text-[var(--ink)] font-semibold">
                   {tr("Match invites", "Invitaciones", "Invitations")}
                 </div>
                 {activeInvites.map((inv) => {
@@ -210,7 +210,7 @@ export function NotificationBell() {
                         <button
                           disabled={busy}
                           onClick={() => decideInvite(inv.id, true)}
-                          className="flex-1 py-1.5 rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                          className="flex-1 py-1.5 rounded-full bg-[var(--ink)] text-white text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
                         >
                           <Check className="w-3 h-3" /> {tr("Accept", "Aceptar", "Accepter")}
                         </button>
@@ -243,10 +243,10 @@ export function NotificationBell() {
                   key={n.id}
                   data-notification-id={n.read_at ? undefined : n.id}
                   onClick={() => openItem(n.id, n.url)}
-                  className={`block h-auto rounded-none whitespace-normal w-full text-left px-4 py-3 border-b border-[var(--ink)]/5 hover:bg-[var(--paper-2)] transition ${!n.read_at ? "bg-[var(--plum)]/5" : ""}`}
+                  className={`block h-auto rounded-none whitespace-normal w-full text-left px-4 py-3 border-b border-[var(--ink)]/5 hover:bg-[var(--paper-2)] transition ${!n.read_at ? "bg-[var(--ink)]/5" : ""}`}
                 >
                   <div className="flex items-start gap-2">
-                    {!n.read_at && <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--plum)] shrink-0" />}
+                    {!n.read_at && <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--ink)] shrink-0" />}
                     <div className="min-w-0 flex-1">
                       <div className="text-sm text-[var(--ink)] font-semibold truncate">{n.title}</div>
                       {n.body && <div className="text-xs text-[var(--ink)]/80 mt-0.5 line-clamp-2">{n.body}</div>}

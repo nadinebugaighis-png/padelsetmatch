@@ -169,7 +169,7 @@ function PosterCard({ c, live, past, locale, tr }: { c: CompetitionRow; live?: b
           </span>
         )}
         {live && (
-          <span className="absolute left-3 top-3 rounded-full border border-[var(--plum)]/30 bg-[var(--cream)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--plum)] shadow-sm">
+          <span className="absolute left-3 top-3 rounded-full border border-[var(--ink)]/30 bg-[var(--cream)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--ink)] shadow-sm">
             {tr("Live", "En curso", "En cours")}
           </span>
         )}

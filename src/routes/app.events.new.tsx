@@ -1,3 +1,4 @@
+import { askForPushAfterMatch } from "@/lib/ask-push";
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -52,10 +53,11 @@ function NewEvent() {
           toast.error(e instanceof Error ? e.message : tr("Match created but invite failed", "Partido creado pero falló la invitación", "Match créé mais échec de l'invitation"));
         }
       } else if (v.joins_on_playtomic) {
-        toast.success(tr("Shared. Local players can find it on Play.", "Compartido. Los jugadores de tu zona lo verán en Jugar.", "Partagé. Les joueurs du coin le verront dans Jouer."));
+        toast.success(tr("Shared. Local players can find it on Play.", "Compartido. Los jugadores de tu comunidad lo verán en Jugar.", "Partagé. Les joueurs du coin le verront dans Jouer."));
       } else {
         toast.success(tr("Match called! Waiting for players.", "¡Partido convocado! Esperando jugadores.", "Match lancé ! En attente des joueurs."));
       }
+      askForPushAfterMatch(tr);
       navigate({ to: "/app/events/$eventId", params: { eventId: id } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : tr("Could not create match", "No se pudo crear el partido", "Impossible de créer le match"));

@@ -103,7 +103,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
       >
         <div className="sticky top-0 bg-[var(--paper)] flex items-center justify-between px-5 pt-4 pb-3 border-b border-[var(--ink)]/16">
           <div className="flex items-center gap-2">
-            <BellRing className="w-5 h-5 text-[var(--plum)]" />
+            <BellRing className="w-5 h-5 text-[var(--ink)]" />
             <h2 className="text-serif text-xl">{tr("Match alerts", "Alertas de partidos", "Alertes de matchs")}</h2>
           </div>
           <button onClick={onClose} className="p-1 -m-1 text-[var(--ink)]/82"><X className="w-5 h-5" /></button>
@@ -114,7 +114,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
             <p className="text-sm text-[var(--ink)]/80 leading-relaxed">
               {tr(
                 "Get notified when a match opens up that fits your times and area, even a spot in an existing one.",
-                "Recibe una notificación cuando aparezca un partido en tus horarios y zona, también si se libera una plaza.",
+                "Recibe una notificación cuando aparezca un partido en tus horarios y comunidad, también si se libera una plaza.",
                 "Recevez une notification quand un match apparaît selon vos créneaux, ou qu'une place se libère.",
               )}
             </p>
@@ -133,7 +133,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                       <button className="text-left flex-1" onClick={() => startEdit(a)}>
                         <div className="font-semibold text-[var(--ink)]">
                           {a.city || tr("Anywhere", "Cualquier ciudad", "Partout")}
-                          {a.level_only && <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--plum)]">{tr("My level", "Mi nivel", "Mon niveau")}</span>}
+                          {a.level_only && <span className="ml-2 text-[10px] uppercase tracking-widest text-[var(--ink)]">{tr("My level", "Mi nivel", "Mon niveau")}</span>}
                         </div>
                         <div className="text-xs text-[var(--ink)]/82 mt-1">
                           {a.days_of_week.length === 7
@@ -151,7 +151,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                             await toggle({ data: { id: a.id, active: e.target.checked } });
                             qc.invalidateQueries({ queryKey: ["my-match-alerts"] });
                           }}
-                          className="w-4 h-4 accent-[var(--plum)]"
+                          className="w-4 h-4 accent-[var(--ink)]"
                         />
                       </label>
                       <button
@@ -172,7 +172,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
 
             <button
               onClick={() => { setDraft({ ...DEFAULT_DRAFT, city: seedCity ?? "" }); setEditing(true); }}
-              className="w-full rounded-full bg-[var(--plum)] text-white font-semibold py-3 inline-flex items-center justify-center gap-2"
+              className="w-full rounded-full bg-[var(--ink)] text-white font-semibold py-3 inline-flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" /> {tr("New alert", "Nueva alerta", "Nouvelle alerte")}
             </button>
@@ -256,7 +256,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                 type="checkbox"
                 checked={draft.level_only}
                 onChange={(e) => setDraft({ ...draft, level_only: e.target.checked })}
-                className="w-4 h-4 accent-[var(--plum)]"
+                className="w-4 h-4 accent-[var(--ink)]"
               />
               {tr("Only matches for my level", "Solo partidos para mi nivel", "Uniquement pour mon niveau")}
             </label>
@@ -266,7 +266,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
                 type="checkbox"
                 checked={draft.active}
                 onChange={(e) => setDraft({ ...draft, active: e.target.checked })}
-                className="w-4 h-4 accent-[var(--plum)]"
+                className="w-4 h-4 accent-[var(--ink)]"
               />
               {tr("Active", "Activa", "Active")}
             </label>
@@ -278,7 +278,7 @@ export function AlertsSheet({ open, onClose, seedCity }: Props) {
               >
                 {tr("Cancel", "Cancelar", "Annuler")}
               </button>
-              <button onClick={save} className="flex-1 rounded-full bg-[var(--plum)] text-white font-semibold py-3">
+              <button onClick={save} className="flex-1 rounded-full bg-[var(--ink)] text-white font-semibold py-3">
                 {tr("Save alert", "Guardar alerta", "Enregistrer")}
               </button>
             </div>
@@ -303,7 +303,7 @@ export function AlertsButton({ seedCity, count }: { seedCity?: string | null; co
       >
         <Bell className="w-4 h-4" />
         {count && count > 0 ? (
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-[var(--plum)] text-white">
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-bold bg-[var(--ink)] text-white">
             {count}
           </span>
         ) : null}

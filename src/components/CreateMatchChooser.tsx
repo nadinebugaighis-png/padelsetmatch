@@ -67,7 +67,7 @@ export function CreateMatchChooser({ open, onClose }: { open: boolean; onClose: 
             body: tr("A private court, a residence or any other address.", "Una pista privada, una urbanización u otra dirección.", "Un court privé, une résidence ou une autre adresse.") })}
           {renderOption({ value: "playtomic", icon: <Link2 className="size-[18px]" strokeWidth={1.6} />,
             title: tr("It's already on Playtomic", "Ya está en Playtomic", "Il est déjà sur Playtomic"),
-            body: tr("Paste your match link. Local players find it here and join on Playtomic.", "Pega el enlace de tu partido. Los jugadores de tu zona lo ven aquí y se unen en Playtomic.", "Colle le lien de ton match. Les joueurs du coin le voient ici et rejoignent sur Playtomic.") })}
+            body: tr("Paste your match link. Local players find it here and join on Playtomic.", "Pega el enlace de tu partido. Los jugadores de tu comunidad lo ven aquí y se unen en Playtomic.", "Colle le lien de ton match. Les joueurs du coin le voient ici et rejoignent sur Playtomic.") })}
         </div>
       </div>
     </div>

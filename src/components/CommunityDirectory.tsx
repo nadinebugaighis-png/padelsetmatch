@@ -2,7 +2,7 @@ import { createContext, useContext, useRef, useState, type ReactNode } from "rea
 import { Check, ChevronRight, Mail, MessageCircle, Plus, Share } from "lucide-react";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "sonner";
-import { communityShareUrl, isCityOnly, type Community, type Directory } from "@/lib/communities";
+import { communityShareUrl, isCityOnly, publicDirectory, type Community, type Directory } from "@/lib/communities";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { useTr } from "@/lib/i18n";
 
@@ -179,7 +179,8 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
   startLabel: string;
 }) {
   const tr = useTr();
-  const countries = directory.countries;
+  const [world, setWorld] = useState(false);
+  const { countries, hiddenElsewhere } = publicDirectory(directory, { world });
 
   return (
     <div>
@@ -218,6 +219,12 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
           </section>
         ))}
       </div>
+      {hiddenElsewhere && (
+        <button type="button" onClick={() => setWorld(true)}
+          className="mt-6 w-full text-center text-[11px] uppercase tracking-[0.22em] text-[var(--ink)]/82 underline underline-offset-4 decoration-[var(--ink)]/30">
+          {tr("See the whole world", "Ver todo el mundo", "Voir le monde entier")}
+        </button>
+      )}
 
       <button type="button" onClick={onStart}
         className="mt-8 w-full flex items-center gap-4 rounded-2xl border border-dashed border-[var(--ink)]/35 px-5 py-4 text-left transition active:scale-[0.99] active:bg-[var(--ink)]/[0.03] hover:border-[var(--ink)]/55">

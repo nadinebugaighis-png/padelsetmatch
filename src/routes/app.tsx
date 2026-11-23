@@ -13,7 +13,6 @@ import { PlayMenuIcon } from "@/components/PlayMenuIcon";
 import { BrandMark } from "@/components/BrandMark";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
-import { EnableNotificationsBanner } from "@/components/EnableNotificationsBanner";
 import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { Button } from "@/components/ui/button";
 import { SessionLoading } from "@/components/SessionLoading";
@@ -327,7 +326,7 @@ function AuthShell() {
         className="fixed top-0 left-0 right-0 z-[60] h-[2px] pointer-events-none"
         style={{ opacity: navigating ? 1 : 0, transition: "opacity 200ms ease" }}
       >
-        <div className="h-full w-full origin-left bg-[var(--plum)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
+        <div className="h-full w-full origin-left bg-[var(--ink)]" style={{ animation: navigating ? "nav-progress 900ms ease-out infinite" : "none" }} />
       </div>
       <div id="app-top-bar" className="sticky top-0 z-40 bg-[var(--paper)]/95 backdrop-blur">
         <header className="px-5 sm:px-8 lg:px-12 py-4 sm:py-5 flex items-center justify-between border-b border-[var(--ink)]/16 gap-3 max-w-7xl mx-auto w-full">
@@ -342,7 +341,7 @@ function AuthShell() {
           )}
           <div className="flex items-center gap-2.5 shrink-0">
             {isAdmin && (
-              <Link to="/app/admin" className="text-[11px] uppercase tracking-[0.18em] text-[var(--plum)] hover:opacity-80">
+              <Link to="/app/admin" className="text-[11px] uppercase tracking-[0.18em] text-[var(--ink)] hover:opacity-80">
                 {t("shell.admin")}
               </Link>
             )}
@@ -355,7 +354,6 @@ function AuthShell() {
         </header>
       </div>
 
-      {hasProfile && !onOnboarding && !inChat && <EnableNotificationsBanner />}
 
       {hasProfile && !onOnboarding && !inChat && visibleInvites.length > 0 && (
         <div className="border-b border-[var(--ink)]/16 bg-[var(--paper-2)]">
@@ -367,13 +365,13 @@ function AuthShell() {
               const where = ev.club_name ?? ev.city ?? "";
               return (
                 <div key={inv.id} className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-[var(--plum)] shrink-0" />
+                  <Mail className="w-4 h-4 text-[var(--ink)] shrink-0" />
                   <Link
                     to="/app/events/$eventId"
                     params={{ eventId: ev.id }}
                     className="flex-1 min-w-0 text-sm text-[var(--ink)] hover:opacity-80"
                   >
-                    <span className="font-semibold text-[var(--plum)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
+                    <span className="font-semibold text-[var(--ink)]">{tr("You're invited", "Te han invitado", "Tu es invité·e")}</span>{" "}
                     <span className="text-[var(--ink)]/88">
                       {tr(
                         `by ${host} · ${when}${where ? " · " + where : ""} — tap to view`,
@@ -431,17 +429,17 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot, onP
   const isHighlight = highlight && !active;
 
   return (
-    <Link to={to} aria-label={ariaLabel} onPointerDown={onPrefetch} onMouseEnter={onPrefetch} onTouchStart={onPrefetch} className={`flex min-h-[62px] flex-col items-center justify-center gap-1 px-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--plum)]" : "text-[var(--cream)]/85"}`}>
+    <Link to={to} aria-label={ariaLabel} onPointerDown={onPrefetch} onMouseEnter={onPrefetch} onTouchStart={onPrefetch} className={`flex min-h-[62px] flex-col items-center justify-center gap-1 px-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] relative ${active ? "text-[var(--cream)]" : isHighlight ? "text-[var(--ink)]" : "text-[var(--cream)]/85"}`}>
       <span className="relative">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--plum)] text-white text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--ink)] text-white text-[10px] font-bold flex items-center justify-center ink-ring">{badge > 9 ? "9+" : badge}</span>
         )}
         {dot && !active && (!badge || badge <= 0) && (
-          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--plum)] ink-ring" />
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--ink)] ink-ring" />
         )}
         {isHighlight && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)] ink-ring animate-ping" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--ink)] ink-ring animate-ping" />
         )}
       </span>
       <span className="h-[1.15em] text-center leading-none whitespace-nowrap">{label}</span>
@@ -449,7 +447,7 @@ function NavTab({ to, label, ariaLabel, icon, active, highlight, badge, dot, onP
         <span className="absolute bottom-1.5 w-1 h-1 rounded-full bg-[var(--gold)]" />
       )}
       {isHighlight && (
-        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--plum)] opacity-90">{t("shell.core")}</span>
+        <span className="absolute -top-1 text-[8px] tracking-wider text-[var(--ink)] opacity-90">{t("shell.core")}</span>
       )}
     </Link>
   );
@@ -470,10 +468,10 @@ function DesktopTab({ to, label, icon, active, badge, dot, onPrefetch }: { to: s
       <span className="relative flex items-center">
         {icon}
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1.5 -right-2 min-w-[14px] h-3.5 px-1 rounded-full bg-[var(--plum)] text-white text-[9px] font-bold flex items-center justify-center">{badge > 9 ? "9+" : badge}</span>
+          <span className="absolute -top-1.5 -right-2 min-w-[14px] h-3.5 px-1 rounded-full bg-[var(--ink)] text-white text-[9px] font-bold flex items-center justify-center">{badge > 9 ? "9+" : badge}</span>
         )}
         {dot && !active && (!badge || badge <= 0) && (
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--plum)]" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--ink)]" />
         )}
       </span>
       <span>{label}</span>

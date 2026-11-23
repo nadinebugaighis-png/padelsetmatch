@@ -90,14 +90,14 @@ function Matches() {
             {requests.length > 0 && (
               <section className="mt-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--plum)] font-semibold">
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--ink)] font-semibold">
                     {tr("Message requests", "Solicitudes", "Demandes")}
                   </span>
-                  <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-[var(--plum)] text-white text-[11px] font-bold flex items-center justify-center">{requests.length}</span>
+                  <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-[var(--ink)] text-white text-[11px] font-bold flex items-center justify-center">{requests.length}</span>
                 </div>
                 <ul className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {requests.map((m) => m.other && (
-                    <li key={m.match_id} className="programme-card p-3 sm:p-4 border-l-4 border-[var(--plum)]">
+                    <li key={m.match_id} className="programme-card p-3 sm:p-4 border-l-4 border-[var(--ink)]">
                       <div className="flex items-center gap-3">
                         <div className="w-14 h-14 rounded-xl overflow-hidden bg-[var(--paper-2)] shrink-0">
                           {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
@@ -116,7 +116,7 @@ function Matches() {
                         <button
                           disabled={busyId === m.match_id}
                           onClick={() => decide(m.match_id, true)}
-                          className="flex-1 h-9 rounded-full bg-[var(--plum)] text-white text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
+                          className="flex-1 h-9 rounded-full bg-[var(--ink)] text-white text-[11px] uppercase tracking-[0.18em] font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-1"
                         >
                           <Check className="w-3.5 h-3.5" /> {tr("Accept", "Aceptar", "Accepter")}
                         </button>
@@ -150,7 +150,7 @@ function Matches() {
                       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[var(--paper-2)] shrink-0 relative">
                         {m.other.photo_url && <img src={m.other.photo_url} alt={m.other.first_name} className="w-full h-full object-cover" />}
                         {m.unread > 0 && (
-                          <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--plum)] text-white text-[11px] font-bold flex items-center justify-center ink-ring">{m.unread > 9 ? "9+" : m.unread}</span>
+                          <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[var(--ink)] text-white text-[11px] font-bold flex items-center justify-center ink-ring">{m.unread > 9 ? "9+" : m.unread}</span>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -161,7 +161,7 @@ function Matches() {
                               {tr("Sent", "Enviado", "Envoyé")}
                             </span>
                           )}
-                          {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--plum)] ink-ring" />}
+                          {m.unread > 0 && <span className="w-2 h-2 rounded-full bg-[var(--ink)] ink-ring" />}
                         </div>
                         <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{m.other.zone} · {label(m.other.level)}</div>
                         <div className={`text-xs sm:text-sm mt-1 line-clamp-2 ${m.unread > 0 ? "text-[var(--ink)] font-medium" : "text-[var(--ink)]/80"}`}>

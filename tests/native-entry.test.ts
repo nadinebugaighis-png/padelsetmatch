@@ -10,7 +10,7 @@ describe("native app reopening", () => {
       const enter = vi.fn();
       const result = resumeNativeEntry(true, () => session, enter);
       await vi.advanceTimersByTimeAsync(12_000);
-      expect(await result).toBe(false);
+      expect(await result).toBe("stalled");
       finish({ data: { session: {} } });
       await Promise.resolve();
       expect(enter).not.toHaveBeenCalled();
@@ -21,17 +21,17 @@ describe("native app reopening", () => {
     try {
       const result = resumeNativeEntry(true, async () => ({ data: { session: {} } }), () => new Promise(() => {}));
       await vi.advanceTimersByTimeAsync(12_000);
-      expect(await result).toBe(false);
+      expect(await result).toBe("stalled");
     } finally { vi.useRealTimers(); }
   });
   it("enters the protected app when a saved session is restored", async () => {
     const enter = vi.fn();
-    expect(await resumeNativeEntry(true, async () => ({ data: { session: { user: { id: "returning-player" } } } }), enter)).toBe(true);
+    expect(await resumeNativeEntry(true, async () => ({ data: { session: { user: { id: "returning-player" } } } }), enter)).toBe("entered");
     expect(enter).toHaveBeenCalledTimes(1);
   });
   it("leaves signed-out native users on the welcome page", async () => {
     const enter = vi.fn();
-    expect(await resumeNativeEntry(true, async () => ({ data: { session: null } }), enter)).toBe(false);
+    expect(await resumeNativeEntry(true, async () => ({ data: { session: null } }), enter)).toBe("signed_out");
     expect(enter).not.toHaveBeenCalled();
   });
   it("preserves the public website without checking its session", async () => {
@@ -55,6 +55,6 @@ describe("native app reopening", () => {
     await Promise.resolve();
     expect(settled).toBe(false);
     finishNavigation();
-    expect(await result).toBe(true);
+    expect(await result).toBe("entered");
   });
 });

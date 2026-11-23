@@ -32,6 +32,7 @@ import { Route as AppBookCourtRouteImport } from './routes/app.book-court'
 import { Route as AppChooseLocationRouteImport } from './routes/app.choose-location'
 import { Route as AppCoachRouteImport } from './routes/app.coach'
 import { Route as AppCoachesRouteImport } from './routes/app.coaches'
+import { Route as AppCommunitiesRouteImport } from './routes/app.communities'
 import { Route as AppConnectRouteImport } from './routes/app.connect'
 import { Route as AppGridRouteImport } from './routes/app.grid'
 import { Route as AppHiddenRouteImport } from './routes/app.hidden'
@@ -175,6 +176,11 @@ const AppCoachRoute = AppCoachRouteImport.update({
 const AppCoachesRoute = AppCoachesRouteImport.update({
   id: '/coaches',
   path: '/coaches',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCommunitiesRoute = AppCommunitiesRouteImport.update({
+  id: '/communities',
+  path: '/communities',
   getParentRoute: () => AppRoute,
 } as any)
 const AppConnectRoute = AppConnectRouteImport.update({
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/app/choose-location': typeof AppChooseLocationRoute
   '/app/coach': typeof AppCoachRoute
   '/app/coaches': typeof AppCoachesRoute
+  '/app/communities': typeof AppCommunitiesRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -389,6 +396,7 @@ export interface FileRoutesByTo {
   '/app/choose-location': typeof AppChooseLocationRoute
   '/app/coach': typeof AppCoachRoute
   '/app/coaches': typeof AppCoachesRoute
+  '/app/communities': typeof AppCommunitiesRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -442,6 +450,7 @@ export interface FileRoutesById {
   '/app/choose-location': typeof AppChooseLocationRoute
   '/app/coach': typeof AppCoachRoute
   '/app/coaches': typeof AppCoachesRoute
+  '/app/communities': typeof AppCommunitiesRoute
   '/app/connect': typeof AppConnectRoute
   '/app/grid': typeof AppGridRoute
   '/app/hidden': typeof AppHiddenRoute
@@ -496,6 +505,7 @@ export interface FileRouteTypes {
     | '/app/choose-location'
     | '/app/coach'
     | '/app/coaches'
+    | '/app/communities'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -547,6 +557,7 @@ export interface FileRouteTypes {
     | '/app/choose-location'
     | '/app/coach'
     | '/app/coaches'
+    | '/app/communities'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -599,6 +610,7 @@ export interface FileRouteTypes {
     | '/app/choose-location'
     | '/app/coach'
     | '/app/coaches'
+    | '/app/communities'
     | '/app/connect'
     | '/app/grid'
     | '/app/hidden'
@@ -823,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCoachesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/communities': {
+      id: '/app/communities'
+      path: '/communities'
+      fullPath: '/app/communities'
+      preLoaderRoute: typeof AppCommunitiesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/connect': {
       id: '/app/connect'
       path: '/connect'
@@ -1044,6 +1063,7 @@ interface AppRouteChildren {
   AppChooseLocationRoute: typeof AppChooseLocationRoute
   AppCoachRoute: typeof AppCoachRoute
   AppCoachesRoute: typeof AppCoachesRoute
+  AppCommunitiesRoute: typeof AppCommunitiesRoute
   AppConnectRoute: typeof AppConnectRoute
   AppGridRoute: typeof AppGridRoute
   AppHiddenRoute: typeof AppHiddenRoute
@@ -1067,6 +1087,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppChooseLocationRoute: AppChooseLocationRoute,
   AppCoachRoute: AppCoachRoute,
   AppCoachesRoute: AppCoachesRoute,
+  AppCommunitiesRoute: AppCommunitiesRoute,
   AppConnectRoute: AppConnectRoute,
   AppGridRoute: AppGridRoute,
   AppHiddenRoute: AppHiddenRoute,

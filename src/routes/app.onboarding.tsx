@@ -183,8 +183,9 @@ function Onboarding() {
     }
     // Brand-new player: pre-fill from the "Choose your location" page.
     if (!p || (!p.locations?.length && !p.zone)) {
-      const preset = presetByKey(search.loc);
-      if (preset) setLocBlocks([{ country: preset.country, city: preset.city, areas: [preset.area ?? "", "", ""] }]);
+      // `loc` is a preset key, or a community location picked from the directory.
+      const preset = search.loc?.includes("|") ? decodeLocation(search.loc) : presetByKey(search.loc);
+      if (preset?.country && preset.city) setLocBlocks([{ country: preset.country, city: preset.city, areas: [preset.area ?? "", "", ""] }]);
     }
   }, [profileQ.data]);
 

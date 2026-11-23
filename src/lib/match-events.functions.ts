@@ -354,14 +354,15 @@ export const quickCreateMatchEvent = createServerFn({ method: "POST" })
 // ---------- List open events ----------
 export const listOpenEvents = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { city?: string | null; needs?: number | null; myLocations?: boolean }) =>
-    z.object({ city: z.string().nullable().optional(), needs: z.number().int().nullable().optional(), myLocations: z.boolean().optional() }).parse(d),
+  .inputValidator((d: { city?: string | null; needs?: number | null; myLocations?: boolean; visit?: string | null }) =>
+    z.object({ city: z.string().nullable().optional(), needs: z.number().int().nullable().optional(), myLocations: z.boolean().optional(), visit: z.string().min(3).max(200).nullable().optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: profile } = await supabase.from("profiles").select("id, locations").eq("user_id", userId).maybeSingle();
     // Only games in the player's own areas (La Moraleja players see La Moraleja, not all of Madrid).
-    const myKeywords = feedKeywords(profile?.locations);
+    // Viewing one community (mine or one I'm visiting) narrows to that place.
+    const myKeywords = feedKeywords(data.visit ? [data.visit] : profile?.locations);
 
     const sinceIso = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     const baseSelect = "*, host:profiles!match_events_host_profile_id_fkey(first_name), participants:match_event_participants(profile_id, profiles(id, first_name, photo_url, gender, level, is_coach))";

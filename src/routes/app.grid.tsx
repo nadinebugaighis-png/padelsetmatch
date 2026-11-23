@@ -23,7 +23,8 @@ import { getSharedVenues, getSharedVenuesBatch, listMyVenues } from "@/lib/venue
 import { MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
 import { PADEL_LEVELS, MADRID_ZONES } from "@/lib/types";
-import { isMoralejaMember } from "@/lib/area-match";
+import { useCommunityView } from "@/lib/community-view";
+import { CommunityHeading } from "@/components/CommunityHeading";
 
 
 export const Route = createFileRoute("/app/grid")({
@@ -127,7 +128,14 @@ function Discover() {
 
 
 
-  const feedQ = useQuery({ queryKey: ["discover", world], queryFn: () => getFeed({ data: { world } }), staleTime: 60_000, placeholderData: keepPreviousData });
+  // Community chosen in the directory (null = all my communities together).
+  const communityView = useCommunityView();
+  const feedQ = useQuery({
+    queryKey: ["discover", world, communityView],
+    queryFn: () => getFeed({ data: communityView ? { world, visit: communityView } : { world } }),
+    staleTime: 60_000,
+    placeholderData: keepPreviousData,
+  });
   const feedLen = (feedQ.data?.candidates?.length ?? 0);
   useEffect(() => { setFeedTick(feedLen); }, [feedLen]);
   const getAnswers = useServerFn(getMyQaAnswers);
@@ -383,12 +391,6 @@ function Discover() {
   if (!feedQ.data?.me) return <GridSkeleton />;
 
   const all = feedQ.data.candidates;
-  // La Moraleja members see their own roster heading (World off only — with
-  // World on the grid is worldwide, so the local name would be wrong).
-  const societyName =
-    !world && isMoralejaMember(feedQ.data.me as unknown as { locations?: string[] | null })
-      ? "La Moraleja"
-      : null;
   // Collect the zones/areas actually present in the current feed (smart options).
   const zonesInFeed = (() => {
     const set = new Set<string>();
@@ -433,14 +435,13 @@ function Discover() {
     <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
       <MemberGuide />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-        {societyName ? (
-          <div>
-            <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[26px] sm:text-[30px] lg:text-[34px]">{societyName}</h1>
-            <p className="mt-2 text-serif italic text-[var(--ink)]/82 text-[14px] sm:text-[15px]">{t("disc.h1.sub")}</p>
-          </div>
-        ) : (
-          <h1 className="text-serif uppercase text-[var(--ink)] leading-[0.95] text-[24px] sm:text-[28px] lg:text-[32px]">{t("disc.h1")}</h1>
-        )}
+        <CommunityHeading
+          view={communityView}
+          locations={((feedQ.data.me as unknown as { locations?: string[] | null }).locations) ?? []}
+          world={world}
+          fallbackTitle={t("disc.h1")}
+          subtitle={t("disc.h1.sub")}
+        />
 
         {(() => {
           const me = feedQ.data.me as unknown as {
@@ -508,7 +509,7 @@ function Discover() {
 
 
 
-        <div className="mt-5 lg:mt-6">
+        {!communityView && <div className="mt-5 lg:mt-6">
           <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <button
               onClick={() => {
@@ -526,7 +527,7 @@ function Discover() {
               {world ? t("disc.world.on") : t("disc.world.off")}
             </button>
           </div>
-        </div>
+        </div>}
 
         <div className="mt-4 flex items-center gap-2 sm:gap-3">
           <div className="relative flex-1">
@@ -640,7 +641,7 @@ function Discover() {
                 onClick: () => { setLevelFilter("all"); setZoneFilter("all"); },
                 primary: true,
               });
-            } else if (totalInFeed === 0 && !world) {
+            } else if (totalInFeed === 0 && !world && !communityView) {
               title = tr("Nobody in your zone yet", "Aún nadie en tu zona", "Personne dans ta zone pour l'instant");
               hint = tr(
                 "Turn on World mode to see players everywhere, or invite friends from your club.",

@@ -88,3 +88,20 @@ describe("location presets", () => {
     expect(presetByKey("madrid_la_moraleja")).toMatchObject({ country: "Spain", city: "Madrid", area: "La Moraleja" });
   });
 });
+
+describe("sharesMyArea across communities", () => {
+  const two = { locations: ["Spain | Madrid | La Moraleja", "United Arab Emirates | Dubai | "] };
+  it("a La Moraleja + Dubai member sees Dubai players", () => {
+    expect(sharesMyArea(two, { locations: ["United Arab Emirates | Dubai | "] })).toBe(true);
+  });
+  it("a La Moraleja + Dubai member still does not see Alcobendas", () => {
+    expect(sharesMyArea(two, loc("Madrid", "Alcobendas"))).toBe(false);
+  });
+  it("Dubai is one open community: Arabian Ranches sees all of Dubai", () => {
+    expect(sharesMyArea({ locations: ["United Arab Emirates | Dubai | Arabian Ranches"] }, { locations: ["United Arab Emirates | Dubai | Dubai Marina"] })).toBe(true);
+  });
+  it("Madrid city-only next to La Moraleja keeps La Moraleja exclusive", () => {
+    expect(sharesMyArea(loc("Madrid", "La Moraleja"), loc("Madrid", "Chamartín"))).toBe(false);
+    expect(sharesMyArea({ locations: ["Spain | Madrid | La Moraleja", "Spain | Madrid | "] }, loc("Madrid", "Chamartín"))).toBe(false);
+  });
+});

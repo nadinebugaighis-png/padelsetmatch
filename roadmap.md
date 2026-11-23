@@ -80,3 +80,7 @@
 ## Connect: Who can play?
 - [x] Turn Connect into "Who can play?": pick day + morning/afternoon/evening, one-tap "Me too", local to the player's areas, alerts to others in the same slot; community board kept below.
 - [ ] Connect cards: no Chat button (chat opens by itself), quiet Leave link kept, tap own name also leaves after confirmation
+
+## Communities directory
+- [x] Communities page (yours + all by country/city with member counts), start/join/leave, visit another community on Home and Play, signup picks from the live list, contact Nadine by WhatsApp/email. Tests and signed-in phone checks pass.
+- [ ] Confirm the organiser contact email (waiting on Nadine's answer).

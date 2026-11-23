@@ -29,6 +29,8 @@ import { useI18n, useTr } from "@/lib/i18n";
 import { AlertsSheet } from "@/components/AlertsSheet";
 import { MatchFiltersSheet } from "@/components/MatchFiltersSheet";
 import { feedAreas, eventInArea } from "@/lib/feed-areas";
+import { useCommunityView } from "@/lib/community-view";
+import { CommunityVisitNote } from "@/components/CommunityHeading";
 import { activeFilterCount, passesFilters, restoreFilters, NO_FILTERS, MATCH_FILTERS_STORAGE_KEY, type MatchFilters } from "@/lib/match-filters";
 import { Button } from "@/components/ui/button";
 import { CreateMatchChooser } from "@/components/CreateMatchChooser";
@@ -135,7 +137,10 @@ function EventsPage() {
     retry: false,
   });
   // Players see their own areas; anyone without an area (e.g. World) sees every game.
-  const myLocations = ((profileQ.data as { locations?: string[] | null } | undefined)?.locations) ?? [];
+  // A community chosen in the directory (one of mine, or one I'm visiting) narrows the feed to it.
+  const communityView = useCommunityView();
+  const savedLocations = ((profileQ.data as { locations?: string[] | null } | undefined)?.locations) ?? [];
+  const myLocations = communityView ? [communityView] : savedLocations;
   const myAreasOnly = myLocations.length > 0;
   const myLevel = (profileQ.data as { level?: string | null } | undefined)?.level ?? null;
   const areas = useMemo(() => feedAreas(myLocations), [myLocations.join("\n")]);
@@ -162,8 +167,8 @@ function EventsPage() {
   const filterCount = activeFilterCount(filters);
 
   const eventsQ = useQuery({
-    queryKey: ["open-events", myAreasOnly],
-    queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly } }),
+    queryKey: ["open-events", myAreasOnly, communityView],
+    queryFn: () => list({ data: { city: null, needs: null, myLocations: myAreasOnly, visit: communityView } }),
     enabled: !profileQ.isPending,
     refetchOnWindowFocus: true,
     refetchInterval: 15_000,
@@ -386,6 +391,7 @@ function EventsPage() {
         <h1 className="text-serif text-[28px] sm:text-5xl leading-none tracking-normal text-foreground pt-1">
           {tr("Matches", "Partidos", "Matchs")}
         </h1>
+        <CommunityVisitNote view={communityView} locations={savedLocations} />
 
         <div className="mt-4 mb-1 -mx-4 sm:mx-0 px-4 sm:px-0 flex items-center justify-between gap-2 border-b border-border">
           <div role="tablist" aria-label={tr("Matches", "Partidos", "Matchs")} className="flex min-w-0 gap-5 sm:gap-7">

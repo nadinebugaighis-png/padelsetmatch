@@ -357,9 +357,11 @@ function scoreCandidate(me: Profile, c: Profile) {
 
 export const getDiscoverFeed = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ world: z.boolean().optional() }).optional().parse(d) ?? {})
+  .inputValidator((d: unknown) => z.object({ world: z.boolean().optional(), visit: z.string().min(3).max(200).optional() }).optional().parse(d) ?? {})
   .handler(async ({ data, context }) => {
-    const world = data?.world === true;
+    // Viewing one community (one of mine, or one I'm visiting) replaces World.
+    const visit = data?.visit;
+    const world = !visit && data?.world === true;
     const { data: meRow, error: meErr } = await context.supabase
       .from("profiles" as never)
       .select("*")
@@ -436,7 +438,8 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
     const { sharesMyArea } = await import("./area-match");
     // Area gate: La Moraleja players see only La Moraleja players (World shows all).
-    const sharesMyCity = (c: Profile) => sharesMyArea(me, c);
+    const gateFrom = visit ? { locations: [visit] } : me;
+    const sharesMyCity = (c: Profile) => sharesMyArea(gateFrom, c);
 
     const candidates = ((candRows as Profile[] | null) ?? []).filter((c) => {
       if (blockedSet.has(c.id)) return false;

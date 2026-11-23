@@ -37,31 +37,52 @@ export function canonicalArea(area: string): string {
   return a;
 }
 
+/**
+ * Cities that are one open community (signup presets without an area, e.g.
+ * Marbella and Dubai): any neighbourhood there folds into the whole city.
+ */
+export const CITY_WIDE_CITIES = ["marbella", "dubai"];
+const foldCity = (s: string) => norm(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+export function isCityWide(city: string): boolean {
+  return CITY_WIDE_CITIES.includes(foldCity(city));
+}
+
 function placesOf(p: Loc) {
   const cities = new Set<string>();
   const areas = new Set<string>(); // "city|area"
+  const areaCities = new Set<string>(); // cities where an area was chosen
+  const openCities = new Set<string>(); // cities chosen without an area (or city-wide)
   (p.locations ?? []).forEach((l) => {
     const d = decodeLocation(l);
-    if (d.city) cities.add(norm(d.city));
-    if (d.city && d.area) areas.add(`${norm(d.city)}|${canonicalArea(d.area)}`);
+    if (!d.city) return;
+    const city = norm(d.city);
+    cities.add(city);
+    if (d.area && !isCityWide(d.city)) {
+      areas.add(`${city}|${canonicalArea(d.area)}`);
+      areaCities.add(city);
+    } else {
+      openCities.add(city);
+    }
   });
   if (p.zone) cities.add(norm(p.zone));
-  return { cities, areas };
+  return { cities, areas, areaCities, openCities };
 }
 
 /**
- * Grid gate (World off): if I chose areas, a player must share one of my
- * city+area pairs (La Moraleja players see only La Moraleja). If I only gave
- * cities, fall back to sharing a city.
+ * Grid gate (World off), one community at a time: an area community needs a
+ * shared city+area (La Moraleja players see only La Moraleja); a city chosen
+ * without an area (or a city-wide community like Dubai) needs a shared city,
+ * unless I also chose an area in that same city, which keeps area
+ * communities exclusive. With no locations at all, fall back to my zone.
  */
 export function sharesMyArea(me: Loc, them: Loc): boolean {
   const mine = placesOf(me);
   const theirs = placesOf(them);
-  if (mine.areas.size > 0) {
-    for (const a of mine.areas) if (theirs.areas.has(a)) return true;
-    return false;
-  }
-  for (const c of mine.cities) if (theirs.cities.has(c)) return true;
+  for (const a of mine.areas) if (theirs.areas.has(a)) return true;
+  const cityGates = mine.areas.size > 0
+    ? [...mine.openCities].filter((c) => !mine.areaCities.has(c))
+    : [...mine.cities];
+  for (const c of cityGates) if (theirs.cities.has(c)) return true;
   return false;
 }
 

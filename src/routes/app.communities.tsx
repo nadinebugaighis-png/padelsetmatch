@@ -119,8 +119,7 @@ function CommunitiesPage() {
             )}
 
             <section className="mt-10">
-              <h2 className={smallCaps}>{tr("All communities", "Todas las comunidades", "Toutes les communautés")}</h2>
-              <div className="mt-3">
+              <div>
                 <CommunityDirectoryList
                   directory={dirQ.data}
                   onOpen={(c) => open(c.location)}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useT, useTr, LangSwitch } from "@/lib/i18n";
-import { ArrowRight, UserRound, Search, CalendarCheck, EyeOff, ThumbsUp, Send } from "lucide-react";
+import { ArrowRight, UserRound, Search, CalendarCheck, EyeOff, Heart, Send, GraduationCap } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -8,8 +8,8 @@ export const Route = createFileRoute("/how-it-works")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "How it works — PadelSetMatch" },
-      { name: "description", content: "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time." },
+      { title: "How it works · PadelSetMatch" },
+      { name: "description", content: "A directory of padel players around you. See who is up for a game, join games and book a coach." },
       { property: "og:title", content: "How PadelSetMatch works" },
       { property: "og:description", content: "Find players. Play more." },
     ],
@@ -114,25 +114,25 @@ function HowItWorksPage() {
         </h1>
         <p className="mt-6 max-w-2xl text-[15px] sm:text-lg text-[var(--ink)]/84 leading-relaxed">
           {tr(
-            "A directory of padel players around you. See who is up for a game, who has free court access, and meet players ahead of time — in your city or wherever you travel.",
-            "Un directorio de jugadores de pádel cerca de ti. Descubre quién quiere jugar, quién tiene pista disponible y conoce a los jugadores antes de jugar — en tu ciudad o adonde viajes.",
-            "Un annuaire des joueurs de padel près de toi. Vois qui veut jouer, qui a une piste dispo, et rencontre les joueurs à l'avance — dans ta ville ou en voyage."
+            "Your padel community in one place. See who is up for a game, join open matches and book a coach, in your city or wherever you travel.",
+            "Tu comunidad de pádel en un solo lugar. Descubre quién quiere jugar, únete a partidas abiertas y reserva un entrenador, en tu ciudad o adonde viajes.",
+            "Ta communauté de padel au même endroit. Vois qui veut jouer, rejoins des parties ouvertes et réserve un coach, dans ta ville ou en voyage."
           )}
         </p>
       </section>
 
       {/* 3 Cards */}
       <section className="relative px-5 sm:px-8 lg:px-16 pb-16 max-w-6xl mx-auto w-full">
-        <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card
             n="1"
             accent="plum"
             icon={UserRound}
             title={tr("Private profile", "Perfil privado", "Profil privé")}
             body={tr(
-              "Share as much as you want. The more the AI knows, the better your matches. Nothing is shown to anyone.",
-              "Comparte lo que quieras. Cuanto más sepa la IA, mejores serán tus conexiones. Nada es visible para otros.",
-              "Partage ce que tu veux. Plus l'IA en sait, meilleurs sont tes matches. Rien n'est visible pour les autres."
+              "Add your level, side and when you play. Your answers stay private and only help suggest the right games.",
+              "Añade tu nivel, tu lado y cuándo juegas. Tus respuestas son privadas y solo sirven para sugerirte partidas.",
+              "Ajoute ton niveau, ton côté et quand tu joues. Tes réponses restent privées et servent seulement à suggérer des parties."
             )}
           />
           <Card
@@ -141,9 +141,9 @@ function HowItWorksPage() {
             icon={Search}
             title={tr("Find & connect", "Busca y conecta", "Cherche et connecte")}
             body={tr(
-              "Browse players around you on Home. Tap to connect with the people you would play with.",
-              "Explora jugadores cerca de ti en Inicio. Pulsa para conectar con quienes te gustaría jugar.",
-              "Explore les joueurs près de toi sur l'accueil. Tape pour te connecter à ceux avec qui tu jouerais."
+              "Browse players in your community on Home. Send a message to the ones you would like to play with.",
+              "Explora los jugadores de tu comunidad en Club. Escribe a quienes te gustaría tener en pista.",
+              "Explore les joueurs de ta communauté sur l'accueil. Écris à ceux avec qui tu aimerais jouer."
             )}
           />
           <Card
@@ -152,9 +152,20 @@ function HowItWorksPage() {
             icon={CalendarCheck}
             title={tr("Set your time", "Marca tu hora", "Choisis ton créneau")}
             body={tr(
-              "Open a slot with one click. Others join. Or join theirs. No more waiting on WhatsApp groups.",
-              "Crea un hueco con un clic. Otros se apuntan. O apúntate a los suyos. Sin quedarte esperando en grupos de WhatsApp.",
-              "Ouvre un créneau en un clic. D'autres rejoignent. Ou rejoins les leurs. Fini l'attente sur WhatsApp."
+              "Create a match in one tap and others join, or join theirs on Play. No more waiting on WhatsApp groups.",
+              "Crea una partida con un toque y otros se apuntan, o únete a las suyas en Jugar. Sin esperar en grupos de WhatsApp.",
+              "Crée une partie en un geste et d'autres rejoignent, ou rejoins les leurs. Fini l'attente sur WhatsApp."
+            )}
+          />
+          <Card
+            n="4"
+            accent="plum"
+            icon={GraduationCap}
+            title={tr("Book a coach", "Reserva un entrenador", "Réserve un coach")}
+            body={tr(
+              "Find a coach who comes to your court, at home or at your club. Book a private lesson or a small group class from the + menu.",
+              "Encuentra un entrenador que venga a tu pista, en casa o en tu club. Reserva una clase particular o en grupo reducido desde el menú +.",
+              "Trouve un coach qui vient sur ton terrain, chez toi ou à ton club. Réserve un cours particulier ou en petit groupe depuis le menu +."
             )}
           />
         </div>
@@ -164,33 +175,33 @@ function HowItWorksPage() {
       <section className="relative px-5 sm:px-8 lg:px-16 pb-16 max-w-6xl mx-auto w-full">
         <div className="flex items-baseline justify-between gap-4 mb-6">
           <span className="inline-flex items-center rounded-full border border-[color-mix(in_oklab,var(--plum)_35%,transparent)] text-[var(--plum)] text-[11px] font-semibold uppercase tracking-[0.22em] px-4 py-1.5">
-            {tr("The juicy parts", "Lo interesante", "Le meilleur")}
+            {tr("Good to know", "Bueno saberlo", "Bon à savoir")}
           </span>
         </div>
         <div className="grid gap-4 sm:gap-5 md:grid-cols-3">
           <div className="rounded-2xl bg-[var(--ink)] text-[var(--paper)] p-6 sm:p-7">
             <EyeOff className="w-5 h-5 text-[var(--paper)]/70" strokeWidth={2} />
             <h3 className="mt-6 text-serif uppercase text-xl leading-tight">
-              {tr("Hide by group", "Ocultar por grupo", "Cacher par groupe")}
+              {tr("Hide quietly", "Oculta con discreción", "Cache en toute discrétion")}
             </h3>
             <p className="mt-3 text-[14px] text-[var(--paper)]/75 leading-relaxed">
               {tr(
-                "Hide someone from your Home group and you disappear from theirs too. Awkwardness solved.",
-                "Oculta a alguien del grupo Relación y tú también desaparecerás del suyo — pero seguís en Amistad o Pádel. Sin momentos incómodos.",
-                "Cache quelqu'un du groupe Relation et tu disparais du sien aussi — mais vous restez dans Amis ou Padel. Fini les moments gênants."
+                "Hide a player and you disappear from their Home too. No awkward moments.",
+                "Oculta a un jugador y tú también desapareces de su Club. Sin momentos incómodos.",
+                "Cache un joueur et tu disparais aussi de son accueil. Aucun moment gênant."
               )}
             </p>
           </div>
           <div className="rounded-2xl bg-[color-mix(in_oklab,var(--plum)_16%,var(--paper))] p-6 sm:p-7 border border-[color-mix(in_oklab,var(--plum)_25%,transparent)]">
-            <ThumbsUp className="w-5 h-5 text-[var(--plum)]" strokeWidth={2} />
+            <Heart className="w-5 h-5 text-[var(--plum)]" strokeWidth={2} />
             <h3 className="mt-6 text-serif uppercase text-xl leading-tight text-[var(--ink)]">
-              {tr("Silent likes", "Me gusta en silencio", "Likes silencieux")}
+              {tr("Follow players", "Sigue a jugadores", "Suis des joueurs")}
             </h3>
             <p className="mt-3 text-[14px] text-[var(--ink)]/84 leading-relaxed">
               {tr(
-                "Tap someone and they'll never know — unless they tap you back. No notifications, no pressure, no ego bruises.",
-                "Dale 'me gusta' a alguien y no lo sabrá — a menos que te lo devuelva. Sin notificaciones, sin presión, sin herir egos.",
-                "Tape quelqu'un et il ne le saura jamais — sauf s'il te tape aussi. Aucune notification, aucune pression."
+                "Tap the heart on a player to follow them and keep them close for your next game. Quiet, no pressure.",
+                "Pulsa el corazón de un jugador para seguirle y tenerle a mano para tu próxima partida. Discreto, sin presión.",
+                "Touche le cœur d'un joueur pour le suivre et l'avoir sous la main pour ta prochaine partie. Discret, sans pression."
               )}
             </p>
           </div>
@@ -223,16 +234,10 @@ function HowItWorksPage() {
               search={{ redirect: undefined, join: undefined }}
               className="group inline-flex items-center gap-3 rounded-full bg-[var(--ink)] text-[var(--paper)] font-semibold uppercase tracking-[0.18em] text-[13px] pl-6 pr-3 py-3.5 hover:brightness-110 shadow-[0_18px_40px_-20px_rgba(15,62,46,0.55)] transition"
             >
-              {tr("Join free", "Únete gratis", "Inscription gratuite")}
+              {tr("Join the club", "Únete al club", "Rejoins le club")}
               <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[var(--paper)]/15 group-hover:translate-x-0.5 transition">
                 <ArrowRight className="w-4 h-4" />
               </span>
-            </Link>
-            <Link
-              to="/"
-              className="inline-flex items-center rounded-full border border-[var(--ink)]/25 text-[var(--ink)] font-semibold uppercase tracking-[0.18em] text-[13px] px-6 py-3.5 hover:bg-[var(--ink)] hover:text-[var(--paper)] transition"
-            >
-              {tr("Back to home", "Volver al inicio", "Retour à l'accueil")}
             </Link>
           </div>
         </div>

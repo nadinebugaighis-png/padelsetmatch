@@ -1061,26 +1061,34 @@ function Discover() {
                           .sort((x, y) => Number(!!y.shared) - Number(!!x.shared));
                         const complements = (cardsQ.data?.complements ?? []).slice(0, 2);
                         const showFull = fullReadFor === preview.id;
-                        const visible = showFull ? facts : facts.slice(0, 3);
-                        const hasMore = facts.length > 3 || complements.length > 0;
+                        const visible = showFull ? facts : facts.slice(0, 2);
+                        const hasMore = facts.length > 2 || complements.length > 0;
+                        const story = noDash(String((compatQ.data as { sub_scores?: { headline?: string } | null; blurb?: string } | undefined)?.sub_scores?.headline || "").trim());
                         const label = (children: string) => (
                           <div className="mb-3 text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/62">{children}</div>
                         );
                         const section = "border-t border-[var(--card-edge)] pt-5";
                         return (
                           <div className="space-y-6 pt-2">
-                            {preview.score != null && (
+                            {(preview.score != null || story || compatQ.isLoading) && (
                               <div className={section}>
-                                {label(tr("Your game", "Tu partida", "Ta partie"))}
-                                <p className="text-[14px] text-[var(--ink)]">
-                                  {tr("Game fit", "Nivel de juego compatible", "Jeu compatible")}<span className="text-[var(--ink)]/50"> · </span><span className="tabular-nums font-medium">{preview.score}%</span>
-                                </p>
+                                <div className="mb-3 flex items-baseline justify-between gap-3">
+                                  <span className="text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/62">{tr("Your game", "Tu partida", "Ta partie")}</span>
+                                  {preview.score != null && (
+                                    <span className="text-[12px] text-[var(--ink)]/75">{tr("Game fit", "Afinidad de juego", "Jeu compatible")} <span className="tabular-nums font-medium text-[var(--ink)]">{preview.score}%</span></span>
+                                  )}
+                                </div>
+                                {story ? (
+                                  <p className="text-serif text-[18px] leading-snug text-[var(--ink)] text-balance">{story}</p>
+                                ) : compatQ.isLoading ? (
+                                  <p className="text-serif text-[16px] text-[var(--ink)]/60">{tr("Reading the court…", "Leyendo la pista…", "On lit le terrain…")}</p>
+                                ) : null}
                               </div>
                             )}
 
                             {visible.length > 0 && (
                               <div className={section}>
-                                {label(tr("Playing style", "Estilo de juego", "Style de jeu"))}
+                                {label(tr("In common", "En común", "En commun"))}
                                 <ul className="divide-y divide-[var(--card-edge)]">
                                   {visible.map((r) => (
                                     <li key={r.q.id} className="flex items-baseline justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
@@ -1303,7 +1311,7 @@ function GridSkeleton() {
 }
 
 // Card rendering no longer uses the AI read, so the grid does not request it.
-const SHOW_AI_READ = false;
+const SHOW_AI_READ = true;
 
 // Short padel labels for the card rows; questions themselves stay unchanged in the bank.
 function factLabel(id: string, question: string, tr: (en: string, es: string, fr: string) => string): string {

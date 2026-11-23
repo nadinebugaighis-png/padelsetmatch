@@ -1320,7 +1320,7 @@ export const getAiCompatibility = createServerFn({ method: "POST" })
     const myIntentsArr = ((me.intents ?? []) as string[]).slice().sort();
     const theirIntentsArr = ((other.intents ?? []) as string[]).slice().sort();
     const lang = data.lang ?? "en";
-    const versionPrefix = `v15-${lang}-`;
+    const versionPrefix = `v16-${lang}-`;
     const versionKey = `${versionPrefix}${myIntentsArr.join(",") || "-"}|${theirIntentsArr.join(",") || "-"}|${myQaCount}x${theirQaCount}${verified ? "v" : ""}`;
 
     // Stale-while-revalidate: any same-version, same-language read is shown
@@ -1412,7 +1412,7 @@ Return ONLY valid JSON with this exact shape:
     "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
     "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
-  "headline": "<ONE plain, factual padel line. Max 70 chars. No nicknames, no poetry, nothing that could read as romantic. Example tone: 'Both play early, both like long rallies.' No filler.>",
+  "headline": "<A short, warm club story, one or two sentences, max 150 chars, like a club host introducing two players at the bar. Sociable and specific, grounded in real details (time of day, side, rhythm, the post-match caña or coffee). Friendly and sporty, never romantic, no nicknames, no flowery poetry, never an em dash. Example tone: 'Early courts suit you both, one covers the left, the other the right, and you both stay for a coffee after.'>",
   "highlights": [
     "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). No emojis — plain, refined wording.>",
     "<second bullet, different angle, same rules>",

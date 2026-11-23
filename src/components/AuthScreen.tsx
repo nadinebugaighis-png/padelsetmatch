@@ -464,7 +464,7 @@ export function AuthScreen({ redirect, join, i, mode: modeParam }: AuthScreenPro
           </div>
         </div>
 
-        <h1 className="text-serif mt-12 text-center text-[32px] font-normal leading-[1.05] text-[var(--ink)]">
+        <h1 className="text-serif mt-12 text-center text-[28px] font-normal leading-[1.05] text-[var(--ink)]">
           {mode === "signup"
             ? tr("Join the club", "Únete al club", "Rejoins le club")
             : tr("Welcome back", "Bienvenido de nuevo", "Bon retour")}

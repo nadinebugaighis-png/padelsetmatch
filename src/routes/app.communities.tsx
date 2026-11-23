@@ -76,8 +76,7 @@ function CommunitiesPage() {
         <button type="button" onClick={() => navigate({ to: "/app/grid" })} aria-label={tr("Back", "Atrás", "Retour")} className="-ml-2 grid size-10 place-items-center rounded-full text-[var(--ink)] active:opacity-60"><ArrowLeft className="size-5" strokeWidth={1.6} /></button>
 
         <header className="mt-1">
-          <div className={smallCaps}>PadelSetMatch</div>
-          <h1 className="mt-2 text-serif text-[28px] sm:text-5xl leading-none text-[var(--ink)]">{tr("Communities", "Comunidades", "Communautés")}</h1>
+          <h1 className="text-serif text-[28px] sm:text-5xl leading-none text-[var(--ink)]">{tr("Communities", "Comunidades", "Communautés")}</h1>
         </header>
 
         {dirQ.isPending ? (

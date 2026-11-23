@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { tidyHeadline } from "@/lib/clean-headline";
 import { levelName, playerLevel, withRating } from "@/lib/level-label";
 import { photoSrc, prefetchPhoto } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
@@ -1063,7 +1064,7 @@ function Discover() {
                         const showFull = fullReadFor === preview.id;
                         const visible = showFull ? facts : facts.slice(0, 2);
                         const hasMore = facts.length > 2 || complements.length > 0;
-                        const story = noDash(String((compatQ.data as { sub_scores?: { headline?: string } | null; blurb?: string } | undefined)?.sub_scores?.headline || "").trim());
+                        const story = tidyHeadline(noDash(String((compatQ.data as { sub_scores?: { headline?: string } | null; blurb?: string } | undefined)?.sub_scores?.headline || "").trim()));
                         const label = (children: string) => (
                           <div className="mb-3 text-[10px] uppercase tracking-[0.28em] text-[var(--ink)]/62">{children}</div>
                         );

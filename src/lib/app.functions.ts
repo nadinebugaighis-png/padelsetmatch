@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { tidyHeadline } from "@/lib/clean-headline";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { bestCultureAffinity, formatNationalities, languageOverlap, locationAffinity, nationalityList, zoneAffinity } from "./affinity";
@@ -1412,7 +1413,7 @@ Return ONLY valid JSON with this exact shape:
     "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
     "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
-  "headline": "<A short, warm club story, one or two sentences, max 150 chars, like a club host introducing two players at the bar. Sociable and specific, grounded in real details (time of day, side, rhythm, the post-match caña or coffee). Friendly and sporty, never romantic, no nicknames, no flowery poetry, never an em dash. Example tone: 'Early courts suit you both, one covers the left, the other the right, and you both stay for a coffee after.'>",
+  "headline": "<A short, warm club story, one or two complete sentences, max 180 chars, like a club host introducing two players at the bar. Sociable and specific, grounded in real details (time of day, side, rhythm, the post-match caña or coffee). Friendly and sporty, never romantic, no nicknames, no flowery poetry, never an em dash. Example tone: 'Early courts suit you both, one covers the left, the other the right, and you both stay for a coffee after.'>",
   "highlights": [
     "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). No emojis — plain, refined wording.>",
     "<second bullet, different angle, same rules>",
@@ -1449,7 +1450,7 @@ ${qaBlock(theirQA)}`;
       const text = (res.text ?? "").replace(/```json|```/g, "").trim();
       const s = text.indexOf("{"); const e = text.lastIndexOf("}");
       const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; headline?: unknown; highlights?: unknown; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
-      const headline = typeof parsed.headline === "string" ? parsed.headline.trim().slice(0, 140) : "";
+      const headline = typeof parsed.headline === "string" ? tidyHeadline(parsed.headline, 220) : "";
       if (headline) blurb = headline;
       else if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
       const highlights: string[] = Array.isArray(parsed.highlights)

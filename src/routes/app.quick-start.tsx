@@ -102,12 +102,12 @@ function QuickStart() {
     }
   }, [meQ.data, meQ.isSuccess, welcomed, tr]);
 
-  const canSubmit = firstName.trim().length > 0 && !!gender && !!level && !busy;
+  const canSubmit = firstName.trim().length > 0 && !!level && !busy;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) {
-      toast.error(tr("Add your name, gender and level", "Añade tu nombre, género y nivel", "Ajoute prénom, genre et niveau"));
+      toast.error(tr("Add your name and level", "Añade tu nombre y nivel", "Ajoute prénom et niveau"));
       return;
     }
     setBusy(true);
@@ -116,7 +116,7 @@ function QuickStart() {
         data: {
           first_name: firstName.trim(),
           level: level as (typeof PADEL_LEVELS)[number],
-          gender: gender as Gender,
+          gender: (gender || "self-describe") as Gender,
           photo_url: photoUrl,
         },
       });
@@ -187,30 +187,6 @@ function QuickStart() {
               required
               className="w-full mt-1 bg-transparent border border-[var(--ink)]/20 rounded-md h-11 px-3 text-[15px]"
             />
-          </div>
-
-          <div>
-            <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
-              {tr("I'd like to play", "Quiero jugar", "Je veux jouer")}
-            </label>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {(["woman", "man", "self-describe"] as Gender[]).map((g) => (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => setGender(g)}
-                  className={`px-3 py-2 rounded-full border text-xs uppercase tracking-widest ${
-                    gender === g
-                      ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
-                      : "border-[var(--ink)]/20 text-[var(--ink)]/84"
-                  }`}
-                >
-                  {g === "woman" && tr("Ladies", "Femenino", "Féminin")}
-                  {g === "man" && tr("Men", "Masculino", "Masculin")}
-                  {g === "self-describe" && tr("Any", "Cualquiera", "Peu importe")}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div>

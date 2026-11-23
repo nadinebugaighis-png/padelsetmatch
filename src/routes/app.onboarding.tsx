@@ -337,12 +337,12 @@ function Onboarding() {
     const legacy = interested_in;
 
     const first = validBlocks[0];
-    if (age === null || !gender || !level) {
+    if (age === null || !level) {
       throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
     }
     await upsert({
       data: {
-        first_name, age, gender, interested_in: legacy,
+        first_name, age, gender: gender || "self-describe", interested_in: legacy,
         friend_interested_in: friendAud, partner_interested_in: partnerAud,
         age_bracket_lo: (bracket ?? bracketForMidpoint(age))?.[0] ?? null,
         age_bracket_hi: (bracket ?? bracketForMidpoint(age))?.[1] ?? null,
@@ -385,7 +385,6 @@ function Onboarding() {
     ([
       !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
       age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
-      !gender ? { key: "gender", label: tr("who you'd like to play", "con quién quieres jugar", "avec qui tu veux jouer") } : null,
       null,
       null,
       age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
@@ -870,20 +869,6 @@ function Onboarding() {
                 </button>
               );
             })}
-          </div>
-        </div>
-        <div data-field="gender" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("gender")}`}>
-          <FieldLabel>{tr("I'd like to play", "Quiero jugar", "Je veux jouer")}</FieldLabel>
-          <div className="mt-1 flex flex-wrap gap-2">
-            {/* Padel categories, not identity labels; legacy "non-binary" stays visible only to players who already chose it. */}
-            {(["woman", "man", "self-describe", ...(gender === "non-binary" ? ["non-binary"] as const : [])] as Gender[]).map((g) => (
-              <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)} className={`h-9 px-4 rounded-full border text-[14px] first-letter:uppercase transition-colors ${gender === g ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]" : "border-[var(--ink)]/20 text-[var(--ink)]/88"}`}>
-                {g === "man" ? tr("Men", "Masculino", "Masculin")
-                  : g === "woman" ? tr("Ladies", "Femenino", "Féminin")
-                  : g === "self-describe" ? tr("Any", "Cualquiera", "Peu importe")
-                  : label(g)}
-              </button>
-            ))}
           </div>
         </div>
         <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>

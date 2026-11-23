@@ -8,7 +8,8 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Check, Send, Flag, Shield, UserX, Pencil, Trash2, X, Star } from "lucide-react";
+import { ArrowLeft, ArrowUp, Check, Flag, MoreHorizontal, Shield, UserX, Pencil, Trash2, X, Star } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
@@ -24,7 +25,7 @@ function ChatRoom() {
   const { matchId } = Route.useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { t, label } = useI18n();
+  const { t, lang } = useI18n();
   const tr = useTr();
   const getDetail = useServerFn(getMatchDetail);
   const send = useServerFn(sendMessage);
@@ -47,6 +48,13 @@ function ChatRoom() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
+  const [ratingOpen, setRatingOpen] = useState(false);
+  const getRatingFn = useServerFn(getMyMatchRating);
+  const ratingQ = useQuery({
+    queryKey: ["match-rating", matchId],
+    queryFn: () => getRatingFn({ data: { matchId } }),
+    enabled: !!statusQ.data && statusQ.data.count >= 2,
+  });
   const [reportReason, setReportReason] = useState<string>(REPORT_REASONS[0]);
   const [reportDetail, setReportDetail] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -100,12 +108,12 @@ function ChatRoom() {
   });
   const confirmM = useMutation({
     mutationFn: () => confirmFn({ data: { matchId } }),
-    onSuccess: () => { toast.success(tr("Marked as played ✅", "Marcado como jugado ✅", "Marqué comme joué ✅")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
+    onSuccess: () => { toast.success(tr("Marked as played", "Marcado como jugado", "Marqué comme joué")); qc.invalidateQueries({ queryKey: ["match-status", matchId] }); },
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't confirm", "No se pudo confirmar", "Impossible de confirmer")),
   });
   const noShowM = useMutation({
     mutationFn: () => noShowFn({ data: { matchId } }),
-    onSuccess: () => toast.success(tr("Reported, thanks 🙏", "Reportado, gracias 🙏", "Signalé, merci 🙏")),
+    onSuccess: () => toast.success(tr("Reported, thank you", "Reportado, gracias", "Signalé, merci")),
     onError: (e) => toast.error(e instanceof Error ? e.message : tr("Couldn't report", "No se pudo reportar", "Impossible de signaler")),
   });
   const editM = useMutation({
@@ -137,66 +145,91 @@ function ChatRoom() {
     noShowM.mutate();
   };
 
+  const played = !!statusQ.data && statusQ.data.count >= 2;
+  const waiting = !!statusQ.data?.iConfirmed && !played;
+  const hasRated = !!ratingQ.data;
+  const locale = lang === "es" ? "es-ES" : lang === "fr" ? "fr-FR" : "en-GB";
+  const dayLabel = (d: Date) => {
+    const today = new Date();
+    const y = new Date(); y.setDate(today.getDate() - 1);
+    if (d.toDateString() === today.toDateString()) return tr("Today", "Hoy", "Aujourd'hui");
+    if (d.toDateString() === y.toDateString()) return tr("Yesterday", "Ayer", "Hier");
+    return d.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
+  };
+  const GROUP_MS = 5 * 60 * 1000;
+
   return (
-    <main className="programme-page max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col text-[var(--ink)]" style={{ height: "calc(100dvh - 160px - env(safe-area-inset-bottom, 0px))" }}>
-      <div className="px-4 py-3 flex items-center gap-3 border-b border-[var(--ink)]/16">
+    <main className="programme-page chat-room max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col text-[var(--ink)]" style={{ height: "calc(100dvh - 160px - env(safe-area-inset-bottom, 0px))" }}>
+      <header className="px-3 py-2.5 flex items-center gap-3 border-b border-[var(--card-edge)]">
         <button
           type="button"
           onClick={() => {
             if (typeof window !== "undefined" && window.history.length > 1) window.history.back();
             else navigate({ to: "/app/matches" });
           }}
-          className="p-1"
-          aria-label="Back"
+          className="-ml-1 grid place-items-center w-9 h-9 rounded-full hover:bg-[var(--ink)]/6 transition"
+          aria-label={tr("Back", "Atrás", "Retour")}
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5" strokeWidth={1.6} />
         </button>
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0">
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-[var(--ink)]/8 shrink-0 ring-1 ring-[var(--card-edge)]">
           {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="text-display text-xl leading-none">{other.first_name}</div>
+          <div className="text-display text-[20px] leading-tight truncate">{other.first_name}</div>
+          <div className="mt-0.5 text-[10.5px] uppercase tracking-[0.16em] text-[var(--ink)]/70 truncate">
+            {[other.zone, playerLevel(other.level, other.level_rating, tr)].filter(Boolean).join(" · ")}
           </div>
-
-          <div className="text-[11px] uppercase tracking-widest text-[var(--ink)]/82">{other.zone} · {playerLevel(other.level, other.level_rating, tr)}</div>
         </div>
 
-        {statusQ.data && statusQ.data.count >= 2 && (
-          <MatchRatingTrigger matchId={matchId} otherName={other.first_name} />
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label={tr("More options", "Más opciones", "Plus d'options")}
+              className="relative grid place-items-center w-9 h-9 rounded-full hover:bg-[var(--ink)]/6 transition"
+            >
+              <MoreHorizontal className="w-5 h-5" strokeWidth={1.6} />
+              {played && !hasRated && <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" sideOffset={6} className="min-w-56 rounded-2xl p-1.5 bg-white text-[var(--ink)] border-[var(--card-edge)] shadow-[0_12px_32px_-12px_color-mix(in_oklab,var(--ink)_28%,transparent)]">
+            <DropdownMenuItem
+              disabled={!!statusQ.data?.iConfirmed || confirmM.isPending}
+              onSelect={() => confirmM.mutate()}
+              className="rounded-xl px-3 py-2.5 text-[14px] gap-2.5"
+            >
+              <Check className="w-4 h-4" strokeWidth={1.6} />
+              {played
+                ? tr("Played together", "Habéis jugado juntos", "Joué ensemble")
+                : waiting
+                  ? tr("Waiting for them to confirm", "Esperando su confirmación", "En attente de sa confirmation")
+                  : tr("We played a match", "Jugamos un partido", "Nous avons joué un match")}
+            </DropdownMenuItem>
+            {played && (
+              <DropdownMenuItem onSelect={() => setRatingOpen(true)} className="rounded-xl px-3 py-2.5 text-[14px] gap-2.5">
+                <Star className={`w-4 h-4 ${hasRated ? "fill-[var(--ink)]" : ""}`} strokeWidth={1.6} />
+                {hasRated ? tr("Your rating", "Tu valoración", "Ta note") : tr("Rate the match", "Valorar el partido", "Noter le match")}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem onSelect={onNoShow} className="rounded-xl px-3 py-2.5 text-[14px] gap-2.5">
+              <UserX className="w-4 h-4" strokeWidth={1.6} />
+              {tr("Report a no-show", "Reportar que no vino", "Signaler une absence")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="my-1.5 bg-[var(--card-edge)]" />
+            <DropdownMenuItem onSelect={onBlock} className="rounded-xl px-3 py-2.5 text-[14px] gap-2.5">
+              <Shield className="w-4 h-4" strokeWidth={1.6} />
+              {t("chat.block")} {other.first_name}
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setReportOpen(true)} className="rounded-xl px-3 py-2.5 text-[14px] gap-2.5 text-destructive focus:text-destructive">
+              <Flag className="w-4 h-4" strokeWidth={1.6} />
+              {t("chat.report")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </header>
 
-        <button onClick={onBlock} title={t("chat.block")} aria-label={t("chat.block")} className="p-1.5 rounded-full hover:bg-[var(--ink)]/10">
-          <Shield className="w-4 h-4" />
-        </button>
-        <button onClick={() => setReportOpen(true)} title={t("chat.report")} aria-label={t("chat.report")} className="p-1.5 rounded-full hover:bg-red-600/30">
-          <Flag className="w-4 h-4" />
-        </button>
-      </div>
-
-
-      <div className="mx-3 mt-2 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => confirmM.mutate()}
-          disabled={statusQ.data?.iConfirmed || confirmM.isPending}
-          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--ink)]/22 bg-[var(--ink)]/5 px-3 py-2 text-xs hover:bg-[var(--ink)]/10 disabled:opacity-60"
-        >
-          <Check className="w-3.5 h-3.5 text-[var(--ink)]" />
-          {statusQ.data?.iConfirmed
-            ? (statusQ.data.count >= 2 ? tr("Played together ✓", "Jugado juntos ✓", "Joué ensemble ✓") : tr("Waiting for them to confirm…", "Esperando que confirmen…", "En attente de sa confirmation…"))
-            : tr("We played a match", "Jugamos un partido", "Nous avons joué un match")}
-        </button>
-        <button
-          type="button"
-          onClick={onNoShow}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-400/30 px-3 py-2 text-xs text-red-300 hover:bg-red-500/10"
-        >
-          <UserX className="w-3.5 h-3.5" /> {tr("No-show", "No-show", "Absence")}
-        </button>
-
-      </div>
-
+      {ratingOpen && <MatchRatingPanel matchId={matchId} otherName={other.first_name} onClose={() => setRatingOpen(false)} />}
 
       {reportOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-4" onClick={() => setReportOpen(false)}>
@@ -217,80 +250,129 @@ function ChatRoom() {
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4">
         {messages.length === 0 && (
-          <div className="text-center text-sm text-[var(--ink)]/82 mt-10">
-            {t("chat.empty")}
+          <div className="mt-14 text-center">
+            <div className="text-display text-[22px] leading-tight">{tr(`Say hello to ${other.first_name}`, `Saluda a ${other.first_name}`, `Dites bonjour à ${other.first_name}`)}</div>
+            <p className="mt-1.5 text-[13px] text-[var(--ink)]/70">{tr("A good start: suggest a day and a club.", "Un buen comienzo: propón un día y un club.", "Un bon début : proposez un jour et un club.")}</p>
           </div>
         )}
-        {messages.map((m) => {
+        {messages.map((m, i) => {
           const mine = m.sender_profile_id === my_profile_id;
           const isEditing = editingId === m.id;
-          const time = new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          const at = new Date(m.created_at);
+          const prev = messages[i - 1];
+          const next = messages[i + 1];
+          const prevAt = prev ? new Date(prev.created_at) : null;
+          const nextAt = next ? new Date(next.created_at) : null;
+          const newDay = !prevAt || prevAt.toDateString() !== at.toDateString();
+          const joinsPrev = !!prev && !newDay && prev.sender_profile_id === m.sender_profile_id && at.getTime() - (prevAt as Date).getTime() < GROUP_MS;
+          const joinsNext = !!next && !!nextAt && nextAt.toDateString() === at.toDateString() && next.sender_profile_id === m.sender_profile_id && nextAt.getTime() - at.getTime() < GROUP_MS;
+          const time = at.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+          const shape = mine
+            ? `rounded-[20px] ${joinsPrev ? "rounded-tr-[6px]" : ""} ${joinsNext ? "rounded-br-[6px]" : ""}`
+            : `rounded-[20px] ${joinsPrev ? "rounded-tl-[6px]" : ""} ${joinsNext ? "rounded-bl-[6px]" : ""}`;
           return (
-            <div key={m.id} className={`group flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}>
-              {!mine && (
-                <div className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/10 shrink-0 mb-1">
-                  {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
+            <div key={m.id}>
+              {newDay && (
+                <div className="flex items-center gap-3 my-5 first:mt-2">
+                  <span className="h-px flex-1 bg-[var(--card-edge)]" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/60">{dayLabel(at)}</span>
+                  <span className="h-px flex-1 bg-[var(--card-edge)]" />
                 </div>
               )}
-              <HoldMenu
-                disabled={!mine || isEditing}
-                hint={tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")}
-                items={[
-                  { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
-                  { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); } },
-                ]}
-                className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed shadow-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm border border-[var(--ink)]" : "bg-white text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/22"}`}
-              >
-                {isEditing ? (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      const body = editingText.trim();
-                      if (body && body !== m.body) editM.mutate({ messageId: m.id, body });
-                      else { setEditingId(null); setEditingText(""); }
-                    }}
-                    className="flex flex-col gap-1.5 min-w-[180px]"
-                  >
-                    <textarea
-                      value={editingText}
-                      onChange={(e) => setEditingText(e.target.value)}
-                      className="w-full bg-[var(--paper)]/20 text-[var(--paper)] rounded-md p-1.5 text-base resize-none placeholder:text-[var(--paper)]/50 outline-none"
-                      rows={2}
-                      autoFocus
-                    />
-                    <div className="flex gap-1 justify-end">
-                      <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded hover:bg-[var(--paper)]/15" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                      <button type="submit" disabled={editM.isPending} className="p-1 rounded hover:bg-[var(--paper)]/15" aria-label={tr("Save", "Guardar", "Enregistrer")}>
-                        <Check className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <>
-                    <p className="whitespace-pre-wrap">{m.body}</p>
-                    <div className={`mt-1 flex items-center gap-1.5 text-[10px] ${mine ? "text-[var(--paper)]/70" : "text-[var(--ink)]/76"}`}>
-                      <span>{time}</span>
-                      {m.edited_at && <span>{tr("(edited)", "(editado)", "(modifié)")}</span>}
-                    </div>
-                  </>
+              <div className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"} ${joinsPrev ? "mt-[3px]" : newDay ? "" : "mt-4"}`}>
+                {!mine && (
+                  <div className="w-7 shrink-0">
+                    {!joinsNext && (
+                      <div className="w-7 h-7 rounded-full overflow-hidden bg-[var(--ink)]/8 ring-1 ring-[var(--card-edge)]">
+                        {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
+                      </div>
+                    )}
+                  </div>
                 )}
-              </HoldMenu>
+                <div className={`flex flex-col max-w-[78%] sm:max-w-[65%] ${mine ? "items-end" : "items-start"}`}>
+                  <HoldMenu
+                    disabled={!mine || isEditing}
+                    hint={tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")}
+                    items={[
+                      { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
+                      { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); } },
+                    ]}
+                    className={`chat-bubble ${mine ? "chat-bubble-mine" : "chat-bubble-theirs"} ${shape} px-4 py-[9px] text-[15px] leading-[1.45]`}
+                  >
+                    {isEditing ? (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          const body = editingText.trim();
+                          if (body && body !== m.body) editM.mutate({ messageId: m.id, body });
+                          else { setEditingId(null); setEditingText(""); }
+                        }}
+                        className="flex flex-col gap-1.5 min-w-[200px]"
+                      >
+                        <textarea
+                          value={editingText}
+                          onChange={(e) => setEditingText(e.target.value)}
+                          className="w-full bg-[var(--paper)]/15 text-[var(--paper)] rounded-xl px-2.5 py-1.5 text-base resize-none placeholder:text-[var(--paper)]/50 outline-none"
+                          rows={2}
+                          autoFocus
+                        />
+                        <div className="flex gap-1 justify-end">
+                          <button type="button" onClick={() => { setEditingId(null); setEditingText(""); }} className="p-1 rounded-full hover:bg-[var(--paper)]/15" aria-label={tr("Cancel", "Cancelar", "Annuler")}>
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                          <button type="submit" disabled={editM.isPending} className="p-1 rounded-full hover:bg-[var(--paper)]/15" aria-label={tr("Save", "Guardar", "Enregistrer")}>
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                    )}
+                  </HoldMenu>
+                  {!joinsNext && !isEditing && (
+                    <div className={`mt-1 px-1.5 text-[10px] tracking-[0.08em] text-[var(--ink)]/55 tabular-nums`}>
+                      {time}{m.edited_at ? ` · ${tr("Edited", "Editado", "Modifié")}` : ""}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           );
         })}
+        {played && !hasRated && messages.length > 0 && (
+          <div className="mt-6 text-center">
+            <button type="button" onClick={() => setRatingOpen(true)} className="text-[12px] tracking-[0.04em] text-[var(--ink)]/75 underline decoration-[var(--gold)] decoration-1 underline-offset-4 hover:text-[var(--ink)]">
+              {tr(`How was your match with ${other.first_name}?`, `¿Qué tal el partido con ${other.first_name}?`, `Comment s'est passé le match avec ${other.first_name} ?`)}
+            </button>
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 
       <form
         onSubmit={(e) => { e.preventDefault(); if (text.trim()) sendM.mutate(text.trim()); }}
-        className="px-3 py-3 border-t border-[var(--ink)]/16 flex gap-2"
+        className="px-3 pt-2 pb-3"
       >
-        <Input value={text} onChange={(e) => setText(e.target.value)} placeholder={messages.length === 0 ? t("chat.placeholder") : ""} />
-        <Button type="submit" size="icon" disabled={!text.trim() || sendM.isPending} className="bg-[var(--ink)] text-[var(--paper)] hover:brightness-110"><Send className="w-4 h-4" /></Button>
+        <div className="flex items-center gap-1.5 rounded-full bg-white border border-[var(--card-edge)] pl-4 pr-1.5 py-1.5 shadow-[0_6px_20px_-12px_color-mix(in_oklab,var(--ink)_30%,transparent)] focus-within:border-[var(--ink)]/30 transition-colors">
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={tr("Message", "Mensaje", "Message")}
+            aria-label={tr("Message", "Mensaje", "Message")}
+            className="flex-1 min-w-0 bg-transparent text-[16px] leading-6 py-1 !outline-none !ring-0 !shadow-none !border-0 placeholder:text-[var(--ink)]/45"
+            enterKeyHint="send"
+          />
+          <button
+            type="submit"
+            disabled={!text.trim() || sendM.isPending}
+            aria-label={tr("Send", "Enviar", "Envoyer")}
+            className="grid place-items-center w-9 h-9 rounded-full bg-[var(--ink)] text-[var(--paper)] transition disabled:opacity-25 hover:brightness-110"
+          >
+            <ArrowUp className="w-4 h-4" strokeWidth={2} />
+          </button>
+        </div>
       </form>
     </main>
   );
@@ -298,36 +380,6 @@ function ChatRoom() {
 
 const RATING_TAGS_EN = ["Great vibe", "Skill match", "Would play again", "Punctual", "Communicative", "Fun off-court", "Mismatched level", "Low energy"];
 const RATING_TAGS_ES = ["Buen rollo", "Nivel similar", "Repetiría", "Puntual", "Comunicativo", "Divertido fuera de pista", "Nivel distinto", "Poca energía"];
-
-function MatchRatingTrigger({ matchId, otherName }: { matchId: string; otherName: string }) {
-  const tr = useTr();
-  const getRatingFn = useServerFn(getMyMatchRating);
-  const ratingQ = useQuery({
-    queryKey: ["match-rating", matchId],
-    queryFn: () => getRatingFn({ data: { matchId } }),
-  });
-  const [open, setOpen] = useState(false);
-  const hasRated = !!ratingQ.data;
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        title={hasRated ? tr("You rated this match", "Valoraste este partido", "Tu as noté ce match") : tr(`Rate your match with ${otherName}`, `Valora tu partido con ${otherName}`, `Note ton match avec ${otherName}`)}
-        aria-label={hasRated ? tr("You rated this match", "Valoraste este partido", "Tu as noté ce match") : tr(`Rate your match with ${otherName}`, `Valora tu partido con ${otherName}`, `Note ton match avec ${otherName}`)}
-        className="relative p-1.5 rounded-full hover:bg-[var(--ink)]/10 transition"
-      >
-        <Star className={`w-4 h-4 ${hasRated ? "text-[var(--ink)] fill-[var(--ink)]" : "text-[var(--ink)]"}`} />
-        {!hasRated && <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--ink)]" />}
-      </button>
-
-      {open && (
-        <MatchRatingPanel matchId={matchId} otherName={otherName} onClose={() => setOpen(false)} />
-      )}
-    </>
-  );
-}
 
 function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; otherName: string; onClose: () => void }) {
   const qc = useQueryClient();
@@ -353,7 +405,7 @@ function MatchRatingPanel({ matchId, otherName, onClose }: { matchId: string; ot
   const submitM = useMutation({
     mutationFn: () => submitFn({ data: { matchId, stars, tags, comment: comment.trim() || undefined } }),
     onSuccess: () => {
-      toast.success(tr("Thanks 🙏", "Gracias 🙏", "Merci 🙏"));
+      toast.success(tr("Thank you", "Gracias", "Merci"));
       qc.invalidateQueries({ queryKey: ["match-rating", matchId] });
       onClose();
     },

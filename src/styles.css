@@ -506,3 +506,16 @@ html.native-shell [role="dialog"][id^="radix-"]:not([class*="inset-y-0"]),
 html.native-shell [role="alertdialog"][id^="radix-"] {
   max-height: calc(100% - 2.5rem);
 }
+
+/* Private player chat: calm club-style bubbles */
+.chat-bubble-mine {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 1px 1px color-mix(in oklab, var(--ink) 18%, transparent);
+}
+.chat-bubble-theirs {
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--card-edge);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 6%, transparent);
+}

@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { HoldMenu } from "@/components/HoldMenu";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
@@ -398,25 +399,18 @@ function ConnectPage() {
                                 </div>
                               </div>
                             ) : cMine ? (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <button type="button" className="text-left w-full">
-                                    <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
-                                    <span className="text-[var(--ink)]/84 whitespace-pre-wrap break-words">{c.body}</span>
-                                  </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start" className="min-w-[140px]">
-                                  <DropdownMenuItem onSelect={() => setEditingComment({ id: c.id, body: c.body })}>
-                                    <Pencil className="w-3.5 h-3.5 mr-2" />{tr("Edit", "Editar", "Modifier")}
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    className="text-destructive focus:text-destructive"
-                                    onSelect={() => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); }}
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5 mr-2" />{tr("Delete", "Eliminar", "Supprimer")}
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                              <HoldMenu
+                                align="start"
+                                className="text-left w-full rounded-md"
+                                hint={tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")}
+                                items={[
+                                  { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => setEditingComment({ id: c.id, body: c.body }) },
+                                  { label: tr("Delete", "Eliminar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); } },
+                                ]}
+                              >
+                                <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
+                                <span className="text-[var(--ink)]/84 whitespace-pre-wrap break-words">{c.body}</span>
+                              </HoldMenu>
                             ) : (
                               <div className="flex items-start gap-1">
                                 <p className="flex-1 min-w-0">

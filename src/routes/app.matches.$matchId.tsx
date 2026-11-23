@@ -12,6 +12,7 @@ import { ArrowLeft, Check, Send, Flag, Shield, UserX, Pencil, Trash2, X, Star } 
 import { toast } from "sonner";
 import { useI18n, useTr } from "@/lib/i18n";
 import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
+import { HoldMenu } from "@/components/HoldMenu";
 
 
 export const Route = createFileRoute("/app/matches/$matchId")({
@@ -233,27 +234,15 @@ function ChatRoom() {
                   {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
                 </div>
               )}
-              {mine && !isEditing && (
-                <div className="flex gap-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity mb-1">
-                  <button
-                    type="button"
-                    onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                    className="p-1.5 rounded-full bg-[var(--ink)]/10 hover:bg-[var(--ink)]/20 text-[var(--ink)]"
-                    aria-label={tr("Edit", "Editar", "Modifier")}
-                  >
-                    <Pencil className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); }}
-                    className="p-1.5 rounded-full bg-[var(--ink)]/10 hover:bg-red-500/20 text-[var(--ink)] hover:text-red-400"
-                    aria-label={tr("Delete", "Eliminar", "Supprimer")}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
-              <div className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed shadow-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm border border-[var(--ink)]" : "bg-white text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/22"}`}>
+              <HoldMenu
+                disabled={!mine || isEditing}
+                hint={tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")}
+                items={[
+                  { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
+                  { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); } },
+                ]}
+                className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed shadow-sm ${mine ? "bg-[var(--ink)] text-[var(--paper)] rounded-br-sm border border-[var(--ink)]" : "bg-white text-[var(--ink)] rounded-bl-sm border border-[var(--ink)]/22"}`}
+              >
                 {isEditing ? (
                   <form
                     onSubmit={(e) => {
@@ -289,7 +278,7 @@ function ChatRoom() {
                     </div>
                   </>
                 )}
-              </div>
+              </HoldMenu>
             </div>
           );
         })}

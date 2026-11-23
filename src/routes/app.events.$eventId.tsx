@@ -1,6 +1,7 @@
 import { askForPushAfterMatch } from "@/lib/ask-push";
 import { useEffect, useRef, useState } from "react";
 import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
+import { HoldMenu } from "@/components/HoldMenu";
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { useServerFn } from "@tanstack/react-start";
@@ -963,7 +964,20 @@ function EventDetail() {
               return (
                 <div key={m.id} className={`group flex w-full ${mine ? "justify-end" : "justify-start"}`}>
                   <div className={`flex min-w-0 flex-col ${mine ? "items-end" : "items-start"}`}>
-                    <div
+                    <HoldMenu
+                      disabled={isEditing || (!mine && !canModerate)}
+                      align={mine ? "end" : "start"}
+                      hint={mine
+                        ? tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")
+                        : tr("Press and hold to delete", "Mantén pulsado para borrar", "Appui long pour supprimer")}
+                      items={mine
+                        ? [
+                            { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="h-4 w-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
+                            { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="h-4 w-4" />, destructive: true, onSelect: () => onDeleteMessage(m.id) },
+                          ]
+                        : [
+                            { label: tr("Delete message", "Borrar mensaje", "Supprimer le message"), icon: <Trash2 className="h-4 w-4" />, destructive: true, onSelect: () => onDeleteMessage(m.id) },
+                          ]}
                       className={`${mine ? "max-w-[min(100%,18rem)]" : "max-w-[min(100%,19rem)]"} min-w-0 rounded-2xl px-3 py-2 text-base ${
                       mine
                         ? "bg-[var(--grass)]/30 text-[var(--ink)]"
@@ -1003,39 +1017,7 @@ function EventDetail() {
                           {m.edited_at && <span className="ml-1.5 text-[10px] text-[var(--ink)]/76">{tr("(edited)", "(editado)", "(modifié)")}</span>}
                         </div>
                       )}
-                    </div>
-                    {mine && !isEditing && (
-                      <div className="mt-1 flex gap-1.5 pr-1">
-                        <button
-                          type="button"
-                          onClick={() => { setEditingId(m.id); setEditingText(m.body); }}
-                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-[var(--ink)]/10"
-                          aria-label={tr("Edit", "Editar", "Modifier")}
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onDeleteMessage(m.id)}
-                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-red-500/20 hover:text-red-500"
-                          aria-label={tr("Delete", "Borrar", "Supprimer")}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
-                      </div>
-                    )}
-                    {canModerate && !isEditing && (
-                      <div className="mt-1 flex gap-1.5 pl-1">
-                        <button
-                          type="button"
-                          onClick={() => onDeleteMessage(m.id)}
-                          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ink)]/5 text-[var(--ink)] hover:bg-red-500/20 hover:text-red-500"
-                          aria-label={tr("Delete message", "Borrar mensaje", "Supprimer le message")}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
-                      </div>
-                    )}
+                    </HoldMenu>
 
                   </div>
                 </div>

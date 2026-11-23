@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDirectory, communityOf, newCommunityLocation } from "./communities";
+import { buildDirectory, communityOf, isCityOnly, newCommunityLocation } from "./communities";
 
 const p = (...locations: string[]) => ({ locations });
 const find = (d: ReturnType<typeof buildDirectory>, label: string) =>
@@ -70,5 +70,23 @@ describe("Padelodontics", () => {
     const p = d.mine.find((c) => c.label === "Padelodontics");
     expect(p?.members).toBe(1);
     expect(d.mine.map((c) => c.label)).toEqual(["Chelsea & Battersea", "Padelodontics"]);
+  });
+});
+
+describe("city-only communities", () => {
+  it("treats a city whose players chose no neighbourhood as one entry", () => {
+    const d = buildDirectory([p("United States | Seattle | "), p("United States | Palm Beach | Delray Beach")], []);
+    const us = d.countries.find((c) => c.country === "United States")!;
+    const seattle = us.cities.find((c) => c.city === "Seattle")!;
+    const palm = us.cities.find((c) => c.city === "Palm Beach")!;
+    expect(isCityOnly(seattle)).toBe(true);
+    expect(isCityOnly(palm)).toBe(false);
+  });
+
+  it("folds Dubai neighbourhoods into one Dubai community", () => {
+    const d = buildDirectory([p("United Arab Emirates | Dubai | "), p("United Arab Emirates | Dubai | Arabian Ranches")], []);
+    const dubai = d.countries.find((c) => c.country === "United Arab Emirates")!.cities[0]!;
+    expect(isCityOnly(dubai)).toBe(true);
+    expect(dubai.communities[0]!.members).toBe(2);
   });
 });

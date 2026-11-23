@@ -157,6 +157,9 @@ export function buildDirectory(members: Member[], myLocations: string[] | null |
   return { mine: myParsed.map((p) => toCommunity(p.key)), countries, total: members.length };
 }
 
+/** A city that is one whole-city community (players chose no neighbourhood), listed once without a repeated heading. */
+export const isCityOnly = (ci: DirectoryCity) => ci.communities.length === 1 && !ci.communities[0]!.area;
+
 /** Validate and normalise a place typed into "Start a community". */
 export function newCommunityLocation(country: string, city: string, area: string): string | null {
   const c = country.trim(), ci = city.trim(), a = area.trim();

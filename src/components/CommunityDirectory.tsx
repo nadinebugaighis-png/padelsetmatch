@@ -2,7 +2,7 @@ import { createContext, useContext, useRef, useState, type ReactNode } from "rea
 import { Check, ChevronRight, Mail, MessageCircle, Plus, Share } from "lucide-react";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "sonner";
-import { communityShareUrl, type Community, type Directory } from "@/lib/communities";
+import { communityShareUrl, isCityOnly, type Community, type Directory } from "@/lib/communities";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { useTr } from "@/lib/i18n";
 
@@ -127,8 +127,10 @@ export function useCommunityShare() {
 /** Classes that stop the phone's own text-selection menu on a long press. */
 export const holdable = "select-none [-webkit-touch-callout:none]";
 
-export function CommunityRow({ c, onOpen, onJoin, joining, current }: {
+export function CommunityRow({ c, label, onOpen, onJoin, joining, current }: {
   c: Community;
+  /** Display name when it should differ from the community's own name. */
+  label?: string;
   onOpen: (c: Community) => void;
   onJoin?: (c: Community) => void;
   joining?: boolean;
@@ -143,7 +145,7 @@ export function CommunityRow({ c, onOpen, onJoin, joining, current }: {
         className={`group min-w-0 flex-1 flex items-center gap-3 px-4 sm:px-5 py-3.5 text-left transition active:bg-[var(--ink)]/[0.04] hover:bg-[var(--ink)]/[0.02] ${holdable}`}>
         <CommunitySeal logo={c.logo} />
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">{c.label}</span>
+          <span className="block truncate text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">{label ?? c.label}</span>
           <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">
             {members(c.members)}
             {current && <> · {tr("Viewing", "Viendo", "Affichée")}</>}
@@ -186,7 +188,7 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
           <section key={co.country}>
             <h3 className={smallCaps}>{co.country}</h3>
             <div className="mt-3 space-y-5">
-              {co.cities.map((ci) => (
+              {co.cities.filter((ci) => !isCityOnly(ci)).map((ci) => (
                 <div key={ci.city}>
                   <div className="flex items-baseline justify-between gap-3">
                     <h4 className="text-serif text-[20px] sm:text-[22px] leading-tight text-[var(--ink)]">{ci.city}</h4>
@@ -198,11 +200,20 @@ export function CommunityDirectoryList({ directory, onOpen, onJoin, joiningKey, 
                   </div>
                   <ul className="mt-2 overflow-hidden rounded-2xl card-pop divide-y divide-[var(--ink)]/[0.07]">
                     {ci.communities.map((c) => (
-                      <CommunityRow key={c.key} c={c} onOpen={onOpen} onJoin={onJoin} joining={joiningKey === c.key} />
+                      <CommunityRow key={c.key} c={c} label={c.area ? undefined : tr(`All of ${c.city}`, `Todo ${c.city}`, `Tout ${c.city}`)}
+                        onOpen={onOpen} onJoin={onJoin} joining={joiningKey === c.key} />
                     ))}
                   </ul>
                 </div>
               ))}
+              {/* Cities whose players chose no neighbourhood: one row each, no repeated heading. */}
+              {co.cities.some(isCityOnly) && (
+                <ul className="overflow-hidden rounded-2xl card-pop divide-y divide-[var(--ink)]/[0.07]">
+                  {co.cities.filter(isCityOnly).map((ci) => (
+                    <CommunityRow key={ci.communities[0]!.key} c={ci.communities[0]!} onOpen={onOpen} onJoin={onJoin} joining={joiningKey === ci.communities[0]!.key} />
+                  ))}
+                </ul>
+              )}
             </div>
           </section>
         ))}

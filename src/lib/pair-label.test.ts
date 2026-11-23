@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { offCourtScore, pairLabel } from "./pair-label";
 
 describe("pairLabel", () => {
-  it("strong on court, lighter socially is Court partners", () => {
+  it("strong on court, lighter socially is Strong on court", () => {
     expect(pairLabel(88, 64)).toBe("court");
   });
-  it("strong socially, lighter on court is Kindred spirits", () => {
+  it("strong socially, lighter on court is Great company", () => {
     expect(pairLabel(66, 92)).toBe("kindred");
   });
   it("both scores high is The full set", () => {

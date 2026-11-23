@@ -1396,15 +1396,14 @@ RESPECT & TONE RULES (very important):
 - Never compare one person's life situation to the other's in a way that could feel like a value judgment. Do NOT say things like "unlike them, you are single / have no kids / are not married / don't have a family". Never imply someone's life is lesser, emptier, behind, or missing something.
 - Life-stage or lifestyle topics (relationship status, kids, family, religion, income, career stage, living situation, age gap) should generally NOT be mentioned. Only mention them if BOTH people clearly signalled them AND it directly affects whether they can play padel together or hang out (e.g. very different available time slots). Frame it neutrally as "your available time slots differ" — never as one being better than the other.
 - Do not moralize about drinking, smoking, partying, dating history, body, appearance, career choices, or income.
-- Address the reader as "you two" — never single out one person as the problem.
+- Address the reader plainly as "you both" or "both of you" (never "you two") and never single out one person as the problem.
 - BANNED words and phrasings: "friction", "clash", "clashing", "conflict", "mismatch" (as a label), "incompatible", "problem", "issue", "red flag", "warning", "sadly", "unfortunately", "shame", "wasted", "behind", "missing out". Use gentle phrasing like "worth being aware of", "something to check together", "differs from yours", "keep in mind".
 - Also avoid empty praise: "wonderful", "amazing", "great connection", "click", "beautiful".
 
 VOICE — FUN, PUNCHY, DISTINCTIVE (very important):
 - Write like a witty padel commentator or a sharp club captain, not a therapist or a dating app. Short, vivid, a little playful.
 - Use padel imagery: the glass, the bandeja, the vibora, lobs, the net, deuce, golden point, the post-match caña, tapas, early courts, floodlights.
-- Give the pair a quick on-court identity when the data supports it, e.g. "The Wall and the Hammer", "Sunrise Grinders", "Tapas-First Tacticians". Vary it every time — never reuse stock phrases.
-- NEVER use romantic or dating language: no "chemistry", "click", "spark", "match made", "soulmate", "perfect pair", "connection", "love".
+- NEVER use romantic or dating language: no "chemistry", "click", "spark", "match made", "soulmate", "perfect pair", "connection", "love", "you two", "kindred", "duo", "together forever". Talk about padel and the post-match social, like a club captain would.
 - Every message must feel different from other pairs: lead with the most specific, surprising shared detail, not the generic one.
 
 Return ONLY valid JSON with this exact shape:
@@ -1413,7 +1412,7 @@ Return ONLY valid JSON with this exact shape:
     "padel": <0-100 integer — on-court fit: level, style, intensity, availability, reliability>,
     "personality": <0-100 integer — off-court fit: values, humor, social energy, communication, shared interests>${extraSubs.length ? ", " + extraSubs.map((k) => `"${k}": <0-100 integer>`).join(", ") : ""}
   },
-  "headline": "<ONE punchy line addressed to 'you two'. Max 80 chars. Ideally opens with a playful duo nickname grounded in the data, then the core reason. Example tone: 'Sunrise grinders: both on court by 8 and allergic to giving up a point.' No filler.>",
+  "headline": "<ONE plain, factual padel line. Max 70 chars. No nicknames, no poetry, nothing that could read as romantic. Example tone: 'Both play early, both like long rallies.' No filler.>",
   "highlights": [
     "<short concrete bullet, max 70 chars, referencing a REAL detail from their profiles (level, side, availability, a specific Q&A answer, a shared interest). No emojis — plain, refined wording.>",
     "<second bullet, different angle, same rules>",

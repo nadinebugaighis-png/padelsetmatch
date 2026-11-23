@@ -792,7 +792,6 @@ function Onboarding() {
         <div data-field="first_name" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("first_name")}`}>
           <FieldLabel htmlFor="ob-first-name">{tr("Name players see", "Nombre que verán", "Nom affiché")}</FieldLabel>
           <input id="ob-first-name" value={first_name} onChange={(e) => setFirstName(e.target.value)} placeholder={t("ob.firstNamePh")} className="w-full bg-transparent text-[17px] text-[var(--ink)] placeholder:text-[var(--ink)]/30 focus:outline-none" maxLength={40} />
-          <p className="mt-1 text-[11px] text-[var(--ink)]/70">{tr("Add an initial or surname so friends can tell you apart.", "Añade una inicial o apellido para que te reconozcan.", "Ajoute une initiale ou ton nom pour qu'on te reconnaisse.")}</p>
         </div>
         <div className="py-3 border-b border-[var(--ink)]/18">
           <FieldLabel htmlFor="ob-bio">{tr("Short bio", "Bio corta", "Bio courte")}</FieldLabel>

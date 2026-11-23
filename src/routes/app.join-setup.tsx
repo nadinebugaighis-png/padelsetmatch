@@ -119,7 +119,7 @@ function JoinSetupPage() {
 
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div>
-            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("First name", "Nombre", "Prénom")}</label>
+            <label className="text-xs uppercase tracking-widest text-[var(--cream)]/60">{tr("Name players see", "Nombre que verán", "Nom affiché")}</label>
             <input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}

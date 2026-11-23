@@ -63,7 +63,7 @@ function QuickStart() {
         const avatar = (meta.avatar_url || meta.picture) as string | undefined;
         let touched = false;
         if (!me?.first_name && (givenName || fullName)) {
-          setFirstName((cur) => cur || (givenName || fullName!.split(" ")[0]));
+          setFirstName((cur) => cur || (fullName || givenName!));
           touched = true;
         }
         if (!me?.photo_url && avatar) {
@@ -176,7 +176,7 @@ function QuickStart() {
 
           <div>
             <label className="text-[10px] uppercase tracking-[0.25em] text-[var(--ink)]/78">
-              {tr("First name", "Nombre", "Prénom")}
+              {tr("Name players see", "Nombre que verán", "Nom affiché")}
             </label>
             <input
               value={firstName}

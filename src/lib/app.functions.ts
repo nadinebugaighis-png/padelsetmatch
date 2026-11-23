@@ -1452,22 +1452,22 @@ ${qaBlock(theirQA)}`;
       const parsed = JSON.parse(text.slice(s, e + 1)) as { score?: number; blurb?: string; headline?: unknown; highlights?: unknown; reasons?: unknown; friction?: unknown; watch_out?: unknown; sub_scores?: unknown; padel_analysis?: unknown; personality_analysis?: unknown };
       const headline = typeof parsed.headline === "string" ? tidyHeadline(parsed.headline, 220) : "";
       if (headline) blurb = headline;
-      else if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = parsed.blurb.trim().slice(0, 280);
+      else if (typeof parsed.blurb === "string" && parsed.blurb.trim().length > 0) blurb = tidyHeadline(parsed.blurb, 280);
       const highlights: string[] = Array.isArray(parsed.highlights)
         ? (parsed.highlights as unknown[])
             .filter((r): r is string => typeof r === "string")
-            .map((r) => r.trim().slice(0, 100))
+            .map((r) => tidyHeadline(r, 120))
             .filter((r) => r.length > 0)
             .slice(0, 3)
         : [];
       // Keep legacy `reasons` in sync so anything reading it still has content.
       if (highlights.length > 0) reasons = highlights;
       else if (Array.isArray(parsed.reasons)) {
-        reasons = (parsed.reasons as unknown[]).filter((r): r is string => typeof r === "string").map((r) => r.trim().slice(0, 120)).filter((r) => r.length > 0).slice(0, 3);
+        reasons = (parsed.reasons as unknown[]).filter((r): r is string => typeof r === "string").map((r) => tidyHeadline(r, 120)).filter((r) => r.length > 0).slice(0, 3);
       }
       const watchRaw = typeof parsed.watch_out === "string" ? parsed.watch_out : typeof parsed.friction === "string" ? parsed.friction : "";
       if (watchRaw.trim().length > 0 && watchRaw.trim().toLowerCase() !== "null") {
-        friction = watchRaw.trim().slice(0, 160);
+        friction = tidyHeadline(watchRaw, 180);
       }
       const cleanSub: Record<string, number> = {};
       if (parsed.sub_scores && typeof parsed.sub_scores === "object") {

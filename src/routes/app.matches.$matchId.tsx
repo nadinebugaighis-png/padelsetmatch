@@ -270,8 +270,8 @@ function ChatRoom() {
           const joinsNext = !!next && !!nextAt && nextAt.toDateString() === at.toDateString() && next.sender_profile_id === m.sender_profile_id && nextAt.getTime() - at.getTime() < GROUP_MS;
           const time = at.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
           const shape = mine
-            ? `rounded-[20px] ${joinsPrev ? "rounded-tr-[6px]" : ""} ${joinsNext ? "rounded-br-[6px]" : ""}`
-            : `rounded-[20px] ${joinsPrev ? "rounded-tl-[6px]" : ""} ${joinsNext ? "rounded-bl-[6px]" : ""}`;
+            ? `rounded-2xl ${joinsPrev ? "rounded-tr-md" : ""} ${joinsNext ? "rounded-br-md" : ""}`
+            : `rounded-2xl ${joinsPrev ? "rounded-tl-md" : ""} ${joinsNext ? "rounded-bl-md" : ""}`;
           return (
             <div key={m.id}>
               {newDay && (
@@ -290,7 +290,7 @@ function ChatRoom() {
                       { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
                       { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); } },
                     ]}
-                    className={`chat-bubble ${mine ? "chat-bubble-mine" : "chat-bubble-theirs"} ${shape} px-4 py-[9px] text-[15px] leading-[1.45]`}
+                    className={`chat-bubble ${mine ? "chat-bubble-mine" : "chat-bubble-theirs"} ${shape} px-3.5 py-2 text-base leading-snug`}
                   >
                     {isEditing ? (
                       <form
@@ -319,14 +319,14 @@ function ChatRoom() {
                         </div>
                       </form>
                     ) : (
-                      <p className="whitespace-pre-wrap break-words">{m.body}</p>
+                      <p className="whitespace-pre-wrap break-words">
+                        {m.body}
+                        <span className="float-right ml-3 mt-[0.55em] translate-y-[2px] text-[11px] leading-none text-[var(--ink)]/55 tabular-nums">
+                          {m.edited_at ? `${tr("Edited", "Editado", "Modifié")} · ` : ""}{time}
+                        </span>
+                      </p>
                     )}
                   </HoldMenu>
-                  {!joinsNext && !isEditing && (
-                    <div className={`mt-1 px-1.5 text-[10px] tracking-[0.08em] text-[var(--ink)]/55 tabular-nums`}>
-                      {time}{m.edited_at ? ` · ${tr("Edited", "Editado", "Modifié")}` : ""}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

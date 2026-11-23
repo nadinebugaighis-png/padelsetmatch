@@ -40,9 +40,9 @@ export function MemberGuide() {
     {
       title: t("shell.tab.play"),
       body: tr(
-        "Games at your own clubs and neighbourhood, nothing across town. Join in one tap or create your own, then add it to your calendar.",
-        "Partidos en tus clubes y tu zona, nada al otro lado de la ciudad. Únete con un toque o crea el tuyo, y añádelo a tu calendario.",
-        "Des matchs dans tes clubs et ton quartier, rien à l'autre bout de la ville. Rejoins en un geste ou crée le tien, puis ajoute-le à ton calendrier.",
+        "Games in your neighbourhood and your own clubs, nothing across town. Join a match in one tap or create your own.",
+        "Partidos en tu zona y tus clubes, nada al otro lado de la ciudad. Únete a un partido con un toque o crea el tuyo.",
+        "Des matchs dans ton quartier et tes clubs, rien à l'autre bout de la ville. Rejoins un match en un geste ou crée le tien.",
       ),
     },
     {

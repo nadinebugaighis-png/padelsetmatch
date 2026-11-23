@@ -666,11 +666,9 @@ function AuthFooter() {
   return (
     <footer className="mt-auto w-full max-w-[400px] pt-14 text-center sm:mt-10 sm:pt-0">
       <div className="native-hide">
-        <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--ink)]/60">
-          <span className="h-px flex-1 bg-[var(--ink)]/12" aria-hidden />
-          <span>{tr("Get the app", "Descarga la app", "Télécharge l’app")}</span>
-          <span className="h-px flex-1 bg-[var(--ink)]/12" aria-hidden />
-        </div>
+        <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--ink)]/60">
+          {tr("Get the app", "Descarga la app", "Télécharge l’app")}
+        </p>
         <div className="mt-4 flex items-center justify-center gap-3">
           <AppStoreBadge className="[&_img]:!h-8" />
           <GooglePlayBadge className="[&_img]:!h-8" />

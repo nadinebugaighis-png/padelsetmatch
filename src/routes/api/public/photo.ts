@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { thumbKey, THUMB_BUCKET } from "@/lib/photo-thumbs";
 
 // Resized player photos. The caller must pass the exact photo address saved on
 // a current, eligible player profile; anything else is refused.
@@ -7,6 +8,11 @@ import { createFileRoute } from "@tanstack/react-router";
 // signed link) so each photo keeps one stable address. Phones can then keep it
 // on the device and show it instantly next time. A new photo always gets a new
 // address, so replaced photos never linger.
+//
+// Each size is made once and kept in the private photo-thumbs store, so later
+// visitors get the small picture straight away instead of waiting for the
+// original (some are 15 MB+) to be resized again. The privacy check still runs
+// on every request, alongside the lookup, before any bytes are returned.
 const WIDTHS = new Set([240, 480, 800]);
 const PREFIX = "/storage/v1/object/sign/padel-photos/";
 const DEVICE_CACHE = "private, max-age=604800"; // one week on the viewer's device
@@ -36,25 +42,43 @@ export const Route = createFileRoute("/api/public/photo")({
             .limit(1).maybeSingle();
           return !error && !!data;
         };
-        let allowed = await eligibleOwner("photo_url", raw);
-        if (!allowed) {
+        const isAllowed = async () => {
+          if (await eligibleOwner("photo_url", raw)) return true;
           // Kit photos live on their own rows; the item must still belong to an
           // eligible player before its picture can be served.
           const { data: item, error: gearError } = await supabaseAdmin.from("profile_gear")
             .select("profile_id").eq("image_url", raw).limit(1).maybeSingle();
-          if (!gearError && item?.profile_id) allowed = await eligibleOwner("id", item.profile_id);
-        }
+          return !gearError && !!item?.profile_id && (await eligibleOwner("id", item.profile_id));
+        };
+        const thumbs = supabaseAdmin.storage.from(THUMB_BUCKET);
+        const key = thumbKey(path, w);
+        const [allowed, kept] = await Promise.all([
+          isAllowed(),
+          thumbs.download(key).then((r) => r.data ?? null, () => null),
+        ]);
         if (!allowed) return new Response("Photo unavailable", { status: 404, headers: { "Cache-Control": "no-store" } });
+        if (kept) {
+          return new Response(kept, {
+            status: 200,
+            headers: { "Content-Type": kept.type || "image/webp", "Cache-Control": DEVICE_CACHE, "Content-Length": String(kept.size) },
+          });
+        }
         const { data } = await supabaseAdmin.storage
           .from("padel-photos")
           .createSignedUrl(path, 60 * 10, { transform: { width: w, height: Math.round((w * 4) / 3), resize: "cover", quality: 72 } });
-        let upstream = data?.signedUrl ? await fetch(data.signedUrl) : null;
+        const resized = data?.signedUrl ? await fetch(data.signedUrl, { headers: { Accept: "image/webp,image/*" } }) : null;
+        if (resized?.ok) {
+          const type = resized.headers.get("content-type") ?? "image/jpeg";
+          const bytes = await resized.arrayBuffer();
+          // Keep this size for the next visitor; a failed save just means the
+          // next request resizes again.
+          await thumbs.upload(key, bytes, { contentType: type, upsert: true, cacheControl: "604800" }).catch(() => null);
+          return new Response(bytes, { status: 200, headers: { "Content-Type": type, "Cache-Control": DEVICE_CACHE } });
+        }
         // If resizing is unavailable, serve the original through a fresh
         // server-signed link, never by replaying the caller's saved link.
-        if (!upstream?.ok) {
-          const { data: plain } = await supabaseAdmin.storage.from("padel-photos").createSignedUrl(path, 60 * 10);
-          upstream = plain?.signedUrl ? await fetch(plain.signedUrl) : null;
-        }
+        const { data: plain } = await supabaseAdmin.storage.from("padel-photos").createSignedUrl(path, 60 * 10);
+        const upstream = plain?.signedUrl ? await fetch(plain.signedUrl) : null;
         if (!upstream?.ok || !upstream.body) return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
         const headers = new Headers({
           "Content-Type": upstream.headers.get("content-type") ?? "image/jpeg",
@@ -62,8 +86,6 @@ export const Route = createFileRoute("/api/public/photo")({
         });
         const len = upstream.headers.get("content-length");
         if (len) headers.set("Content-Length", len);
-        const etag = upstream.headers.get("etag");
-        if (etag) headers.set("ETag", etag);
         return new Response(upstream.body, { status: 200, headers });
       },
     },

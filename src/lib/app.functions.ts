@@ -930,16 +930,16 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     return completeAccountDeletion({
       removePhotos: async () => {
-        const bucket = supabaseAdmin.storage.from("padel-photos");
-        // Photos and gear uploads belong to the authenticated user's folder.
-        const removeFolder = async (folder: string): Promise<void> => {
+        // Photos, gear uploads and their small copies sit in the authenticated
+        // user's folder in each store.
+        const removeFolder = async (folder: string, bucket = supabaseAdmin.storage.from("padel-photos")): Promise<void> => {
           while (true) {
             const { data: files, error } = await bucket.list(folder, { limit: 100 });
             if (error) throw new Error("Couldn't remove your photos. Please retry deletion.");
             if (!files?.length) return;
             const paths: string[] = [];
             for (const file of files) {
-              if (!file.id) await removeFolder(`${folder}/${file.name}`);
+              if (!file.id) await removeFolder(`${folder}/${file.name}`, bucket);
               else paths.push(`${folder}/${file.name}`);
             }
             if (!paths.length) return;
@@ -948,6 +948,8 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
           }
         };
         await removeFolder(context.userId);
+        const { THUMB_BUCKET } = await import("./photo-thumbs");
+        await removeFolder(context.userId, supabaseAdmin.storage.from(THUMB_BUCKET));
       },
       removeProfile: async () => {
         const { error } = await context.supabase.rpc("delete_my_account_data" as never, {} as never);

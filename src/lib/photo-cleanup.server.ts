@@ -1,3 +1,5 @@
+import { THUMB_BUCKET, thumbKeys } from "./photo-thumbs";
+
 const SIGN_PREFIX = "/storage/v1/object/sign/padel-photos/";
 const YEAR = 60 * 60 * 24 * 365;
 
@@ -22,6 +24,14 @@ export async function removeWithdrawnPhoto(url: string | null | undefined, owner
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { error } = await supabaseAdmin.storage.from("padel-photos").remove([path]);
   if (error) throw new Error("Photo was withdrawn, but file cleanup needs a retry.");
+  await removeThumbs(path);
+}
+
+/** Delete the ready-made small copies of a photo that has been moved or removed. */
+async function removeThumbs(path: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin.storage.from(THUMB_BUCKET).remove(thumbKeys(path));
+  if (error) throw new Error("Photo was withdrawn, but file cleanup needs a retry.");
 }
 
 /**
@@ -41,7 +51,10 @@ export async function rotateOwnedPhotoLinks(ownerUserId: string, profileId: stri
     const { error: moveErr } = await bucket.move(path, nextPath);
     if (moveErr) return;
     const { data: signed } = await bucket.createSignedUrl(nextPath, YEAR);
-    if (signed?.signedUrl && (await save(signed.signedUrl))) return;
+    if (signed?.signedUrl && (await save(signed.signedUrl))) {
+      await removeThumbs(path).catch(() => undefined);
+      return;
+    }
     await bucket.move(nextPath, path);
   };
 

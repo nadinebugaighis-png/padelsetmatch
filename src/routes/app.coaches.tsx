@@ -9,7 +9,7 @@ import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { getCoachBoard, requestCoachSlot, cancelCoachSlot } from "@/lib/coach-lessons.functions";
 import { LessonMessageButton } from "@/components/LessonMessageButton";
 import {
-  GROUP_CLASS_PLAYERS, bookingKind, dayKey, firstOpenDay, groupDay, groupSpotsLeft, nextDays, offersClub, offersTravel,
+  GROUP_CLASS_PLAYERS, bookingKind, coachesWithTimes, dayKey, firstOpenDay, groupDay, groupSpotsLeft, nextDays, offersClub, offersTravel,
   openCountByDay, requestPlace, type CoachSlot, type LessonKind,
 } from "@/lib/coach-lessons";
 
@@ -45,6 +45,8 @@ function CoachesPage() {
   const [picked, setPicked] = useState<string | null>(null);
   const day = picked ?? firstOpenDay(days, counts);
   const groups = groupDay(visible, day);
+  const coachList = useMemo(() => coachesWithTimes(visible), [visible]);
+  const teachingToday = new Set(groups.map((g) => g.coachId));
   const [confirm, setConfirm] = useState<CoachSlot | null>(null);
   const [kind, setKind] = useState<LessonKind>("private");
   const [note, setNote] = useState("");
@@ -56,6 +58,11 @@ function CoachesPage() {
   const time = (iso: string) => new Date(iso).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
   const longDate = (iso: string) => new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
   const person = (id: string) => data?.people[id];
+  const dayShort = (iso: string) => {
+    const k = dayKey(new Date(iso));
+    if (k === dayKey(days[0]!)) return tr("Today", "Hoy", "Auj.");
+    return new Date(iso).toLocaleDateString(locale, { weekday: "short", day: "numeric" }).replace(".", "");
+  };
   const spotsText = (n: number) => n === 1
     ? tr("1 place left", "Queda 1 plaza", "1 place restante")
     : tr(`${n} places left`, `Quedan ${n} plazas`, `${n} places restantes`);
@@ -167,6 +174,31 @@ function CoachesPage() {
         )}
 
         <section className="mt-8">
+          {coachList.length > 1 && (
+            <div className="mb-7">
+              <div className="px-5 sm:px-6">
+                <h2 className={sectionTitle}>{tr("Our coaches", "Entrenadores", "Nos coachs")}</h2>
+              </div>
+              <ul className="mt-3 flex gap-4 overflow-x-auto px-5 sm:px-6 pb-1 no-scrollbar">
+                {coachList.map((c) => {
+                  const p = person(c.coachId);
+                  const on = teachingToday.has(c.coachId);
+                  return (
+                    <li key={c.coachId} className="shrink-0">
+                      <button type="button" onClick={() => setPicked(c.nextDay)} aria-pressed={on}
+                        className="flex w-[76px] flex-col items-center gap-1.5 text-center transition active:opacity-60">
+                        <span className={`rounded-full p-[2px] ${on ? "ring-1 ring-[var(--gold)]" : ""}`}>
+                          <PlayerPhoto src={p?.photo_url ?? undefined} seed={c.coachId} alt={p?.first_name ?? ""} className="size-14 rounded-full object-cover" />
+                        </span>
+                        <span className="w-full truncate text-serif text-[14px] leading-tight text-[var(--ink)]">{p?.first_name ?? tr("Coach", "Entrenador", "Coach")}</span>
+                        <span className="text-serif italic text-[11.5px] leading-none text-[var(--pitch)]">{dayShort(c.nextStart)}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
           <div className="px-5 sm:px-6">
             <h2 className={sectionTitle}>{tr("Lesson times", "Horarios", "Horaires")}</h2>
           </div>
@@ -185,7 +217,7 @@ function CoachesPage() {
                   </span>
                   <span className={`text-serif text-[20px] sm:text-[24px] leading-none ${on ? "text-[var(--ink)]" : "text-[var(--ink)]/78"}`}>{d.getDate()}</span>
                   <span aria-hidden className={`h-px w-6 ${on ? "bg-[var(--gold)]" : "bg-transparent"}`} />
-                  <span className="text-serif italic text-[11px] leading-none text-[var(--pitch)]">{n ? tr(`${n} open`, `${n} libres`, `${n} libres`) : "\u00a0"}</span>
+                  <span className="text-serif italic text-[11px] leading-none text-[var(--pitch)]">{n ? tr(`${n} open`, n === 1 ? "1 libre" : `${n} libres`, n === 1 ? "1 libre" : `${n} libres`) : "\u00a0"}</span>
                 </button>
               );
             })}

@@ -117,6 +117,19 @@ export function groupDay(slots: CoachSlot[], day: string, now = new Date()): Coa
   return [...groups.values()];
 }
 
+/** Every coach with an open future time, earliest next lesson first, so a coach stays visible even on days they don't teach. */
+export function coachesWithTimes(slots: CoachSlot[], now = new Date()): { coachId: string; nextStart: string; nextDay: string }[] {
+  const next = new Map<string, string>();
+  for (const s of slots) {
+    if (!bookable(s, now)) continue;
+    const cur = next.get(s.coach_profile_id);
+    if (!cur || s.starts_at < cur) next.set(s.coach_profile_id, s.starts_at);
+  }
+  return [...next.entries()]
+    .sort((a, b) => a[1].localeCompare(b[1]))
+    .map(([coachId, nextStart]) => ({ coachId, nextStart, nextDay: dayKey(new Date(nextStart)) }));
+}
+
 /** First day in the strip with an open time, else the first day. */
 export function firstOpenDay(days: Date[], counts: Map<string, number>): string {
   const hit = days.find((d) => (counts.get(dayKey(d)) ?? 0) > 0);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GROUP_CLASS_PLAYERS, bookingKind, groupDay, groupSpotsLeft, openCountByDay, placeFields, requestPlace, slotStarts, type CoachSlot } from "./coach-lessons";
+import { GROUP_CLASS_PLAYERS, bookingKind, coachesWithTimes, groupDay, groupSpotsLeft, openCountByDay, placeFields, requestPlace, slotStarts, type CoachSlot } from "./coach-lessons";
 
 const now = new Date(2026, 10, 21, 12, 0);
 const slot = (id: string, coach: string, h: number, extra: Partial<CoachSlot> = {}): CoachSlot => ({
@@ -9,6 +9,12 @@ const slot = (id: string, coach: string, h: number, extra: Partial<CoachSlot> = 
 });
 
 describe("coach lesson times", () => {
+  it("lists every coach with open times, even one who has none on the first day", () => {
+    const later = (id: string, coach: string, day: number, h: number) => slot(id, coach, h, { starts_at: new Date(2026, 10, day, h).toISOString() });
+    const list = coachesWithTimes([later("n1", "nadine", 24, 10), later("g1", "gonzalo", 26, 9), later("g2", "gonzalo", 27, 19), later("x", "gone", 25, 9)].map((s) => s.id === "x" ? { ...s, status: "booked" } : s), now);
+    expect(list.map((c) => c.coachId)).toEqual(["nadine", "gonzalo"]);
+    expect(list[1]!.nextDay).toBe("2026-11-26");
+  });
   it("only counts open future times as bookable", () => {
     const counts = openCountByDay([slot("a", "c1", 12), slot("b", "c1", 13, { status: "requested" }), slot("c", "c2", 14, { status: "booked" })], now);
     expect(counts.get("2026-11-23")).toBe(1);

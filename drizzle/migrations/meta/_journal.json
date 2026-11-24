@@ -344,6 +344,13 @@
       "when": 1795469006109,
       "tag": "0048_daily_open_games_salamanca_miami_marbella",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1795503332466,
+      "tag": "0049_migration",
+      "breakpoints": true
     }
   ]
 }

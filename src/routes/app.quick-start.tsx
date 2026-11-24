@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { SmallFirstPhoto } from "@/components/SmallFirstPhoto";
 import { levelName, levelRating } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -162,7 +163,7 @@ function QuickStart() {
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--ink)]/10 flex items-center justify-center text-lg font-medium text-[var(--ink)]/82">
               {photoUrl ? (
-                <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+                <SmallFirstPhoto url={photoUrl} w={240} className="w-full h-full object-cover" />
               ) : (
                 firstName.trim().charAt(0).toUpperCase() || "?"
               )}

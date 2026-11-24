@@ -1,4 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { shrinkPhoto } from "@/lib/shrink-photo";
+import { SmallFirstPhoto } from "@/components/SmallFirstPhoto";
 import { playerLevel } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,44 +28,6 @@ import { isTelemetryEnabled, setTelemetryEnabled } from "@/lib/telemetry";
 
 
 
-
-const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
-
-async function preparePhotoFile(file: File): Promise<File> {
-  if (!file.type.startsWith("image/")) throw new Error("Please choose a photo file.");
-
-  const shouldCompress = file.size > 2.5 * 1024 * 1024 || /heic|heif|png/i.test(file.type);
-  if (!shouldCompress && file.size <= MAX_UPLOAD_BYTES) return file;
-
-  const objectUrl = URL.createObjectURL(file);
-  try {
-    const img = new Image();
-    img.decoding = "async";
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error("This photo format could not be read. Please try a JPG photo."));
-      img.src = objectUrl;
-    });
-
-    const maxSide = 1800;
-    const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
-    const width = Math.max(1, Math.round(img.naturalWidth * scale));
-    const height = Math.max(1, Math.round(img.naturalHeight * scale));
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Could not prepare the photo. Please try another image.");
-    ctx.drawImage(img, 0, 0, width, height);
-
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.86));
-    if (!blob) throw new Error("Could not prepare the photo. Please try another image.");
-    if (blob.size > MAX_UPLOAD_BYTES) throw new Error("Photo is too large. Please choose a smaller photo.");
-    return new File([blob], "padel-photo.jpg", { type: "image/jpeg" });
-  } finally {
-    URL.revokeObjectURL(objectUrl);
-  }
-}
 
 function isTransientUploadError(message: string) {
   return /too many connections|timeout|temporarily|503|gateway|fetch failed|network|failed to fetch/i.test(message);
@@ -106,7 +70,7 @@ function ProfilePage() {
       const user = sessionData.session?.user;
       if (!user) throw new Error("Please sign in again, then change your photo.");
 
-      const photo = await preparePhotoFile(file);
+      const photo = await shrinkPhoto(file);
       const path = `${user.id}/photo-${Date.now()}.jpg`;
       let upErr: { message: string } | null = null;
       for (let attempt = 0; attempt < 4; attempt++) {
@@ -176,7 +140,7 @@ function ProfilePage() {
         <div className="relative">
           <div className="w-36 h-44 sm:w-44 sm:h-52 rounded-t-full rounded-b-[18px] overflow-hidden border border-[var(--ink)]/16 bg-[var(--paper-2)]">
             {p.photo_url ? (
-              <img src={p.photo_url} alt={p.first_name} className="w-full h-full object-cover" />
+              <SmallFirstPhoto url={p.photo_url} w={480} alt={p.first_name ?? ""} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[var(--ink)]/30">
                 <Camera className="w-7 h-7" />

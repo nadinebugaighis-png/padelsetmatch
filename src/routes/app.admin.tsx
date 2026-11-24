@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { SmallFirstPhoto } from "@/components/SmallFirstPhoto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getAdminStats, getAdminTopSharers, adminResolveReport, adminClearProfilePhoto, adminSetSuspended, getAdminHealth, adminAckAlert, adminGetReportedContent, adminDeleteContent, adminModerationFeed } from "@/lib/admin.functions";
@@ -147,7 +148,7 @@ function AdminPage() {
                 <div key={r.id} className="rounded-xl bg-[var(--ink)]/5 border border-[var(--ink)]/16 p-3 space-y-2">
                   <div className="flex items-start gap-3">
                     {r.reported_photo_url ? (
-                      <img src={r.reported_photo_url} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
+                      <SmallFirstPhoto url={r.reported_photo_url} w={240} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" />
                     ) : (
                       <div className="w-14 h-14 rounded-lg bg-[var(--ink)]/10 shrink-0" />
                     )}
@@ -381,7 +382,7 @@ function ModerateTab() {
           <div className="grid grid-cols-3 gap-2">
             {f.photos.map((p) => (
               <div key={p.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/16 bg-[var(--ink)]/5">
-                <img src={p.photo_url ?? ""} alt={p.first_name ?? "member"} className="w-full aspect-square object-cover" loading="lazy" />
+                <SmallFirstPhoto url={p.photo_url ?? ""} w={480} alt={p.first_name ?? "member"} className="w-full aspect-square object-cover" loading="lazy" />
                 <div className="p-1.5 space-y-1">
                   <div className="text-[11px] font-semibold truncate">{p.first_name ?? "·"}</div>
                   <RemoveBtn kind="photo" id={p.id} label={`Remove ${p.first_name ?? "this"} photo`} />
@@ -399,7 +400,7 @@ function ModerateTab() {
             {f.gear.map((g) => (
               <div key={g.id} className="rounded-xl overflow-hidden border border-[var(--ink)]/16 bg-[var(--ink)]/5">
                 {g.image_url
-                  ? <img src={g.image_url} alt={g.title} className="w-full aspect-square object-cover" loading="lazy" />
+                  ? <SmallFirstPhoto url={g.image_url} w={240} alt={g.title} className="w-full aspect-square object-cover" loading="lazy" />
                   : <div className="w-full aspect-square grid place-items-center text-[10px] text-[var(--ink)]/70">no photo</div>}
                 <div className="p-1.5 space-y-1">
                   <div className="text-[11px] font-semibold truncate">{g.title}</div>
@@ -621,7 +622,7 @@ function TopSharersCard() {
             <li key={r.profile_id} className="flex items-center justify-between gap-3 py-2">
               <div className="flex items-center gap-2.5 min-w-0">
                 {r.photo_url ? (
-                  <img src={r.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                  <SmallFirstPhoto url={r.photo_url} w={240} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
                 ) : (
                   <span className="w-8 h-8 rounded-full bg-[var(--ink)]/10 inline-flex items-center justify-center text-xs font-semibold shrink-0">
                     {(r.first_name ?? "?").slice(0, 1).toUpperCase()}

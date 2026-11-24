@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { SmallFirstPhoto } from "@/components/SmallFirstPhoto";
 import { levelFromRating, ratingForLevel } from "@/lib/level-label";
 import { LevelScale } from "@/components/LevelScale";
 import { useServerFn } from "@tanstack/react-start";
@@ -750,7 +751,7 @@ function Onboarding() {
       <div className="pt-6 flex flex-col items-center">
         <label className="relative block w-32 h-40 rounded-t-full rounded-b-[16px] overflow-hidden border border-[var(--ink)]/16 bg-[var(--paper-2)] cursor-pointer">
           {photoUrl ? (
-            <img src={photoUrl} alt={first_name || tr("Your photo", "Tu foto", "Ta photo")} className="absolute inset-0 w-full h-full object-cover" />
+            <SmallFirstPhoto url={photoUrl} w={480} alt={first_name || tr("Your photo", "Tu foto", "Ta photo")} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
             <span className="absolute inset-0 flex items-center justify-center text-[var(--ink)]/70">
               <Camera className="w-7 h-7" />

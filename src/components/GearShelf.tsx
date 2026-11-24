@@ -1,4 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
+import { SmallFirstPhoto } from "@/components/SmallFirstPhoto";
+import { shrinkPhoto } from "@/lib/shrink-photo";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -216,9 +218,10 @@ export function GearEditor({ profileId }: { profileId: string }) {
     try {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error(tr("Please sign in again", "Inicia sesión de nuevo", "Reconnecte-toi"));
-      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
+      const photo = await shrinkPhoto(file, { maxSide: 1200, minBytes: 1024 * 1024, name: "gear.jpg" });
+      const ext = photo.type === "image/jpeg" ? "jpg" : (file.name.split(".").pop() ?? "jpg").toLowerCase();
       const path = `${u.user.id}/gear-${Date.now()}.${ext}`;
-      const { error } = await supabase.storage.from("padel-photos").upload(path, file, { upsert: true, contentType: file.type });
+      const { error } = await supabase.storage.from("padel-photos").upload(path, photo, { upsert: true, contentType: photo.type });
       if (error) throw error;
       const { data: signed, error: sErr } = await supabase.storage
         .from("padel-photos")
@@ -396,7 +399,7 @@ export function GearEditor({ profileId }: { profileId: string }) {
               {uploading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-[var(--ink)]/82" />
               ) : image ? (
-                <img src={image} alt="" className="w-full h-full object-cover" />
+                <SmallFirstPhoto url={image} w={240} className="w-full h-full object-cover" />
               ) : (
                 <span className="text-[10px] text-[var(--ink)]/78 text-center px-1">
                   {tr("Photo", "Foto", "Photo")}

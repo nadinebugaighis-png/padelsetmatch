@@ -69,13 +69,16 @@ export const getCoachBoard = createServerFn({ method: "GET" })
     const { sharesMyCity } = await import("./area-match");
     const near = new Set<string>();
     if (coachIds.length) {
-      const { data: coaches } = await sb.from("profiles").select("id, locations, zone").in("id", coachIds);
-      for (const c of (coaches as { id: string; locations: string[] | null; zone: string | null }[] | null) ?? []) {
+      const { data: coaches } = await sb.from("profiles").select("id, locations, zone, is_coach").in("id", coachIds);
+      for (const c of (coaches as { id: string; locations: string[] | null; zone: string | null; is_coach: boolean | null }[] | null) ?? []) {
+        // A coach who switched coaching off disappears from the board.
+        if (!c.is_coach) continue;
         if (!profile || sharesMyCity(profile, c)) near.add(c.id);
       }
     }
-    const slots = allSlots.filter((s) => near.has(s.coach_profile_id) || s.coach_profile_id === profile?.id);
-    const openClasses = allClasses.filter((c) => near.has(c.host_profile_id) || c.host_profile_id === profile?.id);
+    const mineOk = (id: string) => id === profile?.id && !!profile?.is_coach;
+    const slots = allSlots.filter((s) => near.has(s.coach_profile_id) || mineOk(s.coach_profile_id));
+    const openClasses = allClasses.filter((c) => near.has(c.host_profile_id) || mineOk(c.host_profile_id));
     const [byId, states] = await Promise.all([
       people(sb, [...slots.map((s) => s.coach_profile_id), ...lessons.map((s) => s.coach_profile_id), ...openClasses.map((c) => c.host_profile_id)]),
       classStates(sb, lessons.map((s) => s.match_event_id)),

@@ -89,6 +89,7 @@
 - [x] Press and hold a community to share it; the shared link shows that community first with Join.
 
 ## Same experience in every community
+- [x] Extend daily open-game boxes to every community, including Padelodontics; 44 active schedules, 35 checks pass, signed-in phone Play card and match details verified without overflow or page errors.
 - [x] Dubai/Marbella neighbourhoods count as the whole city on Play and Connect.
 - [x] Coaches and classes shown only from the player's own city.
 - [x] App invite names the sharer's own community.

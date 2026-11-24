@@ -39,6 +39,6 @@
 - Personality cards (personality-cards.ts): whitelisted on-court answers are public; others show only for an identical pick by a verified pair (is_verified_pair); server returns card ids, never raw answers; complements use whitelisted answers only.
 - The player detail sheet shows only the on-court game-fit score plus padel facts with one fixed bottom action and Block/Report in the top-right menu; it adds one sporty club-story line from the AI read and two shared facts (rest behind See more), never the off-court score, so it feels social, not like dating.
 - Players without a photo get a bundled court-view drawing chosen by a hash of their id (src/lib/court-view.ts, CourtViewCard); never generate card art at runtime, so each player keeps the same image and it loads from cache instantly.
-- Daily open games come only from open_game_slots via the hourly ensure_open_games job; open_game_runs stops cancelled/deleted games returning and app.house_games skips the host seat and alerts.
+- Hourly ensure_open_games syncs canonical communities into open_game_slots; open_game_runs prevents repeats and app.house_games skips host seats/alerts. City schedules use empty area keys.
 - Game places come from matchCapacity (match-rules.ts), mirrored by public.match_event_capacity (4, or coach + class_students); a participant insert trigger enforces status, capacity and gender so direct inserts can't bypass them. Never hardcode 4.
 

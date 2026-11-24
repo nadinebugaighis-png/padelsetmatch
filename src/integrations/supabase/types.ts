@@ -2449,6 +2449,7 @@ export type Database = {
       }
       my_profile_id: { Args: never; Returns: string }
       not_blocked_with_me: { Args: { _other: string }; Returns: boolean }
+      open_game_community: { Args: { _location: string }; Returns: Json }
       open_intro_chat: {
         Args: {
           _acting_user_id: string
@@ -2532,6 +2533,7 @@ export type Database = {
       }
       shared_venues: { Args: { _a: string; _b: string }; Returns: Json }
       snooze_my_questions: { Args: never; Returns: string }
+      sync_open_game_communities: { Args: never; Returns: undefined }
       transfer_match_host: {
         Args: { _event: string; _new_host_profile_id: string }
         Returns: undefined

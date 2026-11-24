@@ -41,12 +41,13 @@ function CoachesPage() {
   const days = useMemo(() => nextDays(14), []);
   // A coach books other coaches, never their own times.
   const visible = useMemo(() => (data?.slots ?? []).filter((s) => s.coach_profile_id !== data?.meId), [data]);
-  const counts = useMemo(() => openCountByDay(visible), [visible]);
+  const coachList = useMemo(() => coachesWithTimes(visible), [visible]);
+  const [coachPick, setCoachPick] = useState<string | null>(null);
+  const shown = useMemo(() => coachPick ? visible.filter((s) => s.coach_profile_id === coachPick) : visible, [visible, coachPick]);
+  const counts = useMemo(() => openCountByDay(shown), [shown]);
   const [picked, setPicked] = useState<string | null>(null);
   const day = picked ?? firstOpenDay(days, counts);
-  const groups = groupDay(visible, day);
-  const coachList = useMemo(() => coachesWithTimes(visible), [visible]);
-  const teachingToday = new Set(groups.map((g) => g.coachId));
+  const groups = groupDay(shown, day);
   const [confirm, setConfirm] = useState<CoachSlot | null>(null);
   const [kind, setKind] = useState<LessonKind>("private");
   const [note, setNote] = useState("");
@@ -182,12 +183,12 @@ function CoachesPage() {
               <ul className="mt-3 flex gap-4 overflow-x-auto px-5 sm:px-6 pb-1 no-scrollbar">
                 {coachList.map((c) => {
                   const p = person(c.coachId);
-                  const on = teachingToday.has(c.coachId);
+                  const on = coachPick === c.coachId;
                   return (
                     <li key={c.coachId} className="shrink-0">
-                      <button type="button" onClick={() => setPicked(c.nextDay)} aria-pressed={on}
+                      <button type="button" onClick={() => { if (on) { setCoachPick(null); } else { setCoachPick(c.coachId); setPicked(c.nextDay); } }} aria-pressed={on}
                         className="flex w-[76px] flex-col items-center gap-1.5 text-center transition active:opacity-60">
-                        <span className={`rounded-full p-[2px] ${on ? "ring-1 ring-[var(--gold)]" : ""}`}>
+                        <span className={`rounded-full p-[2px] transition ${on ? "ring-[1.5px] ring-[var(--gold)]" : coachPick ? "opacity-45" : ""}`}>
                           <PlayerPhoto src={p?.photo_url ?? undefined} seed={c.coachId} alt={p?.first_name ?? ""} className="size-14 rounded-full object-cover" />
                         </span>
                         <span className="w-full truncate text-serif text-[14px] leading-tight text-[var(--ink)]">{p?.first_name ?? tr("Coach", "Entrenador", "Coach")}</span>

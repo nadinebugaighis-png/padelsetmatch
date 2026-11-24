@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { photoSrc } from "@/lib/photo-src";
 import { HoldMenu } from "@/components/HoldMenu";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
@@ -319,7 +320,7 @@ function ConnectPage() {
                   {/* Author */}
                   <div className="flex items-center gap-2.5">
                     {p.author?.photo_url ? (
-                      <img src={p.author.photo_url} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-[var(--ink)]/10" />
+                      <img src={photoSrc(p.author.photo_url, 240)} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-[var(--ink)]/10" />
                     ) : (
                       <div className="w-9 h-9 rounded-full bg-[var(--ink)]/8 shrink-0 grid place-items-center text-serif text-[var(--ink)]/78 text-sm">
                         {(p.author?.first_name ?? "?").charAt(0).toUpperCase()}
@@ -639,7 +640,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
               return (
                 <div key={c.id} className="flex items-start gap-2.5">
                   {c.author?.photo_url ? (
-                    <img src={c.author.photo_url} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+                    <img src={photoSrc(c.author.photo_url, 240)} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-[var(--ink)]/10 shrink-0" />
                   )}

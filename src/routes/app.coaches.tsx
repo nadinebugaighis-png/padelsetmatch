@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { photoSrc } from "@/lib/photo-src";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -125,7 +126,7 @@ function CoachesPage() {
                 const coach = person(s.coach_profile_id);
                 return (
                   <li key={s.id} className="flex items-center gap-3 px-4 py-3">
-                    <PlayerPhoto src={coach?.photo_url ?? undefined} seed={s.coach_profile_id} alt={coach?.first_name ?? ""} className="size-10 shrink-0 rounded-full object-cover" />
+                    <PlayerPhoto src={photoSrc(coach?.photo_url, 240)} seed={s.coach_profile_id} alt={coach?.first_name ?? ""} className="size-10 shrink-0 rounded-full object-cover" />
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-serif text-[16px] leading-tight text-[var(--ink)]">{coach?.first_name ?? tr("Coach", "Entrenador", "Coach")}</div>
                       <div className="mt-0.5 truncate text-[12.5px] text-[var(--ink)]/78">
@@ -159,7 +160,7 @@ function CoachesPage() {
                 return (
                   <li key={c.id}>
                     <Link to="/app/events/$eventId" params={{ eventId: c.id }} className="flex items-center gap-3 px-4 py-3 transition active:bg-[var(--ink)]/[0.04]">
-                      <PlayerPhoto src={coach?.photo_url ?? undefined} seed={c.host_profile_id} alt={coach?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
+                      <PlayerPhoto src={photoSrc(coach?.photo_url, 240)} seed={c.host_profile_id} alt={coach?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-serif text-[16px] leading-tight text-[var(--ink)]">{tr(`Class with ${coach?.first_name ?? "a coach"}`, `Clase con ${coach?.first_name ?? "un entrenador"}`, `Cours avec ${coach?.first_name ?? "un coach"}`)}</div>
                         <div className="mt-0.5 truncate text-[12.5px] text-[var(--ink)]/78">{longDate(c.starts_at)} · {time(c.starts_at)} · {c.club_name}</div>
@@ -189,7 +190,7 @@ function CoachesPage() {
                       <button type="button" onClick={() => { if (on) { setCoachPick(null); } else { setCoachPick(c.coachId); setPicked(c.nextDay); } }} aria-pressed={on}
                         className="flex w-[76px] flex-col items-center gap-1.5 text-center transition active:opacity-60">
                         <span className={`rounded-full p-[2px] transition ${on ? "ring-[1.5px] ring-[var(--gold)]" : coachPick ? "opacity-45" : ""}`}>
-                          <PlayerPhoto src={p?.photo_url ?? undefined} seed={c.coachId} alt={p?.first_name ?? ""} className="size-14 rounded-full object-cover" />
+                          <PlayerPhoto src={photoSrc(p?.photo_url, 240)} seed={c.coachId} alt={p?.first_name ?? ""} className="size-14 rounded-full object-cover" />
                         </span>
                         <span className="w-full truncate text-serif text-[14px] leading-tight text-[var(--ink)]">{p?.first_name ?? tr("Coach", "Entrenador", "Coach")}</span>
                         <span className="text-serif italic text-[11.5px] leading-none text-[var(--pitch)]">{dayShort(c.nextStart)}</span>
@@ -233,7 +234,7 @@ function CoachesPage() {
               return (
                 <article key={g.key} className="rounded-2xl card-pop p-4 sm:p-5">
                   <div className="flex gap-3.5">
-                    <PlayerPhoto src={c?.photo_url ?? undefined} seed={g.coachId} alt={c?.first_name ?? ""} className="size-16 shrink-0 rounded-full object-cover" />
+                    <PlayerPhoto src={photoSrc(c?.photo_url, 240)} seed={g.coachId} alt={c?.first_name ?? ""} className="size-16 shrink-0 rounded-full object-cover" />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline justify-between gap-2">
                         <div className="truncate text-serif text-[19px] sm:text-[22px] leading-tight text-[var(--ink)]">{c?.first_name ?? tr("Coach", "Entrenador", "Coach")}</div>
@@ -287,7 +288,7 @@ function CoachesPage() {
           <div onClick={(e) => e.stopPropagation()} className="w-full sm:max-w-md max-h-[min(92vh,92%)] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-[var(--paper)] px-5 sm:px-6 pt-3" style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)" }}>
             <div aria-hidden className="mx-auto mb-3 h-1 w-10 rounded-full bg-[var(--ink)]/15 sm:hidden" />
             <div className="flex items-start gap-3">
-              <PlayerPhoto src={person(confirm.coach_profile_id)?.photo_url ?? undefined} seed={confirm.coach_profile_id} alt="" className="size-12 shrink-0 rounded-full object-cover" />
+              <PlayerPhoto src={photoSrc(person(confirm.coach_profile_id)?.photo_url, 240)} seed={confirm.coach_profile_id} alt="" className="size-12 shrink-0 rounded-full object-cover" />
               <div className="min-w-0 flex-1">
                 <h2 className="truncate text-serif text-[22px] leading-tight text-[var(--ink)]">{person(confirm.coach_profile_id)?.first_name ?? tr("Coach", "Entrenador", "Coach")}</h2>
                 <p className="mt-0.5 text-[13.5px] text-[var(--ink)]/82">{longDate(confirm.starts_at)} · {time(confirm.starts_at)} · {confirm.duration_minutes} min</p>

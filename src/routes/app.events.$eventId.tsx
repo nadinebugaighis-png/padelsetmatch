@@ -1,4 +1,5 @@
 import { askForPushAfterMatch } from "@/lib/ask-push";
+import { photoSrc } from "@/lib/photo-src";
 import { useEffect, useRef, useState } from "react";
 import { draftAfterSuccessfulSend } from "@/lib/qa-safety";
 import { HoldMenu } from "@/components/HoldMenu";
@@ -693,7 +694,7 @@ function EventDetail() {
               >
                 <div className={`w-7 h-7 rounded-full bg-[var(--paper-2)] overflow-hidden ${p.profiles?.is_coach ? "ring-2 ring-[var(--plum)] ring-offset-1" : ""}`}>
                   {p.profiles?.photo_url && (
-                    <img src={p.profiles.photo_url} alt="" className="w-full h-full object-cover" />
+                    <img src={photoSrc(p.profiles.photo_url, 240)} alt="" className="w-full h-full object-cover" />
                   )}
                 </div>
                 <span className="text-xs text-[var(--ink)]">
@@ -926,7 +927,7 @@ function EventDetail() {
                     className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[var(--ink)]/5 transition-colors text-left"
                   >
                     {prof.photo_url ? (
-                      <img src={prof.photo_url} alt="" className="w-10 h-10 rounded-full object-cover" />
+                      <img src={photoSrc(prof.photo_url, 240)} alt="" className="w-10 h-10 rounded-full object-cover" />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-[var(--ink)]/10" />
                     )}
@@ -1237,7 +1238,7 @@ function InvitePanel({ eventId, onClose, listConns, invitePeople, createLink, sh
                       )}
                       <div className="h-14 w-14 overflow-hidden rounded-full bg-[var(--paper-2)] ring-1 ring-[var(--ink)]/8">
                         {p.photo_url ? (
-                          <img src={p.photo_url} alt="" className="h-full w-full object-cover" />
+                          <img src={photoSrc(p.photo_url, 240)} alt="" className="h-full w-full object-cover" />
                         ) : (
                           <div className="h-full w-full grid place-items-center text-[var(--ink)]/30 text-sm font-serif">
                             {(p.first_name ?? "?").charAt(0)}

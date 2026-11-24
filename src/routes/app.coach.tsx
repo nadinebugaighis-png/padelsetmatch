@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { photoSrc } from "@/lib/photo-src";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -156,7 +157,7 @@ function CoachTimesPage() {
                 return (
                   <li key={s.id} className="rounded-2xl border border-[var(--gold)]/45 bg-white p-3.5">
                     <div className="flex items-center gap-3">
-                      <PlayerPhoto src={p?.photo_url ?? undefined} seed={s.student_profile_id} alt={p?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
+                      <PlayerPhoto src={photoSrc(p?.photo_url, 240)} seed={s.student_profile_id} alt={p?.first_name ?? ""} className="size-11 shrink-0 rounded-full object-cover" />
                       <div className="min-w-0 flex-1">
                         <div className="text-[15px] font-medium text-[var(--ink)] truncate">{p?.first_name ?? tr("A player", "Un jugador", "Un joueur")} · <span className={s.lesson_kind === "group" ? "text-[var(--plum)]" : ""}>{kindLabel(s)}</span></div>
                         <div className="text-[12.5px] text-[var(--ink)]/78 truncate">{longDate(s.starts_at)} · {time(s.starts_at)} · {where(s)}</div>

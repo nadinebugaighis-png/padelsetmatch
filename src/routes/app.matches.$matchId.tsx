@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { photoSrc } from "@/lib/photo-src";
 import { playerLevel } from "@/lib/level-label";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -173,7 +174,7 @@ function ChatRoom() {
           <ArrowLeft className="w-5 h-5" strokeWidth={1.6} />
         </button>
         <div className="w-10 h-10 rounded-full overflow-hidden bg-[var(--ink)]/8 shrink-0 ring-1 ring-[var(--card-edge)]">
-          {other.photo_url && <img src={other.photo_url} alt={other.first_name} className="w-full h-full object-cover" />}
+          {other.photo_url && <img src={photoSrc(other.photo_url, 240)} alt={other.first_name} className="w-full h-full object-cover" />}
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-serif text-[22px] leading-tight truncate">{other.first_name}</div>

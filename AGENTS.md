@@ -42,4 +42,3 @@
 - Daily open games come only from open_game_slots via the hourly ensure_open_games job; open_game_runs stops cancelled/deleted games returning and app.house_games skips the host seat and alerts.
 - Game places come from matchCapacity (match-rules.ts), mirrored by public.match_event_capacity (4, or coach + class_students); a participant insert trigger enforces status, capacity and gender so direct inserts can't bypass them. Never hardcode 4.
 
-- Show other players' saved photos through photoSrc() (src/lib/photo-src.ts) at the smallest fitting width, never the raw photo_url; some originals are 15 MB+ and load slowly. Own-photo and admin moderation views may stay raw.

@@ -1152,7 +1152,7 @@ function Discover() {
                       }}
                       className="mx-auto w-full max-w-[320px] h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] font-medium uppercase tracking-[0.16em] text-[11px] whitespace-nowrap flex items-center justify-center transition active:scale-[0.98] hover:brightness-110"
                     >
-                      {tr("Invite to play", "Invitar a jugar", "Inviter à jouer")}
+                      {tr("Message", "Mensaje", "Message")}
                     </button>
                   )}
                 </div>

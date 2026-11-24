@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MatchDateTimePicker } from "@/components/MatchDateTimePicker";
 import { useTr } from "@/lib/i18n";
+import { shrinkPhoto } from "@/lib/shrink-photo";
 import { COMPETITION_FORMATS, formatLabel, myProfileId, safeSignupUrl, safeWhatsAppUrl } from "@/lib/competitions";
 
 export const Route = createFileRoute("/app/competitions/new")({
@@ -69,9 +70,11 @@ function NewCompetition() {
       let posterPath: string | null = null;
       if (poster) {
         const { data: u } = await supabase.auth.getUser();
-        const ext = (poster.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+        // Shrink big phone pictures first so the poster appears quickly for everyone.
+        const small = await shrinkPhoto(poster, { maxSide: 1600, minBytes: 600 * 1024, name: "poster.jpg" });
+        const ext = (small.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
         const path = `${u.user!.id}/${crypto.randomUUID()}.${ext}`;
-        const { error: upErr } = await supabase.storage.from("competition-posters").upload(path, poster, { contentType: poster.type });
+        const { error: upErr } = await supabase.storage.from("competition-posters").upload(path, small, { contentType: small.type });
         if (upErr) throw upErr;
         posterPath = path;
       }

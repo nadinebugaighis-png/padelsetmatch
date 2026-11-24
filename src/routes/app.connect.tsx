@@ -404,6 +404,7 @@ function ConnectPage() {
                                 align="start"
                                 className="text-left w-full rounded-md"
                                 hint={tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")}
+                                copyText={c.body} copyLabel={tr("Copy", "Copiar", "Copier")} copiedLabel={tr("Copied", "Copiado", "Copié")}
                                 items={[
                                   { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => setEditingComment({ id: c.id, body: c.body }) },
                                   { label: tr("Delete", "Eliminar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delCommentMut.mutate(c.id); } },
@@ -414,20 +415,17 @@ function ConnectPage() {
                               </HoldMenu>
                             ) : (
                               <div className="flex items-start gap-1">
-                                <p className="flex-1 min-w-0">
+                                <HoldMenu
+                                  align="start"
+                                  className="flex-1 min-w-0 text-left rounded-md"
+                                  hint={tr("Press and hold for options", "Mantén pulsado para opciones", "Appui long pour les options")}
+                                  copyText={c.body} copyLabel={tr("Copy", "Copiar", "Copier")} copiedLabel={tr("Copied", "Copiado", "Copié")}
+                                  items={isAdmin ? [{ label: tr("Delete (admin)", "Eliminar (admin)", "Supprimer (admin)"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); } }] : []}
+                                >
                                   <span className="font-semibold text-[var(--ink)]">{c.author?.first_name ?? tr("Someone", "Alguien", "Quelqu'un")}</span>{" "}
                                   <span className="text-[var(--ink)]/84 whitespace-pre-wrap break-words">{c.body}</span>
-                                </p>
+                                </HoldMenu>
                                 <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
-                                {isAdmin && (
-                                  <button
-                                    onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate({ kind: "comment", id: c.id }); }}
-                                    className="p-1 text-[var(--ink)]/35 hover:text-destructive"
-                                    aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
-                                  >
-                                    <ShieldAlert className="w-3 h-3" />
-                                  </button>
-                                )}
                               </div>
                             )}
                           </div>
@@ -652,30 +650,7 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                       {!mine && (
                         <span className="ml-auto flex items-center gap-1">
                           <ReportContentButton kind="comment" contentId={c.id} authorProfileId={c.author_profile_id} size="xs" />
-                          {isAdmin && (
-                            <button
-                              onClick={() => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate(c.id); }}
-                              className="text-[var(--ink)]/35 hover:text-destructive p-1"
-                              aria-label={tr("Remove (admin)", "Eliminar (admin)", "Supprimer (admin)")}
-                            >
-                              <ShieldAlert className="w-3 h-3" />
-                            </button>
-                          )}
                         </span>
-                      )}
-                      {mine && !isEditing && (
-                        <div className="ml-auto flex items-center gap-1">
-                          <button
-                            onClick={() => setEditingComment({ id: c.id, body: c.body })}
-                            className="text-[var(--ink)]/76 hover:text-[var(--ink)] transition p-1"
-                            aria-label={tr("Edit comment", "Editar comentario", "Modifier le commentaire")}
-                          >
-                            <Pencil className="w-3 h-3" />
-                          </button>
-                          <button onClick={() => delMut.mutate(c.id)} className="text-[var(--ink)]/70 hover:text-destructive p-1">
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        </div>
                       )}
                     </div>
                     {isEditing ? (
@@ -702,7 +677,22 @@ function PostThread({ post, myProfileId, isAdmin, onClose }: { post: ConnectPost
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-[var(--ink)]/90 mt-0.5 whitespace-pre-wrap break-words">{c.body}</p>
+                      <HoldMenu
+                        align="start"
+                        className="block w-full text-left rounded-md mt-0.5"
+                        hint={tr("Press and hold for options", "Mantén pulsado para opciones", "Appui long pour les options")}
+                        copyText={c.body} copyLabel={tr("Copy", "Copiar", "Copier")} copiedLabel={tr("Copied", "Copiado", "Copié")}
+                        items={mine
+                          ? [
+                              { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => setEditingComment({ id: c.id, body: c.body }) },
+                              { label: tr("Delete", "Eliminar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (confirm(tr("Delete this comment?", "¿Eliminar este comentario?", "Supprimer ce commentaire ?"))) delMut.mutate(c.id); } },
+                            ]
+                          : isAdmin
+                            ? [{ label: tr("Delete (admin)", "Eliminar (admin)", "Supprimer (admin)"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (confirm(tr("Remove this comment as admin?", "¿Eliminar este comentario como admin?", "Supprimer ce commentaire en tant qu'admin ?"))) adminDelMut.mutate(c.id); } }]
+                            : []}
+                      >
+                        <p className="text-sm text-[var(--ink)]/90 whitespace-pre-wrap break-words">{c.body}</p>
+                      </HoldMenu>
                     )}
                   </div>
                 </div>

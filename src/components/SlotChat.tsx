@@ -2,12 +2,14 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowUp, Check, Pencil, Trash2, X } from "lucide-react";
+import { ArrowUp, Check, Copy, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, useTr } from "@/lib/i18n";
 import { levelName } from "@/lib/level-label";
 import { photoSrc } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
+import { HoldMenu } from "@/components/HoldMenu";
+import { getIsAdmin } from "@/lib/admin.functions";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { deleteSlotMessage, editSlotMessage, listSlotMessages, sendSlotMessage } from "@/lib/who-can-play.functions";
 import type { PlaySlot } from "@/lib/who-can-play";
@@ -30,6 +32,8 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
   const send = useServerFn(sendSlotMessage);
   const edit = useServerFn(editSlotMessage);
   const del = useServerFn(deleteSlotMessage);
+  const isAdminFn = useServerFn(getIsAdmin);
+  const isAdmin = useQuery({ queryKey: ["is-admin"], queryFn: () => isAdminFn(), staleTime: 300_000 }).data === true;
   const [body, setBody] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -119,6 +123,8 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
               <OwnBubble
                 key={m.id}
                 editing={editingId === m.id}
+                copyText={m.body}
+                copyLabels={{ copy: tr("Copy", "Copiar", "Copier"), copied: tr("Copied", "Copiado", "Copié") }}
                 onEdit={() => startEdit(m.id, m.body)}
                 onDelete={() => { if (editingId === m.id) cancelEdit(); delMut.mutate(m.id); }}
                 labels={{ edit: tr("Edit", "Editar", "Modifier"), del: tr("Delete", "Borrar", "Supprimer"), hint: tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer") }}
@@ -131,14 +137,19 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
                 <div className="w-6 h-6 shrink-0 rounded-full overflow-hidden bg-[var(--ink)]/10">
                   <PlayerPhoto src={photoSrc(m.sender.photo_url, 240)} seed={m.sender.id} alt={m.sender.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
                 </div>
-                <div className="max-w-[80%] rounded-lg rounded-tl-sm bg-white px-2.5 py-1.5 text-[14.5px] leading-snug text-[var(--ink)] shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]">
+                <HoldMenu
+                  align="start"
+                  hint={tr("Press and hold for options", "Mantén pulsado para opciones", "Appui long pour les options")}
+                  copyText={m.body} copyLabel={tr("Copy", "Copiar", "Copier")} copiedLabel={tr("Copied", "Copiado", "Copié")}
+                  items={isAdmin ? [{ label: tr("Delete (admin)", "Borrar (admin)", "Supprimer (admin)"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) delMut.mutate(m.id); } }] : []}
+                  className="max-w-[80%] rounded-lg rounded-tl-sm bg-white px-2.5 py-1.5 text-[14.5px] leading-snug text-[var(--ink)] shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]">
                   <div className="text-[12px] font-semibold text-[var(--pitch)]">
                     {m.sender.first_name ?? tr("Player", "Jugador", "Joueur")}
                     {m.sender.level ? <span className="font-normal text-[var(--ink)]/72"> · {levelName(m.sender.level, tr)}</span> : null}
                   </div>
                   <span className="whitespace-pre-wrap break-words">{m.body}</span>
                   {meta(m)}
-                </div>
+                </HoldMenu>
               </div>
             ),
           )
@@ -197,12 +208,14 @@ const MOVE_TOLERANCE = 10;
  * My own chat bubble. Like WhatsApp, Edit/Delete only opens after pressing and holding still,
  * so swiping or scrolling through the chat never pops the menu. A mouse click still opens it.
  */
-function OwnBubble({ children, editing, onEdit, onDelete, labels }: {
+function OwnBubble({ children, editing, onEdit, onDelete, labels, copyText, copyLabels }: {
   children: ReactNode;
   editing: boolean;
   onEdit: () => void;
   onDelete: () => void;
   labels: { edit: string; del: string; hint: string };
+  copyText: string;
+  copyLabels: { copy: string; copied: string };
 }) {
   const [open, setOpen] = useState(false);
   const [holding, setHolding] = useState(false);
@@ -251,6 +264,9 @@ function OwnBubble({ children, editing, onEdit, onDelete, labels }: {
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-36 bg-white text-[var(--ink)] border-[var(--ink)]/16">
+          <DropdownMenuItem onSelect={() => { navigator.clipboard?.writeText(copyText).then(() => toast.success(copyLabels.copied), () => {}); }}>
+            <Copy className="w-4 h-4" />{copyLabels.copy}
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={onEdit}>
             <Pencil className="w-4 h-4" />{labels.edit}
           </DropdownMenuItem>

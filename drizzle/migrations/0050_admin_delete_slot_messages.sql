@@ -1,0 +1,1 @@
+CREATE POLICY "Admins delete any slot message" ON public.play_slot_messages FOR DELETE TO authenticated USING (public.is_current_user_admin());

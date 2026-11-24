@@ -966,7 +966,8 @@ function EventDetail() {
                 <div key={m.id} className={`group flex w-full ${mine ? "justify-end" : "justify-start"}`}>
                   <div className={`flex min-w-0 flex-col ${mine ? "items-end" : "items-start"}`}>
                     <HoldMenu
-                      disabled={isEditing || (!mine && !canModerate)}
+                      disabled={isEditing}
+                      copyText={m.body} copyLabel={tr("Copy", "Copiar", "Copier")} copiedLabel={tr("Copied", "Copiado", "Copié")}
                       align={mine ? "end" : "start"}
                       hint={mine
                         ? tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")
@@ -976,9 +977,9 @@ function EventDetail() {
                             { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="h-4 w-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
                             { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="h-4 w-4" />, destructive: true, onSelect: () => onDeleteMessage(m.id) },
                           ]
-                        : [
+                        : canModerate ? [
                             { label: tr("Delete message", "Borrar mensaje", "Supprimer le message"), icon: <Trash2 className="h-4 w-4" />, destructive: true, onSelect: () => onDeleteMessage(m.id) },
-                          ]}
+                          ] : []}
                       className={`${mine ? "max-w-[min(100%,18rem)]" : "max-w-[min(100%,19rem)]"} min-w-0 rounded-2xl px-3 py-2 text-base ${
                       mine
                         ? "bg-[var(--grass)]/30 text-[var(--ink)]"

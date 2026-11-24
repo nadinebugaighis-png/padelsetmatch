@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export type HoldMenuItem = {
@@ -16,14 +18,20 @@ const MOVE_TOLERANCE = 10;
  * pressing and holding still, so scrolling never pops the menu. A mouse click opens it on desktop.
  * With `disabled` (e.g. while the bubble is being edited) it renders a plain box.
  */
-export function HoldMenu({ children, items, className = "", hint, align = "end", disabled = false }: {
+export function HoldMenu({ children, items: baseItems, className = "", hint, align = "end", disabled = false, copyText, copyLabel = "Copy", copiedLabel = "Copied" }: {
   children: ReactNode;
   items: HoldMenuItem[];
+  copyText?: string;
+  copyLabel?: string;
+  copiedLabel?: string;
   className?: string;
   hint: string;
   align?: "start" | "end";
   disabled?: boolean;
 }) {
+  const items: HoldMenuItem[] = copyText
+    ? [{ label: copyLabel, icon: <Copy className="w-4 h-4" />, onSelect: () => { navigator.clipboard?.writeText(copyText).then(() => toast.success(copiedLabel), () => {}); } }, ...baseItems]
+    : baseItems;
   const [open, setOpen] = useState(false);
   const [holding, setHolding] = useState(false);
   const timer = useRef<number | undefined>(undefined);

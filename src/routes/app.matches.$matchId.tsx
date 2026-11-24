@@ -285,9 +285,10 @@ function ChatRoom() {
               <div className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"} ${joinsPrev ? "mt-[3px]" : newDay ? "" : "mt-4"}`}>
                 <div className={`flex flex-col max-w-[78%] sm:max-w-[65%] ${mine ? "items-end" : "items-start"}`}>
                   <HoldMenu
-                    disabled={!mine || isEditing}
-                    hint={tr("Press and hold to edit or delete", "Mantén pulsado para editar o borrar", "Appui long pour modifier ou supprimer")}
-                    items={[
+                    disabled={isEditing}
+                    copyText={m.body} copyLabel={tr("Copy", "Copiar", "Copier")} copiedLabel={tr("Copied", "Copiado", "Copié")}
+                    hint={tr("Press and hold for options", "Mantén pulsado para opciones", "Appui long pour les options")}
+                    items={!mine ? [] : [
                       { label: tr("Edit", "Editar", "Modifier"), icon: <Pencil className="w-4 h-4" />, onSelect: () => { setEditingId(m.id); setEditingText(m.body); } },
                       { label: tr("Delete", "Borrar", "Supprimer"), icon: <Trash2 className="w-4 h-4" />, destructive: true, onSelect: () => { if (window.confirm(tr("Delete this message?", "¿Borrar este mensaje?", "Supprimer ce message ?"))) deleteM.mutate(m.id); } },
                     ]}

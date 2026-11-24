@@ -1,1 +1,2 @@
 - Own chat messages and comments open Edit/Delete only through HoldMenu (press and hold; click on desktop), never inline icon buttons, so chats stay clean.
+- HoldMenu menus also offer Copy (copyText prop) on every message and comment; admins get Delete on others' public comments and slot-chat messages there.

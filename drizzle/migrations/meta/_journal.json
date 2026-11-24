@@ -351,6 +351,13 @@
       "when": 1795503332466,
       "tag": "0049_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1795520171581,
+      "tag": "0050_admin_delete_slot_messages",
+      "breakpoints": true
     }
   ]
 }

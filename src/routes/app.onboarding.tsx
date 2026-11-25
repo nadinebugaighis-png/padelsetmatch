@@ -181,7 +181,12 @@ function Onboarding() {
       const draft = loadGuestDraft();
       if (draft) {
         if (draft.priorities?.length) setPriorities((cur) => cur.length ? cur : draft.priorities!);
-        if (draft.level) setLevel(draft.level as PadelLevel);
+        if (draft.level) {
+          setLevel(draft.level as PadelLevel);
+          // A pre-signup band alone must never save without a number, so the
+          // slider starts on that band's number and it is saved with the profile.
+          setLevelRatingValue(ratingForLevel(draft.level));
+        }
         // Legacy looking_for hydration removed, app is now padel-only.
         clearGuestDraft();
         toast.success("We pre-filled your answers from the preview.");

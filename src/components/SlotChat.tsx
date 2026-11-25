@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ArrowUp, Check, Copy, Pencil, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, useTr } from "@/lib/i18n";
-import { levelName } from "@/lib/level-label";
+import { playerLevel } from "@/lib/level-label";
 import { photoSrc } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { HoldMenu } from "@/components/HoldMenu";
@@ -145,7 +145,7 @@ export function SlotChat({ area, date, slot, canWrite, onJoin, joining }: Props)
                   className="max-w-[80%] rounded-lg rounded-tl-sm bg-white px-2.5 py-1.5 text-[14.5px] leading-snug text-[var(--ink)] shadow-[0_1px_0.5px_rgba(0,0,0,0.08)]">
                   <div className="text-[12px] font-semibold text-[var(--pitch)]">
                     {m.sender.first_name ?? tr("Player", "Jugador", "Joueur")}
-                    {m.sender.level ? <span className="font-normal text-[var(--ink)]/72"> · {levelName(m.sender.level, tr)}</span> : null}
+                    {m.sender.level ? <span className="font-normal text-[var(--ink)]/72"> · {playerLevel(m.sender.level, m.sender.level_rating, tr)}</span> : null}
                   </div>
                   <span className="whitespace-pre-wrap break-words">{m.body}</span>
                   {meta(m)}

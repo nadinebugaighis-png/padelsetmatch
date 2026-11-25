@@ -3,7 +3,7 @@ import { connectAreaOptions, groupCheckins, matchStartFor, slotStillOpen, upcomi
 
 const row = (p: Partial<PlayCheckin>): PlayCheckin => ({
   id: Math.random().toString(36), profile_id: "a", play_date: "2026-11-22", slot: "evening",
-  first_name: "A", photo_url: null, level: null, mine: false, ...p,
+  first_name: "A", photo_url: null, level: null, level_rating: null, mine: false, ...p,
 });
 
 describe("who can play", () => {

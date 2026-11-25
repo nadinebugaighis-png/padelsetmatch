@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tansta
 import { toast } from "sonner";
 import { ChevronDown, MapPin } from "lucide-react";
 import { useI18n, useTr } from "@/lib/i18n";
-import { levelName } from "@/lib/level-label";
+import { playerLevel } from "@/lib/level-label";
 import { photoSrc } from "@/lib/photo-src";
 import { PlayerPhoto } from "@/components/PlayerPhoto";
 import { SlotChat } from "@/components/SlotChat";
@@ -305,7 +305,7 @@ function GroupCard({ group, areaKey, title, slotLabel, focused, busy, onJoin, on
                 <PlayerPhoto src={photoSrc(p.photo_url, 240)} seed={p.profile_id} alt={p.first_name ?? ""} className="w-full h-full object-cover" loading="lazy" />
               </span>
               <span className="mt-1.5 block max-w-16 truncate text-[12.5px] text-[var(--ink)]">{name}</span>
-              {p.level && <span className="block text-[9px] uppercase tracking-[0.16em] text-[var(--ink)]/72">{levelName(p.level, tr)}</span>}
+              {p.level && <span className="block text-[9px] uppercase tracking-[0.16em] text-[var(--ink)]/72">{playerLevel(p.level, p.level_rating, tr)}</span>}
             </>
           );
           return (

@@ -20,11 +20,11 @@ function pickArea(viewer: { mine: ConnectArea[]; elsewhere: ConnectArea[] }, key
   return [...viewer.mine, ...viewer.elsewhere].find((a) => a.key === key) ?? null;
 }
 
-type Person = { id: string; first_name: string | null; photo_url: string | null; level: string | null };
+type Person = { id: string; first_name: string | null; photo_url: string | null; level: string | null; level_rating: number | null };
 
 async function people(supabase: any, ids: string[]): Promise<Map<string, Person>> {
   if (ids.length === 0) return new Map();
-  const { data } = await supabase.from("profiles").select("id, first_name, photo_url, level").in("id", ids);
+  const { data } = await supabase.from("profiles").select("id, first_name, photo_url, level, level_rating").in("id", ids);
   return new Map(((data ?? []) as Person[]).map((p) => [p.id, p]));
 }
 
@@ -71,7 +71,7 @@ export const listPlayCheckins = createServerFn({ method: "GET" })
     for (const r of list) {
       const p = byId.get(r.profile_id);
       if (!p) continue; // suspended or otherwise hidden players stay out
-      checkins.push({ ...r, first_name: p.first_name, photo_url: p.photo_url, level: p.level, mine: r.profile_id === viewer.id });
+      checkins.push({ ...r, first_name: p.first_name, photo_url: p.photo_url, level: p.level, level_rating: p.level_rating, mine: r.profile_id === viewer.id });
     }
     const myCheckins: MyCheckin[] = ((myRes.data ?? []) as Array<{ play_date: string; slot: PlaySlot; area_keys: string[]; area_label: string | null }>)
       .map((r) => ({ date: r.play_date, slot: r.slot, areaKeys: r.area_keys ?? [], areaLabel: r.area_label }));
@@ -123,7 +123,7 @@ export type SlotMessage = {
   created_at: string;
   edited_at: string | null;
   mine: boolean;
-  sender: { id: string; first_name: string | null; photo_url: string | null; level: string | null };
+  sender: { id: string; first_name: string | null; photo_url: string | null; level: string | null; level_rating: number | null };
 };
 
 const thread = z.object({ area: areaKey, date: isoDate, slot: z.enum(PLAY_SLOTS) });

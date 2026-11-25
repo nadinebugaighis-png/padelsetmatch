@@ -22,6 +22,7 @@ export type PlayCheckin = {
   first_name: string | null;
   photo_url: string | null;
   level: string | null;
+  level_rating: number | null;
   mine: boolean;
 };
 

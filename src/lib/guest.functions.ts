@@ -128,7 +128,12 @@ export const listPublicUpcomingMatches = createServerFn({ method: "GET" })
       _limit: data?.limit ?? 40,
     } as never);
     if (error) throw new Error(error.message);
-    return (res as Array<{
+    // Drop games that have already finished (start + length in the past).
+    const nowMs = Date.now();
+    const live = ((res ?? []) as Array<{ starts_at: string; time_tbd?: boolean | null; duration_minutes?: number | null }>).filter(
+      (e) => e.time_tbd || new Date(e.starts_at).getTime() + (e.duration_minutes ?? 90) * 60000 > nowMs,
+    );
+    return (live as unknown as Array<{
       id: string;
       starts_at: string;
       time_tbd?: boolean | null;

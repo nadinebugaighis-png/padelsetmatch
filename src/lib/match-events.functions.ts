@@ -428,7 +428,7 @@ export const listOpenEvents = createServerFn({ method: "POST" })
     }
 
     const nowDate = new Date();
-    const merged = Array.from(eventsMap.values()).filter((e: any) => !playtomicListingExpired(e, nowDate)).sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
+    const merged = Array.from(eventsMap.values()).filter((e: any) => !playtomicListingExpired(e, nowDate) && (e.time_tbd || new Date(e.starts_at).getTime() + (e.duration_minutes ?? 90) * 60000 > nowDate.getTime())).sort((a: any, b: any) => a.starts_at.localeCompare(b.starts_at));
     const eventIds = merged.map((event: any) => event.id);
     const guestsByEvent = new Map<string, any[]>();
     if (eventIds.length > 0) {

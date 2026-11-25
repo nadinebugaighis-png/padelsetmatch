@@ -184,14 +184,14 @@ export function shouldShowQuestion(opts: {
   return opts.lastSlot !== slotKey(now);
 }
 
-/** Skip previous answers; revisit a slot question once the pool is complete. */
+/** Skip previous answers; once every question is answered, the card stops showing. */
 export function dailyQuestionFor(answered: Set<string>, d = new Date()): CuratedQuestion | null {
   const start = CURATED_QUESTIONS.indexOf(questionForSlot(d));
   for (let i = 0; i < CURATED_QUESTIONS.length; i++) {
     const q = CURATED_QUESTIONS[(start + i) % CURATED_QUESTIONS.length];
     if (!answered.has(q.q.en)) return q;
   }
-  return questionForSlot(d);
+  return null;
 }
 
 /** Up to `n` unanswered questions for the player-card unlock. */

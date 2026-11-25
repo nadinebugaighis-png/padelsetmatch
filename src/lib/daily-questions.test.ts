@@ -19,7 +19,7 @@ describe("padel question card", () => {
     const d = new Date(2026, 9, 30, 9);
     const slotQ = questionForSlot(d);
     expect(dailyQuestionFor(new Set([slotQ.q.en]), d)).not.toBe(slotQ);
-    expect(dailyQuestionFor(new Set(CURATED_QUESTIONS.map((q) => q.q.en)), d)).toBe(slotQ);
+    expect(dailyQuestionFor(new Set(CURATED_QUESTIONS.map((q) => q.q.en)), d)).toBeNull();
   });
   it("regular players get one question in the morning and one in the evening", () => {
     const morning = new Date(2026, 10, 7, 9);

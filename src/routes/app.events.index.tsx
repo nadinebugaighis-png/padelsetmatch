@@ -240,7 +240,9 @@ function EventsPage() {
 
   const filtered = useMemo(() => {
     const chosen = areas.filter((a) => areaKeys.has(a.key));
+    const nowMs = Date.now();
     return all
+      .filter((e) => e.time_tbd || new Date(e.starts_at).getTime() + (e.duration_minutes ?? 90) * 60000 > nowMs)
       .filter((e) => selectedDays.has(dayKey(new Date(e.starts_at))))
       .filter((e) => chosen.length === 0 || chosen.some((a) => eventInArea(e, a)))
       .filter((e) => passesFilters(e, filters, myLevel))

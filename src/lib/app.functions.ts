@@ -9,7 +9,7 @@ import { ageMatchesPreference, bracketForMidpoint } from "./age-bracket";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
-const ProfileInput = z.object({
+export const ProfileInput = z.object({
   first_name: z.string().min(1).max(40),
   age: z.number().int().min(18).max(99),
   gender: z.enum(GENDERS),
@@ -34,7 +34,8 @@ const ProfileInput = z.object({
   photo_url: z.string().min(1).max(2000).nullable().optional(),
   availability: z.array(z.string().min(1).max(40)).max(10).default([]),
   court_side: z.enum(["right", "left", "both"]).nullable().optional(),
-  mixed_doubles: z.boolean().default(false),
+  // mixed_doubles left the profile form: the column is no longer written, so a
+  // saved value survives later edits and only legacy pairs still carry one.
   free_court_access: z.boolean().default(false),
   free_court_note: z.string().max(200).nullable().optional(),
   gender_custom: z.string().max(40).nullable().optional(),
@@ -345,6 +346,8 @@ function scoreCandidate(me: Profile, c: Profile) {
       playingStyle += 10;
     }
   }
+  // Legacy only: nobody can turn this on any more, but pairs who both had it
+  // before it left the profile keep the score they were shown.
   if (me.mixed_doubles && c.mixed_doubles) playingStyle += 8;
   if (me.free_court_access || c.free_court_access) playingStyle += 8;
 

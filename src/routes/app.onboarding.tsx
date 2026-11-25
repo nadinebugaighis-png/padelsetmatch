@@ -97,7 +97,6 @@ function Onboarding() {
   const [lastPhotoFile, setLastPhotoFile] = useState<File | null>(null);
   const [availability, setAvailability] = useState<string[]>([]);
   const [courtSide, setCourtSide] = useState<CourtSide | "">("");
-  const [mixedDoubles, setMixedDoubles] = useState(false);
   const [freeCourt, setFreeCourt] = useState(false);
   const [freeCourtNote, setFreeCourtNote] = useState("");
   const [sexualOrientation, setSexualOrientation] = useState("");
@@ -170,7 +169,6 @@ function Onboarding() {
 
       if (p.availability?.length) setAvailability(p.availability);
       if (p.court_side) setCourtSide(p.court_side as CourtSide);
-      if (typeof p.mixed_doubles === "boolean") setMixedDoubles(p.mixed_doubles);
       if (typeof p.free_court_access === "boolean") setFreeCourt(p.free_court_access);
       if (p.free_court_note) setFreeCourtNote(p.free_court_note);
       if (p.sexual_orientation) setSexualOrientation(p.sexual_orientation);
@@ -364,7 +362,7 @@ function Onboarding() {
         locations: encodedLocations, languages,
         level, level_rating: levelRatingValue, priorities, looking_for: derivedLookingFor, intents: derivedIntents,
         bio: bio || null, photo_url: photoUrl,
-        availability, court_side: courtSide || "both", mixed_doubles: mixedDoubles,
+        availability, court_side: courtSide || "both",
         free_court_access: freeCourt, free_court_note: freeCourt ? (freeCourtNote.trim() || null) : null,
         gender_custom: gender === "self-describe" ? (genderCustom.trim() || null) : null,
         sexual_orientation: sexualOrientation.trim() ? sexualOrientation.trim() : null,
@@ -823,12 +821,6 @@ function Onboarding() {
           />
         </div>
         <SummaryRow label={tr("Style", "Estilo", "Style")} value={padelStyle.map((s) => label(s)).join(", ")} onClick={() => setSheet({ kind: "style" })} />
-        <ToggleRow
-          title={tr("Open to mixed doubles", "Abierto a dobles mixtos", "Ouvert au double mixte")}
-          sub={tr("2 men + 2 women", "2 hombres + 2 mujeres", "2 hommes + 2 femmes")}
-          on={mixedDoubles}
-          onChange={() => setMixedDoubles((v) => !v)}
-        />
       </Section>
 
       {/* Where you play */}

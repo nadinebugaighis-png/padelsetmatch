@@ -29,13 +29,13 @@ describe("match gender rule", () => {
 describe("free court share text", () => {
   it("says the court is free when the host turned Free court on", () => {
     expect(matchShareText({ clubName: "La Moraleja", when: "sáb 09:30", freeCourt: true }, es)).toBe(
-      "🎾 ¡Pista gratis! Únete a mi partido de pádel en PadelSetMatch — La Moraleja · sáb 09:30",
+      "🎾 ¡Pista gratis! Únete a mi partido de pádel en PadelSetMatch: La Moraleja · sáb 09:30",
     );
   });
 
   it("does not mention free when Free court is off", () => {
     const text = matchShareText({ clubName: "Club X", when: "sáb 20:00", freeCourt: false }, es);
-    expect(text).toBe("Únete a mi partido de pádel en PadelSetMatch — Club X · sáb 20:00");
+    expect(text).toBe("Únete a mi partido de pádel en PadelSetMatch: Club X · sáb 20:00");
     expect(text.toLowerCase()).not.toContain("gratis");
   });
 

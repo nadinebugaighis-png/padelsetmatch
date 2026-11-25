@@ -48,9 +48,11 @@ describe("Playtomic bands", () => {
     expect(levelFromRating(5.4)).toBe("advanced");
     expect(levelFromRating(5.5)).toBe("competitive");
   });
-  it("shows a player's exact number when set, else their band", () => {
-    expect(playerLevel("intermediate", 3.8, es)).toBe("Intermedio alto · 3.8");
-    expect(playerLevel("intermediate", null, es)).toBe("Intermedio alto · 3.5–4.4");
+  it("shows only the player's chosen number, retaining a range only when unset", () => {
+    expect(playerLevel("intermediate", 3.5, en)).toBe("3.5");
+    expect(playerLevel("intermediate", 3.8, es)).toBe("3.8");
+    expect(playerLevel("just starting", 0, en)).toBe("0.0");
+    expect(playerLevel("intermediate", null, es)).toBe("3.5–4.4");
     expect(withRating("Intermedio", "casual")).toBe("Intermedio · 2.5–3.4");
   });
   it("covers a match's whole range and keeps All levels plain", () => {

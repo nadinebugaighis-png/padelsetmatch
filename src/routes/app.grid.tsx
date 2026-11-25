@@ -168,13 +168,13 @@ function Discover() {
     if (closedIdRef.current === search.previewId) return;
     const c = candidates.find((x) => x.id === search.previewId);
     if (c) {
-      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, nationality_2: (c as any).nationality_2, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
+      setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, level_rating: c.level_rating ?? null, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, nationality_2: (c as any).nationality_2, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
     }
   }, [search.previewId, feedQ.data?.candidates]);
 
   const openPreview = (c: NonNullable<typeof feedQ.data>["candidates"][number]) => {
     closedIdRef.current = null;
-    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, nationality_2: (c as any).nationality_2, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
+    setPreview({ id: c.id, first_name: c.first_name, photo_url: c.photo_url, bio: c.bio, zone: c.zone, level: c.level, level_rating: c.level_rating ?? null, reasons: c.reasons, liked: c.liked, free_court_access: c.free_court_access, free_court_note: c.free_court_note, score: c.score, categories: (c as any).categories, personal_traits: (c as any).personal_traits, padel_style: (c as any).padel_style, priorities: (c as any).priorities, nationality: (c as any).nationality, nationality_2: (c as any).nationality_2, gender: (c as any).gender, gender_custom: (c as any).gender_custom, languages: (c as any).languages, locations: (c as any).locations, is_coach: (c as any).is_coach, founding_number: (c as any).founding_number });
     navigate({ search: { previewId: c.id }, replace: true, resetScroll: false });
   };
   const closePreview = () => {
@@ -763,6 +763,7 @@ function Discover() {
                   bio: me.bio,
                   zone: me.zone,
                   level: me.level,
+                  level_rating: me.level_rating ?? null,
                   reasons: [],
                   liked: false,
                   free_court_access: me.free_court_access,

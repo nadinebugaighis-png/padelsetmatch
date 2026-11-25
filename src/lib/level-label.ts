@@ -123,16 +123,16 @@ export function withRating(word: string, level: string | null | undefined): stri
 }
 
 /**
- * A player's level as shown on cards and profiles: their exact number when they
- * set one ("Intermedio alto · 3.8"), else their band ("Intermedio alto · 3.5–4.4").
+ * Cards and profiles show the chosen number only. Legacy profiles without a
+ * chosen number retain their band span, never an invented exact rating.
  */
 export function playerLevel(level: string | null | undefined, rating: number | null | undefined, tr: Tr): string {
   if (rating != null && Number.isFinite(Number(rating))) {
     const n = Number(rating);
-    return `${ratingWord(n, tr)} · ${fmtRating(n)}`;
+    return fmtRating(n);
   }
   if (!level) return "";
-  return withRating(levelName(level, tr), level);
+  return levelRating(level);
 }
 
 /**

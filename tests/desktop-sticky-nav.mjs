@@ -12,7 +12,11 @@
  * container) silently breaks `position: sticky`. This test catches that.
  *
  * Run against a running dev/preview server:
- *   BASE_URL=http://localhost:8080 node tests/desktop-sticky-nav.spec.mjs
+ *   BASE_URL=http://localhost:8080 node tests/desktop-sticky-nav.mjs
+ *
+ * This is a standalone browser script, not a vitest file: it is named
+ * .mjs (not .spec.mjs) on purpose so the test runner skips it, since the
+ * playwright npm package is not a project dependency.
  *
  * Requires an authenticated Supabase session in env
  * (LOVABLE_BROWSER_SUPABASE_*), otherwise /app/grid redirects to /auth

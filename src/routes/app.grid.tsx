@@ -444,16 +444,37 @@ function Discover() {
   const startingCommunity = communityView ?? (myCommunityKeys.size === 1 ? myLocations.find((l) => communityOf(l)) ?? null : null);
 
   return (
-    <main className="programme-page px-5 py-7 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
+    <main className="programme-page px-5 py-4 sm:py-8 lg:py-10 min-h-[calc(100vh-4rem)]">
       <MemberGuide />
       <div className="max-w-md sm:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
-        <CommunityHeading
-          view={communityView}
-          locations={((feedQ.data.me as unknown as { locations?: string[] | null }).locations) ?? []}
-          world={world}
-          fallbackTitle={t("disc.h1")}
-          subtitle={t("disc.h1.sub")}
-        />
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <CommunityHeading
+              view={communityView}
+              locations={((feedQ.data.me as unknown as { locations?: string[] | null }).locations) ?? []}
+              world={world}
+              fallbackTitle={t("disc.h1")}
+              subtitle={t("disc.h1.sub")}
+            />
+          </div>
+          {!communityView && (
+            <button
+              onClick={() => {
+                const next = !world;
+                setWorld(next);
+                setWorldM.mutate(next);
+              }}
+              className={`shrink-0 mt-1 whitespace-nowrap rounded-full px-2.5 sm:px-3.5 py-1.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1 ${
+                world
+                  ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
+                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
+              }`}
+            >
+              <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              {world ? t("disc.world.on") : t("disc.world.off")}
+            </button>
+          )}
+        </div>
 
         {(() => {
           const me = feedQ.data.me as unknown as {
@@ -521,28 +542,8 @@ function Discover() {
 
 
 
-        {!communityView && <div className="mt-5 lg:mt-6">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <button
-              onClick={() => {
-                const next = !world;
-                setWorld(next);
-                setWorldM.mutate(next);
-              }}
-              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition inline-flex items-center gap-1.5 ${
-                world
-                  ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)] shadow-sm"
-                  : "bg-white border border-[var(--ink)]/20 text-[var(--ink)] hover:bg-[var(--ink)]/5 hover:border-[var(--ink)]/40"
-              }`}
-            >
-              <Globe className="w-3.5 h-3.5" />
-              {world ? t("disc.world.on") : t("disc.world.off")}
-            </button>
-          </div>
-        </div>}
-
-        <div className="mt-4 flex items-center gap-2 sm:gap-3">
-          <div className="relative flex-1">
+        <div className="mt-3 flex items-center gap-2 sm:gap-3">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ink)]/70" />
             <input
               type="text"
@@ -749,7 +750,7 @@ function Discover() {
             );
           })()
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-6 mt-3">
             {(() => {
               const me = feedQ.data.me as any;
               // Visiting another community: show its members only, not me.
@@ -784,8 +785,8 @@ function Discover() {
               };
               return (
                 <div className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md lazy-card">
-                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
-                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                  <div className="relative bg-white p-1.5 sm:p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-square sm:aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {me.photo_url ? (
                         <PlayerPhoto seed={me.id} src={photoSrc(me.photo_url, 480)} alt={me.first_name} loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       ) : (
@@ -799,19 +800,22 @@ function Discover() {
                       />
                     </div>
                   </div>
-                  <div className="p-3 bg-white">
-                    <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
-                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/82 tracking-[0.08em] font-semibold uppercase truncate">
-                      {playerLevel(me.level, me.level_rating, tr)}
-                    </p>
-                    {me.zone && <p className="mt-0.5 text-[11px] text-[var(--ink)]/70 truncate">{me.zone}</p>}
-                    {me.free_court_access && (
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="inline-flex items-center justify-center" title={tr("Free court access", "Pista gratis", "Terrain gratuit")}>
-                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                  <div className="p-2 sm:p-3 bg-white">
+                    <div className="flex items-center gap-1">
+                      <h3 className="text-serif text-[13px] sm:text-[20px] lg:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{me.first_name}</h3>
+                      {me.free_court_access && (
+                        <span
+                          className="shrink-0 inline-flex items-center"
+                          title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                          aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                        >
+                          <CourtIcon className="w-4 h-2.5 sm:w-5 sm:h-3 text-[var(--ink)]" strokeWidth={2.2} />
                         </span>
-                      </div>
-                    )}
+                      )}
+                    </div>
+                    <p className="mt-1 sm:mt-1.5 text-[9px] sm:text-[11px] text-[var(--ink)]/82 tracking-[0.06em] sm:tracking-[0.08em] font-semibold uppercase truncate">
+                      {[me.zone, playerLevel(me.level, me.level_rating, tr)].filter(Boolean).join(" · ")}
+                    </p>
                   </div>
                 </div>
               );
@@ -829,8 +833,8 @@ function Discover() {
                   className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md lazy-card"
                 >
                   {/* Polaroid-style photo frame */}
-                  <div className="relative bg-white p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
-                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                  <div className="relative bg-white p-1.5 sm:p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
+                    <div className="relative aspect-square sm:aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
                         <PlayerPhoto seed={c.id} src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading={idx < 6 ? "eager" : "lazy"} fetchPriority={idx < 4 ? "high" : "auto"} decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       )}
@@ -838,15 +842,15 @@ function Discover() {
                         <CourtViewCard seed={c.id} name={c.first_name} className="absolute inset-0" />
                       )}
 
-                      <div className="absolute top-2 left-2 z-10 flex gap-1.5">
+                      <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 z-10 flex gap-1 sm:gap-1.5">
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); handleHide(c.id, c.first_name); }}
-                          className="w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center text-[var(--ink)] hover:bg-white"
+                          className="w-[18px] h-[18px] sm:w-5 sm:h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center text-[var(--ink)] hover:bg-white"
                           aria-label={tr(`Hide ${c.first_name}`, `Ocultar a ${c.first_name}`, `Masquer ${c.first_name}`)}
                           title={tr("Not interested, hide from my Home grid", "No me interesa, ocultar de mi Inicio", "Pas intéressé·e, masquer de mon accueil")}
                         >
-                          <EyeOff className="w-2.5 h-2.5" strokeWidth={1.6} />
+                          <EyeOff className="w-2 h-2 sm:w-2.5 sm:h-2.5" strokeWidth={1.6} />
                         </button>
                         <button
                           type="button"
@@ -858,11 +862,11 @@ function Discover() {
                             }
                             navigate({ to: "/app/events/new", search: { invite: c.id, name: c.first_name } });
                           }}
-                          className={`w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
+                          className={`w-[18px] h-[18px] sm:w-5 sm:h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center hover:bg-white ${c.liked ? "text-[var(--ink)]" : "text-[var(--ink)]/35"}`}
                           aria-label={tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`)}
                           title={c.liked ? tr(`Request to play with ${c.first_name}`, `Proponer un partido a ${c.first_name}`, `Proposer un match à ${c.first_name}`) : tr(`No connection yet with ${c.first_name}`, `Aún no hay conexión con ${c.first_name}`, `Pas encore de connexion avec ${c.first_name}`)}
                         >
-                          <Zap className="w-2.5 h-2.5" fill="currentColor" strokeWidth={1.5} />
+                          <Zap className="w-2 h-2 sm:w-2.5 sm:h-2.5" fill="currentColor" strokeWidth={1.5} />
 
                         </button>
                       </div>
@@ -875,11 +879,11 @@ function Discover() {
                           if (c.liked) unlikeM.mutate(c.id);
                           else likeSilentM.mutate(c.id);
                         }}
-                        className="absolute top-2 right-2 z-20 w-5 h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
+                        className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 z-20 w-[18px] h-[18px] sm:w-5 sm:h-5 rounded-full bg-white/95 border border-[var(--ink)]/16 flex items-center justify-center hover:bg-white after:absolute after:content-[''] after:-inset-3"
                         aria-label={c.liked ? tr(`Undo thumbs up for ${c.first_name}`, `Quitar pulgar a ${c.first_name}`, `Retirer le pouce à ${c.first_name}`) : tr(`Connect with ${c.first_name}`, `Conectar con ${c.first_name}`, `Connecter avec ${c.first_name}`)}
                         title={c.liked ? tr("Connected", "Conectado", "Connecté") : tr("Connect", "Conectar", "Connecter")}
                       >
-                        {c.liked ? <Check className="w-2.5 h-2.5 text-[var(--ink)]" strokeWidth={2.5} /> : <UserPlus className="w-2.5 h-2.5 text-[var(--ink)]/80" strokeWidth={1.8} />}
+                        {c.liked ? <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-[var(--ink)]" strokeWidth={2.5} /> : <UserPlus className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-[var(--ink)]/80" strokeWidth={1.8} />}
                       </button>
 
 
@@ -892,19 +896,29 @@ function Discover() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white">
-                    <h3 className="text-serif text-[20px] sm:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
-                    <p className="mt-1.5 text-[11px] text-[var(--ink)]/82 tracking-[0.08em] font-semibold uppercase truncate">
-                      {playerLevel(c.level, c.level_rating, tr)}
+                  <div className="p-2 sm:p-3 bg-white">
+                    <div className="flex items-center gap-1">
+                      <h3 className="text-serif text-[13px] sm:text-[20px] lg:text-[22px] leading-none uppercase text-[var(--ink)] truncate">{c.first_name}</h3>
+                      {c.free_court_access && (
+                        <span
+                          className="shrink-0 inline-flex items-center"
+                          title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                          aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
+                        >
+                          <CourtIcon className="w-4 h-2.5 sm:w-5 sm:h-3 text-[var(--ink)]" strokeWidth={2.2} />
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 sm:mt-1.5 text-[9px] sm:text-[11px] text-[var(--ink)]/82 tracking-[0.06em] sm:tracking-[0.08em] font-semibold uppercase truncate">
+                      {[c.zone, playerLevel(c.level, c.level_rating, tr)].filter(Boolean).join(" · ")}
                     </p>
-                    {c.zone && <p className="mt-0.5 text-[11px] text-[var(--ink)]/70 truncate">{c.zone}</p>}
                     {(c as any).is_coach && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[11px] font-semibold uppercase tracking-wider">
-                        <GraduationCap className="w-2.5 h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
+                      <div className="mt-1.5 sm:mt-2 inline-flex items-center gap-1 px-1 py-0.5 rounded-full bg-[var(--plum)]/12 border border-[var(--plum)]/30 text-[var(--plum)] text-[8px] sm:text-[11px] font-semibold uppercase tracking-wider">
+                        <GraduationCap className="w-2 h-2 sm:w-2.5 sm:h-2.5" /> {tr("Coach", "Entrenador", "Coach")}
                       </div>
                     )}
                     {away && (
-                      <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/22 text-[var(--ink)] text-[11px] font-semibold uppercase tracking-wider">
+                      <div className="mt-1.5 sm:mt-2 inline-flex items-center gap-1 px-1 py-0.5 rounded-full bg-[var(--ink)]/5 border border-[var(--ink)]/22 text-[var(--ink)] text-[8px] sm:text-[11px] font-semibold uppercase tracking-wider">
                         ✈ {tr("On holidays", "De vacaciones", "En vacances")}
                       </div>
                     )}
@@ -919,26 +933,15 @@ function Discover() {
                           : tr(`${s.count} shared`, `${s.count} en común`, `${s.count} en commun`);
                       return (
                         <div
-                          className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[11px] font-semibold uppercase tracking-wider max-w-full"
+                          className="mt-1.5 sm:mt-2 inline-flex items-center gap-1 px-1 py-0.5 rounded-full bg-[var(--grass)]/20 border border-[var(--grass)]/50 text-[var(--ink)] text-[8px] sm:text-[11px] font-semibold uppercase tracking-wider max-w-full"
                           title={s.names?.length ? s.names.join(" · ") : tr("You share a venue", "Compartís un lugar", "Vous partagez un lieu")}
                         >
-                          <MapPin className="w-2.5 h-2.5 shrink-0" />
+                          <MapPin className="w-2 h-2 sm:w-2.5 sm:h-2.5 shrink-0" />
                           <span className="truncate">{chip}</span>
                         </div>
                       );
                     })()}
 
-                    <div className="mt-2 flex items-center justify-between">
-                      {c.free_court_access ? (
-                        <span
-                          className="inline-flex items-center justify-center"
-                          title={tr("Free court access", "Pista gratis", "Terrain gratuit")}
-                          aria-label={tr("Free court access", "Pista gratis", "Terrain gratuit")}
-                        >
-                          <CourtIcon className="w-5 h-3 text-[var(--ink)]" strokeWidth={2.2} />
-                        </span>
-                      ) : <span />}
-                    </div>
                   </div>
                 </div>
               );
@@ -1296,13 +1299,13 @@ function GridSkeleton() {
       <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto">
         <div className="h-9 w-2/3 rounded-lg bg-[var(--ink)]/8 animate-pulse" />
         <div className="mt-3 h-4 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
-        <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="mt-4 grid gap-2.5 sm:gap-4 lg:gap-6 grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
+          {Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="rounded-2xl overflow-hidden border border-[var(--ink)]/14 bg-white">
-              <div className="aspect-[3/4] bg-[var(--ink)]/8 animate-pulse" />
-              <div className="p-3 space-y-2">
-                <div className="h-3.5 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />
-                <div className="h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
+              <div className="aspect-square sm:aspect-[3/4] bg-[var(--ink)]/8 animate-pulse" />
+              <div className="p-2 sm:p-3 space-y-2">
+                <div className="h-2.5 sm:h-3.5 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />
+                <div className="h-2 sm:h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
               </div>
             </div>
           ))}

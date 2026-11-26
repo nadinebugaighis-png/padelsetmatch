@@ -95,3 +95,6 @@
 - [x] App invite names the sharer's own community.
 - [x] Daily open game for Salamanca & Chamberí, Miami and Marbella.
 - [x] Book a court: real clubs and tabs for Marbella, Dubai and Miami; open on the player's own city.
+
+## Home grid density on phones
+- [x] Home player grid now 3 across on phones (4 on tablets, 5 on large screens) with square photos, one name line plus one place-and-level line, world toggle moved onto the title row: three full rows fit on the new iPhone. 302 tests pass, build OK, checked at 360/393/402 and 1280 wide.

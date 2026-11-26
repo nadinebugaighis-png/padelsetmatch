@@ -34,6 +34,7 @@ export const Route = createFileRoute("/m/$eventId")({
       meta: [
         { title },
         { name: "description", content: description },
+        { name: "robots", content: "noindex, follow" },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "website" },

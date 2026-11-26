@@ -8,6 +8,7 @@ export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [
     { title: "Sign in · PadelSetMatch" },
     { name: "description", content: "Sign in or create your PadelSetMatch account to meet players and join padel matches." },
+    { name: "robots", content: "noindex, follow" },
     { property: "og:title", content: "Sign in · PadelSetMatch" },
     { property: "og:description", content: "Join your local padel community with PadelSetMatch." },
     { property: "og:type", content: "website" },

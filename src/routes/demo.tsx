@@ -34,10 +34,12 @@ export const Route = createFileRoute("/demo")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://padelsetmatch.com/demo" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESC },
     ],
+    links: [{ rel: "canonical", href: "https://padelsetmatch.com/demo" }],
   }),
   component: DemoPage,
 });

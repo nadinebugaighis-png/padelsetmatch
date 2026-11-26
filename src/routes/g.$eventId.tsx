@@ -16,6 +16,7 @@ import { MatchProgrammeCard } from "@/components/MatchProgrammeCard";
 export const Route = createFileRoute("/g/$eventId")({
   head: () => ({ meta: [
       { name: "description", content: "Join a PadelSetMatch invitation and coordinate with the match host." },
+      { name: "robots", content: "noindex, follow" },
       { property: "og:title", content: "Guest match invitation \u00b7 PadelSetMatch" },
       { property: "og:description", content: "Join a PadelSetMatch invitation and coordinate with the match host." },
       { property: "og:type", content: "website" },

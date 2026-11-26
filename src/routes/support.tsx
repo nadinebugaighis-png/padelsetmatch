@@ -9,8 +9,10 @@ export const Route = createFileRoute("/support")({
       { property: "og:title", content: "Support & Safety · PadelSetMatch" },
       { property: "og:description", content: "Help, safety tools and moderation contact for PadelSetMatch players." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://padelsetmatch.com/support" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://padelsetmatch.com/support" }],
   }),
   component: SupportPage,
 });

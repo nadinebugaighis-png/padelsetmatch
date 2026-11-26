@@ -12,7 +12,9 @@ export const Route = createFileRoute("/how-it-works")({
       { name: "description", content: "A directory of padel players around you. See who is up for a game, join games and book a coach." },
       { property: "og:title", content: "How PadelSetMatch works" },
       { property: "og:description", content: "Find players. Play more." },
+      { property: "og:url", content: "https://padelsetmatch.com/how-it-works" },
     ],
+    links: [{ rel: "canonical", href: "https://padelsetmatch.com/how-it-works" }],
   }),
   component: HowItWorksPage,
 });

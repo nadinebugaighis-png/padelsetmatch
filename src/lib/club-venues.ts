@@ -17,6 +17,7 @@ export const CLUB_COMMUNITY_VENUES: Record<string, ClubResult> = {
 /** The club venue for the community being viewed, if it is a club community. */
 export function clubVenueFor(view: string | null | undefined): ClubResult | null {
   if (!view) return null;
+  if (CLUB_COMMUNITY_VENUES[view]) return CLUB_COMMUNITY_VENUES[view]!;
   const label = communityOf(view)?.label;
   return (label && CLUB_COMMUNITY_VENUES[label]) || null;
 }

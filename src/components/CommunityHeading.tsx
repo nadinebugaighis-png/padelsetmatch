@@ -12,7 +12,10 @@ function myCommunities(locations: string[]) {
     const c = communityOf(l);
     if (c && !seen.has(c.key)) { seen.add(c.key); out.push({ key: c.key, label: c.label }); }
   }
-  return out;
+  // Neighbourhoods lead, in the order the player chose them; clubs and private
+  // communities (those with their own seal) follow, so a club only titles Home
+  // when the player belongs to nothing else.
+  return [...out.filter((c) => !communityLogo(c.key)), ...out.filter((c) => communityLogo(c.key))];
 }
 
 /** True when the chosen view is a community the player has not joined. */

@@ -10,3 +10,9 @@ describe("club community venues", () => {
     expect(clubVenueFor(null)).toBeNull();
   });
 });
+
+describe("clubVenueFor plain label", () => {
+  it("accepts the bare club name", () => {
+    expect(clubVenueFor("Club de Pádel La Moraleja")?.place_id).toBe("ChIJnfS5U1wsQg0R8WQD4_nRg1Q");
+  });
+});

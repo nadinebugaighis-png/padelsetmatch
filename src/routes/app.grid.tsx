@@ -101,7 +101,6 @@ function Discover() {
 
   const [levelFilter, setLevelFilter] = useState<string>("all");
   // Age range for Home; null = the range saved on my profile.
-  const [ageRange, setAgeRange] = useState<{ min: number; max: number } | null>(null);
   const [zoneFilter, setZoneFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -137,8 +136,8 @@ function Discover() {
   // Community chosen in the directory (null = all my communities together).
   const communityView = useCommunityView();
   const feedQ = useQuery({
-    queryKey: ["discover", world, communityView, ageRange],
-    queryFn: () => getFeed({ data: { world, ...(communityView ? { visit: communityView } : {}), ...(ageRange ? { ages: ageRange } : {}) } }),
+    queryKey: ["discover", world, communityView],
+    queryFn: () => getFeed({ data: { world, ...(communityView ? { visit: communityView } : {}) } }),
     staleTime: 60_000,
     placeholderData: keepPreviousData,
   });
@@ -436,7 +435,7 @@ function Discover() {
       }
       return true;
     });
-  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0) + (ageRange ? 1 : 0);
+  const activeFilterCount = (levelFilter !== "all" ? 1 : 0) + (zoneFilter !== "all" ? 1 : 0);
   const myLocations = ((feedQ.data.me as unknown as { locations?: string[] | null }).locations) ?? [];
   const visitingOther = isVisitingOther(communityView, myLocations);
   const myCommunityKeys = new Set(myLocations.map((l) => communityOf(l)?.key).filter(Boolean));
@@ -584,26 +583,6 @@ function Discover() {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("Age", "Edad", "Âge")}</label>
-              {(() => {
-                const meAge = feedQ.data?.me as { age_min?: number | null; age_max?: number | null } | undefined;
-                const cur = ageRange ?? { min: meAge?.age_min ?? 18, max: meAge?.age_max ?? 99 };
-                const opts = [18, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 99];
-                const sel = "flex-1 h-9 rounded-md border border-[var(--ink)]/20 bg-white text-[var(--ink)] px-2 text-sm";
-                return (
-                  <div className="flex items-center gap-2">
-                    <select aria-label={tr("Youngest", "Desde", "De")} value={opts.includes(cur.min) ? cur.min : 18} onChange={(e) => { const min = Number(e.target.value); setAgeRange({ min, max: Math.max(min, cur.max) }); }} className={sel}>
-                      {opts.filter((o) => o < 99).map((o) => <option key={o} value={o}>{o}</option>)}
-                    </select>
-                    <span className="text-[var(--ink)]/70">–</span>
-                    <select aria-label={tr("Oldest", "Hasta", "À")} value={opts.includes(cur.max) ? cur.max : 99} onChange={(e) => { const max = Number(e.target.value); setAgeRange({ min: Math.min(cur.min, max), max }); }} className={sel}>
-                      {opts.filter((o) => o > 18).map((o) => <option key={o} value={o}>{o === 99 ? "70+" : o}</option>)}
-                    </select>
-                  </div>
-                );
-              })()}
-            </div>
-            <div>
               <label className="block text-[10px] uppercase tracking-widest text-[var(--ink)]/82 mb-1.5 font-semibold">{tr("City / community", "Ciudad / comunidad", "Ville / communauté")}</label>
               <input
                 type="text"
@@ -627,7 +606,7 @@ function Discover() {
             {activeFilterCount > 0 && (
               <button
                 type="button"
-                onClick={() => { setLevelFilter("all"); setZoneFilter("all"); setAgeRange(null); }}
+                onClick={() => { setLevelFilter("all"); setZoneFilter("all"); }}
                 className="text-[11px] text-[var(--ink)] underline font-semibold"
               >
                 Clear filters
@@ -671,7 +650,7 @@ function Discover() {
               );
               actions.push({
                 label: tr("Clear filters", "Borrar filtros", "Effacer les filtres"),
-                onClick: () => { setLevelFilter("all"); setZoneFilter("all"); setAgeRange(null); },
+                onClick: () => { setLevelFilter("all"); setZoneFilter("all"); },
                 primary: true,
               });
             } else if (totalInFeed === 0 && !world && startingCommunity) {

@@ -5,10 +5,9 @@ import { LevelScale } from "@/components/LevelScale";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { getMyProfile, upsertMyProfile } from "@/lib/app.functions";
-import { AGE_BRACKETS, bracketForMidpoint, bracketLabel, bracketMidpoint, resolveAgePreference, type AgeBracket } from "@/lib/age-bracket";
+import { bracketForMidpoint, type AgeBracket } from "@/lib/age-bracket";
 import {
   AUDIENCE_OPTIONS, AVAILABILITY_SLOTS, COURT_SIDES, HONEST_EDGES, LANGUAGES, LOOKING_FOR, NATIONALITIES,
   PADEL_STYLES, PERSONAL_STRENGTHS,
@@ -346,7 +345,7 @@ function Onboarding() {
     const legacy = interested_in;
 
     const first = validBlocks[0];
-    if (age === null || !level) {
+    if (!level) {
       throw new Error(tr("Please complete all required fields", "Completa todos los campos obligatorios", "Complète tous les champs obligatoires"));
     }
     await upsert({
@@ -355,7 +354,7 @@ function Onboarding() {
         friend_interested_in: friendAud, partner_interested_in: partnerAud,
         age_bracket_lo: (bracket ?? bracketForMidpoint(age))?.[0] ?? null,
         age_bracket_hi: (bracket ?? bracketForMidpoint(age))?.[1] ?? null,
-        ...resolveAgePreference(age_min, age_max), nationality: nationality === "__none__" ? "" : nationality,
+        age_min: 18, age_max: 99, nationality: nationality === "__none__" ? "" : nationality,
         // A second nationality only counts alongside a real first one.
         nationality_2: nationality !== "__none__" && nationality !== "" && nationality !== "Other" && nationality2 !== nationality ? nationality2 : "",
         zone: first ? first.city : "",
@@ -393,10 +392,8 @@ function Onboarding() {
   const missingByStepDetailed: Array<Array<{ key: string; label: string }>> = [
     ([
       !first_name.trim() ? { key: "first_name", label: tr("first name", "nombre", "prénom") } : null,
-      age === null || age < 18 ? { key: "age", label: tr("age", "edad", "âge") } : null,
       null,
       null,
-      age_min !== null && age_max !== null && age_min > age_max ? { key: "age_range", label: tr("a valid age range", "un rango de edad válido", "une tranche d'âge valide") } : null,
       validBlocks.length === 0 ? { key: "locations", label: tr("where you play", "dónde juegas", "où tu joues") } : null,
       !level ? { key: "level", label: tr("padel level", "nivel de pádel", "niveau de padel") } : null,
     ].filter(Boolean) as Array<{ key: string; label: string }>),
@@ -496,11 +493,6 @@ function Onboarding() {
       ? tr("Prefer not to say", "Prefiero no decirlo", "Je préfère ne pas dire")
       : [nationality === "Other" ? tr("Other", "Otro", "Autre") : nationality, realNat(nationality) && nationality2 && nationality2 !== nationality ? nationality2 : ""].filter(Boolean).join(" ");
   const langSummary = languages.map((l) => ((LANGUAGES as readonly string[]).includes(l) ? label(l) : l)).join(", ");
-  const ageMinShown = age_min ?? 18;
-  const ageMaxShown = age_max ?? 99;
-  const ageRangeText = age_min === null && age_max === null
-    ? tr("Any age", "Cualquier edad", "Tous âges")
-    : `${ageMinShown} ${tr("to", "a", "à")} ${age_max === null ? "99" : ageMaxShown}`;
 
   const renderLocEditor = (i: number) => {
     const b = locBlocks[i];
@@ -842,58 +834,6 @@ function Onboarding() {
         <button type="button" onClick={() => { const n = locBlocks.length; addBlock(); if (n < 5) setSheet({ kind: "loc", i: n }); }} className="mt-1 inline-flex min-h-11 items-center gap-1.5 text-[14px] text-[var(--ink)]/84">
           <Plus className="w-4 h-4" /> {tr("Add another place", "Añadir otro lugar", "Ajouter un autre lieu")}
         </button>
-      </Section>
-
-      {/* Who you match with */}
-      <Section title={tr("Who you play with", "Con quién juegas", "Avec qui tu joues")} sub={tr("Only used to suggest games. Never shown on your profile.", "Solo para sugerirte partidos. Nunca se muestra en tu perfil.", "Uniquement pour te suggérer des matchs. Jamais affiché sur ton profil.")} icon={<Lock className="w-3 h-3" />}>
-        <div data-field="age" className={`py-3 border-b border-[var(--ink)]/18 ${fieldCls("age")}`}>
-          <FieldLabel>{tr("Your age", "Tu edad", "Ton âge")}</FieldLabel>
-          <div className="mt-1 grid grid-cols-5 overflow-hidden rounded-xl border border-[var(--ink)]/22">
-            {AGE_BRACKETS.map((b, idx) => {
-              const mid = bracketMidpoint(b);
-              const selected = bracket !== null && bracket[0] === b[0] && bracket[1] === b[1];
-              const labelTxt = bracketLabel(b);
-              return (
-                <button
-                  key={labelTxt}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() => { setBracket(b); setAge(mid); }}
-                  className={`h-11 text-[13px] transition-colors ${idx > 0 ? "border-l border-[var(--ink)]/22" : ""} ${selected ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--ink)]/84 active:bg-[var(--ink)]/5"}`}
-                >
-                  {labelTxt}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div data-field="age_range" className={`py-3 ${fieldCls("age_range")}`}>
-          <div className="flex items-center justify-between">
-            <FieldLabel>{tr("Players aged", "Edad de los jugadores", "Âge des joueurs")}</FieldLabel>
-            <span className="text-[14px] text-[var(--ink)]">{ageRangeText}</span>
-          </div>
-          <SliderPrimitive.Root
-            className="relative mt-3 flex h-8 w-full touch-none select-none items-center"
-            min={18}
-            max={99}
-            step={1}
-            minStepsBetweenThumbs={1}
-            value={[ageMinShown, ageMaxShown]}
-            onValueChange={(v) => {
-              const lo = v[0] ?? 18;
-              const hi = v[1] ?? 99;
-              setAgeMin(lo <= 18 ? null : lo);
-              setAgeMax(hi >= 99 ? null : hi);
-            }}
-            aria-label={tr("Players aged", "Edad de los jugadores", "Âge des joueurs")}
-          >
-            <SliderPrimitive.Track className="relative h-px w-full grow bg-[var(--ink)]/20">
-              <SliderPrimitive.Range className="absolute h-full bg-[var(--ink)]" />
-            </SliderPrimitive.Track>
-            <SliderPrimitive.Thumb aria-label={tr("Youngest", "Mínima", "Minimum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
-            <SliderPrimitive.Thumb aria-label={tr("Oldest", "Máxima", "Maximum")} className="block h-6 w-6 rounded-full border border-[var(--ink)]/30 bg-[var(--card)] shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)]/30" />
-          </SliderPrimitive.Root>
-        </div>
       </Section>
 
       {/* Background */}

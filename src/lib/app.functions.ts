@@ -5,13 +5,12 @@ import { z } from "zod";
 import { bestCultureAffinity, formatNationalities, languageOverlap, locationAffinity, nationalityList, zoneAffinity } from "./affinity";
 import { GENDERS, LOOKING_FOR, PADEL_LEVELS, type Profile } from "./types";
 import { completeAccountDeletion, isOrderedAgeRange } from "./qa-safety";
-import { ageMatchesPreference, bracketForMidpoint } from "./age-bracket";
 
 const LEVEL_IDX: Record<string, number> = Object.fromEntries(PADEL_LEVELS.map((l, i) => [l, i]));
 
 export const ProfileInput = z.object({
   first_name: z.string().min(1).max(40),
-  age: z.number().int().min(18).max(99),
+  age: z.number().int().min(18).max(99).nullable(),
   gender: z.enum(GENDERS),
   interested_in: z.array(z.enum(GENDERS)).default([]),
   friend_interested_in: z.array(z.string()).default([]),
@@ -274,14 +273,8 @@ function scoreCandidate(me: Profile, c: Profile) {
 
   score += 6;
 
-  // Bracket-based: a saved age is only the midpoint of the chosen bracket
-  // (56+ → 78), so compare spans, never raw numbers.
-  const meLikesAge = ageMatchesPreference(me, c);
-  const theyLikeAge = ageMatchesPreference(c, me);
-  // Hard filter: only show people inside the user's chosen age range.
-  if (!meLikesAge) return { score: 0, reasons, categories: { playingStyle: 0, personality: 0, lifestyle: 0, vibe: 0 } };
-  if (theyLikeAge) { score += 22; }
-  else { score += 8; }
+  // Age is not part of matching: padel is for every age.
+  score += 22;
 
   const levelGap = Math.abs((LEVEL_IDX[me.level] ?? 0) - (LEVEL_IDX[c.level] ?? 0));
   if (levelGap === 0) { score += 18; reasons.push("Same padel level, fair match"); playingStyle += 40; }
@@ -562,8 +555,7 @@ export const getDiscoverFeed = createServerFn({ method: "GET" })
 
 
     const scored = candidates
-      .filter((c) => data?.ages ? ageMatchesPreference({ age_min: data.ages.min, age_max: data.ages.max }, c) : (world || visitingOther || ageMatchesPreference(me, c)))
-      .map((c) => {
+            .map((c) => {
         const { score, reasons, categories } = scoreCandidate(me, c);
         const qa = qaScoreByProfile.get(c.id);
         const qaBonus = qa?.qa_bonus ?? 0;

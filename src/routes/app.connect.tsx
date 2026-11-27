@@ -111,7 +111,7 @@ function ConnectPage() {
   // Age gate: Connect is a social feed, so it requires a completed adult
   // profile (age is NOT NULL and DB-constrained to 18+). Incomplete profiles
   // are sent back to onboarding to finish.
-  const needsOnboarding = meQ.isSuccess && (!meQ.data || (meQ.data as any).age == null);
+  const needsOnboarding = meQ.isSuccess && !meQ.data;
 
   const postsQ = useQuery({
     queryKey: ["connect-posts", { city, cat }],

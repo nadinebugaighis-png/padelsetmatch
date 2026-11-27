@@ -180,12 +180,11 @@ export function newCommunityLocation(country: string, city: string, area: string
 }
 
 /**
- * Public browse list: hides one-member communities (unless mine or branded)
- * so the list never looks abandoned, and lists every country with my home
- * country first. Founders still see and share theirs.
+ * Public browse list: includes communities from their first member and lists
+ * every country with my home country first. Own and branded entries stay visible.
  */
 export function publicDirectory(dir: Directory): { countries: DirectoryCountry[]; homeCountry: string | null } {
-  const visible = (c: Community) => c.mine || !!c.logo || c.members > 1;
+  const visible = (c: Community) => c.mine || !!c.logo || c.members >= 1;
   const countries = dir.countries
     .map((co) => {
       const cities = co.cities

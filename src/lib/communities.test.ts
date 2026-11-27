@@ -116,11 +116,24 @@ describe("publicDirectory", () => {
       { country: "United Kingdom", members: 0, cities: [{ city: "London", members: 0, communities: [c("United Kingdom", "London", "Chelsea", 7), c("United Kingdom", "London", "Padelodontics", 0, false, "logo.png")] }] },
     ],
   };
-  it("hides one-member communities from others", () => {
+  it("shows one-member communities to others", () => {
     const r = publicDirectory(dir);
     const labels = r.countries.flatMap((co) => co.cities.flatMap((ci) => ci.communities.map((x) => x.label)));
-    expect(labels).not.toContain("Lonely");
-    expect(labels).not.toContain("Benghazi");
+    expect(labels).toContain("Lonely");
+    expect(labels).toContain("Benghazi");
+  });
+  it("shows Berlin neighbourhoods when their only member is another player", () => {
+    const berlin = buildDirectory([p(
+      "Germany | Berlin | Charlottenburg",
+      "Germany | Berlin | Mitte",
+      "Germany | Berlin | Steglitz",
+    )], ["Spain | Madrid | La Moraleja"]);
+    const germany = publicDirectory(berlin).countries.find((co) => co.country === "Germany");
+    expect(germany?.cities.find((ci) => ci.city === "Berlin")?.communities.map((community) => ({ label: community.label, members: community.members }))).toEqual([
+      { label: "Charlottenburg", members: 1 },
+      { label: "Mitte", members: 1 },
+      { label: "Steglitz", members: 1 },
+    ]);
   });
   it("keeps a one-member community visible to its founder", () => {
     const own = { ...dir, countries: [{ country: "Libya", members: 0, cities: [{ city: "Benghazi", members: 0, communities: [c("Libya", "Benghazi", "Benghazi", 1, true)] }] }] };
@@ -132,7 +145,7 @@ describe("publicDirectory", () => {
   });
   it("lists the whole world with my country first", () => {
     const flipped = { ...dir, countries: [...dir.countries].reverse() };
-    expect(publicDirectory(flipped).countries.map((co) => co.country)).toEqual(["Spain", "United Kingdom"]);
+    expect(publicDirectory(flipped).countries.map((co) => co.country)).toEqual(["Spain", "United Kingdom", "Libya"]);
   });
 });
 

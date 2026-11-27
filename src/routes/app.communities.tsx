@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -67,10 +67,21 @@ function CommunitiesPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Come back to the exact spot in the list after looking at a community.
+  const SCROLL_KEY = "communities-scroll";
   const open = (location: string | null) => {
+    try { sessionStorage.setItem(SCROLL_KEY, String(window.scrollY)); } catch { /* storage blocked */ }
     setCommunityView(location);
     navigate({ to: "/app/grid" });
   };
+  useEffect(() => {
+    if (!dirQ.data) return;
+    let y: number | null = null;
+    try { const v = sessionStorage.getItem(SCROLL_KEY); sessionStorage.removeItem(SCROLL_KEY); y = v ? Number(v) : null; } catch { /* storage blocked */ }
+    if (y == null || !Number.isFinite(y) || y <= 0) return;
+    const target = y;
+    requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior })));
+  }, [!!dirQ.data]);
   const viewKey = view ? communityOf(view)?.key : null;
   const mine = dirQ.data?.mine ?? [];
   // A community someone shared: shown first, ready to join.

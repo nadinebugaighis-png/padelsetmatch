@@ -518,3 +518,14 @@ html.native-shell [role="alertdialog"][id^="radix-"] {
   border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
   box-shadow: 0 1px 3px color-mix(in oklab, var(--ink) 8%, transparent);
 }
+
+/* Club de Pádel La Moraleja branded community preview */
+.club-lm {
+  --lm-navy: #0b1b2b;
+  --lm-navy-2: #13263a;
+  --lm-lime: #d6fe1d;
+  --lm-white: #ffffff;
+  --lm-mist: #eef1f4;
+  background: var(--lm-mist);
+  color: var(--lm-navy);
+}

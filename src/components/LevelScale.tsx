@@ -1,5 +1,6 @@
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { RATING_MAX, RATING_MIN, RATING_STEP, clampRating, fmtRating, ratingWord } from "@/lib/level-label";
+import { LevelGuideLink } from "@/components/LevelGuide";
 
 type Tr = (en: string, es: string, fr?: string) => string;
 
@@ -65,6 +66,9 @@ export function LevelScale({
       </SliderPrimitive.Root>
       <div className="mt-1 flex justify-between text-[10px] tabular-nums" style={{ color: `color-mix(in oklab, ${ink} 60%, transparent)` }}>
         <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+      </div>
+      <div className="mt-1 flex justify-end">
+        <LevelGuideLink rating={value} tone={tone} />
       </div>
     </div>
   );

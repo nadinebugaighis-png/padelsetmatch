@@ -23,6 +23,7 @@ import { getMyCoachSlots } from "@/lib/coach-lessons.functions";
 import { VenuesSection } from "@/components/VenuesSection";
 import { GearEditor } from "@/components/GearShelf";
 import { MemberGuide, openMemberGuide } from "@/components/MemberGuide";
+import { LevelGuideLink } from "@/components/LevelGuide";
 import { QaAnswers, QA_TOTAL, useQaAnswers } from "@/components/QaAnswers";
 import { isTelemetryEnabled, setTelemetryEnabled } from "@/lib/telemetry";
 
@@ -175,6 +176,7 @@ function ProfilePage() {
         {metaLine && (
           <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-[var(--ink)]/82">{metaLine}</p>
         )}
+        <LevelGuideLink rating={p.level_rating} className="mt-2" />
         {p.bio && (
           <p className="mt-4 max-w-sm text-serif italic text-[15px] sm:text-[17px] leading-snug text-[var(--ink)]/88">
             “{p.bio}”

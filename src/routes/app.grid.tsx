@@ -29,6 +29,7 @@ import { useCommunityView } from "@/lib/community-view";
 import { communityLabel, communityOf, communityShareUrl, isVisitingOther } from "@/lib/communities";
 import { nativeShare } from "@/lib/native";
 import { CommunityHeading } from "@/components/CommunityHeading";
+import { LevelGuideLink } from "@/components/LevelGuide";
 
 
 export const Route = createFileRoute("/app/grid")({
@@ -998,6 +999,7 @@ function Discover() {
                       {/* Programme header */}
                       <div className="text-center lg:text-left">
                         <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--ink)]/78">{[preview.zone, playerLevel(preview.level, preview.level_rating, tr)].filter(Boolean).join(" · ")}</div>
+                        <LevelGuideLink rating={preview.level_rating} className="mt-1" />
                         <div className="text-serif text-[34px] lg:text-[40px] leading-[1.05] text-[var(--ink)] mt-1">{preview.first_name}</div>
                         <div className="mt-2 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-1 text-[11px] uppercase tracking-normal">
                           <span className="text-[var(--ink)] font-semibold">{(preview.score ?? 0) >= 75 ? tr("Great on court", "Gran afinidad", "Grande affinité") : (preview.score ?? 0) >= 55 ? tr("Good on court", "Buena afinidad", "Bonne affinité") : tr("Worth a game", "Para un partido", "À essayer")}</span>

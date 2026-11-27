@@ -42,6 +42,7 @@ import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppQuickStartRouteImport } from './routes/app.quick-start'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as ClubLaMoralejaRouteImport } from './routes/club.la-moraleja'
 import { Route as GEventIdRouteImport } from './routes/g.$eventId'
 import { Route as MEventIdRouteImport } from './routes/m.$eventId'
 import { Route as PlayIndexRouteImport } from './routes/play.index'
@@ -229,6 +230,11 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const ClubLaMoralejaRoute = ClubLaMoralejaRouteImport.update({
+  id: '/club/la-moraleja',
+  path: '/club/la-moraleja',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GEventIdRoute = GEventIdRouteImport.update({
   id: '/g/$eventId',
   path: '/g/$eventId',
@@ -360,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AppProfileRoute
   '/app/quick-start': typeof AppQuickStartRoute
   '/app/settings': typeof AppSettingsRoute
+  '/club/la-moraleja': typeof ClubLaMoralejaRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/play/madrid': typeof PlayMadridRoute
@@ -413,6 +420,7 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AppProfileRoute
   '/app/quick-start': typeof AppQuickStartRoute
   '/app/settings': typeof AppSettingsRoute
+  '/club/la-moraleja': typeof ClubLaMoralejaRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/play/madrid': typeof PlayMadridRoute
@@ -468,6 +476,7 @@ export interface FileRoutesById {
   '/app/profile': typeof AppProfileRoute
   '/app/quick-start': typeof AppQuickStartRoute
   '/app/settings': typeof AppSettingsRoute
+  '/club/la-moraleja': typeof ClubLaMoralejaRoute
   '/g/$eventId': typeof GEventIdRoute
   '/m/$eventId': typeof MEventIdRoute
   '/play/madrid': typeof PlayMadridRoute
@@ -524,6 +533,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/quick-start'
     | '/app/settings'
+    | '/club/la-moraleja'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/play/madrid'
@@ -577,6 +587,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/quick-start'
     | '/app/settings'
+    | '/club/la-moraleja'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/play/madrid'
@@ -631,6 +642,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/quick-start'
     | '/app/settings'
+    | '/club/la-moraleja'
     | '/g/$eventId'
     | '/m/$eventId'
     | '/play/madrid'
@@ -671,6 +683,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   DotwellKnownAppleAppSiteAssociationRoute: typeof DotwellKnownAppleAppSiteAssociationRoute
   DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
+  ClubLaMoralejaRoute: typeof ClubLaMoralejaRoute
   GEventIdRoute: typeof GEventIdRoute
   MEventIdRoute: typeof MEventIdRoute
   PlayMadridRoute: typeof PlayMadridRoute
@@ -917,6 +930,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/club/la-moraleja': {
+      id: '/club/la-moraleja'
+      path: '/club/la-moraleja'
+      fullPath: '/club/la-moraleja'
+      preLoaderRoute: typeof ClubLaMoralejaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/g/$eventId': {
       id: '/g/$eventId'
       path: '/g/$eventId'
@@ -1147,6 +1167,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotwellKnownAppleAppSiteAssociationRoute:
     DotwellKnownAppleAppSiteAssociationRoute,
   DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
+  ClubLaMoralejaRoute: ClubLaMoralejaRoute,
   GEventIdRoute: GEventIdRoute,
   MEventIdRoute: MEventIdRoute,
   PlayMadridRoute: PlayMadridRoute,

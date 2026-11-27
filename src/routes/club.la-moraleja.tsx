@@ -88,7 +88,6 @@ function ClubPage() {
         <ClubLogo look={look} />
         <div className="mx-auto mt-7 h-px w-12" style={{ background: "var(--lm-lime)" }} />
         <h1 className="mt-5 text-2xl font-semibold uppercase tracking-[0.12em]" style={{ color: ink }}>Juega en tu club</h1>
-        <p className="mt-2 text-sm opacity-80 max-w-xs mx-auto" style={{ color: ink }}>Avisos y competiciones solo para socios y jugadores del club.</p>
         <div className="mt-6 flex justify-center gap-3">
           <a href="/auth" className="rounded-full px-6 py-3 text-sm font-bold uppercase" style={light ? { background: "var(--lm-navy)", color: "var(--lm-lime)" } : { background: "var(--lm-lime)", color: "var(--lm-navy)" }}>Únete</a>
           <a href={BOOK_WA} target="_blank" rel="noreferrer" className="rounded-full px-6 py-3 text-sm font-bold uppercase border" style={light ? { borderColor: "var(--lm-navy)", color: "var(--lm-navy)" } : { borderColor: "var(--lm-lime)", color: "var(--lm-lime)" }}>Reserva pista</a>

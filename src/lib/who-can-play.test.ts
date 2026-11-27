@@ -49,6 +49,24 @@ describe("who can play", () => {
     expect(connectAreaOptions(["Spain|Madrid|El Soto"]).mine).toEqual([{ key: "area:la moraleja", label: "La Moraleja" }]);
   });
 
+  it("defaults to the first neighbourhood even when a club was saved first", () => {
+    const { mine } = connectAreaOptions(["Spain|Madrid|Club de Pádel La Moraleja", "Spain|Madrid|La Moraleja", "Spain|Madrid|Alcobendas"]);
+    expect(mine.map((a) => a.key)).toEqual(["area:la moraleja", "area:alcobendas", "area:club de padel la moraleja"]);
+  });
+
+  it("preserves the player's neighbourhood selection order", () => {
+    const { mine } = connectAreaOptions(["Spain|Madrid|Club de Pádel La Moraleja", "Spain|Madrid|Alcobendas", "Spain|Madrid|La Moraleja"]);
+    expect(mine[0]?.key).toBe("area:alcobendas");
+  });
+
+  it("defaults to the club when it is the player's only community", () => {
+    expect(connectAreaOptions(["Spain|Madrid|Club de Pádel La Moraleja"]).mine[0]?.key).toBe("area:club de padel la moraleja");
+  });
+
+  it("also puts neighbourhoods before other branded private communities", () => {
+    expect(connectAreaOptions(["United Kingdom|London|Padelodontics", "United Kingdom|London|Chelsea & Battersea"]).mine[0]?.key).toBe("area:chelsea & battersea");
+  });
+
   it("suggests a match hour that fits the part of the day", () => {
     expect(matchStartFor("2026-11-24", "morning")).toBe("2026-11-24T10:00");
     expect(matchStartFor("2026-11-24", "afternoon")).toBe("2026-11-24T15:00");

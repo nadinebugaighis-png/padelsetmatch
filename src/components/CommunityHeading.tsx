@@ -4,6 +4,7 @@ import { communityLogo, communityOf } from "@/lib/communities";
 import { CommunitySeal } from "@/components/CommunityDirectory";
 import { setCommunityView } from "@/lib/community-view";
 import { useTr } from "@/lib/i18n";
+import { homeAreaOrder } from "@/lib/home-area-order";
 
 function myCommunities(locations: string[]) {
   const seen = new Set<string>();
@@ -15,7 +16,7 @@ function myCommunities(locations: string[]) {
   // Neighbourhoods lead, in the order the player chose them; clubs and private
   // communities (those with their own seal) follow, so a club only titles Home
   // when the player belongs to nothing else.
-  return [...out.filter((c) => !communityLogo(c.key)), ...out.filter((c) => communityLogo(c.key))];
+  return homeAreaOrder(out);
 }
 
 /** True when the chosen view is a community the player has not joined. */

@@ -7,6 +7,7 @@
  */
 import { feedAreas } from "./feed-areas";
 import { LOCATION_PRESETS } from "./location-presets";
+import { homeAreaOrder } from "./home-area-order";
 
 export const PLAY_SLOTS = ["morning", "afternoon", "evening"] as const;
 export type PlaySlot = (typeof PLAY_SLOTS)[number];
@@ -86,7 +87,7 @@ export type ConnectArea = { key: string; label: string };
 const PRESET_LOCATIONS = LOCATION_PRESETS.map((p) => `${p.country}|${p.city}|${p.area ?? ""}`);
 
 export function connectAreaOptions(rawLocations: unknown): { mine: ConnectArea[]; elsewhere: ConnectArea[] } {
-  const mine = feedAreas(rawLocations).map(({ key, label }) => ({ key, label }));
+  const mine = homeAreaOrder(feedAreas(rawLocations).map(({ key, label }) => ({ key, label })));
   const own = new Set(mine.map((a) => a.key));
   const elsewhere = feedAreas(PRESET_LOCATIONS)
     .filter((a) => !own.has(a.key))

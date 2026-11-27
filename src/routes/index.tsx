@@ -53,6 +53,13 @@ function Landing() {
     void import("@/lib/native").then(async ({ isNative }) => {
       const native = isNative();
       if (native) document.documentElement.classList.add("native-app");
+      else {
+        // Home-screen shortcuts and the website: a saved account opens the app.
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data.session && !cancelled) { await navigate({ to: "/app", replace: true }); return; }
+        } catch { /* keep credentials, show the page */ }
+      }
       const result = await resumeNativeEntry(
         native,
         () => supabase.auth.getSession(),

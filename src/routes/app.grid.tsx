@@ -750,7 +750,7 @@ function Discover() {
             );
           })()
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-6 mt-3">
+          <div className="grid grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-6 mt-3">
             {(() => {
               const me = feedQ.data.me as any;
               // Visiting another community: show its members only, not me.
@@ -786,7 +786,7 @@ function Discover() {
               return (
                 <div className="group relative flex flex-col programme-card overflow-hidden transition hover:shadow-md lazy-card">
                   <div className="relative bg-white p-1.5 sm:p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
-                    <div className="relative aspect-square sm:aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {me.photo_url ? (
                         <PlayerPhoto seed={me.id} src={photoSrc(me.photo_url, 480)} alt={me.first_name} loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       ) : (
@@ -834,7 +834,7 @@ function Discover() {
                 >
                   {/* Polaroid-style photo frame */}
                   <div className="relative bg-white p-1.5 sm:p-2 shadow-[0_10px_28px_-12px_rgba(31,58,46,0.22)] rounded-[2px]">
-                    <div className="relative aspect-square sm:aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
+                    <div className="relative aspect-[3/4] bg-[var(--paper-2)] overflow-hidden">
                       {c.photo_url && (
                         <PlayerPhoto seed={c.id} src={photoSrc(c.photo_url, 480)} alt={c.first_name} loading={idx < 6 ? "eager" : "lazy"} fetchPriority={idx < 4 ? "high" : "auto"} decoding="async" className="absolute inset-0 w-full h-full object-cover brightness-110 md:transition-transform md:duration-500 md:group-hover:scale-[1.03]" />
                       )}
@@ -1299,10 +1299,10 @@ function GridSkeleton() {
       <div className="max-w-md sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto">
         <div className="h-9 w-2/3 rounded-lg bg-[var(--ink)]/8 animate-pulse" />
         <div className="mt-3 h-4 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />
-        <div className="mt-4 grid gap-2.5 sm:gap-4 lg:gap-6 grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-4 grid gap-2.5 sm:gap-4 lg:gap-6 grid-cols-2 min-[540px]:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
           {Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="rounded-2xl overflow-hidden border border-[var(--ink)]/14 bg-white">
-              <div className="aspect-square sm:aspect-[3/4] bg-[var(--ink)]/8 animate-pulse" />
+              <div className="aspect-[3/4] bg-[var(--ink)]/8 animate-pulse" />
               <div className="p-2 sm:p-3 space-y-2">
                 <div className="h-2.5 sm:h-3.5 w-2/3 rounded bg-[var(--ink)]/8 animate-pulse" />
                 <div className="h-2 sm:h-3 w-1/2 rounded bg-[var(--ink)]/6 animate-pulse" />

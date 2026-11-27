@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { CalendarDays, MessageCircle, Megaphone, Trophy, QrCode } from "lucide-react";
 import laMoralejaLogo from "@/assets/la-moraleja-club-logo.jpeg.asset.json";
+import logoOnNavy from "@/assets/la-moraleja-logo-on-navy.png.asset.json";
 
 const CLUB_URL = "https://padelsetmatch.com/club/la-moraleja";
 const WA = (msg: string) => "https://wa.me/34647103375?text=" + encodeURIComponent(msg);
@@ -21,8 +22,32 @@ export const Route = createFileRoute("/club/la-moraleja")({
   component: ClubPage,
 });
 
-function ClubLogo() {
-  return <img src={laMoralejaLogo.url} alt="Club de Pádel La Moraleja" width={1435} height={768} className="mx-auto w-full max-w-sm h-auto object-contain" />;
+type Look = 1 | 2 | 3;
+
+// Draft only: three header looks to compare with the club before choosing one.
+function ClubLogo({ look }: { look: Look }) {
+  if (look === 1) return <img src={logoOnNavy.url} alt="Club de Pádel La Moraleja" width={1475} height={737} className="mx-auto w-[78%] max-w-[300px] h-auto" />;
+  if (look === 2) return <img src={laMoralejaLogo.url} alt="Club de Pádel La Moraleja" width={1435} height={768} className="mx-auto w-[82%] max-w-[320px] h-auto" />;
+  return (
+    <div className="mx-auto w-[78%] max-w-[300px] rounded-[22px] p-5 border" style={{ background: "var(--lm-white)", borderColor: "color-mix(in oklab, var(--lm-lime) 55%, transparent)", boxShadow: "0 0 0 6px color-mix(in oklab, var(--lm-white) 6%, transparent), 0 24px 48px -20px rgba(0,0,0,0.6)" }}>
+      <img src={laMoralejaLogo.url} alt="Club de Pádel La Moraleja" width={1435} height={768} className="w-full h-auto" />
+    </div>
+  );
+}
+
+function LookSwitcher({ look, setLook }: { look: Look; setLook: (l: Look) => void }) {
+  const names: Record<Look, string> = { 1: "Navy", 2: "Claro", 3: "Placa" };
+  return (
+    <div className="sticky top-0 z-30 flex items-center justify-center gap-1.5 py-2 text-[11px] font-semibold" style={{ background: "var(--lm-mist)" }}>
+      <span className="opacity-60 mr-1 uppercase tracking-widest">Borrador</span>
+      {([1, 2, 3] as Look[]).map((l) => (
+        <button key={l} type="button" onClick={() => setLook(l)} className="rounded-full px-3 py-1.5 border"
+          style={look === l ? { background: "var(--lm-navy)", color: "var(--lm-lime)", borderColor: "var(--lm-navy)" } : { borderColor: "color-mix(in oklab, var(--lm-navy) 25%, transparent)" }}>
+          {l} · {names[l]}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 const announcements = [
@@ -41,6 +66,9 @@ function ClubPage() {
   const accent = "var(--lm-lime)";
   const BOOK_WA = WA("Hola, quería reservar una pista de pádel.");
   const [qr, setQr] = useState("");
+  const [look, setLook] = useState<Look>(1);
+  const light = look === 2;
+  const ink = light ? "var(--lm-navy)" : "var(--lm-white)";
   useEffect(() => {
     let off = false;
     import("qrcode")
@@ -54,14 +82,16 @@ function ClubPage() {
   // enough trailing space for the booking button to clear it when scrolled down.
   return (
     <div className="club-lm min-h-screen pb-44">
-      <header className="px-5 pt-10 pb-12 text-center" style={{ background: "var(--lm-navy)" }}>
-        <p className="text-[10px] tracking-[0.3em] mb-6" style={{ color: "var(--lm-lime)" }}>COMUNIDAD PRIVADA · PADELSETMATCH</p>
-        <ClubLogo />
-        <h1 className="mt-6 text-2xl font-semibold uppercase tracking-wide" style={{ color: "var(--lm-white)" }}>Juega en tu club</h1>
-        <p className="mt-2 text-sm opacity-80 max-w-xs mx-auto" style={{ color: "var(--lm-white)" }}>Avisos y competiciones solo para socios y jugadores del club.</p>
+      <LookSwitcher look={look} setLook={setLook} />
+      <header className="px-5 pt-8 pb-10 text-center" style={light ? { background: "var(--lm-white)", borderBottom: "1px solid color-mix(in oklab, var(--lm-navy) 10%, transparent)" } : { background: "var(--lm-navy)" }}>
+        <p className="text-[10px] tracking-[0.3em] mb-6" style={{ color: light ? "var(--lm-navy)" : "var(--lm-lime)", opacity: light ? 0.6 : 1 }}>COMUNIDAD PRIVADA · PADELSETMATCH</p>
+        <ClubLogo look={look} />
+        <div className="mx-auto mt-7 h-px w-12" style={{ background: "var(--lm-lime)" }} />
+        <h1 className="mt-5 text-2xl font-semibold uppercase tracking-[0.12em]" style={{ color: ink }}>Juega en tu club</h1>
+        <p className="mt-2 text-sm opacity-80 max-w-xs mx-auto" style={{ color: ink }}>Avisos y competiciones solo para socios y jugadores del club.</p>
         <div className="mt-6 flex justify-center gap-3">
-          <a href="/auth" className="rounded-full px-6 py-3 text-sm font-bold uppercase" style={{ background: "var(--lm-lime)", color: "var(--lm-navy)" }}>Únete</a>
-          <a href={BOOK_WA} target="_blank" rel="noreferrer" className="rounded-full px-6 py-3 text-sm font-bold uppercase border" style={{ borderColor: "var(--lm-lime)", color: "var(--lm-lime)" }}>Reserva pista</a>
+          <a href="/auth" className="rounded-full px-6 py-3 text-sm font-bold uppercase" style={light ? { background: "var(--lm-navy)", color: "var(--lm-lime)" } : { background: "var(--lm-lime)", color: "var(--lm-navy)" }}>Únete</a>
+          <a href={BOOK_WA} target="_blank" rel="noreferrer" className="rounded-full px-6 py-3 text-sm font-bold uppercase border" style={light ? { borderColor: "var(--lm-navy)", color: "var(--lm-navy)" } : { borderColor: "var(--lm-lime)", color: "var(--lm-lime)" }}>Reserva pista</a>
         </div>
       </header>
 

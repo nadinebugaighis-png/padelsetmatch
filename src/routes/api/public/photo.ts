@@ -27,7 +27,13 @@ export const Route = createFileRoute("/api/public/photo")({
         let src: URL;
         try { src = new URL(raw); } catch { return new Response("Bad URL", { status: 400 }); }
         const base = process.env.SUPABASE_URL ?? "";
-        if (!WIDTHS.has(w) || !base || src.origin !== new URL(base).origin || !src.pathname.startsWith(PREFIX)) {
+        // Saved photo links use the project's storage host; some environments
+        // reach the same project through a different address, so accept both.
+        const ref = process.env.SUPABASE_PROJECT_ID ?? process.env.VITE_SUPABASE_PROJECT_ID ?? "";
+        const origins = new Set<string>();
+        if (base) origins.add(new URL(base).origin);
+        if (ref) origins.add(`https://${ref}.supabase.co`);
+        if (!WIDTHS.has(w) || !origins.size || !origins.has(src.origin) || !src.pathname.startsWith(PREFIX)) {
           return new Response("Forbidden", { status: 403 });
         }
         const path = decodeURIComponent(src.pathname.slice(PREFIX.length));

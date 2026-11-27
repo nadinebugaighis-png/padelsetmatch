@@ -135,3 +135,11 @@ describe("publicDirectory", () => {
     expect(publicDirectory(flipped).countries.map((co) => co.country)).toEqual(["Spain", "United Kingdom"]);
   });
 });
+
+describe("Club de Pádel La Moraleja", () => {
+  it("is its own community, separate from the La Moraleja neighbourhood", async () => {
+    const { communityOf } = await import("./communities");
+    expect(communityOf("Spain | Madrid | Club de Pádel La Moraleja")?.label).toBe("Club de Pádel La Moraleja");
+    expect(communityOf("Spain | Madrid | Club de Pádel La Moraleja")?.key).not.toBe(communityOf("Spain | Madrid | La Moraleja")?.key);
+  });
+});

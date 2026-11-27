@@ -9,4 +9,5 @@ export type BrandedCommunity = { country: string; city: string; area: string; lo
 
 export const BRANDED_COMMUNITIES: BrandedCommunity[] = [
   { country: "United Kingdom", city: "London", area: "Padelodontics", logo: padelodonticsSeal.url },
+  { country: "Spain", city: "Madrid", area: "Club de Pádel La Moraleja", logo: "/clubs/la-moraleja-seal.svg" },
 ];

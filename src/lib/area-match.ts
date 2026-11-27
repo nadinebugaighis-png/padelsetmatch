@@ -30,6 +30,8 @@ export const PAIRED_COMMUNITIES: { key: string; label: string; parts: string[] }
 
 export function canonicalArea(area: string): string {
   const a = norm(area).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  // Club communities (e.g. "Club de Pádel La Moraleja") stay their own members-only group.
+  if (a.includes("club")) return a;
   if (a === "el soto" || a === "soto") return "la moraleja";
   if (GREATER_MORALEJA.some((p) => a.includes(p))) return "la moraleja";
   const paired = PAIRED_COMMUNITIES.find((c) => a === c.key || c.parts.includes(a));

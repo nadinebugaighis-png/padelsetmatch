@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { listClubGames } from "@/lib/club.functions";
+import { levelRangeLabel } from "@/lib/level-label";
 import { CalendarDays, MessageCircle, Megaphone, Trophy, Users, QrCode } from "lucide-react";
 
 const CLUB_URL = "https://padelsetmatch.com/club/la-moraleja";
@@ -75,7 +78,15 @@ function ClubPage() {
   const BOOK_WA = WA(beach ? "Hola, quería reservar la pista de arena de beach tennis." : "Hola, quería reservar una pista de pádel.");
   const ann = beach ? beachAnnouncements : announcements;
   const comps = beach ? beachCompetitions : competitions;
-  const gms = beach ? beachGames : games;
+  const liveQ = useQuery({ queryKey: ["club-games", "la-moraleja"], queryFn: () => listClubGames({ data: { club: "la-moraleja" } }), staleTime: 60_000 });
+  const live = (liveQ.data ?? []).map((g) => ({
+    id: g.id,
+    time: new Date(g.starts_at).toLocaleString("es-ES", g.time_tbd ? { weekday: "short", day: "numeric", month: "short", timeZone: "Europe/Madrid" } : { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" }) + (g.time_tbd ? " · hora por decidir" : ""),
+    level: levelRangeLabel(g.level_min, g.level_max, (_en: string, es: string) => es),
+    players: g.players,
+    capacity: g.capacity,
+  }));
+  const gms = beach ? beachGames.map((g) => ({ ...g, id: "", capacity: 4 })) : live;
   const [qr, setQr] = useState("");
   useEffect(() => {
     let off = false;
@@ -135,16 +146,19 @@ function ClubPage() {
         </Section>
 
         <Section icon={<Users className="w-4 h-4" />} title="Partidos abiertos">
+          {!beach && liveQ.isSuccess && gms.length === 0 && (
+            <Card><p className="text-sm opacity-75">Aún no hay partidos abiertos en el club. Crea el primero desde la app.</p></Card>
+          )}
           {gms.map((g) => (
-            <Card key={g.time}>
+            <a key={g.id || g.time} href={g.id ? `/m/${g.id}` : "/auth"} className="block"><Card>
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="font-semibold">{g.time}</p>
-                  <p className="text-sm opacity-75">{g.level} · {g.players}/4 jugadores</p>
+                  <p className="text-sm opacity-75">{g.level} · {g.players}/{g.capacity} jugadores</p>
                 </div>
                 <span className="rounded-full px-4 py-2 text-xs font-bold uppercase" style={{ background: "var(--lm-navy)", color: accent }}>Unirme</span>
               </div>
-            </Card>
+            </Card></a>
           ))}
         </Section>
 

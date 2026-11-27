@@ -108,6 +108,21 @@ function CommunitiesPage() {
               </section>
             )}
 
+            <section className="mt-7">
+              <h2 className={smallCaps}>{tr("Clubs", "Clubes", "Clubs")}</h2>
+              <ul className="mt-3 overflow-hidden rounded-2xl card-pop">
+                <li>
+                  <a href="/club/la-moraleja" className="flex items-center gap-3 px-4 sm:px-5 py-3.5 transition active:bg-[var(--ink)]/[0.04]">
+                    <CommunitySeal logo="/clubs/la-moraleja-seal.svg" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">Club de Pádel La Moraleja</span>
+                      <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">Madrid · {tr("Club page", "Página del club", "Page du club")}</span>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </section>
+
             {mine.length > 0 && (
               <section className="mt-7">
                 <h2 className={smallCaps}>{tr("Your communities", "Tus comunidades", "Tes communautés")}</h2>

@@ -72,6 +72,9 @@ export function QRShareButton() {
   const [open, setOpen] = useState(false);
   const pathname = useLocation({ select: (l) => l.pathname });
   if (pathname === "/" || pathname === "/app" || pathname.startsWith("/app/")) return null;
+  // Club pages carry their own printed QR panel, so the app-share button would
+  // only sit on top of it and get swallowed by the cookie notice.
+  if (pathname.startsWith("/club/")) return null;
   return (
     <>
       <button type="button" onClick={() => setOpen(true)} aria-label="Show QR code to share app"

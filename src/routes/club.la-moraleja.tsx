@@ -66,8 +66,10 @@ function ClubPage() {
     return () => { off = true; };
   }, []);
 
+  // The cookie notice is pinned to the bottom of the screen, so the page needs
+  // enough trailing space for the booking button to clear it when scrolled down.
   return (
-    <div className="club-lm min-h-screen pb-16">
+    <div className="club-lm min-h-screen pb-44">
       <header className="px-5 pt-10 pb-12 text-center" style={{ background: "var(--lm-navy)" }}>
         <p className="text-[10px] tracking-[0.3em] mb-6" style={{ color: "var(--lm-lime)" }}>COMUNIDAD PRIVADA · PADELSETMATCH</p>
         <ClubLogo />

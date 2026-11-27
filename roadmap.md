@@ -1,5 +1,10 @@
 # iPhone sign-in and notifications
 
+## La Moraleja club preview page
+- [x] Build the private club page (navy/lime branding, club news, open games, competitions, QR, WhatsApp booking); kept hidden with no in-app link, reachable only by its address.
+- [ ] Publish the site so the page appears at padelsetmatch.com/club/la-moraleja (requires Nadine's publish).
+- [ ] Replace the redrawn logo with their official logo file and the sample news, games and competitions with real club content (requires the club's files and decisions).
+
 ## Shared matches open in the installed app
 - [x] Prepare iOS Universal Links, Android App Links, safe cold/warm link handling and new release versions; 15 focused checks, typecheck and preview build pass.
 - [ ] Add the Google Play app-signing SHA-256 fingerprint (requires Nadine's Play Console certificate details).

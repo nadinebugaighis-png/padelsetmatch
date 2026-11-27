@@ -11,6 +11,7 @@ import { communityOf, type Community } from "@/lib/communities";
 import { setCommunityView, useCommunityView } from "@/lib/community-view";
 import { COUNTRY_NAMES, areasFor, citiesFor } from "@/lib/locations";
 import { useTr } from "@/lib/i18n";
+import laMoralejaLogo from "@/assets/la-moraleja-club-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/app/communities")({
   head: () => ({
@@ -113,7 +114,7 @@ function CommunitiesPage() {
               <ul className="mt-3 overflow-hidden rounded-2xl card-pop">
                 <li>
                   <a href="/club/la-moraleja" className="flex items-center gap-3 px-4 sm:px-5 py-3.5 transition active:bg-[var(--ink)]/[0.04]">
-                    <CommunitySeal logo="/clubs/la-moraleja-seal.svg" />
+                    <CommunitySeal logo={laMoralejaLogo.url} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-serif text-[17px] sm:text-[19px] leading-tight text-[var(--ink)]">Club de Pádel La Moraleja</span>
                       <span className="mt-1 block text-[10px] uppercase tracking-[0.2em] text-[var(--ink)]/72">Madrid · {tr("Club page", "Página del club", "Page du club")}</span>

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { CalendarDays, MessageCircle, Megaphone, Trophy, QrCode } from "lucide-react";
+import laMoralejaLogo from "@/assets/la-moraleja-club-logo.jpeg.asset.json";
 
 const CLUB_URL = "https://padelsetmatch.com/club/la-moraleja";
 const WA = (msg: string) => "https://wa.me/34647103375?text=" + encodeURIComponent(msg);
@@ -20,21 +21,8 @@ export const Route = createFileRoute("/club/la-moraleja")({
   component: ClubPage,
 });
 
-function ClubLogo({ light = true }: { light?: boolean }) {
-  const ink = light ? "var(--lm-white)" : "var(--lm-navy)";
-  return (
-    <div className="flex flex-col items-center">
-      <span className="text-[8px] tracking-[0.4em]" style={{ color: ink }}>CLUB · DE · PÁDEL</span>
-      <span className="text-xl tracking-[0.18em] font-light" style={{ color: ink }}>LA MORALEJA</span>
-      <svg width="120" height="34" viewBox="0 0 120 34" aria-hidden>
-        <path d="M4 32 C4 14 16 4 30 4 C42 4 50 12 50 22 L50 32 Z" fill="var(--lm-lime)" />
-        <path d="M14 30 C18 18 30 12 46 16" stroke="var(--lm-navy)" strokeWidth="2" fill="none" />
-        <circle cx="66" cy="18" r="9" fill="var(--lm-lime)" />
-        <circle cx="88" cy="22" r="5.5" fill="var(--lm-lime)" />
-        <circle cx="104" cy="27" r="3" fill="var(--lm-lime)" />
-      </svg>
-    </div>
-  );
+function ClubLogo() {
+  return <img src={laMoralejaLogo.url} alt="Club de Pádel La Moraleja" width={1435} height={768} className="mx-auto w-full max-w-sm h-auto object-contain" />;
 }
 
 const announcements = [

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { communityShareUrl, isCityOnly, publicDirectory, type Community, type Directory } from "@/lib/communities";
 import { nativeShare, openExternal, openMailTo } from "@/lib/native";
 import { useTr } from "@/lib/i18n";
+import laMoralejaLogo from "@/assets/la-moraleja-club-logo.jpeg.asset.json";
 
 export const CONCIERGE_WHATSAPP = "34620296060";
 export const CONCIERGE_EMAIL = "Nadine@padelsetmatch.com";
@@ -24,7 +25,7 @@ export function useMembersLabel() {
 /** Small round seal for communities that have their own logo. */
 export function CommunitySeal({ logo, className = "size-9" }: { logo?: string; className?: string }) {
   if (!logo) return null;
-  return <img src={logo} alt="" aria-hidden loading="lazy" decoding="async" draggable={false} className={`${className} shrink-0 rounded-full object-cover shadow-[0_1px_3px_rgba(0,0,0,0.18)]`} />;
+  return <img src={logo} alt="" aria-hidden loading="lazy" decoding="async" draggable={false} className={`${className} shrink-0 ${logo === laMoralejaLogo.url ? "object-contain" : "rounded-full object-cover shadow-[0_1px_3px_rgba(0,0,0,0.18)]"}`} />;
 }
 
 type ShareTarget = (c: Community) => void;

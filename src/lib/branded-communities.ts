@@ -1,4 +1,5 @@
 import padelodonticsSeal from "@/assets/padelodontics_seal.png.asset.json";
+import laMoralejaLogo from "@/assets/la-moraleja-club-logo.jpeg.asset.json";
 
 /**
  * Communities set up with their organiser, shown with their own round seal.
@@ -9,5 +10,5 @@ export type BrandedCommunity = { country: string; city: string; area: string; lo
 
 export const BRANDED_COMMUNITIES: BrandedCommunity[] = [
   { country: "United Kingdom", city: "London", area: "Padelodontics", logo: padelodonticsSeal.url },
-  { country: "Spain", city: "Madrid", area: "Club de Pádel La Moraleja", logo: "/clubs/la-moraleja-seal.svg" },
+  { country: "Spain", city: "Madrid", area: "Club de Pádel La Moraleja", logo: laMoralejaLogo.url },
 ];

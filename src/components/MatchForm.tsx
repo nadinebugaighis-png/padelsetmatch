@@ -59,6 +59,8 @@ type Props = {
   startMode?: "club" | "address" | "playtomic";
   /** New matches: suggested local date and time (YYYY-MM-DDTHH:MM), e.g. from "Who can play?". */
   startWhen?: string;
+  /** New matches: club already chosen (club communities play at their own club). */
+  startClub?: ClubResult;
 };
 
 function toLocalDatetime(iso?: string | null) {
@@ -111,7 +113,7 @@ function SegButton({
   );
 }
 
-export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode, startWhen }: Props) {
+export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backEventId, startMode, startWhen, startClub }: Props) {
   // Playtomic numbers: the min picker shows where a band starts, the max where it ends.
   const bandEnd = (l: string, end: "lo" | "hi") => { const r = levelRating(l); const [lo, hi] = r.replace("+", "–7.0").split("–"); return (end === "lo" ? lo : hi) ?? r; };
   const tr = useTr();
@@ -139,7 +141,7 @@ export function MatchForm({ initial, submitLabel, onSubmit, saving, title, backE
           city: initial!.city ?? "",
           country: initial!.country ?? "",
         }
-      : null,
+      : !initial && startClub ? startClub : null,
   );
   const [customAddress, setCustomAddress] = useState(
     !isClub && initial?.club_address ? initial.club_address : !isClub ? initial?.club_name ?? "" : "",

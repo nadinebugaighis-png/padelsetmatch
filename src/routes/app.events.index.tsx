@@ -35,6 +35,7 @@ import { CommunityVisitNote } from "@/components/CommunityHeading";
 import { activeFilterCount, passesFilters, restoreFilters, NO_FILTERS, MATCH_FILTERS_STORAGE_KEY, type MatchFilters } from "@/lib/match-filters";
 import { Button } from "@/components/ui/button";
 import { CreateMatchChooser } from "@/components/CreateMatchChooser";
+import { clubVenueFor } from "@/lib/club-venues";
 import { defaultMatchDays, groupByDay, toggleMatchDay, MATCH_DAYS_STORAGE_KEY, restoreMatchDays, serializeMatchDays } from "@/lib/match-date-selection";
 
 export const Route = createFileRoute("/app/events/")({
@@ -486,7 +487,7 @@ function EventsPage() {
                 onResetDays={() =>
                   chooseDays(new Set(days.slice(0, 7).map((d) => dayKey(d))))
                 }
-                onCreate={() => setChooser(true)}
+                onCreate={() => clubVenueFor(communityView) ? navigate({ to: "/app/events/new", search: { where: "club", venue: communityView ?? undefined } }) : setChooser(true)}
               />
             ) : (
               <div className="mt-5 space-y-4">

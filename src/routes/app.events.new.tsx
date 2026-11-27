@@ -8,11 +8,14 @@ import { toast } from "sonner";
 import { useTr } from "@/lib/i18n";
 import { z } from "zod";
 import { PLAY_SLOTS, matchStartFor } from "@/lib/who-can-play";
+import { clubVenueFor } from "@/lib/club-venues";
 
 const searchSchema = z.object({
   invite: z.string().uuid().optional(),
   name: z.string().optional(),
   where: z.enum(["club", "address", "playtomic"]).optional(),
+  // A club community (e.g. Club de Pádel La Moraleja): its matches start at that club.
+  venue: z.string().optional().catch(undefined),
   // From "Who can play?": the day and part of the day the players agreed on.
   day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().catch(undefined),
   slot: z.enum(PLAY_SLOTS).optional().catch(undefined),
@@ -36,7 +39,8 @@ export const Route = createFileRoute("/app/events/new")({
 function NewEvent() {
   const navigate = useNavigate();
   const tr = useTr();
-  const { invite, name, where, day, slot } = Route.useSearch();
+  const { invite, name, where, day, slot, venue } = Route.useSearch();
+  const startClub = where === "playtomic" ? null : clubVenueFor(venue);
   const create = useServerFn(createMatchEvent);
   const invitePlayer = useServerFn(inviteToMatchEvent);
   const [saving, setSaving] = useState(false);
@@ -74,5 +78,5 @@ function NewEvent() {
     ? tr(`Invite ${trimmedName} to play`, `Invitar a ${trimmedName} a jugar`, `Inviter ${trimmedName} à jouer`)
     : tr("Call a match", "Convocar partido", "Lancer un match");
 
-  return <MatchForm title={title} submitLabel={sharing ? tr("Share this match", "Compartir este partido", "Partager ce match") : tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} startMode={where} {...(day && slot ? { startWhen: matchStartFor(day, slot) } : {})} />;
+  return <MatchForm title={title} submitLabel={sharing ? tr("Share this match", "Compartir este partido", "Partager ce match") : tr("Call this match", "Convocar este partido", "Lancer ce match")} onSubmit={onSubmit} saving={saving} startMode={where} {...(startClub ? { startClub } : {})} {...(day && slot ? { startWhen: matchStartFor(day, slot) } : {})} />;
 }

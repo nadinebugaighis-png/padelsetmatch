@@ -5,11 +5,14 @@ import { useTr } from "@/lib/i18n";
 import { RacketIcon } from "@/components/RacketIcon";
 import { CreateMatchChooser } from "@/components/CreateMatchChooser";
 import { ShareAppDialog } from "@/components/QRShareButton";
+import { clubVenueFor } from "@/lib/club-venues";
+import { useCommunityView } from "@/lib/community-view";
 
 /** Round + button above the floating bar: book a court, create a match, book a coach, share the app. */
 export function QuickActions() {
   const tr = useTr();
   const navigate = useNavigate();
+  const communityView = useCommunityView();
   const [open, setOpen] = useState(false);
   const [chooser, setChooser] = useState(false);
   const [share, setShare] = useState(false);
@@ -32,7 +35,7 @@ export function QuickActions() {
 
   const actions = [
     { key: "court", label: tr("Book a court", "Reservar pista", "Réserver un court"), icon: <CalendarDays className="size-[22px]" strokeWidth={1.6} />, run: () => navigate({ to: "/app/book-court" }) },
-    { key: "match", label: tr("Create a match", "Crear partido", "Créer un match"), icon: <RacketIcon className="size-[26px]" />, run: () => setChooser(true) },
+    { key: "match", label: tr("Create a match", "Crear partido", "Créer un match"), icon: <RacketIcon className="size-[26px]" />, run: () => clubVenueFor(communityView) ? navigate({ to: "/app/events/new", search: { where: "club", venue: communityView ?? undefined } }) : setChooser(true) },
     { key: "coach", label: tr("Book a coach", "Reservar entrenador", "Réserver un coach"), icon: <GraduationCap className="size-[22px]" strokeWidth={1.6} />, run: () => navigate({ to: "/app/coaches" }) },
     { key: "share", label: tr("Share the app", "Compartir la app", "Partager l’app"), icon: <QrCode className="size-[20px]" strokeWidth={1.6} />, run: () => setShare(true) },
   ];

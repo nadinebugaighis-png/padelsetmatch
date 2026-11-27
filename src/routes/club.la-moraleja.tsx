@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { CalendarDays, MessageCircle, Megaphone, Trophy, Users, QrCode } from "lucide-react";
 
 const CLUB_URL = "https://padelsetmatch.com/club/la-moraleja";
-const BOOK_WA = "https://wa.me/34647103375?text=" + encodeURIComponent("Hola, quería reservar una pista de pádel.");
+const WA = (msg: string) => "https://wa.me/34647103375?text=" + encodeURIComponent(msg);
+type Sport = "padel" | "beach";
 
 export const Route = createFileRoute("/club/la-moraleja")({
   head: () => ({
@@ -49,6 +50,18 @@ const competitions = [
   { name: "Americana de Navidad", when: "20 de diciembre · 18:00", spots: "32 plazas" },
 ];
 
+const beachAnnouncements = [
+  { tag: "Escuela", title: "Clases con el entrenador del club", body: "Grupos reducidos en la pista de arena · Iniciación y perfeccionamiento." },
+  { tag: "Social", title: "Sunset Beach Tennis", body: "Viernes al atardecer · Partidos rotativos y música en la arena." },
+];
+const beachCompetitions = [
+  { name: "Torneo Beach Tennis La Moraleja", when: "Sábado 13 de diciembre", spots: "Parejas mixtas · 16 plazas" },
+];
+const beachGames = [
+  { time: "Hoy · 18:00", level: "Todos los niveles", players: 2 },
+  { time: "Sábado · 11:00", level: "Intermedio", players: 3 },
+];
+
 const games = [
   { time: "Hoy · 19:00", level: "Nivel 3.5", players: 3 },
   { time: "Mañana · 10:30", level: "Nivel 4.0", players: 2 },
@@ -56,6 +69,13 @@ const games = [
 ];
 
 function ClubPage() {
+  const [sport, setSport] = useState<Sport>("padel");
+  const beach = sport === "beach";
+  const accent = beach ? "var(--lm-sand)" : "var(--lm-lime)";
+  const BOOK_WA = WA(beach ? "Hola, quería reservar la pista de arena de beach tennis." : "Hola, quería reservar una pista de pádel.");
+  const ann = beach ? beachAnnouncements : announcements;
+  const comps = beach ? beachCompetitions : competitions;
+  const gms = beach ? beachGames : games;
   const [qr, setQr] = useState("");
   useEffect(() => {
     let off = false;
@@ -81,11 +101,33 @@ function ClubPage() {
         </div>
       </header>
 
+      <div className="sticky top-0 z-10 px-4 py-3" style={{ background: "var(--lm-navy)" }}>
+        <div role="tablist" aria-label="Deporte" className="max-w-xl mx-auto grid grid-cols-2 gap-1 rounded-full p-1 border" style={{ borderColor: "rgba(255,255,255,0.2)" }}>
+          {([["padel", "Pádel", "Pistas de cristal"], ["beach", "Beach Tennis", "1 pista de arena"]] as const).map(([k, label, sub]) => {
+            const on = sport === k;
+            const c = k === "beach" ? "var(--lm-sand)" : "var(--lm-lime)";
+            return (
+              <button key={k} role="tab" aria-selected={on} onClick={() => setSport(k)} className="rounded-full py-2 transition-colors" style={on ? { background: c, color: "var(--lm-navy)" } : { color: "var(--lm-white)" }}>
+                <span className="block text-sm font-bold uppercase tracking-wide">{label}</span>
+                <span className="block text-[10px] opacity-80">{sub}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <main className="max-w-xl mx-auto px-4 pt-6 space-y-6">
+        {beach && (
+          <div className="rounded-2xl p-4 border-l-4" style={{ background: "var(--lm-white)", borderColor: "var(--lm-sand)" }}>
+            <p className="text-[10px] font-bold uppercase tracking-widest">Zona Beach Tennis</p>
+            <p className="mt-1 font-semibold">Una pista de arena, un entrenador y una gran comunidad</p>
+            <p className="text-sm opacity-75">Reserva la pista, apúntate a clases o únete a un partido en la arena.</p>
+          </div>
+        )}
         <Section icon={<Megaphone className="w-4 h-4" />} title="Avisos del club">
-          {announcements.map((a) => (
+          {ann.map((a) => (
             <Card key={a.title}>
-              <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: "var(--lm-lime)" }}>{a.tag}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: accent }}>{a.tag}</span>
               <p className="mt-2 font-semibold">{a.title}</p>
               <p className="text-sm opacity-75">{a.body}</p>
             </Card>
@@ -93,21 +135,21 @@ function ClubPage() {
         </Section>
 
         <Section icon={<Users className="w-4 h-4" />} title="Partidos abiertos">
-          {games.map((g) => (
+          {gms.map((g) => (
             <Card key={g.time}>
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="font-semibold">{g.time}</p>
                   <p className="text-sm opacity-75">{g.level} · {g.players}/4 jugadores</p>
                 </div>
-                <span className="rounded-full px-4 py-2 text-xs font-bold uppercase" style={{ background: "var(--lm-navy)", color: "var(--lm-lime)" }}>Unirme</span>
+                <span className="rounded-full px-4 py-2 text-xs font-bold uppercase" style={{ background: "var(--lm-navy)", color: accent }}>Unirme</span>
               </div>
             </Card>
           ))}
         </Section>
 
         <Section icon={<Trophy className="w-4 h-4" />} title="Competiciones">
-          {competitions.map((c) => (
+          {comps.map((c) => (
             <Card key={c.name}>
               <p className="font-semibold">{c.name}</p>
               <p className="text-sm opacity-75 flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" />{c.when}</p>
@@ -125,8 +167,8 @@ function ClubPage() {
           <p className="mt-3 text-xs opacity-70">Para recepción, pantallas y cartelería</p>
         </section>
 
-        <a href={BOOK_WA} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-full py-3 text-sm font-bold uppercase" style={{ background: "var(--lm-lime)", color: "var(--lm-navy)" }}>
-          <MessageCircle className="w-4 h-4" />Reservar por WhatsApp
+        <a href={BOOK_WA} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 rounded-full py-3 text-sm font-bold uppercase" style={{ background: accent, color: "var(--lm-navy)" }}>
+          <MessageCircle className="w-4 h-4" />{beach ? "Reservar arena por WhatsApp" : "Reservar por WhatsApp"}
         </a>
         <p className="text-center text-[11px] opacity-60">Con la tecnología de PadelSetMatch · Vista previa</p>
       </main>

@@ -523,6 +523,7 @@ html.native-shell [role="alertdialog"][id^="radix-"] {
 .club-lm {
   --lm-navy: #0b1b2b;
   --lm-navy-2: #13263a;
+  --lm-sand: #e8c97a;
   --lm-lime: #d6fe1d;
   --lm-white: #ffffff;
   --lm-mist: #eef1f4;

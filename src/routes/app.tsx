@@ -45,8 +45,19 @@ export const Route = createFileRoute("/app")({
           ? (error as { status?: number }).status
           : undefined;
         if (status === 401 || status === 403) {
-          try { await supabase.auth.signOut({ scope: "local" }); } catch { /* ignore */ }
-          throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+          // Usually the access token just expired while the phone was locked.
+          // Refresh quietly and never wipe the saved login here; only an
+          // explicit Sign out deletes credentials.
+          try {
+            const { data: r, error: rErr } = await withTimeout(supabase.auth.refreshSession(), 6000);
+            if (r.session?.user) return { user: r.session.user };
+            const rStatus = rErr && typeof rErr === "object" && "status" in rErr ? (rErr as { status?: number }).status : undefined;
+            if (rStatus === 400 || rStatus === 401) {
+              throw redirect({ to: "/auth", search: { redirect: undefined, join: undefined } });
+            }
+          } catch (e) {
+            if (isRedirect(e)) throw e;
+          }
         }
         // Network hiccup: trust the stored session and let the app load.
         return { user: sessionData.session.user };
